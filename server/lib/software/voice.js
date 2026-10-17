@@ -151,6 +151,41 @@ function handoffToPusat(input = {}) {
   return routeTextTask({ ...input, pusat: true });
 }
 
+function startCall() {
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    mediaOpen: false,
+    sid: null,
+    reason: "CALL_START_BLOCKED",
+    note: "Twilio SID/token presence does not place a call.",
+  };
+}
+
+function inboundWebhook() {
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    mediaOpen: false,
+    answered: false,
+    reason: "TWILIO_INBOUND_BLOCKED",
+    note: "Inbound telephony webhooks are not executed. No media stream is opened.",
+  };
+}
+
+function confirmLiveCall() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    callStarted: false,
+    reason: "LIVE_CALL_NOT_CONFIGURED",
+    note: "BUZZARD_VOICE_LIVE_PROBE does not open a paid media session.",
+  };
+}
+
 function health() {
   const adapters = listAdapters();
   return {
@@ -158,6 +193,8 @@ function health() {
     liveReady: false,
     liveVerified: false,
     anyLive: false,
+    callStarted: false,
+    twilioLive: false,
     adapters,
   };
 }
@@ -180,5 +217,8 @@ module.exports = {
   webrtcSignal,
   realtimeSession,
   digitalHumanSession,
+  startCall,
+  inboundWebhook,
+  confirmLiveCall,
   health,
 };

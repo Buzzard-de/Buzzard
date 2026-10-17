@@ -271,3 +271,14 @@ Isolated static `:3040` + API `:3001`. Sales off. No production E2E claim.
 | `npx playwright test --reporter=line` (`PLAYWRIGHT_SKIP_WEBSERVER=1`, base `http://127.0.0.1:3040`) | 0 | 119 tests, **107 passed**, **12 skipped**, **0 failed**, 50.3s |
 
 **147** 82→100 established-scope. **199** 82→100 established-scope. Both PARTIAL (not VERIFIED_100). Mean **77.63%** (18399/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 GPS / phone software (items 152 / 154 / 167)
+
+Scan + schedule ETA + simulated map only. No live GPS ingest, no Twilio call, no ICE URLs. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| gpsPhoneSoftwareCoverage + infrastructureAdvancementDay + buzzardRecordSprint2 + buzzard80MasterAdvancement | 0 | 4 files, **22 passed** |
+| softwareCompletion + softwareMasterCompletion | 0 | 2 files, **90 passed** |
+
+**152** 74→100. **154** 55→100. **167** 80→100. All PARTIAL (not VERIFIED_100). Voice closed on `voice.js` (no numbered 237 voice row). Mean **78.02%** (18490/237). LIVE_VERIFIED 0.

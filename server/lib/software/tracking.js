@@ -32,24 +32,35 @@ function newId(prefix) {
 }
 
 function normalizeEvent(event = {}) {
-  const gpsClaimed = Boolean(event.gps || event.latitude || event.longitude);
-  const carrierGps = Boolean(event.carrierGps === true && gpsClaimed);
+  const gpsClaimed = Boolean(event.gps || event.latitude || event.longitude || event.carrierGps === true);
   const simulated = event.simulated === true;
+  if (gpsClaimed && !simulated) {
+    return {
+      ok: false,
+      reason: "GPS_CLAIM_WITHOUT_TELEMATICS",
+      gpsInvented: false,
+      carrierGps: false,
+      liveGps: false,
+      statusAdvanced: false,
+    };
+  }
+  const requestedType = event.locationType;
+  const liveGpsType = requestedType === LOCATION_TYPE.CARRIER_GPS;
   return {
+    ok: true,
     status: event.status || TRACKING_STATUS.UNKNOWN,
     description: event.description || event.message || null,
     occurredAt: event.occurredAt || event.timestamp || new Date().toISOString(),
-    locationType: carrierGps ? LOCATION_TYPE.CARRIER_GPS : event.locationType || LOCATION_TYPE.CARRIER_EVENT,
+    locationType: liveGpsType ? LOCATION_TYPE.CARRIER_EVENT : requestedType || LOCATION_TYPE.CARRIER_EVENT,
     gpsInvented: false,
-    carrierGps,
+    carrierGps: false,
+    liveGps: false,
     simulated,
     note: simulated
       ? "Simulated tracking event. Not carrier-reported live GPS."
-      : carrierGps
-        ? null
-        : gpsClaimed
-          ? "Coordinate-like fields ignored without carrierGps=true"
-          : null,
+      : liveGpsType
+        ? "carrier_gps location type stored as carrier_event. Live GPS is not authoritative."
+        : null,
   };
 }
 
@@ -116,6 +127,9 @@ function appendEvent(db, shipmentId, event) {
     return { ok: false, reason: "NOT_FOUND", gpsInvented: false, statusAdvanced: false };
   }
   const normalized = normalizeEvent(event);
+  if (normalized.ok === false) {
+    return { ...normalized, duplicate: false, outOfOrder: false };
+  }
   const eventId = event.eventId ? String(event.eventId) : null;
   if (eventId) {
     const byId = db
@@ -198,8 +212,11 @@ function mapShipment(row, db) {
     lastUpdate: row.last_update,
     stale,
     location: {
-      type: row.location_type,
+      type: row.location_type === LOCATION_TYPE.CARRIER_GPS ? LOCATION_TYPE.NOT_AVAILABLE : row.location_type,
       gpsInvented: Boolean(row.gps_invented),
+      liveGps: false,
+      latitude: null,
+      longitude: null,
     },
     events: events.map((e) => {
       let raw = {};
@@ -212,13 +229,35 @@ function mapShipment(row, db) {
         status: e.status,
         description: e.description,
         occurredAt: e.occurred_at,
-        locationType: e.location_type,
+        locationType: e.location_type === LOCATION_TYPE.CARRIER_GPS ? LOCATION_TYPE.CARRIER_EVENT : e.location_type,
         gpsInvented: Boolean(e.gps_invented),
         simulated: raw.simulated === true,
       };
     }),
     shipmentCreated: false,
     liveCarrier: false,
+    liveGps: false,
+  };
+}
+
+function customerView(db, input = {}) {
+  const result = getForCustomer(db, input);
+  if (!result.ok) return result;
+  return {
+    ok: true,
+    liveGps: false,
+    gpsInvented: false,
+    shipment: {
+      ...result.shipment,
+      liveGps: false,
+      location: {
+        type: result.shipment.location?.type || LOCATION_TYPE.NOT_AVAILABLE,
+        liveGps: false,
+        gpsInvented: false,
+        latitude: null,
+        longitude: null,
+      },
+    },
   };
 }
 
@@ -265,5 +304,6 @@ module.exports = {
   appendEvent,
   ingestVerifiedCarrierEvent,
   getForCustomer,
+  customerView,
   mapShipment,
 };

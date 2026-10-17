@@ -47,6 +47,20 @@ function evaluateShipment(shipment = {}, now = Date.now()) {
       source: "shipment_events_plus_schedule",
     };
   }
+  if (gpsClaimed && telematics) {
+    return {
+      ok: false,
+      gps: false,
+      liveMap: false,
+      telematics: false,
+      live: false,
+      gpsInvented: false,
+      reason: "LIVE_GPS_FEED_NOT_CONFIGURED",
+      status,
+      source: "shipment_events_plus_schedule",
+      note: "telematicsAuthorized is not a configured GPS feed.",
+    };
+  }
   return {
     ok: true,
     gps: false,

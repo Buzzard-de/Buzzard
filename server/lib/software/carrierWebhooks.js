@@ -85,6 +85,7 @@ function pollCarrierTracking() {
     ok: false,
     polled: false,
     live: false,
+    liveGps: false,
     gpsInvented: false,
     reason: "CARRIER_POLL_BLOCKED",
     note: "Polling a live carrier API is not executed from this workspace.",

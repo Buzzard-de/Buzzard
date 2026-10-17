@@ -115,6 +115,10 @@ function evaluate(db, input = {}) {
     checks.gpsNotAuthoritative = true;
     reasons.push("GPS_NOT_AUTHORITATIVE");
   }
+  if (input.locationType === "carrier_gps" && input.telematicsAuthorized === true) {
+    checks.telematicsFeedNotConfigured = true;
+    reasons.push("TELEMATICS_FEED_NOT_CONFIGURED");
+  }
   if (input.gpsInvented === true || input.fabricateGps === true) {
     checks.gpsInventedRejected = true;
     reasons.push("GPS_FABRICATION_REJECTED");

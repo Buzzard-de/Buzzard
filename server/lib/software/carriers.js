@@ -125,9 +125,24 @@ function lookup(input = {}) {
     carrier: carrier.id,
     status: input.trackingNumber ? "UNKNOWN_UNTIL_SCAN" : "NO_TRACKING",
     locationType: "not_available",
+    liveGps: false,
+    latitude: null,
+    longitude: null,
     estimatedDelivery: estimate.estimatedDelivery,
     connector: carrier,
     note: "Scan-based stub only. Estimate is not live GPS.",
+  };
+}
+
+function pollGps() {
+  return {
+    ok: false,
+    live: false,
+    liveGps: false,
+    gpsInvented: false,
+    coordinates: null,
+    reason: "CARRIER_GPS_POLL_BLOCKED",
+    note: "Carrier telematics polling is not executed from this adapter.",
   };
 }
 
@@ -163,6 +178,7 @@ function health() {
     liveReady: false,
     shipmentCreateEnabled: false,
     labelPurchaseEnabled: false,
+    liveGps: false,
     carriers: listCarriers(),
     provider: shippingProvider.getProviderHealth(),
   };
@@ -173,6 +189,7 @@ module.exports = {
   classify,
   listCarriers,
   lookup,
+  pollGps,
   purchaseLabel,
   createShipment,
   health,

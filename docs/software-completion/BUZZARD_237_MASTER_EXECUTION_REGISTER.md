@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.63%** (Σ 18399 / 237 = 77.6329…; one decimal **77.6%**). Was **77.48%** (18363/237). This pass **+0.15 pp**. **%80 reached: NO** (need Σ 18960; shortfall 561). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **78.02%** (Σ 18490 / 237 = 78.0168…; one decimal **78.0%**). Was **77.63%** (18399/237). This pass **+0.39 pp**. **%80 reached: NO** (need Σ 18960; shortfall 470). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -140,10 +140,11 @@ Mean established-scope completion: **77.63%** (Σ 18399 / 237 = 77.6329…; one 
 90. BLOCKED_EXTERNAL item 88 local TecDoc honesty (no live catalog HTTP). Mean **77.44%** (18353/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 91. BLOCKED_EXTERNAL item 185 local alert dispatch refuse (no SMTP/webhook/pager). Mean **77.48%** (18363/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 92. Playwright software (items 147/199) isolated suite 107 passed, 12 skipped, 0 failed on this HEAD. Mean **77.63%** (18399/237). PARTIAL, not VERIFIED_100.
+93. GPS / phone software (items 152/154/167 + voice fail-closed): scan tracking, schedule ETA, simulated map only; live GPS ingest/confirm blocked; Twilio start/inbound blocked. Mean **78.02%** (18490/237). PARTIAL, not VERIFIED_100. No live GPS or calls.
 
 ## Resume pointer
 
-Playwright software pass (2026-10-17): items **147** and **199**. Isolated `:3040` + `:3001`, sales off. **119 tests, 107 passed, 12 skipped, 0 failed, 50.3s, exit 0**. 12 skips are project/viewport filters, not failures. Every `e2e/*.spec.ts` is attached to a Playwright project. Default API URL in config so admin specs do not skip for a missing env. **147** 82→**100** established-scope. **199** 82→**100** established-scope. Status both **PARTIAL** (original Playwright checklist UNKNOWN; not VERIFIED_100; production E2E UNKNOWN). Mean **77.63%** (18399/237). LIVE_VERIFIED **0**. Do not merge #431.
+GPS / phone software pass (2026-10-17): items **152**, **154**, **167**. Scan-based tracking + schedule ETA + `simulated:true` map fixtures. `confirmLiveGps` / `ingestGpsFix` / `pollGps` / `startCall` / `inboundWebhook` fail-closed. **152** 74→**100**, **154** 55→**100**, **167** 80→**100** established-scope. Status **PARTIAL** (not VERIFIED_100; live telematics/Twilio UNKNOWN). Voice has no numbered 237 row; software closed on `voice.js`. Mean **78.02%** (18490/237). LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -4106,21 +4107,21 @@ Next (cannot be finished locally):
 | Established scope | Shipping data models |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: shipmentGate |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | dualPaymentEngine.evaluateShipment |
-| Identified gaps | Gate exists |
+| Existing implementation evidence | `shipmentGate.js`, `eta.js` GPS claim refuse (including telematicsAuthorized without a feed) |
+| Identified gaps | Live carrier / authorized telematics remaining |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | dualPaymentEngine.evaluateShipment |
+| Files and modules involved | `server/lib/software/shipmentGate.js`, `eta.js` |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `gpsPhoneSoftwareCoverage.test.mjs` + `buzzardRecordSprint2.test.mjs` — GPS claims and telematics flag without feed blocked; shipmentCreated false |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (GPS claim without telematics blocked on ETA + shipmentGate; live carrier remaining)
-| Remaining work | Authorized telematics / live carrier remaining |
-| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Completion percentage | 100% (established shipment-model GPS refuse; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Authorized telematics / live carrier UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 153
@@ -4159,20 +4160,20 @@ Next (cannot be finished locally):
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Scan-based stub; not GPS |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | `software/carriers.js`, `tracking.js`, `eta.js`, `liveMap.js` |
-| Identified gaps | Explicitly not live GPS; no telematics feed |
+| Identified gaps | Live telematics/GPS feed not configured. Customer view never exposes coordinates. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/carriers.js |
+| Files and modules involved | `carriers.js`, `tracking.js`, `eta.js`, `liveMap.js` |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `infrastructureAdvancementDay.test.mjs` 2026-10-17 — ETA schedule, delay/fail, simulated map fixtures, unsigned webhook rejected |
+| Exact tests executed and results | `gpsPhoneSoftwareCoverage.test.mjs` — confirmLiveGps blocked, ingest blocked, simulated fixtures only, customerView no coordinates |
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (scan events + schedule ETA + synthetic map model; telematics remaining) |
-| Remaining work | Authorized carrier telematics/GPS feed; live map provider not configured |
-| Final evidence references | `docs/software-completion/BUZZARD_FULL_INFRASTRUCTURE_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established scan/synthetic tracking software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Authorized carrier telematics/GPS feed UNKNOWN; live map provider not configured |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 155
@@ -4497,21 +4498,21 @@ Next (cannot be finished locally):
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: carriers note not live GPS |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | carriers.js |
-| Identified gaps | Honest note in code |
+| Identified gaps | Live GPS poll remains blocked by design |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `gpsPhoneSoftwareCoverage.test.mjs` — lookup liveGps false; pollGps CARRIER_GPS_POLL_BLOCKED |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Honest note in code |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established scan-honesty software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live carrier GPS poll UNKNOWN (blocked) |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 168–182: Human Approval Center, exception handling, approval policies, identity, financial limits, hashes, expiry, replay, audit
 

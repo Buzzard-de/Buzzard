@@ -230,3 +230,13 @@ No commercial order, charge, or fulfillment. Sales stay off.
 | buzzardHumanGatesEasy | 0 | 1 file, **12 passed** |
 
 **225** 0→15. Stays HUMAN_APPROVAL_REQUIRED. **226** unchanged. Mean **77.32%** (18326/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN item 226 protected merge (no git/gh)
+
+No `git merge`, no `gh pr merge`, PR #431 not merged.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy | 0 | 1 file, **13 passed** |
+
+**226** 0→15. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.39%** (18341/237). LIVE_VERIFIED 0.

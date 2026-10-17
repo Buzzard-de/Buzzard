@@ -52,6 +52,7 @@ const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
 const dnsAccessGate = require("./dnsAccessGate");
 const firstOrderGate = require("./firstOrderGate");
+const protectedBranchMergeGate = require("./protectedBranchMergeGate");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -118,4 +119,5 @@ module.exports = {
   goLiveGate,
   dnsAccessGate,
   firstOrderGate,
+  protectedBranchMergeGate,
 };

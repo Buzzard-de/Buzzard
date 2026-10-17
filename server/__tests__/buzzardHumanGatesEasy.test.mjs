@@ -371,4 +371,39 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(forced.salesEnabled).toBe(false);
     expect(process.env.BUZZARD_SALES_ENABLED).toBe(salesBefore);
   });
+
+  it("item 226: protected-branch merge is not executed", () => {
+    const software = require("../lib/software");
+    const seen = software.protectedBranchMergeGate.inspect({
+      branch: "cursor/software-completion-local-c293",
+      target: "main",
+      prNumber: 431,
+    });
+    expect(seen.merged).toBe(false);
+    expect(seen.gitExecuted).toBe(false);
+    expect(seen.ghExecuted).toBe(false);
+    expect(seen.protectedTarget).toBe(true);
+    expect(seen.prNumber).toBe(431);
+
+    const ai = software.protectedBranchMergeGate.merge({
+      actor: "guardian",
+      forceMerge: true,
+      target: "main",
+      prNumber: 431,
+    });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.merged).toBe(false);
+    expect(ai.gitExecuted).toBe(false);
+
+    const forced = software.protectedBranchMergeGate.merge({
+      actor: "operator",
+      forceMerge: true,
+      target: "main",
+      prNumber: 431,
+    });
+    expect(forced.reason).toBe("HUMAN_PROTECTED_MERGE_REQUIRED");
+    expect(forced.forceMergeIgnored).toBe(true);
+    expect(forced.merged).toBe(false);
+    expect(forced.ghExecuted).toBe(false);
+  });
 });

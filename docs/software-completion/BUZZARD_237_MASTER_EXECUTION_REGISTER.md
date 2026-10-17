@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.32%** (Σ 18326 / 237 = 77.3249…; one decimal **77.3%**). Was **77.26%** (18311/237). This pass **+0.06 pp**. **%80 reached: NO** (need Σ 18960; shortfall 634). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.39%** (Σ 18341 / 237 = 77.3882…; one decimal **77.4%**). Was **77.32%** (18326/237). This pass **+0.07 pp**. **%80 reached: NO** (need Σ 18960; shortfall 619). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -135,13 +135,14 @@ Mean established-scope completion: **77.32%** (Σ 18326 / 237 = 77.3249…; one 
 85. HUMAN item 219 local go-live refuse (no approval execution, sales stay off). Mean **77.20%** (18296/237). Stays HUMAN_APPROVAL_REQUIRED.
 86. HUMAN item 221 local DNS/access-policy refuse (no live DNS). Mean **77.26%** (18311/237). Stays HUMAN_APPROVAL_REQUIRED.
 87. HUMAN item 225 local first-order refuse (no commercial order). Mean **77.32%** (18326/237). Stays HUMAN_APPROVAL_REQUIRED.
+88. HUMAN item 226 local protected-merge refuse (no git/gh merge). Mean **77.39%** (18341/237). Stays HUMAN_APPROVAL_REQUIRED.
 
 ## Resume pointer
 
-Human-gate local pass 10 (2026-10-17): item **225**. No first real customer order. **225** 0→**15**: `firstOrderGate.place` refuses AI and forcePlace; `orderId` null; `charged`/`fulfilled` false; sales stay off. Status **HUMAN_APPROVAL_REQUIRED**. Item **226** unchanged (no merge). Mean **77.32%** (18326/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 11 (2026-10-17): item **226**. No protected-branch merge. **226** 0→**15**: `protectedBranchMergeGate.merge` refuses AI and forceMerge; `gitExecuted`/`ghExecuted` false; PR #431 not merged. Status **HUMAN_APPROVAL_REQUIRED**. Mean **77.39%** (18341/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. Remaining HUMAN: **226** protected-branch merge refuse — do not merge #431
+1. Remaining HUMAN items still HUMAN (local refuse-only work exhausted for the easy production set)
 2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
 3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
 4. Original 237 checklist still UNKNOWN
@@ -6032,8 +6033,8 @@ Next:
 | Established scope | Merge and production deploy |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Forbidden without human |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | git/PR |
-| Identified gaps | Feature-branch PR only; no merge |
+| Existing implementation evidence | Feature-branch PR #431; software/protectedBranchMergeGate.js never runs git/gh merge |
+| Identified gaps | Independent human must still merge to a protected branch |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | git/PR |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -6044,10 +6045,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 0% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Feature-branch PR only; no merge |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Completion percentage | 15% (local inspect/refuse; live protected merge remaining) |
+| Remaining work | Independent human must merge to protected branch — this agent must not merge #431 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ## Items 227–237: Esat Bey / Guardian maximum-security: threat detection, authz, anomaly, telemetry, containment (no autonomous destructive), audit, isolation, IR
 

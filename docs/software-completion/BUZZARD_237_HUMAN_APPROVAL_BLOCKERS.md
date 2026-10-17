@@ -21,7 +21,7 @@ Standing locks (must remain until an independent authenticated human approves th
 | 115 / 129 | Marketplace live listing / publish | High | Irreversible external marketplace effect. Local 115: draft-only; vendor listing ids rejected; activateDraft blocked. Live listing still pending independent approval |
 | 155 / 165 | Customer notification send | Medium–High | External customer-facing message. Local 155: provider ids rejected; approveSend does not send; PROVIDER_ACCEPTED not written. Live send still requires independent approval |
 | 182 | High-impact catalog (sales, SoT, live pay, PO, listing, ship, deploy) | Critical | AI cannot approve itself |
-| 213 | Production environment configuration | Critical | Production config change |
+| 213 | Production environment configuration | Critical | Local refuse: inspect is presence-only; apply does not write process.env. Live production config still requires independent human approval |
 | 214 | Production deploy | Critical | Irreversible release |
 | 219 | Go-live approval execution | Critical | `goLiveApproval` must not be self-approved |
 | 221 | Live DNS / access policy | Critical | Not touched |

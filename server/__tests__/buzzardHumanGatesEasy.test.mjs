@@ -208,4 +208,34 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
       else process.env.BUZZARD_PRODUCT_SOT_ACTIVE = previous;
     }
   });
+
+  it("item 213: production env inspect is presence-only and apply does not mutate", () => {
+    const software = require("../lib/software");
+    const snapshot = { ...process.env };
+    const seen = software.productionConfigGate.inspect();
+    expect(seen.secretsIncluded).toBe(false);
+    expect(seen.productionChanged).toBe(false);
+    expect(seen.keys.every((row) => row.valueIncluded === false)).toBe(true);
+    expect(seen.keys.some((row) => row.name === "JWT_SECRET")).toBe(true);
+
+    const ai = software.productionConfigGate.apply({
+      actor: "guardian",
+      updates: { BUZZARD_SALES_ENABLED: "1" },
+    });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.applied).toBe(false);
+    expect(ai.processEnvMutated).toBe(false);
+
+    const forced = software.productionConfigGate.apply({
+      actor: "operator",
+      forceApply: true,
+      updates: { JWT_SECRET: "must-not-be-written" },
+    });
+    expect(forced.reason).toBe("HUMAN_PRODUCTION_CONFIG_REQUIRED");
+    expect(forced.forceApplyIgnored).toBe(true);
+    expect(forced.mutated).toBe(false);
+    expect(forced.secretsIncluded).toBe(false);
+    expect(process.env.JWT_SECRET).toBe(snapshot.JWT_SECRET);
+    expect(process.env.BUZZARD_SALES_ENABLED).toBe(snapshot.BUZZARD_SALES_ENABLED);
+  });
 });

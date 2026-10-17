@@ -33,8 +33,46 @@ async function collectLocalAlerts() {
   return generateLocalAlerts(readiness);
 }
 
+const ALERT_AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
+function dispatch(input = {}, env = process.env) {
+  const actor = String(input.actorId || input.actor || input.approver || "").trim().toLowerCase();
+  const smtpPresent = Boolean(env.SMTP_HOST || env.SMTP_URL);
+  const webhookPresent = Boolean(env.ALERT_WEBHOOK_URL || env.SLACK_WEBHOOK_URL);
+  if (ALERT_AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      liveDispatch: false,
+      smtpSent: false,
+      webhookSent: false,
+      pager: false,
+      httpAttempted: false,
+      secretsIncluded: false,
+      webhookUrlIncluded: false,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+    };
+  }
+  return {
+    ok: false,
+    liveDispatch: false,
+    smtpSent: false,
+    webhookSent: false,
+    pager: false,
+    httpAttempted: false,
+    secretsIncluded: false,
+    webhookUrlIncluded: false,
+    forceDispatchIgnored: input.forceDispatch === true,
+    smtpConfiguredIgnored: smtpPresent,
+    webhookConfiguredIgnored: webhookPresent,
+    reason: "ALERT_DISPATCH_BLOCKED",
+    note: "Local generation is not live delivery. Item 185.",
+  };
+}
+
 module.exports = {
   generateLocalAlerts,
   collectLocalAlerts,
+  dispatch,
   buildAlertRules,
 };

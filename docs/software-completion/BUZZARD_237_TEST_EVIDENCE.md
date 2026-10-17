@@ -250,3 +250,13 @@ No Inter-Cars HTTP, no live PO, no invented stock. Key presence is not live.
 | externalIntegrationHonesty | 0 | 1 file, **2 passed** |
 
 **87** 58→64. Stays BLOCKED_EXTERNAL_DEPENDENCY. **88** unchanged. Mean **77.41%** (18347/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 BLOCKED_EXTERNAL items 88 TecDoc and 185 alerts
+
+No TecDoc HTTP. No SMTP/webhook/pager send. Secrets not returned.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| externalIntegrationHonesty + localMetricsAlerts | 0 | 2 files, **5 passed** |
+
+**88** 58→64. **185** 40→50. Both stay BLOCKED_EXTERNAL_DEPENDENCY. Mean **77.48%** (18363/237). LIVE_VERIFIED 0.

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.41%** (Σ 18347 / 237 = 77.4135…; one decimal **77.4%**). Was **77.39%** (18341/237). This pass **+0.02 pp**. **%80 reached: NO** (need Σ 18960; shortfall 613). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.48%** (Σ 18363 / 237 = 77.4810…; one decimal **77.5%**). Was **77.41%** (18347/237). This pass **+0.07 pp**. **%80 reached: NO** (need Σ 18960; shortfall 597). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -137,14 +137,18 @@ Mean established-scope completion: **77.41%** (Σ 18347 / 237 = 77.4135…; one 
 87. HUMAN item 225 local first-order refuse (no commercial order). Mean **77.32%** (18326/237). Stays HUMAN_APPROVAL_REQUIRED.
 88. HUMAN item 226 local protected-merge refuse (no git/gh merge). Mean **77.39%** (18341/237). Stays HUMAN_APPROVAL_REQUIRED.
 89. BLOCKED_EXTERNAL item 87 local Inter-Cars honesty (no live HTTP/PO). Mean **77.41%** (18347/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
+90. BLOCKED_EXTERNAL item 88 local TecDoc honesty (no live catalog HTTP). Mean **77.44%** (18353/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
+91. BLOCKED_EXTERNAL item 185 local alert dispatch refuse (no SMTP/webhook/pager). Mean **77.48%** (18363/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 
 ## Resume pointer
 
-External local pass (2026-10-17): item **87**. No Inter-Cars HTTP or PO. **87** 58→**64**: vendor PO ids rejected; AI purchase denied; forcePurchase ignored; lookup does not invent stock; `confirmAvailability` is `LIVE_STOCK_UNKNOWN`. Status **BLOCKED_EXTERNAL_DEPENDENCY**. Item **88** unchanged. Mean **77.41%** (18347/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+External local closeout (2026-10-17): items **88** then **185**. No TecDoc HTTP. No alert delivery. **88** 58→**64**: vendor catalog ids rejected; stock/price not invented; `confirmLiveCatalog` is `LIVE_TECDOC_UNKNOWN`. **185** 40→**50**: `dispatch` refuses AI and forceDispatch; SMTP/webhook presence ≠ send. Both stay **BLOCKED_EXTERNAL_DEPENDENCY**. Mean **77.48%** (18363/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
-Next:
-1. BLOCKED_EXTERNAL **88** TecDoc, then **185** alerts (`liveDispatch: false`)
-2. HUMAN items remain HUMAN — independent approval still required
+Local-doable HUMAN refuse gates and the three BLOCKED_EXTERNAL honesty gates on this track are complete. Remaining work needs independent human approval or authorized live credentials — this agent must not invent them.
+
+Next (cannot be finished locally):
+1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
+2. BLOCKED_EXTERNAL still **87, 88, 185** — authorized Inter-Cars, TecDoc, SMTP/webhook/pager
 3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
 4. Original 237 checklist still UNKNOWN
 
@@ -2443,9 +2447,9 @@ Next:
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 58% (mock adapter + key≠live; live TecDoc catalog remaining) |
+| Completion percentage | 64% (mock catalog + vendor-id refuse + stock/price honesty; live TecDoc remaining) |
 | Remaining work | Live TecDoc HUMAN / authorized API |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `tecdocAdapter.js` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `externalIntegrationHonesty.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 89
@@ -4977,10 +4981,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (2/5: local generate + no-dispatch proven; SMTP/webhook/pager/production remaining) |
+| Completion percentage | 50% (local generate + dispatch refuse; live SMTP/webhook/pager remaining) |
 | Remaining work | No authorized alerting backend — live delivery BLOCKED_EXTERNAL_DEPENDENCY |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `localMetricsAlerts.test.mjs` |
+| Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 186
 

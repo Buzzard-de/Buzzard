@@ -30,26 +30,68 @@ function describeStatus() {
 
 async function fetchCatalog(options = {}) {
   const status = describeStatus();
+  if (options.vendorCatalogId || options.liveCatalogId) {
+    return {
+      ok: false,
+      mock: true,
+      live: false,
+      httpAttempted: false,
+      inventedCatalog: false,
+      records: [],
+      reason: "VENDOR_CATALOG_ID_REJECTED",
+      ...status,
+    };
+  }
   return {
     ok: true,
     mock: true,
     live: false,
     httpAttempted: false,
+    inventedCatalog: false,
     message: "TecDoc catalog mock. TECDOC_API_KEY does not enable HTTP from this adapter.",
     records: [],
     vehicles: MOCK_VEHICLES,
     compatibility: MOCK_COMPATIBILITY,
     configured: status.keyPresent,
+    forceLiveIgnored: options.forceLive === true,
     ...status,
   };
 }
 
 async function fetchStock() {
-  return { ok: true, mock: true, records: [] };
+  return {
+    ok: true,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedStock: false,
+    records: [],
+    ...describeStatus(),
+  };
 }
 
 async function fetchPrices() {
-  return { ok: true, mock: true, records: [] };
+  return {
+    ok: true,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedPrice: false,
+    records: [],
+    ...describeStatus(),
+  };
+}
+
+function confirmLiveCatalog() {
+  return {
+    ok: false,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedCatalog: false,
+    reason: "LIVE_TECDOC_UNKNOWN",
+    ...describeStatus(),
+  };
 }
 
 function lookupVehicle(query = {}) {
@@ -81,4 +123,5 @@ module.exports = {
   fetchPrices,
   lookupVehicle,
   getCompatibility,
+  confirmLiveCatalog,
 };

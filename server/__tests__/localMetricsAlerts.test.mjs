@@ -37,4 +37,33 @@ describe("local alert generation", () => {
     expect(collected.secretsExposed).toBe(false);
     expect(Array.isArray(collected.alerts)).toBe(true);
   });
+
+  it("item 185: dispatch does not send even when SMTP or webhook env is present", () => {
+    const { dispatch } = require("../lib/operations/localAlerts.js");
+    const previousHost = process.env.SMTP_HOST;
+    const previousHook = process.env.ALERT_WEBHOOK_URL;
+    process.env.SMTP_HOST = "smtp.example.invalid";
+    process.env.ALERT_WEBHOOK_URL = "https://example.invalid/hook";
+    try {
+      const ai = dispatch({ actor: "guardian", forceDispatch: true });
+      expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+      expect(ai.liveDispatch).toBe(false);
+      expect(ai.httpAttempted).toBe(false);
+
+      const forced = dispatch({ actor: "operator", forceDispatch: true });
+      expect(forced.reason).toBe("ALERT_DISPATCH_BLOCKED");
+      expect(forced.forceDispatchIgnored).toBe(true);
+      expect(forced.smtpConfiguredIgnored).toBe(true);
+      expect(forced.webhookConfiguredIgnored).toBe(true);
+      expect(forced.smtpSent).toBe(false);
+      expect(forced.webhookSent).toBe(false);
+      expect(forced.pager).toBe(false);
+      expect(forced.webhookUrlIncluded).toBe(false);
+    } finally {
+      if (previousHost === undefined) delete process.env.SMTP_HOST;
+      else process.env.SMTP_HOST = previousHost;
+      if (previousHook === undefined) delete process.env.ALERT_WEBHOOK_URL;
+      else process.env.ALERT_WEBHOOK_URL = previousHook;
+    }
+  });
 });

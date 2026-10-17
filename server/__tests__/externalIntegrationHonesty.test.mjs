@@ -38,6 +38,19 @@ describe("external integration inventory honesty", () => {
       expect(catalog.httpAttempted).toBe(false);
       expect(catalog.keyPresent).toBe(true);
       expect(JSON.stringify(catalog)).not.toContain("not-a-live-key");
+      const rejectedCatalog = await tecdoc.fetchCatalog({ vendorCatalogId: "td-live-1" });
+      expect(rejectedCatalog.reason).toBe("VENDOR_CATALOG_ID_REJECTED");
+      expect(rejectedCatalog.httpAttempted).toBe(false);
+      const tecdocStock = await tecdoc.fetchStock();
+      expect(tecdocStock.live).toBe(false);
+      expect(tecdocStock.inventedStock).toBe(false);
+      expect(tecdocStock.httpAttempted).toBe(false);
+      const prices = await tecdoc.fetchPrices();
+      expect(prices.inventedPrice).toBe(false);
+      expect(prices.httpAttempted).toBe(false);
+      const liveCatalog = tecdoc.confirmLiveCatalog();
+      expect(liveCatalog.reason).toBe("LIVE_TECDOC_UNKNOWN");
+      expect(liveCatalog.httpAttempted).toBe(false);
       const po = interCars.purchaseOrder();
       expect(po.sent).toBe(false);
       expect(po.live).toBe(false);
@@ -52,10 +65,10 @@ describe("external integration inventory honesty", () => {
       expect(lookup.inventedStock).toBe(false);
       expect(lookup.vendorStockIgnored).toBe(true);
 
-      const stock = interCars.confirmAvailability({ sku: "IC-1" });
-      expect(stock.reason).toBe("LIVE_STOCK_UNKNOWN");
-      expect(stock.inStock).toBe(false);
-      expect(stock.httpAttempted).toBe(false);
+      const icStock = interCars.confirmAvailability({ sku: "IC-1" });
+      expect(icStock.reason).toBe("LIVE_STOCK_UNKNOWN");
+      expect(icStock.inStock).toBe(false);
+      expect(icStock.httpAttempted).toBe(false);
 
       const rejected = interCars.purchaseOrder({ vendorPoId: "ic-live-1" });
       expect(rejected.reason).toBe("VENDOR_PO_ID_REJECTED");

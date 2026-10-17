@@ -33,7 +33,7 @@ function openCase(db, input = {}) {
       items: input.items || [],
     });
   } catch (error) {
-    rma = { error: error.message, status: 500 };
+    rma = { error: require("../security").publicTaskError(error, "returns.rma_failed"), status: 500 };
   }
 
   const id = newId();
@@ -55,6 +55,10 @@ function openCase(db, input = {}) {
       reason: input.reason,
       rmaError: rma?.error || null,
       refundExecuted: false,
+      estimatedCustomerRefund: input.refundAmount == null ? null : Number(input.refundAmount) || 0,
+      actualCustomerRefund: null,
+      estimatedSupplierCredit: null,
+      actualSupplierCredit: null,
     })
   );
 
@@ -68,7 +72,7 @@ function openCase(db, input = {}) {
       returned: false,
     });
   } catch (error) {
-    opened.loyalty = { ok: false, reason: error.message };
+    opened.loyalty = { ok: false, reason: require("../security").publicTaskError(error, "loyalty.reevaluate_failed") };
   }
   return opened;
 }
@@ -76,6 +80,7 @@ function openCase(db, input = {}) {
 function inspect(db, id) {
   const row = db.prepare("SELECT * FROM software_return_ledger WHERE id = ?").get(id);
   if (!row) return { ok: false, error: "not_found", executed: false };
+  const details = readDetails(row);
   return {
     ok: true,
     id: row.id,
@@ -91,8 +96,26 @@ function inspect(db, id) {
       assumedFromCustomerRefund: row.assumed_supplier_will_reimburse === 1,
     },
     refundExecuted: false,
-    note: "A customer refund request is not a supplier credit. Execution stays disabled.",
+    estimated: {
+      customerRefund: details.estimatedCustomerRefund ?? null,
+      supplierCredit: details.estimatedSupplierCredit ?? null,
+      invented: false,
+    },
+    actual: {
+      customerRefund: details.actualCustomerRefund ?? null,
+      supplierCredit: row.supplier_credit_received === 1 ? details.actualSupplierCredit ?? null : null,
+      executed: false,
+    },
+    note: "A customer refund request is not a supplier credit. Estimated amounts are not actual. Execution stays disabled.",
   };
+}
+
+function readDetails(row) {
+  try {
+    return JSON.parse(row.details_json || "{}");
+  } catch {
+    return {};
+  }
 }
 
 const CUSTOMER_REFUND_TRANSITIONS = Object.freeze({
@@ -156,11 +179,28 @@ function recordSupplierCredit(db, id, status) {
   return inspect(db, id);
 }
 
+function reconcileFinancials(db, id) {
+  const current = inspect(db, id);
+  if (!current.ok) return current;
+  return {
+    ok: true,
+    id,
+    matched: false,
+    executed: false,
+    live: false,
+    customerRefund: current.customerRefund,
+    supplierCredit: current.supplierCredit,
+    reason: "RECONCILE_NOT_AUTO_MATCHED",
+    note: "Customer refund and supplier credit stay independent. No money is moved.",
+  };
+}
+
 module.exports = {
   openCase,
   inspect,
   recordSupplierCredit,
   transitionCustomerRefund,
+  reconcileFinancials,
   CUSTOMER_REFUND_TRANSITIONS,
   RETURN_SIDE_STATUS,
 };

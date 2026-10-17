@@ -108,12 +108,11 @@ function customerSend(input = {}) {
 }
 
 function providerStatus() {
-  const { getActiveProvider, isProviderConfigured, PROVIDERS } = require("../aiProviders");
-  const active = getActiveProvider();
+  const { getProviderHonesty } = require("../aiProviders");
+  const honesty = getProviderHonesty();
   return {
-    active,
-    stub: active === PROVIDERS.STUB,
-    configured: isProviderConfigured(active),
+    ...honesty,
+    active: honesty.effective,
     liveVerified: false,
     openai: Boolean(process.env.OPENAI_API_KEY),
     anthropic: Boolean(process.env.ANTHROPIC_API_KEY),

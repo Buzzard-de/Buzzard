@@ -24,9 +24,15 @@ def test_go_live_gate():
 
 def test_telephony_demo():
     demo = PhoneTelephonyFacade().demo_flow()
-    assert demo["health"]["status"] == "telephony_integration_ready"
+    assert demo["health"]["status"] == "telephony_code_ready"
+    assert demo["health"]["live"] is False
+    assert demo["health"]["callStarted"] is False
     assert demo["inbound"]["session"]["state"] == "active"
+    assert demo["inbound"]["answer"]["live"] is False
+    assert demo["media_contract"]["streamOpened"] is False
+    assert demo["media_contract"]["callback_url"] is None
     assert demo["hangup"]["action"] == "hangup"
+    assert demo["hangup"]["live"] is False
     assert demo["go_live_doc"] is True
 
 

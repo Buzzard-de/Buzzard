@@ -26,14 +26,15 @@ test.describe("Storefront Commerce Bridge Part 9", () => {
     const productId = product?.id;
     expect(productId).toBeTruthy();
 
+    const sessionId = `e2e-p9-${Date.now()}`;
     const cartRes = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-p9-${Date.now()}`, country: "DE" },
+      data: { sessionId, country: "DE" },
     });
     const cartBody = await cartRes.json();
     expect(cartBody.cart?.id).toBeTruthy();
 
     const addRes = await request.post(`${API}/api/commerce/cart/${cartBody.cart.id}/items`, {
-      data: { productId, quantity: 1 },
+      data: { productId, quantity: 1, sessionId },
     });
     expect(addRes.ok()).toBeTruthy();
     const addBody = await addRes.json();
@@ -44,24 +45,25 @@ test.describe("Storefront Commerce Bridge Part 9", () => {
   test("READINESS_TEST order via API (storefront backend path)", async ({ request }) => {
     const product = await firstPublicCatalogItem(request);
     const productId = product?.id;
+    const sessionId = `e2e-readiness-${Date.now()}`;
     const cart = await request.post(`${API}/api/commerce/cart`, {
-      data: { sessionId: `e2e-readiness-${Date.now()}` },
+      data: { sessionId },
     });
     const cartId = (await cart.json()).cart.id;
     await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity: 1 },
+      data: { productId, quantity: 1, sessionId },
     });
 
     const start = await request.post(`${API}/api/commerce/checkout/start`, {
-      data: { cartId, orderType: "READINESS_TEST" },
+      data: { cartId, orderType: "READINESS_TEST", sessionId },
     });
     const checkoutId = (await start.json()).checkout.id;
     const addr = { line1: "E2E 1", city: "Berlin", postalCode: "10115", country: "DE" };
     await request.post(`${API}/api/commerce/checkout/${checkoutId}/validate`, {
-      data: { billingAddress: addr, shippingAddress: addr },
+      data: { billingAddress: addr, shippingAddress: addr, sessionId },
     });
     const complete = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
-      data: { orderType: "READINESS_TEST" },
+      data: { orderType: "READINESS_TEST", sessionId },
       headers: { "Idempotency-Key": `e2e-complete-${Date.now()}` },
     });
     const result = await complete.json();

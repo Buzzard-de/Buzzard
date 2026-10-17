@@ -5,6 +5,12 @@ const crypto = require("crypto");
 const { db } = require("../db");
 const { OPERATIONS_STATUS } = require("../../core/operationsConstants");
 
+const FINANCIAL_OPERATIONS = new Set(["payment_or_refund", "payment", "refund", "capture"]);
+
+function isFinancialOperation(operation) {
+  return FINANCIAL_OPERATIONS.has(String(operation || ""));
+}
+
 function hashKey(operation, scope, key) {
   const raw = `${operation}:${scope}:${key}`;
   return crypto.createHash("sha256").update(raw).digest("hex").slice(0, 32);
@@ -28,12 +34,44 @@ function beginOperation({ operation, scope, idempotencyKey, jobId, metadata } = 
         result: existing.result_json ? JSON.parse(existing.result_json) : null,
       };
     }
-    if (existing.status === OPERATIONS_STATUS.RUNNING) {
+    if (existing.status === OPERATIONS_STATUS.RUNNING || existing.status === OPERATIONS_STATUS.RETRYING) {
       return {
         ok: false,
         duplicate: true,
         code: "already_running",
         existingJobId: existing.job_id,
+      };
+    }
+    if (existing.status === OPERATIONS_STATUS.PERMANENTLY_FAILED) {
+      return {
+        ok: false,
+        duplicate: true,
+        retryable: false,
+        code: "permanently_failed",
+        existingJobId: existing.job_id,
+      };
+    }
+    if (existing.status === OPERATIONS_STATUS.FAILED) {
+      if (isFinancialOperation(existing.operation || operation)) {
+        return {
+          ok: false,
+          duplicate: true,
+          retryable: false,
+          code: "failed_do_not_retry",
+          existingJobId: existing.job_id,
+        };
+      }
+      db.prepare(`
+        UPDATE core_job_idempotency
+        SET status = ?, job_id = COALESCE(?, job_id), attempts = attempts + 1
+        WHERE idempotency_key = ? AND status = ?
+      `).run(OPERATIONS_STATUS.RUNNING, jobId || null, key, OPERATIONS_STATUS.FAILED);
+      return {
+        ok: true,
+        retried: true,
+        id: existing.id,
+        idempotencyKey: key,
+        status: OPERATIONS_STATUS.RUNNING,
       };
     }
   }
@@ -109,4 +147,5 @@ module.exports = {
   completeOperation,
   failOperation,
   getOperation,
+  isFinancialOperation,
 };

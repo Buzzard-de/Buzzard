@@ -81,16 +81,61 @@ function getVerifiedOrderStatus({ orderNumber, email, postalCode, locale = "de" 
 
 function routeToHumanSupport(locale = "de") {
   const messages = {
-    de: "Ich verbinde Sie mit unserem Kundenservice. Bitte warten Sie oder rufen Sie während der Geschäftszeiten an.",
-    en: "Routing you to human support. Please hold or call during business hours.",
-    tr: "Sizi insan desteğine yönlendiriyorum. Lütfen bekleyin veya mesai saatlerinde arayın.",
-    ar: "سأحولك إلى الدعم البشري. يرجى الانتظار أو الاتصال خلال ساعات العمل.",
+    de: "Dieses Software-Interface verbindet keinen Telefonanruf. Schreiben Sie an service@buzzard24.de.",
+    en: "This software does not place or transfer a phone call. Email service@buzzard24.de.",
+    tr: "Bu yazılım telefon görüşmesi başlatmaz veya aktarmaz. service@buzzard24.de adresine yazın.",
+    ar: "هذا البرنامج لا يبدأ مكالمة هاتفية. راسل service@buzzard24.de.",
   };
   return {
     ok: true,
     routed: true,
+    live: false,
+    callStarted: false,
+    callTransferred: false,
+    reason: "ESCALATE_CALL_BLOCKED",
     message: messages[locale] || messages.de,
     contact: "service@buzzard24.de",
+  };
+}
+
+function startCall() {
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    sid: null,
+    reason: "CALL_START_BLOCKED",
+    note: "JSON phone assistant never places a Twilio or SIP call.",
+  };
+}
+
+function inboundWebhook() {
+  return {
+    ok: false,
+    live: false,
+    answered: false,
+    mediaOpen: false,
+    reason: "TWILIO_INBOUND_BLOCKED",
+  };
+}
+
+function digitalHumanSession() {
+  return {
+    ok: false,
+    live: false,
+    videoOpen: false,
+    avatarOpen: false,
+    reason: "DIGITAL_HUMAN_LIVE_BLOCKED",
+  };
+}
+
+function confirmLiveAssistant() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    callStarted: false,
+    reason: "LIVE_PHONE_NOT_CONFIGURED",
   };
 }
 
@@ -98,4 +143,8 @@ module.exports = {
   verifyOrderAccess,
   getVerifiedOrderStatus,
   routeToHumanSupport,
+  startCall,
+  inboundWebhook,
+  digitalHumanSession,
+  confirmLiveAssistant,
 };

@@ -21,7 +21,9 @@ function getNotificationReadiness() {
     notificationEngine: hasEngine,
     templateEvents,
     smtpConfigured,
-    deliveryMode: smtpConfigured ? "smtp_ready" : "queued_demo",
+    deliveryMode: smtpConfigured ? "smtp_configured_not_live" : "queued_local",
+    liveSend: false,
+    smtpConfiguredDoesNotSend: true,
     wiredToCheckout: true,
     wiredToReturns: true,
     realEmailSendWhileSalesOff: false,
@@ -48,7 +50,8 @@ function emitCheckoutNotification(order, ctx = {}) {
     );
     return { ok: true, queued: true };
   } catch (err) {
-    return { ok: false, reason: err.message };
+    const { publicTaskError } = require("../security");
+    return { ok: false, reason: publicTaskError(err, "notification.emit_failed") };
   }
 }
 

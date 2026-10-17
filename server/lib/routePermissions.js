@@ -9,36 +9,12 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/admin/logout",
   "GET /api/health",
   "GET /api/health/db",
-  "GET /api/health/ai",
   "GET /api/status",
   "GET /api/categories/visibility",
   "GET /api/catalog/health",
   "GET /api/storefront/health",
-  "GET /api/health/commerce",
   "GET /api/health/version",
-  "GET /api/health/worker",
-  "GET /api/health/production",
-  "GET /api/health/go-live-readiness",
-  "GET /api/health/operations",
-  "GET /api/health/storefront-readiness",
-  "GET /api/health/customer-experience-readiness",
-  "GET /api/health/admin-backoffice-readiness",
-  "GET /api/health/security-readiness",
-  "GET /api/health/product-quality-readiness",
-  "GET /api/health/supplier-readiness",
-  "GET /api/health/release-readiness",
-  "GET /api/health/final-production-readiness",
-  "GET /api/health/part27-readiness",
-  "GET /api/health/final-go-live-readiness",
-  "GET /api/health/final-prelaunch-readiness",
-  "GET /api/health/final-operational-readiness",
-  "GET /api/health/final-launch-governance",
-  "GET /api/health/final-control-recovery",
-  "GET /api/health/final-prelaunch-control",
-  "GET /api/health/final-launch-control",
-  "GET /api/health/final-production-governance",
   "GET /api/commerce/status",
-  "GET /api/commerce/readiness",
   "GET /api/commerce/shipping/methods",
   "GET /api/commerce/payments/providers",
   "POST /api/commerce/webhooks/:provider",
@@ -48,13 +24,12 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/payments-finance/provider/dispute-webhook",
   "POST /api/webhooks/payment",
   "POST /api/marketing-loyalty/campaigns/:code/apply",
-  "GET /api/security/health",
   "GET /api/p1/status",
-  "GET /api/orchestrator/status",
-  "GET /api/guardian/status",
-  "GET /api/health/software",
-  "GET /api/health/pusat",
+  "GET /api/p1/health",
   "POST /api/commerce/cart",
+  "GET /api/commerce/cart/:id",
+  "GET /api/commerce/checkout/:id",
+  "GET /api/commerce/orders/:id",
   "POST /api/commerce/cart/:id/items",
   "PATCH /api/commerce/cart/:id/items/:itemId",
   "DELETE /api/commerce/cart/:id/items/:itemId",
@@ -105,14 +80,20 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/identity-security/auth/logout",
   "POST /api/identity-security/auth/password-reset-request",
   "POST /api/identity-security/auth/password-reset",
+  "POST /api/account/register",
+  "POST /api/account/login",
+  "POST /api/account/password-reset/request",
+  "POST /api/account/password-reset/confirm",
   "POST /api/webhooks/:provider",
 ]);
 
 const EXACT = {
   "GET /api/admin/me": null,
+  "GET /api/submissions": "security.manage",
   "GET /api/admin/sessions": "security.read",
   "DELETE /api/admin/sessions/:sessionId": "security.manage",
   "GET /api/admin/audit": "audit.read",
+  "GET /api/admin/pusat/exceptions": "security.read",
   "GET /api/admin/control-center/deployment": "system.read",
   "GET /api/admin/operations/summary": "system.read",
   "GET /api/admin/operations/audit": "audit.read",
@@ -210,6 +191,10 @@ const EXACT = {
   "POST /api/commerce/payments/:id/fail": "orders.write",
   "POST /api/commerce/payments/:id/reconcile": "orders.write",
   "GET /api/commerce/payments/:id": "orders.read",
+  "GET /api/health/pusat": "system.read",
+  "GET /api/health/software": "system.read",
+  "GET /api/commerce/readiness": "system.read",
+  "GET /api/security/health": "security.read",
 };
 
 const PREFIX = [
@@ -250,6 +235,12 @@ const PREFIX = [
   { prefix: "/api/master-admin-v40", read: "system.read", write: "system.configure" },
   { prefix: "/api/supplier-integration-hub", read: "suppliers.read", write: "suppliers.write" },
   { prefix: "/api/marketing-loyalty", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/p1/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/guardian/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/orchestrator/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/pusat", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/software", read: "system.read", write: "system.configure" },
+  { prefix: "/api/db/", read: "orders.read", write: "orders.write" },
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -302,6 +293,10 @@ function resolvePrefixPermission(pathname, upper) {
 function resolveRoutePermission(method, pathname) {
   const upper = method.toUpperCase();
   if (isPublicRoute(upper, pathname)) return { public: true };
+
+  if (pathname.startsWith("/api/health/")) {
+    return { permission: "system.read" };
+  }
 
   for (const [pattern, permission] of Object.entries(EXACT)) {
     const [patMethod, ...patParts] = pattern.split(" ");

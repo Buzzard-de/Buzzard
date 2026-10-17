@@ -27,13 +27,13 @@ function createSupplierError(code, { message, details = null, supplierId = null 
 function wrapError(err, supplierId) {
   if (err?.code && Object.values(SUPPLIER_ERROR_CODE).includes(err.code)) {
     return createSupplierError(err.code, {
-      message: err.message,
+      message: err.code,
       details: err.details,
       supplierId,
     });
   }
   return createSupplierError(SUPPLIER_ERROR_CODE.SUPPLIER_UNAVAILABLE, {
-    message: err?.message || "Unknown supplier error",
+    message: SUPPLIER_ERROR_CODE.SUPPLIER_UNAVAILABLE,
     supplierId,
   });
 }

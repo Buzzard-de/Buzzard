@@ -14,11 +14,11 @@ module.exports = {
 
     app.get("/api/guardian/health", async (_req, res) => {
       if (!isGuardianConfigured()) {
-        return res.status(503).json({ error: "guardian_not_configured" });
+        return res.status(503).json({ success: false, errorKey: "guardian_not_configured" });
       }
       const result = await fetchGuardian("/health");
       if (!result.ok) {
-        return res.status(502).json({ error: "guardian_unreachable", detail: result });
+        return res.status(502).json({ success: false, errorKey: "guardian_unreachable" });
       }
       return res.json(result.body);
     });
@@ -27,12 +27,12 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       if (!isGuardianConfigured()) {
-        return res.status(503).json({ error: "guardian_not_configured" });
+        return res.status(503).json({ success: false, errorKey: "guardian_not_configured" });
       }
       const limit = req.query.limit ? `?limit=${req.query.limit}` : "";
       const result = await fetchGuardian(`/approvals/pending${limit}`);
       if (!result.ok) {
-        return res.status(502).json({ error: "guardian_unreachable", detail: result });
+        return res.status(502).json({ success: false, errorKey: "guardian_unreachable" });
       }
       return res.json(result.body);
     });
@@ -41,12 +41,12 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       if (!isGuardianConfigured()) {
-        return res.status(503).json({ error: "guardian_not_configured" });
+        return res.status(503).json({ success: false, errorKey: "guardian_not_configured" });
       }
       const limit = req.query.limit ? `?limit=${req.query.limit}` : "";
       const result = await fetchGuardian(`/incidents/open${limit}`);
       if (!result.ok) {
-        return res.status(502).json({ error: "guardian_unreachable", detail: result });
+        return res.status(502).json({ success: false, errorKey: "guardian_unreachable" });
       }
       return res.json(result.body);
     });
@@ -55,11 +55,11 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       if (!isGuardianConfigured()) {
-        return res.status(503).json({ error: "guardian_not_configured" });
+        return res.status(503).json({ success: false, errorKey: "guardian_not_configured" });
       }
       const result = await fetchGuardian("/costs/dashboard");
       if (!result.ok) {
-        return res.status(502).json({ error: "guardian_unreachable", detail: result });
+        return res.status(502).json({ success: false, errorKey: "guardian_unreachable" });
       }
       return res.json(result.body);
     });

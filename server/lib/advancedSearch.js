@@ -162,7 +162,7 @@ function search(queryParams = {}) {
 
 function recordClick(sku) {
   const product = db.prepare("SELECT sku FROM srch_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   db.prepare(`
     UPDATE srch_events
@@ -175,7 +175,7 @@ function recordClick(sku) {
 
 function createProduct(body = {}) {
   if (!body.sku || !body.title) {
-    return { error: "SKU and title required", status: 400 };
+    return { error: "product.skuTitleRequired", status: 400 };
   }
 
   try {
@@ -208,12 +208,12 @@ function createProduct(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 }
 
 function upsertSynonym(body = {}) {
-  if (!body.term) return { error: "Term required", status: 400 };
+  if (!body.term) return { error: "search.termRequired", status: 400 };
 
   db.prepare(`
     INSERT OR REPLACE INTO srch_synonyms(term, synonyms_json, active)

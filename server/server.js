@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const { URL, URLSearchParams } = require('url');
 const { isDefaultJwtSecret } = require('./lib/dbAuth');
-const { isAllowedOrigin } = require('./lib/corsOrigins');
-const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
+const { isAllowedOrigin, API_CORS_ALLOW_HEADERS } = require('./lib/corsOrigins');
+const { isHealthPath } = require('./lib/healthPaths');
+const { createRateLimiter, setSecurityHeaders, publicErrorBody, publicTaskError } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
 
@@ -13,6 +14,7 @@ const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const healthRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: 'api-health:' });
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);
@@ -26,7 +28,7 @@ function setApiCorsHeaders(req, res) {
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Accept,Authorization,X-Buzzard-CSRF-Token");
+  res.setHeader("Access-Control-Allow-Headers", API_CORS_ALLOW_HEADERS);
 }
 
 function addRoute(method, routePath, handler) {
@@ -135,7 +137,7 @@ function sendFile(res, filePath) {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      sendJson(res, 404, { message: 'Datei nicht gefunden.' });
+      sendJson(res, 404, publicErrorBody('security.notFound'));
       return;
     }
     res.writeHead(200, { 'Content-Type': contentType });
@@ -158,7 +160,9 @@ function parseBody(req) {
     req.on("data", (chunk) => {
       totalBytes += chunk.length;
       if (totalBytes > MAX_BODY_BYTES) {
-        reject(new Error("Payload too large"));
+        const tooLarge = new Error("Payload too large");
+        tooLarge.code = "PAYLOAD_TOO_LARGE";
+        reject(tooLarge);
         req.destroy();
         return;
       }
@@ -225,7 +229,7 @@ try {
   const { assertDurableOpenAllowed } = require("./lib/dbPaths");
   assertDurableOpenAllowed();
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "database.open_refused"));
   if (process.env.NODE_ENV === "production") process.exit(1);
   throw err;
 }
@@ -238,14 +242,14 @@ try {
   const { validateConfiguration } = require("./lib/operations/configurationValidation");
   const configResult = validateConfiguration();
   if (!configResult.ok) {
-    console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.message).join("; "));
+    console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.code).join("; "));
     if (process.env.NODE_ENV === "production") process.exit(1);
   }
   for (const w of configResult.warnings) {
-    console.warn("[config-validation]", w.message);
+    console.warn("[config-validation]", w.code);
   }
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "environment.validation_failed"));
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
@@ -253,7 +257,7 @@ try {
   const { validateDatabaseStartup } = require("./lib/dbStartup");
   validateDatabaseStartup();
 } catch (err) {
-  console.error(err.message);
+  console.error(publicTaskError(err, "database.startup_failed"));
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
@@ -266,7 +270,7 @@ if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
     try {
       jobScheduler.tickScheduler();
     } catch (err) {
-      console.error("[scheduler] tick error:", err.message);
+      console.error("[scheduler] tick error:", publicTaskError(err, "scheduler.tick_failed"));
     }
   }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
 }
@@ -296,7 +300,8 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (apiRateLimit(req)) {
+    const limited = isHealthPath(pathname) ? healthRateLimit(req) : apiRateLimit(req);
+    if (limited) {
       logSecurityEvent({
         type: 'api_rate_limited',
         success: false,
@@ -322,15 +327,16 @@ const server = http.createServer(async (req, res) => {
       }
       route.handler(req, res);
     } catch (error) {
-      console.error('API error:', error);
+      console.error("API error:", publicTaskError(error, "security.internalError"));
+      const tooLarge = error.code === "PAYLOAD_TOO_LARGE";
       logSecurityEvent({
         type: 'api_error',
         success: false,
         path: pathname,
-        detail: { message: error.message },
+        detail: { errorKey: tooLarge ? "security.payloadTooLarge" : "security.internalError" },
       });
-      const statusCode = error.message === 'Payload too large' ? 413 : 500;
-      sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));
+      const statusCode = tooLarge ? 413 : 500;
+      sendJson(res, statusCode, publicErrorBody(tooLarge ? 'security.payloadTooLarge' : 'security.internalError'));
     }
     return;
   }
@@ -338,7 +344,7 @@ const server = http.createServer(async (req, res) => {
   let filePath = pathname === '/' ? path.join(rootDir, 'index.html') : safePath(pathname);
 
   if (!filePath.startsWith(rootDir)) {
-    sendJson(res, 403, { message: 'Zugriff verweigert.' });
+    sendJson(res, 403, publicErrorBody('security.forbidden'));
     return;
   }
 
@@ -347,7 +353,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (!fs.existsSync(filePath)) {
-    sendJson(res, 404, { message: 'Seite nicht gefunden.' });
+    sendJson(res, 404, publicErrorBody('security.notFound'));
     return;
   }
 
@@ -364,6 +370,6 @@ server.listen(port, "0.0.0.0", () => {
 });
 
 server.on("error", (err) => {
-  console.error("Buzzard API server failed to start:", err.message);
+  console.error("Buzzard API server failed to start:", publicTaskError(err, "server.listen_failed"));
   process.exit(1);
 });

@@ -21,15 +21,25 @@ test.describe("Storefront Bridge E2E (Part 7)", () => {
   test("Mega menu: subcategories hidden until main category click", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/");
-    await page.click('button:has-text("Kategorien"), button[aria-label*="Kategorien"], .nav-categories-btn').catch(() => {});
+    const opener = page
+      .locator("nav")
+      .getByRole("button", { name: /all categories|alle kategorien|kategorien/i })
+      .first();
+    if (!(await opener.isVisible().catch(() => false))) {
+      test.info().annotations.push({ type: "note", description: "desktop mega-menu opener not present on this shell" });
+      return;
+    }
+    await opener.click({ timeout: 8_000 });
     const megaOpen = page.locator(".mega-menu-overlay");
-    if (await megaOpen.count()) {
-      await expect(megaOpen.locator(".subcategory-link").first()).not.toBeVisible({ timeout: 3000 }).catch(() => {});
-      const mainLink = megaOpen.locator(".home-sidebar-item").first();
-      if (await mainLink.count()) {
-        await mainLink.click();
-        await expect(megaOpen.locator(".subcategory-link, .mega-panel-placeholder").first()).toBeVisible();
-      }
+    await expect(megaOpen).toBeVisible({ timeout: 8_000 });
+    const sub = megaOpen.locator(".subcategory-link").first();
+    if (await sub.count()) {
+      await expect(sub).toBeHidden();
+    }
+    const mainLink = megaOpen.locator(".home-sidebar-item").first();
+    if (await mainLink.count()) {
+      await mainLink.click();
+      await expect(megaOpen.locator(".subcategory-link, .mega-panel-placeholder").first()).toBeVisible();
     }
   });
 

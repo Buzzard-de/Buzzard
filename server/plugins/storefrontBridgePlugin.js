@@ -97,11 +97,11 @@ module.exports = {
     });
 
     app.get("/api/catalog/health", (_req, res) => {
-      res.json({ success: true, health: catalogReadService.getHealth() });
+      res.json({ success: true, ok: true, status: "ok" });
     });
 
     app.get("/api/storefront/health", (_req, res) => {
-      res.json({ success: true, health: catalogReadService.getHealth() });
+      res.json({ success: true, ok: true, status: "ok" });
     });
 
     // Admin: preview as customer

@@ -17,7 +17,8 @@ function check(name, fn) {
     const result = fn();
     return { name, ...result };
   } catch (err) {
-    return { name, status: READINESS_STATUS.FAIL, detail: err.message };
+    const { publicTaskError } = require("../security");
+    return { name, status: READINESS_STATUS.FAIL, detail: publicTaskError(err, "commerce.check_failed") };
   }
 }
 

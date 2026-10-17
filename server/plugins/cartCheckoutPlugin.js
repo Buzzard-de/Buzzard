@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -43,25 +43,25 @@ module.exports = {
 
     app.get("/api/cart-checkout/carts/:token", (req, res) => {
       const result = cartCheckout.getCart(req.params.token);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/cart-checkout/carts/:token/items", (req, res) => {
       const result = cartCheckout.addCartItem(req.params.token, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.patch("/api/cart-checkout/carts/:token/items/:sku", (req, res) => {
       const result = cartCheckout.updateCartItem(req.params.token, req.params.sku, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/cart-checkout/carts/:token/coupon", (req, res) => {
       const result = cartCheckout.applyCoupon(req.params.token, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -71,19 +71,19 @@ module.exports = {
 
     app.post("/api/cart-checkout/sessions", (req, res) => {
       const result = cartCheckout.createCheckoutSession(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result);
     });
 
     app.post("/api/cart-checkout/sessions/:token/validate", (req, res) => {
       const result = cartCheckout.validateCheckoutSession(req.params.token);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/cart-checkout/sessions/:token/complete", (req, res) => {
       const result = cartCheckout.completeCheckoutSession(req.params.token);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

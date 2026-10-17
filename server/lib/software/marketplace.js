@@ -5,20 +5,14 @@
 const crypto = require("crypto");
 const { CONNECTOR_STATUS } = require("./constants");
 const { marketplaceDraft } = require("../pusat/integrations");
+const { MARKETPLACE_CHANNELS } = require("./marketplaceChannels");
 
-const CONNECTORS = Object.freeze([
-  { id: "amazon", name: "Amazon", status: CONNECTOR_STATUS.MOCK, existingModule: "marketplaceHub + pusat.integrations" },
-  { id: "ebay", name: "eBay", status: CONNECTOR_STATUS.MOCK, existingModule: "marketplaceHub" },
-  { id: "google_shopping", name: "Google Shopping", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceHub" },
-  { id: "tiktok_shop", name: "TikTok Shop", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceHub" },
-  { id: "kaufland", name: "Kaufland", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceV35" },
-  { id: "allegro", name: "Allegro", status: CONNECTOR_STATUS.DRAFT, existingModule: "marketplaceV35" },
-  { id: "bol", name: "bol.com", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "cdiscount", name: "Cdiscount", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "otto", name: "OTTO", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "emag", name: "eMAG", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-  { id: "skroutz", name: "Skroutz", status: CONNECTOR_STATUS.DRAFT, existingModule: null },
-]);
+const CONNECTORS = Object.freeze(
+  MARKETPLACE_CHANNELS.map((channel) => ({
+    ...channel,
+    status: channel.status === "mock_connector" ? CONNECTOR_STATUS.MOCK : CONNECTOR_STATUS.DRAFT,
+  }))
+);
 
 const CHANNEL_REQUIRED_FIELDS = Object.freeze({
   amazon: ["sku", "price", "category"],
@@ -119,14 +113,29 @@ function persistDraft(db, row) {
 
 function draftListing(input = {}, db = null) {
   const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.listingId || input.vendorListingId) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      inventedListingId: false,
+      reason: "VENDOR_LISTING_ID_REJECTED",
+      channel: channel.id,
+      adapterExists: channel.adapterExists,
+      note: "A caller-supplied marketplace listing id is not accepted. Item 115.",
+    };
+  }
   if (input.forceError) {
+    const classified = classifyMarketplaceError(input.forceError);
     return {
       ok: false,
       live: false,
       published: false,
       listingId: null,
       error: input.forceError,
-      retryable: input.retryable === true,
+      retryable: classified.retryable,
+      errorClass: classified.code,
       channel: channel.id,
       adapterExists: channel.adapterExists,
     };
@@ -184,6 +193,91 @@ function draftListing(input = {}, db = null) {
   };
 }
 
+function mapCategory(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  const source = String(input.sourceCategory || input.category || "").trim();
+  if (!source) {
+    return {
+      ok: false,
+      mapped: false,
+      published: false,
+      live: false,
+      invented: false,
+      channel: channel.id,
+      reason: "CATEGORY_REQUIRED",
+    };
+  }
+  return {
+    ok: true,
+    mapped: false,
+    published: false,
+    live: false,
+    invented: false,
+    channel: channel.id,
+    sourceCategory: source,
+    marketplaceCategoryId: null,
+    vendorCategoryIdIgnored: Boolean(input.marketplaceCategoryId || input.vendorCategoryId),
+    note: "No vendor category map is invented. Unmapped source categories stay unpublished.",
+  };
+}
+
+function activateDraft(input = {}) {
+  return {
+    ok: false,
+    activated: false,
+    published: false,
+    live: false,
+    listingId: null,
+    inventedListingId: false,
+    status: "DRAFT",
+    draftId: input.draftId || null,
+    reason: "LISTING_ACTIVATE_BLOCKED",
+    note: "A draft cannot be promoted to a live listing. Item 115.",
+  };
+}
+
+function transformListing(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.listingId || input.vendorListingId) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      inventedListingId: false,
+      reason: "VENDOR_LISTING_ID_REJECTED",
+      channel: channel.id,
+    };
+  }
+  const validation = validateDraftInput(input, channel);
+  if (!validation.ok) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      reason: validation.reason,
+      missing: validation.missing,
+      channel: channel.id,
+    };
+  }
+  return {
+    ok: true,
+    live: false,
+    published: false,
+    listingId: null,
+    channel: channel.id,
+    payload: {
+      sku: String(input.sku).trim(),
+      price: Number(input.price),
+      category: input.category || null,
+      currency: "EUR",
+    },
+    categoryMap: mapCategory({ channel: channel.id, sourceCategory: input.category }),
+    note: "Local listing transform only. Not submitted to a marketplace.",
+  };
+}
+
 function publishListing(input = {}) {
   const channel = classify(input.channel || input.marketplace || "amazon");
   return {
@@ -194,11 +288,38 @@ function publishListing(input = {}) {
     inventedListingId: false,
     write: false,
     reason: "PUBLISH_BLOCKED",
+    forcePublishIgnored: input.forcePublish === true,
     channel: channel.id,
     adapterExists: channel.adapterExists,
     classificationOnly: channel.classificationOnly,
     safeInterface: true,
     note: "Publish is never executed from this adapter. A draft is not a listing.",
+  };
+}
+
+const LISTING_AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
+function approvePublish(input = {}) {
+  const actor = String(input.actor || input.approver || "").trim().toLowerCase();
+  if (LISTING_AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      published: false,
+      live: false,
+      listingId: null,
+      executed: false,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+    };
+  }
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    listingId: null,
+    executed: false,
+    reason: "HUMAN_LISTING_APPROVAL_REQUIRED",
+    note: "Approval is recorded as required. No marketplace write. Item 129.",
   };
 }
 
@@ -218,6 +339,12 @@ function createSafeAdapter(channelId) {
     },
     draft(input = {}, db = null) {
       return draftListing({ ...input, channel: channel.id }, db);
+    },
+    activate(input = {}) {
+      return activateDraft({ ...input, channel: channel.id });
+    },
+    transform(input = {}) {
+      return transformListing({ ...input, channel: channel.id });
     },
     publish(input = {}) {
       return publishListing({ ...input, channel: channel.id });
@@ -260,6 +387,135 @@ function syncChannelStatus(input = {}) {
   };
 }
 
+const CHANNEL_AUTH_ENV = Object.freeze({
+  amazon: ["AMAZON_SP_CLIENT_ID", "AMAZON_SP_CLIENT_SECRET"],
+  ebay: ["EBAY_CLIENT_ID", "EBAY_CLIENT_SECRET"],
+  google_shopping: ["GOOGLE_MERCHANT_ID"],
+  tiktok_shop: ["TIKTOK_SHOP_APP_KEY"],
+  kaufland: ["KAUFLAND_CLIENT_KEY"],
+  allegro: ["ALLEGRO_CLIENT_ID"],
+  bol: ["BOL_CLIENT_ID"],
+  cdiscount: ["CDISCOUNT_API_KEY"],
+  otto: ["OTTO_CLIENT_ID"],
+  emag: ["EMAG_API_KEY"],
+  skroutz: ["SKROUTZ_API_KEY"],
+});
+
+function validateAuthConfig(channelId, env = process.env) {
+  const channel = classify(channelId);
+  const names = CHANNEL_AUTH_ENV[channel.id] || [`${String(channel.id).toUpperCase()}_API_KEY`];
+  const requiredEnv = names.map((name) => ({ name, present: Boolean(env[name]) }));
+  return {
+    channel: channel.id,
+    requiredEnv,
+    credentialsPresent: requiredEnv.every((row) => row.present),
+    configured: requiredEnv.every((row) => row.present),
+    authTested: false,
+    live: false,
+    liveVerified: false,
+    secretsIncluded: false,
+    note: "Presence-only check. No live marketplace authentication is performed.",
+  };
+}
+
+function classifyMarketplaceError(error) {
+  const message = String(error?.message || error || "");
+  if (/429|rate.?limit/i.test(message)) {
+    return { code: "RATE_LIMIT", retryable: true, live: false, published: false };
+  }
+  if (/timeout|temporar|503|502|ECONNRESET/i.test(message)) {
+    return { code: "TRANSIENT", retryable: true, live: false, published: false };
+  }
+  if (/401|403|unauthor|forbidden|auth/i.test(message)) {
+    return { code: "AUTH", retryable: false, live: false, published: false };
+  }
+  return { code: "UNKNOWN", retryable: false, live: false, published: false };
+}
+
+function dryRunListing(input = {}, db = null) {
+  return {
+    ...draftListing(input, db),
+    dryRun: true,
+    published: false,
+    live: false,
+  };
+}
+
+function exportFeedDryRun(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.live === true || input.push === true) {
+    return {
+      ok: false,
+      dryRun: true,
+      exported: false,
+      pushed: false,
+      live: false,
+      published: false,
+      written: false,
+      channel: channel.id,
+      reason: "FEED_EXPORT_LIVE_BLOCKED",
+    };
+  }
+  const products = Array.isArray(input.products) ? input.products : [];
+  const rows = products.map((product) => {
+    const transformed = transformListing({ ...product, channel: channel.id });
+    return {
+      sku: product.sku || null,
+      transformed: transformed.ok === true,
+      published: false,
+      live: false,
+      categoryMapped: transformed.categoryMap?.mapped === true,
+      inventedCategory: Boolean(transformed.categoryMap?.invented),
+      reason: transformed.ok ? null : transformed.reason,
+    };
+  });
+  return {
+    ok: true,
+    dryRun: true,
+    exported: false,
+    pushed: false,
+    live: false,
+    published: false,
+    written: false,
+    channel: channel.id,
+    rowCount: rows.length,
+    rows,
+    note: "Local feed preview only. Not uploaded to a marketplace.",
+  };
+}
+
+function confirmPublished() {
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    listingId: null,
+    inventedListingId: false,
+    reason: "PUBLISH_CONFIRM_BLOCKED",
+    note: "A provider listing id is not treated as a published listing.",
+  };
+}
+
+function inboundMarketplaceWebhook() {
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    imported: false,
+    httpAttempted: false,
+    reason: "MARKETPLACE_WEBHOOK_BLOCKED",
+    note: "Inbound marketplace webhooks do not create listings or orders.",
+  };
+}
+
+function pushFeed(input = {}) {
+  return {
+    ...exportFeedDryRun({ ...input, live: true, push: true }),
+    reason: "FEED_EXPORT_LIVE_BLOCKED",
+    pushed: false,
+  };
+}
+
 function health() {
   const connectors = classifyConnectors();
   return {
@@ -283,10 +539,22 @@ module.exports = {
   requiredFields,
   validateDraftInput,
   draftListing,
+  activateDraft,
+  transformListing,
+  mapCategory,
+  exportFeedDryRun,
+  dryRunListing,
+  validateAuthConfig,
+  classifyMarketplaceError,
+  CHANNEL_AUTH_ENV,
   publishListing,
+  approvePublish,
   createSafeAdapter,
   listSafeAdapters,
   importChannelOrder,
   syncChannelStatus,
+  confirmPublished,
+  inboundMarketplaceWebhook,
+  pushFeed,
   health,
 };

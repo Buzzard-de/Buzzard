@@ -21,6 +21,14 @@ function newId() {
   return `job_${crypto.randomBytes(8).toString("hex")}`;
 }
 
+function sanitizePublicJobError(raw) {
+  const text = String(raw || "").trim();
+  if (!text) return null;
+  if (/^[A-Z][A-Z0-9_]{1,40}$/.test(text)) return text;
+  if (/^[A-Za-z0-9._:-]{1,64}$/.test(text)) return text;
+  return "job.failed";
+}
+
 function parseJson(val, fallback) {
   if (!val) return fallback;
   try {
@@ -43,7 +51,7 @@ function mapRow(row) {
     payload,
     priority: row.priority || payload.priority || JOB_PRIORITY.NORMAL,
     result: parseJson(row.result_json, null),
-    error: row.error_message,
+    error: sanitizePublicJobError(row.error_message),
     retryCount: row.retry_count,
     maxRetries: payload.maxRetries ?? DEFAULT_MAX_RETRIES,
     nextRunAt: row.next_run_at,
@@ -280,7 +288,7 @@ function cancelJob(id) {
   const job = getJob(id);
   if (!job) return null;
   if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELLED].includes(job.status)) return job;
-  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "Cancelled by admin" });
+  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "job.cancelled" });
 }
 
 function retryJob(id) {
@@ -328,6 +336,7 @@ module.exports = {
   JOB_STATUS,
   JOB_PRIORITY,
   isFinancialJobType,
+  sanitizePublicJobError,
   enqueueJob,
   getJob,
   listJobs,

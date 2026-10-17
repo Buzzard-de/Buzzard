@@ -37,9 +37,9 @@ function recordEvent(returnId, eventType, oldStatus, newStatus, message = "", me
 
 function createReturn(body = {}) {
   if (!body.orderNumber && !body.order_number) {
-    return { error: "Order number and return reason required", status: 400 };
+    return { error: "rma.orderReasonRequired", status: 400 };
   }
-  if (!body.reason) return { error: "Order number and return reason required", status: 400 };
+  if (!body.reason) return { error: "rma.orderReasonRequired", status: 400 };
 
   const result = db
     .prepare(`
@@ -89,7 +89,7 @@ function createReturn(body = {}) {
 
 function getReturnByRma(rma) {
   const row = db.prepare("SELECT * FROM rma_returns WHERE rma_number = ?").get(rma);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
 
   return {
     return: row,
@@ -105,7 +105,7 @@ function getReturnByRma(rma) {
 
 function updateReturnStatus(id, body = {}) {
   const row = db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
 
   const next = body.status;
   if (!TRANSITIONS[row.status]?.includes(next)) {
@@ -119,7 +119,7 @@ function updateReturnStatus(id, body = {}) {
 
 function updateInspection(id, body = {}) {
   const row = db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
 
   db.prepare("UPDATE rma_returns SET inspection_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
     body.status || "passed",
@@ -141,7 +141,7 @@ function updateInspection(id, body = {}) {
 
 function createReturnLabel(id, body = {}) {
   const row = db.prepare("SELECT id FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
 
   const tracking = body.trackingNumber || body.tracking_number || `DEMO-${crypto.randomBytes(5).toString("hex").toUpperCase()}`;
   const result = db
@@ -166,13 +166,13 @@ function createReturnLabel(id, body = {}) {
 
 function processRefund(id, body = {}) {
   const row = db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
   if (!["approved_for_refund", "inspecting", "received"].includes(row.status)) {
-    return { error: "RMA is not ready for refund", status: 400 };
+    return { error: "rma.refundNotReady", status: 400 };
   }
 
   const amount = Number(body.amount || row.refund_amount);
-  if (amount <= 0) return { error: "Refund amount required", status: 400 };
+  if (amount <= 0) return { error: "rma.refundAmountRequired", status: 400 };
 
   db.prepare(`
     UPDATE rma_returns SET
@@ -197,9 +197,9 @@ function processRefund(id, body = {}) {
 
 function processExchange(id) {
   const row = db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
   if (row.status !== "approved_for_exchange") {
-    return { error: "RMA is not approved for exchange", status: 400 };
+    return { error: "rma.exchangeNotApproved", status: 400 };
   }
 
   const order = `EX-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
@@ -213,7 +213,7 @@ function processExchange(id) {
 
 function createWarrantyClaim(id, body = {}) {
   const row = db.prepare("SELECT id, status FROM rma_returns WHERE id = ?").get(id);
-  if (!row) return { error: "RMA not found", status: 404 };
+  if (!row) return { error: "rma.notFound", status: 404 };
 
   const result = db
     .prepare(`

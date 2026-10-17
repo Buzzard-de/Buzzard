@@ -8,6 +8,7 @@ const {
   validateFinalPreLaunchAudit,
 } = require("../lib/release/finalPreLaunchAudit");
 const { auditFinalPreLaunch } = require("../lib/release/finalPreLaunchAuditLog");
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -30,7 +31,7 @@ module.exports = {
         const audit = await getFinalPreLaunchAudit();
         res.json({ success: true, ...audit });
       } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        require("../lib/http/publicPluginError").sendPublicError(res, 500, "ops.internalError", err);
       }
     });
 
@@ -41,7 +42,7 @@ module.exports = {
         const audit = await auditFinalPreLaunch();
         res.json({ success: true, ...audit });
       } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        require("../lib/http/publicPluginError").sendPublicError(res, 500, "ops.internalError", err);
       }
     });
 
@@ -51,13 +52,13 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction("go_live", { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       try {
         const result = await validateFinalPreLaunchAudit();
         res.json({ success: true, ...result });
       } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        require("../lib/http/publicPluginError").sendPublicError(res, 500, "ops.internalError", err);
       }
     });
   },

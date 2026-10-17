@@ -27,6 +27,8 @@ function mapApproval(row) {
     requestingAgent: row.requesting_agent,
     action: row.action,
     reason: row.reason,
+    requiredApprover: parseJson(row.metadata_json, {}).requiredApprover || "admin",
+    financialImpact: parseJson(row.metadata_json, {}).financialImpact || null,
     aiRecommendation: row.ai_recommendation,
     input: parseJson(row.metadata_json, {}).input || null,
     expectedSideEffects: row.expected_side_effects || parseJson(row.metadata_json, {}).expectedSideEffects || null,
@@ -48,13 +50,17 @@ function getApproval(id) {
 }
 
 function expireDue(now = new Date()) {
-  const iso = now.toISOString();
-  const due = db
+  const cutoff = now.getTime();
+  const pending = db
     .prepare(
-      `SELECT id FROM core_approvals
-       WHERE status = 'PENDING' AND expires_at IS NOT NULL AND expires_at <= ?`
+      `SELECT id, expires_at FROM core_approvals
+       WHERE status = 'PENDING' AND expires_at IS NOT NULL`
     )
-    .all(iso);
+    .all();
+  const due = pending.filter((row) => {
+    const stamp = Date.parse(row.expires_at);
+    return Number.isFinite(stamp) && stamp <= cutoff;
+  });
   for (const row of due) {
     db.prepare(
       `UPDATE core_approvals SET status = ?, decided_at = CURRENT_TIMESTAMP, decided_by = 'system_expiry'
@@ -80,6 +86,10 @@ function requestApproval({
   riskLevel,
   ttlMs = DEFAULT_APPROVAL_TTL_MS,
   aiRecommendation,
+  requiredApprover,
+  financialImpact,
+  resourceType,
+  resourceId,
 } = {}) {
   const id = newId("appr");
   const inputHash = hashInput(input || {});
@@ -89,6 +99,8 @@ function requestApproval({
     expectedSideEffects: expectedSideEffects || [],
     requestingAgent,
     action,
+    requiredApprover: requiredApprover || "admin",
+    financialImpact: financialImpact || null,
   };
 
   db.prepare(
@@ -99,8 +111,8 @@ function requestApproval({
   ).run(
     id,
     taskId || null,
-    "ai_task",
-    taskId || null,
+    resourceType || "ai_task",
+    resourceId || taskId || null,
     aiRecommendation || `Review ${action || "action"} before execution`,
     reason || "",
     riskLevel || RISK_LEVEL.HIGH,
@@ -147,6 +159,118 @@ function assertBound(approval, currentInput) {
   return { ok: true, approval: fresh };
 }
 
+function executionConsumed(approval) {
+  if (!approval?.executionResult) return false;
+  try {
+    const parsed = JSON.parse(approval.executionResult);
+    return parsed && parsed.consumed === true;
+  } catch {
+    return false;
+  }
+}
+
+function consumeForExecution(id, currentInput, { actor, action } = {}) {
+  expireDue();
+  const existing = getApproval(id);
+  const bound = assertBound(existing, currentInput);
+  if (!bound.ok) return bound;
+
+  if (existing.action) {
+    if (!action) {
+      return { ok: false, code: "action_required", approval: existing, liveAction: false };
+    }
+    if (String(action) !== String(existing.action)) {
+      return { ok: false, code: "action_mismatch", approval: existing, liveAction: false };
+    }
+  }
+
+  const actorName = actor || existing.decidedBy;
+  const unauthorized = isUnauthorizedApprover(actorName, existing.requiredApprover);
+  if (unauthorized.unauthorized) {
+    return { ok: false, code: unauthorized.code, approval: existing, liveAction: false };
+  }
+
+  const forbidden = isForbiddenApprover(actorName, existing.requestingAgent);
+  if (forbidden.forbidden) {
+    return { ok: false, code: forbidden.code, approval: existing, liveAction: false };
+  }
+
+  if (executionConsumed(existing)) {
+    return { ok: false, code: "already_executed", replay: true, liveAction: false, approval: existing };
+  }
+
+  const payload = JSON.stringify({
+    consumed: true,
+    consumedAt: new Date().toISOString(),
+    consumedBy: actor || existing.decidedBy || null,
+    liveAction: false,
+  });
+  const result = db.prepare(
+    `UPDATE core_approvals SET execution_result = ?
+     WHERE id = ? AND status = ? AND (execution_result IS NULL OR execution_result NOT LIKE '%"consumed":true%')`
+  ).run(payload, id, APPROVAL_STATUS.APPROVED);
+
+  if (result.changes !== 1) {
+    return { ok: false, code: "already_executed", replay: true, liveAction: false, approval: getApproval(id) };
+  }
+
+  controlCenter.recordSystemEvent({
+    eventType: "approval.execution_consumed",
+    actorType: "system",
+    actorId: actor || existing.decidedBy,
+    resourceType: "approval",
+    resourceId: id,
+    summary: "Approval token consumed; live action still not executed by software",
+  });
+
+  return {
+    ok: true,
+    executed: false,
+    liveAction: false,
+    replay: false,
+    approval: getApproval(id),
+  };
+}
+
+const INSUFFICIENT_APPROVERS = new Set(["read_only", "staff", "customer", "anonymous", "guest", "order_manager"]);
+
+function isUnauthorizedApprover(decidedBy, requiredApprover) {
+  const actor = String(decidedBy || "").trim().toLowerCase();
+  if (!actor) return { unauthorized: true, code: "approver_identity_required" };
+  const required = String(requiredApprover || "admin").toLowerCase();
+  if (INSUFFICIENT_APPROVERS.has(actor)) {
+    return { unauthorized: true, code: "approver_unauthorized" };
+  }
+  if (required === "admin" && (actor === "read_only" || actor.endsWith(":staff"))) {
+    return { unauthorized: true, code: "approver_unauthorized" };
+  }
+  return { unauthorized: false };
+}
+
+function isForbiddenApprover(decidedBy, requestingAgent) {
+  const actor = String(decidedBy || "").trim();
+  if (!actor) {
+    return { forbidden: true, code: "approver_identity_required" };
+  }
+  const actorLc = actor.toLowerCase();
+  const agentLc = String(requestingAgent || "").trim().toLowerCase();
+  if (agentLc && actorLc === agentLc) {
+    return { forbidden: true, code: "ai_cannot_self_approve" };
+  }
+  if (
+    actorLc === "ai" ||
+    actorLc === "pusat" ||
+    actorLc === "guardian" ||
+    actorLc === "orchestrator" ||
+    actorLc === "esat_bey" ||
+    /_ai$/.test(actorLc) ||
+    /^(ai|agent)[-_]/.test(actorLc)
+  ) {
+    return { forbidden: true, code: "ai_cannot_self_approve" };
+  }
+  return { forbidden: false };
+}
+
 function decide(id, decision, decidedBy, { currentInput } = {}) {
   expireDue();
   const existing = getApproval(id);
@@ -164,6 +288,16 @@ function decide(id, decision, decidedBy, { currentInput } = {}) {
   }
 
   const normalized = String(decision || "").toLowerCase();
+  if (normalized === "approve") {
+    const unauthorized = isUnauthorizedApprover(decidedBy, existing.requiredApprover);
+    if (unauthorized.unauthorized) {
+      return { rejected: true, code: unauthorized.code, approval: existing };
+    }
+    const forbidden = isForbiddenApprover(decidedBy, existing.requestingAgent);
+    if (forbidden.forbidden) {
+      return { rejected: true, code: forbidden.code, approval: existing };
+    }
+  }
   if (normalized === "approve" && currentInput !== undefined) {
     const currentHash = hashInput(currentInput);
     if (existing.inputHash && existing.inputHash !== currentHash) {
@@ -245,7 +379,7 @@ function listApprovals(status) {
 
 function latestForTask(taskId) {
   const row = db
-    .prepare("SELECT * FROM core_approvals WHERE task_id = ? ORDER BY created_at DESC LIMIT 1")
+    .prepare("SELECT * FROM core_approvals WHERE task_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1")
     .get(taskId);
   return mapApproval(row);
 }
@@ -256,9 +390,13 @@ module.exports = {
   cancel,
   expireDue,
   assertBound,
+  consumeForExecution,
+  executionConsumed,
   markExecutionFailed,
   getApproval,
   listApprovals,
   latestForTask,
   hashInput,
+  isForbiddenApprover,
+  isUnauthorizedApprover,
 };

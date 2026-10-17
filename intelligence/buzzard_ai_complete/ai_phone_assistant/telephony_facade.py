@@ -58,9 +58,13 @@ class PhoneTelephonyFacade:
         return {
             "service": "phone-telephony",
             "version": "3.0.0",
-            "status": "telephony_integration_ready",
+            "status": "telephony_code_ready",
             "enabled": self.config.get("enabled", False),
             "provider": self.provider.name,
+            "live": False,
+            "liveVerified": False,
+            "callStarted": False,
+            "pstnConnected": False,
             "live_credentials_present": False,
             "require_signed_webhooks": self.config.get("security", {}).get(
                 "require_signed_webhooks", True

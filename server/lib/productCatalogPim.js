@@ -50,14 +50,14 @@ function updateCompleteness(productId) {
 }
 
 function createBrand(body = {}) {
-  if (!body.name) return { error: "Brand name required", status: 400 };
+  if (!body.name) return { error: "brand.nameRequired", status: 400 };
   const slug = slugify(body.slug || body.name);
 
   try {
     const result = db.prepare("INSERT INTO pim30_brands(name, slug) VALUES(?,?)").run(body.name, slug);
     return { brand: db.prepare("SELECT * FROM pim30_brands WHERE id = ?").get(result.lastInsertRowid), created: true };
   } catch {
-    return { error: "Brand exists", status: 409 };
+    return { error: "brand.exists", status: 409 };
   }
 }
 
@@ -66,7 +66,7 @@ function listBrands() {
 }
 
 function createCategory(body = {}) {
-  if (!body.name) return { error: "Category name required", status: 400 };
+  if (!body.name) return { error: "category.nameRequired", status: 400 };
 
   const slug = slugify(body.slug || body.name);
   const parent = body.parentId || body.parent_id
@@ -151,7 +151,7 @@ function createProduct(body = {}, context = {}) {
       productSourceOfTruthActive: false,
     };
   } catch {
-    return { error: "SKU already exists", status: 409 };
+    return { error: "product.skuExists", status: 409 };
   }
 }
 
@@ -166,7 +166,7 @@ function getProductBySku(sku) {
     `)
     .get(sku);
 
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   return {
     product,
@@ -185,7 +185,7 @@ function getProductBySku(sku) {
 
 function upsertTranslation(sku, language, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   db.prepare(`
     INSERT INTO pim30_product_translations(
@@ -220,8 +220,8 @@ function upsertTranslation(sku, language, body = {}) {
 
 function upsertAttribute(sku, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
-  if (!body.code) return { error: "Attribute code required", status: 400 };
+  if (!product) return { error: "product.notFound", status: 404 };
+  if (!body.code) return { error: "attribute.codeRequired", status: 400 };
 
   db.prepare(`
     INSERT OR REPLACE INTO pim30_product_attributes(product_id, attribute_code, attribute_value, language)
@@ -234,7 +234,7 @@ function upsertAttribute(sku, body = {}) {
 
 function addMedia(sku, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   const result = db
     .prepare(`
@@ -258,8 +258,8 @@ function addMedia(sku, body = {}) {
 
 function createVariant(sku, body = {}) {
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
-  if (!product) return { error: "Parent product not found", status: 404 };
-  if (!body.sku) return { error: "Variant SKU required", status: 400 };
+  if (!product) return { error: "product.parentNotFound", status: 404 };
+  if (!body.sku) return { error: "variant.skuRequired", status: 400 };
 
   try {
     const result = db
@@ -283,7 +283,7 @@ function createVariant(sku, body = {}) {
       created: true,
     };
   } catch {
-    return { error: "Variant SKU exists", status: 409 };
+    return { error: "variant.skuExists", status: 409 };
   }
 }
 

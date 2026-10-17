@@ -73,7 +73,7 @@ function readSubmissions() {
     const content = fs.readFileSync(submissionsFile, 'utf8');
     return JSON.parse(content || '[]');
   } catch (err) {
-    console.error('Error reading submissions file:', err);
+    console.error('Error reading submissions file:', require('../lib/security').publicTaskError(err, 'contact.readFailed'));
     return [];
   }
 }
@@ -81,13 +81,16 @@ function readSubmissions() {
 function writeSubmissions(submissions) {
   try {
     fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2), 'utf8');
+    return true;
   } catch (err) {
-    console.error('Error writing submissions file:', err);
+    console.error('Error writing submissions file:', require('../lib/security').publicTaskError(err, 'contact.writeFailed'));
+    return false;
   }
 }
 
 module.exports = {
   validateContactAntiAbuse,
+  writeSubmissions,
   register(app) {
     ensureDataDirectory();
 
@@ -95,7 +98,7 @@ module.exports = {
       const forwardedFor = req.headers['x-forwarded-for'];
       const ip = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor || req.socket.remoteAddress || 'unknown')).split(',')[0].trim();
       if (isRateLimited(ip)) {
-        return res.status(429).json({ message: 'Zu viele Anfragen. Bitte versuchen Sie es in einigen Minuten erneut.' });
+        return res.status(429).json({ message: 'Zu viele Anfragen. Bitte versuchen Sie es in einigen Minuten erneut.', errorKey: 'contact.rateLimited' });
       }
 
       const abuse = validateContactAntiAbuse(req.body);
@@ -103,7 +106,7 @@ module.exports = {
         return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
       }
       if (!abuse.ok) {
-        return res.status(abuse.status || 400).json({ message: 'Bitte Formular kurz ausfüllen und erneut senden.' });
+        return res.status(abuse.status || 400).json({ message: 'Bitte Formular kurz ausfüllen und erneut senden.', errorKey: 'contact.invalid' });
       }
 
       const name = normalizeText(req.body && req.body.name);
@@ -111,13 +114,13 @@ module.exports = {
       const message = normalizeText(req.body && req.body.message);
 
       if (!name || !email || !message) {
-        return res.status(400).json({ message: 'Bitte alle Felder ausfüllen.' });
+        return res.status(400).json({ message: 'Bitte alle Felder ausfüllen.', errorKey: 'contact.fieldsRequired' });
       }
       if (name.length > MAX_NAME_LENGTH || email.length > MAX_EMAIL_LENGTH || message.length > MAX_MESSAGE_LENGTH) {
-        return res.status(400).json({ message: 'Eine oder mehrere Eingaben sind zu lang.' });
+        return res.status(400).json({ message: 'Eine oder mehrere Eingaben sind zu lang.', errorKey: 'contact.tooLong' });
       }
       if (!isValidEmail(email)) {
-        return res.status(400).json({ message: 'Bitte eine gültige E-Mail-Adresse eingeben.' });
+        return res.status(400).json({ message: 'Bitte eine gültige E-Mail-Adresse eingeben.', errorKey: 'contact.invalidEmail' });
       }
 
       const submissions = readSubmissions();
@@ -128,15 +131,20 @@ module.exports = {
         message,
         createdAt: new Date().toISOString(),
       });
-      writeSubmissions(submissions);
+      if (!writeSubmissions(submissions)) {
+        return res.status(500).json({
+          message: 'Nachricht konnte nicht gespeichert werden. Bitte später erneut versuchen.',
+          errorKey: 'contact.writeFailed',
+        });
+      }
 
-      console.log('Kontaktanfrage gespeichert:', { name, email });
-      return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
+      console.log('Kontaktanfrage gespeichert:', { received: true, id: submissions[submissions.length - 1].id });
+      return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.', errorKey: 'contact.received' });
     });
 
     app.get('/api/submissions', (req, res) => {
       if (!requireAuth(req, res)) return;
-      if (!requirePermission(req, res, 'orders.read')) return;
+      if (!requirePermission(req, res, 'security.manage')) return;
       const submissions = readSubmissions();
       return res.json({ submissions });
     });

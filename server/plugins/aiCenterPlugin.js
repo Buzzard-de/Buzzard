@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -41,17 +41,17 @@ module.exports = {
 
     app.get("/api/ai-center/sessions/:token", (req, res) => {
       const result = aiCenter.getSessionByToken(req.params.token);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/ai-center/chat", (req, res) => {
       try {
         const result = aiCenter.chat(req.body || {});
-        if (result.error) return res.status(result.status || 400).json({ error: result.error });
+        if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
         return res.json(result);
       } catch {
-        return res.status(500).json({ error: "AI adapter error" });
+        return res.status(500).json({ success: false, errorKey: "ai.adapterError" });
       }
     });
 
@@ -61,31 +61,31 @@ module.exports = {
 
     app.post("/api/ai-center/product-copy", (req, res) => {
       const result = aiCenter.generateProductCopy(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/ai-center/translate", (req, res) => {
       const result = aiCenter.translate(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/ai-center/review-sentiment", (req, res) => {
       const result = aiCenter.analyzeReviewSentiment(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/ai-center/smart-search", (req, res) => {
       const result = aiCenter.smartSearch(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/ai-center/jobs/:id/retry", (req, res) => {
       const result = aiCenter.retryJob(req.params.id);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

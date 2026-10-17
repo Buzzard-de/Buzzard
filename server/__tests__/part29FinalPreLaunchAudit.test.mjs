@@ -249,9 +249,12 @@ test("Final result is fail-closed", async () => {
   assert.ok(result.blockers.length > 0);
 });
 
-test("RBAC public health route is public", () => {
+test("RBAC operational health route requires system.read", () => {
   const { resolveRoutePermission } = require("../lib/routePermissions.js");
-  assert.equal(resolveRoutePermission("GET", "/api/health/final-prelaunch-readiness").public, true);
+  assert.equal(
+    resolveRoutePermission("GET", "/api/health/final-prelaunch-readiness").permission,
+    "system.read"
+  );
 });
 
 test("RBAC admin final prelaunch routes require system.read", () => {

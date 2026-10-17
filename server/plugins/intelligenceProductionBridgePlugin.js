@@ -5,7 +5,7 @@ function blockSales(res) {
   const blocked = salesDisabledResponse();
   return res.status(blocked.status).json({
     success: false,
-    error: blocked.error,
+    errorKey: blocked.errorKey,
     code: blocked.code,
     catalogMode: true,
   });
@@ -37,7 +37,7 @@ module.exports = {
       }
       const result = await fetchIntelligence("/production/readiness");
       if (!result.ok) {
-        return res.status(503).json({ success: false, error: result.error });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 503, error: result.error });
       }
       return res.json({ success: true, catalogMode: true, ...result.data });
     });
@@ -53,7 +53,7 @@ module.exports = {
       if (!result.ok) {
         const fallback = await fetchIntelligence("/production/bridge/summary");
         if (!fallback.ok) {
-          return res.status(503).json({ success: false, error: result.error });
+          return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 503, error: result.error });
         }
         return res.json({ success: true, catalogMode: true, ...fallback.data });
       }
@@ -69,7 +69,7 @@ module.exports = {
       }
       const result = await fetchIntelligence("/production/bridge/preflight");
       if (!result.ok) {
-        return res.status(503).json({ success: false, error: result.error });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 503, error: result.error });
       }
       return res.json({ success: true, catalogMode: true, ...result.data });
     });
@@ -83,7 +83,7 @@ module.exports = {
       }
       const result = await fetchIntelligence("/production/integrations");
       if (!result.ok) {
-        return res.status(503).json({ success: false, error: result.error });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 503, error: result.error });
       }
       return res.json({ success: true, ...result.data });
     });
@@ -98,7 +98,7 @@ module.exports = {
       const query = req.query?.q ? `?q=${encodeURIComponent(String(req.query.q))}` : "";
       const result = await fetchIntelligence(`/storefront/products${query}`);
       if (!result.ok) {
-        return res.status(503).json({ success: false, error: result.error });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 503, error: result.error });
       }
       return res.json({ success: true, catalogMode: true, items: result.data });
     });

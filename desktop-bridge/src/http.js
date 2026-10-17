@@ -55,7 +55,7 @@ function createServer(engine, options = {}) {
     }
     const provided = req.headers["x-bridge-token"] || url.searchParams.get("token") || "";
     if (provided !== token) {
-      return json(res, 401, { error: "Unauthorized", code: "BRIDGE_UNAUTHORIZED" });
+      return json(res, 401, { errorKey: "BRIDGE_UNAUTHORIZED", code: "BRIDGE_UNAUTHORIZED" });
     }
     try {
       if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/ui")) {
@@ -90,11 +90,14 @@ function createServer(engine, options = {}) {
         const body = await readBody(req);
         return json(res, 200, engine.importReport(body.path || body.report || body));
       }
-      json(res, 404, { error: "Not found" });
+      json(res, 404, { errorKey: "BRIDGE_NOT_FOUND", code: "BRIDGE_NOT_FOUND" });
     } catch (error) {
+      const code = typeof error.code === "string" && /^[A-Za-z0-9._:-]{1,80}$/.test(error.code)
+        ? error.code
+        : "BRIDGE_ERROR";
       json(res, error.code === "BRIDGE_UNAUTHORIZED" ? 401 : 400, {
-        error: error.message,
-        code: error.code || "BRIDGE_ERROR",
+        errorKey: code,
+        code,
       });
     }
   });

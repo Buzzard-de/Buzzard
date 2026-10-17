@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -36,25 +36,25 @@ module.exports = {
 
     app.post("/api/crm-customer-service/customers", (req, res) => {
       const result = crmCustomerService.createCustomer(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.customer);
     });
 
     app.get("/api/crm-customer-service/customers/:id", (req, res) => {
       const result = crmCustomerService.getCustomer(req.params.id);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/crm-customer-service/tickets", (req, res) => {
       const result = crmCustomerService.createTicket(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.ticket);
     });
 
     app.get("/api/crm-customer-service/tickets/:number", (req, res) => {
       const result = crmCustomerService.getTicket(req.params.number);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -71,14 +71,14 @@ module.exports = {
     app.patch("/api/admin/crm-customer-service/customers/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.updateCustomer(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.customer);
     });
 
     app.post("/api/admin/crm-customer-service/customers/:id/tags", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.addCustomerTag(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -90,14 +90,14 @@ module.exports = {
     app.patch("/api/admin/crm-customer-service/tickets/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.updateTicket(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.ticket);
     });
 
     app.post("/api/admin/crm-customer-service/tickets/:id/messages", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.addTicketMessage(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

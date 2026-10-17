@@ -77,7 +77,41 @@ function lookup(input = {}) {
       reason: "MALFORMED_TRACKING_PAYLOAD",
     };
   }
-  const carrier = classify(String(input.carrier || "dhl").toLowerCase());
+  if (input.forceError === "timeout") {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_TIMEOUT",
+      retryable: true,
+    };
+  }
+  if (input.forceError === "unavailable") {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_UNAVAILABLE",
+      retryable: false,
+    };
+  }
+  const requested = String(input.carrier || "dhl").toLowerCase();
+  if (requested && !CARRIERS.some((c) => c.id === requested)) {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_UNKNOWN",
+      carrier: requested,
+    };
+  }
+  const carrier = classify(requested);
   const estimate = shippingProvider.calculateShipping({
     methodId: input.methodId,
     country: input.country || "DE",
@@ -91,9 +125,50 @@ function lookup(input = {}) {
     carrier: carrier.id,
     status: input.trackingNumber ? "UNKNOWN_UNTIL_SCAN" : "NO_TRACKING",
     locationType: "not_available",
+    liveGps: false,
+    latitude: null,
+    longitude: null,
     estimatedDelivery: estimate.estimatedDelivery,
     connector: carrier,
     note: "Scan-based stub only. Estimate is not live GPS.",
+  };
+}
+
+function pollGps() {
+  return {
+    ok: false,
+    live: false,
+    liveGps: false,
+    gpsInvented: false,
+    coordinates: null,
+    reason: "CARRIER_GPS_POLL_BLOCKED",
+    note: "Carrier telematics polling is not executed from this adapter.",
+  };
+}
+
+function purchaseLabel(input = {}) {
+  const carrier = classify(String(input.carrier || "dhl").toLowerCase());
+  return {
+    ok: false,
+    purchased: false,
+    live: false,
+    labelUrl: null,
+    trackingNumber: null,
+    shipmentCreated: false,
+    gpsInvented: false,
+    amountCharged: 0,
+    reason: "LABEL_PURCHASE_BLOCKED",
+    carrier: carrier.id,
+    credentialsPresent: carrier.credentialsPresent === true,
+    note: "Label purchase is never executed from this adapter. Credentials in env do not authorize a live buy.",
+  };
+}
+
+function createShipment(input = {}) {
+  return {
+    ...purchaseLabel(input),
+    reason: "SHIPMENT_CREATE_BLOCKED",
+    created: false,
   };
 }
 
@@ -102,6 +177,8 @@ function health() {
     codeReady: true,
     liveReady: false,
     shipmentCreateEnabled: false,
+    labelPurchaseEnabled: false,
+    liveGps: false,
     carriers: listCarriers(),
     provider: shippingProvider.getProviderHealth(),
   };
@@ -112,5 +189,8 @@ module.exports = {
   classify,
   listCarriers,
   lookup,
+  pollGps,
+  purchaseLabel,
+  createShipment,
   health,
 };

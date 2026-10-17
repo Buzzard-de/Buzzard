@@ -32,7 +32,7 @@ function createPaymentIntent(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const amount = Number(body.amount || 0);
   if (!orderNumber || amount <= 0) {
-    return { error: "orderNumber and positive amount required", status: 400 };
+    return { error: "payment.amountRequired", status: 400 };
   }
 
   const idempotencyKey = body.idempotencyKey || body.idempotency_key || uuid();
@@ -44,7 +44,7 @@ function createPaymentIntent(body = {}) {
   const provider = db
     .prepare("SELECT * FROM finance_payment_providers WHERE code = ? AND enabled = 1")
     .get(body.provider || "stripe");
-  if (!provider) return { error: "Payment provider unavailable", status: 400 };
+  if (!provider) return { error: "payment.providerUnavailable", status: 400 };
 
   const method = db
     .prepare(`
@@ -52,7 +52,7 @@ function createPaymentIntent(body = {}) {
       WHERE provider_id = ? AND code = ? AND active = 1
     `)
     .get(provider.id, body.method || "card");
-  if (!method) return { error: "Payment method unavailable", status: 400 };
+  if (!method) return { error: "payment.methodUnavailable", status: 400 };
 
   const externalId = `pi_demo_${uuid().replace(/-/g, "")}`;
   const result = db
@@ -84,7 +84,7 @@ function createPaymentIntent(body = {}) {
 
 function confirmPaymentIntent(id) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
-  if (!intent) return { error: "Payment intent not found", status: 404 };
+  if (!intent) return { error: "payment.intentNotFound", status: 404 };
   if (["succeeded", "refunded", "partially_refunded"].includes(intent.status)) {
     return { intent, applied: false, reason: "ALREADY_TERMINAL" };
   }
@@ -94,7 +94,7 @@ function confirmPaymentIntent(id) {
     officialPath: "/api/commerce/webhooks/:provider",
   });
   return {
-    error: "Confirmation requires an official provider result",
+    error: "payment.confirmBlocked",
     status: 409,
     applied: false,
     reason: "PROVIDER_CONFIRMATION_REQUIRED",
@@ -106,7 +106,7 @@ function confirmPaymentIntent(id) {
 function createRefund(id, _body = {}) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent) {
-    return { error: "Payment intent not found", status: 404 };
+    return { error: "payment.intentNotFound", status: 404 };
   }
 
   audit("manual_refund_rejected", intent.id, {
@@ -115,7 +115,7 @@ function createRefund(id, _body = {}) {
     officialPath: "/api/commerce/webhooks/:provider",
   });
   return {
-    error: "Refund execution is disabled without an official provider result",
+    error: "payment.refundBlocked",
     status: 409,
     applied: false,
     financialEffect: false,
@@ -127,12 +127,12 @@ function createRefund(id, _body = {}) {
 function handlePaymentWebhook(body = {}) {
   const externalId = String(body.externalId || body.external_id || "").trim();
   const claimedStatus = String(body.status || "").trim();
-  if (!externalId || !claimedStatus) return { error: "externalId and status required", status: 400 };
+  if (!externalId || !claimedStatus) return { error: "payment.externalStatusRequired", status: 400 };
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
     .get(externalId);
-  if (!intent) return { error: "Payment intent not found", status: 404 };
+  if (!intent) return { error: "payment.intentNotFound", status: 404 };
 
   audit("unsigned_webhook_isolated", intent.id, {
     claimedStatus,
@@ -153,7 +153,7 @@ function handlePaymentWebhook(body = {}) {
 function createInvoice(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const grossAmount = Number(body.grossAmount || body.gross_amount || 0);
-  if (!orderNumber || grossAmount <= 0) return { error: "Invoice data missing", status: 400 };
+  if (!orderNumber || grossAmount <= 0) return { error: "invoice.dataMissing", status: 400 };
 
   const invoiceNumber =
     body.invoiceNumber ||
@@ -180,7 +180,7 @@ function createInvoice(body = {}) {
     audit("invoice_issued", result.lastInsertRowid, { invoiceNumber });
     return { invoice: db.prepare("SELECT * FROM finance_invoices WHERE id = ?").get(result.lastInsertRowid) };
   } catch {
-    return { error: "Invoice/order already exists", status: 409 };
+    return { error: "invoice.exists", status: 409 };
   }
 }
 
@@ -188,7 +188,7 @@ function handlePayoutWebhook(body = {}) {
   const provider = db
     .prepare("SELECT id FROM finance_payment_providers WHERE code = ?")
     .get(body.provider);
-  if (!provider) return { error: "Unknown provider", status: 400 };
+  if (!provider) return { error: "payment.unknownProvider", status: 400 };
 
   audit("unsigned_payout_webhook_isolated", provider.id, {
     claimedExternalPayoutId: body.externalPayoutId || body.external_payout_id || null,
@@ -210,7 +210,7 @@ function handleDisputeWebhook(body = {}) {
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
     .get(body.externalId || body.external_id);
-  if (!intent) return { error: "Payment not found", status: 404 };
+  if (!intent) return { error: "payment.notFound", status: 404 };
 
   audit("unsigned_dispute_webhook_isolated", intent.id, {
     claimedCaseId: body.caseId || body.case_id || null,

@@ -28,6 +28,33 @@ describe("Pusat agent registry and schemas", () => {
     }
   });
 
+  it("seeds an employee and execute binding for every AGENT_CODES entry", () => {
+    const roster = pusat.agents.specialistRosterStatus();
+    expect(roster.complete).toBe(true);
+    expect(roster.missingEmployees).toEqual([]);
+    expect(roster.missingExecute).toEqual([]);
+    expect(roster.missingCodes).toEqual([]);
+    expect(roster.recommendationOnly).toBe(true);
+    expect(roster.liveMutations).toBe(false);
+
+    const listed = pusat.agents.listAgents();
+    expect(listed).toHaveLength(Object.keys(pusat.AGENT_CODES).length);
+    expect(listed.every((agent) => agent.employeeSeeded && agent.executeBound && agent.recommendationOnly)).toBe(true);
+
+    const db = require("../lib/db").db;
+    for (const employeeId of ["price_ai", "product_ai", "order_ai", "category_ai"]) {
+      const row = db.prepare("SELECT id, status FROM core_ai_employees WHERE id = ?").get(employeeId);
+      expect(row?.id).toBe(employeeId);
+    }
+
+    const product = pusat.agents.executeAgent("product_assistant", { sku: "TEST-SKU" });
+    expect(product.invented).toBe(false);
+    expect(product.activationBlocked).toBe(true);
+    const order = pusat.agents.executeAgent("order_assistant", { orderId: "ORD-TEST" });
+    expect(order.realSupplierOrder).toBe(false);
+    expect(order.salesLocked).toBe(true);
+  });
+
   it("price assistant never invents costs and flags the missing undercut rule", () => {
     const missing = pusat.agents.runPriceAssistant({ salePrice: 10 });
     expect(missing.ok).toBe(false);

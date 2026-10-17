@@ -24,7 +24,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -46,14 +46,14 @@ module.exports = {
       }
       const result = orderManagement.createOrder(req.body || {});
       if (result.error) {
-        return res.status(result.status || 400).json({ error: result.error, detail: result.detail });
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       }
       return res.status(result.created ? 201 : 200).json(result.order);
     });
 
     app.get("/api/order-management/orders/:orderNumber", (req, res) => {
       const result = orderManagement.getOrderByNumber(req.params.orderNumber);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -74,49 +74,49 @@ module.exports = {
     app.patch("/api/admin/order-management/orders/:id/status", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.updateOrderStatus(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.order);
     });
 
     app.patch("/api/admin/order-management/orders/:id/payment", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.updatePaymentStatus(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.order);
     });
 
     app.patch("/api/admin/order-management/orders/:id/fulfillment", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.updateFulfillmentStatus(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.order);
     });
 
     app.post("/api/admin/order-management/orders/:id/cancel", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.cancelOrder(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/order-management/orders/:id/split", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.splitOrder(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.order);
     });
 
     app.post("/api/admin/order-management/orders/:id/fulfillment-link", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.addFulfillmentLink(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.link);
     });
 
     app.post("/api/admin/order-management/orders/:id/note", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.addOrderNote(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
   },

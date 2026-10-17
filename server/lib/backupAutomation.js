@@ -104,7 +104,7 @@ function runBackup({ applyRetentionPolicy = true } = {}) {
     });
     result = JSON.parse(output.trim().split("\n").pop());
   } catch (err) {
-    return { ok: false, error: err.message, path: backupDir };
+    return { ok: false, error: require("./security").publicTaskError(err, "backup.run_failed"), path: backupDir };
   }
 
   let retention = null;

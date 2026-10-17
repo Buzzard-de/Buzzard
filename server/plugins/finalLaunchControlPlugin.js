@@ -8,6 +8,7 @@ const {
   validateFinalLaunchControl,
 } = require('../lib/release/finalLaunchControl');
 const { auditFinalLaunchControl } = require('../lib/release/finalLaunchControlAudit');
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -41,7 +42,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction('go_live', { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const body = req.body && typeof req.body === 'object' ? req.body : {};
       res.json({ success: true, ...validateFinalLaunchControl(body) });

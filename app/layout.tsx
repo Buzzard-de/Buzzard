@@ -7,6 +7,7 @@ import TopUtilityBar from "@/components/TopUtilityBar";
 import ShopProviders from "@/components/ShopProviders";
 import MobileBottomNavigation from "@/components/storefront/MobileBottomNavigation";
 import SkipLink from "@/components/SkipLink";
+import { MAIN_CONTENT_ID } from "@/lib/a11y/landmarks";
 import { SECURITY_HEADERS } from "@/lib/security";
 import { marketingConfig } from "@/lib/marketing/config";
 import { SEO_DEFAULTS, SITE_URL } from "@/lib/seo/config";
@@ -101,7 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
           </div>
           <MobileStorefrontChrome />
-          <main id="maincontent">{children}</main>
+          <main id={MAIN_CONTENT_ID}>{children}</main>
           <div className="buzzard-desktop-chrome">
             <Footer />
             <MobileBottomNavigation />

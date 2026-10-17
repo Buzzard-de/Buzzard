@@ -83,7 +83,7 @@ async function fetchIntelligence(path) {
       const data = await response.json();
       return { ok: true, status: "LIVE", data };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "fetch_failed";
+      const msg = require("./security").publicTaskError(error, "fetch_failed");
       return { ok: false, status: "DOWN", error: msg };
     } finally {
       clearTimeout(timer);

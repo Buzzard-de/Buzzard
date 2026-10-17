@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -42,36 +42,42 @@ module.exports = {
     app.patch("/api/admin/marketplace-hub/marketplaces/:code", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketplaceHub.updateMarketplace(req.params.code, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.marketplace);
     });
 
     app.post("/api/admin/marketplace-hub/sync/stock", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queueStockSync());
+      const result = marketplaceHub.queueStockSync();
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/sync/prices", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queuePriceSync());
+      const result = marketplaceHub.queuePriceSync();
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/sync/orders", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(marketplaceHub.queueOrderSync());
+      const result = marketplaceHub.queueOrderSync();
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/listings", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketplaceHub.upsertListing(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/marketplace-hub/sku-map", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketplaceHub.upsertSkuMapping(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -83,7 +89,7 @@ module.exports = {
     app.post("/api/admin/marketplace-hub/sync-jobs/:id/result", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketplaceHub.updateSyncJobResult(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -99,7 +105,7 @@ module.exports = {
 
     app.post("/api/marketplace-hub/order-webhook", (req, res) => {
       const result = marketplaceHub.importOrderWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.status || 202).json(result);
     });
   },

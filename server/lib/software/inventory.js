@@ -92,6 +92,15 @@ function resolveSupplierConflict(offers = []) {
   };
 }
 
+function parseStamp(value) {
+  if (value == null || value === "") return NaN;
+  const parsed = Date.parse(value);
+  if (!Number.isNaN(parsed)) return parsed;
+  const normalized = String(value).trim().replace(" ", "T");
+  const withZone = /Z$|[+-]\d{2}:?\d{2}$/.test(normalized) ? normalized : `${normalized}Z`;
+  return Date.parse(withZone);
+}
+
 function writeEvent(db, reservationId, eventType, details) {
   db.prepare(
     `INSERT INTO software_reservation_events(id, reservation_id, event_type, details_json)
@@ -100,6 +109,16 @@ function writeEvent(db, reservationId, eventType, details) {
 }
 
 function reserve(db, input = {}) {
+  if (input.availability && input.availability.treatAsStock === false) {
+    return {
+      ok: false,
+      reserved: false,
+      failClosed: true,
+      reason: input.availability.reason || "SUPPLIER_AVAILABILITY_UNRELIABLE",
+      purchaseOwnStock: false,
+      live: false,
+    };
+  }
   if (Array.isArray(input.offers) && input.offers.length) {
     const conflict = resolveSupplierConflict(input.offers);
     if (conflict.failClosed) {
@@ -198,11 +217,13 @@ function reserve(db, input = {}) {
       duplicate: Boolean(result.duplicate),
       failClosed: false,
       purchaseOwnStock: false,
+      authority: "commerce_software",
+      wmsReservationId: null,
       reservation: result.reservation,
       reliability,
     };
-  } catch (error) {
-    return { ok: false, reserved: false, failClosed: true, reason: "RESERVE_FAILED", error: error.message };
+  } catch {
+    return { ok: false, reserved: false, failClosed: true, reason: "RESERVE_FAILED" };
   }
 }
 
@@ -261,8 +282,8 @@ function consume(db, reservationId, input = {}) {
       };
     }
     return { ok: true, consumed: true, duplicate: false, reservation: result.reservation };
-  } catch (error) {
-    return { ok: false, consumed: false, failClosed: true, reason: "CONSUME_FAILED", error: error.message };
+  } catch {
+    return { ok: false, consumed: false, failClosed: true, reason: "CONSUME_FAILED" };
   }
 }
 
@@ -286,24 +307,49 @@ function release(db, reservationId) {
   return { ok: true, reservation: db.prepare("SELECT * FROM software_reservations WHERE id = ?").get(reservationId) };
 }
 
+function expireDue(db, { olderThanMs = 30 * 60 * 1000, sku = null, orderId = null } = {}) {
+  if (!sku && !orderId) {
+    return { ok: false, reason: "SKU_OR_ORDER_REQUIRED", expired: 0 };
+  }
+  const cutoffMs = Date.now() - olderThanMs;
+  const candidates = sku
+    ? db
+        .prepare(`SELECT * FROM software_reservations WHERE status = ? AND sku = ?`)
+        .all(RESERVATION_STATUS.ACTIVE, sku)
+    : db
+        .prepare(`SELECT * FROM software_reservations WHERE status = ? AND order_id = ?`)
+        .all(RESERVATION_STATUS.ACTIVE, orderId);
+  const due = candidates.filter((row) => {
+    const created = parseStamp(row.created_at);
+    return !Number.isNaN(created) && created <= cutoffMs;
+  });
+  const expired = [];
+  for (const row of due) {
+    db.prepare(
+      "UPDATE software_reservations SET status = ?, released_at = CURRENT_TIMESTAMP WHERE id = ?"
+    ).run(RESERVATION_STATUS.EXPIRED, row.id);
+    writeEvent(db, row.id, "expired", { cutoffMs });
+    expired.push(row.id);
+  }
+  return { ok: true, scanned: candidates.length, expired: expired.length, ids: expired };
+}
+
 function recoverOrphanReservations(db, { olderThanMs = 30 * 60 * 1000, sku = null, orderId = null } = {}) {
   if (!sku && !orderId) {
     return { ok: false, reason: "SKU_OR_ORDER_REQUIRED", released: 0 };
   }
-  const cutoff = new Date(Date.now() - olderThanMs).toISOString();
-  const orphans = sku
+  const cutoffMs = Date.now() - olderThanMs;
+  const orphans = (sku
     ? db
-        .prepare(
-          `SELECT * FROM software_reservations
-           WHERE status = ? AND sku = ? AND created_at <= ?`
-        )
-        .all(RESERVATION_STATUS.ACTIVE, sku, cutoff)
+        .prepare(`SELECT * FROM software_reservations WHERE status = ? AND sku = ?`)
+        .all(RESERVATION_STATUS.ACTIVE, sku)
     : db
-        .prepare(
-          `SELECT * FROM software_reservations
-           WHERE status = ? AND order_id = ? AND created_at <= ?`
-        )
-        .all(RESERVATION_STATUS.ACTIVE, orderId, cutoff);
+        .prepare(`SELECT * FROM software_reservations WHERE status = ? AND order_id = ?`)
+        .all(RESERVATION_STATUS.ACTIVE, orderId)
+  ).filter((row) => {
+    const created = parseStamp(row.created_at);
+    return !Number.isNaN(created) && created <= cutoffMs;
+  });
   const released = [];
   for (const row of orphans) {
     const result = release(db, row.id);
@@ -382,6 +428,7 @@ module.exports = {
   release,
   reservedQuantity,
   recoverOrphanReservations,
+  expireDue,
   history,
   withTransaction,
   recordWmsReservationAudit,

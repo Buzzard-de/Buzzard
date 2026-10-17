@@ -6,6 +6,7 @@ const OFFICIAL_PATH = "/api/commerce/webhooks/:provider";
 const LEGACY_PATHS = Object.freeze(["/api/webhooks/payment", "/api/payments-finance/webhook"]);
 
 function describeIngress() {
+  const flags = require("../commerce/commerceFeatureFlags").getEffectiveFlags();
   return {
     officialPath: OFFICIAL_PATH,
     officialProviders: ["stripe", "paypal"],
@@ -15,8 +16,9 @@ function describeIngress() {
     timeoutIsNotSuccess: true,
     refundDistinctFromChargeback: true,
     refundDistinctFromSupplierCredit: true,
-    livePayments: process.env.BUZZARD_LIVE_PAYMENTS === "1",
-    salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
+    livePayments: flags.livePaymentsEnabled,
+    salesEnabled: flags.salesEnabled,
+    productSotActive: flags.productSotActive,
   };
 }
 

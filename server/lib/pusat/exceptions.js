@@ -13,6 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
 } = require("./constants");
 const { newId } = require("./hash");
+const { publicTaskError, classifySystemFailure } = require("../security");
 
 const NON_RETRYABLE = new Set([
   EXCEPTION_CODES.PERMISSION_DENIED,
@@ -23,38 +24,56 @@ const NON_RETRYABLE = new Set([
   EXCEPTION_CODES.SALES_LOCKED,
   EXCEPTION_CODES.APPROVAL_INVALID,
   EXCEPTION_CODES.INPUT_CHANGED,
+  EXCEPTION_CODES.AUTH_FAILED,
+  EXCEPTION_CODES.RATE_LIMIT,
   EXCEPTION_CODES.SENSITIVE_NO_RETRY,
 ]);
 
 const SENSITIVE_HINT = /\b(payment|refund|purchase|payout|supplier\.order|marketplace\.publish)\b/i;
 
+function httpStatusExceptionCode(error) {
+  const status = Number(error?.status || error?.statusCode || 0);
+  if (status === 401) return EXCEPTION_CODES.AUTH_FAILED;
+  if (status === 403) return EXCEPTION_CODES.PERMISSION_DENIED;
+  if (status === 408 || status === 504) return EXCEPTION_CODES.TASK_TIMEOUT;
+  if (status === 429) return EXCEPTION_CODES.RATE_LIMIT;
+  if (status === 502 || status === 503) return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  return null;
+}
+
+function structuredExceptionCode(error) {
+  if (!error) return null;
+  if (error.pusatCode && Object.values(EXCEPTION_CODES).includes(error.pusatCode)) return error.pusatCode;
+  if (error.code && Object.values(EXCEPTION_CODES).includes(error.code)) return error.code;
+  if (error.errorKey && Object.values(EXCEPTION_CODES).includes(error.errorKey)) return error.errorKey;
+  const sys = classifySystemFailure(error);
+  if (sys === "TIMEOUT") return EXCEPTION_CODES.TASK_TIMEOUT;
+  if (sys === "NETWORK") return EXCEPTION_CODES.PROVIDER_UNAVAILABLE;
+  if (sys === "CONFLICT") return EXCEPTION_CODES.VALIDATION_FAILED;
+  if (sys === "DATABASE") return EXCEPTION_CODES.DATABASE_FAILURE;
+  return httpStatusExceptionCode(error);
+}
+
 function classify(error, { action } = {}) {
-  const message = error?.message || String(error || "unknown");
-  const code = error?.code || error?.pusatCode || inferCode(message, action);
-  const sensitive = SENSITIVE_ACTIONS.includes(action) || SENSITIVE_HINT.test(`${action || ""} ${message}`);
+  const actionKey = action || null;
+  const code =
+    structuredExceptionCode(error) ||
+    (SENSITIVE_ACTIONS.includes(actionKey) ? EXCEPTION_CODES.SENSITIVE_NO_RETRY : EXCEPTION_CODES.UNKNOWN);
+  const sensitive = SENSITIVE_ACTIONS.includes(actionKey) || SENSITIVE_HINT.test(String(actionKey || ""));
   const retryable = !sensitive && !NON_RETRYABLE.has(code);
   return {
     code,
     retryable,
     sensitive,
-    message,
-    action: action || null,
+    message: code,
+    action: actionKey,
   };
 }
 
-function inferCode(message, action) {
-  const text = String(message || "").toLowerCase();
-  if (text.includes("timeout")) return EXCEPTION_CODES.TASK_TIMEOUT;
-  if (text.includes("permission")) return EXCEPTION_CODES.PERMISSION_DENIED;
-  if (text.includes("guardian")) return EXCEPTION_CODES.GUARDIAN_BLOCKED;
-  if (text.includes("approval")) return EXCEPTION_CODES.APPROVAL_REQUIRED;
-  if (text.includes("sales") || text.includes("catalog mode")) return EXCEPTION_CODES.SALES_LOCKED;
-  if (text.includes("cost") || text.includes("missing")) return EXCEPTION_CODES.MISSING_COST;
-  if (text.includes("stock")) return EXCEPTION_CODES.STOCK_UNCONFIRMED;
-  if (text.includes("not found")) return EXCEPTION_CODES.TASK_NOT_FOUND;
-  if (text.includes("unavailable") || text.includes("not active")) return EXCEPTION_CODES.AGENT_UNAVAILABLE;
-  if (SENSITIVE_ACTIONS.includes(action)) return EXCEPTION_CODES.SENSITIVE_NO_RETRY;
-  return EXCEPTION_CODES.UNKNOWN;
+function redactError(text) {
+  return String(text || "")
+    .replace(/(api[_-]?key|secret|token|password|authorization|bearer)\s*[=:]\s*\S+/gi, "$1=[REDACTED]")
+    .slice(0, 400);
 }
 
 function recordException({
@@ -80,7 +99,7 @@ function recordException({
     maxRetries,
     retryable ? EXCEPTION_STATUS.OPEN : EXCEPTION_STATUS.ESCALATED,
     JSON.stringify(details || {}),
-    lastError || null
+    publicTaskError(lastError, code || EXCEPTION_CODES.UNKNOWN)
   );
 
   if (!retryable) {
@@ -88,7 +107,7 @@ function recordException({
       sourceType: "ai_exception",
       sourceId: id,
       title: `AI exception ${code}`,
-      message: lastError || code,
+      message: publicTaskError(lastError, code || EXCEPTION_CODES.UNKNOWN),
       riskLevel: "HIGH",
       metadata: { taskId, correlationId },
     });
@@ -118,7 +137,7 @@ function getException(id) {
     maxRetries: row.max_retries,
     status: row.status,
     details: row.details_json ? JSON.parse(row.details_json) : {},
-    lastError: row.last_error,
+    lastError: publicTaskError(row.last_error, row.code || EXCEPTION_CODES.UNKNOWN),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     recoveredAt: row.recovered_at,
@@ -176,16 +195,54 @@ function deadLetter(id, reason) {
     `UPDATE core_ai_exceptions
      SET status = ?, last_error = ?, updated_at = CURRENT_TIMESTAMP
      WHERE id = ?`
-  ).run(EXCEPTION_STATUS.DEAD_LETTER, reason || "dead_letter", id);
+  ).run(
+    EXCEPTION_STATUS.DEAD_LETTER,
+    publicTaskError(reason, "dead_letter"),
+    id
+  );
   const row = getException(id);
   controlCenter.createEscalation({
     sourceType: "ai_exception",
     sourceId: id,
     title: "AI task dead-lettered",
-    message: reason || row?.code,
+    message: publicTaskError(reason, row?.code || "dead_letter"),
     riskLevel: "CRITICAL",
   });
   return row;
+}
+
+function summarize() {
+  try {
+    const rows = db
+      .prepare(
+        `SELECT status, COUNT(*) AS n FROM core_ai_exceptions GROUP BY status`
+      )
+      .all();
+    const byStatus = {};
+    let total = 0;
+    for (const row of rows) {
+      byStatus[row.status] = Number(row.n) || 0;
+      total += Number(row.n) || 0;
+    }
+    return {
+      ok: true,
+      total,
+      byStatus,
+      liveRecovery: false,
+      sensitiveRetry: false,
+      productionVerified: false,
+    };
+  } catch {
+    return {
+      ok: false,
+      total: 0,
+      byStatus: {},
+      liveRecovery: false,
+      sensitiveRetry: false,
+      productionVerified: false,
+      reason: "EXCEPTION_STORE_UNAVAILABLE",
+    };
+  }
 }
 
 function handleFailure(error, context = {}) {
@@ -196,7 +253,7 @@ function handleFailure(error, context = {}) {
     correlationId: context.correlationId,
     retryable: classified.retryable,
     details: { action: classified.action, sensitive: classified.sensitive },
-    lastError: classified.message,
+    lastError: classified.code,
     maxRetries: context.maxRetries,
   });
   const retry = shouldRetry(recorded);
@@ -219,4 +276,5 @@ module.exports = {
   markRecovered,
   deadLetter,
   handleFailure,
+  summarize,
 };

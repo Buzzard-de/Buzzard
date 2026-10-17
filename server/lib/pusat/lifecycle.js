@@ -14,6 +14,9 @@ const memory = require("./memory");
 const automations = require("./automations");
 const { getMeta, upsertMeta } = require("./submit");
 const { EXCEPTION_CODES, MEMORY_KIND, SENSITIVE_ACTIONS } = require("./constants");
+const { publicTaskError } = require("../security");
+const circuitBreaker = require("./circuitBreaker");
+const esatSecurity = require("./esatSecurity");
 
 function parseJson(val, fallback) {
   if (!val) return fallback;
@@ -132,19 +135,56 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
   });
 
   if (!gate.allowed) {
+    circuitBreaker.recordFailure(`pusat:${agentCode}`, db);
     exceptions.handleFailure(
       { message: gate.message, code: gate.code },
       { taskId, correlationId: meta?.correlation_id, action }
     );
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: gate.message,
+      error: publicTaskError({ code: gate.code }, "PUSAT_GUARDIAN_BLOCKED"),
       result: { failureKind: "GUARDIAN", guardian: gate },
     });
   }
 
+  const circuit = circuitBreaker.allow(`pusat:${agentCode}`, { financial: esatSecurity.isMoneyAction(action) });
+  if (!circuit.allowed) {
+    exceptions.handleFailure(
+      { message: circuit.reason || "CIRCUIT_OPEN", code: EXCEPTION_CODES.GUARDIAN_BLOCKED },
+      { taskId, correlationId: meta?.correlation_id, action }
+    );
+    return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
+      error: publicTaskError({ code: EXCEPTION_CODES.GUARDIAN_BLOCKED }, EXCEPTION_CODES.GUARDIAN_BLOCKED),
+      result: { failureKind: "CIRCUIT", circuit, executed: false },
+    });
+  }
+
   if (gate.requireApproval || task.payload.requiresApproval || task.priority === "CRITICAL") {
-    const existing = approval.latestForTask(taskId);
-    if (!existing || existing.status === "PENDING" || existing.status === "EXPIRED" || existing.status === "CANCELLED") {
+    const approvalReady = esatSecurity.wrapApprovalCall(() => {
+      approval.expireDue();
+      return { ok: true, existing: approval.latestForTask(taskId) };
+    });
+    if (!approvalReady.ok) {
+      exceptions.handleFailure(
+        { message: "Approval service unavailable", code: EXCEPTION_CODES.APPROVAL_INVALID },
+        { taskId, correlationId: meta?.correlation_id, action }
+      );
+      return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
+        error: publicTaskError({ code: EXCEPTION_CODES.APPROVAL_INVALID }, EXCEPTION_CODES.APPROVAL_INVALID),
+        result: { failureKind: "APPROVAL_UNAVAILABLE", executed: false, failClosed: true },
+      });
+    }
+    const existing = approvalReady.existing;
+    if (existing && ["REJECTED", "CANCELLED", "EXECUTION_FAILED"].includes(existing.status)) {
+      return controlCenter.updateTaskStatus(taskId, TASK_STATUS.CANCELLED, {
+        error: `approval_${String(existing.status).toLowerCase()}`,
+        result: {
+          executed: false,
+          approvalStatus: existing.status,
+          reminted: false,
+        },
+      });
+    }
+    if (!existing || existing.status === "PENDING" || existing.status === "EXPIRED") {
       if (!existing || existing.status !== "PENDING") {
         approval.requestApproval({
           taskId,
@@ -158,13 +198,19 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       }
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL);
     }
-    const bound = approval.assertBound(existing, task.payload);
-    if (!bound.ok) {
+    const consumed = approval.consumeForExecution(existing.id, task.payload, {
+      actor: existing.decidedBy,
+      action,
+    });
+    if (!consumed.ok) {
+      if (consumed.code === "already_executed") {
+        return controlCenter.getAiTask(taskId);
+      }
       exceptions.handleFailure(
-        { message: `Approval invalid: ${bound.code}`, code: EXCEPTION_CODES.APPROVAL_INVALID },
+        { message: `Approval invalid: ${consumed.code}`, code: EXCEPTION_CODES.APPROVAL_INVALID },
         { taskId, correlationId: meta?.correlation_id, action }
       );
-      if (bound.code === "input_changed") {
+      if (consumed.code === "input_changed") {
         approval.requestApproval({
           taskId,
           requestingAgent: employee.id,
@@ -175,7 +221,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
         });
       }
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL, {
-        error: bound.code,
+        error: consumed.code,
       });
     }
   }
@@ -241,10 +287,12 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       taskId,
     });
 
+    circuitBreaker.recordSuccess(`pusat:${agentCode}`, db);
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.COMPLETED, {
       result: { agentCode, output, skipEnqueueSideEffects },
     });
   } catch (error) {
+    circuitBreaker.recordFailure(`pusat:${agentCode}`, db);
     const handled = exceptions.handleFailure(error, {
       taskId,
       correlationId: meta?.correlation_id,
@@ -257,14 +305,14 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
 
     if (SENSITIVE_ACTIONS.includes(action) || !handled.classified.retryable) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-        error: error.message,
+        error: publicTaskError(error, handled.classified.code),
         result: { failureKind: handled.classified.code, exceptionId: handled.exception?.id, retryable: false },
       });
     }
 
     if (handled.retry.retry && retryCount < (task.max_retries || 3)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.ASSIGNED, {
-        error: error.message,
+        error: publicTaskError(error, handled.classified.code),
         result: { failureKind: handled.classified.code, retry: true, delayMs: handled.retry.delayMs },
       });
     }
@@ -278,7 +326,7 @@ async function executeTask(taskId, { skipEnqueueSideEffects = true } = {}) {
       riskLevel: "HIGH",
     });
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: error.message,
+      error: publicTaskError(error, handled.classified.code),
       result: { failureKind: handled.classified.code, exceptionId: handled.exception?.id },
     });
   }
@@ -311,12 +359,14 @@ function cancelTask(taskId, { cancelledBy, reason } = {}) {
 function enqueueTask(taskId) {
   setImmediate(() => {
     executeTask(taskId).catch((err) => {
-      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: err.message });
+      const errorKey = publicTaskError(err, "ai.orchestrator.failed");
+      console.error("[pusat.lifecycle]", { name: err?.name, code: err?.code });
+      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: errorKey });
       controlCenter.createEscalation({
         sourceType: "ai_task",
         sourceId: taskId,
         title: "Pusat orchestrator error",
-        message: err.message,
+        message: errorKey,
         riskLevel: "CRITICAL",
       });
     });

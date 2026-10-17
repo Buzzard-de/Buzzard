@@ -11,6 +11,7 @@ const marketplace = require("./marketplace");
 const voice = require("./voice");
 const { providerStatus } = require("../pusat/integrations");
 const { inventory } = require("./externalIntegrations");
+const pusatExceptions = require("../pusat/exceptions");
 
 function engineStatus({ pass, blocked, configured }) {
   if (blocked) return HEALTH_STATUS.BLOCKED;
@@ -113,6 +114,12 @@ function getSoftwareHealth(pusatHealth) {
     provider: providers,
     marketplace: market,
     voice: voiceHealth,
+    exceptions: {
+      ...pusatExceptions.summarize(),
+      liveRecovery: false,
+      sensitiveRetry: false,
+      productionVerified: false,
+    },
     engines,
     ready: code.database && code.salesLock && !isSalesEnabled(),
     liveReady: false,

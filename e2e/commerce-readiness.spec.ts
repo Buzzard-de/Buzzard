@@ -3,11 +3,15 @@ import { test, expect } from "@playwright/test";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 test.describe("Commerce Readiness Part 8", () => {
-  test("commerce health shows sales disabled", async ({ request }) => {
-    const res = await request.get(`${API}/api/health/commerce`);
+  test("commerce health requires auth and public status keeps sales disabled", async ({ request }) => {
+    const health = await request.get(`${API}/api/health/commerce`);
+    expect(health.status()).toBe(401);
+    const res = await request.get(`${API}/api/commerce/status`);
     expect(res.ok()).toBeTruthy();
     const body = await res.json();
-    expect(body.health.sales.salesEnabled).toBe(false);
+    expect(body.salesEnabled).toBe(false);
+    expect(body.flags.salesEnabled).toBe(false);
+    expect(body.safety.salesEnabled).toBe(false);
   });
 
   test("critical: commercial checkout attempt produces zero commercial orders", async ({ request }) => {

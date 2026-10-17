@@ -16,7 +16,7 @@ function recordEvent(customerId, eventType, reference, message, meta = {}) {
 }
 
 function createCustomer(body = {}) {
-  if (!body.email) return { error: "Email required", status: 400 };
+  if (!body.email) return { error: "customer.emailRequired", status: 400 };
 
   try {
     const result = db
@@ -43,13 +43,13 @@ function createCustomer(body = {}) {
     recordEvent(result.lastInsertRowid, "customer_created", "", "Customer created");
     return { customer: db.prepare("SELECT * FROM crmcs_customers WHERE id = ?").get(result.lastInsertRowid), created: true };
   } catch {
-    return { error: "Customer already exists", status: 409 };
+    return { error: "customer.exists", status: 409 };
   }
 }
 
 function getCustomer(id) {
   const customer = db.prepare("SELECT * FROM crmcs_customers WHERE id = ?").get(id);
-  if (!customer) return { error: "Customer not found", status: 404 };
+  if (!customer) return { error: "customer.notFound", status: 404 };
 
   return {
     customer,
@@ -65,7 +65,7 @@ function getCustomer(id) {
 
 function updateCustomer(id, body = {}) {
   const customer = db.prepare("SELECT * FROM crmcs_customers WHERE id = ?").get(id);
-  if (!customer) return { error: "Customer not found", status: 404 };
+  if (!customer) return { error: "customer.notFound", status: 404 };
 
   db.prepare(`
     UPDATE crmcs_customers SET
@@ -99,7 +99,7 @@ function updateCustomer(id, body = {}) {
 
 function addCustomerTag(id, body = {}) {
   const tag = String(body.tag || "").trim();
-  if (!tag) return { error: "Tag required", status: 400 };
+  if (!tag) return { error: "customer.tagRequired", status: 400 };
 
   db.prepare("INSERT OR IGNORE INTO crmcs_customer_tags(customer_id, tag) VALUES(?,?)").run(id, tag);
   return { ok: true };
@@ -130,7 +130,7 @@ function listCustomers(query = {}) {
 }
 
 function createTicket(body = {}) {
-  if (!body.subject) return { error: "Subject required", status: 400 };
+  if (!body.subject) return { error: "support.subjectRequired", status: 400 };
 
   const customer = body.customerId || body.customer_id
     ? db.prepare("SELECT id FROM crmcs_customers WHERE id = ?").get(body.customerId || body.customer_id)
@@ -186,7 +186,7 @@ function getTicket(number) {
     `)
     .get(number);
 
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "support.ticketNotFound", status: 404 };
 
   return {
     ticket,
@@ -201,7 +201,7 @@ function getTicket(number) {
 
 function addTicketMessage(id, body = {}) {
   const ticket = db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(id);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "support.ticketNotFound", status: 404 };
 
   db.prepare(`
     INSERT INTO crmcs_ticket_messages(ticket_id, sender_type, sender_name, message, internal)
@@ -220,7 +220,7 @@ function addTicketMessage(id, body = {}) {
 
 function updateTicket(id, body = {}) {
   const ticket = db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(id);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "support.ticketNotFound", status: 404 };
 
   db.prepare(`
     UPDATE crmcs_tickets SET

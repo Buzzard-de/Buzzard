@@ -13,6 +13,8 @@ import {
   getCommerceSessionId,
   getStoredCommerceCartId,
   setStoredCommerceCartId,
+  getStoredCommerceGuestToken,
+  setStoredCommerceGuestToken,
 } from "@/lib/commerce/runtime";
 import type { CommerceAddress } from "@/lib/commerce/types";
 
@@ -41,8 +43,17 @@ async function request<T>(
   const headers: HeadersInit = {
     ...(init?.headers || {}),
   };
+  const headerMap = headers as Record<string, string>;
   if (init?.idempotencyKey) {
-    (headers as Record<string, string>)["Idempotency-Key"] = init.idempotencyKey;
+    headerMap["Idempotency-Key"] = init.idempotencyKey;
+  }
+  const sessionId = getCommerceSessionId();
+  if (sessionId && sessionId !== "ssr") {
+    headerMap["X-Buzzard-Commerce-Session"] = sessionId;
+  }
+  const guestToken = getStoredCommerceGuestToken();
+  if (guestToken) {
+    headerMap["X-Buzzard-Guest-Token"] = guestToken;
   }
 
   let res: Response;
@@ -60,7 +71,7 @@ async function request<T>(
 
   if (!res.ok) {
     throw new CommerceClientError(
-      data.message || data.errorKey || "commerce.requestFailed",
+      data.errorKey || "commerce.requestFailed",
       data.errorKey || "commerce.requestFailed",
       res.status
     );
@@ -229,11 +240,18 @@ export async function startCheckout(input: {
   cartId: string;
   customerId?: string;
   orderType?: CommerceOrderType;
-}): Promise<{ success: boolean; checkout: { id: string; orderType?: string } }> {
-  return request("/api/commerce/checkout/start", {
+}): Promise<{ success: boolean; checkout: { id: string; orderType?: string; guestToken?: string } }> {
+  const data = await request<{
+    success: boolean;
+    checkout: { id: string; orderType?: string; guestToken?: string };
+  }>("/api/commerce/checkout/start", {
     method: "POST",
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, sessionId: getCommerceSessionId() }),
   });
+  if (data.checkout?.guestToken) {
+    setStoredCommerceGuestToken(data.checkout.guestToken);
+  }
+  return data;
 }
 
 export async function validateCheckout(

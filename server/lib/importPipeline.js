@@ -194,7 +194,7 @@ function processRecords(records, supplierId, ctx = {}) {
         supplier_id: supplierId,
         record_reference: raw?.supplier_sku || raw?.sku || "unknown",
         error_type: "processing",
-        error_message: error.message,
+        error_message: require("./security").publicTaskError(error, "import.record_failed"),
         sync_job_id: job.id,
         retry_status: "pending",
       });

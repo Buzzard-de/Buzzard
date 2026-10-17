@@ -481,6 +481,14 @@ function runCommunications(software, db, input) {
 }
 
 function runMarketplace(software, db, input) {
+  const publishGate = guardian.evaluate({
+    agentId: "marketplace_ai",
+    employee: { id: "marketplace_ai", status: "ACTIVE", permissions: ["products.read", "ai.execute"] },
+    action: "marketplace.publish",
+    payload: { sku: input.sku, channel: "otto" },
+    permissionsRequired: ["marketplace.publish"],
+    priority: "CRITICAL",
+  });
   const amazon = software.marketplace.draftListing(
     { channel: "amazon", sku: input.sku, price: 19.9, category: "automotive" },
     db
@@ -509,6 +517,7 @@ function runMarketplace(software, db, input) {
       ottoSafeInterface: otto.safeInterface,
     },
     pass:
+      publishGate.allowed === false &&
       amazon.published === false &&
       amazon.listingId === null &&
       otto.safeInterface === true &&
@@ -517,7 +526,7 @@ function runMarketplace(software, db, input) {
       ottoDraft.published === false &&
       published.reason === "PUBLISH_BLOCKED" &&
       missing.ok === false,
-    evidence: "server/lib/software/marketplace",
+    evidence: "server/lib/software/marketplace + pusat/guardian",
   });
 }
 

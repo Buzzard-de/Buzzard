@@ -20,13 +20,30 @@ function deliverNotification(notification) {
       status: "DELIVERED",
       deliveryResult: "stored_internal",
       channel,
+      sent: false,
+      live: false,
+      note: "Internal store only. Not SMTP, SMS, or push.",
     };
   }
   return {
-    status: "PENDING",
+    status: "BLOCKED",
     deliveryResult: `${channel}_not_configured`,
     channel,
+    sent: false,
+    live: false,
+    delivered: false,
   };
 }
 
-module.exports = { NOTIFICATION_CHANNELS, deliverNotification };
+function confirmDelivery() {
+  return {
+    ok: false,
+    status: "BLOCKED",
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "DELIVERY_CONFIRM_BLOCKED",
+  };
+}
+
+module.exports = { NOTIFICATION_CHANNELS, deliverNotification, confirmDelivery };

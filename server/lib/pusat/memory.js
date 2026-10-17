@@ -97,6 +97,10 @@ function writeMemory({
   if (!check.ok) {
     return { ok: false, ...check };
   }
+  const esatSecurity = require("./esatSecurity");
+  if (esatSecurity.memoryLooksLikePolicyChange(content) || esatSecurity.securityMemoryMayChangePolicy()) {
+    return { ok: false, error: "policy_change_rejected" };
+  }
 
   const existing = db
     .prepare(
@@ -148,7 +152,7 @@ function writeMemory({
       expires
     );
   } catch (error) {
-    return { ok: false, error: "database_failure", message: error.message };
+    return { ok: false, error: "database_failure" };
   }
 
   return {
@@ -195,7 +199,7 @@ function readMemory({ subject, kind, taskId, role, includeExpired = false, limit
       .map(mapRow)
       .filter((record) => !role || canAccess(record, role));
   } catch (error) {
-    return { ok: false, error: "database_failure", message: error.message };
+    return { ok: false, error: "database_failure" };
   }
 }
 
@@ -243,7 +247,7 @@ function memoryHealth() {
       byKind: Object.fromEntries(counts.map((r) => [r.kind, r.n])),
     };
   } catch (error) {
-    return { ok: false, error: error.message, persistent: false, volatileFallback: false };
+    return { ok: false, error: "database_failure", persistent: false, volatileFallback: false };
   }
 }
 

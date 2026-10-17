@@ -24,6 +24,8 @@ describe("Pusat approval center", () => {
     expect(created.status).toBe("PENDING");
     expect(created.inputHash).toBeTruthy();
     expect(created.expiresAt).toBeTruthy();
+    expect(created.requiredApprover).toBe("admin");
+    expect(created.financialImpact).toBeNull();
 
     const approved = pusat.approval.decide(created.id, "approve", "reviewer@test");
     expect(approved.approval.status).toBe("APPROVED");
@@ -55,6 +57,80 @@ describe("Pusat approval center", () => {
 
     const again = pusat.approval.decide(created.id, "approve", "reviewer@test");
     expect(again.duplicate || again.expired).toBe(true);
+  });
+
+  it("refuses AI self-approval and missing approver identity", () => {
+    const created = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Self approve",
+      input: { sku: "APPR-SELF" },
+    });
+    const self = pusat.approval.decide(created.id, "approve", "price_ai");
+    expect(self.rejected).toBe(true);
+    expect(self.code).toBe("ai_cannot_self_approve");
+    expect(self.approval.status).toBe("PENDING");
+
+    const missing = pusat.approval.decide(created.id, "approve", "");
+    expect(missing.rejected).toBe(true);
+    expect(missing.code).toBe("approver_identity_required");
+    expect(missing.approval.status).toBe("PENDING");
+
+    const human = pusat.approval.decide(created.id, "approve", "reviewer@test");
+    expect(human.approval.status).toBe("APPROVED");
+  });
+
+  it("rejects named AI actors as approvers without mutating the pending record", () => {
+    for (const actor of ["pusat", "guardian", "AI", "orchestrator", "esat_bey"]) {
+      const created = pusat.approval.requestApproval({
+        requestingAgent: "price_ai",
+        action: "prices.update",
+        reason: `Reject ${actor}`,
+        input: { sku: `APPR-${actor}` },
+      });
+      const decided = pusat.approval.decide(created.id, "approve", actor);
+      expect(decided.rejected).toBe(true);
+      expect(decided.code).toBe("ai_cannot_self_approve");
+      expect(decided.approval.status).toBe("PENDING");
+    }
+  });
+
+  it("consumes an approved token once and refuses replay without executing the live action", () => {
+    const created = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Consume once",
+      input: { sku: "APPR-CONSUME", price: 10 },
+    });
+    const approved = pusat.approval.decide(created.id, "approve", "reviewer@test");
+    const first = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
+      actor: "reviewer@test",
+      action: "prices.update",
+    });
+    expect(first.ok).toBe(true);
+    expect(first.executed).toBe(false);
+    expect(first.liveAction).toBe(false);
+    const second = pusat.approval.consumeForExecution(approved.approval.id, { sku: "APPR-CONSUME", price: 10 }, {
+      actor: "reviewer@test",
+      action: "prices.update",
+    });
+    expect(second.ok).toBe(false);
+    expect(second.code).toBe("already_executed");
+    expect(second.replay).toBe(true);
+
+    const mismatched = pusat.approval.requestApproval({
+      requestingAgent: "price_ai",
+      action: "prices.update",
+      reason: "Bound consume",
+      input: { sku: "APPR-BIND", price: 10 },
+    });
+    const bound = pusat.approval.decide(mismatched.id, "approve", "reviewer@test");
+    const wrong = pusat.approval.consumeForExecution(bound.approval.id, { sku: "APPR-BIND", price: 77 }, {
+      actor: "reviewer@test",
+      action: "prices.update",
+    });
+    expect(wrong.ok).toBe(false);
+    expect(wrong.code).toBe("input_changed");
   });
 
   it("cancels approval when material inputs change", () => {
@@ -105,7 +181,7 @@ describe("Pusat exceptions and retries", () => {
   });
 
   it("records structured exception details", () => {
-    const handled = pusat.exceptions.handleFailure(new Error("Permission denied for tool"), {
+    const handled = pusat.exceptions.handleFailure({ status: 403, code: "PUSAT_PERMISSION_DENIED" }, {
       taskId: "task_exc_perm",
       correlationId: "corr_perm",
       action: "prices.update",

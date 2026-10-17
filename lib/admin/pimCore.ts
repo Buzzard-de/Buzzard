@@ -23,7 +23,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!base) throw new Error("admin.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string; message?: string };
-  if (!res.ok) throw new Error(data.errorKey || data.message || "admin.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "admin.requestFailed");
   return data;
 }
 

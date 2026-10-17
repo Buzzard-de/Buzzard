@@ -84,7 +84,8 @@ function runSync({ dryRun = true } = {}) {
       }
       synced += 1;
     } catch (err) {
-      markError(p.id, err.message);
+      const { publicTaskError } = require("../security");
+      markError(p.id, publicTaskError(err, "storefront.sync_failed"));
     }
   }
 

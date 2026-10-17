@@ -16,6 +16,9 @@ const CARRIER_MAP = Object.freeze({
 const EVENT_MAP = Object.freeze({
   pickup: "IN_TRANSIT",
   in_transit: "IN_TRANSIT",
+  delayed: "DELAYED",
+  exception: "EXCEPTION",
+  timeout: "EXCEPTION",
   out_for_delivery: "OUT_FOR_DELIVERY",
   delivered: "DELIVERED",
   delivered_signed: "DELIVERED",
@@ -62,11 +65,13 @@ function mapCarrierEvent(input = {}) {
   const signatureEvent = raw === "delivered_signed";
   return {
     status: mapped,
+    eventId: input.eventId || input.id || null,
     deliveryEvent: mapped === "DELIVERED",
     signatureProof: signatureEvent,
     locationProof: false,
     gpsInvented: false,
     gps: null,
+    simulated: input.simulated === true,
     distinctProofs: {
       delivery: mapped === "DELIVERED",
       signature: signatureEvent,
@@ -75,8 +80,22 @@ function mapCarrierEvent(input = {}) {
   };
 }
 
+function pollCarrierTracking() {
+  return {
+    ok: false,
+    polled: false,
+    live: false,
+    liveGps: false,
+    gpsInvented: false,
+    reason: "CARRIER_POLL_BLOCKED",
+    note: "Polling a live carrier API is not executed from this workspace.",
+  };
+}
+
 module.exports = {
   CARRIER_MAP,
+  EVENT_MAP,
   verifyCarrierWebhook,
   mapCarrierEvent,
+  pollCarrierTracking,
 };

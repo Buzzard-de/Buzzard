@@ -26,7 +26,7 @@ function mapReadinessStatus(summary) {
 
   push("database", summary.database?.integrity?.status === "OK", summary.database?.integrity?.integrityCheck);
   push("persistence", summary.database?.persistence?.persistent === true, summary.database?.persistence?.mode);
-  push("environment", summary.environment?.ok === true, summary.environment?.errors?.[0]?.message || "ok");
+  push("environment", summary.environment?.ok === true, summary.environment?.errors?.[0]?.code || "ok");
   push("deployment", summary.deployment?.status === "SYNCED", summary.deployment?.status);
   push("redis", summary.redis?.ok !== false, summary.redis?.status);
   push("worker", summary.worker?.enabled && summary.worker?.status === "RUNNING", summary.worker?.status);
@@ -43,7 +43,12 @@ function mapReadinessStatus(summary) {
 module.exports = {
   register(app) {
     app.get("/api/health/version", (_req, res) => {
-      res.json({ success: true, ...productionHealth.getVersionPayload() });
+      const identity = productionHealth.getVersionPayload();
+      res.json({
+        success: true,
+        service: identity.service,
+        commit: identity.commit,
+      });
     });
 
     app.get("/api/health/worker", (_req, res) => {
@@ -61,7 +66,15 @@ module.exports = {
         delete persistence.renderDisk;
         database.persistence = persistence;
       }
-      res.json({ success: true, ...summary, database });
+      if (database.startup) {
+        const startup = { ...database.startup };
+        delete startup.dbPath;
+        delete startup.migration;
+        database.startup = startup;
+      }
+      const backup = summary.backup ? { ...summary.backup } : {};
+      delete backup.backupDir;
+      res.json({ success: true, ...summary, database, backup });
     });
 
     app.get("/api/health/go-live-readiness", async (_req, res) => {

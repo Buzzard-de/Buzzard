@@ -1,3 +1,6 @@
+const API_CORS_ALLOW_HEADERS =
+  "Content-Type,Accept,Authorization,X-Buzzard-CSRF-Token,X-Buzzard-Commerce-Session,X-Buzzard-Guest-Token,Idempotency-Key";
+
 const DEFAULT_ORIGINS = Object.freeze([
   "http://localhost:8000",
   "http://localhost:3000",
@@ -51,6 +54,7 @@ function isAllowedOrigin(origin) {
 }
 
 module.exports = {
+  API_CORS_ALLOW_HEADERS,
   DEFAULT_ORIGINS,
   getAllowedOrigins,
   isAllowedOrigin,

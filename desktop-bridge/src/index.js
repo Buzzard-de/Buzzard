@@ -58,7 +58,8 @@ async function main(argv) {
   try {
     address = await listenLoopback(server, { host, port: preferred });
   } catch (error) {
-    process.stderr.write(`Port conflict or bind failure: ${error.message}\n`);
+    const code = error && error.code === "EADDRINUSE" ? "BRIDGE_PORT_IN_USE" : "BRIDGE_LISTEN_FAILED";
+    process.stderr.write(`Desktop bridge listen failed (${code})\n`);
     process.stderr.write("Set BUZZARD_BRIDGE_PORT to a free loopback port.\n");
     throw error;
   }
@@ -82,7 +83,7 @@ async function main(argv) {
 
 if (require.main === module) {
   main(process.argv).catch((error) => {
-    process.stderr.write(`${error.message}\n`);
+    process.stderr.write(`Desktop bridge failed (${error && error.code ? error.code : "BRIDGE_ERROR"})\n`);
     process.exit(1);
   });
 }

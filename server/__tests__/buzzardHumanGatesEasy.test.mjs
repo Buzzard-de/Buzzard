@@ -238,4 +238,38 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(process.env.JWT_SECRET).toBe(snapshot.JWT_SECRET);
     expect(process.env.BUZZARD_SALES_ENABLED).toBe(snapshot.BUZZARD_SALES_ENABLED);
   });
+
+  it("item 214: deploy inspect is presence-only and trigger never calls a hook", () => {
+    const software = require("../lib/software");
+    const previousHook = process.env.RENDER_DEPLOY_HOOK_URL;
+    process.env.RENDER_DEPLOY_HOOK_URL = "https://example.invalid/deploy-hook";
+    try {
+      const seen = software.productionDeployGate.inspect();
+      expect(seen.deployHookPresent).toBe(true);
+      expect(seen.hookUrlIncluded).toBe(false);
+      expect(seen.secretsIncluded).toBe(false);
+      expect(seen.deployed).toBe(false);
+      expect(seen.hookCalled).toBe(false);
+
+      const ai = software.productionDeployGate.trigger({ actor: "esat", forceDeploy: true });
+      expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+      expect(ai.deployed).toBe(false);
+      expect(ai.httpAttempted).toBe(false);
+
+      const forced = software.productionDeployGate.trigger({
+        actor: "operator",
+        forceDeploy: true,
+        hookUrl: process.env.RENDER_DEPLOY_HOOK_URL,
+      });
+      expect(forced.reason).toBe("HUMAN_DEPLOY_REQUIRED");
+      expect(forced.forceDeployIgnored).toBe(true);
+      expect(forced.hookPresentIgnored).toBe(true);
+      expect(forced.hookCalled).toBe(false);
+      expect(forced.httpAttempted).toBe(false);
+      expect(forced.hookUrlIncluded).toBe(false);
+    } finally {
+      if (previousHook === undefined) delete process.env.RENDER_DEPLOY_HOOK_URL;
+      else process.env.RENDER_DEPLOY_HOOK_URL = previousHook;
+    }
+  });
 });

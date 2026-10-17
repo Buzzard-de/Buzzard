@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.11%** (Σ 18276 / 237 = 77.1139…; one decimal **77.1%**). Was **77.07%** (18266/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 684). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.16%** (Σ 18286 / 237 = 77.1561…; one decimal **77.2%**). Was **77.11%** (18276/237). This pass **+0.05 pp**. **%80 reached: NO** (need Σ 18960; shortfall 674). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -131,13 +131,14 @@ Mean established-scope completion: **77.11%** (Σ 18276 / 237 = 77.1139…; one 
 81. HUMAN item 155 local notification draft/send-blocked only (no live send). Mean **77.03%** (18256/237). Stays HUMAN_APPROVAL_REQUIRED. Item 165 unchanged.
 82. HUMAN item 73 local SoT refuse-only (no activation, no dual-write). Mean **77.07%** (18266/237). Stays HUMAN_APPROVAL_REQUIRED.
 83. HUMAN item 213 local production-config refuse (no env write). Mean **77.11%** (18276/237). Stays HUMAN_APPROVAL_REQUIRED.
+84. HUMAN item 214 local deploy refuse (no hook call). Mean **77.16%** (18286/237). Stays HUMAN_APPROVAL_REQUIRED.
 
 ## Resume pointer
 
-Human-gate local pass 6 (2026-10-17): item **213**. No production env change. **213** 30→**40**: `productionConfigGate.inspect` is presence-only (no secret values); `apply` refuses AI and forceApply; `process.env` unchanged. Status **HUMAN_APPROVAL_REQUIRED**. Items **214/226** unchanged (no deploy/merge). Mean **77.11%** (18276/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 7 (2026-10-17): item **214**. No production deploy. **214** 40→**50**: `productionDeployGate.inspect` is presence-only (hook URL not returned); `trigger` refuses AI and forceDeploy; `httpAttempted: false`. Status **HUMAN_APPROVAL_REQUIRED**. Item **226** unchanged (no merge). Mean **77.16%** (18286/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. Remaining HUMAN (easiest remaining after 213): **214** deploy prep refuse — do not deploy; then **219** go-live
+1. Remaining HUMAN (easiest remaining after 214): **219** go-live refuse — do not approve go-live
 2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
 3. Human/production: **221** DNS, **225** first order, **226** merge — do not self-approve
 4. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
@@ -5717,8 +5718,8 @@ Next:
 | Established scope | Deployment preparation |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Scripts exist; no deploy |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | start-production, render |
-| Identified gaps | No deploy this session |
+| Existing implementation evidence | start-production scripts; software/productionDeployGate.js never calls RENDER_DEPLOY_HOOK_URL |
+| Identified gaps | Live production deploy still HUMAN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | start-production, render |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -5729,10 +5730,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | No deploy this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Completion percentage | 50% (local inspect/refuse; live deploy remaining) |
+| Remaining work | Independent human must deploy — this agent must not |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 215
 

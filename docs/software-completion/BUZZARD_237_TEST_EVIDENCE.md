@@ -343,3 +343,13 @@ Single Pusat. Remote memory, inter-agent bus, remote Guardian, SIEM export, and 
 | architectureSecuritySoftware + pusatApprovalExceptions + pusatMemoryGuardian | 0 | 3 files, **19 passed** |
 
 Items **1–17**, **19**, **35–46**, **48–53**, **55**, **168–181** established-scope **100** PARTIAL. **18**, **47**, **54**, **182**, **227–237** already 100. Not VERIFIED_100. Mean **91.16%** (21605/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-17 Product and catalog infrastructure software (items 56–74)
+
+Exact sku/ean match only. Live import, OpenSearch, catalog confirm, and invented prices/images stay blocked. Shop taxonomy 53 / customer-facing 50 / legacy 48. SoT stays off. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| catalogIntegritySoftware + buzzardHumanGatesEasy | 0 | 2 files, **19 passed** |
+
+Items **56–66**, **68–72**, **74** established-scope **100** PARTIAL. **67** 52→100 stays HUMAN_APPROVAL_REQUIRED. **73** 60→100 stays HUMAN_APPROVAL_REQUIRED. Not VERIFIED_100. Mean **93.07%** (22057/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

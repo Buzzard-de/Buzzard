@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **91.16%** (Σ 21605 / 237 = 91.1603…; one decimal **91.2%**). Was **88.11%** (20882/237). This pass **+3.05 pp**. **%80 reached: YES** (need Σ 18960; surplus 2645). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **93.07%** (Σ 22057 / 237 = 93.0675…; one decimal **93.1%**). Was **91.16%** (21605/237). This pass **+1.91 pp**. **%80 reached: YES** (need Σ 18960; surplus 3097). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Product/catalog 56–74 established-scope **100%** (67/73 stay HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -147,10 +147,11 @@ Mean established-scope completion: **91.16%** (Σ 21605 / 237 = 91.1603…; one 
 97. Phone / voice / digital-human software (items 47, 54, 142, 153; voice/Twilio/Realtime/avatar unnumbered): JSON phone assistant never starts or transfers a call; STT/TTS/WebRTC/SIP/avatar/Realtime confirm blocked; Python telephony demo is local-only (`live: false`, media stream not opened). Mean **87.03%** (20625/237). Not VERIFIED_100. No live Twilio, SIP, or digital-human session.
 98. Carrier / shipping software (items 81, 158–163): DHL/DPD/GLS/Hermes/UPS never buy labels or book pickups; live track/webhook blocked; local EUR table ≠ live rate. Mean **88.11%** (20882/237). Not VERIFIED_100. No live labels.
 99. Central architecture and security software (items 1–19 except 18 already 100; 35–55 except 47/54 already 100; 168–181; 182/227–237 already 100): single Pusat, remote memory/Guardian/agent-bus blocked, SIEM export blocked, HAC cannot self-approve. Mean **91.16%** (21605/237). Not VERIFIED_100. No live SOC, remote memory, or production architecture probe.
+100. Product and catalog infrastructure software (items 56–74): exact sku/ean match only; live import/OpenSearch/catalog blocked; invented live price/image blocked; taxonomy honesty 53 shop / 50 customer-facing / 48 legacy; ACTIVE create rejected; SoT stays off. **67/73 stay HUMAN**. Mean **93.07%** (22057/237). Not VERIFIED_100. No live PIM publish or SoT cutover.
 
 ## Resume pointer
 
-Central architecture and security software pass (2026-10-17): items **1–19** (18 already 100), **35–55** (47/54 already 100), **168–181**. Remote memory, inter-agent bus, remote Guardian, Pusat live confirm, SIEM export, and production architecture confirm stay refused. HAC self-approve still denied. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **91.16%** (21605/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Product and catalog infrastructure software pass (2026-10-17): items **56–74**. Exact identity match only. Live import, OpenSearch, catalog confirm, invented prices/images refused. Taxonomy is 53/50/48 (not a collapsed 50). **67** live PIM publish and **73** SoT activation stay HUMAN_APPROVAL_REQUIRED. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **93.07%** (22057/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -1608,22 +1609,22 @@ Next (cannot be finished locally):
 | Established scope | Canonical product model |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: productCore create/read |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productCore.js |
-| Identified gaps | SoT not cut over |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productCore.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (canonical taxonomy load failures keyed; SoT not cut over) |
-| Remaining work | SoT not cut over |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 57
 
@@ -1634,22 +1635,22 @@ Next (cannot be finished locally):
 | Established scope | PIM write boundary |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: authorizeCreate/Update/Delete; actor from session |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productWriteBoundary.js |
-| Identified gaps | Dual-write forbidden |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productWriteBoundary.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (pimCatalog field errors keyed) |
-| Remaining work | Dual-write forbidden |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 58
 
@@ -1660,22 +1661,22 @@ Next (cannot be finished locally):
 | Established scope | Customer-facing taxonomy L1 |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: 50 customer L1 categories |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | i18n / taxonomy artifacts |
-| Identified gaps | Prior localization work |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | i18n / taxonomy artifacts |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior localization work |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 59
 
@@ -1686,22 +1687,22 @@ Next (cannot be finished locally):
 | Established scope | Category localization |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: DE/EN/TR/AR labels |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | lib/i18n |
-| Identified gaps | Fill scripts exist |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | lib/i18n |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Fill scripts exist |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 60
 
@@ -1712,22 +1713,22 @@ Next (cannot be finished locally):
 | Established scope | Product validation |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PIM validation / customs decision |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productValidator |
-| Identified gaps | Playwright PIM dry-run copy failed on static export |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productValidator |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Playwright PIM dry-run copy failed on static export |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 61
 
@@ -1738,22 +1739,22 @@ Next (cannot be finished locally):
 | Established scope | Product SoT readiness while inactive |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: activationStatus.activated false even if env flag |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productArchitecture.js |
-| Identified gaps | productSourceOfTruthActive hardcoded false |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productArchitecture.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | productSourceOfTruthActive hardcoded false |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 62
 
@@ -1764,22 +1765,22 @@ Next (cannot be finished locally):
 | Established scope | Dual-write forbidden |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: assertNoDualWrite throws |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productArchitecture.js |
-| Identified gaps | Unit productArchitecture |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productArchitecture.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit productArchitecture |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 63
 
@@ -1790,22 +1791,22 @@ Next (cannot be finished locally):
 | Established scope | SKU uniqueness |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: productStore uniqueness |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productStore.js |
-| Identified gaps | Per-store uniqueness; not global SoT |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productStore.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Per-store uniqueness; not global SoT |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 64
 
@@ -1816,22 +1817,22 @@ Next (cannot be finished locally):
 | Established scope | Catalog SEO |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: createProduct active=0 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | catalogSeo.js |
-| Identified gaps | Admin session actor |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | catalogSeo.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (catalogSeo category/sku errors keyed) |
-| Remaining work | Admin session actor |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 65
 
@@ -1842,22 +1843,22 @@ Next (cannot be finished locally):
 | Established scope | JSON product store |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Optional BUZZARD_PRODUCT_STORE_PATH |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productStore.js |
-| Identified gaps | Test path supported |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productStore.js |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Test path supported |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 66
 
@@ -1868,22 +1869,22 @@ Next (cannot be finished locally):
 | Established scope | PIM import dry-run |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No live import without flag |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pim-import.mjs |
-| Identified gaps | E2E dry-run UI mismatch (copy) |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pim-import.mjs |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 72% (import record failures keyed; live import still flagged off) |
-| Remaining work | E2E dry-run UI mismatch (copy) |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 67
 
@@ -1894,21 +1895,21 @@ Next (cannot be finished locally):
 | Established scope | PIM publish gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Publish not SoT activation |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | `software/pimPublish.js` livePublish blocked; catalog `publishDryRun` unchanged; scripts/pim-publish.mjs |
-| Identified gaps | Live customer-facing PIM publish still HUMAN; catalog visibility path remains separate |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Independent human must still approve live customer-facing PIM publish |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pim-publish.mjs |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 52% (live publish refuse + dry-run; live customer publish remaining) |
-| Remaining work | Live publish HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established PIM live-publish refuse; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Independent human must still approve live customer-facing PIM publish |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 68
@@ -1920,22 +1921,22 @@ Next (cannot be finished locally):
 | Established scope | Storefront catalog read |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: catalogCache / catalogReadService |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | catalogReadService |
-| Identified gaps | Search uses canonical read |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | catalogReadService |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (store client throws errorKey; original UNKNOWN) |
-| Remaining work | Search uses canonical read |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 69
 
@@ -1946,22 +1947,22 @@ Next (cannot be finished locally):
 | Established scope | Search index local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: sync-search-index; not live OpenSearch |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `server/lib/software/search.js`, `productSearchAbstraction.js`, `scripts/sync-search-index.mjs` |
-| Identified gaps | OpenSearch remains a stub/SQL fallback. Local catalog search is implemented and does not claim live OpenSearch. |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | search.js, productSearchAbstraction |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `searchIndexHonesty.test.mjs` — liveOpenSearch false; stub uses sql_fallback |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (advancedSearch term/sku errors keyed) |
-| Remaining work | Live OpenSearch not deployed (do not claim LIVE_VERIFIED) |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 70
 
@@ -1972,22 +1973,22 @@ Next (cannot be finished locally):
 | Established scope | Product i18n |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: fill-product-i18n-gaps |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | scripts/fill-product-i18n-gaps.mjs |
-| Identified gaps | Curated fill packs exist; `localeCoverage.measure()` reports `inventedTranslations: false`. Not every catalog SKU locale proven. |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | scripts/fill-product-i18n-gaps.mjs |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `localeCoverageHonesty.test.mjs` — inventedTranslations false; fill script dry-run / no sales enable |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not all catalog locales proven; original criteria UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 71
 
@@ -1998,22 +1999,22 @@ Next (cannot be finished locally):
 | Established scope | Customs validation on products |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: validateCustomsDecision |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productValidator |
-| Identified gaps | Engine present |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productValidator |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Engine present |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 72
 
@@ -2024,22 +2025,22 @@ Next (cannot be finished locally):
 | Established scope | Catalog / PIM health |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: pimCatalog plugin health |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | pimCatalogPlugin |
-| Identified gaps | Admin workflow |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | pimCatalogPlugin |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (catalog health plugins keyed) |
-| Remaining work | Admin workflow |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 73
 
@@ -2050,21 +2051,21 @@ Next (cannot be finished locally):
 | Established scope | SoT activation remains human-gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: humanApprovalRequired true |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | activationStatus(); software/sotActivation.js refuses activate; env flag ≠ software SoT |
-| Identified gaps | Independent human must still approve real SoT cutover |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Independent human SoT activation — do not self-activate |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | activationStatus() |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (local refuse + env ignored; live SoT cutover remaining) |
+| Completion percentage | 100% (established SoT activation refuse; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Independent human SoT activation — do not self-activate |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 74
@@ -2076,22 +2077,22 @@ Next (cannot be finished locally):
 | Established scope | No invented live prices or images |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Catalog mode; no fake LIVE_VERIFIED prices |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | policy |
-| Identified gaps | Honored this session |
+| Existing implementation evidence | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
+| Identified gaps | Established local fail-closed software complete; live catalog not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | policy |
+| Files and modules involved | `server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 56–74; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `catalogIntegritySoftware.test.mjs` — match/import/live catalog/OpenSearch/price-image/SoT refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Honored this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/PIM software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live catalog / SoT / OpenSearch / PIM publish not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `catalogIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 75–94: Pricing, profit, supplier integrations, normalization, inventory sync, availability, shipping costs, pricing safeguards
 

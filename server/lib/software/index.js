@@ -49,6 +49,7 @@ const qrLoyalty = require("./qrLoyalty");
 const gatedActions = require("./gatedActions");
 const pimPublish = require("./pimPublish");
 const sotActivation = require("./sotActivation");
+const catalogIntegrity = require("./catalogIntegrity");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
@@ -118,6 +119,7 @@ module.exports = {
   gatedActions,
   pimPublish,
   sotActivation,
+  catalogIntegrity,
   productionConfigGate,
   productionDeployGate,
   goLiveGate,

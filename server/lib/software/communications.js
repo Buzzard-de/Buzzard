@@ -62,10 +62,23 @@ function detectLocale(input = {}) {
   return "de";
 }
 
+const MESSAGE_AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
 function draft(db, input = {}) {
   const body = String(input.message || input.body || "").trim();
   if (!body) {
     return { ok: false, status: MESSAGE_STATUS.FAILED, sent: false, reason: "MESSAGE_REQUIRED" };
+  }
+  if (input.providerMessageId || input.vendorMessageId || input.messageId) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      inventedProviderId: false,
+      reason: "PROVIDER_MESSAGE_ID_REJECTED",
+      note: "A caller-supplied provider message id is not accepted. Item 155.",
+    };
   }
   const channel = input.channel || "email";
   if (!channelAllowed(channel)) {
@@ -180,6 +193,43 @@ function markSentOrDelivered() {
   };
 }
 
+function approveSend(input = {}) {
+  const actor = String(input.actor || input.approver || "").trim().toLowerCase();
+  if (MESSAGE_AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      executed: false,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+    };
+  }
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    executed: false,
+    reason: "HUMAN_SEND_REQUIRED",
+    note: "Approval is recorded as required. No customer message is sent. Item 155.",
+  };
+}
+
+function recordProviderAccepted() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    providerAccepted: false,
+    live: false,
+    status: MESSAGE_STATUS.BLOCKED,
+    reason: "PROVIDER_ACCEPT_BLOCKED",
+    note: "PROVIDER_ACCEPTED is not written locally. Item 155.",
+  };
+}
+
 function sendPrepared(db, draftId, options = {}) {
   const row = db?.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId);
   const result = customerSend({
@@ -198,6 +248,8 @@ function sendPrepared(db, draftId, options = {}) {
     deliveryUnknown: false,
     live: false,
     blocked: true,
+    inventedProviderId: false,
+    providerMessageIdIgnored: Boolean(options.providerMessageId || options.messageId),
     forceSendIgnored: options.forceSend === true,
     consentDoesNotSend: options.consentGranted === true,
     reason: result.reason,
@@ -238,6 +290,8 @@ module.exports = {
   draft,
   queue,
   sendPrepared,
+  approveSend,
+  recordProviderAccepted,
   consentGate,
   humanHandoff,
   markSentOrDelivered,

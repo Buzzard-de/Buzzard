@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **76.99%** (Σ 18247 / 237 = 76.9915…; one decimal **77.0%**). Was **76.95%** (18238/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 713). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.03%** (Σ 18256 / 237 = 77.0295…; one decimal **77.0%**). Was **76.99%** (18247/237). This pass **+0.04 pp**. **%80 reached: NO** (need Σ 18960; shortfall 704). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -128,13 +128,14 @@ Mean established-scope completion: **76.99%** (Σ 18247 / 237 = 76.9915…; one 
 78. Easiest remaining HUMAN items 165/182 local gates only (no live send or high-impact execute). Mean **76.87%** (18218/237). Both stay HUMAN_APPROVAL_REQUIRED.
 79. Next HUMAN items 67/129 local refuse-only (no catalog mutation from software.pimPublish; no listing write). Mean **76.95%** (18238/237). Both stay HUMAN_APPROVAL_REQUIRED.
 80. HUMAN item 115 local listing model only (no live listing). Mean **76.99%** (18247/237). Stays HUMAN_APPROVAL_REQUIRED.
+81. HUMAN item 155 local notification draft/send-blocked only (no live send). Mean **77.03%** (18256/237). Stays HUMAN_APPROVAL_REQUIRED. Item 165 unchanged.
 
 ## Resume pointer
 
-Human-gate local pass 3 (2026-10-17): item **115**. No live marketplace listing. **115** 55→**64**: caller-supplied vendor listing ids rejected; unpublished category map ignores vendor ids; `activateDraft` stays `LISTING_ACTIVATE_BLOCKED`. Status **HUMAN_APPROVAL_REQUIRED**. Item **129** unchanged (58%). Mean **76.99%** (18247/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 4 (2026-10-17): item **155**. No live customer send. **155** 55→**64**: provider message ids rejected; `approveSend` self-approve denied and still does not send; `recordProviderAccepted` blocked. Status **HUMAN_APPROVAL_REQUIRED**. Item **165** unchanged (60%). Mean **77.03%** (18256/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. Remaining HUMAN (easiest remaining after 115): **155** (paired with already-gated 165), then **73** SoT — do not self-approve
+1. Remaining HUMAN (easiest remaining after 155): **73** SoT — do not self-activate
 2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
 3. Human/production: **220** disk, **217** monitoring, then 213/214/219/221/225/226 — do not self-approve
 4. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
@@ -4173,8 +4174,8 @@ Next:
 | Established scope | Notifications draft / send blocked |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: communications.js send BLOCKED |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | software/communications.sendPrepared BLOCKED; notificationHub external channels BLOCKED (not PENDING); notificationHub.test.mjs
-| Identified gaps | Draft + send-blocked implemented; live customer send still requires human approval and provider config
+| Existing implementation evidence | software/communications.sendPrepared BLOCKED; provider message ids rejected; approveSend refuse; recordProviderAccepted blocked; notificationHub external channels BLOCKED
+| Identified gaps | Draft + send-blocked implemented; live customer send still requires independent human approval and provider config
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/communications.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -4185,10 +4186,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
-| Remaining work | Do not send customer messages until authorized; alerting backend still external (item 185)
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Completion percentage | 64% (draft/send-blocked + provider-id refuse + approveSend refuse; live send remaining)
+| Remaining work | Live customer send HUMAN; alerting backend still external (item 185)
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 156
 

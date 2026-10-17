@@ -133,4 +133,45 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
     expect(adapterActivate.reason).toBe("LISTING_ACTIVATE_BLOCKED");
     expect(adapterActivate.live).toBe(false);
   });
+
+  it("item 155: notifications stay drafted; provider ids and approve do not send", () => {
+    const software = require("../lib/software");
+    const db = memoryDb();
+    const rejected = software.communications.draft(db, {
+      channel: "email",
+      message: "Where is my order?",
+      providerMessageId: "smtp-live-1",
+    });
+    expect(rejected.ok).toBe(false);
+    expect(rejected.reason).toBe("PROVIDER_MESSAGE_ID_REJECTED");
+    expect(rejected.sent).toBe(false);
+    expect(rejected.live).toBe(false);
+
+    const drafted = software.communications.draft(db, {
+      channel: "email",
+      message: "Where is my order?",
+    });
+    expect(drafted.ok).toBe(true);
+    expect(drafted.sent).toBe(false);
+    const sent = software.communications.sendPrepared(db, drafted.draft.id, {
+      providerMessageId: "smtp-live-1",
+    });
+    expect(sent.sent).toBe(false);
+    expect(sent.providerAccepted).toBe(false);
+    expect(sent.providerMessageIdIgnored).toBe(true);
+    expect(sent.blocked).toBe(true);
+
+    const ai = software.communications.approveSend({ actor: "orchestrator" });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.sent).toBe(false);
+    const human = software.communications.approveSend({ actor: "operator" });
+    expect(human.reason).toBe("HUMAN_SEND_REQUIRED");
+    expect(human.executed).toBe(false);
+    expect(human.live).toBe(false);
+
+    const accepted = software.communications.recordProviderAccepted();
+    expect(accepted.reason).toBe("PROVIDER_ACCEPT_BLOCKED");
+    expect(accepted.providerAccepted).toBe(false);
+    db.close();
+  });
 });

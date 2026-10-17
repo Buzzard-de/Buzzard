@@ -111,8 +111,28 @@ function assertRestoreAllowed({ sourcePath, targetPath }) {
   return plan;
 }
 
+function executeRestore(input = {}) {
+  const plan = reviewRestorePlan({
+    sourcePath: input.sourcePath,
+    targetPath: input.targetPath,
+    environment: input.environment,
+  });
+  return {
+    ok: false,
+    executed: false,
+    autoRestore: false,
+    live: false,
+    restored: false,
+    allowed: false,
+    planAllowedIgnored: plan.allowed === true,
+    reason: "RESTORE_EXECUTE_BLOCKED",
+    note: "VALIDATE/REVIEW may pass. Explicit restore is not executed from software.",
+  };
+}
+
 module.exports = {
   validateBackupFile,
   reviewRestorePlan,
   assertRestoreAllowed,
+  executeRestore,
 };

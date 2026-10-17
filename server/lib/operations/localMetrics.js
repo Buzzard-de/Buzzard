@@ -32,7 +32,30 @@ async function collectLocalMetrics() {
   return getLocalMetricsSnapshot(operational);
 }
 
+function exportPrometheus() {
+  return {
+    ok: false,
+    prometheus: false,
+    liveExporter: false,
+    scraped: false,
+    reason: "PROMETHEUS_EXPORT_BLOCKED",
+    note: "Local counters are not a Prometheus scrape endpoint.",
+  };
+}
+
+function scrapeRemote() {
+  return {
+    ok: false,
+    scraped: false,
+    live: false,
+    httpAttempted: false,
+    reason: "REMOTE_SCRAPE_BLOCKED",
+  };
+}
+
 module.exports = {
   getLocalMetricsSnapshot,
   collectLocalMetrics,
+  exportPrometheus,
+  scrapeRemote,
 };

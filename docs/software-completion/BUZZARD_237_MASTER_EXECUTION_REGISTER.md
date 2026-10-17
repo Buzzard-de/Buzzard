@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **81.92%** (Σ 19414 / 237 = 81.9156…; one decimal **81.9%**). Was **78.55%** (18616/237). This pass **+3.37 pp**. **%80 reached: YES** (need Σ 18960; surplus 454). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This 80% is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **86.68%** (Σ 20543 / 237 = 86.6793…; one decimal **86.7%**). Was **81.92%** (19414/237). This pass **+4.76 pp**. **%80 reached: YES** (need Σ 18960; surplus 1583). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -143,10 +143,11 @@ Mean established-scope completion: **81.92%** (Σ 19414 / 237 = 81.9156…; one 
 93. GPS / phone software (items 152/154/167 + voice fail-closed): scan tracking, schedule ETA, simulated map only; live GPS ingest/confirm blocked; Twilio start/inbound blocked. Mean **78.02%** (18490/237). PARTIAL, not VERIFIED_100. No live GPS or calls.
 94. Alert / notification delivery software (items 155/165/185): local queue + draft only; SMTP env ≠ send; inbound delivery webhooks blocked; alert dispatch/confirm blocked. **155/165 stay HUMAN**. **185 stays BLOCKED_EXTERNAL**. Mean **78.55%** (18616/237). Not VERIFIED_100. No live email/pager.
 95. International market / locale / VAT / marketplace software (items 91, 114–135; 136 already 100): unknown VAT not DE-default; FX not invented; locale≠market; classification-only channels unpublished; feed push blocked. **115/129 stay HUMAN**. Mean **81.92%** (19414/237). Established-scope 80% reached. Not VERIFIED_100. No live listings.
+96. Security / monitoring / backup / production infrastructure software (items 18, 182, 184, 186–195 except 185, 211, 213–216, 218–219, 221–237; 185/217/220 already 100): restore execute blocked even with `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`; Prometheus export/scrape blocked; secret vault write blocked; monitoring live/dispatch blocked. **182/213/214/219/221/225/226 stay HUMAN**. **185 stays EXTERNAL**. Mean **86.68%** (20543/237). Not VERIFIED_100. No live restore, deploy, DNS, merge, or pager.
 
 ## Resume pointer
 
-International market / locale / VAT / marketplace software pass (2026-10-17): items **91**, **114–135**. 35-market registry, unknown VAT fail-closed, locale independent of market, marketplace classify/publish/feed refuse. **115** and **129** stay HUMAN_APPROVAL_REQUIRED. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **81.92%** (19414/237). LIVE_VERIFIED **0**. Do not merge #431.
+Security / monitoring / backup / production infrastructure software pass (2026-10-17): items **18**, **182**, **184**, **186–195** (185 already 100 EXTERNAL), **211**, **213–216**, **218–219**, **221–237**. Restore never overwrites a database. Metrics never export Prometheus. Secrets never write. Production config/deploy/go-live/DNS/first-order/merge stay refuse. **HUMAN still 13**. **EXTERNAL still 87, 88, 185**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **86.68%** (20543/237). LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -518,7 +519,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (password-reset tokens stripped from HTTP JSON; production secret audit UNKNOWN)
+| Completion percentage | 99% (password-reset tokens stripped from HTTP JSON; production secret audit UNKNOWN) |
 | Remaining work | Production secret audit UNKNOWN; live reports not observed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -570,7 +571,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (cart.empty/inventory.insufficient keyed; guest proof still local)
+| Completion percentage | 92% (cart.empty/inventory.insufficient keyed; guest proof still local) |
 | Remaining work | guestCommerceAccess unit passed |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -618,14 +619,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (getDatabaseHealth has no path; production persistence UNKNOWN) |
-| Remaining work | Local SQLite path known; production persistence UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established durable-path fail-closed software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production persistence UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 19
 
@@ -728,7 +729,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (cartCheckout remaining English keyed)
+| Completion percentage | 93% (cartCheckout remaining English keyed) |
 | Remaining work | Writes require bound session |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -754,7 +755,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (checkout session errors keyed)
+| Completion percentage | 93% (checkout session errors keyed) |
 | Remaining work | Commercial checkout blocked while sales off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -780,7 +781,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (OMS English errors replaced with order.* keys)
+| Completion percentage | 91% (OMS English errors replaced with order.* keys) |
 | Remaining work | Unit + E2E blocked commercial path |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -806,7 +807,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (PIM catalog brand/variant errors keyed)
+| Completion percentage | 90% (PIM catalog brand/variant errors keyed) |
 | Remaining work | Multiple stores still classified; SoT off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -884,7 +885,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (UNIQUE vs CHECK kinds; public keys hide constraint text; original UNKNOWN)
+| Completion percentage | 94% (UNIQUE vs CHECK kinds; public keys hide constraint text; original UNKNOWN) |
 | Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -988,7 +989,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (taxonomy/menu plugins use errorKey)
+| Completion percentage | 93% (taxonomy/menu plugins use errorKey) |
 | Remaining work | Unregistered paths 404 |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1014,7 +1015,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (salesDisabledResponse is errorKey only)
+| Completion percentage | 92% (salesDisabledResponse is errorKey only) |
 | Remaining work | isSalesEnabled === false in workspace |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1040,7 +1041,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (continuousIntegrity251 + write-boundary keys)
+| Completion percentage | 86% (continuousIntegrity251 + write-boundary keys) |
 | Remaining work | 927 passed historically; re-run this session focused |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1642,7 +1643,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (pimCatalog field errors keyed)
+| Completion percentage | 91% (pimCatalog field errors keyed) |
 | Remaining work | Dual-write forbidden |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1824,7 +1825,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (catalogSeo category/sku errors keyed)
+| Completion percentage | 76% (catalogSeo category/sku errors keyed) |
 | Remaining work | Admin session actor |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -1954,7 +1955,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (advancedSearch term/sku errors keyed)
+| Completion percentage | 80% (advancedSearch term/sku errors keyed) |
 | Remaining work | Live OpenSearch not deployed (do not claim LIVE_VERIFIED) |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2032,7 +2033,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (catalog health plugins keyed)
+| Completion percentage | 80% (catalog health plugins keyed) |
 | Remaining work | Admin workflow |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2164,7 +2165,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (supplierHub error strings keyed)
+| Completion percentage | 80% (supplierHub error strings keyed) |
 | Remaining work | Many NOT_IMPLEMENTED live |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2216,7 +2217,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (WMS inventory errors keyed)
+| Completion percentage | 80% (WMS inventory errors keyed) |
 | Remaining work | Local tables; live supplier sync BLOCKED |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2268,7 +2269,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (local EUR table + env key does not enable live rates; carrier APIs remaining)
+| Completion percentage | 78% (local EUR table + env key does not enable live rates; carrier APIs remaining) |
 | Remaining work | Live rate APIs remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -2372,7 +2373,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (wmsInventory public errors keyed)
+| Completion percentage | 84% (wmsInventory public errors keyed) |
 | Remaining work | Live supplier stock still BLOCKED_EXTERNAL |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2398,7 +2399,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (WMS insufficient stock no SKU echo)
+| Completion percentage | 75% (WMS insufficient stock no SKU echo) |
 | Remaining work | Do not unify reservation authority; live WMS UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2528,7 +2529,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established market quote fail-closed; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established market quote fail-closed; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live fiscal / FX UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -2634,7 +2635,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (cartCheckout notFound/invalid keyed)
+| Completion percentage | 93% (cartCheckout notFound/invalid keyed) |
 | Remaining work | assertCartAccess |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2660,7 +2661,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (checkout notFound keyed)
+| Completion percentage | 88% (checkout notFound keyed) |
 | Remaining work | Commercial blocked |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2686,7 +2687,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (orderManagement English replaced with keys)
+| Completion percentage | 86% (orderManagement English replaced with keys) |
 | Remaining work | Guest token stripped |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2712,7 +2713,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (paymentsFinance errors keyed; live Stripe UNKNOWN)
+| Completion percentage | 70% (paymentsFinance errors keyed; live Stripe UNKNOWN) |
 | Remaining work | LIVE_VERIFIED false; sandbox UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2738,7 +2739,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (paymentsFinance errors keyed; live PayPal UNKNOWN)
+| Completion percentage | 70% (paymentsFinance errors keyed; live PayPal UNKNOWN) |
 | Remaining work | LIVE_VERIFIED false |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2764,7 +2765,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (payment intent errors keyed; live dual UNKNOWN)
+| Completion percentage | 74% (payment intent errors keyed; live dual UNKNOWN) |
 | Remaining work | providerDiagnostics now effective flags |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2790,7 +2791,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (payment confirm blocked is a key)
+| Completion percentage | 88% (payment confirm blocked is a key) |
 | Remaining work | fortressAuthz |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2816,7 +2817,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (refund blocked is a key)
+| Completion percentage | 88% (refund blocked is a key) |
 | Remaining work | fortressAuthz |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2842,7 +2843,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (returnsRma English replaced with rma.* keys)
+| Completion percentage | 91% (returnsRma English replaced with rma.* keys) |
 | Remaining work | Ledger wrap; live refund UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2894,7 +2895,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 87% (payment unique events classified; non-unique sqlite rethrow is keyed)
+| Completion percentage | 87% (payment unique events classified; non-unique sqlite rethrow is keyed) |
 | Remaining work | Timeout policy; live payments off |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -2998,7 +2999,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (webhook 501 errorKey only; no adapter hint leak)
+| Completion percentage | 88% (webhook 501 errorKey only; no adapter hint leak) |
 | Remaining work | Live provider verification not authorized |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3076,7 +3077,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 77% (loyalty/campaign errors keyed)
+| Completion percentage | 77% (loyalty/campaign errors keyed) |
 | Remaining work | Abuse paths not fully re-audited |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3130,7 +3131,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established marketplace classify + unpublished transform; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established marketplace classify + unpublished transform; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live marketplace adapters UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3156,7 +3157,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established draft/activate refuse software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established draft/activate refuse software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live listing HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
@@ -3182,7 +3183,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established 35-market registry software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established 35-market registry software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live market operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3208,7 +3209,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established VAT unknown/no-DE-default software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established VAT unknown/no-DE-default software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Fiscal LIVE UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3234,7 +3235,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established locale catalog coverage without invented copy; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established locale catalog coverage without invented copy; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production locale QA UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3260,7 +3261,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established multilingual resolve/fallback software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established multilingual resolve/fallback software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Visual storefront re-run UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3286,7 +3287,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established expansion registry software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established expansion registry software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live operations UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3312,7 +3313,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established live-publish-off flags software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established live-publish-off flags software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live listings HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3338,7 +3339,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established amazon/ebay unpublished classify; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established amazon/ebay unpublished classify; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | LIVE_VERIFIED remaining |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3364,7 +3365,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3390,7 +3391,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3416,7 +3417,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3442,7 +3443,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3468,7 +3469,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established classification-only marketplace software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Vendor API contract undocumented; live adapter and credentials remain out of scope until authorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3494,7 +3495,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established canonical channel list software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established canonical channel list software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Listing table vs classification still two stores; no live channel mapping
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-14
@@ -3520,7 +3521,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established approvePublish refuse software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established approvePublish refuse software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Authorized human must approve the exact listing payload; this agent must not approve it
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14
@@ -3546,7 +3547,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established RTL flag + no invented RTL copy; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established RTL flag + no invented RTL copy; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Visual RTL QA UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3572,7 +3573,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established locale≠market bind refuse rewrite; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established locale≠market bind refuse rewrite; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Storefront visual UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3598,7 +3599,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established market registry vitest software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established market registry vitest software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production market probe UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3624,7 +3625,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established per-market currency + FX refuse; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established per-market currency + FX refuse; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live FX UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3650,7 +3651,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established legal copy not invented; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established legal copy not invented; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Per-market legal crawl UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3676,7 +3677,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established feed dry-run + live push blocked; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established feed dry-run + live push blocked; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live marketplace upload UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `internationalMarketSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -3756,7 +3757,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Original mega-menu acceptance UNKNOWN; production UI not probed
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -3990,7 +3991,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production E2E UNKNOWN; 12 skipped remain project filters
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `playwright.config.ts` |
 | Final state and date | PARTIAL / 2026-10-17
@@ -4122,7 +4123,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established shipment-model GPS refuse; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established shipment-model GPS refuse; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Authorized telematics / live carrier UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -4148,7 +4149,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (customerSupport/CRM ticket errors keyed)
+| Completion percentage | 80% (customerSupport/CRM ticket errors keyed) |
 | Remaining work | Implemented/tested historically |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4174,7 +4175,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established scan/synthetic tracking software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established scan/synthetic tracking software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Authorized carrier telematics/GPS feed UNKNOWN; live map provider not configured |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -4200,7 +4201,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established draft/send-blocked software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established draft/send-blocked software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live customer send HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
@@ -4226,7 +4227,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (reset tokens stored as SHA-256 hashes; confirm still works; original UNKNOWN)
+| Completion percentage | 96% (reset tokens stored as SHA-256 hashes; confirm still works; original UNKNOWN) |
 | Remaining work | Rate limit 8/15min |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4252,7 +4253,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (RMA refund/exchange keys)
+| Completion percentage | 90% (RMA refund/exchange keys) |
 | Remaining work | Live refund/credit UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4278,7 +4279,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4304,7 +4305,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4330,7 +4331,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4356,7 +4357,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4382,7 +4383,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 55% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Live carrier credentials and label purchase remain unauthorized
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4408,7 +4409,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Do not purchase labels without human authorization
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4434,7 +4435,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (v32–v40 record.* keys)
+| Completion percentage | 85% (v32–v40 record.* keys) |
 | Remaining work | System events recorded |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4460,7 +4461,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established send-blocked communications software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established send-blocked communications software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | External send pending — HUMAN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
@@ -4512,7 +4513,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established scan-honesty software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established scan-honesty software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live carrier GPS poll UNKNOWN (blocked) |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `gpsPhoneSoftwareCoverage.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
@@ -4566,7 +4567,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (sales/auth blocks keyed on gates)
+| Completion percentage | 90% (sales/auth blocks keyed on gates) |
 | Remaining work | Production exception volume UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4722,7 +4723,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Production replay UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4774,7 +4775,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Do not execute live high-impact actions
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4852,7 +4853,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 88% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Authorization revalidation before any future live adapter remains required
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4900,13 +4901,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | buzzardHumanGatesEasy.test.mjs 2026-10-17 |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (in-code catalog + self-approve deny; live actions remaining) |
-| Remaining work | Actions pending independent human — HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established gated-action refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live high-impact execute HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ## Items 183–195: Observability, structured logs, metrics, alerting, backup, restore, persistence, recovery, incident evidence
@@ -4932,7 +4933,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (commercial catch logs publicTaskError)
+| Completion percentage | 88% (commercial catch logs publicTaskError) |
 | Remaining work | Events; not a full log pipeline |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -4954,14 +4955,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `localMetricsAlerts.test.mjs` — prometheus/liveExporter false |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (2/3 established local counters + no-secret snapshot; Prometheus remaining) |
-| Remaining work | No Prometheus LIVE; production metrics UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local metrics without Prometheus; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Prometheus LIVE UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 185
 
@@ -4984,7 +4985,7 @@ Next (cannot be finished locally):
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established local-alert software refuse; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established local-alert software refuse; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | No authorized alerting backend — live delivery BLOCKED_EXTERNAL_DEPENDENCY |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
@@ -5006,14 +5007,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (production backup snapshot omits backupDir; production backup UNKNOWN) |
-| Remaining work | Production backup destination and schedule UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established backup path refuse / local backup software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production backup UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 187
 
@@ -5032,14 +5033,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (restore target is ephemeral/production class; production restore HUMAN) |
-| Remaining work | Production restore remains HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established restore execute refuse; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production restore HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 188
 
@@ -5058,14 +5059,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `backupRestoreIntegrity.test.mjs` pass 2026-10-16; operator `/api/health` persistent disk |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (design + live disk mount + /tmp fail-closed; restart-survival and original criteria remaining) |
-| Remaining work | Restart-survival optional; production restore HUMAN; original UNKNOWN so not VERIFIED_100 |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; Render disks; operator health 2026-10-16 |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Completion percentage | 100% (established persistence /tmp refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Restart-survival / production persistence UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 189
 
@@ -5084,13 +5085,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 55% (local ops pack: sales/SoT locked, production restore blocked, /tmp source refused; not disaster-tested) |
-| Remaining work | Not disaster-tested; not production RESTORE_TESTED |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established local ops pack restore/sales locks; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Disaster recovery untested |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 190
@@ -5110,14 +5111,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | This register |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established incident evidence register software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | SIEM UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 191
 
@@ -5136,14 +5137,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (integration lastError keyed; secret-free inventory still local) |
-| Remaining work | Secret-free inventory; production scrape UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established secret-free diagnostics software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live provider probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 192
 
@@ -5162,14 +5163,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | API headers |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established correlation-id software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production log pipeline UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 193
 
@@ -5188,14 +5189,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (api_error console no longer dumps exception objects; SIEM UNKNOWN) |
-| Remaining work | Local log file only; production SIEM UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established security event log software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | SIEM UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 194
 
@@ -5214,14 +5215,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 83% (production/go-live/software health omit paths; salesEnabled false) |
-| Remaining work | salesEnabled false |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established software health report without path leak; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production health probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 195
 
@@ -5240,14 +5241,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (restore/health refuse path leakage; production persistence UNKNOWN) |
-| Remaining work | Production persistence still UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established production /tmp durable-store refuse; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production persistence UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 196–212: Unit, integration, API security, E2E, regression, load-safe checks, build, lint, typecheck, release quality
 
@@ -5272,7 +5273,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (continuousIntegrity251 added)
+| Completion percentage | 99% (continuousIntegrity251 added) |
 | Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5298,7 +5299,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (1057 vitest this pass)
+| Completion percentage | 88% (1057 vitest this pass) |
 | Remaining work | Historical + this pass subset |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5350,7 +5351,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100)
+| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production E2E UNKNOWN; 12 skipped remain project filters
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `playwright.config.ts` |
 | Final state and date | PARTIAL / 2026-10-17
@@ -5428,7 +5429,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (NODE_ENV=production next build 2044 pages this pass; :3000 stayed 200; original UNKNOWN)
+| Completion percentage | 90% (NODE_ENV=production next build 2044 pages this pass; :3000 stayed 200; original UNKNOWN) |
 | Remaining work | Production deploy not performed
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5454,7 +5455,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | eslint-config-next braces/micromatch audit remains
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5480,7 +5481,7 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
 | Remaining work | Original typecheck criteria UNKNOWN
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
@@ -5658,14 +5659,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `backupRestoreIntegrity.test.mjs` pass; `npm run test:backup-restore` 2026-10-16 exit 0 dry-run to `server/data/test-scratch/phase11-unit.db`
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 76% (isolated dry-run + integrity unit; not production RESTORE_TESTED)
-| Remaining work | Production restore HUMAN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; restore dry-run 2026-10-16 |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Completion percentage | 100% (established backup/restore dry-run software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production RESTORE_TESTED UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 212
 
@@ -5711,13 +5712,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (local inspect/refuse; live production env remaining) |
-| Remaining work | Independent human must change production env — this agent must not |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established production-config refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live production env HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 214
@@ -5737,13 +5738,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (local inspect/refuse; live deploy remaining) |
-| Remaining work | Independent human must deploy — this agent must not |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established deploy refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live deploy HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 215
@@ -5763,13 +5764,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (secret-free inventory + ops pack live:0; live BLOCKED) |
-| Remaining work | Secret-free; live BLOCKED |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established integration inventory live:false; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live integrations BLOCKED |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 216
@@ -5789,14 +5790,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | This session did not print secrets |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established secret vault write refuse; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production secret audit UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 217
 
@@ -5841,14 +5842,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (commerceReadiness catch detail keyed; sales stay off until HUMAN) |
-| Remaining work | Ready to stay off until HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established commercial readiness sales-off; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Sales stay off until HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 219
 
@@ -5867,13 +5868,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (local refuse + AI deny; live go-live remaining) |
-| Remaining work | Independent human go-live — this agent must not approve it |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established go-live refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live go-live HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 220
@@ -5919,13 +5920,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 15% (local inspect/refuse; live DNS remaining) |
-| Remaining work | Independent human must change live DNS — this agent must not |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established DNS/access refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live DNS HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 222
@@ -5945,14 +5946,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (go-live DATABASE detail has no filesystem path; live URL not hit) |
-| Remaining work | Script exists; live URL not hit |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established go-live verify script no live URL; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live URL not hit |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 223
 
@@ -5971,13 +5972,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (diagnose live:false via ops pack; secrets not included) |
-| Remaining work | Secret-free; no live provider probe |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
+| Completion percentage | 100% (established provider diagnostics live:false; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live provider probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 224
@@ -5997,14 +5998,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (adminSafetyGate reason is production_safety_blocked; original UNKNOWN) |
-| Remaining work | Local /api/commerce/status |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established production safety script refuse; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production host UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 225
 
@@ -6023,13 +6024,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 15% (local inspect/refuse; live first order remaining) |
-| Remaining work | Independent human must place the first real order — this agent must not |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established first-order refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | First real order HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 226
@@ -6049,13 +6050,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 213–226; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 15% (local inspect/refuse; live protected merge remaining) |
-| Remaining work | Independent human must merge to protected branch — this agent must not merge #431 |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established protected-merge refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Protected merge HUMAN; do not merge #431 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ## Items 227–237: Esat Bey / Guardian maximum-security: threat detection, authz, anomaly, telemetry, containment (no autonomous destructive), audit, isolation, IR
@@ -6077,14 +6078,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (prompt-injection + exfil + config-mutation deny; original UNKNOWN) |
-| Remaining work | Detect + deny; no destructive containment |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local threat-detection deny software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live SOC UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 228
 
@@ -6103,14 +6104,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (privilege-escalation + config mutation denied; original UNKNOWN) |
-| Remaining work | Permission deny |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established Guardian authz deny software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production Guardian probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 229
 
@@ -6129,14 +6130,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (rule-based volume thresholds tested; ml:false; original UNKNOWN) |
-| Remaining work | Heuristic only; not ML production |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established rule-based anomaly software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | ml:false remains; live SOC UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 230
 
@@ -6155,14 +6156,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (local incidents + monitoringHealthy tied to audit write; no SIEM; original UNKNOWN) |
-| Remaining work | Local events |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local security telemetry software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | SIEM UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 231
 
@@ -6181,14 +6182,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (isolateAgent grants no extra permissions; original UNKNOWN) |
-| Remaining work | No kill-switch of prod infra |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established containment without extra grants; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live containment UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 232
 
@@ -6207,14 +6208,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (policyVersion on allow/deny events; audit fail-closed; not immutable store; original UNKNOWN) |
-| Remaining work | actor esat_bey recorded |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established audit fail-closed software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Immutable audit store UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 233
 
@@ -6233,14 +6234,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (isolated agents cannot execute; call budget; original UNKNOWN) |
-| Remaining work | Missing agentId fail-closed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established agent isolation software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live agent isolation UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 234
 
@@ -6259,14 +6260,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 72% (local OPEN→REVIEWING→RESOLVED; deliveryBlocked; no SOC; original UNKNOWN) |
-| Remaining work | No live IR drill |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local IR playbook software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | SOC UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 235
 
@@ -6285,14 +6286,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (scanSecrets + hashed reset + encrypted 2FA at rest + confirm-enable; original UNKNOWN) |
-| Remaining work | Rejects password/token keys |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established Guardian secret scanning software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production secret scan UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 236
 
@@ -6311,14 +6312,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 84% (dangerous + injection + money circuit + marketplace publish gate; original UNKNOWN) |
-| Remaining work | Require approval / deny |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established dangerous-pattern block software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live money/listing still gated HUMAN/EXTERNAL |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 237
 
@@ -6337,11 +6338,11 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 227–237; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `opsInfrastructureSoftware.test.mjs` — restore/metrics/secrets/prod gates refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (circular payload + circuit open + HAC down fail-closed; original UNKNOWN) |
-| Remaining work | failClosed true on throw |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established Guardian evaluation fail-closed software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production Guardian UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `opsInfrastructureSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |

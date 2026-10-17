@@ -35,7 +35,32 @@ function readiness() {
   };
 }
 
+function confirmLive() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    productionWired: false,
+    reason: "MONITORING_LIVE_BLOCKED",
+    note: "Local health is not production monitoring evidence.",
+  };
+}
+
+function dispatchAlerts() {
+  return {
+    ok: false,
+    dispatched: false,
+    live: false,
+    pager: false,
+    smtpSent: false,
+    webhookSent: false,
+    reason: "MONITORING_ALERT_DISPATCH_BLOCKED",
+  };
+}
+
 module.exports = {
   alertRules,
   readiness,
+  confirmLive,
+  dispatchAlerts,
 };

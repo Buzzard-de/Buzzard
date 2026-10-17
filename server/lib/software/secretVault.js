@@ -33,8 +33,26 @@ function listKnownNames() {
   }));
 }
 
+function writeSecret() {
+  return {
+    ok: false,
+    written: false,
+    writtenToGit: false,
+    value: null,
+    reason: "SECRET_WRITE_BLOCKED",
+    note: "Secrets are not written to git, logs, or process.env from this vault.",
+  };
+}
+
+function redact(value) {
+  if (value == null || value === "") return { redacted: true, value: null };
+  return { redacted: true, value: null, present: true };
+}
+
 module.exports = {
   KNOWN_NAMES,
   getSecret,
   listKnownNames,
+  writeSecret,
+  redact,
 };

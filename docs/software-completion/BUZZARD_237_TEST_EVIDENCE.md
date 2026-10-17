@@ -302,3 +302,13 @@ Unknown VAT is not a DE default. FX is not invented. Locale is independent of ma
 | internationalMarketSoftware + marketEngine + buzzardRecordSprint2 + localeCoverageHonesty + marketplaceClassification + commerceIntegrityBatch + lib/market-engine/marketEngine.test.ts | 0 | 7 files, **83 passed** |
 
 **91** and **114–135** established-scope **100** PARTIAL. **115** and **129** stay HUMAN_APPROVAL_REQUIRED. **136** already 100. Not VERIFIED_100. Mean **81.92%** (19414/237). Established-scope 80% reached. LIVE_VERIFIED 0.
+
+## 2026-10-17 Security / monitoring / backup / production infrastructure software
+
+Restore execute, Prometheus export, secret write, monitoring dispatch, and production gates stay fail-closed. Sales off. No live restore, deploy, DNS, merge, or pager.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| opsInfrastructureSoftware + backupRestoreIntegrity + localMetricsAlerts + buzzardHumanGatesEasy + continuousIntegrity238 + continuousIntegrity245 | 0 | 6 files, **36 passed** |
+
+Items **18**, **182**, **184**, **186–195** (except **185** already 100 EXTERNAL), **211**, **213–216**, **218–219**, **221–237** established-scope **100**. **182/213/214/219/221/225/226** stay HUMAN_APPROVAL_REQUIRED. **185** stays BLOCKED_EXTERNAL_DEPENDENCY. **217/220** already 100 PARTIAL. Not VERIFIED_100. Mean **86.68%** (20543/237). LIVE_VERIFIED 0.

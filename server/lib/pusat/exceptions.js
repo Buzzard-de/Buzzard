@@ -211,6 +211,40 @@ function deadLetter(id, reason) {
   return row;
 }
 
+function summarize() {
+  try {
+    const rows = db
+      .prepare(
+        `SELECT status, COUNT(*) AS n FROM core_ai_exceptions GROUP BY status`
+      )
+      .all();
+    const byStatus = {};
+    let total = 0;
+    for (const row of rows) {
+      byStatus[row.status] = Number(row.n) || 0;
+      total += Number(row.n) || 0;
+    }
+    return {
+      ok: true,
+      total,
+      byStatus,
+      liveRecovery: false,
+      sensitiveRetry: false,
+      productionVerified: false,
+    };
+  } catch {
+    return {
+      ok: false,
+      total: 0,
+      byStatus: {},
+      liveRecovery: false,
+      sensitiveRetry: false,
+      productionVerified: false,
+      reason: "EXCEPTION_STORE_UNAVAILABLE",
+    };
+  }
+}
+
 function handleFailure(error, context = {}) {
   const classified = classify(error, context);
   const recorded = recordException({
@@ -242,4 +276,5 @@ module.exports = {
   markRecovered,
   deadLetter,
   handleFailure,
+  summarize,
 };

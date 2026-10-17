@@ -122,10 +122,11 @@ Mean established-scope completion: **76.29%** (Σ 18080 / 237 = 76.2869…; one 
 72. TecDoc and Inter-Cars mock adapters refuse to treat API-key presence as live HTTP. Inter-Cars `purchaseOrder` is `LIVE_PO_BLOCKED`. Still BLOCKED_EXTERNAL.
 73. Infrastructure day: schedule ETA, synthetic live-map fixtures (`simulated:true` required), webhook delay map + eventId duplicate, voice STT/TTS/WebRTC/Realtime/digital-human fail-closed, marketplace `transformListing` local-only. No live GPS, calls, listings, or labels.
 74. Buzzard 80 round: OpenSearch env ≠ live search; ops pack refuses `/tmp` source; amazon/ebay unpublished; sendPrepared blocked; localeCoverage no invented translations. 80% not reached.
+75. Buzzard 80 master 2026-10-17: numbered 80-item plan **not found** (do not invent). Local: exception summarize on software health; carrier label/shipment sensitive no-retry; forceSend/consent still BLOCKED; duplicate message drafts keep locale. 237 mean **unchanged** 76.29%. 80% not reached. LIVE_VERIFIED 0.
 
 ## Resume pointer
 
-Buzzard 80 round 2026-10-17. Branch `cursor/software-completion-local-c293` HEAD after local commit. Official mean **76.29%** (Σ 18080/237). **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden this command. Sales / SoT / live payments **OFF**.
+Buzzard 80 master 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **76.29%** (Σ 18080/237) **unchanged**. Numbered 80-item infrastructure plan **SOURCE NOT FOUND**. **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden this command. Sales / SoT / live payments **OFF**. Evidence: `docs/software-completion/BUZZARD_80_MASTER_ADVANCEMENT_2026-10-17.md`.
 
 Next:
 1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)

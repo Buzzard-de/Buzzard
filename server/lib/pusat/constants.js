@@ -86,6 +86,8 @@ const SENSITIVE_ACTIONS = Object.freeze([
   "supplier.order.submit",
   "marketplace.publish",
   "customer.message.send",
+  "carrier.label.purchase",
+  "carrier.shipment.create",
   "product.activate",
   "prices.update",
   "orders.write",

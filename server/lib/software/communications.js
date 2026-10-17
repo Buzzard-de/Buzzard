@@ -68,7 +68,10 @@ function draft(db, input = {}) {
         ok: true,
         duplicate: true,
         sent: false,
+        delivered: false,
         status: existing.status,
+        locale: existing.locale,
+        classification: existing.classification,
         draft: existing,
       };
     }
@@ -144,7 +147,7 @@ function queue(db, draftId) {
   };
 }
 
-function sendPrepared(db, draftId) {
+function sendPrepared(db, draftId, options = {}) {
   const row = db?.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId);
   const result = customerSend({
     channel: row?.channel || "email",
@@ -162,6 +165,8 @@ function sendPrepared(db, draftId) {
     deliveryUnknown: false,
     live: false,
     blocked: true,
+    forceSendIgnored: options.forceSend === true,
+    consentDoesNotSend: options.consentGranted === true,
     reason: result.reason,
     draft: row || null,
   };

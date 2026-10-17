@@ -207,6 +207,6 @@ No go-live approve write from the software gate. Sales stay off. AI commerce app
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| buzzardHumanGatesEasy + part8Foundation go-live | pending | see command output |
+| buzzardHumanGatesEasy + part8Foundation | 0 | 2 files, **33 passed** |
 
 **219** 50→60. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.20%** (18296/237). LIVE_VERIFIED 0.

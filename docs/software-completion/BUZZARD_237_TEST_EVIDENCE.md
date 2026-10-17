@@ -168,6 +168,5 @@ No customer message send, no invented provider message id, no PROVIDER_ACCEPTED 
 | Command | Exit | Totals |
 | --- | --- | --- |
 | buzzardHumanGatesEasy + notificationHub | 0 | 2 files, **8 passed** |
-| softwareCompletion + buzzard80MasterAdvancement `-t message\|notification\|communications\|sendPrepared` | 0 | included in the 7 passed / 77 skipped combined run |
 
 **155** 55→64. Stays HUMAN_APPROVAL_REQUIRED. **165** unchanged at 60%. Mean **77.03%** (18256/237). LIVE_VERIFIED 0.

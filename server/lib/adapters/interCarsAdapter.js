@@ -18,6 +18,8 @@ function describeStatus() {
   };
 }
 
+const AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
 function lookupArticle(query = {}) {
   const q = String(query.q || query.sku || "").trim();
   return {
@@ -27,11 +29,59 @@ function lookupArticle(query = {}) {
     httpAttempted: false,
     query: q,
     records: [],
+    inStock: false,
+    inventedStock: false,
+    vendorStockIgnored: query.vendorStock != null || query.liveStock != null,
     ...describeStatus(),
   };
 }
 
-function purchaseOrder() {
+function confirmAvailability() {
+  return {
+    ok: false,
+    live: false,
+    mock: true,
+    inStock: false,
+    inventedStock: false,
+    httpAttempted: false,
+    reason: "LIVE_STOCK_UNKNOWN",
+    ...describeStatus(),
+  };
+}
+
+function purchaseOrder(input = {}) {
+  const actor = String(input.actor || input.approver || "").trim().toLowerCase();
+  if (input.vendorPoId || input.purchaseOrderId) {
+    return {
+      ok: false,
+      sent: false,
+      live: false,
+      purchased: false,
+      httpAttempted: false,
+      amountCharged: 0,
+      inventedPoId: false,
+      purchaseOrderId: null,
+      reason: "VENDOR_PO_ID_REJECTED",
+      ...describeStatus(),
+      purchaseOrderSent: false,
+    };
+  }
+  if (AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      sent: false,
+      live: false,
+      purchased: false,
+      httpAttempted: false,
+      amountCharged: 0,
+      inventedPoId: false,
+      purchaseOrderId: null,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+      ...describeStatus(),
+      purchaseOrderSent: false,
+    };
+  }
   return {
     ok: false,
     sent: false,
@@ -39,6 +89,9 @@ function purchaseOrder() {
     purchased: false,
     httpAttempted: false,
     amountCharged: 0,
+    inventedPoId: false,
+    purchaseOrderId: null,
+    forcePurchaseIgnored: input.forcePurchase === true,
     reason: "LIVE_PO_BLOCKED",
     ...describeStatus(),
     purchaseOrderSent: false,
@@ -51,5 +104,6 @@ module.exports = {
   live: false,
   describeStatus,
   lookupArticle,
+  confirmAvailability,
   purchaseOrder,
 };

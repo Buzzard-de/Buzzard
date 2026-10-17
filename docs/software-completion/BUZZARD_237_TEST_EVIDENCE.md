@@ -240,3 +240,13 @@ No `git merge`, no `gh pr merge`, PR #431 not merged.
 | buzzardHumanGatesEasy | 0 | 1 file, **13 passed** |
 
 **226** 0→15. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.39%** (18341/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 BLOCKED_EXTERNAL item 87 Inter-Cars (no live HTTP)
+
+No Inter-Cars HTTP, no live PO, no invented stock. Key presence is not live.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| externalIntegrationHonesty | 0 | 1 file, **2 passed** |
+
+**87** 58→64. Stays BLOCKED_EXTERNAL_DEPENDENCY. **88** unchanged. Mean **77.41%** (18347/237). LIVE_VERIFIED 0.

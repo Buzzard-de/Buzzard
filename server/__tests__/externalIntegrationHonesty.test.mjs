@@ -45,9 +45,31 @@ describe("external integration inventory honesty", () => {
       expect(po.reason).toBe("LIVE_PO_BLOCKED");
       expect(po.keyPresent).toBe(true);
       expect(JSON.stringify(po)).not.toContain("not-a-live-key");
-      const lookup = interCars.lookupArticle({ sku: "IC-1" });
+      const lookup = interCars.lookupArticle({ sku: "IC-1", vendorStock: 99 });
       expect(lookup.live).toBe(false);
       expect(lookup.httpAttempted).toBe(false);
+      expect(lookup.inStock).toBe(false);
+      expect(lookup.inventedStock).toBe(false);
+      expect(lookup.vendorStockIgnored).toBe(true);
+
+      const stock = interCars.confirmAvailability({ sku: "IC-1" });
+      expect(stock.reason).toBe("LIVE_STOCK_UNKNOWN");
+      expect(stock.inStock).toBe(false);
+      expect(stock.httpAttempted).toBe(false);
+
+      const rejected = interCars.purchaseOrder({ vendorPoId: "ic-live-1" });
+      expect(rejected.reason).toBe("VENDOR_PO_ID_REJECTED");
+      expect(rejected.purchaseOrderId).toBe(null);
+      expect(rejected.httpAttempted).toBe(false);
+
+      const ai = interCars.purchaseOrder({ actor: "pusat", forcePurchase: true });
+      expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+      expect(ai.sent).toBe(false);
+
+      const forced = interCars.purchaseOrder({ actor: "operator", forcePurchase: true });
+      expect(forced.reason).toBe("LIVE_PO_BLOCKED");
+      expect(forced.forcePurchaseIgnored).toBe(true);
+      expect(forced.inventedPoId).toBe(false);
     } finally {
       if (prevTecdoc === undefined) delete process.env.TECDOC_API_KEY;
       else process.env.TECDOC_API_KEY = prevTecdoc;

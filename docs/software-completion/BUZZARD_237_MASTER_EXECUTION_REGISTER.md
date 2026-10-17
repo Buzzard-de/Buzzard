@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.39%** (Σ 18341 / 237 = 77.3882…; one decimal **77.4%**). Was **77.32%** (18326/237). This pass **+0.07 pp**. **%80 reached: NO** (need Σ 18960; shortfall 619). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.41%** (Σ 18347 / 237 = 77.4135…; one decimal **77.4%**). Was **77.39%** (18341/237). This pass **+0.02 pp**. **%80 reached: NO** (need Σ 18960; shortfall 613). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -136,14 +136,15 @@ Mean established-scope completion: **77.39%** (Σ 18341 / 237 = 77.3882…; one 
 86. HUMAN item 221 local DNS/access-policy refuse (no live DNS). Mean **77.26%** (18311/237). Stays HUMAN_APPROVAL_REQUIRED.
 87. HUMAN item 225 local first-order refuse (no commercial order). Mean **77.32%** (18326/237). Stays HUMAN_APPROVAL_REQUIRED.
 88. HUMAN item 226 local protected-merge refuse (no git/gh merge). Mean **77.39%** (18341/237). Stays HUMAN_APPROVAL_REQUIRED.
+89. BLOCKED_EXTERNAL item 87 local Inter-Cars honesty (no live HTTP/PO). Mean **77.41%** (18347/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 
 ## Resume pointer
 
-Human-gate local pass 11 (2026-10-17): item **226**. No protected-branch merge. **226** 0→**15**: `protectedBranchMergeGate.merge` refuses AI and forceMerge; `gitExecuted`/`ghExecuted` false; PR #431 not merged. Status **HUMAN_APPROVAL_REQUIRED**. Mean **77.39%** (18341/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+External local pass (2026-10-17): item **87**. No Inter-Cars HTTP or PO. **87** 58→**64**: vendor PO ids rejected; AI purchase denied; forcePurchase ignored; lookup does not invent stock; `confirmAvailability` is `LIVE_STOCK_UNKNOWN`. Status **BLOCKED_EXTERNAL_DEPENDENCY**. Item **88** unchanged. Mean **77.41%** (18347/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
-1. Remaining HUMAN items still HUMAN (local refuse-only work exhausted for the easy production set)
-2. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
+1. BLOCKED_EXTERNAL **88** TecDoc, then **185** alerts (`liveDispatch: false`)
+2. HUMAN items remain HUMAN — independent approval still required
 3. `npm audit` 5 high in `eslint-config-next`/`braces` — no `audit fix --force`
 4. Original 237 checklist still UNKNOWN
 
@@ -2404,7 +2405,7 @@ Next:
 | Established scope | Inter-Cars adapter class |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sandbox/mock; no live order |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | `server/lib/adapters/interCarsAdapter.js` mock class; `purchaseOrder` LIVE_PO_BLOCKED even if `INTERCARS_API_KEY` is set |
+| Existing implementation evidence | `interCarsAdapter.js` mock lookup; vendor PO ids rejected; AI/forcePurchase ignored; LIVE_PO_BLOCKED; LIVE_STOCK_UNKNOWN |
 | Identified gaps | No authorized Inter-Cars credentials; no live HTTP |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | `server/lib/adapters/interCarsAdapter.js`, `connectorInventory.js` |
@@ -2416,9 +2417,9 @@ Next:
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 58% (adapter class + mock lookup + PO fail-closed; live stock/order remaining) |
+| Completion percentage | 64% (local honesty + PO/stock refuse; live Inter-Cars remaining) |
 | Remaining work | Authorized Inter-Cars credentials and live catalog/order still BLOCKED_EXTERNAL |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `interCarsAdapter.js` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `externalIntegrationHonesty.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 88

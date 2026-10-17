@@ -323,3 +323,13 @@ JSON phone assistant, Node voice adapters, and Python telephony demo stay fail-c
 | PYTHONPATH=intelligence python3 telephony v3 (safe defaults, schema, go-live gate, demo, unsigned webhook) | 0 | **5 passed** (pytest module absent; functions invoked directly) |
 
 **47** 80→100. **54** 85→100. **142** 73→100. **153** 80→100. All PARTIAL (not VERIFIED_100). Voice/Twilio/Realtime/digital-human remain unnumbered 237 rows. Mean **87.03%** (20625/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 Carrier / shipping software (items 81 / 158–163)
+
+Local EUR shipping table only. Carrier API keys do not buy labels, book pickups, or open live tracking. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| carrierAdapterSoftware + carrierLabelPurchase + gpsPhoneSoftwareCoverage | 0 | 3 files, **10 passed** |
+
+**81** 78→100. **158–162** 55→100. **163** 90→100. All PARTIAL (not VERIFIED_100). Mean **88.11%** (20882/237). LIVE_VERIFIED 0.

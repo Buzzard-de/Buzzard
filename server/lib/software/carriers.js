@@ -172,13 +172,80 @@ function createShipment(input = {}) {
   };
 }
 
+function confirmLiveLabel() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    purchased: false,
+    reason: "LIVE_LABEL_NOT_CONFIGURED",
+    note: "Carrier API key presence is not a purchased label.",
+  };
+}
+
+function bookPickup() {
+  return {
+    ok: false,
+    live: false,
+    booked: false,
+    reason: "PICKUP_BOOKING_BLOCKED",
+  };
+}
+
+function cancelPickup() {
+  return {
+    ok: false,
+    live: false,
+    cancelled: false,
+    reason: "PICKUP_CANCEL_BLOCKED",
+  };
+}
+
+function trackLive() {
+  return {
+    ok: false,
+    live: false,
+    tracked: false,
+    httpAttempted: false,
+    reason: "CARRIER_TRACK_LIVE_BLOCKED",
+  };
+}
+
+function inboundWebhook() {
+  return {
+    ok: false,
+    live: false,
+    accepted: false,
+    labelCreated: false,
+    reason: "CARRIER_INBOUND_WEBHOOK_BLOCKED",
+    note: "Inbound carrier webhooks are verified locally at most. They never buy a label.",
+  };
+}
+
+function quoteRate(input = {}) {
+  const quote = shippingProvider.calculateShipping({
+    methodId: input.methodId,
+    country: input.country || "DE",
+    liveRate: true,
+  });
+  return {
+    ...quote,
+    live: false,
+    liveRate: false,
+    carrierHttp: false,
+    reason: quote.ok === false ? quote.reason : "LOCAL_SHIPPING_TABLE_ONLY",
+  };
+}
+
 function health() {
   return {
     codeReady: true,
     liveReady: false,
     shipmentCreateEnabled: false,
     labelPurchaseEnabled: false,
+    pickupBookingEnabled: false,
     liveGps: false,
+    liveRate: false,
     carriers: listCarriers(),
     provider: shippingProvider.getProviderHealth(),
   };
@@ -192,5 +259,11 @@ module.exports = {
   pollGps,
   purchaseLabel,
   createShipment,
+  confirmLiveLabel,
+  bookPickup,
+  cancelPickup,
+  trackLive,
+  inboundWebhook,
+  quoteRate,
   health,
 };

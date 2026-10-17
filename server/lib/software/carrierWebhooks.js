@@ -92,10 +92,21 @@ function pollCarrierTracking() {
   };
 }
 
+function inboundDeliveryWebhook() {
+  return {
+    ok: false,
+    accepted: false,
+    live: false,
+    labelCreated: false,
+    reason: "CARRIER_INBOUND_WEBHOOK_BLOCKED",
+  };
+}
+
 module.exports = {
   CARRIER_MAP,
   EVENT_MAP,
   verifyCarrierWebhook,
   mapCarrierEvent,
   pollCarrierTracking,
+  inboundDeliveryWebhook,
 };

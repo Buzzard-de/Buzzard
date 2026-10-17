@@ -177,6 +177,6 @@ No SoT cutover, no dual-write, env `BUZZARD_PRODUCT_SOT_ACTIVE=1` does not activ
 
 | Command | Exit | Totals |
 | --- | --- | --- |
-| buzzardHumanGatesEasy + buzzard80NextAdvancement + productWriteBoundary | pending | see command output |
+| buzzardHumanGatesEasy + buzzard80NextAdvancement + productWriteBoundary + productArchitecture | 0 | 4 files, **35 passed** |
 
 **73** 50→60. Stays HUMAN_APPROVAL_REQUIRED. **182** unchanged. Mean **77.07%** (18266/237). LIVE_VERIFIED 0.

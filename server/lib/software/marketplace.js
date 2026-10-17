@@ -180,6 +180,33 @@ function draftListing(input = {}, db = null) {
   };
 }
 
+function mapCategory(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  const source = String(input.sourceCategory || input.category || "").trim();
+  if (!source) {
+    return {
+      ok: false,
+      mapped: false,
+      published: false,
+      live: false,
+      invented: false,
+      channel: channel.id,
+      reason: "CATEGORY_REQUIRED",
+    };
+  }
+  return {
+    ok: true,
+    mapped: false,
+    published: false,
+    live: false,
+    invented: false,
+    channel: channel.id,
+    sourceCategory: source,
+    marketplaceCategoryId: null,
+    note: "No vendor category map is invented. Unmapped source categories stay unpublished.",
+  };
+}
+
 function transformListing(input = {}) {
   const channel = classify(input.channel || input.marketplace || "amazon");
   const validation = validateDraftInput(input, channel);
@@ -206,6 +233,7 @@ function transformListing(input = {}) {
       category: input.category || null,
       currency: "EUR",
     },
+    categoryMap: mapCategory({ channel: channel.id, sourceCategory: input.category }),
     note: "Local listing transform only. Not submitted to a marketplace.",
   };
 }
@@ -367,6 +395,7 @@ module.exports = {
   validateDraftInput,
   draftListing,
   transformListing,
+  mapCategory,
   dryRunListing,
   validateAuthConfig,
   classifyMarketplaceError,

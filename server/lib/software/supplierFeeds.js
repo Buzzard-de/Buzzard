@@ -326,6 +326,117 @@ function resetPreviewIdempotency() {
   previewCache.clear();
 }
 
+const AVAILABILITY = Object.freeze({
+  IN_STOCK: "IN_STOCK",
+  OUT_OF_STOCK: "OUT_OF_STOCK",
+  UNKNOWN: "UNKNOWN",
+  STALE: "STALE",
+  OUTAGE: "OUTAGE",
+  MALFORMED: "MALFORMED",
+});
+
+function classifyOutage(input = {}) {
+  const status = Number(input.status || input.statusCode || 0);
+  const code = String(input.code || input.errorCode || "").toUpperCase();
+  const kind = String(input.kind || input.failureKind || "").toLowerCase();
+  const outage =
+    input.outage === true ||
+    input.timeout === true ||
+    kind === "timeout" ||
+    kind === "network" ||
+    status >= 500 ||
+    status === 408 ||
+    status === 429 ||
+    /ECONN|ETIMEDOUT|ENOTFOUND|EAI_AGAIN/.test(code);
+  const malformed = input.malformed === true || kind === "malformed" || status === 400;
+  if (outage) {
+    return {
+      ok: true,
+      availability: AVAILABILITY.OUTAGE,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      reason: "SUPPLIER_OUTAGE",
+      note: "Supplier outage is not inventory. Quantity is not inferred.",
+    };
+  }
+  if (malformed) {
+    return {
+      ok: true,
+      availability: AVAILABILITY.MALFORMED,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      reason: "SUPPLIER_PAYLOAD_MALFORMED",
+    };
+  }
+  return { ok: true, outage: false, malformed: false, live: false };
+}
+
+function classifyAvailability(row = {}, context = {}) {
+  const outage = classifyOutage(context);
+  if (outage.treatAsStock === false) {
+    return { ...outage, sku: row.sku || null, stock: null, live: false };
+  }
+  if (row.stock == null || !Number.isFinite(Number(row.stock))) {
+    return {
+      availability: AVAILABILITY.UNKNOWN,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      reason: "STOCK_UNKNOWN",
+    };
+  }
+  if (row.timestamp) {
+    const parsed = Date.parse(row.timestamp);
+    const staleAfterMs = context.staleAfterMs || 48 * 60 * 60 * 1000;
+    if (Number.isNaN(parsed) || Date.now() - parsed > staleAfterMs) {
+      return {
+        availability: AVAILABILITY.STALE,
+        treatAsStock: false,
+        purchasable: false,
+        live: false,
+        sku: row.sku || null,
+        stock: Number(row.stock),
+        reason: "STALE_SUPPLIER_STOCK",
+      };
+    }
+  } else if (context.requireTimestamp !== false) {
+    return {
+      availability: AVAILABILITY.STALE,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      stock: Number(row.stock),
+      reason: "MISSING_STOCK_TIMESTAMP",
+    };
+  }
+  const stock = Number(row.stock);
+  if (stock <= 0) {
+    return {
+      availability: AVAILABILITY.OUT_OF_STOCK,
+      treatAsStock: true,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      stock,
+      reason: "OUT_OF_STOCK",
+    };
+  }
+  return {
+    availability: AVAILABILITY.IN_STOCK,
+    treatAsStock: true,
+    purchasable: true,
+    live: false,
+    sku: row.sku || null,
+    stock,
+    reason: null,
+    note: "Fixture/dry-run availability only. Not a live supplier quantity.",
+  };
+}
+
 function recordPreview(db, previewResult) {
   if (!db) return previewResult;
   db.prepare(
@@ -348,6 +459,7 @@ function recordPreview(db, previewResult) {
 
 module.exports = {
   FEED_STATUS,
+  AVAILABILITY,
   parseCsv,
   parseXml,
   parseJson,
@@ -359,4 +471,6 @@ module.exports = {
   rejectLiveFetch,
   circuitStatus,
   resetCircuit,
+  classifyOutage,
+  classifyAvailability,
 };

@@ -179,11 +179,28 @@ function recordSupplierCredit(db, id, status) {
   return inspect(db, id);
 }
 
+function reconcileFinancials(db, id) {
+  const current = inspect(db, id);
+  if (!current.ok) return current;
+  return {
+    ok: true,
+    id,
+    matched: false,
+    executed: false,
+    live: false,
+    customerRefund: current.customerRefund,
+    supplierCredit: current.supplierCredit,
+    reason: "RECONCILE_NOT_AUTO_MATCHED",
+    note: "Customer refund and supplier credit stay independent. No money is moved.",
+  };
+}
+
 module.exports = {
   openCase,
   inspect,
   recordSupplierCredit,
   transitionCustomerRefund,
+  reconcileFinancials,
   CUSTOMER_REFUND_TRANSITIONS,
   RETURN_SIDE_STATUS,
 };

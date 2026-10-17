@@ -13,8 +13,28 @@ function listMethods() {
   return Object.values(METHODS);
 }
 
-function calculateShipping({ methodId = "standard", country = "DE", subtotal = 0, itemCount = 0 } = {}) {
-  const method = METHODS[methodId.toUpperCase()] || METHODS.STANDARD;
+function calculateShipping({
+  methodId = "standard",
+  country = "DE",
+  subtotal = 0,
+  itemCount = 0,
+  liveRate = false,
+  currency = "EUR",
+} = {}) {
+  const requestedCurrency = String(currency || "EUR").trim().toUpperCase();
+  if (requestedCurrency !== "EUR") {
+    return {
+      ok: false,
+      dryRun: true,
+      live: false,
+      liveRate: false,
+      shipmentCreated: false,
+      inventedFx: false,
+      reason: "SHIPPING_CURRENCY_UNSUPPORTED",
+      note: "Local shipping table is EUR-only. No FX rate is invented.",
+    };
+  }
+  const method = METHODS[String(methodId || "standard").toUpperCase()] || METHODS.STANDARD;
   let price = method.basePrice;
 
   if (country && country.toUpperCase() !== "DE") {
@@ -27,7 +47,12 @@ function calculateShipping({ methodId = "standard", country = "DE", subtotal = 0
   const estimatedDelivery = new Date();
   estimatedDelivery.setDate(estimatedDelivery.getDate() + method.baseDays + (country?.toUpperCase() !== "DE" ? 2 : 0));
 
+  const envHints = Boolean(
+    process.env.DHL_API_KEY || process.env.DPD_API_KEY || process.env.GLS_API_KEY || process.env.UPS_API_KEY
+  );
+
   return {
+    ok: true,
     methodId: method.id,
     methodName: method.name,
     price: roundMoney(price),
@@ -36,8 +61,12 @@ function calculateShipping({ methodId = "standard", country = "DE", subtotal = 0
     dryRun: true,
     live: false,
     liveRate: false,
+    liveRateRequested: liveRate === true || envHints,
+    source: "local_table",
     shipmentCreated: false,
+    inventedFx: false,
     itemCount,
+    note: "Local shipping table only. Carrier API keys do not enable live rates.",
   };
 }
 

@@ -109,6 +109,16 @@ function writeEvent(db, reservationId, eventType, details) {
 }
 
 function reserve(db, input = {}) {
+  if (input.availability && input.availability.treatAsStock === false) {
+    return {
+      ok: false,
+      reserved: false,
+      failClosed: true,
+      reason: input.availability.reason || "SUPPLIER_AVAILABILITY_UNRELIABLE",
+      purchaseOwnStock: false,
+      live: false,
+    };
+  }
   if (Array.isArray(input.offers) && input.offers.length) {
     const conflict = resolveSupplierConflict(input.offers);
     if (conflict.failClosed) {

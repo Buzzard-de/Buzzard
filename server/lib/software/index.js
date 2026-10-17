@@ -10,6 +10,7 @@ const pricing = require("./pricing");
 const tracking = require("./tracking");
 const marketplace = require("./marketplace");
 const voice = require("./voice");
+const phoneAssistant = require("../phoneAssistantService");
 const customerAccess = require("./customerAccess");
 const orders = require("./orders");
 const { getSoftwareHealth } = require("./health");
@@ -76,6 +77,7 @@ module.exports = {
   tracking,
   marketplace,
   voice,
+  phoneAssistant,
   customerAccess,
   orders,
   searchCatalog,

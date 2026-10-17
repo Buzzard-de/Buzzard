@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **86.68%** (Σ 20543 / 237 = 86.6793…; one decimal **86.7%**). Was **81.92%** (19414/237). This pass **+4.76 pp**. **%80 reached: YES** (need Σ 18960; surplus 1583). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **87.03%** (Σ 20625 / 237 = 87.0253…; one decimal **87.0%**). Was **86.68%** (20543/237). This pass **+0.35 pp**. **%80 reached: YES** (need Σ 18960; surplus 1665). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -144,10 +144,11 @@ Mean established-scope completion: **86.68%** (Σ 20543 / 237 = 86.6793…; one 
 94. Alert / notification delivery software (items 155/165/185): local queue + draft only; SMTP env ≠ send; inbound delivery webhooks blocked; alert dispatch/confirm blocked. **155/165 stay HUMAN**. **185 stays BLOCKED_EXTERNAL**. Mean **78.55%** (18616/237). Not VERIFIED_100. No live email/pager.
 95. International market / locale / VAT / marketplace software (items 91, 114–135; 136 already 100): unknown VAT not DE-default; FX not invented; locale≠market; classification-only channels unpublished; feed push blocked. **115/129 stay HUMAN**. Mean **81.92%** (19414/237). Established-scope 80% reached. Not VERIFIED_100. No live listings.
 96. Security / monitoring / backup / production infrastructure software (items 18, 182, 184, 186–195 except 185, 211, 213–216, 218–219, 221–237; 185/217/220 already 100): restore execute blocked even with `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`; Prometheus export/scrape blocked; secret vault write blocked; monitoring live/dispatch blocked. **182/213/214/219/221/225/226 stay HUMAN**. **185 stays EXTERNAL**. Mean **86.68%** (20543/237). Not VERIFIED_100. No live restore, deploy, DNS, merge, or pager.
+97. Phone / voice / digital-human software (items 47, 54, 142, 153; voice/Twilio/Realtime/avatar unnumbered): JSON phone assistant never starts or transfers a call; STT/TTS/WebRTC/SIP/avatar/Realtime confirm blocked; Python telephony demo is local-only (`live: false`, media stream not opened). Mean **87.03%** (20625/237). Not VERIFIED_100. No live Twilio, SIP, or digital-human session.
 
 ## Resume pointer
 
-Security / monitoring / backup / production infrastructure software pass (2026-10-17): items **18**, **182**, **184**, **186–195** (185 already 100 EXTERNAL), **211**, **213–216**, **218–219**, **221–237**. Restore never overwrites a database. Metrics never export Prometheus. Secrets never write. Production config/deploy/go-live/DNS/first-order/merge stay refuse. **HUMAN still 13**. **EXTERNAL still 87, 88, 185**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **86.68%** (20543/237). LIVE_VERIFIED **0**. Do not merge #431.
+Phone / voice / digital-human software pass (2026-10-17): items **47**, **54**, **142**, **153**. Voice/Twilio/Realtime/digital-human stay fail-closed (no numbered 237 telephony row). JSON escalate does not transfer PSTN. Python facade health is `telephony_code_ready`, not live. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **87.03%** (20625/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -1377,14 +1378,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` provider honesty — live false, effective stub |
+| Exact tests executed and results | `phoneVoiceDigitalHumanSoftware.test.mjs` — Realtime confirm blocked; key ≠ live session |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (stub default + honesty; live provider remaining) |
-| Remaining work | Authorized live LLM credentials/probe not enabled |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established stub/Realtime refuse software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Authorized live LLM/Realtime session remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `phoneVoiceDigitalHumanSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 48
 
@@ -1559,14 +1560,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` executeAgent stamps commercialSideEffects false |
+| Exact tests executed and results | `phoneVoiceDigitalHumanSoftware.test.mjs` — phone assistant escalate does not transfer a call |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (wrapper + roster recommendation-only; original UNKNOWN) |
-| Remaining work | Original criteria UNKNOWN; no live commercial execution claimed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established recommendation-only / no-call assistant software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live commercial or PSTN execution remaining forbidden |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `phoneVoiceDigitalHumanSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 55
 
@@ -3861,10 +3862,10 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 73% (notification emit reason keyed; live send still HUMAN) |
-| Remaining work | part19 tests historically |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established phone CX verify/escalate without a live call; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live phone CX remaining HUMAN/EXTERNAL |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `phoneVoiceDigitalHumanSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 143
 
@@ -4149,10 +4150,10 @@ Next (cannot be finished locally):
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (customerSupport/CRM ticket errors keyed) |
-| Remaining work | Implemented/tested historically |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established phone order-status software without PSTN; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live customer-ops call remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `phoneVoiceDigitalHumanSoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 154
 

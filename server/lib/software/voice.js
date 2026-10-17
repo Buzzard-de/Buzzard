@@ -186,6 +186,68 @@ function confirmLiveCall() {
   };
 }
 
+function transferCall() {
+  return {
+    ok: false,
+    live: false,
+    transferred: false,
+    callStarted: false,
+    reason: "TRANSFER_BLOCKED",
+    note: "Software never bridges a PSTN transfer.",
+  };
+}
+
+function hangupCall() {
+  return {
+    ok: false,
+    live: false,
+    hungUp: false,
+    pstn: false,
+    reason: "HANGUP_BLOCKED",
+  };
+}
+
+function sipInvite() {
+  return {
+    ok: false,
+    live: false,
+    invited: false,
+    callStarted: false,
+    reason: "SIP_INVITE_BLOCKED",
+  };
+}
+
+function avatarStream() {
+  return {
+    ok: false,
+    live: false,
+    videoOpen: false,
+    avatarOpen: false,
+    lipSync: false,
+    reason: "AVATAR_STREAM_BLOCKED",
+    note: "Digital-human endpoint presence is not a live avatar session.",
+  };
+}
+
+function confirmDigitalHuman() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    videoOpen: false,
+    reason: "DIGITAL_HUMAN_CONFIRM_BLOCKED",
+  };
+}
+
+function confirmRealtime() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    reason: "REALTIME_CONFIRM_BLOCKED",
+  };
+}
+
 function health() {
   const adapters = listAdapters();
   return {
@@ -195,6 +257,10 @@ function health() {
     anyLive: false,
     callStarted: false,
     twilioLive: false,
+    realtimeLive: false,
+    webrtcLive: false,
+    digitalHumanLive: false,
+    avatarOpen: false,
     adapters,
   };
 }
@@ -220,5 +286,11 @@ module.exports = {
   startCall,
   inboundWebhook,
   confirmLiveCall,
+  transferCall,
+  hangupCall,
+  sipInvite,
+  avatarStream,
+  confirmDigitalHuman,
+  confirmRealtime,
   health,
 };

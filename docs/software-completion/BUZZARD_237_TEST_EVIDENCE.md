@@ -312,3 +312,14 @@ Restore execute, Prometheus export, secret write, monitoring dispatch, and produ
 | opsInfrastructureSoftware + backupRestoreIntegrity + localMetricsAlerts + buzzardHumanGatesEasy + continuousIntegrity238 + continuousIntegrity245 | 0 | 6 files, **36 passed** |
 
 Items **18**, **182**, **184**, **186–195** (except **185** already 100 EXTERNAL), **211**, **213–216**, **218–219**, **221–237** established-scope **100**. **182/213/214/219/221/225/226** stay HUMAN_APPROVAL_REQUIRED. **185** stays BLOCKED_EXTERNAL_DEPENDENCY. **217/220** already 100 PARTIAL. Not VERIFIED_100. Mean **86.68%** (20543/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 Phone / voice / digital-human software (items 47 / 54 / 142 / 153)
+
+JSON phone assistant, Node voice adapters, and Python telephony demo stay fail-closed. No Twilio, SIP, Realtime, WebRTC, or avatar session. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| phoneVoiceDigitalHumanSoftware + gpsPhoneSoftwareCoverage + infrastructureAdvancementDay | 0 | 3 files, **16 passed** |
+| PYTHONPATH=intelligence python3 telephony v3 (safe defaults, schema, go-live gate, demo, unsigned webhook) | 0 | **5 passed** (pytest module absent; functions invoked directly) |
+
+**47** 80→100. **54** 85→100. **142** 73→100. **153** 80→100. All PARTIAL (not VERIFIED_100). Voice/Twilio/Realtime/digital-human remain unnumbered 237 rows. Mean **87.03%** (20625/237). LIVE_VERIFIED 0.

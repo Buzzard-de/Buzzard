@@ -865,6 +865,18 @@ function executeAgent(code, input, ctx) {
   };
 }
 
+function sendLiveMessage() {
+  return {
+    ok: false,
+    sent: false,
+    live: false,
+    bus: false,
+    commercialSideEffects: false,
+    reason: "INTER_AGENT_BUS_BLOCKED",
+    note: "Agents coordinate in-process through executeTask. No live message bus is opened.",
+  };
+}
+
 module.exports = {
   SPECIALIST_EMPLOYEES,
   AGENT_BY_CODE,
@@ -887,4 +899,5 @@ module.exports = {
   runOrderAssistant,
   runSupplierAssistant,
   runCustomsAssistant,
+  sendLiveMessage,
 };

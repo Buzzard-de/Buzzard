@@ -619,5 +619,15 @@ module.exports = {
   globalSearch,
   getDashboardSummary,
   recordSystemEvent,
+  exportAuditToSiem() {
+    return {
+      ok: false,
+      exported: false,
+      live: false,
+      siem: false,
+      reason: "SIEM_EXPORT_BLOCKED",
+      note: "Local system events are not shipped to an external SIEM.",
+    };
+  },
   categoryVisibility,
 };

@@ -293,12 +293,24 @@ async function remoteStatus() {
   return getGuardianStatus();
 }
 
+function confirmRemoteLive() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    httpAttempted: false,
+    reason: "REMOTE_GUARDIAN_LIVE_BLOCKED",
+    note: "Optional remote Python Guardian is a health signal only. It is not probed as live from this path.",
+  };
+}
+
 module.exports = {
   evaluate,
   actionRequiresApproval,
   scanSecrets,
   resetRateLimiter,
   remoteStatus,
+  confirmRemoteLive,
   isolateAgent: esatSecurity.isolateAgent,
   clearIsolation: esatSecurity.clearIsolation,
   getEsatHealth: esatSecurity.getEsatHealth,

@@ -251,6 +251,29 @@ function memoryHealth() {
   }
 }
 
+function syncRemote() {
+  return {
+    ok: false,
+    synced: false,
+    live: false,
+    remote: false,
+    httpAttempted: false,
+    backend: "sqlite",
+    reason: "MEMORY_REMOTE_BLOCKED",
+    note: "Central AI memory is local SQLite. Cross-host replication is not executed.",
+  };
+}
+
+function confirmCrossProcess() {
+  return {
+    ok: false,
+    proven: false,
+    live: false,
+    reason: "CROSS_PROCESS_MEMORY_NOT_PROVEN",
+    note: "A second process sharing this SQLite file is not proven from software.",
+  };
+}
+
 module.exports = {
   validateRecord,
   writeMemory,
@@ -262,4 +285,6 @@ module.exports = {
   memoryHealth,
   canAccess,
   containsBlockedKey,
+  syncRemote,
+  confirmCrossProcess,
 };

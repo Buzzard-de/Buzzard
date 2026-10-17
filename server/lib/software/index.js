@@ -38,6 +38,7 @@ const bankAdapters = require("./bankAdapters");
 const carrierWebhooks = require("./carrierWebhooks");
 const eta = require("./eta");
 const liveMap = require("./liveMap");
+const architectureInventory = require("./architectureInventory");
 const secretVault = require("./secretVault");
 const monitoringReady = require("./monitoringReady");
 const reportingModels = require("./reportingModels");
@@ -106,6 +107,7 @@ module.exports = {
   carrierWebhooks,
   eta,
   liveMap,
+  architectureInventory,
   secretVault,
   monitoringReady,
   reportingModels,

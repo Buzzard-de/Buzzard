@@ -333,3 +333,13 @@ Local EUR shipping table only. Carrier API keys do not buy labels, book pickups,
 | carrierAdapterSoftware + carrierLabelPurchase + gpsPhoneSoftwareCoverage | 0 | 3 files, **10 passed** |
 
 **81** 78→100. **158–162** 55→100. **163** 90→100. All PARTIAL (not VERIFIED_100). Mean **88.11%** (20882/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 Central architecture and security software (items 1–19 / 35–55 / 168–181)
+
+Single Pusat. Remote memory, inter-agent bus, remote Guardian, SIEM export, and production architecture confirm stay blocked. HAC cannot self-approve. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| architectureSecuritySoftware + pusatApprovalExceptions + pusatMemoryGuardian | 0 | 3 files, **19 passed** |
+
+Items **1–17**, **19**, **35–46**, **48–53**, **55**, **168–181** established-scope **100** PARTIAL. **18**, **47**, **54**, **182**, **227–237** already 100. Not VERIFIED_100. Mean **91.16%** (21605/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

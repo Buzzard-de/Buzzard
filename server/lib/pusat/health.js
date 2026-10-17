@@ -48,4 +48,14 @@ async function getHealth() {
   };
 }
 
-module.exports = { getHealth };
+function confirmLive() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    reason: "PUSAT_LIVE_BLOCKED",
+    note: "Local Pusat health is not production orchestrator evidence.",
+  };
+}
+
+module.exports = { getHealth, confirmLive };

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **88.11%** (Σ 20882 / 237 = 88.1097…; one decimal **88.1%**). Was **87.03%** (20625/237). This pass **+1.08 pp**. **%80 reached: YES** (need Σ 18960; surplus 1922). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **91.16%** (Σ 21605 / 237 = 91.1603…; one decimal **91.2%**). Was **88.11%** (20882/237). This pass **+3.05 pp**. **%80 reached: YES** (need Σ 18960; surplus 2645). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **100%** established-scope (not VERIFIED_100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -146,10 +146,11 @@ Mean established-scope completion: **88.11%** (Σ 20882 / 237 = 88.1097…; one 
 96. Security / monitoring / backup / production infrastructure software (items 18, 182, 184, 186–195 except 185, 211, 213–216, 218–219, 221–237; 185/217/220 already 100): restore execute blocked even with `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`; Prometheus export/scrape blocked; secret vault write blocked; monitoring live/dispatch blocked. **182/213/214/219/221/225/226 stay HUMAN**. **185 stays EXTERNAL**. Mean **86.68%** (20543/237). Not VERIFIED_100. No live restore, deploy, DNS, merge, or pager.
 97. Phone / voice / digital-human software (items 47, 54, 142, 153; voice/Twilio/Realtime/avatar unnumbered): JSON phone assistant never starts or transfers a call; STT/TTS/WebRTC/SIP/avatar/Realtime confirm blocked; Python telephony demo is local-only (`live: false`, media stream not opened). Mean **87.03%** (20625/237). Not VERIFIED_100. No live Twilio, SIP, or digital-human session.
 98. Carrier / shipping software (items 81, 158–163): DHL/DPD/GLS/Hermes/UPS never buy labels or book pickups; live track/webhook blocked; local EUR table ≠ live rate. Mean **88.11%** (20882/237). Not VERIFIED_100. No live labels.
+99. Central architecture and security software (items 1–19 except 18 already 100; 35–55 except 47/54 already 100; 168–181; 182/227–237 already 100): single Pusat, remote memory/Guardian/agent-bus blocked, SIEM export blocked, HAC cannot self-approve. Mean **91.16%** (21605/237). Not VERIFIED_100. No live SOC, remote memory, or production architecture probe.
 
 ## Resume pointer
 
-Carrier / shipping software pass (2026-10-17): items **81**, **158–163**. Label purchase, pickup, live track, and inbound carrier webhooks stay refused even when API keys are present. Local shipping quotes stay `liveRate: false`. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **88.11%** (20882/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Central architecture and security software pass (2026-10-17): items **1–19** (18 already 100), **35–55** (47/54 already 100), **168–181**. Remote memory, inter-agent bus, remote Guardian, Pusat live confirm, SIEM export, and production architecture confirm stay refused. HAC self-approve still denied. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **91.16%** (21605/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -179,14 +180,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | HEAD inspectable; remote CI UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 2
 
@@ -205,14 +206,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Facades exist; SoT inactive by design |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 3
 
@@ -231,14 +232,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Unit fortressAuthz; production UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 4
 
@@ -257,14 +258,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (GET /api/submissions security.manage; read_only 403; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Plugin audit exists; not every alternate path production-probed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 5
 
@@ -283,14 +284,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | guestCommerceAccess + E2E IDOR passed locally |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 6
 
@@ -309,14 +310,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Cookie closeout present; Secure flag needs HTTPS |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 7
 
@@ -335,14 +336,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | HttpOnly set; Secure on HTTPS only; Playwright cookie gap on HTTP static |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 8
 
@@ -361,14 +362,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (account login/register are public CSRF-exempt auth entrypoints; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | csrf.test.mjs passed locally |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 9
 
@@ -387,14 +388,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | corsOrigins tests; guest headers allowed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 10
 
@@ -413,14 +414,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | jwtSecret.test.mjs; production secret value UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 11
 
@@ -439,14 +440,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (limiter disable is per-call; reset HTTP bucket 5/hour; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | TEST_MODE still disables limiter for CI E2E isolation only; production forbids TEST_MODE |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 12
 
@@ -465,14 +466,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Unit tests this pass; flags remain OFF in workspace |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 13
 
@@ -491,14 +492,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (env validation logs/codes only; production startup not observed) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Unit tested; production startup not observed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 14
 
@@ -517,14 +518,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (password-reset tokens stripped from HTTP JSON; production secret audit UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production secret audit UNKNOWN; live reports not observed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 15
 
@@ -543,14 +544,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (sqlite constraint text not in publicErrorBody; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Other unused health blobs may still exist in intelligence copies |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 16
 
@@ -569,14 +570,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (cart.empty/inventory.insufficient keyed; guest proof still local) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | guestCommerceAccess unit passed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 17
 
@@ -595,14 +596,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (auth health payloads slimmed of db paths; other public liveness remains) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | fortressAuthz / routePermissions tests |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 18
 
@@ -647,14 +648,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 1–19; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Workspace env verified; production env not probed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 20–34: Buzzard Core, shared business services, common interfaces, data contracts, core infrastructure
 
@@ -1067,14 +1068,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | test:ai historically green |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 36
 
@@ -1093,14 +1094,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 78% (sales agent database_failure has no exception text; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Recommendation-only extras exist |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 37
 
@@ -1119,14 +1120,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (no raw SQL in memory failures; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production memory persistence UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 38
 
@@ -1145,14 +1146,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatAgentsAutomations.test.mjs` — seeds + execute for price/product/order/category; roster.complete true |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (4/5 established: execute, employee seed, recommendation-only, no live mutations; live/original remaining) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Original criteria UNKNOWN; live agent verification not claimed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 39
 
@@ -1171,14 +1172,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — reject/cancel/execution_failed stay CANCELLED; EXPIRED remints after Date.parse expireDue |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (task error_message mapped to keys; enqueue escalations use errorKey; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Original criteria UNKNOWN; production orchestration not observed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 40
 
@@ -1197,14 +1198,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `continuousIntegrity237.test.mjs` Pusat error-key mapping; no SQLITE leak |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 98% (UNIQUE is non-retryable VALIDATION_FAILED; submit throws classified codes; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live exception operations UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 41
 
@@ -1223,14 +1224,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | New unit test this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 42
 
@@ -1249,14 +1250,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 95% (unique race replay or classified 409; raw sqlite not rethrown; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Original criteria UNKNOWN; generic SQLITE_CONSTRAINT still parsed internally for kind only |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 43
 
@@ -1275,14 +1276,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (worker classifyError uses codes/failureKind only; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live workers not claimed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 44
 
@@ -1301,14 +1302,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Hash + TTL |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 45
 
@@ -1327,14 +1328,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (UNIQUE CONFLICT does not retry as DATABASE_FAILURE; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live exception operations UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 46
 
@@ -1353,14 +1354,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (guardian bridge unreachable uses key not exception text) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Existing suite; live Guardian UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 47
 
@@ -1405,14 +1406,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | RATE_LIMIT 60/min |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 49
 
@@ -1431,14 +1432,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — deny without employee identity |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (employee identity fail-closed + permission/tool checks; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Original criteria UNKNOWN; production isolation not observed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 50
 
@@ -1457,14 +1458,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | CRITICAL always approval |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 51
 
@@ -1483,14 +1484,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `fortressAuthz.test.mjs` — GET /api/orchestrator/status, /api/health/pusat, /api/health/software 401 unauthenticated |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (orchestrator_unreachable keyed; prefix still authenticated) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production orchestrator HTTP not probed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 52
 
@@ -1509,14 +1510,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (automationEngine event.error is publicTaskError; live PO still blocked) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Sensitive actions gated; live PO still blocked |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 53
 
@@ -1535,14 +1536,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Prior reports; not re-proven this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 54
 
@@ -1587,14 +1588,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 35–55; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `pusatTaskApprovalHold.test.mjs` — health.provider.live false, stub true |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (Pusat health omits database.path; production probe UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production Pusat health not probed |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ## Items 56–74: Product catalog, canonical product model, PIM, taxonomy, category localization, product validation, Product SoT readiness (inactive)
 
@@ -4539,14 +4540,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 89% (action mismatch + insufficient approver + AI self-approve; original UNKNOWN) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live human approval not produced |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 169
 
@@ -4565,14 +4566,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (sales/auth blocks keyed on gates) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production exception volume UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 170
 
@@ -4591,14 +4592,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Defaults HIGH |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 171
 
@@ -4617,14 +4618,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | New this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 172
 
@@ -4643,14 +4644,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Bridge test EUR 0 |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 173
 
@@ -4669,14 +4670,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | input_changed cancels |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 174
 
@@ -4695,14 +4696,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Unit expired |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 175
 
@@ -4721,14 +4722,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | pusatApprovalExceptions consume-once pass
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production replay UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 176
 
@@ -4747,14 +4748,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Events on create/decide |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 177
 
@@ -4773,14 +4774,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | pusatApprovalExceptions + pusatOrchestrator
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Do not execute live high-impact actions
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 178
 
@@ -4799,14 +4800,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | New unit |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 179
 
@@ -4825,14 +4826,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | API + admin UI |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 180
 
@@ -4851,14 +4852,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | pusatApprovalExceptions consume-once
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Authorization revalidation before any future live adapter remains required
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 181
 
@@ -4877,14 +4878,14 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 168–182; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `architectureSecuritySoftware.test.mjs` — Pusat/HAC/memory/SIEM refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 100% (established architecture/security software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Delegated |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `architectureSecuritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 182
 

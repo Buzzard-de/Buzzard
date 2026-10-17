@@ -342,4 +342,33 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
       else process.env.CLOUDFLARE_API_TOKEN = previous;
     }
   });
+
+  it("item 225: first real customer order is not placed", () => {
+    const software = require("../lib/software");
+    const salesBefore = process.env.BUZZARD_SALES_ENABLED;
+    const seen = software.firstOrderGate.inspect();
+    expect(seen.firstOrderPlaced).toBe(false);
+    expect(seen.commercialCreated).toBe(false);
+    expect(seen.charged).toBe(false);
+    expect(seen.salesEnabled).toBe(false);
+
+    const ai = software.firstOrderGate.place({ actor: "pusat", forcePlace: true, sku: "SKU-1" });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.orderId).toBe(null);
+    expect(ai.commercialCreated).toBe(false);
+
+    const forced = software.firstOrderGate.place({
+      actor: "operator",
+      forcePlace: true,
+      sku: "SKU-1",
+      customerId: "cust-1",
+    });
+    expect(forced.reason).toBe("HUMAN_FIRST_ORDER_REQUIRED");
+    expect(forced.forcePlaceIgnored).toBe(true);
+    expect(forced.orderId).toBe(null);
+    expect(forced.charged).toBe(false);
+    expect(forced.fulfilled).toBe(false);
+    expect(forced.salesEnabled).toBe(false);
+    expect(process.env.BUZZARD_SALES_ENABLED).toBe(salesBefore);
+  });
 });

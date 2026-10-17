@@ -220,3 +220,13 @@ No DNS API call, no access-policy write, token/zone values not returned.
 | buzzardHumanGatesEasy | 0 | 1 file, **11 passed** |
 
 **221** 0→15. Stays HUMAN_APPROVAL_REQUIRED. Mean **77.26%** (18311/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN item 225 first real order (no commercial create)
+
+No commercial order, charge, or fulfillment. Sales stay off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy | 0 | 1 file, **12 passed** |
+
+**225** 0→15. Stays HUMAN_APPROVAL_REQUIRED. **226** unchanged. Mean **77.32%** (18326/237). LIVE_VERIFIED 0.

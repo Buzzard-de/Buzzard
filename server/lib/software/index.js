@@ -49,6 +49,7 @@ const pimPublish = require("./pimPublish");
 const sotActivation = require("./sotActivation");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
+const goLiveGate = require("./goLiveGate");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -112,4 +113,5 @@ module.exports = {
   sotActivation,
   productionConfigGate,
   productionDeployGate,
+  goLiveGate,
 };

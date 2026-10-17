@@ -272,4 +272,34 @@ describe("easiest remaining human gates — 165/182/67/129", () => {
       else process.env.RENDER_DEPLOY_HOOK_URL = previousHook;
     }
   });
+
+  it("item 219: go-live software gate does not approve or enable sales", () => {
+    const software = require("../lib/software");
+    const goLiveApproval = require("../lib/commerce/goLiveApproval");
+    const salesBefore = process.env.BUZZARD_SALES_ENABLED;
+
+    const ai = software.goLiveGate.approve({ actor: "pusat", forceApprove: true });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.approved).toBe(false);
+    expect(ai.salesEnabled).toBe(false);
+    expect(ai.mutated).toBe(false);
+
+    const human = software.goLiveGate.approve({ actor: "operator", forceApprove: true });
+    expect(human.reason).toBe("HUMAN_GO_LIVE_REQUIRED");
+    expect(human.forceApproveIgnored).toBe(true);
+    expect(human.executed).toBe(false);
+    expect(human.salesEnabled).toBe(false);
+
+    const sales = software.goLiveGate.activateSales({ actor: "operator" });
+    expect(sales.allowed).toBe(false);
+    expect(sales.salesEnabled).toBe(false);
+    expect(sales.reason).toBe("HUMAN_SALES_ACTIVATION_REQUIRED");
+
+    const commerceAi = goLiveApproval.approveGoLive({ requestId: "gl_unused", decidedBy: "guardian" });
+    expect(commerceAi.reason).toBe("SELF_APPROVE_DENIED");
+    expect(commerceAi.salesEnabled).toBe(false);
+    expect(commerceAi.executed).toBe(false);
+    expect(goLiveApproval.canActivateSales().allowed).toBe(false);
+    expect(process.env.BUZZARD_SALES_ENABLED).toBe(salesBefore);
+  });
 });

@@ -70,9 +70,24 @@ function dispatch(input = {}, env = process.env) {
   };
 }
 
+function confirmDelivery() {
+  return {
+    ok: false,
+    liveDispatch: false,
+    smtpSent: false,
+    webhookSent: false,
+    pager: false,
+    delivered: false,
+    httpAttempted: false,
+    reason: "ALERT_DELIVERY_CONFIRM_BLOCKED",
+    note: "Pager/SMTP/webhook receipts are not treated as dispatched alerts.",
+  };
+}
+
 module.exports = {
   generateLocalAlerts,
   collectLocalAlerts,
   dispatch,
+  confirmDelivery,
   buildAlertRules,
 };

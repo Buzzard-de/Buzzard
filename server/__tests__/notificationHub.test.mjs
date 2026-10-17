@@ -12,6 +12,8 @@ describe("notification delivery fail-closed", () => {
       NOTIFICATION_CHANNELS.SMS,
       NOTIFICATION_CHANNELS.PUSH,
       NOTIFICATION_CHANNELS.WHATSAPP,
+      NOTIFICATION_CHANNELS.SLACK,
+      NOTIFICATION_CHANNELS.TEAMS,
     ]) {
       const result = deliverNotification({ channel, body: "test" });
       expect(result.status).toBe("BLOCKED");

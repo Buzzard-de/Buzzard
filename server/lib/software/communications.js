@@ -282,6 +282,29 @@ function humanHandoff(input = {}) {
   };
 }
 
+function confirmDelivery() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "DELIVERY_CONFIRM_BLOCKED",
+    note: "SENT/DELIVERED cannot be confirmed from a provider receipt in software. Item 155/165.",
+  };
+}
+
+function inboundDeliveryWebhook() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    httpAttempted: false,
+    reason: "INBOUND_DELIVERY_WEBHOOK_BLOCKED",
+    note: "Inbound delivery webhooks are not executed.",
+  };
+}
+
 module.exports = {
   MESSAGE_STATUS,
   ALLOWED_CHANNELS,
@@ -295,4 +318,6 @@ module.exports = {
   consentGate,
   humanHandoff,
   markSentOrDelivered,
+  confirmDelivery,
+  inboundDeliveryWebhook,
 };

@@ -282,3 +282,13 @@ Scan + schedule ETA + simulated map only. No live GPS ingest, no Twilio call, no
 | softwareCompletion + softwareMasterCompletion | 0 | 2 files, **90 passed** |
 
 **152** 74→100. **154** 55→100. **167** 80→100. All PARTIAL (not VERIFIED_100). Voice closed on `voice.js` (no numbered 237 voice row). Mean **78.02%** (18490/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 Alert / notification delivery software (items 155 / 165 / 185)
+
+Local draft/queue/generate only. No SMTP, webhook, or pager send. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| alertNotificationDelivery + notificationHub + localMetricsAlerts + part19CustomerExperienceReadiness + buzzardHumanGatesEasy + canonicalLocales | 0 | 6 files, **48 passed** |
+
+**155** 64→100 stays HUMAN_APPROVAL_REQUIRED. **165** 60→100 stays HUMAN_APPROVAL_REQUIRED. **185** 50→100 stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Mean **78.55%** (18616/237). LIVE_VERIFIED 0.

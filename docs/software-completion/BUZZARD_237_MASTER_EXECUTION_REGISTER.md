@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **78.02%** (Σ 18490 / 237 = 78.0168…; one decimal **78.0%**). Was **77.63%** (18399/237). This pass **+0.39 pp**. **%80 reached: NO** (need Σ 18960; shortfall 470). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **78.55%** (Σ 18616 / 237 = 78.5485…; one decimal **78.5%**). Was **78.02%** (18490/237). This pass **+0.53 pp**. **%80 reached: NO** (need Σ 18960; shortfall 344). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -141,10 +141,11 @@ Mean established-scope completion: **78.02%** (Σ 18490 / 237 = 78.0168…; one 
 91. BLOCKED_EXTERNAL item 185 local alert dispatch refuse (no SMTP/webhook/pager). Mean **77.48%** (18363/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 92. Playwright software (items 147/199) isolated suite 107 passed, 12 skipped, 0 failed on this HEAD. Mean **77.63%** (18399/237). PARTIAL, not VERIFIED_100.
 93. GPS / phone software (items 152/154/167 + voice fail-closed): scan tracking, schedule ETA, simulated map only; live GPS ingest/confirm blocked; Twilio start/inbound blocked. Mean **78.02%** (18490/237). PARTIAL, not VERIFIED_100. No live GPS or calls.
+94. Alert / notification delivery software (items 155/165/185): local queue + draft only; SMTP env ≠ send; inbound delivery webhooks blocked; alert dispatch/confirm blocked. **155/165 stay HUMAN**. **185 stays BLOCKED_EXTERNAL**. Mean **78.55%** (18616/237). Not VERIFIED_100. No live email/pager.
 
 ## Resume pointer
 
-GPS / phone software pass (2026-10-17): items **152**, **154**, **167**. Scan-based tracking + schedule ETA + `simulated:true` map fixtures. `confirmLiveGps` / `ingestGpsFix` / `pollGps` / `startCall` / `inboundWebhook` fail-closed. **152** 74→**100**, **154** 55→**100**, **167** 80→**100** established-scope. Status **PARTIAL** (not VERIFIED_100; live telematics/Twilio UNKNOWN). Voice has no numbered 237 row; software closed on `voice.js`. Mean **78.02%** (18490/237). LIVE_VERIFIED **0**. Do not merge #431.
+Alert / notification delivery software pass (2026-10-17): items **155**, **165**, **185**. Local draft/queue/generate only. SMTP env ignored. Delivery confirm and inbound provider webhooks blocked. **155** 64→**100**, **165** 60→**100** stay HUMAN_APPROVAL_REQUIRED. **185** 50→**100** stays BLOCKED_EXTERNAL_DEPENDENCY. Not VERIFIED_100. Live SMTP/webhook/pager UNKNOWN. Mean **78.55%** (18616/237). LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -4185,21 +4186,21 @@ Next (cannot be finished locally):
 | Established scope | Notifications draft / send blocked |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: communications.js send BLOCKED |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | software/communications.sendPrepared BLOCKED; provider message ids rejected; approveSend refuse; recordProviderAccepted blocked; notificationHub external channels BLOCKED
-| Identified gaps | Draft + send-blocked implemented; live customer send still requires independent human approval and provider config
+| Existing implementation evidence | sendPrepared BLOCKED; provider ids rejected; approveSend refuse; confirmDelivery/inbound webhook refuse; hub external BLOCKED; SMTP env ≠ send
+| Identified gaps | Live customer send still requires independent human approval and provider config
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/communications.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | notificationHub.test.mjs 2 passed; softwareCompletion sendPrepared historically blocked
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `alertNotificationDelivery.test.mjs` + `buzzardHumanGatesEasy.test.mjs` — confirm/inbound refuse; send stays blocked |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 64% (draft/send-blocked + provider-id refuse + approveSend refuse; live send remaining)
-| Remaining work | Live customer send HUMAN; alerting backend still external (item 185)
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Completion percentage | 100% (established draft/send-blocked software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Live customer send HUMAN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 156
@@ -4445,7 +4446,7 @@ Next (cannot be finished locally):
 | Established scope | Communications module |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Send always BLOCKED |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | communications.js channel allowlist; queue DRAFT-only; markSentOrDelivered HUMAN_SEND_REQUIRED; sendPrepared BLOCKED |
+| Existing implementation evidence | channel allowlist; queue DRAFT-only; markSentOrDelivered HUMAN_SEND_REQUIRED; sendPrepared BLOCKED; confirmDelivery/inbound webhook refuse |
 | Identified gaps | Live customer send still requires independent human + provider |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | communications.js |
@@ -4453,13 +4454,13 @@ Next (cannot be finished locally):
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | buzzardHumanGatesEasy.test.mjs 2026-10-17 |
+| Exact tests executed and results | `alertNotificationDelivery.test.mjs` — confirmDelivery and inbound webhook blocked |
 | Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (draft/queue/channel honesty; live send remaining) |
+| Completion percentage | 100% (established send-blocked communications software; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | External send pending — HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 166
@@ -4969,21 +4970,21 @@ Next (cannot be finished locally):
 | Established scope | Alerting |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Not a live pager |
 | Current implementation status | BLOCKED_EXTERNAL_DEPENDENCY |
-| Existing implementation evidence | `server/lib/operations/alertReadiness.js`, `localAlerts.js` |
-| Identified gaps | Local generation exists (`liveDispatch: false`). No authorized SMTP/webhook/pager backend. |
+| Existing implementation evidence | `alertReadiness.js`, `localAlerts.js` generate + dispatch refuse + confirmDelivery refuse |
+| Identified gaps | No authorized SMTP/webhook/pager backend. Local generation is not live delivery. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | ops |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `localMetricsAlerts.test.mjs` — alerts generated, dispatched false, deliveryBlocked |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `alertNotificationDelivery.test.mjs` + `localMetricsAlerts.test.mjs` — generate, dispatch blocked, confirm blocked |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (local generate + dispatch refuse; live SMTP/webhook/pager remaining) |
+| Completion percentage | 100% (established local-alert software refuse; original unknown criteria cannot be VERIFIED_100)
 | Remaining work | No authorized alerting backend — live delivery BLOCKED_EXTERNAL_DEPENDENCY |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `localMetricsAlerts.test.mjs` |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `alertNotificationDelivery.test.mjs` |
 | Final state and date | BLOCKED_EXTERNAL_DEPENDENCY / 2026-10-17 |
 
 ### Item 186

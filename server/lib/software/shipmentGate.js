@@ -111,6 +111,15 @@ function evaluate(db, input = {}) {
     reasons.push("RESERVE_NOT_IRREVERSIBLE");
   }
 
+  if (input.locationType === "carrier_gps" && input.telematicsAuthorized !== true) {
+    checks.gpsNotAuthoritative = true;
+    reasons.push("GPS_NOT_AUTHORITATIVE");
+  }
+  if (input.gpsInvented === true || input.fabricateGps === true) {
+    checks.gpsInventedRejected = true;
+    reasons.push("GPS_FABRICATION_REJECTED");
+  }
+
   const allowed = reasons.length === 0;
   const result = {
     allowed,

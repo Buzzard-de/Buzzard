@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **76.54%** (Σ 18141 / 237 = 76.5443…; one decimal **76.5%**). Was **76.29%** (18080/237). This pass **+0.25 pp**. **%80 reached: NO** (need Σ 18960; shortfall 819). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. This command did **not** push. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **76.78%** (Σ 18198 / 237 = 76.7848…; one decimal **76.8%**). Was **76.54%** (18141/237). This pass **+0.24 pp**. **%80 reached: NO** (need Σ 18960; shortfall 762). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. This command did **not** push. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -124,10 +124,11 @@ Mean established-scope completion: **76.54%** (Σ 18141 / 237 = 76.5443…; one 
 74. Buzzard 80 round: OpenSearch env ≠ live search; ops pack refuses `/tmp` source; amazon/ebay unpublished; sendPrepared blocked; localeCoverage no invented translations. 80% not reached.
 75. Buzzard 80 master 2026-10-17: numbered 80-item plan **not found** (do not invent). Local: exception summarize on software health; carrier label/shipment sensitive no-retry; forceSend/consent still BLOCKED; duplicate message drafts keep locale. 237 mean **unchanged** 76.29%. 80% not reached. LIVE_VERIFIED 0.
 76. Record sprint 2026-10-17: supplier outage≠stock; local shipping table (key≠live rate); listing category map unpublished; return reconcile no auto-match. Items 80/81/94/104/115. Mean **76.54%** (18141/237). 80% not reached. LIVE_VERIFIED 0.
+77. Record sprint 2 2026-10-17: quoteForMarket unknown/FX fail-closed; VAT unknown market no DE default; feed export dry-run; future timestamp/sourceId conflict; GPS claim ≠ telematics. Items 78/91/117/135/152. Mean **76.78%** (18198/237). 80% not reached. LIVE_VERIFIED 0.
 
 ## Resume pointer
 
-Record sprint 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **76.54%** (Σ 18141/237). Numbered 80-item plan **SOURCE NOT FOUND**. **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden. Sales / SoT / live payments **OFF**. Evidence: `docs/software-completion/BUZZARD_RECORD_SPRINT_2026-10-17.md`.
+Record sprint 2 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **76.78%** (Σ 18198/237). Numbered 80-item plan **SOURCE NOT FOUND**. **80% not reached.** VERIFIED_100 **0**. LIVE_VERIFIED **0**. Push/PR forbidden. Sales / SoT / live payments **OFF**. Evidence: `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`.
 
 Next:
 1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)
@@ -2170,10 +2171,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 72% (future timestamp + sourceId conflict fail preview; live fetch remaining) |
 | Remaining work | No live fetch |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 79
 
@@ -2508,10 +2509,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 65% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | 35 markets classified |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 78% (quoteForMarket: unknown market / non-EUR FX fail-closed; locale≠market; live VAT remaining) |
+| Remaining work | Live fiscal / FX remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 92
 
@@ -3188,10 +3189,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (unknown VAT fail-closed; messages do not echo request input; fiscal LIVE UNKNOWN) |
+| Completion percentage | 78% (unknown market no longer defaults to DE VAT; fiscal LIVE UNKNOWN) |
 | Remaining work | Fiscal LIVE UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `marketEngine.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 118
 
@@ -3656,10 +3657,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 46% (locale/price feed validation keyed; live export UNKNOWN)
-| Remaining work | Dry-run only |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 62% (exportFeedDryRun local preview; live=true blocked; unpublished; live upload remaining)
+| Remaining work | Dry-run only; no marketplace upload |
+| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 136
 
@@ -4102,10 +4103,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 66% (logisticsFulfillment shipment errors keyed)
-| Remaining work | Gate exists |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 74% (GPS claim without telematics blocked on ETA + shipmentGate; live carrier remaining)
+| Remaining work | Authorized telematics / live carrier remaining |
+| Final evidence references | `docs/software-completion/BUZZARD_RECORD_SPRINT_2_2026-10-17.md`; `buzzardRecordSprint2.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 153
 

@@ -224,4 +224,77 @@ function channelQuote(input = {}) {
   };
 }
 
-module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale };
+function quoteForMarket(input = {}) {
+  const marketEngine = require("../../core/marketEngineRegistry");
+  const marketCode = String(input.market || input.country || "").trim().toUpperCase();
+  const locale = input.locale ? String(input.locale).trim() : null;
+  const validation = marketEngine.validateMarketRequest(marketCode);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      conversionInvented: false,
+      vatLive: false,
+      reason: validation.reason || "UNKNOWN_MARKET",
+      market: marketCode || null,
+      locale,
+      languageIndependentFromMarket: true,
+    };
+  }
+  const market = validation.market;
+  const currency = String(input.currency || market.currency || "EUR").trim().toUpperCase();
+  if (currency !== "EUR") {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      conversionInvented: false,
+      vatLive: false,
+      reason: "MARKET_FX_UNSUPPORTED",
+      currency,
+      market: marketCode,
+      locale,
+      languageIndependentFromMarket: true,
+      note: "Market currency is recorded. No FX rate is invented for a EUR sale quote.",
+    };
+  }
+  const vat = marketEngine.getVatContext({
+    sellerCountry: input.sellerCountry || "DE",
+    buyerCountry: marketCode,
+    customerType: input.customerType || "B2C",
+    vatId: input.vatId,
+  });
+  if (!vat || vat.ok === false || vat.rate == null || !Number.isFinite(Number(vat.rate))) {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      vatLive: false,
+      reason: vat?.reason || "VAT_UNKNOWN",
+      market: marketCode,
+      locale,
+      languageIndependentFromMarket: true,
+    };
+  }
+  const quoted = quote({
+    ...input,
+    currency: "EUR",
+    taxRate: input.taxRate != null ? input.taxRate : vat.rate,
+  });
+  return {
+    ...quoted,
+    market: marketCode,
+    locale,
+    languageIndependentFromMarket: true,
+    vatReason: vat.reason,
+    vatLive: false,
+    conversionInvented: false,
+    marketUndercut: quoted.marketUndercut,
+  };
+}
+
+module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale, quoteForMarket };

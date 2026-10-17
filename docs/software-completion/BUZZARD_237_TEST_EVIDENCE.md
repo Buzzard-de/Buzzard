@@ -99,3 +99,17 @@ Push/PR/deploy **not** executed. Numbered 80-item plan still **not found**.
 | Playwright | not run | did not touch :3000 |
 
 Mean **76.54%** (18141/237). LIVE_VERIFIED 0. Items 80/81/94/104/115 only.
+
+## 2026-10-17 record sprint 2
+
+Push/PR/deploy **not** executed.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardRecordSprint2 + marketEngine | 0 | 2 files, **20 passed** |
+| softwareCompletion + softwareReliabilityBatch + dualPaymentAdapters + infrastructureAdvancementDay | 0 | 4 files, **101 passed** |
+| `npm run typecheck` | 0 | clean |
+| `npm run lint` | 0 | no warnings |
+| Playwright | not run | did not touch :3000 |
+
+Mean **76.78%** (18198/237). LIVE_VERIFIED 0. Items 78/91/117/135/152. Previously raised 80/81/94/104/115/114/122/140/189/215/223 unchanged.

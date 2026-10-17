@@ -38,6 +38,7 @@ function createDraft(input = {}) {
   if (!customs.ok) missing.push("customs");
   if (!input.customerId) missing.push("customer");
   if (!input.sku) missing.push("sku");
+  if (price.ok && price.saleApproved !== true) missing.push("precise_price");
 
   const blockedBySales = !salesEnabled;
   const ok = missing.length === 0;

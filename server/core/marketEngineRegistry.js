@@ -96,8 +96,18 @@ function isValidVatId(vatId) {
 function getVatContext({ sellerCountry, buyerCountry, customerType, vatId }) {
   const seller = String(sellerCountry || "").toUpperCase();
   const buyer = String(buyerCountry || "").toUpperCase();
-  const sellerMarket = getMarket(seller) || getDefaultMarket();
-  const buyerMarket = getMarket(buyer) || getDefaultMarket();
+  const sellerMarket = getMarket(seller);
+  const buyerMarket = getMarket(buyer);
+  if (!sellerMarket || !buyerMarket) {
+    return {
+      ok: false,
+      rate: null,
+      included: false,
+      reverseCharge: false,
+      invented: false,
+      reason: "UNKNOWN_MARKET",
+    };
+  }
   const domestic = seller === buyer;
   const sellerEu = isEuCountry(seller);
   const buyerEu = isEuCountry(buyer);
@@ -105,24 +115,24 @@ function getVatContext({ sellerCountry, buyerCountry, customerType, vatId }) {
 
   if (customerType === "B2B") {
     if (intraEu && isValidVatId(vatId)) {
-      return { rate: 0, included: false, reverseCharge: true, reason: "B2B_INTRA_EU_REVERSE_CHARGE" };
+      return { ok: true, rate: 0, included: false, reverseCharge: true, invented: false, reason: "B2B_INTRA_EU_REVERSE_CHARGE" };
     }
     if (sellerEu && !buyerEu) {
-      return { rate: 0, included: false, reverseCharge: false, reason: "B2B_EXPORT_ZERO_RATED" };
+      return { ok: true, rate: 0, included: false, reverseCharge: false, invented: false, reason: "B2B_EXPORT_ZERO_RATED" };
     }
     if (domestic) {
-      return { rate: sellerMarket.vat.standardRate, included: false, reverseCharge: false, reason: "B2B_DOMESTIC_NET" };
+      return { ok: true, rate: sellerMarket.vat.standardRate, included: false, reverseCharge: false, invented: false, reason: "B2B_DOMESTIC_NET" };
     }
-    return { rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, reason: "B2B_CROSS_BORDER_DEFAULT" };
+    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2B_CROSS_BORDER_DEFAULT" };
   }
 
   if (domestic) {
-    return { rate: sellerMarket.vat.standardRate, included: sellerMarket.vat.pricesIncludeVat, reverseCharge: false, reason: "B2C_DOMESTIC" };
+    return { ok: true, rate: sellerMarket.vat.standardRate, included: sellerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_DOMESTIC" };
   }
   if (intraEu) {
-    return { rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, reason: "B2C_INTRA_EU_DESTINATION" };
+    return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_INTRA_EU_DESTINATION" };
   }
-  return { rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, reason: "B2C_CROSS_BORDER" };
+  return { ok: true, rate: buyerMarket.vat.standardRate, included: buyerMarket.vat.pricesIncludeVat, reverseCharge: false, invented: false, reason: "B2C_CROSS_BORDER" };
 }
 
 function getEligibleSupplierRegions(countryCode) {

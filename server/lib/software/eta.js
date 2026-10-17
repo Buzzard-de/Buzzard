@@ -32,6 +32,21 @@ function evaluateShipment(shipment = {}, now = Date.now()) {
   const stale = Number.isNaN(last) || now - last > DEFAULT_STALE_TRACKING_MS;
   const delayed = status === TRACKING_STATUS.DELAYED || (stale && status === TRACKING_STATUS.IN_TRANSIT);
   const failed = status === TRACKING_STATUS.FAILED_DELIVERY;
+  const gpsClaimed = Boolean(shipment.gps || shipment.liveGps || shipment.latitude || shipment.longitude);
+  const telematics = shipment.telematicsAuthorized === true;
+  if (gpsClaimed && !telematics) {
+    return {
+      ok: false,
+      gps: false,
+      liveMap: false,
+      telematics: false,
+      live: false,
+      gpsInvented: false,
+      reason: "GPS_CLAIM_WITHOUT_TELEMATICS",
+      status,
+      source: "shipment_events_plus_schedule",
+    };
+  }
   return {
     ok: true,
     gps: false,

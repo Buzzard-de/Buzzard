@@ -102,6 +102,7 @@ function normalizeRow(raw, index) {
     stock: Number.isFinite(stock) ? stock : null,
     timestamp,
     sourceId: raw.source_id || raw.sourceId || raw.external_id || raw.supplier_item_id || null,
+    packQty: Number.isFinite(Number(raw.pack_qty ?? raw.packQty)) ? Number(raw.pack_qty ?? raw.packQty) : 1,
     live: false,
   };
 }
@@ -124,10 +125,14 @@ function validateRow(row) {
   if (row.timestamp) {
     const parsed = Date.parse(row.timestamp);
     if (Number.isNaN(parsed)) errors.push("TIMESTAMP_INVALID");
+    else if (parsed > Date.now() + 60_000) errors.push("TIMESTAMP_FUTURE");
   } else {
     warnings.push("TIMESTAMP_MISSING");
   }
   if (!row.category) warnings.push("CATEGORY_UNMAPPED");
+  if (row.packQty != null && (!Number.isFinite(Number(row.packQty)) || Number(row.packQty) <= 0)) {
+    errors.push("PACK_QTY_INVALID");
+  }
   const cost = Number(row.supplierCost ?? row.cost);
   if (row.supplierCost != null || row.cost != null) {
     if (!Number.isFinite(cost) || cost <= 0) errors.push("SUPPLIER_COST_INVALID");
@@ -150,6 +155,21 @@ function detectDuplicates(rows) {
     }
   });
   return duplicates;
+}
+
+function detectSourceIdConflicts(rows) {
+  const seen = new Map();
+  const conflicts = [];
+  rows.forEach((row) => {
+    if (!row.sourceId) return;
+    const key = String(row.sourceId);
+    if (seen.has(key) && seen.get(key) !== row.sku) {
+      conflicts.push({ field: "sourceId", value: key, skus: [seen.get(key), row.sku] });
+    } else if (!seen.has(key)) {
+      seen.set(key, row.sku);
+    }
+  });
+  return conflicts;
 }
 
 function classifyStatus({ configured, parsed, errors, live }) {
@@ -248,6 +268,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
   const rows = rawRows.map((raw, index) => normalizeRow(raw, index));
   const validated = rows.map((row) => ({ ...row, ...validateRow(row) }));
   const duplicates = detectDuplicates(rows);
+  const sourceIdConflicts = detectSourceIdConflicts(rows);
   const rowErrors = validated.flatMap((row) => row.errors.map((code) => ({ index: row.index, sku: row.sku, code })));
   const status = classifyStatus({
     configured: credentialsConfigured,
@@ -256,7 +277,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     live: false,
   });
 
-  const ok = rowErrors.length === 0 && duplicates.length === 0;
+  const ok = rowErrors.length === 0 && duplicates.length === 0 && sourceIdConflicts.length === 0;
   const breaker = recordCircuit(supplierId, ok);
   return {
     ok,
@@ -272,6 +293,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     rowCount: rows.length,
     rows: validated,
     duplicates,
+    sourceIdConflicts,
     errors: rowErrors,
     circuit: breaker,
     note: "Dry-run feed preview. Catalog is not written. Live supplier fetch remains BLOCKED.",
@@ -473,4 +495,5 @@ module.exports = {
   resetCircuit,
   classifyOutage,
   classifyAvailability,
+  detectSourceIdConflicts,
 };

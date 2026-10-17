@@ -371,6 +371,49 @@ function dryRunListing(input = {}, db = null) {
   };
 }
 
+function exportFeedDryRun(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  if (input.live === true || input.push === true) {
+    return {
+      ok: false,
+      dryRun: true,
+      exported: false,
+      pushed: false,
+      live: false,
+      published: false,
+      written: false,
+      channel: channel.id,
+      reason: "FEED_EXPORT_LIVE_BLOCKED",
+    };
+  }
+  const products = Array.isArray(input.products) ? input.products : [];
+  const rows = products.map((product) => {
+    const transformed = transformListing({ ...product, channel: channel.id });
+    return {
+      sku: product.sku || null,
+      transformed: transformed.ok === true,
+      published: false,
+      live: false,
+      categoryMapped: transformed.categoryMap?.mapped === true,
+      inventedCategory: Boolean(transformed.categoryMap?.invented),
+      reason: transformed.ok ? null : transformed.reason,
+    };
+  });
+  return {
+    ok: true,
+    dryRun: true,
+    exported: false,
+    pushed: false,
+    live: false,
+    published: false,
+    written: false,
+    channel: channel.id,
+    rowCount: rows.length,
+    rows,
+    note: "Local feed preview only. Not uploaded to a marketplace.",
+  };
+}
+
 function health() {
   const connectors = classifyConnectors();
   return {
@@ -396,6 +439,7 @@ module.exports = {
   draftListing,
   transformListing,
   mapCategory,
+  exportFeedDryRun,
   dryRunListing,
   validateAuthConfig,
   classifyMarketplaceError,

@@ -13,6 +13,18 @@ const {
 } = require("../lib/authSecurity");
 const { getLockoutInfo, recordFailure, clearFailures } = require("../lib/accountLockout");
 const { getClientIp } = require("../lib/security");
+const { applyAdminSessionCookies, applyCustomerSessionCookies } = require("../lib/authCookies");
+const { generateCsrfToken } = require("../lib/csrf");
+
+function applyRoleSessionCookies(res, user, token) {
+  const csrfToken = generateCsrfToken();
+  if (user?.role === "admin" || user?.role === "administrator") {
+    applyAdminSessionCookies(res, { token, csrfToken });
+  } else {
+    applyCustomerSessionCookies(res, { token, csrfToken });
+  }
+  return csrfToken;
+}
 
 function isEnabled() {
   return process.env.BUZZARD_DB_ENABLED !== "0";
@@ -96,10 +108,12 @@ module.exports = {
           .prepare("INSERT INTO users(email, password_hash, name) VALUES(?,?,?)")
           .run(normalizedEmail, hashPassword(password), normalizedName);
         const user = db.prepare("SELECT id, email, name, role FROM users WHERE id = ?").get(info.lastInsertRowid);
-        return res.status(201).json({ user, token: signUser(user) });
+        const token = signUser(user);
+        const csrfToken = applyRoleSessionCookies(res, user, token);
+        return res.status(201).json({ user, token, csrfToken, tokenStoredInCookie: true });
       } catch {
         logAuthFailure(req, { type: "auth_register_rejected", email: normalizedEmail, path: "/api/auth/register" });
-        return res.status(409).json({ error: "Email already exists" });
+        return res.status(409).json({ success: false, errorKey: "auth.emailExists" });
       }
     });
 
@@ -121,7 +135,7 @@ module.exports = {
       if (!isValidEmail(email) || typeof password !== "string" || password.length === 0 || password.length > 128) {
         recordFailure("auth", normalizedEmail, { ip, email: normalizedEmail, path: "/api/auth/login" });
         logAuthFailure(req, { type: "auth_login_failed", email, path: "/api/auth/login" });
-        return res.status(401).json({ error: "Invalid credentials" });
+        return res.status(401).json({ success: false, errorKey: "auth.invalidCredentials" });
       }
       const user = db
         .prepare("SELECT id, email, name, role, password_hash FROM users WHERE email = ?")
@@ -140,11 +154,13 @@ module.exports = {
             retryAfterSec: failure.retryAfterSec,
           });
         }
-        return res.status(401).json({ error: "Invalid credentials" });
+        return res.status(401).json({ success: false, errorKey: "auth.invalidCredentials" });
       }
       clearFailures("auth", normalizedEmail);
       delete user.password_hash;
-      return res.json({ user, token: signUser(user) });
+      const token = signUser(user);
+      const csrfToken = applyRoleSessionCookies(res, user, token);
+      return res.json({ user, token, csrfToken, tokenStoredInCookie: true });
     });
 
     app.get("/api/me", (req, res) => {
@@ -194,7 +210,7 @@ module.exports = {
 
     app.get("/api/products/by-sku/:sku", (req, res) => {
       const product = findProductBySku(decodeURIComponent(req.params.sku));
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(publicProduct(product));
     });
 
@@ -207,7 +223,7 @@ module.exports = {
           WHERE p.id = ? AND p.active = 1
         `)
         .get(req.params.id);
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(publicProduct(product));
     });
 
@@ -222,7 +238,7 @@ module.exports = {
         product = findProductBySku(String(sku));
       }
       if (!product || quantity < 1 || quantity > product.stock) {
-        return res.status(400).json({ error: "Invalid product or quantity" });
+        return res.status(400).json({ success: false, errorKey: "cart.invalidItem" });
       }
       const cart = getOrCreateCart(req.user.sub);
       db.prepare(`
@@ -246,7 +262,7 @@ module.exports = {
       const productId = Number(req.params.productId);
       const { quantity } = req.body || {};
       const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(req.user.sub);
-      if (!cart) return res.status(404).json({ error: "Cart not found" });
+      if (!cart) return res.status(404).json({ success: false, errorKey: "cart.notFound" });
 
       if (!Number.isFinite(quantity) || quantity < 1) {
         db.prepare("DELETE FROM cart_items WHERE cart_id = ? AND product_id = ?").run(cart.id, productId);
@@ -255,7 +271,7 @@ module.exports = {
 
       const product = db.prepare("SELECT * FROM products WHERE id = ? AND active = 1").get(productId);
       if (!product || quantity > product.stock) {
-        return res.status(400).json({ error: "Invalid product or quantity" });
+        return res.status(400).json({ success: false, errorKey: "cart.invalidItem" });
       }
 
       db.prepare(`
@@ -270,7 +286,7 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       const { items = [] } = req.body || {};
       if (!Array.isArray(items)) {
-        return res.status(400).json({ error: "items must be an array" });
+        return res.status(400).json({ success: false, errorKey: "order.itemsInvalid" });
       }
 
       const cart = getOrCreateCart(req.user.sub);
@@ -284,14 +300,14 @@ module.exports = {
         const product = findProductBySku(sku);
         if (!product) continue;
         if (quantity > product.stock) {
-          return res.status(409).json({ error: `Insufficient stock: ${sku}` });
+          return res.status(409).json({ success: false, errorKey: "inventory.insufficient" });
         }
 
         const existing = resolved.find((row) => row.productId === product.id);
         if (existing) {
           existing.quantity += quantity;
           if (existing.quantity > product.stock) {
-            return res.status(409).json({ error: `Insufficient stock: ${sku}` });
+            return res.status(409).json({ success: false, errorKey: "inventory.insufficient" });
           }
         } else {
           resolved.push({ productId: product.id, quantity });
@@ -336,7 +352,7 @@ module.exports = {
           shippingAddress,
         });
         if (result.error) {
-          return res.status(result.status || 400).json({ error: result.error });
+          return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
         }
         return res.status(201).json({
           id: result.orderId,
@@ -351,7 +367,7 @@ module.exports = {
         });
       } catch (error) {
         console.error("SQLite order error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     }
 
@@ -376,7 +392,7 @@ module.exports = {
           WHERE order_number = ? AND user_id = ?
         `)
         .get(req.params.orderNumber, req.user.sub);
-      if (!order) return res.status(404).json({ error: "Order not found" });
+      if (!order) return res.status(404).json({ success: false, errorKey: "order.notFound" });
       return res.json(order);
     });
 
@@ -393,7 +409,7 @@ module.exports = {
     app.get("/api/db/admin/products/:id", (req, res) => {
       if (!requireAdmin(req, res)) return;
       const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(product);
     });
 
@@ -401,7 +417,7 @@ module.exports = {
       if (!requireAdmin(req, res)) return;
       const { price_eur, stock, active, name, description } = req.body || {};
       const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       db.prepare(`
         UPDATE products
         SET price_eur = ?, stock = ?, active = ?, name = ?, description = ?
@@ -420,11 +436,11 @@ module.exports = {
     app.patch("/api/db/admin/orders/:orderNumber/status", (req, res) => {
       if (!requireAdmin(req, res)) return;
       const { status } = req.body || {};
-      if (!status) return res.status(400).json({ error: "status required" });
+      if (!status) return res.status(400).json({ success: false, errorKey: "validation.statusRequired" });
       const order = db
         .prepare("SELECT * FROM orders WHERE order_number = ?")
         .get(req.params.orderNumber);
-      if (!order) return res.status(404).json({ error: "Order not found" });
+      if (!order) return res.status(404).json({ success: false, errorKey: "order.notFound" });
       db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
       return res.json(
         db.prepare(`
@@ -439,7 +455,7 @@ module.exports = {
       if (!requireAdmin(req, res)) return;
       const { orderId } = req.body || {};
       const order = db.prepare("SELECT * FROM orders WHERE id = ?").get(orderId);
-      if (!order) return res.status(404).json({ error: "Order not found" });
+      if (!order) return res.status(404).json({ success: false, errorKey: "order.notFound" });
       try {
         const shipment = await createShipment({
           orderNumber: order.order_number,
@@ -451,7 +467,7 @@ module.exports = {
         return res.json(shipment);
       } catch (error) {
         console.error("SQLite shipment error:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ success: false, errorKey: "security.internalError" });
       }
     });
   },

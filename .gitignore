@@ -7,6 +7,10 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 .next/
+.next-dev/
+.next-prod/
+.next-prod.lock
+
 out/
 tsconfig.tsbuildinfo
 
@@ -250,3 +254,10 @@ intelligence/buzzard_ki_gesamt/snapshots/latest/
 intelligence/buzzard_ki_gesamt/snapshots/20*/
 intelligence/buzzard_ki_gesamt/snapshots/*.zip
 test-results/
+
+# Staged copy used only while packing the portable zip
+desktop-bridge/portable/src/
+
+# Local audit scratch DBs (never commit)
+.buzzard-audit-ci.db
+.buzzard-audit-ci.sqlite

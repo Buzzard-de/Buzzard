@@ -13,6 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
   FAILURE_KIND,
 } = require("../core/jobConstants");
+const { classifySystemFailure } = require("./security");
 
 const WORKER_ID = `worker_${crypto.randomBytes(4).toString("hex")}`;
 let pollTimer = null;
@@ -55,12 +56,14 @@ function setWorkerState(partial) {
 }
 
 function classifyError(err) {
-  if (err.failureKind) return err.failureKind;
-  const msg = String(err.message || "").toLowerCase();
-  if (msg.includes("timeout") || err.name === "AbortError") return FAILURE_KIND.TIMEOUT;
-  if (msg.includes("network") || msg.includes("fetch")) return FAILURE_KIND.NETWORK;
-  if (msg.includes("sql") || msg.includes("database")) return FAILURE_KIND.DATABASE;
-  if (msg.includes("provider") || msg.includes("supplier")) return FAILURE_KIND.PROVIDER;
+  if (!err) return FAILURE_KIND.UNKNOWN;
+  if (err.failureKind && Object.values(FAILURE_KIND).includes(err.failureKind)) {
+    return err.failureKind;
+  }
+  const sys = classifySystemFailure(err);
+  if (sys === "TIMEOUT") return FAILURE_KIND.TIMEOUT;
+  if (sys === "NETWORK") return FAILURE_KIND.NETWORK;
+  if (sys === "DATABASE") return FAILURE_KIND.DATABASE;
   return FAILURE_KIND.UNKNOWN;
 }
 
@@ -112,7 +115,7 @@ async function processOneJob() {
     const retry = (job.retryCount || 0) + 1;
     const maxRetries = job.maxRetries ?? DEFAULT_MAX_RETRIES;
 
-    appendJobLog(job.id, err.message, { level: "ERROR", metadata: { failureKind, retry } });
+    appendJobLog(job.id, failureKind, { level: "ERROR", metadata: { failureKind, retry } });
 
     if (retry < maxRetries) {
       const delayMs = computeRetryDelay(retry);
@@ -123,9 +126,9 @@ async function processOneJob() {
           execution_ms = ?, next_run_at = ?, lock_owner = NULL, lock_expires_at = NULL,
           updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
-      `).run(retry, err.message, failureKind, executionMs, nextRun, job.id);
+      `).run(retry, failureKind, failureKind, executionMs, nextRun, job.id);
     } else {
-      jobQueue.markDeadLetter(job.id, err.message, failureKind);
+      jobQueue.markDeadLetter(job.id, failureKind, failureKind);
       jobQueue.updateJob(job.id, { executionMs });
     }
   } finally {
@@ -156,7 +159,7 @@ function startWorker({ pollIntervalMs = 3000 } = {}) {
   });
   jobQueue.releaseStaleLocks();
   pollTimer = setInterval(() => {
-    tick().catch((err) => console.error("[worker] tick error:", err.message));
+    tick().catch((err) => console.error("[worker] tick error:", require("./security").publicTaskError(err, "worker.tick_failed")));
   }, pollIntervalMs);
   if (pollTimer.unref) pollTimer.unref();
   tick().catch(() => {});
@@ -206,5 +209,6 @@ module.exports = {
   stopWorker,
   processOneJob,
   tick,
+  classifyError,
   setupGracefulShutdown,
 };

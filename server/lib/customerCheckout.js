@@ -6,9 +6,15 @@ function isEnabled() {
 }
 
 function getTaxRate(countryCode) {
-  const country = String(countryCode || "DE").toUpperCase();
+  const country = String(countryCode || "").toUpperCase();
+  if (!country) return null;
   const row = db.prepare("SELECT rate FROM tax_rates WHERE country_code = ?").get(country);
-  return row?.rate ?? 0.19;
+  if (row?.rate != null && Number.isFinite(Number(row.rate))) {
+    return Number(row.rate);
+  }
+  const { getTaxRate: configuredRate } = require("./commerce/taxProvider");
+  const percent = configuredRate(country);
+  return percent == null ? null : percent / 100;
 }
 
 function resolveCurrency(countryCode, currency) {
@@ -54,7 +60,7 @@ function normalizeAddressInput(body = {}) {
 function createAddress(userId, body) {
   const address = normalizeAddressInput(body);
   if (!address.name || !address.line1 || !address.city || !address.postalCode || !address.countryCode) {
-    return { error: "Complete address required", status: 400 };
+    return { error: "address.incomplete", status: 400 };
   }
   const info = db
     .prepare(
@@ -82,10 +88,10 @@ function updateAddress(userId, addressId, body) {
   const existing = db
     .prepare("SELECT * FROM addresses WHERE id = ? AND user_id = ?")
     .get(addressId, userId);
-  if (!existing) return { error: "Address not found", status: 404 };
+  if (!existing) return { error: "address.notFound", status: 404 };
   const address = normalizeAddressInput(body);
   if (!address.name || !address.line1 || !address.city || !address.postalCode || !address.countryCode) {
-    return { error: "Complete address required", status: 400 };
+    return { error: "address.incomplete", status: 400 };
   }
   db.prepare(`
     UPDATE addresses
@@ -124,7 +130,7 @@ function createReview(userId, body = {}) {
   const productId = String(body.productId || "");
   const rating = Number(body.rating);
   if (!productId || !Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return { error: "Rating 1-5 required", status: 400 };
+    return { error: "review.ratingRequired", status: 400 };
   }
   const info = db
     .prepare("INSERT INTO reviews(user_id, product_id, rating, title, body) VALUES(?,?,?,?,?)")
@@ -147,12 +153,12 @@ function validateCouponCode(code, subtotal) {
   const result = validateCoupon(code, subtotal);
   if (!result.valid) {
     if (result.errorKey === "checkout.couponEmpty") {
-      return { error: "Coupon code required", status: 400 };
+      return { error: "coupon.codeRequired", status: 400 };
     }
     if (result.errorKey === "checkout.couponMinSubtotal") {
-      return { error: "Minimum order not reached", status: 400 };
+      return { error: "coupon.minOrder", status: 400 };
     }
-    return { error: "Coupon not found", status: 404 };
+    return { error: "coupon.notFound", status: 404 };
   }
   const coupon = lookupDbCoupon(code);
   return {
@@ -199,7 +205,10 @@ function calculateCheckoutQuote(body = {}) {
   const method = db
     .prepare("SELECT * FROM shipping_methods WHERE country_code = ? AND code = ?")
     .get(country, body.shippingMethod || "standard");
-  const shipping = method ? (subtotal >= method.free_from ? 0 : method.price) : 9.99;
+  if (!method) {
+    return { ok: false, blocked: true, code: "shipping_method_unknown", invented: false, country };
+  }
+  const shipping = subtotal >= method.free_from ? 0 : method.price;
 
   let discount = 0;
   if (body.couponCode) {
@@ -209,10 +218,16 @@ function calculateCheckoutQuote(body = {}) {
 
   const net = Math.max(0, subtotal - discount);
   const taxRate = getTaxRate(country);
+  if (taxRate == null) {
+    return { ok: false, blocked: true, code: "tax_rate_unknown", invented: false, country };
+  }
   const tax = Number((net * taxRate).toFixed(2));
   const total = Number((net + shipping + tax).toFixed(2));
 
   return {
+    ok: true,
+    blocked: false,
+    invented: false,
     subtotal,
     discount: Number(discount.toFixed(2)),
     shipping,
@@ -255,7 +270,7 @@ function createCouponAdmin(body = {}) {
   const code = String(body.code || "")
     .trim()
     .toUpperCase();
-  if (!code) return { error: "Coupon code required", status: 400 };
+  if (!code) return { error: "coupon.codeRequired", status: 400 };
   db.prepare(
     "INSERT INTO coupons(code, type, value, min_order, expires_at) VALUES(?,?,?,?,?)"
   ).run(
@@ -286,6 +301,7 @@ function getCustomerCheckoutStatus() {
 
 module.exports = {
   isEnabled,
+  getTaxRate,
   listShippingMethods,
   getCustomerProfile,
   createAddress,

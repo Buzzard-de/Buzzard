@@ -44,7 +44,7 @@ async function fetchGuardian(path, options = {}) {
     return {
       ok: false,
       status: "UNREACHABLE",
-      error: error.name === "AbortError" ? "guardian_timeout" : error.message,
+      error: error.name === "AbortError" ? "guardian_timeout" : require("./security").publicTaskError(error, "guardian_unreachable"),
     };
   } finally {
     clearTimeout(timer);

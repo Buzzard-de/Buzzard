@@ -23,21 +23,21 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
 function requireCustomer(req, res) {
   const bearer = extractToken(req);
   if (!bearer) {
-    res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ success: false, errorKey: "security.authRequired" });
     return null;
   }
   try {
     req.user = verifyToken(bearer);
     return req.user;
   } catch {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ success: false, errorKey: "security.invalidToken" });
     return null;
   }
 }
@@ -52,7 +52,7 @@ module.exports = {
     app.post("/api/customer/support/tickets", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerSupport.createTicket(req.user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result);
     });
 
@@ -64,7 +64,7 @@ module.exports = {
     app.get("/api/customer/support/tickets/:id", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerSupport.getUserTicket(req.user.sub, req.params.id);
-      if (!result) return res.status(404).json({ error: "Ticket not found" });
+      if (!result) return res.status(404).json({ success: false, errorKey: "support.ticketNotFound" });
       return res.json(result);
     });
 
@@ -75,7 +75,7 @@ module.exports = {
         req.params.id,
         req.body?.message
       );
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -97,7 +97,7 @@ module.exports = {
     app.get("/api/admin/customer-support/tickets/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.getTicketAdmin(req.params.id);
-      if (!result) return res.status(404).json({ error: "Ticket not found" });
+      if (!result) return res.status(404).json({ success: false, errorKey: "support.ticketNotFound" });
       return res.json(result);
     });
 
@@ -105,7 +105,7 @@ module.exports = {
       if (!requireAnyAdmin(req, res)) return;
       const adminId = req.user?.sub || 0;
       const result = customerSupport.replyTicketAdmin(adminId, req.params.id, req.body?.message);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -117,21 +117,21 @@ module.exports = {
     app.post("/api/admin/customer-support/tracking-event", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.createTrackingEvent(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/customer-support/notifications/email", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.queueEmailNotification(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(202).json(result);
     });
 
     app.post("/api/admin/customer-support/notifications/whatsapp", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.queueWhatsAppNotification(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(202).json(result);
     });
 

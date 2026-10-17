@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -36,7 +36,7 @@ module.exports = {
 
     app.post("/api/reviews-ratings/reviews", (req, res) => {
       const result = reviewsRatings.createReview(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.review);
     });
 
@@ -54,28 +54,28 @@ module.exports = {
 
     app.post("/api/reviews-ratings/reviews/:id/report", (req, res) => {
       const result = reviewsRatings.reportReview(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result);
     });
 
     app.post("/api/admin/reviews-ratings/reviews/:id/reply", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = reviewsRatings.addReply(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.patch("/api/admin/reviews-ratings/reviews/:id/moderate", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = reviewsRatings.moderateReview(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.review);
     });
 
     app.patch("/api/admin/reviews-ratings/media/:id/moderate", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = reviewsRatings.moderateMedia(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

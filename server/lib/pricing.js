@@ -1,3 +1,10 @@
+function cents(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  const sign = n < 0 ? -1 : 1;
+  return sign * (Math.round(Math.abs(n) * 100 + 1e-10) / 100);
+}
+
 function calculateSalePrice({
   supplierPrice,
   markupPercent = 38,
@@ -11,7 +18,7 @@ function calculateSalePrice({
   const minSale = purchase * (1 + minimumMarginPercent / 100);
   if (sale < minSale) sale = minSale;
 
-  return { amount: Math.round(sale * 100) / 100, currency };
+  return { amount: cents(sale), currency };
 }
 
 function applySafetyStock(stock, safetyStock = 0) {
@@ -30,7 +37,7 @@ function validatePrice(price, options = {}) {
   if (amount > 999999) return { ok: false, error: "price_too_high" };
   return {
     ok: true,
-    value: { amount: Math.round(amount * 100) / 100, currency: price?.currency || "EUR" },
+    value: { amount: cents(amount), currency: price?.currency || "EUR" },
   };
 }
 

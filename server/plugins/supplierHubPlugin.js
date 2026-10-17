@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -45,7 +45,7 @@ function requireAnyAuth(req, res) {
     return session;
   }
 
-  res.status(401).json({ error: "Authentication required" });
+  res.status(401).json({ success: false, errorKey: "security.authRequired" });
   return null;
 }
 
@@ -64,14 +64,14 @@ module.exports = {
     app.post("/api/admin/supplier-hub/suppliers", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = supplierHub.createSupplier(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.supplier);
     });
 
     app.patch("/api/admin/supplier-hub/suppliers/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = supplierHub.updateSupplier(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.supplier);
     });
 
@@ -101,7 +101,7 @@ module.exports = {
     app.post("/api/admin/supplier-hub/suppliers/:id/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = supplierHub.upsertSupplierProduct(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -118,7 +118,7 @@ module.exports = {
     app.post("/api/admin/supplier-hub/sync-jobs/:id/result", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = supplierHub.updateSupplierSyncJobResult(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -135,7 +135,7 @@ module.exports = {
     app.post("/api/admin/supplier-hub/supplier-orders", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = supplierHub.createSupplierOrder(req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.status || 201).json(result.order);
     });
 
@@ -161,7 +161,7 @@ module.exports = {
     app.post("/api/tecdoc/compatibility/link", (req, res) => {
       if (!requireAnyAuth(req, res)) return;
       const result = supplierHub.linkCompatibility(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

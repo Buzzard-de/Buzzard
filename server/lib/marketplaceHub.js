@@ -1,11 +1,24 @@
 const { db } = require("./db");
+const { MARKETPLACE_CHANNELS } = require("./software/marketplaceChannels");
 
-const CHANNELS = [
-  ["amazon", "Amazon"],
-  ["ebay", "eBay"],
-  ["google_shopping", "Google Shopping"],
-  ["tiktok_shop", "TikTok Shop"],
-];
+const CHANNELS = MARKETPLACE_CHANNELS.map((channel) => [channel.id, channel.name]);
+
+function marketplaceMutationGuard() {
+  const { assertFeatureAllowed } = require("./commerce/commerceFeatureFlags");
+  const gate = assertFeatureAllowed("sales");
+  if (!gate.allowed) {
+    return {
+      ok: false,
+      error: "marketplace_mutations_disabled",
+      status: 409,
+      live: false,
+      queued: 0,
+      published: false,
+      reason: "SALES_DISABLED",
+    };
+  }
+  return null;
+}
 
 function isEnabled() {
   return process.env.BUZZARD_MARKETPLACE_HUB !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -29,8 +42,12 @@ function listMarketplaces() {
 }
 
 function updateMarketplace(code, body = {}) {
+  if (body.enabled) {
+    const blocked = marketplaceMutationGuard();
+    if (blocked) return blocked;
+  }
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(code);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   db.prepare(
     "UPDATE marketplace_channels SET enabled = ?, account_label = ?, status = ?, last_sync = CURRENT_TIMESTAMP WHERE id = ?"
   ).run(
@@ -45,6 +62,8 @@ function updateMarketplace(code, body = {}) {
 }
 
 function queueStockSync() {
+  const blocked = marketplaceMutationGuard();
+  if (blocked) return blocked;
   const rows = db.prepare("SELECT * FROM marketplace_listings").all();
   const insert = db.prepare(
     "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
@@ -59,6 +78,8 @@ function queueStockSync() {
 }
 
 function queuePriceSync() {
+  const blocked = marketplaceMutationGuard();
+  if (blocked) return blocked;
   const rows = db.prepare("SELECT * FROM marketplace_listings").all();
   const insert = db.prepare(
     "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
@@ -78,6 +99,8 @@ function queuePriceSync() {
 }
 
 function queueOrderSync() {
+  const blocked = marketplaceMutationGuard();
+  if (blocked) return blocked;
   const marketplaces = db.prepare("SELECT * FROM marketplace_channels WHERE enabled = 1").all();
   const insert = db.prepare(
     "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
@@ -93,8 +116,8 @@ function queueOrderSync() {
 
 function upsertListing(body = {}) {
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
-  if (!body.productSku) return { error: "productSku required", status: 400 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
+  if (!body.productSku) return { error: "product.skuRequired", status: 400 };
 
   db.prepare(`
     INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
@@ -123,9 +146,9 @@ function upsertListing(body = {}) {
 
 function upsertSkuMapping(body = {}) {
   const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
+  if (!marketplace) return { error: "marketplace.notFound", status: 404 };
   if (!body.productSku || !body.channelSku) {
-    return { error: "productSku and channelSku required", status: 400 };
+    return { error: "marketplace.channelSkuRequired", status: 400 };
   }
 
   db.prepare(`
@@ -151,7 +174,7 @@ function listSyncJobs() {
 
 function updateSyncJobResult(jobId, body = {}) {
   const job = db.prepare("SELECT id FROM marketplace_sync_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "Sync job not found", status: 404 };
+  if (!job) return { error: "supplier.syncJobNotFound", status: 404 };
   db.prepare(`
     UPDATE marketplace_sync_jobs
     SET status = ?, attempts = attempts + 1, error_message = ?, finished_at = CURRENT_TIMESTAMP
@@ -173,9 +196,11 @@ function listChannelOrders() {
 }
 
 function importOrderWebhook(body = {}) {
+  const blocked = marketplaceMutationGuard();
+  if (blocked) return blocked;
   const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
   if (!marketplace || !body.externalOrderId) {
-    return { error: "marketplace and externalOrderId required", status: 400 };
+    return { error: "marketplace.externalOrderRequired", status: 400 };
   }
   try {
     db.prepare(`
@@ -216,6 +241,7 @@ function getMarketplaceHubStatus() {
 module.exports = {
   isEnabled,
   CHANNELS,
+  marketplaceMutationGuard,
   listMarketplaces,
   updateMarketplace,
   queueStockSync,

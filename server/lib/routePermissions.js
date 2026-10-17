@@ -9,48 +9,91 @@ const PUBLIC_ROUTES = new Set([
   "POST /api/admin/logout",
   "GET /api/health",
   "GET /api/health/db",
-  "GET /api/health/ai",
   "GET /api/status",
   "GET /api/categories/visibility",
   "GET /api/catalog/health",
   "GET /api/storefront/health",
-  "GET /api/health/commerce",
   "GET /api/health/version",
-  "GET /api/health/worker",
-  "GET /api/health/production",
-  "GET /api/health/go-live-readiness",
-  "GET /api/health/operations",
-  "GET /api/health/storefront-readiness",
-  "GET /api/health/customer-experience-readiness",
-  "GET /api/health/admin-backoffice-readiness",
-  "GET /api/health/security-readiness",
-  "GET /api/health/product-quality-readiness",
-  "GET /api/health/supplier-readiness",
-  "GET /api/health/release-readiness",
-  "GET /api/health/final-production-readiness",
-  "GET /api/health/part27-readiness",
-  "GET /api/health/final-go-live-readiness",
-  "GET /api/health/final-prelaunch-readiness",
-  "GET /api/health/final-operational-readiness",
-  "GET /api/health/final-launch-governance",
-  "GET /api/health/final-control-recovery",
-  "GET /api/health/final-prelaunch-control",
-  "GET /api/health/final-launch-control",
-  "GET /api/health/final-production-governance",
   "GET /api/commerce/status",
-  "GET /api/commerce/readiness",
   "GET /api/commerce/shipping/methods",
-  "GET /api/security/health",
+  "GET /api/commerce/payments/providers",
+  "POST /api/commerce/webhooks/:provider",
+  "GET /api/payments-finance/methods",
+  "POST /api/payments-finance/webhook",
+  "POST /api/payments-finance/provider/payout-webhook",
+  "POST /api/payments-finance/provider/dispute-webhook",
+  "POST /api/webhooks/payment",
+  "POST /api/marketing-loyalty/campaigns/:code/apply",
   "GET /api/p1/status",
-  "GET /api/orchestrator/status",
-  "GET /api/guardian/status",
+  "GET /api/p1/health",
+  "POST /api/commerce/cart",
+  "GET /api/commerce/cart/:id",
+  "GET /api/commerce/checkout/:id",
+  "GET /api/commerce/orders/:id",
+  "POST /api/commerce/cart/:id/items",
+  "PATCH /api/commerce/cart/:id/items/:itemId",
+  "DELETE /api/commerce/cart/:id/items/:itemId",
+  "POST /api/commerce/cart/:id/clear",
+  "POST /api/commerce/cart/:id/validate",
+  "POST /api/commerce/cart/:id/coupon",
+  "DELETE /api/commerce/cart/:id/coupon",
+  "POST /api/commerce/coupons/validate",
+  "POST /api/commerce/checkout/start",
+  "POST /api/commerce/checkout/:id/validate",
+  "POST /api/commerce/checkout/:id/complete",
+  "POST /api/commerce/checkout/attempt",
+  "POST /api/commerce/payments",
+  "POST /api/contact",
+  "POST /api/ai/chat",
+  "POST /api/ai/phone/verify-order",
+  "POST /api/ai/phone/order-status",
+  "POST /api/ai/phone/escalate",
+  "POST /api/cart/abandoned",
+  "POST /api/cart/items",
+  "PATCH /api/cart/items/:productId",
+  "PUT /api/cart/sync",
+  "DELETE /api/cart/items/:productId",
+  "POST /api/auth/register",
+  "POST /api/auth/login",
+  "POST /api/software/qr/scan",
+  "POST /api/checkout/quote",
+  "POST /api/orders",
+  "POST /api/customer/support/tickets",
+  "POST /api/customer/support/tickets/:id/messages",
+  "POST /api/reviews-ratings/reviews",
+  "POST /api/reviews-ratings/reviews/:id/helpful",
+  "POST /api/reviews-ratings/reviews/:id/report",
+  "POST /api/marketing-center/conversion",
+  "POST /api/marketing-center/events",
+  "POST /api/intelligence/storefront/cart",
+  "POST /api/intelligence/storefront/cart/:cartId/items",
+  "POST /api/intelligence/storefront/cart/:cartId/checkout",
+  "POST /api/returns-rma/returns",
+  "POST /api/logistics-fulfillment/carrier/webhook",
+  "POST /api/logistics-fulfillment/returns",
+  "POST /api/marketplace-hub/order-webhook",
+  "POST /api/wms-inventory/scan",
+  "POST /api/identity-security/auth/register",
+  "POST /api/identity-security/auth/verify-email",
+  "POST /api/identity-security/auth/login",
+  "POST /api/identity-security/auth/refresh",
+  "POST /api/identity-security/auth/logout",
+  "POST /api/identity-security/auth/password-reset-request",
+  "POST /api/identity-security/auth/password-reset",
+  "POST /api/account/register",
+  "POST /api/account/login",
+  "POST /api/account/password-reset/request",
+  "POST /api/account/password-reset/confirm",
+  "POST /api/webhooks/:provider",
 ]);
 
 const EXACT = {
   "GET /api/admin/me": null,
+  "GET /api/submissions": "security.manage",
   "GET /api/admin/sessions": "security.read",
   "DELETE /api/admin/sessions/:sessionId": "security.manage",
   "GET /api/admin/audit": "audit.read",
+  "GET /api/admin/pusat/exceptions": "security.read",
   "GET /api/admin/control-center/deployment": "system.read",
   "GET /api/admin/operations/summary": "system.read",
   "GET /api/admin/operations/audit": "audit.read",
@@ -145,6 +188,13 @@ const EXACT = {
   "GET /api/admin/identity-security/overview": "security.read",
   "GET /api/admin/identity-security/audit": "audit.read",
   "GET /api/admin/identity-security/sessions": "security.read",
+  "POST /api/commerce/payments/:id/fail": "orders.write",
+  "POST /api/commerce/payments/:id/reconcile": "orders.write",
+  "GET /api/commerce/payments/:id": "orders.read",
+  "GET /api/health/pusat": "system.read",
+  "GET /api/health/software": "system.read",
+  "GET /api/commerce/readiness": "system.read",
+  "GET /api/security/health": "security.read",
 };
 
 const PREFIX = [
@@ -173,6 +223,24 @@ const PREFIX = [
   { prefix: "/api/admin/p1", read: "system.read", write: "system.configure" },
   { prefix: "/api/admin/submissions", read: "audit.read", write: "audit.read" },
   { prefix: "/api/security/admin", read: "security.read", write: "security.manage" },
+  { prefix: "/api/payments-finance", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/payments-v36", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/order-management-v32", read: "orders.read", write: "orders.write" },
+  { prefix: "/api/fulfillment-v33", read: "logistics.read", write: "logistics.write" },
+  { prefix: "/api/logistics-v34", read: "logistics.read", write: "logistics.write" },
+  { prefix: "/api/marketplace-v35", read: "integrations.read", write: "integrations.manage" },
+  { prefix: "/api/international-v37", read: "system.read", write: "system.configure" },
+  { prefix: "/api/security-v38", read: "security.read", write: "security.manage" },
+  { prefix: "/api/analytics-v39", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/master-admin-v40", read: "system.read", write: "system.configure" },
+  { prefix: "/api/supplier-integration-hub", read: "suppliers.read", write: "suppliers.write" },
+  { prefix: "/api/marketing-loyalty", read: "analytics.read", write: "analytics.export" },
+  { prefix: "/api/p1/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/guardian/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/orchestrator/", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/pusat", read: "system.read", write: "system.configure" },
+  { prefix: "/api/health/software", read: "system.read", write: "system.configure" },
+  { prefix: "/api/db/", read: "orders.read", write: "orders.write" },
 ];
 
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -188,39 +256,66 @@ function normalizePattern(pathname) {
     .join("/");
 }
 
-function resolveRoutePermission(method, pathname) {
+function pathMatchesPattern(pathname, pattern) {
+  const patSegs = pattern.split("/").filter(Boolean);
+  const reqSegs = pathname.split("/").filter(Boolean);
+  if (patSegs.length !== reqSegs.length) return false;
+  for (let i = 0; i < patSegs.length; i++) {
+    if (patSegs[i].startsWith(":")) continue;
+    if (patSegs[i] !== reqSegs[i]) return false;
+  }
+  return true;
+}
+
+function isPublicRoute(method, pathname) {
   const upper = method.toUpperCase();
   const key = routeKey(upper, pathname);
-  if (PUBLIC_ROUTES.has(key)) return { public: true };
+  if (PUBLIC_ROUTES.has(key)) return true;
+  for (const pattern of PUBLIC_ROUTES) {
+    const [patMethod, ...patParts] = pattern.split(" ");
+    if (patMethod !== upper) continue;
+    if (pathMatchesPattern(pathname, patParts.join(" "))) return true;
+  }
+  return false;
+}
+
+function resolvePrefixPermission(pathname, upper) {
+  let best = null;
+  for (const entry of PREFIX) {
+    if (pathname.startsWith(entry.prefix) && (!best || entry.prefix.length > best.prefix.length)) {
+      best = entry;
+    }
+  }
+  if (!best) return null;
+  return { permission: WRITE_METHODS.has(upper) ? best.write : best.read };
+}
+
+function resolveRoutePermission(method, pathname) {
+  const upper = method.toUpperCase();
+  if (isPublicRoute(upper, pathname)) return { public: true };
+
+  if (pathname.startsWith("/api/health/")) {
+    return { permission: "system.read" };
+  }
 
   for (const [pattern, permission] of Object.entries(EXACT)) {
     const [patMethod, ...patParts] = pattern.split(" ");
     const patPath = patParts.join(" ");
     if (patMethod !== upper) continue;
-    const patSegs = patPath.split("/").filter(Boolean);
-    const reqSegs = pathname.split("/").filter(Boolean);
-    if (patSegs.length !== reqSegs.length) continue;
-    let match = true;
-    for (let i = 0; i < patSegs.length; i++) {
-      if (patSegs[i].startsWith(":")) continue;
-      if (patSegs[i] !== reqSegs[i]) {
-        match = false;
-        break;
-      }
-    }
-    if (match) {
+    if (pathMatchesPattern(pathname, patPath)) {
       if (permission === null) return { authenticated: true };
       return { permission };
     }
   }
 
+  if (pathname.startsWith("/api/product-catalog-pim/") && WRITE_METHODS.has(upper)) {
+    return { permission: "products.write" };
+  }
+
+  const prefixPolicy = resolvePrefixPermission(pathname, upper);
+  if (prefixPolicy) return prefixPolicy;
+
   if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/security/admin")) {
-    for (const entry of PREFIX) {
-      if (pathname.startsWith(entry.prefix)) {
-        const permission = WRITE_METHODS.has(upper) ? entry.write : entry.read;
-        return { permission };
-      }
-    }
     if (WRITE_METHODS.has(upper)) {
       return { permission: "system.configure", derived: true };
     }
@@ -228,6 +323,18 @@ function resolveRoutePermission(method, pathname) {
       authenticated: true,
       derived: true,
     };
+  }
+
+  if (pathname.startsWith("/api/account/") || pathname.startsWith("/api/customer/") || pathname === "/api/me") {
+    return { authenticated: true, realm: "customer" };
+  }
+
+  if (upper === "GET" && pathname.startsWith("/api/orders/")) {
+    return { authenticated: true, realm: "customer" };
+  }
+
+  if (pathname.startsWith("/api/identity-security/account") || pathname.startsWith("/api/identity-security/privacy")) {
+    return { authenticated: true, realm: "service" };
   }
 
   return null;
@@ -239,4 +346,5 @@ module.exports = {
   PREFIX,
   resolveRoutePermission,
   routeKey,
+  isPublicRoute,
 };

@@ -22,6 +22,14 @@ export function getVatContext(input: VatContextInput): VatContext {
   const customerType = input.customerType;
   const buyerVat = getMarketVat(buyer);
   const sellerVat = getMarketVat(seller);
+  if (!buyerVat || !sellerVat) {
+    return {
+      rate: Number.NaN,
+      included: false,
+      reverseCharge: false,
+      reason: "UNKNOWN_MARKET",
+    };
+  }
   const sellerEu = isEuCountry(seller);
   const buyerEu = isEuCountry(buyer);
   const domestic = seller === buyer;

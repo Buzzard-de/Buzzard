@@ -1,4 +1,6 @@
 const { login, logout, verifyTwoFactor, requireAuth, extractToken, listActiveSessions, revokeSession } = require("../lib/auth");
+const { applyAdminSessionCookies, clearAdminSessionCookies } = require("../lib/authCookies");
+const { generateCsrfToken } = require("../lib/csrf");
 const { listAudit } = require("../lib/audit");
 const { requirePermission } = require("../lib/rbac");
 const adminTwoFactor = require("../lib/adminTwoFactor");
@@ -18,18 +20,23 @@ module.exports = {
       if (result.requires2FA) {
         return res.json(result);
       }
-      return res.json(result);
+      const csrfToken = generateCsrfToken();
+      applyAdminSessionCookies(res, { token: result.token, csrfToken });
+      return res.json({ ...result, csrfToken, tokenStoredInCookie: true });
     });
 
     app.post("/api/admin/login/2fa", (req, res) => {
       const { challengeToken, code } = req.body || {};
       const result = verifyTwoFactor(challengeToken, code, req);
       if (!result.success) return res.status(401).json(result);
-      return res.json(result);
+      const csrfToken = generateCsrfToken();
+      applyAdminSessionCookies(res, { token: result.token, csrfToken });
+      return res.json({ ...result, csrfToken, tokenStoredInCookie: true });
     });
 
     app.post("/api/admin/logout", (req, res) => {
       logout(extractToken(req), req);
+      clearAdminSessionCookies(res);
       return res.json({ success: true });
     });
 

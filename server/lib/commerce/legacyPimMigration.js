@@ -32,7 +32,7 @@ function loadLegacyCatalog() {
     }
     return { found: true, path: LEGACY_PATH, products, rawKeys: Object.keys(raw) };
   } catch (err) {
-    return { found: true, path: LEGACY_PATH, error: err.message, products: [] };
+    return { found: true, path: LEGACY_PATH, error: require("../security").publicTaskError(err, "pim.legacy.read_failed"), products: [] };
   }
 }
 

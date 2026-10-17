@@ -1,10 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
-const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
+const { resolveDbPath, ensureDbDirectory, getPersistenceInfo, assertDurableOpenAllowed } = require("./dbPaths");
+const { MARKETPLACE_CHANNELS } = require("./software/marketplaceChannels");
+
+assertDurableOpenAllowed();
 
 const dataDir = path.join(__dirname, "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
+if (process.env.NODE_ENV !== "production") {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
 const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);
@@ -953,16 +958,10 @@ function migrateMarketplaceHub() {
     );
   `);
 
-  const channels = [
-    ["amazon", "Amazon"],
-    ["ebay", "eBay"],
-    ["google_shopping", "Google Shopping"],
-    ["tiktok_shop", "TikTok Shop"],
-  ];
   const insertChannel = db.prepare(
     "INSERT OR IGNORE INTO marketplace_channels(code, name) VALUES(?, ?)"
   );
-  channels.forEach(([code, name]) => insertChannel.run(code, name));
+  MARKETPLACE_CHANNELS.forEach((channel) => insertChannel.run(channel.id, channel.name));
 
   const listingCount = db.prepare("SELECT COUNT(*) n FROM marketplace_listings").get().n;
   if (listingCount === 0) {
@@ -3860,6 +3859,16 @@ function migrateCoreFoundationPart17() {
   }
 }
 
+function migrateCoreFoundationPusat() {
+  const { migratePusatSchema } = require("./pusat/schema");
+  migratePusatSchema(db);
+}
+
+function migrateSoftwareCompletion() {
+  const { migrateSoftwareSchema } = require("./software/schema");
+  migrateSoftwareSchema(db);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
@@ -3867,6 +3876,8 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateCoreFoundationPusat();
+migrateSoftwareCompletion();
 
 
 function seed() {
@@ -3907,6 +3918,21 @@ function seed() {
 
 seed();
 
+function toPublicDatabaseHealth(health = getDatabaseHealth()) {
+  return {
+    enabled: Boolean(health?.enabled),
+    ok: !health?.error,
+    persistent: Boolean(health?.persistence?.persistent),
+    ephemeralRisk: Boolean(health?.persistence?.ephemeralRisk),
+    version: health?.version || "0.3.0",
+    persistence: {
+      mode: health?.persistence?.mode || "unknown",
+      persistent: Boolean(health?.persistence?.persistent),
+      ephemeralRisk: Boolean(health?.persistence?.ephemeralRisk),
+    },
+  };
+}
+
 function getDatabaseHealth() {
   try {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
@@ -3915,7 +3941,6 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
       users,
       products,
@@ -3924,8 +3949,6 @@ function getDatabaseHealth() {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        backupDir: persistence.backupDir,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };
@@ -3933,14 +3956,12 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
-      error: error.message,
+      error: require("./security").publicTaskError(error, "database.health_failed"),
       persistence: {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };
@@ -3951,5 +3972,6 @@ module.exports = {
   db,
   dbPath,
   getDatabaseHealth,
+  toPublicDatabaseHealth,
   getPersistenceInfo: () => getPersistenceInfo(dbPath),
 };

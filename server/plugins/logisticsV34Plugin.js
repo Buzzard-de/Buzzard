@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -36,7 +36,7 @@ module.exports = {
 
     app.post("/api/logistics-v34/records", (req, res) => {
       const result = mod.createRecord(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.record);
     });
 
@@ -46,13 +46,13 @@ module.exports = {
 
     app.get("/api/logistics-v34/records/:code", (req, res) => {
       const record = mod.getRecordByCode(req.params.code);
-      if (!record) return res.status(404).json({ error: "not found" });
+      if (!record) return res.status(404).json({ success: false, errorKey: "not_found" });
       return res.json(record);
     });
 
     app.patch("/api/logistics-v34/records/:id", (req, res) => {
       const result = mod.updateRecord(Number(req.params.id), req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.record);
     });
 

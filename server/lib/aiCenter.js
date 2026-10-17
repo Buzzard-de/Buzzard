@@ -80,7 +80,7 @@ function createSession(body = {}) {
 
 function getSessionByToken(token) {
   const session = db.prepare("SELECT * FROM aictr_sessions WHERE session_token = ?").get(token);
-  if (!session) return { error: "Session not found", status: 404 };
+  if (!session) return { error: "ai.sessionNotFound", status: 404 };
 
   return {
     session,
@@ -92,7 +92,7 @@ function getSessionByToken(token) {
 
 function chat(body = {}) {
   const text = clean(body.message);
-  if (!text) return { error: "Message required", status: 400 };
+  if (!text) return { error: "support.messageRequired", status: 400 };
 
   let session = body.sessionToken
     ? db.prepare("SELECT * FROM aictr_sessions WHERE session_token = ?").get(body.sessionToken)
@@ -150,7 +150,7 @@ function recommend(body = {}) {
 }
 
 function generateProductCopy(body = {}) {
-  if (!body.product) return { error: "Product data required", status: 400 };
+  if (!body.product) return { error: "ai.productRequired", status: 400 };
 
   const input = JSON.stringify(body.product);
   const output = aiAdapter({ task: "product_copy", input, language: body.language || "de" });
@@ -176,7 +176,7 @@ function generateProductCopy(body = {}) {
 
 function translate(body = {}) {
   if (!body.text || !body.targetLanguage) {
-    return { error: "Text and target language required", status: 400 };
+    return { error: "ai.translateRequired", status: 400 };
   }
 
   const output = aiAdapter({
@@ -205,7 +205,7 @@ function translate(body = {}) {
 }
 
 function analyzeReviewSentiment(body = {}) {
-  if (!body.review) return { error: "Review required", status: 400 };
+  if (!body.review) return { error: "ai.reviewRequired", status: 400 };
 
   const output = aiAdapter({ task: "sentiment", input: body.review });
   const result = db
@@ -229,7 +229,7 @@ function analyzeReviewSentiment(body = {}) {
 }
 
 function smartSearch(body = {}) {
-  if (!body.query) return { error: "Query required", status: 400 };
+  if (!body.query) return { error: "ai.queryRequired", status: 400 };
 
   const output = aiAdapter({ task: "search", input: body.query, language: body.language || "de" });
   return { ...output, filters: [], productIds: [] };
@@ -237,7 +237,7 @@ function smartSearch(body = {}) {
 
 function retryJob(jobId) {
   const job = db.prepare("SELECT * FROM aictr_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "AI job not found", status: 404 };
+  if (!job) return { error: "ai.jobNotFound", status: 404 };
 
   db.prepare("UPDATE aictr_jobs SET status = 'queued', completed_at = NULL WHERE id = ?").run(job.id);
   return { ok: true, status: "queued" };

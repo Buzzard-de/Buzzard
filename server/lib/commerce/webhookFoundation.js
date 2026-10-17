@@ -6,15 +6,22 @@ const { db } = require("../db");
 const { getEffectiveFlags } = require("./commerceFeatureFlags");
 const { logSecurityEvent } = require("../securityLog");
 
-function verifySignature(payload, signature, secret) {
-  if (!secret || !signature) return false;
-  const expected = crypto.createHmac("sha256", secret).update(payload).digest("hex");
-  if (signature.length !== expected.length) return false;
-  try {
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-  } catch {
-    return false;
-  }
+function verifySignature(payload, signature, secret, { now = Date.now(), maxAgeSec = 300 } = {}) {
+  const check = require("../software/paymentLifecycle").verifyWebhookSignature({
+    rawBody: payload,
+    signature,
+    secret,
+    now,
+    maxAgeSec,
+  });
+  return Boolean(check.ok);
+}
+
+function redactWebhookPayload(payload) {
+  const { redactForLog } = require("../security");
+  if (payload == null) return {};
+  if (typeof payload !== "object") return { redacted: true };
+  return redactForLog(payload);
 }
 
 function isDuplicateWebhook(eventId) {
@@ -27,11 +34,11 @@ function recordWebhookEvent({ provider, eventId, eventType, payload, verified })
   db.prepare(`
     INSERT INTO commerce_webhook_events(id, provider, event_id, event_type, payload_json, verified)
     VALUES (?, ?, ?, ?, ?, ?)
-  `).run(id, provider, eventId, eventType, JSON.stringify(payload || {}), verified ? 1 : 0);
+  `).run(id, provider, eventId, eventType, JSON.stringify(redactWebhookPayload(payload)), verified ? 1 : 0);
   return id;
 }
 
-function handleWebhook({ provider, eventId, eventType, rawBody, signature, secret, req }) {
+function handleWebhook({ provider, eventId, eventType, rawBody, signature, secret, req, now }) {
   const flags = getEffectiveFlags();
 
   if (!flags.salesEnabled || !flags.paymentEnabled) {
@@ -44,30 +51,52 @@ function handleWebhook({ provider, eventId, eventType, rawBody, signature, secre
     return {
       accepted: false,
       code: "webhook_blocked",
-      message: "Webhooks cannot create real orders/payments while sales disabled",
+      errorKey: "webhook.blocked",
       status: 403,
       orderCreated: false,
       paymentCreated: false,
+      live: false,
     };
   }
 
+  if (!eventId) {
+    return { accepted: false, code: "event_id_required", errorKey: "webhook.eventIdRequired", status: 400 };
+  }
+
+  const signatureCheck = require("../software/paymentLifecycle").verifyWebhookSignature({
+    rawBody,
+    signature,
+    secret,
+    now,
+  });
+  if (!signatureCheck.ok) {
+    logSecurityEvent({
+      type: "payment_attempt_blocked",
+      success: false,
+      detail: { provider, reason: signatureCheck.reason },
+    });
+    return { accepted: false, code: signatureCheck.reason, errorKey: "webhook.invalidSignature", status: 401 };
+  }
+
   if (isDuplicateWebhook(eventId)) {
-    return { accepted: true, duplicate: true, status: 200 };
+    return { accepted: true, duplicate: true, verified: true, status: 200, processed: false, financialEffect: false };
   }
 
-  const verified = verifySignature(rawBody, signature, secret);
-  if (!verified) {
-    logSecurityEvent({ type: "payment_attempt_blocked", success: false, detail: { provider, reason: "bad_signature" } });
-    return { accepted: false, code: "invalid_signature", status: 401 };
+  let payload = {};
+  try {
+    payload = rawBody ? JSON.parse(rawBody) : {};
+  } catch {
+    return { accepted: false, code: "invalid_json", errorKey: "webhook.invalidPayload", status: 400 };
   }
 
-  recordWebhookEvent({ provider, eventId, eventType, payload: JSON.parse(rawBody || "{}"), verified });
-  return { accepted: true, verified: true, status: 200, processed: false, note: "Foundation only" };
+  recordWebhookEvent({ provider, eventId, eventType, payload, verified: true });
+  return { accepted: true, verified: true, status: 200, processed: false, live: false, note: "Foundation only" };
 }
 
 module.exports = {
   verifySignature,
   isDuplicateWebhook,
   recordWebhookEvent,
+  redactWebhookPayload,
   handleWebhook,
 };

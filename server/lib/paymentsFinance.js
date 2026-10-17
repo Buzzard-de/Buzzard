@@ -32,7 +32,7 @@ function createPaymentIntent(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const amount = Number(body.amount || 0);
   if (!orderNumber || amount <= 0) {
-    return { error: "orderNumber and positive amount required", status: 400 };
+    return { error: "payment.amountRequired", status: 400 };
   }
 
   const idempotencyKey = body.idempotencyKey || body.idempotency_key || uuid();
@@ -44,7 +44,7 @@ function createPaymentIntent(body = {}) {
   const provider = db
     .prepare("SELECT * FROM finance_payment_providers WHERE code = ? AND enabled = 1")
     .get(body.provider || "stripe");
-  if (!provider) return { error: "Payment provider unavailable", status: 400 };
+  if (!provider) return { error: "payment.providerUnavailable", status: 400 };
 
   const method = db
     .prepare(`
@@ -52,7 +52,7 @@ function createPaymentIntent(body = {}) {
       WHERE provider_id = ? AND code = ? AND active = 1
     `)
     .get(provider.id, body.method || "card");
-  if (!method) return { error: "Payment method unavailable", status: 400 };
+  if (!method) return { error: "payment.methodUnavailable", status: 400 };
 
   const externalId = `pi_demo_${uuid().replace(/-/g, "")}`;
   const result = db
@@ -84,102 +84,76 @@ function createPaymentIntent(body = {}) {
 
 function confirmPaymentIntent(id) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
-  if (!intent) return { error: "Payment intent not found", status: 404 };
+  if (!intent) return { error: "payment.intentNotFound", status: 404 };
   if (["succeeded", "refunded", "partially_refunded"].includes(intent.status)) {
-    return { intent };
+    return { intent, applied: false, reason: "ALREADY_TERMINAL" };
   }
 
-  db.prepare(`
-    UPDATE finance_payment_intents SET status = 'succeeded', updated_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(intent.id);
-  db.prepare(`
-    INSERT INTO finance_payment_transactions(
-      payment_intent_id, type, amount, currency, external_id, status, metadata_json
-    )
-    VALUES(?,?,?,?,?,?,?)
-  `).run(intent.id, "capture", intent.amount, intent.currency, intent.external_id, "succeeded", "{}");
-
-  audit("payment_succeeded", intent.id, { amount: intent.amount, currency: intent.currency });
-  return { intent: db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(intent.id) };
+  audit("manual_confirm_rejected", intent.id, {
+    applied: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    error: "payment.confirmBlocked",
+    status: 409,
+    applied: false,
+    reason: "PROVIDER_CONFIRMATION_REQUIRED",
+    officialPath: "/api/commerce/webhooks/:provider",
+    intentStatusUnchanged: intent.status,
+  };
 }
 
-function createRefund(id, body = {}) {
+function createRefund(id, _body = {}) {
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
-  if (!intent || intent.status !== "succeeded") {
-    return { error: "Payment must be succeeded before refund", status: 400 };
+  if (!intent) {
+    return { error: "payment.intentNotFound", status: 404 };
   }
 
-  const already = db
-    .prepare(`
-      SELECT COALESCE(SUM(amount), 0) AS total
-      FROM finance_refunds
-      WHERE payment_intent_id = ? AND status IN ('pending', 'succeeded')
-    `)
-    .get(intent.id).total;
-  const amount = Math.min(Number(body.amount || intent.amount - already), intent.amount - already);
-  if (amount <= 0) return { error: "No refundable amount remaining", status: 400 };
-
-  const result = db
-    .prepare(`
-      INSERT INTO finance_refunds(payment_intent_id, external_id, amount, currency, reason, status)
-      VALUES(?,?,?,?,?,?)
-    `)
-    .run(
-      intent.id,
-      `re_${uuid().replace(/-/g, "")}`,
-      amount,
-      intent.currency,
-      body.reason || "customer_request",
-      "succeeded"
-    );
-
-  const total = already + amount;
-  db.prepare(`
-    UPDATE finance_payment_intents
-    SET status = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(total >= intent.amount ? "refunded" : "partially_refunded", intent.id);
-
-  db.prepare(`
-    INSERT INTO finance_payment_transactions(
-      payment_intent_id, type, amount, currency, external_id, status, metadata_json
-    )
-    VALUES(?,?,?,?,?,?,?)
-  `).run(
-    intent.id,
-    "refund",
-    amount,
-    intent.currency,
-    `re_${result.lastInsertRowid}`,
-    "succeeded",
-    "{}"
-  );
-
-  audit("refund_succeeded", result.lastInsertRowid, { paymentIntentId: intent.id, amount });
-  return { refund: db.prepare("SELECT * FROM finance_refunds WHERE id = ?").get(result.lastInsertRowid) };
+  audit("manual_refund_rejected", intent.id, {
+    applied: false,
+    financialEffect: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    error: "payment.refundBlocked",
+    status: 409,
+    applied: false,
+    financialEffect: false,
+    reason: "PROVIDER_REFUND_REQUIRED",
+    officialPath: "/api/commerce/webhooks/:provider",
+  };
 }
 
 function handlePaymentWebhook(body = {}) {
   const externalId = String(body.externalId || body.external_id || "").trim();
-  const status = String(body.status || "").trim();
-  if (!externalId || !status) return { error: "externalId and status required", status: 400 };
+  const claimedStatus = String(body.status || "").trim();
+  if (!externalId || !claimedStatus) return { error: "payment.externalStatusRequired", status: 400 };
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
     .get(externalId);
-  if (!intent) return { error: "Payment intent not found", status: 404 };
+  if (!intent) return { error: "payment.intentNotFound", status: 404 };
 
-  db.prepare(`
-    UPDATE finance_payment_intents SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, intent.id);
-  audit("provider_webhook", intent.id, { status });
-  return { ok: true, status: 202 };
+  audit("unsigned_webhook_isolated", intent.id, {
+    claimedStatus,
+    applied: false,
+    officialPath: "/api/commerce/webhooks/:provider",
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    intentStatusUnchanged: intent.status,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+    officialPath: "/api/commerce/webhooks/:provider",
+  };
 }
 
 function createInvoice(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const grossAmount = Number(body.grossAmount || body.gross_amount || 0);
-  if (!orderNumber || grossAmount <= 0) return { error: "Invoice data missing", status: 400 };
+  if (!orderNumber || grossAmount <= 0) return { error: "invoice.dataMissing", status: 400 };
 
   const invoiceNumber =
     body.invoiceNumber ||
@@ -206,7 +180,7 @@ function createInvoice(body = {}) {
     audit("invoice_issued", result.lastInsertRowid, { invoiceNumber });
     return { invoice: db.prepare("SELECT * FROM finance_invoices WHERE id = ?").get(result.lastInsertRowid) };
   } catch {
-    return { error: "Invoice/order already exists", status: 409 };
+    return { error: "invoice.exists", status: 409 };
   }
 }
 
@@ -214,47 +188,46 @@ function handlePayoutWebhook(body = {}) {
   const provider = db
     .prepare("SELECT id FROM finance_payment_providers WHERE code = ?")
     .get(body.provider);
-  if (!provider) return { error: "Unknown provider", status: 400 };
+  if (!provider) return { error: "payment.unknownProvider", status: 400 };
 
-  db.prepare(`
-    INSERT INTO finance_payouts(provider_id, external_payout_id, amount, currency, status, payout_date)
-    VALUES(?,?,?,?,?,?)
-  `).run(
-    provider.id,
-    body.externalPayoutId || body.external_payout_id || uuid(),
-    Number(body.amount || 0),
-    body.currency || "EUR",
-    body.status || "received",
-    body.payoutDate || body.payout_date || new Date().toISOString()
-  );
-  return { ok: true, status: 202 };
+  audit("unsigned_payout_webhook_isolated", provider.id, {
+    claimedExternalPayoutId: body.externalPayoutId || body.external_payout_id || null,
+    claimedStatus: body.status || null,
+    applied: false,
+    financialEffect: false,
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    financialEffect: false,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+  };
 }
 
 function handleDisputeWebhook(body = {}) {
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
     .get(body.externalId || body.external_id);
-  if (!intent) return { error: "Payment not found", status: 404 };
+  if (!intent) return { error: "payment.notFound", status: 404 };
 
-  const result = db
-    .prepare(`
-      INSERT INTO finance_disputes(
-        payment_intent_id, provider_code, external_case_id, amount, currency, status, reason
-      )
-      VALUES(?,?,?,?,?,?,?)
-    `)
-    .run(
-      intent.id,
-      body.provider || "",
-      body.caseId || body.case_id || uuid(),
-      Number(body.amount || 0),
-      body.currency || intent.currency,
-      body.status || "open",
-      body.reason || ""
-    );
-
-  audit("dispute_received", result.lastInsertRowid, { paymentIntentId: intent.id });
-  return { ok: true, status: 202 };
+  audit("unsigned_dispute_webhook_isolated", intent.id, {
+    claimedCaseId: body.caseId || body.case_id || null,
+    claimedStatus: body.status || null,
+    applied: false,
+    distinctFromRefund: true,
+    distinctFromSupplierCredit: true,
+  });
+  return {
+    ok: true,
+    status: 202,
+    accepted: true,
+    applied: false,
+    reason: "UNSIGNED_WEBHOOK_ISOLATED",
+    distinctFromRefund: true,
+    distinctFromSupplierCredit: true,
+  };
 }
 
 function getFinanceOverview() {

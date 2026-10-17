@@ -7,11 +7,14 @@ const { createRateLimiter, getClientIp } = require("../lib/security");
 const { isCommerceCoreEnabled } = require("../core/commerceConstants");
 const commerce = require("../lib/commerce");
 const { logAuditFromRequest } = require("../lib/coreAudit");
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 const cartRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-cart:" });
 const checkoutRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "commerce-checkout:" });
 const orderRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 10, keyPrefix: "commerce-order:" });
 const readinessRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: "commerce-readiness:" });
+const paymentRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 20, keyPrefix: "commerce-pay:" });
+const webhookRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 120, keyPrefix: "commerce-wh:" });
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -46,9 +49,15 @@ module.exports = {
     app.get("/api/commerce/status", (_req, res) => {
       res.json({
         success: true,
-        flags: commerce.getEffectiveFlags(),
-        safety: commerce.getSalesSafetyStatus(),
         salesEnabled: false,
+        flags: {
+          salesEnabled: false,
+          checkoutEnabled: false,
+          checkoutDryRunOnly: true,
+          paymentEnabled: false,
+          mockPaymentOnly: true,
+        },
+        safety: { salesEnabled: false, catalogMode: true },
       });
     });
 
@@ -177,6 +186,8 @@ module.exports = {
     app.get("/api/commerce/checkout/:id", (req, res) => {
       const checkout = commerce.checkoutService.getCheckout(req.params.id, {
         customerId: req.query.customerId,
+        sessionId: req.query.sessionId,
+        guestToken: req.query.guestToken,
         req,
       });
       if (checkout.error) return res.status(checkout.status || 404).json({ success: false, errorKey: checkout.error });
@@ -196,6 +207,8 @@ module.exports = {
       const body = parseBody(req);
       const result = commerce.checkoutService.validateCheckout(req.params.id, body, {
         customerId: body.customerId,
+        sessionId: body.sessionId,
+        guestToken: body.guestToken,
         req,
       });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
@@ -207,6 +220,8 @@ module.exports = {
       const body = parseBody(req);
       const result = commerce.checkoutService.completeCheckout(req.params.id, body, {
         customerId: body.customerId,
+        sessionId: body.sessionId,
+        guestToken: body.guestToken,
         idempotencyKey: body.idempotencyKey || req.headers["idempotency-key"],
         req,
       });
@@ -220,12 +235,25 @@ module.exports = {
       if (!rateLimit(req, res, readinessRateLimit)) return;
       const body = parseBody(req);
       const demo = commerce.cartService.getDemoProductForCart();
-      if (!demo) return res.status(503).json({ success: false, errorKey: "demo_product_unavailable" });
+      const salesEnabled = commerce.getSalesSafetyStatus().salesEnabled;
+      if (!demo) {
+        return res.json({
+          success: true,
+          blocked: true,
+          phase: "start",
+          code: "demo_product_unavailable",
+          commercialOrders: commerce.orderService.getCommercialOrderCount(),
+          realPayment: false,
+          supplierOrders: 0,
+          salesEnabled,
+        });
+      }
 
       const cart = commerce.cartService.createCart({ sessionId: body.sessionId || "readiness-test" });
       commerce.cartService.addItem(cart.cart.id, {
         productId: demo.productId,
         quantity: 1,
+        sessionId: cart.cart.sessionId,
         req,
       });
 
@@ -266,15 +294,123 @@ module.exports = {
     });
 
     app.get("/api/commerce/orders/:id", (req, res) => {
-      const order = commerce.orderService.getOrder(req.params.id, { customerId: req.query.customerId, req });
+      const order = commerce.orderService.getOrder(req.params.id, {
+        customerId: req.query.customerId,
+        sessionId: req.query.sessionId,
+        guestToken: req.query.guestToken,
+        req,
+      });
       if (order.error) return res.status(order.status || 404).json({ success: false, errorKey: order.error });
       res.json({ success: true, order });
     });
 
-    app.post("/api/commerce/webhooks/:provider", (req, res) => {
-      const rawBody = JSON.stringify(req.body || {});
+    app.get("/api/commerce/payments/providers", (_req, res) => {
+      const diagnostics = commerce.dualPaymentEngine.providerDiagnostics();
+      res.json({
+        success: true,
+        stripe: diagnostics.stripe,
+        paypal: diagnostics.paypal,
+        liveVerified: false,
+        sandboxVerified: false,
+        realMoneyMovement: false,
+        salesEnabled: diagnostics.salesEnabled,
+      });
+    });
+
+    app.post("/api/commerce/payments", async (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const body = parseBody(req);
+      const db = require("../lib/db").db;
+      const result = await commerce.dualPaymentEngine.createPayment(db, {
+        provider: body.provider,
+        orderId: body.orderId,
+        expectedAmount: body.expectedAmount ?? body.serverAmount,
+        expectedCurrency: body.expectedCurrency || body.serverCurrency || "EUR",
+        clientAmount: body.amount,
+        clientCurrency: body.currency,
+        idempotencyKey: req.headers["idempotency-key"] || body.idempotencyKey,
+      });
+      const status = result.ok ? 200 : result.reason === "AMOUNT_TAMPERING" || result.reason === "CURRENCY_TAMPERING" ? 400 : 422;
+      res.status(status).json({
+        success: result.ok === true,
+        payment: result.payment || null,
+        checkoutUrl: result.checkoutUrl || null,
+        approvalUrl: result.approvalUrl || null,
+        reason: result.reason || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.get("/api/commerce/payments/:id", (req, res) => {
+      const db = require("../lib/db").db;
+      const result = commerce.dualPaymentEngine.retrievePayment(db, req.params.id);
+      if (!result.ok) return res.status(404).json({ success: false, reason: result.reason });
+      res.json({
+        success: true,
+        payment: result.payment,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/payments/:id/fail", (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const db = require("../lib/db").db;
+      const result = commerce.dualPaymentEngine.recordFailure(db, req.params.id, parseBody(req).reason || "provider_failure");
+      res.status(result.ok ? 200 : 404).json({
+        success: result.ok === true,
+        payment: result.payment || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/payments/:id/reconcile", async (req, res) => {
+      if (!rateLimit(req, res, paymentRateLimit)) return;
+      const db = require("../lib/db").db;
+      const result = await commerce.dualPaymentEngine.reconcilePayment(db, req.params.id);
+      res.status(result.ok ? 200 : 404).json({
+        success: result.ok === true,
+        executed: false,
+        financialEffect: false,
+        mismatch: result.mismatch === true,
+        diagnostic: result.diagnostic || result.reason || null,
+        payment: result.payment || null,
+        shipmentAuthorized: false,
+        realMoneyMovement: false,
+      });
+    });
+
+    app.post("/api/commerce/webhooks/:provider", async (req, res) => {
+      if (!rateLimit(req, res, webhookRateLimit)) return;
+      const provider = String(req.params.provider || "").toLowerCase();
+      if (provider === "stripe" || provider === "paypal") {
+        const db = require("../lib/db").db;
+        const result = await commerce.dualPaymentEngine.handleWebhook(db, {
+          provider,
+          rawBody: req.rawBody || JSON.stringify(req.body || {}),
+          headers: req.headers,
+          body: req.body,
+          eventId: req.headers["x-event-id"] || req.body?.id,
+        });
+        return res.status(result.status || 200).json({
+          success: result.accepted === true,
+          accepted: result.accepted === true,
+          applied: result.applied === true,
+          duplicate: result.duplicate === true,
+          reason: result.reason || null,
+          payment: result.payment || null,
+          orderCreated: false,
+          paymentCreated: false,
+          shipmentAuthorized: false,
+          realMoneyMovement: false,
+        });
+      }
+
+      const rawBody = req.rawBody || JSON.stringify(req.body || {});
       const result = commerce.webhookFoundation.handleWebhook({
-        provider: req.params.provider,
+        provider,
         eventId: req.headers["x-event-id"] || `evt_${Date.now()}`,
         eventType: req.body?.type || "unknown",
         rawBody,
@@ -334,12 +470,7 @@ module.exports = {
         const adminSafetyGate = require("../lib/operations/adminSafetyGate");
         adminSafetyGate.requireAdminAction("go_live", { req, body });
       } catch (err) {
-        return res.status(403).json({
-          success: false,
-          errorKey: err.code || "admin_action_blocked",
-          message: err.message,
-          details: err.details,
-        });
+        return sendAdminGateError(res, err);
       }
       const result = commerce.goLiveApproval.requestGoLive({
         requestedBy: req.adminUser.email,
@@ -356,12 +487,7 @@ module.exports = {
         const adminSafetyGate = require("../lib/operations/adminSafetyGate");
         adminSafetyGate.requireAdminAction("go_live", { req, body: parseBody(req) });
       } catch (err) {
-        return res.status(403).json({
-          success: false,
-          errorKey: err.code || "admin_action_blocked",
-          message: err.message,
-          details: err.details,
-        });
+        return sendAdminGateError(res, err);
       }
       const result = commerce.goLiveApproval.approveGoLive({
         requestId: req.params.id,

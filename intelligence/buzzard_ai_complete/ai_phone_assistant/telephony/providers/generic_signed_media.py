@@ -20,15 +20,36 @@ class GenericSignedMediaProvider:
         }
 
     def answer(self, session):
-        return {"action": "answer", "call_id": session.call_id}
+        return {
+            "action": "answer",
+            "call_id": session.call_id,
+            "executed": False,
+            "live": False,
+            "pstnConnected": False,
+            "reason": "CALL_ANSWER_BLOCKED",
+        }
 
     def hangup(self, session):
-        return {"action": "hangup", "call_id": session.call_id}
+        return {
+            "action": "hangup",
+            "call_id": session.call_id,
+            "executed": False,
+            "live": False,
+            "pstn": False,
+            "reason": "HANGUP_LOCAL_ONLY",
+        }
 
     def transfer(self, session, destination):
         if not destination:
             raise ValueError("TRANSFER_DESTINATION_REQUIRED")
-        return {"action": "transfer", "call_id": session.call_id, "destination": destination}
+        return {
+            "action": "transfer",
+            "call_id": session.call_id,
+            "destination": None,
+            "transferred": False,
+            "live": False,
+            "reason": "TRANSFER_BLOCKED",
+        }
 
     def start_media_stream(self, session, callback_url):
         if not callback_url:
@@ -36,7 +57,10 @@ class GenericSignedMediaProvider:
         return {
             "action": "start_media_stream",
             "call_id": session.call_id,
-            "callback_url": callback_url,
+            "callback_url": None,
+            "streamOpened": False,
+            "live": False,
+            "reason": "MEDIA_STREAM_BLOCKED",
         }
 
     def stop_media_stream(self, session):

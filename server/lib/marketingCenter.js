@@ -35,7 +35,7 @@ function listProviders() {
 }
 
 function updateProvider(provider, body = {}) {
-  if (!PROVIDERS.includes(provider)) return { error: "Unsupported provider", status: 404 };
+  if (!PROVIDERS.includes(provider)) return { error: "marketing.unsupportedProvider", status: 404 };
   db.prepare(
     "UPDATE marketing_provider_connections SET enabled = ?, account_label = ?, updated_at = CURRENT_TIMESTAMP WHERE provider = ?"
   ).run(body.enabled ? 1 : 0, body.accountLabel || "", provider);
@@ -43,7 +43,7 @@ function updateProvider(provider, body = {}) {
 }
 
 function createCampaign(body = {}) {
-  if (!body.name || !body.channel) return { error: "name and channel required", status: 400 };
+  if (!body.name || !body.channel) return { error: "campaign.channelRequired", status: 400 };
   const utmSource = body.utmSource || body.channel;
   const utmMedium = body.utmMedium || "paid";
   const utmCampaign =
@@ -72,7 +72,7 @@ function createCampaign(body = {}) {
       campaign: db.prepare("SELECT * FROM marketing_campaigns WHERE id = ?").get(result.lastInsertRowid),
     };
   } catch {
-    return { error: "Campaign name already exists", status: 409 };
+    return { error: "campaign.nameExists", status: 409 };
   }
 }
 
@@ -85,7 +85,7 @@ function listCampaigns() {
 
 function addCampaignSpend(campaignId, body = {}) {
   const campaign = db.prepare("SELECT id FROM marketing_campaigns WHERE id = ?").get(campaignId);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
+  if (!campaign) return { error: "campaign.notFound", status: 404 };
   db.prepare(
     "INSERT INTO marketing_campaign_spend(campaign_id, spend, currency, spend_date) VALUES(?,?,?,?)"
   ).run(campaignId, Number(body.spend || 0), body.currency || "EUR", body.date || new Date().toISOString());
@@ -94,7 +94,7 @@ function addCampaignSpend(campaignId, body = {}) {
 
 function recordConversion(body = {}) {
   if (!body.campaignId || !body.orderNumber) {
-    return { error: "campaignId and orderNumber required", status: 400 };
+    return { error: "campaign.orderRequired", status: 400 };
   }
   try {
     db.prepare(`
@@ -114,7 +114,7 @@ function recordConversion(body = {}) {
 }
 
 function recordEvent(body = {}) {
-  if (!body.eventType) return { error: "eventType required", status: 400 };
+  if (!body.eventType) return { error: "automation.eventTypeRequired", status: 400 };
   db.prepare(`
     INSERT INTO marketing_center_events(session_id, event_type, campaign, source, medium, country_code, product_sku)
     VALUES(?,?,?,?,?,?,?)
@@ -178,7 +178,7 @@ function getUtmBreakdown() {
 
 function getCampaignBySlug(slug) {
   const campaign = db.prepare("SELECT * FROM marketing_campaigns WHERE utm_campaign = ?").get(slug);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
+  if (!campaign) return { error: "campaign.notFound", status: 404 };
   const base = process.env.PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://buzzard24.de";
   return {
     campaign,

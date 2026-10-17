@@ -1,5 +1,6 @@
 const CART_ID_KEY = "buzzard_commerce_cart_id";
 const SESSION_KEY = "buzzard_commerce_session";
+const GUEST_TOKEN_KEY = "buzzard_commerce_guest_token";
 
 /** Commerce Core storefront bridge (Part 9) — dry-run checkout while SALES=0 */
 export function shouldUseCommerceCore(): boolean {
@@ -36,6 +37,25 @@ export function setStoredCommerceCartId(cartId: string | null): void {
   try {
     if (cartId) localStorage.setItem(CART_ID_KEY, cartId);
     else localStorage.removeItem(CART_ID_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getStoredCommerceGuestToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return sessionStorage.getItem(GUEST_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredCommerceGuestToken(token: string | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (token) sessionStorage.setItem(GUEST_TOKEN_KEY, token);
+    else sessionStorage.removeItem(GUEST_TOKEN_KEY);
   } catch {
     /* ignore */
   }

@@ -24,7 +24,12 @@ function assertSupplierOperation(operation, { req, body = {}, dryRun = true, sup
       dryRun,
     });
   } catch (err) {
-    issues.push({ gate: "admin_safety", reason: err.message, code: err.code });
+    const { publicTaskError } = require("../security");
+    issues.push({
+      gate: "admin_safety",
+      reason: publicTaskError(err, "admin_action_blocked"),
+      code: err.code || "admin_action_blocked",
+    });
   }
 
   const safety = checkProductionSafety();

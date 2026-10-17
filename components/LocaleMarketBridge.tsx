@@ -13,6 +13,8 @@ export default function LocaleMarketBridge({ children }: { children: ReactNode }
   const { locale, setLocale } = useLocale();
   const { countryCode, ready } = useMarket();
   const previousCountry = useRef<string | null>(null);
+  const localeRef = useRef(locale);
+  localeRef.current = locale;
 
   useEffect(() => {
     if (!ready) return;
@@ -22,9 +24,10 @@ export default function LocaleMarketBridge({ children }: { children: ReactNode }
     }
     if (previousCountry.current === countryCode) return;
     previousCountry.current = countryCode;
-    const next = resolveLocaleAfterMarketChange(locale, countryCode);
-    if (next !== locale) setLocale(next, false);
-  }, [ready, countryCode, locale, setLocale]);
+    const current = localeRef.current;
+    const next = resolveLocaleAfterMarketChange(current, countryCode);
+    if (next !== current) setLocale(next, false);
+  }, [ready, countryCode, setLocale]);
 
   return <>{children}</>;
 }

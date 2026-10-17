@@ -4,7 +4,34 @@
 
 const PUBLIC_BASE = (process.env.PUBLIC_BASE_URL || "https://buzzard24.de").replace(/\/$/, "");
 
+function liveHttpBlocked() {
+  return process.env.BUZZARD_SALES_ENABLED !== "1" || process.env.BUZZARD_LIVE_PAYMENTS !== "1";
+}
+
+function blockedProviderPayload(provider, extra = {}) {
+  return {
+    provider,
+    status: "blocked",
+    executed: false,
+    realMoneyMovement: false,
+    checkoutUrl: null,
+    approvalUrl: null,
+    reason: "LIVE_HTTP_BLOCKED",
+    hint: "Sales lock and BUZZARD_LIVE_PAYMENTS block live provider HTTP even when secrets exist.",
+    ...extra,
+  };
+}
+
 async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", successUrl, cancelUrl }) {
+  if (liveHttpBlocked()) {
+    return blockedProviderPayload("stripe", {
+      orderId,
+      amount,
+      currency,
+      status: process.env.STRIPE_SECRET_KEY ? "blocked" : "adapter_ready",
+    });
+  }
+
   const secret = process.env.STRIPE_SECRET_KEY;
   if (!secret) {
     return {
@@ -42,7 +69,9 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error?.message || "Stripe checkout session failed");
+    const err = new Error("stripe.session_failed");
+    err.code = "stripe.session_failed";
+    throw err;
   }
 
   return {
@@ -57,6 +86,15 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
 }
 
 async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
+  if (liveHttpBlocked()) {
+    return blockedProviderPayload("paypal", {
+      orderId,
+      amount,
+      currency,
+      status: process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET ? "blocked" : "adapter_ready",
+    });
+  }
+
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
@@ -86,7 +124,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
   });
   const tokenData = await tokenRes.json();
   if (!tokenRes.ok) {
-    throw new Error(tokenData.error_description || "PayPal auth failed");
+    const err = new Error("paypal.auth_failed");
+    err.code = "paypal.auth_failed";
+    throw err;
   }
 
   const orderRes = await fetch(`${base}/v2/checkout/orders`, {
@@ -114,7 +154,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
   });
   const orderData = await orderRes.json();
   if (!orderRes.ok) {
-    throw new Error(orderData.message || "PayPal order creation failed");
+    const err = new Error("paypal.order_failed");
+    err.code = "paypal.order_failed";
+    throw err;
   }
 
   const approvalUrl = (orderData.links || []).find((link) => link.rel === "approve")?.href || null;
@@ -131,6 +173,9 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
 
 const payments = {
   stripe: async ({ orderId, amount, currency, successUrl, cancelUrl }) => {
+    if (liveHttpBlocked()) {
+      return createStripeCheckoutSession({ orderId, amount, currency, successUrl, cancelUrl });
+    }
     if (process.env.STRIPE_SECRET_KEY) {
       return createStripeCheckoutSession({ orderId, amount, currency, successUrl, cancelUrl });
     }
@@ -144,6 +189,9 @@ const payments = {
     };
   },
   paypal: async ({ orderId, amount, currency }) => {
+    if (liveHttpBlocked()) {
+      return createPayPalOrder({ orderId, amount, currency });
+    }
     if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
       return createPayPalOrder({ orderId, amount, currency });
     }
@@ -222,27 +270,38 @@ function calculateTaxSync(countryCode, netAmount, shipping = 0) {
       tax: null,
       source: "provider_required",
       status: "tax_provider_configured",
+      ok: false,
+      blocked: true,
+      invented: false,
     };
   }
 
-  const indicativeRates = {
-    DE: 0.19,
-    FR: 0.2,
-    NL: 0.21,
-    PL: 0.23,
-    ES: 0.21,
-    IT: 0.22,
-    GB: 0.2,
-    CH: 0.081,
-    TR: 0.2,
-  };
-  const rate = indicativeRates[countryCode] ?? 0.19;
-  const taxable = Number(netAmount || 0) + Number(shipping || 0);
+  const taxProvider = require("./commerce/taxProvider");
+  const result = taxProvider.calculateTax({
+    country: countryCode,
+    subtotal: Number(netAmount || 0) + Number(shipping || 0),
+  });
+  if (!result.ok) {
+    return {
+      countryCode,
+      rate: null,
+      tax: null,
+      source: "unconfigured",
+      status: result.code || "tax_rate_unknown",
+      ok: false,
+      blocked: true,
+      invented: false,
+    };
+  }
   return {
-    countryCode,
-    rate,
-    tax: Number((taxable * rate).toFixed(2)),
-    source: "placeholder",
+    countryCode: result.country,
+    rate: result.rate / 100,
+    tax: result.tax,
+    source: "configured_table",
+    ok: true,
+    blocked: false,
+    invented: false,
+    dryRun: true,
   };
 }
 

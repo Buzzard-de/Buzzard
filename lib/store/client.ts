@@ -1,4 +1,11 @@
 import { isSqliteStoreEnabled, storeApiBase } from "./config";
+import {
+  clearAccountSessionFlag,
+  clearAdminSessionFlag,
+  markAccountSession,
+  markAdminSession,
+  withAdminOrAccountCredentials,
+} from "@/lib/admin/authTransport";
 import type {
   StoreCart,
   StoreCategory,
@@ -8,32 +15,12 @@ import type {
   StoreUser,
 } from "./types";
 
-const ACCOUNT_TOKEN_KEY = "buzzard_account_token";
-const ADMIN_TOKEN_KEY = "buzzard_admin_token";
-
-function readToken(key: string): string | null {
-  if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(key);
-}
-
-function authHeaders(token?: string | null): HeadersInit {
-  const resolved = token ?? readToken(ACCOUNT_TOKEN_KEY) ?? readToken(ADMIN_TOKEN_KEY);
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(resolved ? { Authorization: `Bearer ${resolved}` } : {}),
-  };
-}
-
 async function storeFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const base = storeApiBase();
   if (!base) throw new Error("store.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: { ...authHeaders(), ...init?.headers },
-  });
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "store.requestFailed");
+  const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "store.requestFailed");
   return data;
 }
 
@@ -46,41 +33,29 @@ export async function storeRegister(body: {
   password: string;
   name: string;
 }): Promise<{ token: string; user: StoreUser }> {
-  const data = await storeFetch<{ token: string; user: StoreUser }>("/api/auth/register", {
+  const data = await storeFetch<{ token: string; csrfToken?: string; user: StoreUser }>("/api/auth/register", {
     method: "POST",
     body: JSON.stringify(body),
   });
-  saveAccountToken(data.token);
+  markAccountSession(data.csrfToken);
   return data;
 }
 
-function saveAccountToken(token: string): void {
-  sessionStorage.setItem(ACCOUNT_TOKEN_KEY, token);
-}
-
-function saveAdminToken(token: string): void {
-  sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
-}
-
-function clearStoreTokens(): void {
-  sessionStorage.removeItem(ACCOUNT_TOKEN_KEY);
-  sessionStorage.removeItem(ADMIN_TOKEN_KEY);
-}
-
 export async function storeLogin(email: string, password: string): Promise<{ token: string; user: StoreUser }> {
-  const data = await storeFetch<{ token: string; user: StoreUser }>("/api/auth/login", {
+  const data = await storeFetch<{ token: string; csrfToken?: string; user: StoreUser }>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
-  saveAccountToken(data.token);
+  markAccountSession(data.csrfToken);
   if (data.user.role === "admin") {
-    saveAdminToken(data.token);
+    markAdminSession(data.csrfToken);
   }
   return data;
 }
 
 export async function storeLogout(): Promise<void> {
-  clearStoreTokens();
+  clearAccountSessionFlag();
+  clearAdminSessionFlag();
 }
 
 export async function storeMe(): Promise<StoreUser> {
@@ -161,21 +136,15 @@ export async function storeListOrders(): Promise<StoreOrder[]> {
 }
 
 export async function storeAdminOrders(): Promise<StoreOrder[]> {
-  return storeFetch<StoreOrder[]>("/api/db/admin/orders", {
-    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
-  });
+  return storeFetch<StoreOrder[]>("/api/db/admin/orders");
 }
 
 export async function storeAdminProducts(): Promise<StoreProduct[]> {
-  return storeFetch<StoreProduct[]>("/api/db/admin/products", {
-    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
-  });
+  return storeFetch<StoreProduct[]>("/api/db/admin/products");
 }
 
 export async function storeAdminGetProduct(id: number): Promise<StoreProduct> {
-  return storeFetch<StoreProduct>(`/api/db/admin/products/${id}`, {
-    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
-  });
+  return storeFetch<StoreProduct>(`/api/db/admin/products/${id}`);
 }
 
 export async function storeAdminUpdateProduct(
@@ -185,7 +154,6 @@ export async function storeAdminUpdateProduct(
   return storeFetch<StoreProduct>(`/api/db/admin/products/${id}`, {
     method: "PATCH",
     body: JSON.stringify(patch),
-    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
   });
 }
 
@@ -196,7 +164,6 @@ export async function storeAdminUpdateOrderStatus(
   return storeFetch<StoreOrder>(`/api/db/admin/orders/${encodeURIComponent(orderNumber)}/status`, {
     method: "PATCH",
     body: JSON.stringify({ status }),
-    headers: authHeaders(readToken(ADMIN_TOKEN_KEY)),
   });
 }
 

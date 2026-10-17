@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -44,21 +44,21 @@ module.exports = {
 
     app.post("/api/advanced-search/:sku/click", (req, res) => {
       const result = advancedSearch.recordClick(req.params.sku);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/advanced-search/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = advancedSearch.createProduct(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.product);
     });
 
     app.post("/api/admin/advanced-search/synonyms", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = advancedSearch.upsertSynonym(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

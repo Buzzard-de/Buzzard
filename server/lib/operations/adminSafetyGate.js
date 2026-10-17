@@ -33,7 +33,11 @@ function assertAdminAction(action, { req, body = {}, dryRun = true } = {}) {
   try {
     assertProductionSafety();
   } catch (err) {
-    issues.push({ gate: "production_safety", reason: err.message });
+    const { publicTaskError } = require("../security");
+    issues.push({
+      gate: "production_safety",
+      reason: publicTaskError(err, "production_safety_blocked"),
+    });
   }
 
   if (normalized.includes("sales") || body.enableSales || body.BUZZARD_SALES_ENABLED === "1") {

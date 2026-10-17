@@ -7,6 +7,7 @@ import type {
 } from "./types";
 import { isSqliteStoreEnabled } from "@/lib/store/config";
 import { mapStoreOrderToPublic, storeCreateOrder, storeGetOrderByNumber } from "@/lib/store";
+import { hasAccountSession, withAccountCredentials } from "@/lib/admin/authTransport";
 
 const SESSION_ORDER_KEY = "buzzard_confirmed_order";
 
@@ -38,10 +39,9 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
     return { success: false, errorKey: "checkout.apiUnavailable" };
   }
 
-  const accountToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
+  const accountSession = typeof window !== "undefined" && hasAccountSession();
 
-  if (isSqliteStoreEnabled() && accountToken) {
+  if (isSqliteStoreEnabled() && accountSession) {
     try {
       const result = await storeCreateOrder({
         countryCode: request.shippingAddress?.country || "DE",
@@ -66,24 +66,22 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
           request.customer.email
         ),
       };
-    } catch (err) {
+    } catch {
       return {
         success: false,
-        errorKey: err instanceof Error ? err.message : "checkout.apiUnavailable",
+        errorKey: "checkout.apiUnavailable",
       };
     }
   }
 
   try {
-    const res = await fetch(`${base}/api/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        ...(accountToken ? { Authorization: `Bearer ${accountToken}` } : {}),
-      },
-      body: JSON.stringify(request),
-    });
+    const res = await fetch(
+      `${base}/api/orders`,
+      withAccountCredentials({
+        method: "POST",
+        body: JSON.stringify(request),
+      })
+    );
     return (await res.json()) as CreateOrderResponse;
   } catch {
     return { success: false, errorKey: "checkout.apiUnavailable" };
@@ -94,10 +92,9 @@ export async function fetchOrder(orderNumber: string): Promise<PublicOrder | nul
   const base = apiBase();
   if (!base) return null;
 
-  const accountToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
+  const accountSession = typeof window !== "undefined" && hasAccountSession();
 
-  if (isSqliteStoreEnabled() && accountToken) {
+  if (isSqliteStoreEnabled() && accountSession) {
     try {
       const order = await storeGetOrderByNumber(orderNumber);
       const meEmail =
@@ -111,9 +108,10 @@ export async function fetchOrder(orderNumber: string): Promise<PublicOrder | nul
   }
 
   try {
-    const res = await fetch(`${base}/api/orders/${encodeURIComponent(orderNumber)}`, {
-      headers: { Accept: "application/json" },
-    });
+    const res = await fetch(
+      `${base}/api/orders/${encodeURIComponent(orderNumber)}`,
+      withAccountCredentials({ headers: { Accept: "application/json" } })
+    );
     if (!res.ok) return null;
     const data = (await res.json()) as { order?: PublicOrder };
     return data.order ?? null;

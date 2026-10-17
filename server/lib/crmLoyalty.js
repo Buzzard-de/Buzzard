@@ -92,7 +92,7 @@ function getLoyaltyDashboard(userId) {
 
 function earnPoints(userId, body = {}) {
   const points = Math.max(0, Math.floor(Number(body.points || 0)));
-  if (!points) return { error: "Positive points required", status: 400 };
+  if (!points) return { error: "loyalty.positivePointsRequired", status: 400 };
   const account = addPoints(userId, points, body.reason || "manual", body.reference || "");
   return account;
 }
@@ -101,9 +101,9 @@ function redeemReward(userId, rewardId) {
   const reward = db.prepare("SELECT * FROM rewards WHERE id = ? AND active = 1").get(rewardId);
   const account =
     db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) || { points: 0 };
-  if (!reward) return { error: "Reward not found", status: 404 };
+  if (!reward) return { error: "loyalty.rewardNotFound", status: 404 };
   if (Number(account.points || 0) < reward.points_cost) {
-    return { error: "Not enough points", status: 400 };
+    return { error: "loyalty.insufficientPoints", status: 400 };
   }
 
   addPoints(userId, -reward.points_cost, "reward redemption", reward.code);

@@ -98,11 +98,11 @@ test('All gates expose deterministic status', () => {
     );
   }
 });
-test('RBAC public health route is public', () => {
+test('RBAC operational health route requires system.read', () => {
   const { resolveRoutePermission } = require('../lib/routePermissions.js');
   assert.equal(
-    resolveRoutePermission('GET', '/api/health/final-control-recovery').public,
-    true
+    resolveRoutePermission('GET', '/api/health/final-control-recovery').permission,
+    'system.read'
   );
 });
 test('RBAC admin control recovery routes require system.read', () => {

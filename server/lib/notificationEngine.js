@@ -144,10 +144,42 @@ function queueNotification(entry) {
 
 function dispatchEmail(entry) {
   const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
-  if (!smtpConfigured) {
-    return { channel: "email", status: "queued_demo", demo: true };
-  }
-  return { channel: "email", status: "queued", smtp: true };
+  return {
+    channel: entry?.channel || "email",
+    status: "SEND_BLOCKED",
+    sent: false,
+    delivered: false,
+    live: false,
+    smtp: false,
+    smtpConfigured,
+    smtpConfiguredIgnored: smtpConfigured,
+    demo: !smtpConfigured,
+    reason: "SMTP_SEND_BLOCKED",
+    note: "Local queue is not email delivery. SMTP env does not send.",
+  };
+}
+
+function confirmDelivery() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "DELIVERY_CONFIRM_BLOCKED",
+    note: "Provider delivery receipts are not accepted as send proof.",
+  };
+}
+
+function inboundProviderWebhook() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    httpAttempted: false,
+    reason: "PROVIDER_WEBHOOK_BLOCKED",
+    note: "Inbound SMTP/provider webhooks do not mark messages delivered.",
+  };
 }
 
 function handleAutomationEvent(event) {
@@ -194,7 +226,14 @@ function handleAutomationEvent(event) {
     }, 0);
   }
 
-  return { sent: true, ...dispatch, template: rendered.subject };
+  return {
+    sent: false,
+    queued: true,
+    delivered: false,
+    live: false,
+    ...dispatch,
+    template: rendered.subject,
+  };
 }
 
 function listNotifications(limit = 100) {
@@ -206,5 +245,8 @@ module.exports = {
   renderTemplate,
   listNotifications,
   queueNotification,
+  dispatchEmail,
+  confirmDelivery,
+  inboundProviderWebhook,
   TEMPLATES,
 };

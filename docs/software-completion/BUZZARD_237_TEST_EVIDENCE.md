@@ -260,3 +260,14 @@ No TecDoc HTTP. No SMTP/webhook/pager send. Secrets not returned.
 | externalIntegrationHonesty + localMetricsAlerts | 0 | 2 files, **5 passed** |
 
 **88** 58→64. **185** 40→50. Both stay BLOCKED_EXTERNAL_DEPENDENCY. Mean **77.48%** (18363/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 Playwright software (items 147 / 199)
+
+Isolated static `:3040` + API `:3001`. Sales off. No production E2E claim.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| playwrightSoftwareCoverage.test.mjs | 0 | 1 file, **3 passed** |
+| `npx playwright test --reporter=line` (`PLAYWRIGHT_SKIP_WEBSERVER=1`, base `http://127.0.0.1:3040`) | 0 | 119 tests, **107 passed**, **12 skipped**, **0 failed**, 50.3s |
+
+**147** 82→100 established-scope. **199** 82→100 established-scope. Both PARTIAL (not VERIFIED_100). Mean **77.63%** (18399/237). LIVE_VERIFIED 0.

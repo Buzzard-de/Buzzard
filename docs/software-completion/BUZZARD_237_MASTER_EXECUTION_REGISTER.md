@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **77.48%** (Σ 18363 / 237 = 77.4810…; one decimal **77.5%**). Was **77.41%** (18347/237). This pass **+0.07 pp**. **%80 reached: NO** (need Σ 18960; shortfall 597). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **77.63%** (Σ 18399 / 237 = 77.6329…; one decimal **77.6%**). Was **77.48%** (18363/237). This pass **+0.15 pp**. **%80 reached: NO** (need Σ 18960; shortfall 561). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -139,12 +139,11 @@ Mean established-scope completion: **77.48%** (Σ 18363 / 237 = 77.4810…; one 
 89. BLOCKED_EXTERNAL item 87 local Inter-Cars honesty (no live HTTP/PO). Mean **77.41%** (18347/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 90. BLOCKED_EXTERNAL item 88 local TecDoc honesty (no live catalog HTTP). Mean **77.44%** (18353/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
 91. BLOCKED_EXTERNAL item 185 local alert dispatch refuse (no SMTP/webhook/pager). Mean **77.48%** (18363/237). Stays BLOCKED_EXTERNAL_DEPENDENCY.
+92. Playwright software (items 147/199) isolated suite 107 passed, 12 skipped, 0 failed on this HEAD. Mean **77.63%** (18399/237). PARTIAL, not VERIFIED_100.
 
 ## Resume pointer
 
-External local closeout (2026-10-17): items **88** then **185**. No TecDoc HTTP. No alert delivery. **88** 58→**64**: vendor catalog ids rejected; stock/price not invented; `confirmLiveCatalog` is `LIVE_TECDOC_UNKNOWN`. **185** 40→**50**: `dispatch` refuses AI and forceDispatch; SMTP/webhook presence ≠ send. Both stay **BLOCKED_EXTERNAL_DEPENDENCY**. Mean **77.48%** (18363/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
-
-Local-doable HUMAN refuse gates and the three BLOCKED_EXTERNAL honesty gates on this track are complete. Remaining work needs independent human approval or authorized live credentials — this agent must not invent them.
+Playwright software pass (2026-10-17): items **147** and **199**. Isolated `:3040` + `:3001`, sales off. **119 tests, 107 passed, 12 skipped, 0 failed, 50.3s, exit 0**. 12 skips are project/viewport filters, not failures. Every `e2e/*.spec.ts` is attached to a Playwright project. Default API URL in config so admin specs do not skip for a missing env. **147** 82→**100** established-scope. **199** 82→**100** established-scope. Status both **PARTIAL** (original Playwright checklist UNKNOWN; not VERIFIED_100; production E2E UNKNOWN). Mean **77.63%** (18399/237). LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -3716,7 +3715,7 @@ Next (cannot be finished locally):
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Storefront home |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | app pages |
-| Identified gaps | Playwright 6 failures include mega menu timeout |
+| Identified gaps | Isolated Playwright this HEAD: 0 failed (mega-menu included). 12 skipped are project filters. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | app pages |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -3728,7 +3727,7 @@ Next (cannot be finished locally):
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
 | Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Playwright 6 failures include mega menu timeout |
+| Remaining work | Production homepage probe UNKNOWN; original UI checklist UNKNOWN |
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | PARTIAL / 2026-10-14 |
 
@@ -3975,22 +3974,22 @@ Next (cannot be finished locally):
 | Established scope | UI regression Playwright |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Isolated :3010 static + :3001 API |
 | Current implementation status | PARTIAL
-| Existing implementation evidence | Isolated Playwright on HEAD 1a40186: 107 passed, 12 skipped, 0 failed
-| Identified gaps | 12 skipped viewport/project filters. Original UI checklist UNKNOWN.
+| Existing implementation evidence | Isolated Playwright this HEAD: 119 scheduled, 107 passed, 12 skipped, 0 failed; all e2e/*.spec.ts attached
+| Identified gaps | 12 skipped viewport/project filters. Original UI checklist UNKNOWN. Production E2E UNKNOWN.
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | e2e/ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | 107 passed, 12 skipped, 0 failed, 47.9s, exit 0
+| Exact tests executed and results | 107 passed, 12 skipped, 0 failed, 50.3s, exit 0; playwrightSoftwareCoverage.test.mjs 3 passed
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (established-criteria weighting; original unknown criteria cannot be 100%)
-| Remaining work | Skipped tests are filters. Production E2E UNKNOWN.
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14
+| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Production E2E UNKNOWN; 12 skipped remain project filters
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `playwright.config.ts` |
+| Final state and date | PARTIAL / 2026-10-17
 
 ### Item 148
 
@@ -5336,21 +5335,21 @@ Next (cannot be finished locally):
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Playwright |
 | Current implementation status | PARTIAL |
 | Existing implementation evidence | e2e/ |
-| Identified gaps | Isolated 107/12/0. Historic 6 failures repaired. 12 skips are filters.
+| Identified gaps | Isolated 107/12/0 this HEAD. 12 skips are project filters. Production E2E UNKNOWN. |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | e2e/ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Playwright isolated 107 passed 12 skipped 0 failed 47.9s exit 0
+| Exact tests executed and results | Playwright isolated 107 passed 12 skipped 0 failed 50.3s exit 0
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (established-criteria weighting; original unknown criteria cannot be 100%)
-| Remaining work | Skipped filters; production E2E UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established isolated Playwright software; original unknown criteria cannot be VERIFIED_100)
+| Remaining work | Production E2E UNKNOWN; 12 skipped remain project filters
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `playwright.config.ts` |
+| Final state and date | PARTIAL / 2026-10-17
 
 ### Item 200
 

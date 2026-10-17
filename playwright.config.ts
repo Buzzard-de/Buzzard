@@ -1,4 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
+import fs from "node:fs";
+import path from "node:path";
+
+/** Default isolated API so admin/storefront specs do not skip for a missing URL. */
+if (!process.env.BUZZARD_API_URL && !process.env.NEXT_PUBLIC_BUZZARD_API_URL) {
+  process.env.BUZZARD_API_URL = "http://127.0.0.1:3001";
+  process.env.NEXT_PUBLIC_BUZZARD_API_URL = "http://127.0.0.1:3001";
+}
+
+const E2E_SPEC_DIR = path.join(process.cwd(), "e2e");
+
+function listE2eSpecs() {
+  return fs
+    .readdirSync(E2E_SPEC_DIR)
+    .filter((name) => name.endsWith(".spec.ts"))
+    .sort();
+}
 
 const VIEWPORTS = {
   desktop1280: { width: 1280, height: 720 },
@@ -63,4 +80,4 @@ export default defineConfig({
       },
 });
 
-export { VIEWPORTS };
+export { VIEWPORTS, listE2eSpecs };

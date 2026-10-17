@@ -18,6 +18,13 @@ const MESSAGE_STATUS = Object.freeze({
   BLOCKED: "BLOCKED",
 });
 
+/** Draft/queue channels only. SMS/WhatsApp are not opened as live send. */
+const ALLOWED_CHANNELS = Object.freeze(["email", "in_app", "support"]);
+
+function channelAllowed(channel) {
+  return ALLOWED_CHANNELS.includes(String(channel || "email"));
+}
+
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
 }
@@ -59,6 +66,17 @@ function draft(db, input = {}) {
   const body = String(input.message || input.body || "").trim();
   if (!body) {
     return { ok: false, status: MESSAGE_STATUS.FAILED, sent: false, reason: "MESSAGE_REQUIRED" };
+  }
+  const channel = input.channel || "email";
+  if (!channelAllowed(channel)) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      reason: "CHANNEL_NOT_ALLOWED",
+      channel,
+    };
   }
   const inputHash = hashInput({ ...input, message: body });
   if (db) {
@@ -134,7 +152,10 @@ function draft(db, input = {}) {
 
 function queue(db, draftId) {
   const row = db.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId);
-  if (!row) return { ok: false, reason: "NOT_FOUND" };
+  if (!row) return { ok: false, reason: "NOT_FOUND", sent: false };
+  if (row.status !== MESSAGE_STATUS.DRAFT) {
+    return { ok: false, reason: "NOT_DRAFT", sent: false, status: row.status };
+  }
   db.prepare("UPDATE software_message_drafts SET status = ? WHERE id = ?").run(MESSAGE_STATUS.QUEUED, draftId);
   return {
     ok: true,
@@ -143,7 +164,19 @@ function queue(db, draftId) {
     delivered: false,
     providerAccepted: false,
     deliveryUnknown: false,
+    live: false,
     draft: db.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId),
+  };
+}
+
+function markSentOrDelivered() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "HUMAN_SEND_REQUIRED",
+    note: "Status SENT/DELIVERED cannot be written by software. Item 155/165.",
   };
 }
 
@@ -199,6 +232,7 @@ function humanHandoff(input = {}) {
 
 module.exports = {
   MESSAGE_STATUS,
+  ALLOWED_CHANNELS,
   classifyInquiry,
   detectLocale,
   draft,
@@ -206,4 +240,5 @@ module.exports = {
   sendPrepared,
   consentGate,
   humanHandoff,
+  markSentOrDelivered,
 };

@@ -128,3 +128,14 @@ Push of SHA `c4a6e4ede4f0772a5e2b05069f0a0c2c73430b35` to `cursor/software-compl
 | PR #430 checks | 3 SUCCESS, same SHA (commit-scoped; base still not `main`) | https://github.com/Buzzard-de/Buzzard/pull/430 |
 
 237 mean **unchanged**. Items 205 and 212 stay PARTIAL (original criteria UNKNOWN, not VERIFIED_100).
+
+## 2026-10-17 easiest remaining HUMAN items 165 / 182
+
+No live send, publish, SoT, sales, payment, merge, or deploy.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy + buzzard80MasterAdvancement | 0 | 2 files, **6 passed** |
+| softwareCompletion `-t message` | 0 | **2 passed**, 70 skipped |
+
+**165** 50→60. **182** 60→70. Status both HUMAN_APPROVAL_REQUIRED. Mean **76.87%** (18218/237). LIVE_VERIFIED 0.

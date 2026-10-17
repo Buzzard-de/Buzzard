@@ -44,6 +44,7 @@ const localeCoverage = require("./localeCoverage");
 const orderInventoryBridge = require("./orderInventoryBridge");
 const orderIdentity = require("./orderIdentity");
 const qrLoyalty = require("./qrLoyalty");
+const gatedActions = require("./gatedActions");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -102,4 +103,5 @@ module.exports = {
   orderInventoryBridge,
   orderIdentity,
   qrLoyalty,
+  gatedActions,
 };

@@ -180,6 +180,36 @@ function draftListing(input = {}, db = null) {
   };
 }
 
+function transformListing(input = {}) {
+  const channel = classify(input.channel || input.marketplace || "amazon");
+  const validation = validateDraftInput(input, channel);
+  if (!validation.ok) {
+    return {
+      ok: false,
+      live: false,
+      published: false,
+      listingId: null,
+      reason: validation.reason,
+      missing: validation.missing,
+      channel: channel.id,
+    };
+  }
+  return {
+    ok: true,
+    live: false,
+    published: false,
+    listingId: null,
+    channel: channel.id,
+    payload: {
+      sku: String(input.sku).trim(),
+      price: Number(input.price),
+      category: input.category || null,
+      currency: "EUR",
+    },
+    note: "Local listing transform only. Not submitted to a marketplace.",
+  };
+}
+
 function publishListing(input = {}) {
   const channel = classify(input.channel || input.marketplace || "amazon");
   return {
@@ -214,6 +244,9 @@ function createSafeAdapter(channelId) {
     },
     draft(input = {}, db = null) {
       return draftListing({ ...input, channel: channel.id }, db);
+    },
+    transform(input = {}) {
+      return transformListing({ ...input, channel: channel.id });
     },
     publish(input = {}) {
       return publishListing({ ...input, channel: channel.id });
@@ -333,6 +366,7 @@ module.exports = {
   requiredFields,
   validateDraftInput,
   draftListing,
+  transformListing,
   dryRunListing,
   validateAuthConfig,
   classifyMarketplaceError,

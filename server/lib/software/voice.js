@@ -80,6 +80,77 @@ function mockSession(input = {}) {
   };
 }
 
+function iceConfig() {
+  return {
+    ok: true,
+    live: false,
+    connected: false,
+    stunPresent: Boolean(process.env.WEBRTC_STUN_URL),
+    turnPresent: Boolean(process.env.WEBRTC_TURN_URL),
+    signalingPresent: Boolean(process.env.WEBRTC_SIGNALING_URL),
+    urlsExposed: false,
+    note: "Presence-only ICE/TURN/STUN flags. URLs are not returned and no peer connection is opened.",
+  };
+}
+
+function sttTranscribe() {
+  const status = adapterStatus("stt");
+  return {
+    ok: false,
+    live: false,
+    transcript: null,
+    reason: status.configured ? "STT_LIVE_BLOCKED" : "STT_NOT_CONFIGURED",
+    callStarted: false,
+  };
+}
+
+function ttsSpeak() {
+  const status = adapterStatus("tts");
+  return {
+    ok: false,
+    live: false,
+    audio: null,
+    reason: status.configured ? "TTS_LIVE_BLOCKED" : "TTS_NOT_CONFIGURED",
+    callStarted: false,
+  };
+}
+
+function webrtcSignal() {
+  return {
+    ok: false,
+    live: false,
+    webrtcConnected: false,
+    mediaOpen: false,
+    ice: iceConfig(),
+    reason: "WEBRTC_SIGNALING_BLOCKED",
+  };
+}
+
+function realtimeSession() {
+  const status = adapterStatus("realtime");
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    reason: status.configured ? "REALTIME_LIVE_BLOCKED" : "REALTIME_NOT_CONFIGURED",
+    note: "OPENAI_API_KEY presence is not a live Realtime session.",
+  };
+}
+
+function digitalHumanSession() {
+  const status = adapterStatus("digital_human");
+  return {
+    ok: false,
+    live: false,
+    videoOpen: false,
+    reason: status.configured ? "DIGITAL_HUMAN_LIVE_BLOCKED" : "DIGITAL_HUMAN_NOT_CONFIGURED",
+  };
+}
+
+function handoffToPusat(input = {}) {
+  return routeTextTask({ ...input, pusat: true });
+}
+
 function health() {
   const adapters = listAdapters();
   return {
@@ -101,6 +172,13 @@ module.exports = {
   requiredEnv,
   validateConfig,
   routeTextTask,
+  handoffToPusat,
   mockSession,
+  iceConfig,
+  sttTranscribe,
+  ttsSpeak,
+  webrtcSignal,
+  realtimeSession,
+  digitalHumanSession,
   health,
 };

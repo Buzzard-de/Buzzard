@@ -116,6 +116,18 @@ function appendEvent(db, shipmentId, event) {
     return { ok: false, reason: "NOT_FOUND", gpsInvented: false, statusAdvanced: false };
   }
   const normalized = normalizeEvent(event);
+  const eventId = event.eventId ? String(event.eventId) : null;
+  if (eventId) {
+    const byId = db
+      .prepare(
+        `SELECT id FROM software_shipment_events
+         WHERE shipment_id = ? AND json_extract(raw_json, '$.eventId') = ?`
+      )
+      .get(shipmentId, eventId);
+    if (byId) {
+      return { ...normalized, ok: true, duplicate: true, eventId, statusAdvanced: false, outOfOrder: false };
+    }
+  }
   const existing = db
     .prepare(
       `SELECT id FROM software_shipment_events
@@ -141,6 +153,7 @@ function appendEvent(db, shipmentId, event) {
       note: normalized.note,
       carrierGps: normalized.carrierGps,
       simulated: normalized.simulated,
+      eventId,
     })
   );
 
@@ -209,6 +222,27 @@ function mapShipment(row, db) {
   };
 }
 
+function ingestVerifiedCarrierEvent(db, { shipmentId, verification, mappedEvent, occurredAt } = {}) {
+  if (!verification || verification.verified !== true) {
+    return {
+      ok: false,
+      reason: verification?.reason || "WEBHOOK_NOT_VERIFIED",
+      gpsInvented: false,
+      statusAdvanced: false,
+    };
+  }
+  if (!mappedEvent || !mappedEvent.status) {
+    return { ok: false, reason: "EVENT_REQUIRED", gpsInvented: false, statusAdvanced: false };
+  }
+  return appendEvent(db, shipmentId, {
+    status: mappedEvent.status,
+    eventId: mappedEvent.eventId,
+    occurredAt: occurredAt || new Date().toISOString(),
+    simulated: mappedEvent.simulated === true,
+    carrierGps: false,
+  });
+}
+
 function getForCustomer(db, { shipmentId, orderId, trackingNumber, customerId } = {}) {
   if (!customerId) {
     return { ok: false, denied: true, reason: "CUSTOMER_REQUIRED" };
@@ -229,6 +263,7 @@ module.exports = {
   validateTrackingNumber,
   createShipment,
   appendEvent,
+  ingestVerifiedCarrierEvent,
   getForCustomer,
   mapShipment,
 };

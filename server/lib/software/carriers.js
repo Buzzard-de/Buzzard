@@ -77,7 +77,41 @@ function lookup(input = {}) {
       reason: "MALFORMED_TRACKING_PAYLOAD",
     };
   }
-  const carrier = classify(String(input.carrier || "dhl").toLowerCase());
+  if (input.forceError === "timeout") {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_TIMEOUT",
+      retryable: true,
+    };
+  }
+  if (input.forceError === "unavailable") {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_UNAVAILABLE",
+      retryable: false,
+    };
+  }
+  const requested = String(input.carrier || "dhl").toLowerCase();
+  if (requested && !CARRIERS.some((c) => c.id === requested)) {
+    return {
+      ok: false,
+      live: false,
+      shipmentCreated: false,
+      gpsInvented: false,
+      status: "ERROR",
+      reason: "CARRIER_UNKNOWN",
+      carrier: requested,
+    };
+  }
+  const carrier = classify(requested);
   const estimate = shippingProvider.calculateShipping({
     methodId: input.methodId,
     country: input.country || "DE",

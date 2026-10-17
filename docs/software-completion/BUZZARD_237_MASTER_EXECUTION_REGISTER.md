@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **75.91%** (Σ 17991 / 237 = 75.9114…; one decimal **75.9%**). Was **75.76%** (17955/237). This pass **+0.15 pp** from 2026-10-17 local adapter honesty: items **87** and **88** 40→58 (mock class + key≠live + no HTTP + Inter-Cars PO blocked). Still **BLOCKED_EXTERNAL** — no live catalog/order. **185** unchanged. Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **75.97%** (Σ 18006 / 237 = 75.9747…; one decimal **76.0%**). Was **75.91%** (17991/237). This pass **+0.06 pp** from 2026-10-17 infrastructure day: item **154** 40→55 (ETA schedule + live-map fixtures + webhook ingest tests; still not live GPS). **87/88** remain BLOCKED_EXTERNAL at 58%. **185** unchanged. Original criteria still UNKNOWN so VERIFIED_100 remains **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Esat Bey is **not** 100% and **not** LIVE_VERIFIED. Isolated local restore is not production RESTORE_TESTED. Do **not** merge PR #431. This day did **not** push or merge. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -120,10 +120,11 @@ Mean established-scope completion: **75.91%** (Σ 17991 / 237 = 75.9114…; one 
 70. HAC consumeForExecution requires the stored action; omitting action is `action_required` (fail-closed). Percentages this pass **unchanged** (audit, not score inflation).
 71. Local load-safe rate-limit burst tests (item 201): serial 40 vs max 10 and same-tick 24 vs max 8. `npm audit --audit-level=high` recorded 5 high (`braces` via `eslint-config-next`); no `audit fix --force`. Restore dry-run and `backupRestoreIntegrity` re-run. Persistence item 188 uses prior Render disk evidence plus /tmp fail-closed tests. Not production load, not RESTORE_TESTED, not a clean audit.
 72. TecDoc and Inter-Cars mock adapters refuse to treat API-key presence as live HTTP. Inter-Cars `purchaseOrder` is `LIVE_PO_BLOCKED`. Still BLOCKED_EXTERNAL.
+73. Infrastructure day: schedule ETA, synthetic live-map fixtures (`simulated:true` required), webhook delay map + eventId duplicate, voice STT/TTS/WebRTC/Realtime/digital-human fail-closed, marketplace `transformListing` local-only. No live GPS, calls, listings, or labels.
 
 ## Resume pointer
 
-In progress 2026-10-17 morning. Saved on `cursor/software-completion-local-c293` / PR **#431** (do **not** merge). Official mean **75.91%** (one decimal **75.9%**; Σ 17991/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**.
+Infrastructure day 2026-10-17. Branch `cursor/software-completion-local-c293`. Official mean **75.97%** (one decimal **76.0%**; Σ 18006/237). VERIFIED_100 **0**. Sales / SoT / live payments **OFF**. Operator forbade push/PR this command.
 
 Next:
 1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc (local mock 58%; live catalog/PO still needs authorized credentials), **185** alerts (`liveDispatch: false`)
@@ -4138,22 +4139,22 @@ Next:
 | Established scope | Tracking UI |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Scan-based stub; not GPS |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/carriers.js |
-| Identified gaps | Explicitly not live GPS |
+| Existing implementation evidence | `software/carriers.js`, `tracking.js`, `eta.js`, `liveMap.js` |
+| Identified gaps | Explicitly not live GPS; no telematics feed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | software/carriers.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
-| Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
+| Exact tests executed and results | `infrastructureAdvancementDay.test.mjs` 2026-10-17 — ETA schedule, delay/fail, simulated map fixtures, unsigned webhook rejected |
+| Integration status | MOCK_OR_SIMULATED; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Explicitly not live GPS |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 55% (scan events + schedule ETA + synthetic map model; telematics remaining) |
+| Remaining work | Authorized carrier telematics/GPS feed; live map provider not configured |
+| Final evidence references | `docs/software-completion/BUZZARD_FULL_INFRASTRUCTURE_ADVANCEMENT_2026-10-17.md` |
+| Final state and date | PARTIAL / 2026-10-17 |
 
 ### Item 155
 

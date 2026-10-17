@@ -182,7 +182,7 @@ const SCOPES = {
   151: ["Cart and account chrome", "Header cart", "storefront header", "PARTIAL", 65, "Guest session headers wired"],
   152: ["Shipping data models", "shipmentGate", "dualPaymentEngine.evaluateShipment", "PARTIAL", 60, "Gate exists"],
   153: ["Customer operations", "customerOrderBridge", "customerOrderBridge", "PARTIAL", 70, "Implemented/tested historically"],
-  154: ["Tracking UI", "Scan-based stub; not GPS", "software/carriers.js", "PARTIAL", 40, "Explicitly not live GPS"],
+  154: ["Tracking UI", "Scan-based stub; not GPS", "software/eta.js liveMap.js tracking.js", "PARTIAL", 55, "2026-10-17 schedule ETA + synthetic map; not live GPS"],
   155: ["Notifications draft / send blocked", "communications.js send BLOCKED", "software/communications.js", "HUMAN_APPROVAL_REQUIRED", 50, "Drafts only"],
   156: ["Customer accounts", "customerAuth login rate limit", "customerAuth.js", "PARTIAL", 75, "Rate limit 8/15min"],
   157: ["Returns workflows", "RMA + ledger", "software/returns.js", "PARTIAL", 70, "Refund ≠ supplier credit"],

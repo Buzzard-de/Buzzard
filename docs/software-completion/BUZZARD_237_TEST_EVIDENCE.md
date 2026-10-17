@@ -46,3 +46,16 @@ Register mean after this trial: **75.76%** (17955/237; one decimal **75.8%**). V
 | `npx vitest run server/__tests__/externalIntegrationHonesty.test.mjs` | 0 | 2 passed (key present ≠ live HTTP; Inter-Cars `LIVE_PO_BLOCKED`) |
 
 Register mean after this pass: **75.91%** (17991/237; one decimal **75.9%**). 87 and 88 remain BLOCKED_EXTERNAL. 185 unchanged. VERIFIED_100 remains 0.
+
+## 2026-10-17 infrastructure advancement day
+
+Push/PR/deploy **not** executed (operator command). Sales/SoT/live payments off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| infrastructureAdvancementDay.test.mjs | 0 | 7 passed |
+| softwareCompletion + lifecycle + secureCommerce + dualPayment + softwareMasterCompletion | 0 | 129 passed |
+| pusatOrchestrator + memory/guardian + approval + agents + worker | 0 | 44 passed |
+| localMetricsAlerts + rateLimitStore | 0 | 10 passed |
+
+Item **154** 40→55. Mean **75.97%** (18006/237). VERIFIED_100 0. Live GPS/calls/listings not claimed.

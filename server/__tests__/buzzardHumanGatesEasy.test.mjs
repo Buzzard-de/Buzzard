@@ -10,7 +10,7 @@ function memoryDb() {
   return db;
 }
 
-describe("easiest remaining human gates — 165 communications, 182 catalog", () => {
+describe("easiest remaining human gates — 165/182/67/129", () => {
   it("item 165: unknown channel is not a live send", () => {
     const software = require("../lib/software");
     const db = memoryDb();
@@ -62,5 +62,38 @@ describe("easiest remaining human gates — 165 communications, 182 catalog", ()
 
     const unknown = software.gatedActions.evaluate({ action: "invented_action" });
     expect(unknown.reason).toBe("UNKNOWN_GATED_ACTION");
+  });
+
+  it("item 67: live PIM publish does not mutate", () => {
+    const software = require("../lib/software");
+    const ai = software.pimPublish.livePublish({ sku: "SKU-1", actorId: "pusat" });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.mutated).toBe(false);
+    expect(ai.live).toBe(false);
+    const forced = software.pimPublish.livePublish({ sku: "SKU-1", actorId: "operator", forceLive: true });
+    expect(forced.reason).toBe("HUMAN_PUBLISH_REQUIRED");
+    expect(forced.forceLiveIgnored).toBe(true);
+    expect(forced.mutated).toBe(false);
+    expect(forced.salesWouldChange).toBe(false);
+  });
+
+  it("item 129: listing approval never writes a live listing", () => {
+    const software = require("../lib/software");
+    const published = software.marketplace.publishListing({
+      channel: "amazon",
+      sku: "A",
+      price: 10,
+      forcePublish: true,
+    });
+    expect(published.reason).toBe("PUBLISH_BLOCKED");
+    expect(published.forcePublishIgnored).toBe(true);
+    expect(published.listingId).toBe(null);
+    const ai = software.marketplace.approvePublish({ actor: "guardian" });
+    expect(ai.reason).toBe("SELF_APPROVE_DENIED");
+    expect(ai.published).toBe(false);
+    const human = software.marketplace.approvePublish({ actor: "operator" });
+    expect(human.reason).toBe("HUMAN_LISTING_APPROVAL_REQUIRED");
+    expect(human.executed).toBe(false);
+    expect(human.live).toBe(false);
   });
 });

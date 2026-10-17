@@ -139,3 +139,13 @@ No live send, publish, SoT, sales, payment, merge, or deploy.
 | softwareCompletion `-t message` | 0 | **2 passed**, 70 skipped |
 
 **165** 50→60. **182** 60→70. Status both HUMAN_APPROVAL_REQUIRED. Mean **76.87%** (18218/237). LIVE_VERIFIED 0.
+
+## 2026-10-17 HUMAN items 67 / 129
+
+No live PIM visibility mutation via `software.pimPublish`. No marketplace listing write.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| buzzardHumanGatesEasy + buzzard80NextAdvancement | 0 | 2 files, **8 passed** |
+
+**67** 40→52. **129** 50→58. Both HUMAN_APPROVAL_REQUIRED. Mean **76.95%** (18238/237). LIVE_VERIFIED 0.

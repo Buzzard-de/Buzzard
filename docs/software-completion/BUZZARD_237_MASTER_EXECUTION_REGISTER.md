@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **76.87%** (Σ 18218 / 237 = 76.8692…; one decimal **76.9%**). Was **76.78%** (18198/237). This pass **+0.08 pp**. **%80 reached: NO** (need Σ 18960; shortfall 742). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
+Mean established-scope completion: **76.95%** (Σ 18238 / 237 = 76.9536…; one decimal **77.0%**). Was **76.87%** (18218/237). This pass **+0.08 pp**. **%80 reached: NO** (need Σ 18960; shortfall 722). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Esat Bey 227–237 mean **83.73%** unchanged. Do **not** merge PR #431. Sales / SoT / live payments remain OFF.
 
 ## Safety locks this workspace
 
@@ -126,10 +126,11 @@ Mean established-scope completion: **76.87%** (Σ 18218 / 237 = 76.8692…; one 
 76. Record sprint 2026-10-17: supplier outage≠stock; local shipping table (key≠live rate); listing category map unpublished; return reconcile no auto-match. Items 80/81/94/104/115. Mean **76.54%** (18141/237). 80% not reached. LIVE_VERIFIED 0.
 77. Record sprint 2 2026-10-17: quoteForMarket unknown/FX fail-closed; VAT unknown market no DE default; feed export dry-run; future timestamp/sourceId conflict; GPS claim ≠ telematics. Items 78/91/117/135/152. Mean **76.78%** (18198/237). 80% not reached. LIVE_VERIFIED 0.
 78. Easiest remaining HUMAN items 165/182 local gates only (no live send or high-impact execute). Mean **76.87%** (18218/237). Both stay HUMAN_APPROVAL_REQUIRED.
+79. Next HUMAN items 67/129 local refuse-only (no catalog mutation from software.pimPublish; no listing write). Mean **76.95%** (18238/237). Both stay HUMAN_APPROVAL_REQUIRED.
 
 ## Resume pointer
 
-Human-gate local pass 2026-10-17 (easiest remaining HUMAN items **165** then **182**). No live send/publish/SoT/sales/pay/merge/deploy. **165** 50→**60**: channel allowlist, queue only from DRAFT, SENT/DELIVERED cannot be written. **182** 60→**70**: in-code catalog; AI self-approve denied; `execute` never runs. Status both still **HUMAN_APPROVAL_REQUIRED**. Mean **76.87%** (18218/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
+Human-gate local pass 2 (2026-10-17): items **67** then **129**. No live PIM/customer publish, no marketplace write. **67** 40→**52**: `pimPublish.livePublish` refuses AI and forceLive; no mutation. **129** 50→**58**: `forcePublish` ignored; `approvePublish` self-approve denied and does not write. Both stay **HUMAN_APPROVAL_REQUIRED**. Mean **76.95%** (18238/237). VERIFIED_100 **0**. LIVE_VERIFIED **0**. Sales / SoT / live payments **OFF**. Do not merge #431.
 
 Next:
 1. BLOCKED_EXTERNAL still **87** Inter-Cars, **88** TecDoc, **185** alerts (`liveDispatch: false`)
@@ -1872,8 +1873,8 @@ Next:
 | Established scope | PIM publish gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Publish not SoT activation |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED |
-| Existing implementation evidence | pim-publish.mjs |
-| Identified gaps | Live publish HUMAN |
+| Existing implementation evidence | `software/pimPublish.js` livePublish blocked; catalog `publishDryRun` unchanged; scripts/pim-publish.mjs |
+| Identified gaps | Live customer-facing PIM publish still HUMAN; catalog visibility path remains separate |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | pim-publish.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
@@ -1884,10 +1885,10 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
+| Completion percentage | 52% (live publish refuse + dry-run; live customer publish remaining) |
 | Remaining work | Live publish HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `buzzardHumanGatesEasy.test.mjs` |
+| Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-17 |
 
 ### Item 68
 
@@ -3490,7 +3491,7 @@ Next:
 | Established scope | Marketplace mutations gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No publish without approval |
 | Current implementation status | HUMAN_APPROVAL_REQUIRED
-| Existing implementation evidence | marketplaceHub.marketplaceMutationGuard HTTP 409 while sales off; software.publishListing PUBLISH_BLOCKED
+| Existing implementation evidence | marketplaceHub 409 while sales off; publishListing PUBLISH_BLOCKED; forcePublish ignored; approvePublish never writes |
 | Identified gaps | Workflow and fail-closed gates exist; live publish action remains pending independent human approval
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | approval + flags |
@@ -3502,7 +3503,7 @@ Next:
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 50% (established-criteria weighting; original unknown criteria cannot be 100%)
+| Completion percentage | 58% (approvePublish refuse + forcePublish ignored; live listing remaining)
 | Remaining work | Authorized human must approve the exact listing payload; this agent must not approve it
 | Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
 | Final state and date | HUMAN_APPROVAL_REQUIRED / 2026-10-14

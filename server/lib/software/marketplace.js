@@ -248,11 +248,38 @@ function publishListing(input = {}) {
     inventedListingId: false,
     write: false,
     reason: "PUBLISH_BLOCKED",
+    forcePublishIgnored: input.forcePublish === true,
     channel: channel.id,
     adapterExists: channel.adapterExists,
     classificationOnly: channel.classificationOnly,
     safeInterface: true,
     note: "Publish is never executed from this adapter. A draft is not a listing.",
+  };
+}
+
+const LISTING_AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
+function approvePublish(input = {}) {
+  const actor = String(input.actor || input.approver || "").trim().toLowerCase();
+  if (LISTING_AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      published: false,
+      live: false,
+      listingId: null,
+      executed: false,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+    };
+  }
+  return {
+    ok: false,
+    published: false,
+    live: false,
+    listingId: null,
+    executed: false,
+    reason: "HUMAN_LISTING_APPROVAL_REQUIRED",
+    note: "Approval is recorded as required. No marketplace write. Item 129.",
   };
 }
 
@@ -445,6 +472,7 @@ module.exports = {
   classifyMarketplaceError,
   CHANNEL_AUTH_ENV,
   publishListing,
+  approvePublish,
   createSafeAdapter,
   listSafeAdapters,
   importChannelOrder,

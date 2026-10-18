@@ -413,3 +413,16 @@ Single Pusat facade (not a second orchestrator). Assistants recommendation-only 
 | aiAutomationIntegritySoftware | 0 | 1 file, **3 passed** |
 
 Items **30** 88→100, **208** 90→100 PARTIAL. Not VERIFIED_100. Mean **97.00%** (22988/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Test, reliability, and operations software (items 183, 196–201, 203, 204, 206, 207, 209, 210)
+
+Structured logs redact secrets. Restore execute blocked even with `BUZZARD_ALLOW_PRODUCTION_RESTORE=1`. `/tmp` ops source refused. Rate-limit burst is not a production load test. npm audit 5 high recorded; no `audit fix --force`. **202 stays 90%** (next build not re-run). **185 stays EXTERNAL**. HUMAN ops stay HUMAN.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| locked pack (ops integrity + csrf/cors/guest/fortress/dualPayment/rateLimit/backupRestore) | 0 | 8 files, **55 passed** |
+| npx next lint | 0 | No ESLint warnings or errors |
+| npx tsc --noEmit | 0 | clean |
+| npm audit --audit-level=high | 1 | high=5 critical=0; no force fix |
+
+Items **183,196–201,203,204,206,207,209,210** →100 PARTIAL. **202 remains 90**. Not VERIFIED_100. Mean **98.11%** (23253/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

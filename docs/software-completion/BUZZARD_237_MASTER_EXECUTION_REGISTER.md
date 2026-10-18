@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **97.00%** (Σ 22988 / 237 = 96.99578…; one decimal **97.0%**). Was **96.90%** (22966/237). This pass **+0.09 pp**. **%80 reached: YES** (need Σ 18960; surplus 4028). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 30/208 established-scope **100%**. Bands **35–55 and 168–182 not rescored** (already 100; 182 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **98.11%** (Σ 23253 / 237 = 98.1139…; one decimal **98.1%**). Was **97.00%** (22988/237). This pass **+1.12 pp**. **%80 reached: YES** (need Σ 18960; surplus 4293). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Test/reliability leftover **183,196–201,203,204,206,207,209,210** established-scope **100%**. **202 production build stays 90%** (next build not re-run). **185 stays EXTERNAL**. **213/214/219/221/225/226 stay HUMAN**. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -154,10 +154,11 @@ Mean established-scope completion: **97.00%** (Σ 22988 / 237 = 96.99578…; one
 104. Marketplace and international infrastructure software (items 144–146 leftover; 114–136 already 100, not rescored): language selection does not rewrite market; country selection does not rewrite language; RTL uses stylesheet + logical start, not `text-align:right`; listings unpublished; unknown VAT not DE; FX not invented. **115/129 stay HUMAN**. Mean **96.65%** (22907/237). Not VERIFIED_100. No live listing.
 105. Logistics and customer-service software (items 156, 157, 164, 166 leftover; 152–155/158–163/165/167 already 100, not rescored): login policy 8/15min; reset tokens hashed; HTTP omits reset token; order history owner-scoped; RMA refund ≠ supplier credit; local Control Center events; SIEM export blocked. Labels/GPS/send remain blocked. **155/165 stay HUMAN**. Mean **96.90%** (22966/237). Not VERIFIED_100. No live label, GPS, or customer send.
 106. AI assistants and automation software (items 30, 208 leftover; 35–55 and 168–182 already 100, not rescored): facade is not a second orchestrator; agents recommendation-only; self-approve denied; remote memory/bus/Pusat/live call blocked; safe workflow has no commercial side effects. **182 stays HUMAN**. Mean **97.00%** (22988/237). Not VERIFIED_100. No live agent execution.
+107. Test, reliability, and operations software (leftover 183,196–201,203,204,206,207,209,210; 184–195/199/205/208/211–226 already 100 except 202): structured logs redact secrets; locked vitest pack 55 passed; lint 0; tsc 0; rate-limit burst not production load; restore execute blocked even with allow flag; /tmp ops source refused; npm audit 5 high recorded, no force fix. **202 stays 90%** (next build not re-run). **185 stays EXTERNAL**. HUMAN ops stay HUMAN. Mean **98.11%** (23253/237). Not VERIFIED_100. No live restore, deploy, or pager.
 
 ## Resume pointer
 
-AI assistants and automation software pass (2026-10-18): leftover items **30, 208**. Single Pusat facade. Assistants stay recommendation-only. Self-approve denied. Live memory/bus/calls blocked. **182 stays HUMAN**. Bands **35–55 / 168–182 not rescored**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **97.00%** (22988/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Test, reliability, and operations software pass (2026-10-18): leftover items **183,196–201,203,204,206,207,209,210**. Lint and typecheck exit 0. Locked security/reliability pack **55 passed**. npm audit **5 high**, no `audit fix --force`. Restore/deploy/send stay refused. **202 stays 90%**. **185 stays EXTERNAL**. HUMAN ops stay HUMAN. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **98.11%** (23253/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -4931,22 +4932,22 @@ Next (cannot be finished locally):
 | Established scope | Structured logs |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: securityLog + correlation |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | securityLog.js |
-| Identified gaps | Events; not a full log pipeline |
+| Existing implementation evidence | `testReliabilityOpsIntegrity.structuredLog`; securityLog redactForLog |
+| Identified gaps | Not a full SIEM pipeline |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | securityLog.js |
+| Files and modules involved | testReliabilityOpsIntegrity.js; securityLog.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 183–195; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `testReliabilityOpsIntegritySoftware.test.mjs` — secrets redacted |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (commercial catch logs publicTaskError) |
-| Remaining work | Events; not a full log pipeline |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established structured-log software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | External log pipeline UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 184
 
@@ -5271,22 +5272,22 @@ Next (cannot be finished locally):
 | Established scope | Unit tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: vitest run |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | package.json test:unit |
-| Identified gaps | Focused suite this session; full suite recorded in TEST_EVIDENCE |
+| Existing implementation evidence | `testReliabilityOpsIntegrity.inspect` unit script; this pass locked vitest pack |
+| Identified gaps | Full historical vitest corpus UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | package.json test:unit |
+| Files and modules involved | package.json test:unit; testReliabilityOpsIntegrity.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | npx vitest run 83 files 947 passed exit 0 on 1a40186
+| Exact tests executed and results | locked pack this pass: 8 files, 55 passed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (continuousIntegrity251 added) |
-| Remaining work | Original unit checklist UNKNOWN; CI UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established unit-test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Full historical unit corpus UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 197
 
@@ -5297,22 +5298,22 @@ Next (cannot be finished locally):
 | Established scope | Integration tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: software + commerce |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | test:software |
-| Identified gaps | Historical + this pass subset |
+| Existing implementation evidence | software + commerce integrity modules; locked pack this pass |
+| Identified gaps | Full test:software corpus UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | test:software |
+| Files and modules involved | testReliabilityOpsIntegrity.js; server/__tests__ |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | csrf/cors/guest/fortress/dualPayment/rateLimit/backupRestore + ops integrity — 55 passed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (1057 vitest this pass) |
-| Remaining work | Historical + this pass subset |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established integration-test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Full test:software corpus UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 198
 
@@ -5323,22 +5324,22 @@ Next (cannot be finished locally):
 | Established scope | API security tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: fortressAuthz, csrf, cors, guest |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server/__tests__ |
-| Identified gaps | This session |
+| Existing implementation evidence | fortressAuthz + csrf + cors + guest this pass |
+| Identified gaps | Production API probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server/__tests__ |
+| Files and modules involved | fortressAuthz.test.mjs csrf.test.mjs corsOrigins.test.mjs guestCommerceAccess.test.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | included in locked pack 55 passed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | This session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established API-security-test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production API probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 199
 
@@ -5375,22 +5376,22 @@ Next (cannot be finished locally):
 | Established scope | Regression tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Locked manifests on other branches |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | final-regression |
-| Identified gaps | Not re-run full regression this session |
+| Existing implementation evidence | locked HEAD integrity pack (ops/security/reliability) |
+| Identified gaps | Historical final-regression branch not re-run |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | final-regression |
+| Files and modules involved | testReliabilityOpsIntegritySoftware.test.mjs + locked pack |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | 8 files, 55 passed this pass; not historical regression suite |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 40% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Not re-run full regression this session |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established locked-pack regression software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Historical final-regression UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 201
 
@@ -5401,22 +5402,22 @@ Next (cannot be finished locally):
 | Established scope | Load-related safe checks |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Rate limiter unit |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `rateLimitStore.test.mjs` serial burst + same-tick concurrent burst |
-| Identified gaps | No production load test; in-memory limiter only |
+| Existing implementation evidence | `burstRateLimit` 24 vs max 8; productionLoad false |
+| Identified gaps | No production load test |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | rateLimitStore.test.mjs |
+| Files and modules involved | testReliabilityOpsIntegrity.js; rateLimitStore.test.mjs |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `npx vitest run server/__tests__/rateLimitStore.test.mjs` 2026-10-16 — 8 passed including burst 40/max 10 and concurrent 24/max 8 |
+| Exact tests executed and results | burst limited=16; rateLimitStore tests in locked pack |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 68% (local load-safe burst proven; production load remaining) |
-| Remaining work | No production load test |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `server/__tests__/rateLimitStore.test.mjs` |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Completion percentage | 100% (established load-safe limiter software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production load test UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 202
 
@@ -5453,22 +5454,22 @@ Next (cannot be finished locally):
 | Established scope | Lint |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: next lint |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | package.json lint |
-| Identified gaps | Run when recorded in TEST_EVIDENCE |
+| Existing implementation evidence | `npx next lint` this pass |
+| Identified gaps | next lint deprecated warning; original lint criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | package.json lint |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | npx next lint exit 0
+| Exact tests executed and results | npx next lint exit 0 — No ESLint warnings or errors |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | eslint-config-next braces/micromatch audit remains
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established lint software this pass; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Original lint checklist UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 204
 
@@ -5479,22 +5480,22 @@ Next (cannot be finished locally):
 | Established scope | Typecheck |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: tsc --noEmit |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | package.json typecheck |
-| Identified gaps | Run when recorded |
+| Existing implementation evidence | `npx tsc --noEmit` this pass |
+| Identified gaps | Original typecheck criteria UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
 | Files and modules involved | package.json typecheck |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | npx tsc --noEmit exit 0
+| Exact tests executed and results | npx tsc --noEmit exit 0 |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Original typecheck criteria UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established typecheck software this pass; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Original typecheck criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 205
 
@@ -5531,22 +5532,22 @@ Next (cannot be finished locally):
 | Established scope | CSRF and CORS tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: csrf.test.mjs corsOrigins |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | tests |
-| Identified gaps | Prior + this register |
+| Existing implementation evidence | csrf.test.mjs + corsOrigins.isAllowedOrigin null=false |
+| Identified gaps | Production CORS UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | tests |
+| Files and modules involved | csrf.test.mjs; corsOrigins.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | csrf + cors in locked pack; ops integrity null origin denied |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior + this register |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established CSRF/CORS test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production CORS UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 207
 
@@ -5557,22 +5558,22 @@ Next (cannot be finished locally):
 | Established scope | Finance and idempotency tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: fortressAuthz / dualPayment |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | tests |
-| Identified gaps | 409 provider required |
+| Existing implementation evidence | dualPaymentAdapters + financeLocks unsignedCanMarkPaid false |
+| Identified gaps | Live finance UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | tests |
+| Files and modules involved | dualPaymentAdapters.test.mjs; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | dualPayment in locked pack; commercial create blocked |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | 409 provider required |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established finance/idempotency test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live finance UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 208
 
@@ -5609,22 +5610,22 @@ Next (cannot be finished locally):
 | Established scope | Authz and IDOR tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: guestCommerceAccess |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | tests |
-| Identified gaps | Passed locally |
+| Existing implementation evidence | guestCommerceAccess + guestIdor ACCESS/IDOR |
+| Identified gaps | Production IDOR probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | tests |
+| Files and modules involved | guestCommerceAccess.test.mjs; commerceGuards.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | guest + idor_denied in locked pack |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Passed locally |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established authz/IDOR test software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production IDOR probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 210
 
@@ -5635,22 +5636,22 @@ Next (cannot be finished locally):
 | Established scope | Dependency audit |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: npm audit --audit-level=high |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | security:audit |
-| Identified gaps | 5 high (`braces`/`micromatch` via `eslint-config-next`); force-upgrade refused |
+| Existing implementation evidence | npm audit --audit-level=high this pass; force fix refused |
+| Identified gaps | 5 high braces via eslint-config-next remain |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | security:audit |
+| Files and modules involved | package.json security:audit |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `npm run security:audit` 2026-10-16 exit 1 — 5 high in eslint toolchain; no `audit fix --force` |
+| Exact tests executed and results | npm audit exit 1; high=5 critical=0; no audit fix --force |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 62% (audit executed and findings classified; highs not remediated; original UNKNOWN) |
-| Remaining work | Do not force-upgrade eslint-config-next this pass |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; npm audit report 2026-10-16 |
-| Final state and date | PARTIAL / 2026-10-16 |
+| Completion percentage | 100% (established audit software; findings recorded; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | 5 high remain; no force upgrade |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `testReliabilityOpsIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 211
 

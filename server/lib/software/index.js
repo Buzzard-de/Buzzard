@@ -56,6 +56,7 @@ const orderPaymentReturnIntegrity = require("./orderPaymentReturnIntegrity");
 const marketplaceInternationalIntegrity = require("./marketplaceInternationalIntegrity");
 const logisticsCustomerIntegrity = require("./logisticsCustomerIntegrity");
 const aiAutomationIntegrity = require("./aiAutomationIntegrity");
+const testReliabilityOpsIntegrity = require("./testReliabilityOpsIntegrity");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
@@ -132,6 +133,7 @@ module.exports = {
   marketplaceInternationalIntegrity,
   logisticsCustomerIntegrity,
   aiAutomationIntegrity,
+  testReliabilityOpsIntegrity,
   productionConfigGate,
   productionDeployGate,
   goLiveGate,

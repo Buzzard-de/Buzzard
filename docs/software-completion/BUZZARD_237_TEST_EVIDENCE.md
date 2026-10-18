@@ -403,3 +403,13 @@ Login policy 8/15min (TEST_MODE still disables limiter in CI). Reset tokens hash
 | logisticsCustomerIntegritySoftware | 0 | 1 file, **3 passed** |
 
 Items **156** 96→100, **157** 90→100, **164** 85→100, **166** 70→100 PARTIAL. Not VERIFIED_100. Mean **96.90%** (22966/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 AI assistants and automation software (items 30, 208)
+
+Single Pusat facade (not a second orchestrator). Assistants recommendation-only with no commercial side effects. AI self-approve denied. Remote memory, inter-agent bus, live Pusat, and live calls blocked. Safe workflow stays non-commercial. Bands 35–55 and 168–182 not rescored. 182 stays HUMAN.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| aiAutomationIntegritySoftware | 0 | 1 file, **3 passed** |
+
+Items **30** 88→100, **208** 90→100 PARTIAL. Not VERIFIED_100. Mean **97.00%** (22988/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **96.90%** (Σ 22966 / 237 = 96.9029…; one decimal **96.9%**). Was **96.65%** (22907/237). This pass **+0.25 pp**. **%80 reached: YES** (need Σ 18960; surplus 4006). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 156/157/164/166 established-scope **100%**. Band **152–155, 158–163, 165, 167 not rescored** (already 100; 155/165 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **97.00%** (Σ 22988 / 237 = 96.99578…; one decimal **97.0%**). Was **96.90%** (22966/237). This pass **+0.09 pp**. **%80 reached: YES** (need Σ 18960; surplus 4028). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 30/208 established-scope **100%**. Bands **35–55 and 168–182 not rescored** (already 100; 182 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -153,10 +153,11 @@ Mean established-scope completion: **96.90%** (Σ 22966 / 237 = 96.9029…; one 
 103. Order, payment, and return software (items 95–113): commercial create blocked; Stripe/PayPal live HTTP blocked; confirm/refund provider-gated; unsigned webhook cannot mark paid; UNCERTAIN not retried as success; refund ≠ supplier credit; guest IDOR/loyalty mint blocked. Mean **96.27%** (22817/237). Not VERIFIED_100. No live charge.
 104. Marketplace and international infrastructure software (items 144–146 leftover; 114–136 already 100, not rescored): language selection does not rewrite market; country selection does not rewrite language; RTL uses stylesheet + logical start, not `text-align:right`; listings unpublished; unknown VAT not DE; FX not invented. **115/129 stay HUMAN**. Mean **96.65%** (22907/237). Not VERIFIED_100. No live listing.
 105. Logistics and customer-service software (items 156, 157, 164, 166 leftover; 152–155/158–163/165/167 already 100, not rescored): login policy 8/15min; reset tokens hashed; HTTP omits reset token; order history owner-scoped; RMA refund ≠ supplier credit; local Control Center events; SIEM export blocked. Labels/GPS/send remain blocked. **155/165 stay HUMAN**. Mean **96.90%** (22966/237). Not VERIFIED_100. No live label, GPS, or customer send.
+106. AI assistants and automation software (items 30, 208 leftover; 35–55 and 168–182 already 100, not rescored): facade is not a second orchestrator; agents recommendation-only; self-approve denied; remote memory/bus/Pusat/live call blocked; safe workflow has no commercial side effects. **182 stays HUMAN**. Mean **97.00%** (22988/237). Not VERIFIED_100. No live agent execution.
 
 ## Resume pointer
 
-Logistics and customer-service software pass (2026-10-18): leftover items **156, 157, 164, 166**. Labels, GPS, and customer send stay refused. **155/165 stay HUMAN**. Carriers/tracking already 100 not rescored. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.90%** (22966/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+AI assistants and automation software pass (2026-10-18): leftover items **30, 208**. Single Pusat facade. Assistants stay recommendation-only. Self-approve denied. Live memory/bus/calls blocked. **182 stays HUMAN**. Bands **35–55 / 168–182 not rescored**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **97.00%** (22988/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -934,22 +935,22 @@ Next (cannot be finished locally):
 | Established scope | Software facade is not a second orchestrator |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: server/lib/software wraps existing engines |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server/lib/software |
-| Identified gaps | CODE_IMPLEMENTATION_STATUS |
+| Existing implementation evidence | `aiAutomationIntegrity.inspect`; architectureInventory; Pusat wrap only |
+| Identified gaps | Production orchestrator probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server/lib/software |
+| Files and modules involved | aiAutomationIntegrity.js; software/index.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `aiAutomationIntegritySoftware.test.mjs` — single Pusat; PUSAT_LIVE_BLOCKED; INTER_AGENT_BUS_BLOCKED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (bridge 401/404/stderr are keys; not a second orchestrator) |
-| Remaining work | CODE_IMPLEMENTATION_STATUS |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established software-facade wrap; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production orchestrator probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `aiAutomationIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 31
 
@@ -5582,22 +5583,22 @@ Next (cannot be finished locally):
 | Established scope | Human approval tests |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: pusatApprovalExceptions, controlCenter bridge |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | tests |
-| Identified gaps | Self-approve test added |
+| Existing implementation evidence | `aiAutomationIntegrity.selfApprove` / `gatedExecute`; `aiAutomationIntegritySoftware.test.mjs` |
+| Identified gaps | Production HAC probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | tests |
+| Files and modules involved | aiAutomationIntegrity.js; pusat/approval.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 196–212; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | Focused vitest this session (see BUZZARD_237_TEST_EVIDENCE.md) |
+| Exact tests executed and results | `aiAutomationIntegritySoftware.test.mjs` — ai_cannot_self_approve; gated sales_enable HUMAN |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Self-approve test added |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established human-approval tests; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production HAC probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `aiAutomationIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 209
 

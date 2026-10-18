@@ -383,3 +383,13 @@ Commercial create blocked. Stripe/PayPal live HTTP blocked. Confirm/refund provi
 | orderPaymentReturnIntegritySoftware | 0 | 1 file, **3 passed** |
 
 Items **95–113** established-scope **100** PARTIAL (**104** already 100). Not VERIFIED_100. Mean **96.27%** (22817/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Marketplace and international infrastructure software (items 144–146)
+
+Language selection does not rewrite market. Country selection does not rewrite language. RTL uses stylesheet + logical start (no `text-align:right`). Listings unpublished. Unknown VAT not DE. FX not invented. Band 114–136 not rescored. 115/129 stay HUMAN.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| marketplaceInternationalIntegritySoftware + internationalMarketSoftware | 0 | 2 files, **9 passed** |
+
+Items **144–146** 70→100 PARTIAL. Not VERIFIED_100. Mean **96.65%** (22907/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

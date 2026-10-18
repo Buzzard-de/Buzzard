@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **96.27%** (Σ 22817 / 237 = 96.2743…; one decimal **96.3%**). Was **95.00%** (22514/237). This pass **+1.27 pp**. **%80 reached: YES** (need Σ 18960; surplus 3857). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Order/payment/return 95–113 established-scope **100%**. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **96.65%** (Σ 22907 / 237 = 96.6540…; one decimal **96.7%**). Was **96.27%** (22817/237). This pass **+0.38 pp**. **%80 reached: YES** (need Σ 18960; surplus 3947). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 144–146 established-scope **100%**. Band **114–136 not rescored** (already 100; 115/129 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -151,10 +151,11 @@ Mean established-scope completion: **96.27%** (Σ 22817 / 237 = 96.2743…; one 
 101. Supplier and stock infrastructure software (items 75–94): live PO/feed/sync blocked; outage/malformed/stale ≠ stock; no own-stock buy; €0.50 floor; €0.10 undercut unimplemented; WMS vs commerce reserves split. **87/88 stay EXTERNAL**. Mean **94.82%** (22472/237). Not VERIFIED_100. No live Inter-Cars or TecDoc.
 102. Pricing and profitability software (items 22, 23, 27, 104; 75/76/82/89/90/91 already 100): client totals rejected; missing cost fail-closed; €0.50 floor; undercut unimplemented; competitor prices not invented; UNCERTAIN is not revenue. Mean **95.00%** (22514/237). Not VERIFIED_100. No live price publish.
 103. Order, payment, and return software (items 95–113): commercial create blocked; Stripe/PayPal live HTTP blocked; confirm/refund provider-gated; unsigned webhook cannot mark paid; UNCERTAIN not retried as success; refund ≠ supplier credit; guest IDOR/loyalty mint blocked. Mean **96.27%** (22817/237). Not VERIFIED_100. No live charge.
+104. Marketplace and international infrastructure software (items 144–146 leftover; 114–136 already 100, not rescored): language selection does not rewrite market; country selection does not rewrite language; RTL uses stylesheet + logical start, not `text-align:right`; listings unpublished; unknown VAT not DE; FX not invented. **115/129 stay HUMAN**. Mean **96.65%** (22907/237). Not VERIFIED_100. No live listing.
 
 ## Resume pointer
 
-Order, payment, and return software pass (2026-10-18): items **95–113**. Commercial orders, live Stripe/PayPal, confirm, refund, and unsigned webhooks stay refused. Customer refund is not supplier credit. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.27%** (22817/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Marketplace and international software pass (2026-10-18): leftover items **144–146**. Language/country independence and RTL honesty closed locally. Band **114–136 not rescored**. Listings stay unpublished. **115/129 stay HUMAN**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.65%** (22907/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -3908,22 +3909,22 @@ Next (cannot be finished locally):
 | Established scope | Language selection |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Locale switcher |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | i18n UI |
-| Identified gaps | Prior |
+| Existing implementation evidence | `marketplaceInternationalIntegrity.selectLanguage`; `components/LanguageSelector.tsx` from SUPPORTED_LOCALES |
+| Identified gaps | Live locale CDN / production storefront probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | i18n UI |
+| Files and modules involved | marketplaceInternationalIntegrity.js; LanguageSelector.tsx |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `marketplaceInternationalIntegritySoftware.test.mjs` — language does not rewrite market |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established language-selection software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production storefront locale probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `marketplaceInternationalIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 145
 
@@ -3934,22 +3935,22 @@ Next (cannot be finished locally):
 | Established scope | Country selection |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Market switcher |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | market UI |
-| Identified gaps | Prior |
+| Existing implementation evidence | `marketplaceInternationalIntegrity.selectCountry`; `components/CountrySelector.tsx` from 35-market registry; no setLocale |
+| Identified gaps | Live market operations UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | market UI |
+| Files and modules involved | marketplaceInternationalIntegrity.js; CountrySelector.tsx |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `marketplaceInternationalIntegritySoftware.test.mjs` — country does not rewrite language; VAT not invented |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established country-selection software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live market operations UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `marketplaceInternationalIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 146
 
@@ -3960,22 +3961,22 @@ Next (cannot be finished locally):
 | Established scope | RTL CSS |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Arabic/Hebrew direction |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | storefront CSS |
-| Identified gaps | Prior RTL |
+| Existing implementation evidence | `marketplaceInternationalIntegrity.rtlForLocale`; `styles/rtl.css` `text-align: start` + `inset-inline-*` |
+| Identified gaps | Production RTL visual probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | storefront CSS |
+| Files and modules involved | marketplaceInternationalIntegrity.js; styles/rtl.css |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `marketplaceInternationalIntegritySoftware.test.mjs` — ar=rtl, de=ltr, no text-align:right hack |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior RTL |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established RTL software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production RTL visual probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `marketplaceInternationalIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 147
 

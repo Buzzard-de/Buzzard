@@ -18,6 +18,12 @@ describe("category labels", () => {
     expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "en")).toBe(
       "Automotive and motor vehicles",
     );
+    for (const locale of SUPPORTED_LOCALES) {
+      const label = getCategoryLabel({ id: "cat-05", name: "Automotive" }, locale);
+      expect(label).not.toBe("Automotive");
+      expect(label).not.toBe("Otomotiv");
+      expect(label.length).toBeGreaterThan("Auto".length);
+    }
     expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "tr")).not.toBe("Textiles");
     expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "tr")).not.toBe("Automotive");
   });

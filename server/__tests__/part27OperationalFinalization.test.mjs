@@ -117,9 +117,9 @@ test("commerce safety gate is READY with sales OFF", () => {
   assert.equal(result.gates.commerceSafety.status, "READY");
 });
 
-test("RBAC public route is public", () => {
+test("RBAC operational health route requires system.read", () => {
   const { resolveRoutePermission } = require("../lib/routePermissions.js");
-  assert.equal(resolveRoutePermission("GET", "/api/health/part27-readiness").public, true);
+  assert.equal(resolveRoutePermission("GET", "/api/health/part27-readiness").permission, "system.read");
 });
 
 test("RBAC admin routes require permissions", () => {

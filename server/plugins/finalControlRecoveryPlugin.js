@@ -3,6 +3,7 @@
 const { requireAuth } = require('../lib/auth');
 const { requirePermission } = require('../lib/rbac');
 const adminSafetyGate = require('../lib/operations/adminSafetyGate');
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 const {
   evaluateFinalControlRecoveryReadiness,
 } = require('../lib/release/finalControlRecoveryReadiness');
@@ -43,7 +44,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction('go_live', { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const body = req.body && typeof req.body === 'object' ? req.body : {};
       const result = evaluateFinalControlRecoveryReadiness(body);

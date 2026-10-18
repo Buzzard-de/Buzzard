@@ -4,6 +4,7 @@
 
 const jobQueue = require("../jobQueue");
 const { executeTask } = require("./lifecycle");
+const { publicTaskError } = require("../security");
 
 async function claimAndExecute(workerId = "pusat-worker", { jobType = "AI_TASK", lockTtlMs } = {}) {
   const job = jobQueue.claimNextJob(workerId, lockTtlMs, { jobType });
@@ -22,20 +23,27 @@ async function claimAndExecute(workerId = "pusat-worker", { jobType = "AI_TASK",
     const retries = (job.retryCount || 0) + 1;
     const financial = jobQueue.isFinancialJobType(job.jobType);
     if (financial || retries >= (job.maxRetries || 3)) {
+      const errorKey = publicTaskError(error, financial ? "FINANCIAL_NO_RETRY" : "CRASH");
       jobQueue.markDeadLetter(
         job.id,
-        financial ? `financial_no_retry: ${error.message}` : error.message,
+        errorKey,
         financial ? "FINANCIAL_NO_RETRY" : error.failureKind || "CRASH"
       );
     } else {
+      const errorKey = publicTaskError(error, error.failureKind || "CRASH");
       jobQueue.updateJob(job.id, {
         status: "RETRYING",
-        error: error.message,
+        error: errorKey,
         retryCount: retries,
         failureKind: error.failureKind || "CRASH",
       });
     }
-    return { claimed: true, jobId: job.id, error: error.message, retried: !financial };
+    return {
+      claimed: true,
+      jobId: job.id,
+      error: publicTaskError(error, "ai.worker.failed"),
+      retried: !financial,
+    };
   }
 }
 

@@ -56,8 +56,9 @@ function resolveMarketStatus(country: GlobalCountryEntry): MarketStatus {
 
 function buildVatRules(countryCode: string): VatRules {
   const overlay = overlayByCode[countryCode];
+  const rate = overlay?.taxRate;
   return {
-    standardRate: overlay?.taxRate ?? 0.2,
+    standardRate: typeof rate === "number" && Number.isFinite(rate) ? rate : (null as unknown as number),
     pricesIncludeVat: true,
     taxModel: overlay?.taxModel ?? "VAT",
   };
@@ -156,8 +157,10 @@ export function getMarketCurrency(countryCode: string): { code: string; symbol: 
   };
 }
 
-export function getMarketVat(countryCode: string): VatRules {
-  return getMarket(countryCode)?.vat ?? { standardRate: 0.2, pricesIncludeVat: true, taxModel: "VAT" };
+export function getMarketVat(countryCode: string): VatRules | null {
+  const vat = getMarket(countryCode)?.vat;
+  if (!vat || !Number.isFinite(Number(vat.standardRate))) return null;
+  return vat;
 }
 
 export function getMarketShippingRegion(countryCode: string): string {

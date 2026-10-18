@@ -38,7 +38,7 @@ function loadCanonicalTaxonomy() {
       categories: [],
       source: CANONICAL_FILE,
       authoritative: true,
-      error: err.message,
+      error: require("./security").publicTaskError(err, "taxonomy.load_failed"),
     };
   }
 }

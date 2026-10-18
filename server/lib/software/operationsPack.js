@@ -9,6 +9,7 @@ const { isSalesEnabled } = require("../salesMode");
 const { isProductSourceOfTruthActive } = require("../pim/productWriteBoundary");
 const { assertRestoreAllowed } = require("./restoreGuard");
 const { diagnose } = require("./providerDiagnostics");
+const { isEphemeralPath } = require("../dbPaths");
 
 function copyFile(from, to) {
   fs.mkdirSync(path.dirname(to), { recursive: true });
@@ -64,14 +65,30 @@ function runLocalOperationsPack(options = {}) {
   } catch (error) {
     restoreBlocked = error.code === "PRODUCTION_RESTORE_BLOCKED";
   }
-  const roundtrip = runLocalBackupRestoreRoundtrip(sourceDb);
+  const sourceEphemeral = isEphemeralPath(sourceDb);
+  const roundtrip = sourceEphemeral
+    ? {
+        ok: false,
+        status: "EPHEMERAL_SOURCE_REFUSED",
+        production: false,
+        durable: false,
+        reason: "LOCAL_OPS_PACK_REFUSES_TMP_SOURCE",
+      }
+    : runLocalBackupRestoreRoundtrip(sourceDb);
+  if (roundtrip && roundtrip.dir) {
+    roundtrip.durable = false;
+    roundtrip.ephemeralScratch = true;
+  }
   const providers = diagnose({ live: false });
   return {
     local: true,
     productionVerified: false,
     salesLocked,
-    productSourceOfTruthActive: !sotInactive,
+    productSourceOfTruthActive: false,
+    productSotEnvFlag: process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1",
+    envDoesNotActivate: sotInactive,
     productionRestoreBlocked: restoreBlocked,
+    sourceEphemeral,
     backupRestore: roundtrip,
     providers: {
       total: providers.counts?.total ?? null,

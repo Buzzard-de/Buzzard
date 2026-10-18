@@ -29,6 +29,12 @@ function validateCsrfForRequest(req, res) {
     "/api/admin/login/2fa",
     "/api/account/login",
     "/api/account/register",
+    "/api/account/password-reset/request",
+    "/api/account/password-reset/confirm",
+    "/api/identity-security/auth/login",
+    "/api/identity-security/auth/register",
+    "/api/identity-security/auth/password-reset-request",
+    "/api/identity-security/auth/password-reset",
     "/api/auth/login",
     "/api/auth/register",
   ];

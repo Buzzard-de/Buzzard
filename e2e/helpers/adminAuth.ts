@@ -1,4 +1,5 @@
 import type { APIRequestContext, Page } from "@playwright/test";
+import { identityHeaders } from "./testIdentity";
 
 export const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
 export const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
@@ -10,9 +11,10 @@ export const API = (process.env.BUZZARD_API_URL || process.env.NEXT_PUBLIC_BUZZA
 let cachedToken: string | undefined;
 
 export async function loginAdminApi(request: APIRequestContext): Promise<string> {
+  const ipHeaders = identityHeaders("admin-login");
   if (cachedToken) {
     const probe = await request.get(`${API}/api/admin/me`, {
-      headers: { Authorization: `Bearer ${cachedToken}` },
+      headers: { Authorization: `Bearer ${cachedToken}`, ...ipHeaders },
     });
     // 429 is a limiter response, not proof the session is invalid.
     if (probe.ok() || probe.status() === 429) return cachedToken;
@@ -21,6 +23,7 @@ export async function loginAdminApi(request: APIRequestContext): Promise<string>
 
   const login = await request.post(`${API}/api/admin/login`, {
     data: { email: ADMIN_EMAIL, password: ADMIN_PASSWORD },
+    headers: ipHeaders,
   });
   if (login.status() === 429) {
     throw new Error("admin_login_rate_limited");
@@ -31,7 +34,7 @@ export async function loginAdminApi(request: APIRequestContext): Promise<string>
     throw new Error(`admin_login_failed:${login.status()}`);
   }
   const me = await request.get(`${API}/api/admin/me`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}`, ...ipHeaders },
   });
   if (!me.ok()) {
     throw new Error(`admin_me_failed:${me.status()}`);
@@ -43,6 +46,9 @@ export async function loginAdminApi(request: APIRequestContext): Promise<string>
 export async function seedAdminSession(page: Page, request: APIRequestContext) {
   const token = await loginAdminApi(request);
   const apiUrl = new URL(API.includes("://") ? API : `http://${API}`);
+  const crossOriginHttp = apiUrl.protocol === "http:";
+  // Secure cookies are not stored on http:// static-export E2E. Production keeps Secure.
+  // Bearer is a first-class admin auth path (CSRF-exempt). Do not disable cookie CSRF.
   await page.context().addCookies([
     {
       name: "buzzard_admin",
@@ -50,18 +56,27 @@ export async function seedAdminSession(page: Page, request: APIRequestContext) {
       domain: apiUrl.hostname,
       path: "/",
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: !crossOriginHttp,
+      sameSite: "Lax",
     },
     {
       name: "buzzard_admin_ui",
       value: "1",
       domain: apiUrl.hostname,
       path: "/",
-      secure: true,
-      sameSite: "None",
+      secure: !crossOriginHttp,
+      sameSite: "Lax",
     },
   ]);
+  const apiOrigin = apiUrl.origin;
+  await page.route(`${apiOrigin}/**`, async (route) => {
+    const headers = {
+      ...route.request().headers(),
+      Authorization: `Bearer ${token}`,
+      "x-forwarded-for": identityHeaders("admin-page")["x-forwarded-for"],
+    };
+    await route.continue({ headers });
+  });
   await page.addInitScript(
     ({ api }) => {
       (window as Window & { __BUZZARD_API_URL__?: string }).__BUZZARD_API_URL__ = api;

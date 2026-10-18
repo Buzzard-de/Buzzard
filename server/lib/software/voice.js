@@ -80,6 +80,174 @@ function mockSession(input = {}) {
   };
 }
 
+function iceConfig() {
+  return {
+    ok: true,
+    live: false,
+    connected: false,
+    stunPresent: Boolean(process.env.WEBRTC_STUN_URL),
+    turnPresent: Boolean(process.env.WEBRTC_TURN_URL),
+    signalingPresent: Boolean(process.env.WEBRTC_SIGNALING_URL),
+    urlsExposed: false,
+    note: "Presence-only ICE/TURN/STUN flags. URLs are not returned and no peer connection is opened.",
+  };
+}
+
+function sttTranscribe() {
+  const status = adapterStatus("stt");
+  return {
+    ok: false,
+    live: false,
+    transcript: null,
+    reason: status.configured ? "STT_LIVE_BLOCKED" : "STT_NOT_CONFIGURED",
+    callStarted: false,
+  };
+}
+
+function ttsSpeak() {
+  const status = adapterStatus("tts");
+  return {
+    ok: false,
+    live: false,
+    audio: null,
+    reason: status.configured ? "TTS_LIVE_BLOCKED" : "TTS_NOT_CONFIGURED",
+    callStarted: false,
+  };
+}
+
+function webrtcSignal() {
+  return {
+    ok: false,
+    live: false,
+    webrtcConnected: false,
+    mediaOpen: false,
+    ice: iceConfig(),
+    reason: "WEBRTC_SIGNALING_BLOCKED",
+  };
+}
+
+function realtimeSession() {
+  const status = adapterStatus("realtime");
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    reason: status.configured ? "REALTIME_LIVE_BLOCKED" : "REALTIME_NOT_CONFIGURED",
+    note: "OPENAI_API_KEY presence is not a live Realtime session.",
+  };
+}
+
+function digitalHumanSession() {
+  const status = adapterStatus("digital_human");
+  return {
+    ok: false,
+    live: false,
+    videoOpen: false,
+    reason: status.configured ? "DIGITAL_HUMAN_LIVE_BLOCKED" : "DIGITAL_HUMAN_NOT_CONFIGURED",
+  };
+}
+
+function handoffToPusat(input = {}) {
+  return routeTextTask({ ...input, pusat: true });
+}
+
+function startCall() {
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    mediaOpen: false,
+    sid: null,
+    reason: "CALL_START_BLOCKED",
+    note: "Twilio SID/token presence does not place a call.",
+  };
+}
+
+function inboundWebhook() {
+  return {
+    ok: false,
+    live: false,
+    callStarted: false,
+    mediaOpen: false,
+    answered: false,
+    reason: "TWILIO_INBOUND_BLOCKED",
+    note: "Inbound telephony webhooks are not executed. No media stream is opened.",
+  };
+}
+
+function confirmLiveCall() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    callStarted: false,
+    reason: "LIVE_CALL_NOT_CONFIGURED",
+    note: "BUZZARD_VOICE_LIVE_PROBE does not open a paid media session.",
+  };
+}
+
+function transferCall() {
+  return {
+    ok: false,
+    live: false,
+    transferred: false,
+    callStarted: false,
+    reason: "TRANSFER_BLOCKED",
+    note: "Software never bridges a PSTN transfer.",
+  };
+}
+
+function hangupCall() {
+  return {
+    ok: false,
+    live: false,
+    hungUp: false,
+    pstn: false,
+    reason: "HANGUP_BLOCKED",
+  };
+}
+
+function sipInvite() {
+  return {
+    ok: false,
+    live: false,
+    invited: false,
+    callStarted: false,
+    reason: "SIP_INVITE_BLOCKED",
+  };
+}
+
+function avatarStream() {
+  return {
+    ok: false,
+    live: false,
+    videoOpen: false,
+    avatarOpen: false,
+    lipSync: false,
+    reason: "AVATAR_STREAM_BLOCKED",
+    note: "Digital-human endpoint presence is not a live avatar session.",
+  };
+}
+
+function confirmDigitalHuman() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    videoOpen: false,
+    reason: "DIGITAL_HUMAN_CONFIRM_BLOCKED",
+  };
+}
+
+function confirmRealtime() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    reason: "REALTIME_CONFIRM_BLOCKED",
+  };
+}
+
 function health() {
   const adapters = listAdapters();
   return {
@@ -87,6 +255,12 @@ function health() {
     liveReady: false,
     liveVerified: false,
     anyLive: false,
+    callStarted: false,
+    twilioLive: false,
+    realtimeLive: false,
+    webrtcLive: false,
+    digitalHumanLive: false,
+    avatarOpen: false,
     adapters,
   };
 }
@@ -101,6 +275,22 @@ module.exports = {
   requiredEnv,
   validateConfig,
   routeTextTask,
+  handoffToPusat,
   mockSession,
+  iceConfig,
+  sttTranscribe,
+  ttsSpeak,
+  webrtcSignal,
+  realtimeSession,
+  digitalHumanSession,
+  startCall,
+  inboundWebhook,
+  confirmLiveCall,
+  transferCall,
+  hangupCall,
+  sipInvite,
+  avatarStream,
+  confirmDigitalHuman,
+  confirmRealtime,
   health,
 };

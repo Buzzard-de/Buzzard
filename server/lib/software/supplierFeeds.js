@@ -95,9 +95,15 @@ function normalizeRow(raw, index) {
     brand: raw.brand || null,
     category: raw.supplier_category || raw.category || null,
     price: Number.isFinite(price) ? price : null,
+    supplierCost: Number.isFinite(Number(raw.supplier_cost ?? raw.cost ?? raw.supplierCost))
+      ? Number(raw.supplier_cost ?? raw.cost ?? raw.supplierCost)
+      : null,
     currency,
     stock: Number.isFinite(stock) ? stock : null,
     timestamp,
+    sourceId: raw.source_id || raw.sourceId || raw.external_id || raw.supplier_item_id || null,
+    packQty: Number.isFinite(Number(raw.pack_qty ?? raw.packQty)) ? Number(raw.pack_qty ?? raw.packQty) : 1,
+    live: false,
   };
 }
 
@@ -119,10 +125,18 @@ function validateRow(row) {
   if (row.timestamp) {
     const parsed = Date.parse(row.timestamp);
     if (Number.isNaN(parsed)) errors.push("TIMESTAMP_INVALID");
+    else if (parsed > Date.now() + 60_000) errors.push("TIMESTAMP_FUTURE");
   } else {
     warnings.push("TIMESTAMP_MISSING");
   }
   if (!row.category) warnings.push("CATEGORY_UNMAPPED");
+  if (row.packQty != null && (!Number.isFinite(Number(row.packQty)) || Number(row.packQty) <= 0)) {
+    errors.push("PACK_QTY_INVALID");
+  }
+  const cost = Number(row.supplierCost ?? row.cost);
+  if (row.supplierCost != null || row.cost != null) {
+    if (!Number.isFinite(cost) || cost <= 0) errors.push("SUPPLIER_COST_INVALID");
+  }
   return { errors, warnings };
 }
 
@@ -141,6 +155,21 @@ function detectDuplicates(rows) {
     }
   });
   return duplicates;
+}
+
+function detectSourceIdConflicts(rows) {
+  const seen = new Map();
+  const conflicts = [];
+  rows.forEach((row) => {
+    if (!row.sourceId) return;
+    const key = String(row.sourceId);
+    if (seen.has(key) && seen.get(key) !== row.sku) {
+      conflicts.push({ field: "sourceId", value: key, skus: [seen.get(key), row.sku] });
+    } else if (!seen.has(key)) {
+      seen.set(key, row.sku);
+    }
+  });
+  return conflicts;
 }
 
 function classifyStatus({ configured, parsed, errors, live }) {
@@ -232,13 +261,14 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
       live: false,
       purchaseOrderSent: false,
       errors: ["PARSE_FAILED"],
-      detail: error.message,
+      detail: require("../security").publicTaskError(error, "PARSE_FAILED"),
     };
   }
 
   const rows = rawRows.map((raw, index) => normalizeRow(raw, index));
   const validated = rows.map((row) => ({ ...row, ...validateRow(row) }));
   const duplicates = detectDuplicates(rows);
+  const sourceIdConflicts = detectSourceIdConflicts(rows);
   const rowErrors = validated.flatMap((row) => row.errors.map((code) => ({ index: row.index, sku: row.sku, code })));
   const status = classifyStatus({
     configured: credentialsConfigured,
@@ -247,7 +277,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     live: false,
   });
 
-  const ok = rowErrors.length === 0 && duplicates.length === 0;
+  const ok = rowErrors.length === 0 && duplicates.length === 0 && sourceIdConflicts.length === 0;
   const breaker = recordCircuit(supplierId, ok);
   return {
     ok,
@@ -263,6 +293,7 @@ function preview({ format, payload, supplierId = "fixture", credentialsConfigure
     rowCount: rows.length,
     rows: validated,
     duplicates,
+    sourceIdConflicts,
     errors: rowErrors,
     circuit: breaker,
     note: "Dry-run feed preview. Catalog is not written. Live supplier fetch remains BLOCKED.",
@@ -280,6 +311,151 @@ function adapterStatus(format) {
     networkBlocked: true,
     canGoLive: false,
     issues: config.issues,
+  };
+}
+
+const previewCache = new Map();
+
+function previewIdempotent(input = {}) {
+  const key = input.idempotencyKey ? String(input.idempotencyKey).trim() : "";
+  const hash = crypto.createHash("sha256").update(JSON.stringify({
+    format: input.format || null,
+    payload: input.payload || null,
+    supplierId: input.supplierId || null,
+  })).digest("hex");
+  if (key && previewCache.has(key)) {
+    const prior = previewCache.get(key);
+    if (prior.hash !== hash) {
+      return {
+        ok: false,
+        status: FEED_STATUS.ERROR,
+        written: false,
+        live: false,
+        importReady: false,
+        purchaseOrderSent: false,
+        code: "IDEMPOTENCY_CONFLICT",
+        replayed: false,
+      };
+    }
+    return { ...prior.result, replayed: true, written: false, live: false, purchaseOrderSent: false };
+  }
+  const result = preview(input);
+  if (key) previewCache.set(key, { hash, result });
+  return { ...result, replayed: false };
+}
+
+function resetPreviewIdempotency() {
+  previewCache.clear();
+}
+
+const AVAILABILITY = Object.freeze({
+  IN_STOCK: "IN_STOCK",
+  OUT_OF_STOCK: "OUT_OF_STOCK",
+  UNKNOWN: "UNKNOWN",
+  STALE: "STALE",
+  OUTAGE: "OUTAGE",
+  MALFORMED: "MALFORMED",
+});
+
+function classifyOutage(input = {}) {
+  const status = Number(input.status || input.statusCode || 0);
+  const code = String(input.code || input.errorCode || "").toUpperCase();
+  const kind = String(input.kind || input.failureKind || "").toLowerCase();
+  const outage =
+    input.outage === true ||
+    input.timeout === true ||
+    kind === "timeout" ||
+    kind === "network" ||
+    status >= 500 ||
+    status === 408 ||
+    status === 429 ||
+    /ECONN|ETIMEDOUT|ENOTFOUND|EAI_AGAIN/.test(code);
+  const malformed = input.malformed === true || kind === "malformed" || status === 400;
+  if (outage) {
+    return {
+      ok: true,
+      availability: AVAILABILITY.OUTAGE,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      reason: "SUPPLIER_OUTAGE",
+      note: "Supplier outage is not inventory. Quantity is not inferred.",
+    };
+  }
+  if (malformed) {
+    return {
+      ok: true,
+      availability: AVAILABILITY.MALFORMED,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      reason: "SUPPLIER_PAYLOAD_MALFORMED",
+    };
+  }
+  return { ok: true, outage: false, malformed: false, live: false };
+}
+
+function classifyAvailability(row = {}, context = {}) {
+  const outage = classifyOutage(context);
+  if (outage.treatAsStock === false) {
+    return { ...outage, sku: row.sku || null, stock: null, live: false };
+  }
+  if (row.stock == null || !Number.isFinite(Number(row.stock))) {
+    return {
+      availability: AVAILABILITY.UNKNOWN,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      reason: "STOCK_UNKNOWN",
+    };
+  }
+  if (row.timestamp) {
+    const parsed = Date.parse(row.timestamp);
+    const staleAfterMs = context.staleAfterMs || 48 * 60 * 60 * 1000;
+    if (Number.isNaN(parsed) || Date.now() - parsed > staleAfterMs) {
+      return {
+        availability: AVAILABILITY.STALE,
+        treatAsStock: false,
+        purchasable: false,
+        live: false,
+        sku: row.sku || null,
+        stock: Number(row.stock),
+        reason: "STALE_SUPPLIER_STOCK",
+      };
+    }
+  } else if (context.requireTimestamp !== false) {
+    return {
+      availability: AVAILABILITY.STALE,
+      treatAsStock: false,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      stock: Number(row.stock),
+      reason: "MISSING_STOCK_TIMESTAMP",
+    };
+  }
+  const stock = Number(row.stock);
+  if (stock <= 0) {
+    return {
+      availability: AVAILABILITY.OUT_OF_STOCK,
+      treatAsStock: true,
+      purchasable: false,
+      live: false,
+      sku: row.sku || null,
+      stock,
+      reason: "OUT_OF_STOCK",
+    };
+  }
+  return {
+    availability: AVAILABILITY.IN_STOCK,
+    treatAsStock: true,
+    purchasable: true,
+    live: false,
+    sku: row.sku || null,
+    stock,
+    reason: null,
+    note: "Fixture/dry-run availability only. Not a live supplier quantity.",
   };
 }
 
@@ -305,13 +481,19 @@ function recordPreview(db, previewResult) {
 
 module.exports = {
   FEED_STATUS,
+  AVAILABILITY,
   parseCsv,
   parseXml,
   parseJson,
   preview,
+  previewIdempotent,
+  resetPreviewIdempotency,
   adapterStatus,
   recordPreview,
   rejectLiveFetch,
   circuitStatus,
   resetCircuit,
+  classifyOutage,
+  classifyAvailability,
+  detectSourceIdConflicts,
 };

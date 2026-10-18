@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -53,7 +53,7 @@ module.exports = {
 
     app.get("/api/pim-catalog/products/:sku", (req, res) => {
       const result = pimCatalog.getProductBySku(req.params.sku);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -69,7 +69,7 @@ module.exports = {
         source: "ADMIN",
         actorId: identity.email || identity.userId || identity.sub || null,
       });
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.product);
     });
 
@@ -81,42 +81,42 @@ module.exports = {
         source: "ADMIN",
         actorId: identity.email || identity.userId || identity.sub || null,
       });
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.product);
     });
 
     app.post("/api/admin/pim-catalog/translations", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = pimCatalog.upsertTranslation(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/pim-catalog/attributes", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = pimCatalog.upsertAttribute(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/pim-catalog/media", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = pimCatalog.addMedia(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/pim-catalog/seo", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = pimCatalog.upsertSeo(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/pim-catalog/variants", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = pimCatalog.addVariant(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

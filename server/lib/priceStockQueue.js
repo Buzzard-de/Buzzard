@@ -147,8 +147,8 @@ function processNextJob(processor) {
     recordAudit({ type: job.job_type, product_id: job.product_id, job_id: job.id, result });
   } catch (error) {
     job.status = job.attempts >= 3 ? "failed" : "queued";
-    job.error = error.message;
-    recordAudit({ type: job.job_type, product_id: job.product_id, job_id: job.id, error: error.message });
+    job.error = require("./security").publicTaskError(error, "price_stock.job_failed");
+    recordAudit({ type: job.job_type, product_id: job.product_id, job_id: job.id, error: job.error });
   }
 
   queue[idx] = job;

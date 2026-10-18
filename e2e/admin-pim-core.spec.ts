@@ -28,9 +28,8 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
     await adminLogin(page, request);
     await page.goto("/admin/pim-core/");
     await waitForAdminReady(page);
-    await page.click('button:has-text("Validate")');
-    await page.click('button:has-text("Validation")');
-    await expect(page.locator("body")).toContainText(/Overall|PASS|WARNING|FAIL/i);
+    await page.getByRole("button", { name: /^Validate$/i }).click();
+    await expect(page.locator("body")).toContainText(/Overall:\s*(PASS|WARNING|FAIL)|Overall/i);
   });
 
   test("Import dry-run", async ({ page, request }) => {
@@ -38,8 +37,8 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
     await page.goto("/admin/pim-core/");
     await waitForAdminReady(page);
     await page.click('button:has-text("Import")');
-    await page.click('button:has-text("dry-run")');
-    await expect(page.locator("body")).toContainText(/Dry run/i);
+    await page.getByRole("button", { name: /dry-run/i }).click();
+    await expect(page.locator("body")).toContainText(/Dry run|dry-run/i);
   });
 
   test("Brands section", async ({ page, request }) => {

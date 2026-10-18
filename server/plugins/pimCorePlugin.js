@@ -18,6 +18,7 @@ const productSearch = require("../lib/pim/productSearch");
 const productAudit = require("../lib/pim/productAudit");
 const qualityScore = require("../lib/pim/qualityScore");
 const bulkOperations = require("../lib/pim/bulkOperations");
+const { sendPublicError, sendAdminGateError } = require("../lib/http/publicPluginError");
 const productAiFoundation = require("../lib/pim/productAiFoundation");
 const jobQueue = require("../lib/jobQueue");
 const { JOB_TYPES_PIM } = require("../core/productConstants");
@@ -75,7 +76,7 @@ module.exports = {
         logAuditFromRequest(req, { action: "pim.product.create", entityType: "product", entityId: product.id });
         res.status(201).json({ success: true, product });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 
@@ -89,7 +90,7 @@ module.exports = {
         });
         res.json({ success: true, product });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 
@@ -114,7 +115,7 @@ module.exports = {
         const brand = brandService.createBrand(req.body || {});
         res.status(201).json({ success: true, brand });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 
@@ -156,7 +157,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction(dryRun ? "import" : "import_live", { req, body: req.body, dryRun });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message, details: err.details });
+        return sendAdminGateError(res, err);
       }
       const result = await importPipeline.runPipeline(req.body?.raw || req.body || {}, {
         dryRun,
@@ -182,7 +183,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: req.body?.dryRun !== false });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const job = jobQueue.enqueueJob({
         jobType: JOB_TYPES_PIM.PRODUCT_IMPORT,
@@ -215,7 +216,7 @@ module.exports = {
       if (!requirePerm(req, res, "products.write")) return;
       const { action, ids } = req.body || {};
       if (!Array.isArray(ids) || !ids.length) {
-        return res.status(400).json({ success: false, message: "ids required" });
+        return res.status(400).json({ success: false, errorKey: "pim.idsRequired" });
       }
       let results;
       const actorId = req.adminUser.email;
@@ -236,7 +237,7 @@ module.exports = {
           results = bulkOperations.bulkBrandMapping(ids, req.body.brandId, actorId);
           break;
         default:
-          return res.status(400).json({ success: false, message: "unknown action" });
+          return res.status(400).json({ success: false, errorKey: "pim.unknownAction" });
       }
       logAuditFromRequest(req, { action: `pim.bulk.${action}`, entityType: "product", metadata: { count: ids.length } });
       res.json({ success: true, results });
@@ -255,7 +256,7 @@ module.exports = {
         const variant = variantService.addVariant(req.params.id, req.body || {});
         res.status(201).json({ success: true, variant });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 
@@ -266,7 +267,7 @@ module.exports = {
         const media = mediaService.addMedia(req.params.id, req.body || {});
         res.status(201).json({ success: true, media });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 
@@ -277,7 +278,7 @@ module.exports = {
         const seo = seoService.updateSeo(req.params.id, req.body || {});
         res.json({ success: true, seo });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "pim.request.invalid", err);
       }
     });
 

@@ -108,8 +108,9 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
       testInfo.project.name !== "chromium-desktop",
       "API cart invariant is project-independent; extra projects share the IP cart limiter",
     );
+    const sessionId = `e2e-bad-${Date.now()}`;
     const cartRes = await postCommerce(request, `${API}/api/commerce/cart`, {
-      sessionId: `e2e-bad-${Date.now()}`,
+      sessionId,
       country: "DE",
     });
     expect(cartRes.ok()).toBeTruthy();
@@ -117,6 +118,7 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     const addRes = await postCommerce(request, `${API}/api/commerce/cart/${cartId}/items`, {
       productId: "missing-product-xyz",
       quantity: 1,
+      sessionId,
     });
     expect(addRes.ok()).toBeFalsy();
     const body = await addRes.json();
@@ -145,8 +147,9 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     test.skip(!product, "no public catalog product in this isolated environment");
     if (!product) return;
 
+    const sessionId = `e2e-ui-${Date.now()}`;
     const cartRes = await postCommerce(request, `${API}/api/commerce/cart`, {
-      sessionId: `e2e-ui-${Date.now()}`,
+      sessionId,
       country: "DE",
     });
     expect(cartRes.ok()).toBeTruthy();
@@ -154,6 +157,7 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     const addRes = await postCommerce(request, `${API}/api/commerce/cart/${cartId}/items`, {
       productId: product.id,
       quantity: 1,
+      sessionId,
     });
     expect(addRes.ok()).toBeTruthy();
 

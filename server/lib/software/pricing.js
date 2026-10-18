@@ -52,14 +52,21 @@ function quote(input = {}) {
   const returnReserve = money(input.returnReserve);
   const commissionRate = input.marketplaceCommissionRate != null ? Number(input.marketplaceCommissionRate) : null;
   const taxRate = input.taxRate != null ? Number(input.taxRate) : null;
+  const paymentFeeRate = input.paymentFeeRate != null ? Number(input.paymentFeeRate) : null;
+  const paymentFeeFlat = money(input.paymentFee);
+  if (paymentFeeFlat != null && paymentFeeFlat < 0) {
+    return { ok: false, failClosed: true, reason: "NEGATIVE_PAYMENT_FEE", invented: false, engine: "server/lib/pricing.js" };
+  }
   if ((commissionRate != null && (!Number.isFinite(commissionRate) || commissionRate < 0 || commissionRate >= 1))
-    || (taxRate != null && (!Number.isFinite(taxRate) || taxRate < 0 || taxRate >= 1))) {
+    || (taxRate != null && (!Number.isFinite(taxRate) || taxRate < 0 || taxRate >= 1))
+    || (paymentFeeRate != null && (!Number.isFinite(paymentFeeRate) || paymentFeeRate < 0 || paymentFeeRate >= 1))) {
     return { ok: false, failClosed: true, reason: "INVALID_FEE_RATES", invented: false, engine: "server/lib/pricing.js" };
   }
   const missingOptional = [];
   if (returnReserve == null) missingOptional.push("returnReserve");
   if (commissionRate == null || !Number.isFinite(commissionRate)) missingOptional.push("marketplaceCommissionRate");
   if (taxRate == null || !Number.isFinite(taxRate)) missingOptional.push("taxRate");
+  const paymentFeeAccounted = paymentFeeRate != null || paymentFeeFlat != null;
 
   const base = pricing.calculateSalePrice({
     supplierPrice: supplierCost,
@@ -68,10 +75,11 @@ function quote(input = {}) {
     currency,
   });
 
-  const landed = money(supplierCost + shipping + extras + (returnReserve || 0));
+  const paymentFlat = paymentFeeFlat || 0;
+  const landed = money(supplierCost + shipping + extras + paymentFlat + (returnReserve || 0));
   let requiredSale = landed + MIN_NET_PROFIT_EUR;
   if (missingOptional.length === 0) {
-    const denom = 1 - commissionRate - taxRate;
+    const denom = 1 - commissionRate - taxRate - (paymentFeeRate || 0);
     if (denom <= 0) {
       return { ok: false, failClosed: true, reason: "INVALID_FEE_RATES", invented: false, engine: "server/lib/pricing.js" };
     }
@@ -80,13 +88,17 @@ function quote(input = {}) {
   let sale = money(Math.max(base.amount, requiredSale));
   let commission = commissionRate != null ? money(sale * commissionRate) : null;
   let tax = taxRate != null ? money(sale * taxRate) : null;
-  let net = commission != null && tax != null ? money(sale - landed - commission - tax) : null;
+  let paymentFee = paymentFeeRate != null ? money(sale * paymentFeeRate) : paymentFeeFlat;
+  let net = commission != null && tax != null
+    ? money(sale - landed - commission - tax - (paymentFeeRate != null ? paymentFee : 0))
+    : null;
   if (missingOptional.length === 0 && net != null) {
     for (let i = 0; i < 5 && net + 1e-9 < MIN_NET_PROFIT_EUR; i += 1) {
       sale = money(sale + 0.01);
       commission = money(sale * commissionRate);
       tax = money(sale * taxRate);
-      net = money(sale - landed - commission - tax);
+      paymentFee = paymentFeeRate != null ? money(sale * paymentFeeRate) : paymentFeeFlat;
+      net = money(sale - landed - commission - tax - (paymentFeeRate != null ? paymentFee : 0));
     }
   }
   const netBeforeOptional = money(sale - landed);
@@ -108,6 +120,8 @@ function quote(input = {}) {
     extraCosts: extras,
     returnReserve: returnReserve,
     marketplaceCommission: commission,
+    paymentFee,
+    paymentFeeAccounted,
     tax,
     salePrice: sale,
     netProfit: net,
@@ -165,16 +179,21 @@ function evaluateGivenSale(input = {}, salePrice) {
       note: "Campaign discounts require supplier, shipping, return reserve, commission and tax inputs.",
     };
   }
-  const landed = money(base.supplierCost + base.shippingCost + base.extraCosts + (base.returnReserve || 0));
+  const paymentFeeRate = input.paymentFeeRate != null ? Number(input.paymentFeeRate) : null;
+  const paymentFeeFlat = money(input.paymentFee) || 0;
+  const landed = money(base.supplierCost + base.shippingCost + base.extraCosts + paymentFeeFlat + (base.returnReserve || 0));
   const commissionRate = input.marketplaceCommissionRate != null ? Number(input.marketplaceCommissionRate) : null;
   const taxRate = input.taxRate != null ? Number(input.taxRate) : null;
   const commission = money(sale * commissionRate);
   const tax = money(sale * taxRate);
-  const net = money(sale - landed - commission - tax);
+  const paymentFee = paymentFeeRate != null ? money(sale * paymentFeeRate) : money(input.paymentFee);
+  const net = money(sale - landed - commission - tax - (paymentFeeRate != null ? paymentFee : 0));
   return {
     ...base,
     salePrice: sale,
     marketplaceCommission: commission,
+    paymentFee,
+    paymentFeeAccounted: paymentFeeRate != null || money(input.paymentFee) != null,
     tax,
     netProfit: net,
     saleApproved: net != null && net + 1e-9 >= base.minNetProfitEur,
@@ -205,4 +224,77 @@ function channelQuote(input = {}) {
   };
 }
 
-module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale };
+function quoteForMarket(input = {}) {
+  const marketEngine = require("../../core/marketEngineRegistry");
+  const marketCode = String(input.market || input.country || "").trim().toUpperCase();
+  const locale = input.locale ? String(input.locale).trim() : null;
+  const validation = marketEngine.validateMarketRequest(marketCode);
+  if (!validation.valid) {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      conversionInvented: false,
+      vatLive: false,
+      reason: validation.reason || "UNKNOWN_MARKET",
+      market: marketCode || null,
+      locale,
+      languageIndependentFromMarket: true,
+    };
+  }
+  const market = validation.market;
+  const currency = String(input.currency || market.currency || "EUR").trim().toUpperCase();
+  if (currency !== "EUR") {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      conversionInvented: false,
+      vatLive: false,
+      reason: "MARKET_FX_UNSUPPORTED",
+      currency,
+      market: marketCode,
+      locale,
+      languageIndependentFromMarket: true,
+      note: "Market currency is recorded. No FX rate is invented for a EUR sale quote.",
+    };
+  }
+  const vat = marketEngine.getVatContext({
+    sellerCountry: input.sellerCountry || "DE",
+    buyerCountry: marketCode,
+    customerType: input.customerType || "B2C",
+    vatId: input.vatId,
+  });
+  if (!vat || vat.ok === false || vat.rate == null || !Number.isFinite(Number(vat.rate))) {
+    return {
+      ok: false,
+      failClosed: true,
+      saleApproved: false,
+      invented: false,
+      vatLive: false,
+      reason: vat?.reason || "VAT_UNKNOWN",
+      market: marketCode,
+      locale,
+      languageIndependentFromMarket: true,
+    };
+  }
+  const quoted = quote({
+    ...input,
+    currency: "EUR",
+    taxRate: input.taxRate != null ? input.taxRate : vat.rate,
+  });
+  return {
+    ...quoted,
+    market: marketCode,
+    locale,
+    languageIndependentFromMarket: true,
+    vatReason: vat.reason,
+    vatLive: false,
+    conversionInvented: false,
+    marketUndercut: quoted.marketUndercut,
+  };
+}
+
+module.exports = { quote, recordHistory, channelQuote, evaluateGivenSale, quoteForMarket };

@@ -257,7 +257,7 @@ export async function updateAccountPreferences(preferences: AccountPreferences):
   return data.preferences;
 }
 
-export async function requestPasswordReset(email: string): Promise<{ resetToken?: string }> {
+export async function requestPasswordReset(email: string): Promise<{ success?: boolean; errorKey?: string }> {
   if (isSqliteStoreEnabled()) throw new Error("account.featureUnavailable");
   return request("/api/account/password-reset/request", {
     method: "POST",

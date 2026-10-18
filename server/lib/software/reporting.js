@@ -41,6 +41,14 @@ function getOperationalReport(db, { windowMinutes = 60 } = {}) {
     returns: {
       open: countSafe(db, "SELECT COUNT(*) AS n FROM software_return_ledger"),
     },
+    payments: {
+      uncertain: countSafe(
+        db,
+        "SELECT COUNT(*) AS n FROM software_payments WHERE state = 'PAYMENT_RECONCILIATION_REQUIRED'"
+      ),
+      capturedAsRevenue: 0,
+      note: "UNCERTAIN payments are not revenue.",
+    },
     security: {
       note: "Counts are local diagnostics, not production SIEM.",
     },

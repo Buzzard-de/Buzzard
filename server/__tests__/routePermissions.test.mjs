@@ -8,7 +8,15 @@ describe("routePermissions", () => {
   it("public routes do not require auth", () => {
     expect(resolveRoutePermission("GET", "/api/health")).toEqual({ public: true });
     expect(resolveRoutePermission("POST", "/api/admin/login")).toEqual({ public: true });
-    expect(PUBLIC_ROUTES.has("GET /api/security/health")).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/security/health")).toEqual({
+      permission: "security.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/commerce/readiness")).toEqual({
+      permission: "system.read",
+    });
+    expect(resolveRoutePermission("GET", "/api/health/commerce")).toEqual({
+      permission: "system.read",
+    });
   });
 
   it("admin control-center requires system.read", () => {
@@ -52,6 +60,9 @@ describe("routePermissions", () => {
       permission: "products.write",
     });
     expect(resolveRoutePermission("GET", "/api/product-catalog-pim/brands")).toBeNull();
+    expect(resolveRoutePermission("GET", "/api/p1/i18n/gaps")).toEqual({
+      permission: "system.read",
+    });
   });
 
   it("privileged non-admin finance and engine prefixes require admin permissions", () => {

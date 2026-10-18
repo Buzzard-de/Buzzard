@@ -141,13 +141,13 @@ function listAdminProducts() {
 
 function createCategory(body = {}) {
   const { name } = body;
-  if (!name) return { error: "name required", status: 400 };
+  if (!name) return { error: "validation.nameRequired", status: 400 };
   try {
     const slug = slugify(name);
     const result = db.prepare("INSERT INTO categories(name, slug) VALUES(?, ?)").run(name, slug);
     return { category: db.prepare("SELECT * FROM categories WHERE id = ?").get(result.lastInsertRowid) };
   } catch {
-    return { error: "Category already exists", status: 409 };
+    return { error: "category.exists", status: 409 };
   }
 }
 
@@ -174,13 +174,13 @@ function createProduct(body = {}, context = {}) {
   });
   if (!gate.ok) {
     if (gate.reason === "SKU_REQUIRED") {
-      return { error: "sku and name required", status: 400, reason: gate.reason, boundary: gate.boundary };
+      return { error: "product.skuNameRequired", status: 400, reason: gate.reason, boundary: gate.boundary };
     }
     return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
   }
   const productName = String(name || "").trim();
   if (!productName) {
-    return { error: "sku and name required", status: 400 };
+    return { error: "product.skuNameRequired", status: 400 };
   }
   const cost = Number(supplierCostEur) || 0;
   const floor = Number(marginFloor);
@@ -216,13 +216,13 @@ function createProduct(body = {}, context = {}) {
       productSourceOfTruthActive: false,
     };
   } catch {
-    return { error: "SKU or slug already exists", status: 409 };
+    return { error: "product.skuOrSlugExists", status: 409 };
   }
 }
 
 function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
 
   const nextActive = body.active === undefined ? product.active : body.active ? 1 : 0;
   const gate = productWriteBoundary.authorizeUpdate(
@@ -287,9 +287,9 @@ function bulkUpdatePrices(margin = 0.3) {
 
 function addProductImage(productId, body = {}) {
   const { url, altText = "", sortOrder = 0 } = body;
-  if (!url) return { error: "url required", status: 400 };
+  if (!url) return { error: "validation.urlRequired", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   const result = db
     .prepare("INSERT INTO product_images(product_id, url, alt_text, sort_order) VALUES(?,?,?,?)")
     .run(product.id, url, altText, sortOrder);

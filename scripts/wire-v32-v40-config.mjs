@@ -38,7 +38,7 @@ function write(rel, content) {
         ...require("../lib/${m.camel}").get${m.Pascal}Status(),
       };
     } catch (error) {
-      ${m.camel} = { enabled: true, error: error.message };
+      ${m.camel} = { enabled: true, errorKey: "health.probeFailed" };
     }
   }
 `

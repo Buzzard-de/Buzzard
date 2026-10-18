@@ -148,10 +148,19 @@ describe("secure commerce — payment, confirmation, delivery", () => {
       sc.constants.PAYMENT_STATE.PAYMENT_CAPTURED,
       "out-of-order-capture"
     );
-    expect(rewind.ok).toBe(true);
+    expect(rewind.ok).toBe(false);
+    expect(rewind.reason).toBe("RECONCILIATION_CAPTURE_REQUIRES_HUMAN");
+    const capturedDirect = sc.paymentLifecycle.createPayment(db, { orderId: freshOrder(), amount: 12, currency: "EUR" });
+    const captured = sc.paymentLifecycle.applyState(
+      db,
+      capturedDirect.payment.id,
+      sc.constants.PAYMENT_STATE.PAYMENT_CAPTURED,
+      "direct-capture"
+    );
+    expect(captured.ok).toBe(true);
     const fromCapturedToPending = sc.paymentLifecycle.applyState(
       db,
-      created.payment.id,
+      capturedDirect.payment.id,
       sc.constants.PAYMENT_STATE.PAYMENT_PENDING,
       "rewind"
     );

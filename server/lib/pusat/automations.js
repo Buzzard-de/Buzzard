@@ -9,12 +9,13 @@ const pricing = require("../pricing");
 const stockEngine = require("../operations/stockEngine");
 const { listAdapters, getAdapter } = require("../supplier/adapterRegistry");
 const customsAi = require("../customsAi");
-const { MIN_NET_PROFIT_EUR, MARKET_UNDERCUT_IMPLEMENTED, MARKET_UNDERCUT_EUR, MEMORY_KIND } = require("./constants");
+const { MIN_NET_PROFIT_EUR, MARKET_UNDERCUT_IMPLEMENTED, MARKET_UNDERCUT_EUR, MEMORY_KIND, EXCEPTION_CODES } = require("./constants");
 const agents = require("./agents");
 const memory = require("./memory");
 const { listExceptions } = require("./exceptions");
 const approval = require("./approval");
 const controlCenter = require("../controlCenter");
+const { publicTaskError } = require("../security");
 
 function productCreation(input = {}) {
   const dryRun = input.dryRun !== false;
@@ -55,7 +56,7 @@ function productCreation(input = {}) {
       { source: "AI", actorId: "product_assistant", dryRun: true }
     );
   } catch (error) {
-    coreError = error.message;
+    coreError = publicTaskError(error, "product.core.dry_run_failed");
   }
 
   return {
@@ -100,7 +101,7 @@ function supplierImport(input = {}) {
       mock: adapter.id === "mock" || /mock/i.test(adapter.name || ""),
     };
   } catch (error) {
-    return { ok: false, workflow: "supplier_import", error: error.message, live: false };
+    return { ok: false, workflow: "supplier_import", error: publicTaskError(error, "supplier.import.failed"), live: false };
   }
 
   return {
@@ -202,7 +203,7 @@ function customsAutomation(input = {}) {
       customs: { review_required: true, source: "module_unavailable" },
       review_required: true,
       disclaimer: "Customs classification could not be validated. Not legal or tax advice.",
-      error: error.message,
+      error: publicTaskError(error, "customs.module_unavailable"),
     };
   }
   return {
@@ -249,8 +250,8 @@ function reportingAutomation() {
       available: false,
       reason: "No persistent live feed watermark table; mock adapters have no stale production feed.",
     },
-    missingPricingInputs: failed.filter((t) => String(t.error || "").includes("cost")).length,
-    timeouts: failed.filter((t) => String(t.error || "").includes("timeout") || t.result?.failureKind === "TIMEOUT").length,
+    missingPricingInputs: failed.filter((t) => t.error === EXCEPTION_CODES.MISSING_COST).length,
+    timeouts: failed.filter((t) => t.result?.failureKind === "TIMEOUT" || t.error === EXCEPTION_CODES.TASK_TIMEOUT).length,
     retries: tasks.reduce((n, t) => n + (t.retryCount || 0), 0),
     guardianBlocked: failed.filter((t) => t.result?.failureKind === "GUARDIAN").length,
     worker: require("./worker").health(),

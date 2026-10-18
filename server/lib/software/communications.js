@@ -18,6 +18,13 @@ const MESSAGE_STATUS = Object.freeze({
   BLOCKED: "BLOCKED",
 });
 
+/** Draft/queue channels only. SMS/WhatsApp are not opened as live send. */
+const ALLOWED_CHANNELS = Object.freeze(["email", "in_app", "support"]);
+
+function channelAllowed(channel) {
+  return ALLOWED_CHANNELS.includes(String(channel || "email"));
+}
+
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
 }
@@ -55,10 +62,34 @@ function detectLocale(input = {}) {
   return "de";
 }
 
+const MESSAGE_AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
 function draft(db, input = {}) {
   const body = String(input.message || input.body || "").trim();
   if (!body) {
     return { ok: false, status: MESSAGE_STATUS.FAILED, sent: false, reason: "MESSAGE_REQUIRED" };
+  }
+  if (input.providerMessageId || input.vendorMessageId || input.messageId) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      inventedProviderId: false,
+      reason: "PROVIDER_MESSAGE_ID_REJECTED",
+      note: "A caller-supplied provider message id is not accepted. Item 155.",
+    };
+  }
+  const channel = input.channel || "email";
+  if (!channelAllowed(channel)) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      reason: "CHANNEL_NOT_ALLOWED",
+      channel,
+    };
   }
   const inputHash = hashInput({ ...input, message: body });
   if (db) {
@@ -68,7 +99,10 @@ function draft(db, input = {}) {
         ok: true,
         duplicate: true,
         sent: false,
+        delivered: false,
         status: existing.status,
+        locale: existing.locale,
+        classification: existing.classification,
         draft: existing,
       };
     }
@@ -131,7 +165,10 @@ function draft(db, input = {}) {
 
 function queue(db, draftId) {
   const row = db.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId);
-  if (!row) return { ok: false, reason: "NOT_FOUND" };
+  if (!row) return { ok: false, reason: "NOT_FOUND", sent: false };
+  if (row.status !== MESSAGE_STATUS.DRAFT) {
+    return { ok: false, reason: "NOT_DRAFT", sent: false, status: row.status };
+  }
   db.prepare("UPDATE software_message_drafts SET status = ? WHERE id = ?").run(MESSAGE_STATUS.QUEUED, draftId);
   return {
     ok: true,
@@ -140,11 +177,60 @@ function queue(db, draftId) {
     delivered: false,
     providerAccepted: false,
     deliveryUnknown: false,
+    live: false,
     draft: db.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId),
   };
 }
 
-function sendPrepared(db, draftId) {
+function markSentOrDelivered() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "HUMAN_SEND_REQUIRED",
+    note: "Status SENT/DELIVERED cannot be written by software. Item 155/165.",
+  };
+}
+
+function approveSend(input = {}) {
+  const actor = String(input.actor || input.approver || "").trim().toLowerCase();
+  if (MESSAGE_AI_ACTORS.has(actor)) {
+    return {
+      ok: false,
+      sent: false,
+      delivered: false,
+      live: false,
+      executed: false,
+      reason: "SELF_APPROVE_DENIED",
+      actor,
+    };
+  }
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    executed: false,
+    reason: "HUMAN_SEND_REQUIRED",
+    note: "Approval is recorded as required. No customer message is sent. Item 155.",
+  };
+}
+
+function recordProviderAccepted() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    providerAccepted: false,
+    live: false,
+    status: MESSAGE_STATUS.BLOCKED,
+    reason: "PROVIDER_ACCEPT_BLOCKED",
+    note: "PROVIDER_ACCEPTED is not written locally. Item 155.",
+  };
+}
+
+function sendPrepared(db, draftId, options = {}) {
   const row = db?.prepare("SELECT * FROM software_message_drafts WHERE id = ?").get(draftId);
   const result = customerSend({
     channel: row?.channel || "email",
@@ -162,6 +248,10 @@ function sendPrepared(db, draftId) {
     deliveryUnknown: false,
     live: false,
     blocked: true,
+    inventedProviderId: false,
+    providerMessageIdIgnored: Boolean(options.providerMessageId || options.messageId),
+    forceSendIgnored: options.forceSend === true,
+    consentDoesNotSend: options.consentGranted === true,
     reason: result.reason,
     draft: row || null,
   };
@@ -192,13 +282,42 @@ function humanHandoff(input = {}) {
   };
 }
 
+function confirmDelivery() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    reason: "DELIVERY_CONFIRM_BLOCKED",
+    note: "SENT/DELIVERED cannot be confirmed from a provider receipt in software. Item 155/165.",
+  };
+}
+
+function inboundDeliveryWebhook() {
+  return {
+    ok: false,
+    sent: false,
+    delivered: false,
+    live: false,
+    httpAttempted: false,
+    reason: "INBOUND_DELIVERY_WEBHOOK_BLOCKED",
+    note: "Inbound delivery webhooks are not executed.",
+  };
+}
+
 module.exports = {
   MESSAGE_STATUS,
+  ALLOWED_CHANNELS,
   classifyInquiry,
   detectLocale,
   draft,
   queue,
   sendPrepared,
+  approveSend,
+  recordProviderAccepted,
   consentGate,
   humanHandoff,
+  markSentOrDelivered,
+  confirmDelivery,
+  inboundDeliveryWebhook,
 };

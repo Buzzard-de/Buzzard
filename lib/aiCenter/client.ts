@@ -10,8 +10,8 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("aiCenter.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminCredentials(init));
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "aiCenter.requestFailed");
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "aiCenter.requestFailed");
   return data;
 }
 
@@ -45,7 +45,7 @@ export async function sendAiCenterChat(message: string, language = "de"): Promis
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ message, language }),
   });
-  const data = (await res.json()) as AiChatResponse & { error?: string };
-  if (!res.ok) throw new Error(data.error || "aiCenter.requestFailed");
+  const data = (await res.json()) as AiChatResponse & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "aiCenter.requestFailed");
   return data;
 }

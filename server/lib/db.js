@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
 const { resolveDbPath, ensureDbDirectory, getPersistenceInfo, assertDurableOpenAllowed } = require("./dbPaths");
+const { MARKETPLACE_CHANNELS } = require("./software/marketplaceChannels");
 
 assertDurableOpenAllowed();
 
@@ -957,16 +958,10 @@ function migrateMarketplaceHub() {
     );
   `);
 
-  const channels = [
-    ["amazon", "Amazon"],
-    ["ebay", "eBay"],
-    ["google_shopping", "Google Shopping"],
-    ["tiktok_shop", "TikTok Shop"],
-  ];
   const insertChannel = db.prepare(
     "INSERT OR IGNORE INTO marketplace_channels(code, name) VALUES(?, ?)"
   );
-  channels.forEach(([code, name]) => insertChannel.run(code, name));
+  MARKETPLACE_CHANNELS.forEach((channel) => insertChannel.run(channel.id, channel.name));
 
   const listingCount = db.prepare("SELECT COUNT(*) n FROM marketplace_listings").get().n;
   if (listingCount === 0) {
@@ -3946,7 +3941,6 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
       users,
       products,
@@ -3955,8 +3949,6 @@ function getDatabaseHealth() {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        backupDir: persistence.backupDir,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };
@@ -3964,14 +3956,12 @@ function getDatabaseHealth() {
     const persistence = getPersistenceInfo(dbPath);
     return {
       enabled: true,
-      path: dbPath,
       version: "0.3.0",
-      error: error.message,
+      error: require("./security").publicTaskError(error, "database.health_failed"),
       persistence: {
         mode: persistence.mode,
         persistent: persistence.persistent,
         ephemeralRisk: persistence.ephemeralRisk,
-        renderDisk: persistence.renderDisk,
         syncHint: persistence.syncHint,
       },
     };

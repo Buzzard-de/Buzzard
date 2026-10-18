@@ -332,7 +332,10 @@ function createEngine(options = {}) {
           }
           imported[file] = stamp;
         } catch (error) {
-          errors.push({ file, code: error.code || "WATCH_ERROR", message: error.message });
+          errors.push({
+            file: path.basename(file),
+            code: error.code || "WATCH_ERROR",
+          });
         }
       }
     }

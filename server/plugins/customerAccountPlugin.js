@@ -20,6 +20,9 @@ const {
 
 const { applyCustomerSessionCookies, clearCustomerSessionCookies } = require("../lib/authCookies");
 const { generateCsrfToken } = require("../lib/csrf");
+const { createRateLimiter, getClientIp } = require("../lib/security");
+
+const resetHttpLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5, keyPrefix: "customer-reset-http:" });
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -272,6 +275,14 @@ module.exports = {
 
     app.post("/api/account/password-reset/request", (req, res) => {
       const email = String(req.body?.email || "").trim().toLowerCase();
+      const publicBody = {
+        success: true,
+        errorKey: "account.passwordReset.requested",
+        message: "If the email exists, a reset link was generated.",
+      };
+      if (resetHttpLimit(req, { key: `${getClientIp(req)}:${email || "missing"}` })) {
+        return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
+      }
       const customer = customerStore.findByEmail(email);
       if (customer) {
         const reset = createResetToken(customer.id, req);
@@ -288,13 +299,8 @@ module.exports = {
           oldValue: null,
           newValue: "requested",
         });
-        return res.json({
-          success: true,
-          message: "If the email exists, a reset link was generated.",
-          resetToken: reset.token,
-        });
       }
-      return res.json({ success: true, message: "If the email exists, a reset link was generated." });
+      return res.json(publicBody);
     });
 
     app.post("/api/account/password-reset/confirm", (req, res) => {

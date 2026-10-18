@@ -8,6 +8,7 @@ const { aiCanExecute } = require("../rbac");
 const { getGuardianStatus } = require("../guardianBridge");
 const { SENSITIVE_ACTIONS, EXCEPTION_CODES, RISK_LEVEL } = require("./constants");
 const { logSecurityEvent } = require("../securityLog");
+const esatSecurity = require("./esatSecurity");
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_LIMIT = 60;
@@ -80,35 +81,75 @@ function evaluateUnsafe({
 } = {}) {
   const decisions = [];
   const deny = (code, message, extra = {}) => {
+    const classification = esatSecurity.classifyEvent(extra.reason || "guardian_deny", {
+      repeats: extra.repeats || 0,
+    });
+    const incident = esatSecurity.recordIncident({
+      reason: extra.reason || "guardian_deny",
+      actorId: agentId || employee?.id || null,
+      severity: extra.riskLevel || RISK_LEVEL.HIGH,
+      evidenceRef: code,
+      repeats: extra.repeats || 0,
+    });
     const result = {
       ok: false,
       allowed: false,
       code,
       message,
+      policyVersion: esatSecurity.POLICY_VERSION,
+      eventClass: classification,
+      incidentId: incident.id,
       riskLevel: extra.riskLevel || RISK_LEVEL.HIGH,
       requireApproval: Boolean(extra.requireApproval),
       decisions,
       ...extra,
     };
-    controlCenter.recordSystemEvent({
-      eventType: "guardian.deny",
-      actorType: "guardian",
-      actorId: "esat_bey",
-      resourceType: "ai_agent",
-      resourceId: agentId || null,
-      summary: message,
-      metadata: { code, action, tool },
-    });
+    try {
+      controlCenter.recordSystemEvent({
+        eventType: "guardian.deny",
+        actorType: "guardian",
+        actorId: "esat_bey",
+        resourceType: "ai_agent",
+        resourceId: agentId || null,
+        summary: message,
+        metadata: {
+          code,
+          action,
+          tool,
+          policyVersion: esatSecurity.POLICY_VERSION,
+          eventClass: classification,
+          incidentId: incident.id,
+        },
+      });
+      esatSecurity.markAuditWrite(true);
+    } catch {
+      esatSecurity.markAuditWrite(false);
+    }
     logSecurityEvent({
       type: "guardian_deny",
       success: false,
-      detail: { code, agentId, action, tool },
+      detail: { code, agentId, action, tool, incidentId: incident.id, eventClass: classification },
     });
     return result;
   };
 
+  if (!esatSecurity.getEsatHealth().policyLoaded) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Security policy unavailable", {
+      failClosed: true,
+      reason: "policy_unavailable",
+    });
+  }
   if (!agentId && !employee) {
-    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent identity required");
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent identity required", { reason: "identity_unknown" });
+  }
+  if (!employee || !employee.id) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent employee identity required");
+  }
+  if (esatSecurity.isIsolated(employee.id) || esatSecurity.isIsolated(agentId)) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent is isolated", {
+      isolated: true,
+      grantedPermissions: [],
+    });
   }
 
   if (employee && employee.status && employee.status !== "ACTIVE") {
@@ -142,6 +183,33 @@ function evaluateUnsafe({
     });
   }
 
+  const untrusted = esatSecurity.inspectUntrustedPayload(payload);
+  if (untrusted.includes("prompt_injection")) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Untrusted content cannot override policy", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+      requireApproval: true,
+      reason: "prompt_injection",
+    });
+  }
+  if (untrusted.includes("exfiltration")) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Potential exfiltration content rejected", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+      reason: "exfiltration",
+    });
+  }
+  if (untrusted.includes("config_mutation")) {
+    return deny(EXCEPTION_CODES.PERMISSION_DENIED, "Unauthorized security configuration change", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+      reason: "config_mutation",
+    });
+  }
+  if (untrusted.includes("privilege_escalation")) {
+    return deny(EXCEPTION_CODES.PERMISSION_DENIED, "Agent cannot raise its own privileges", {
+      riskLevel: RISK_LEVEL.CRITICAL,
+      reason: "privilege_escalation",
+    });
+  }
+
   let serialized = `${action || ""} ${tool || ""}`;
   try {
     serialized += ` ${JSON.stringify(payload || {})}`;
@@ -158,8 +226,19 @@ function evaluateUnsafe({
   decisions.push({ check: "dangerous", pass: true });
 
   const count = recordHit(agentId || employee?.id || "unknown");
+  esatSecurity.observeMetric("agentCallsPerMinute");
   if (count > RATE_LIMIT) {
-    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent rate limit exceeded", { rate: count });
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent rate limit exceeded", {
+      rate: count,
+      reason: "rate_limit",
+    });
+  }
+  const budget = esatSecurity.allowAgentBudget(agentId || employee?.id);
+  if (!budget.allowed) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Agent call budget exceeded", {
+      reason: "rate_limit",
+      count: budget.count,
+    });
   }
   decisions.push({ check: "rate", count, pass: true });
 
@@ -168,20 +247,43 @@ function evaluateUnsafe({
     decisions.push({ check: "approval", required: true });
   }
 
-  controlCenter.recordSystemEvent({
-    eventType: "guardian.allow",
-    actorType: "guardian",
-    actorId: "esat_bey",
-    resourceType: "ai_agent",
-    resourceId: agentId || employee?.id || null,
-    summary: `Guardian allowed ${action || "task"}`,
-    metadata: { tool, requireApproval: needsApproval },
-  });
+  try {
+    controlCenter.recordSystemEvent({
+      eventType: "guardian.allow",
+      actorType: "guardian",
+      actorId: "esat_bey",
+      resourceType: "ai_agent",
+      resourceId: agentId || employee?.id || null,
+      summary: `Guardian allowed ${action || "task"}`,
+      metadata: {
+        tool,
+        requireApproval: needsApproval,
+        policyVersion: esatSecurity.POLICY_VERSION,
+        eventClass: "observation",
+      },
+    });
+    esatSecurity.markAuditWrite(true);
+  } catch {
+    esatSecurity.markAuditWrite(false);
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Guardian evaluation failed closed", {
+      failClosed: true,
+      reason: "audit_write_failed",
+    });
+  }
+
+  if (!esatSecurity.getEsatHealth().monitoringHealthy) {
+    return deny(EXCEPTION_CODES.GUARDIAN_BLOCKED, "Security monitoring unhealthy", {
+      failClosed: true,
+      reason: "audit_write_failed",
+    });
+  }
 
   return {
     ok: true,
     allowed: true,
     requireApproval: needsApproval,
+    policyVersion: esatSecurity.POLICY_VERSION,
+    eventClass: "observation",
     decisions,
     riskLevel: needsApproval ? RISK_LEVEL.HIGH : RISK_LEVEL.LOW,
   };
@@ -191,10 +293,26 @@ async function remoteStatus() {
   return getGuardianStatus();
 }
 
+function confirmRemoteLive() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    httpAttempted: false,
+    reason: "REMOTE_GUARDIAN_LIVE_BLOCKED",
+    note: "Optional remote Python Guardian is a health signal only. It is not probed as live from this path.",
+  };
+}
+
 module.exports = {
   evaluate,
   actionRequiresApproval,
   scanSecrets,
   resetRateLimiter,
   remoteStatus,
+  confirmRemoteLive,
+  isolateAgent: esatSecurity.isolateAgent,
+  clearIsolation: esatSecurity.clearIsolation,
+  getEsatHealth: esatSecurity.getEsatHealth,
+  listIncidents: esatSecurity.listIncidents,
 };

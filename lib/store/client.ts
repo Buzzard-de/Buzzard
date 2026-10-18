@@ -19,8 +19,8 @@ async function storeFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const base = storeApiBase();
   if (!base) throw new Error("store.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "store.requestFailed");
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "store.requestFailed");
   return data;
 }
 

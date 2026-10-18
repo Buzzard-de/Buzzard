@@ -18,7 +18,7 @@ const circuitBreaker = require("./circuitBreaker");
 const events = require("./events");
 const taskConflict = require("./taskConflict");
 const schedulerBridge = require("./schedulerBridge");
-const { getHealth } = require("./health");
+const { getHealth, confirmLive } = require("./health");
 const { reportingAutomation } = require("./automations");
 
 function initialize(db) {
@@ -37,6 +37,7 @@ module.exports = {
   cancelTask,
   getMeta,
   getHealth,
+  confirmLive,
   report: reportingAutomation,
   memory,
   guardian,

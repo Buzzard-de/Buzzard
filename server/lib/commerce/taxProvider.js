@@ -15,18 +15,30 @@ const VAT_BY_COUNTRY = Object.freeze({
 });
 
 function getTaxRate(country) {
-  const code = String(country || "DE").toUpperCase();
+  const code = String(country || "").toUpperCase();
+  if (!code) return null;
   return VAT_BY_COUNTRY[code] ?? null;
 }
 
-function calculateTax({ country = "DE", subtotal = 0, discount = 0 } = {}) {
+function calculateTax({ country, subtotal = 0, discount = 0, category = null } = {}) {
+  if (category) {
+    return {
+      ok: false,
+      code: "tax_category_rate_unknown",
+      message: "No verified category VAT; country rate is not applied as category tax",
+      blocked: true,
+      invented: false,
+    };
+  }
+
   const rate = getTaxRate(country);
   if (rate === null) {
     return {
       ok: false,
       code: "tax_rate_unknown",
-      message: `No tax rate configured for country ${country}`,
+      message: "No tax rate configured for country",
       blocked: true,
+      invented: false,
     };
   }
 
@@ -48,9 +60,12 @@ function calculateTax({ country = "DE", subtotal = 0, discount = 0 } = {}) {
 function getProviderHealth() {
   return {
     provider: "foundation",
-    status: "READY",
+    status: "PARTIAL",
+    live: false,
+    fiscalLive: false,
+    invented: false,
     countriesConfigured: Object.keys(VAT_BY_COUNTRY).length,
-    note: "Replace with real tax engine before go-live",
+    note: "Configured country rates only. Unknown country/category stay blocked. Not a live fiscal engine.",
   };
 }
 

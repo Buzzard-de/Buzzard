@@ -55,7 +55,7 @@ describe("product catalog PIM write access", () => {
       await handler({ headers: {}, params: { sku: "test-sku", language: "en" }, body: {} }, response);
 
       expect(response.statusCode, `${method} ${path} should reject anonymous writes`).toBe(403);
-      expect(response.json).toHaveBeenCalledWith({ error: "Admin access required" });
+      expect(response.json).toHaveBeenCalledWith({ success: false, errorKey: "security.adminRequired" });
     }
   });
 });

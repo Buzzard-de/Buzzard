@@ -307,7 +307,9 @@ describe("Part 23 — health and readiness center", () => {
 describe("Part 23 — RBAC", () => {
   it("30. routes require proper permissions", () => {
     const { resolveRoutePermission } = require("../lib/routePermissions.js");
-    expect(resolveRoutePermission("GET", "/api/health/supplier-readiness").public).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/health/supplier-readiness")).toEqual({
+      permission: "system.read",
+    });
     expect(resolveRoutePermission("GET", "/api/admin/suppliers/readiness").permission).toBe("suppliers.read");
     expect(resolveRoutePermission("POST", "/api/admin/suppliers/api-supplier-dry/dry-run").permission).toBe(
       "suppliers.read"

@@ -7,6 +7,7 @@ const controlCenter = require("./controlCenter");
 const { executeWithProvider, getActiveProvider } = require("./aiProviders");
 const { TASK_STATUS, TASK_PRIORITY, RISK_LEVEL, AI_EMPLOYEE_STATUS } = require("../core/constants");
 const { aiCanExecute } = require("./rbac");
+const { publicTaskError } = require("./security");
 
 function parseJson(val, fallback = {}) {
   if (!val) return fallback;
@@ -67,7 +68,7 @@ async function processTask(taskId) {
       riskLevel: RISK_LEVEL.HIGH,
     });
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: "No eligible AI employee",
+      error: "ai.employee.unavailable",
     });
   }
 
@@ -75,7 +76,7 @@ async function processTask(taskId) {
   for (const perm of required) {
     if (!aiCanExecute(employee.permissions, perm)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-        error: `Permission denied: ${perm}`,
+        error: "ai.permission_denied",
       });
     }
   }
@@ -116,7 +117,7 @@ async function processTask(taskId) {
     db.prepare("UPDATE core_ai_tasks SET retry_count = ? WHERE id = ?").run(retryCount, taskId);
     if (retryCount < (row.max_retries || 3)) {
       return controlCenter.updateTaskStatus(taskId, TASK_STATUS.ASSIGNED, {
-        error: providerResult.message || providerResult.error,
+        error: publicTaskError(providerResult, "ai.provider.failed"),
       });
     }
     controlCenter.createEscalation({
@@ -127,7 +128,7 @@ async function processTask(taskId) {
       riskLevel: RISK_LEVEL.HIGH,
     });
     return controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, {
-      error: providerResult.message || providerResult.error,
+      error: publicTaskError(providerResult, "ai.provider.failed"),
     });
   }
 
@@ -152,12 +153,14 @@ async function processTask(taskId) {
 function enqueueTaskProcessing(taskId) {
   setImmediate(() => {
     processTask(taskId).catch((err) => {
-      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: err.message });
+      const errorKey = publicTaskError(err, "ai.orchestrator.failed");
+      console.error("[aiOrchestrator]", { name: err?.name, code: err?.code });
+      controlCenter.updateTaskStatus(taskId, TASK_STATUS.FAILED, { error: errorKey });
       controlCenter.createEscalation({
         sourceType: "ai_task",
         sourceId: taskId,
         title: "Orchestrator error",
-        message: err.message,
+        message: errorKey,
         riskLevel: RISK_LEVEL.CRITICAL,
       });
     });

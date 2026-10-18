@@ -14,7 +14,7 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   if (blocked) return blocked;
 
   const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(userId);
-  if (!cart) return { error: "Cart is empty", status: 400 };
+  if (!cart) return { error: "cart.empty", status: 400 };
 
   const items = db
     .prepare(`
@@ -25,11 +25,11 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
     `)
     .all(cart.id);
 
-  if (!items.length) return { error: "Cart is empty", status: 400 };
+  if (!items.length) return { error: "cart.empty", status: 400 };
 
   for (const item of items) {
     if (item.quantity > item.stock) {
-      return { error: `Insufficient stock: ${item.sku}`, status: 409 };
+      return { error: "inventory.insufficient", status: 409 };
     }
   }
 
@@ -37,9 +37,10 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   const weight = items.reduce((sum, item) => sum + item.weight_kg * item.quantity, 0);
   const shipping = calculateShipping(countryCode, weight, subtotal);
   const taxInfo = calculateTaxSync(countryCode, subtotal, shipping);
-  const tax =
-    taxInfo.tax ??
-    Number(((subtotal + shipping) * (taxInfo.rate ?? 0.19)).toFixed(2));
+  if (!taxInfo.ok || taxInfo.tax == null) {
+    return { error: taxInfo.status || "tax_rate_unknown", status: 400, blocked: true, invented: false };
+  }
+  const tax = taxInfo.tax;
   const total = Number((subtotal + shipping + tax).toFixed(2));
   const number = orderNumber();
 

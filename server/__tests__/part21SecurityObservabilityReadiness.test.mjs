@@ -127,7 +127,9 @@ describe("Part 21 — operational metrics", () => {
 describe("Part 21 — RBAC route permissions", () => {
   it("10. security admin routes require permissions", () => {
     const { resolveRoutePermission } = require("../lib/routePermissions.js");
-    expect(resolveRoutePermission("GET", "/api/health/security-readiness").public).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/health/security-readiness")).toEqual({
+      permission: "system.read",
+    });
     expect(resolveRoutePermission("GET", "/api/admin/security/readiness").permission).toBe("security.read");
     expect(resolveRoutePermission("GET", "/api/admin/security/audit").permission).toBe("security.read");
     expect(resolveRoutePermission("GET", "/api/admin/monitoring/readiness").permission).toBe("system.read");

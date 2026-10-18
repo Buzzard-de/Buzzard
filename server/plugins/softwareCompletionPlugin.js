@@ -80,10 +80,14 @@ module.exports = {
       if (!requirePermission(req, res, "ai.read")) return;
       const software = require("../lib/software");
       const { db } = require("../lib/db");
-      const preview = software.supplierFeeds.preview(req.body || {});
+      const preview = software.supplierFeeds.previewIdempotent({
+        ...(req.body || {}),
+        idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
+      });
       software.supplierFeeds.recordPreview(db, preview);
-      res.status(preview.ok || preview.status === "FEED_AVAILABLE" ? 200 : 400).json({
-        success: Boolean(preview.ok),
+      const conflict = preview.code === "IDEMPOTENCY_CONFLICT";
+      res.status(conflict ? 409 : preview.ok || preview.status === "FEED_AVAILABLE" ? 200 : 400).json({
+        success: Boolean(preview.ok) && !conflict,
         ...preview,
       });
     });
@@ -150,7 +154,7 @@ module.exports = {
         customerId: session.customerId,
       });
       if (result.denied || !result.ok) {
-        res.status(result.denied ? 403 : 404).json({ success: false, error: result.denied ? "access_denied" : "not_found" });
+        res.status(result.denied ? 403 : 404).json({ success: false, errorKey: result.denied ? "access_denied" : "not_found" });
         return;
       }
       res.json({ success: true, shipment: result.shipment });
@@ -196,7 +200,7 @@ module.exports = {
         ? software.qrLoyalty.revealAccount(db, { token, requesterCustomerId: session.customerId })
         : { ok: true };
       if (reveal.denied) {
-        res.status(403).json({ success: false, error: reveal.reason });
+        require("../lib/http/publicPluginError").sendKeyedResult(res, { status: 403, error: reveal.reason });
         return;
       }
       const eligibility = software.qrLoyalty.evaluateEligibility(db, {

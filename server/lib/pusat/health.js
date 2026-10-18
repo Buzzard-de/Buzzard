@@ -1,5 +1,5 @@
 const { getDatabaseHealth } = require("../db");
-const { getActiveProvider, isProviderConfigured } = require("../aiProviders");
+const { getProviderHonesty } = require("../aiProviders");
 const { getOrchestratorStatus } = require("../orchestratorBridge");
 const { memoryHealth } = require("./memory");
 const { remoteStatus } = require("./guardian");
@@ -27,17 +27,12 @@ async function getHealth() {
     status: ready ? "ready" : "degraded",
     database: {
       ok: !database.error,
-      path: database.path,
       persistent: database.persistence?.persistent ?? null,
       ephemeralRisk: database.persistence?.ephemeralRisk ?? null,
       error: database.error || null,
     },
     memory,
-    provider: {
-      active: getActiveProvider(),
-      configured: isProviderConfigured(),
-      stub: getActiveProvider() === "stub",
-    },
+    provider: getProviderHonesty(),
     guardian: {
       local: true,
       remoteConfigured: remoteGuardian.configured,
@@ -53,4 +48,14 @@ async function getHealth() {
   };
 }
 
-module.exports = { getHealth };
+function confirmLive() {
+  return {
+    ok: false,
+    live: false,
+    liveVerified: false,
+    reason: "PUSAT_LIVE_BLOCKED",
+    note: "Local Pusat health is not production orchestrator evidence.",
+  };
+}
+
+module.exports = { getHealth, confirmLive };

@@ -248,7 +248,7 @@ module.exports = {
                 shippingAddress: body.shippingAddress || {},
               });
               if (result.error) {
-                return res.status(result.status || 400).json({ success: false, error: result.error });
+                return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
               }
               return res.status(201).json({
                 success: true,

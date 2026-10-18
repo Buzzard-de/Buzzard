@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -45,7 +45,7 @@ function requireAnyAuth(req, res) {
     return session;
   }
 
-  res.status(401).json({ error: "Authentication required" });
+  res.status(401).json({ success: false, errorKey: "security.authRequired" });
   return null;
 }
 
@@ -64,14 +64,14 @@ module.exports = {
     app.post("/api/admin/wms-inventory/warehouses", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.createWarehouse(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.warehouse);
     });
 
     app.post("/api/admin/wms-inventory/locations", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.createLocation(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -85,21 +85,21 @@ module.exports = {
       if (!user) return;
       const userId = user.sub || user.id;
       const result = wmsInventory.recordMovement(req.body || {}, userId);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.inventory);
     });
 
     app.post("/api/admin/wms-inventory/inventory/reserve", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.reserveInventory(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.reservation);
     });
 
     app.post("/api/wms-inventory/scan", (req, res) => {
       if (!requireAnyAuth(req, res)) return;
       const result = wmsInventory.scanBarcode(String(req.body?.barcode || "").trim());
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.item);
     });
 
@@ -111,21 +111,21 @@ module.exports = {
     app.post("/api/admin/wms-inventory/jobs", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.createWarehouseJob(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.job);
     });
 
     app.post("/api/admin/wms-inventory/transfers", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.createTransfer(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.transfer);
     });
 
     app.post("/api/admin/wms-inventory/stocktakes", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = wmsInventory.createStocktake(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.stocktake);
     });
 

@@ -10,10 +10,11 @@ const pricing = require("./pricing");
 const tracking = require("./tracking");
 const marketplace = require("./marketplace");
 const voice = require("./voice");
+const phoneAssistant = require("../phoneAssistantService");
 const customerAccess = require("./customerAccess");
 const orders = require("./orders");
 const { getSoftwareHealth } = require("./health");
-const { searchCatalog, searchCanonicalCatalog } = require("./search");
+const { searchCatalog, searchCanonicalCatalog, getLocalSearchIndexStatus } = require("./search");
 const returns = require("./returns");
 const reporting = require("./reporting");
 const supplierFeeds = require("./supplierFeeds");
@@ -35,6 +36,9 @@ const partialFulfillment = require("./partialFulfillment");
 const competitorPrices = require("./competitorPrices");
 const bankAdapters = require("./bankAdapters");
 const carrierWebhooks = require("./carrierWebhooks");
+const eta = require("./eta");
+const liveMap = require("./liveMap");
+const architectureInventory = require("./architectureInventory");
 const secretVault = require("./secretVault");
 const monitoringReady = require("./monitoringReady");
 const reportingModels = require("./reportingModels");
@@ -42,6 +46,26 @@ const localeCoverage = require("./localeCoverage");
 const orderInventoryBridge = require("./orderInventoryBridge");
 const orderIdentity = require("./orderIdentity");
 const qrLoyalty = require("./qrLoyalty");
+const gatedActions = require("./gatedActions");
+const pimPublish = require("./pimPublish");
+const sotActivation = require("./sotActivation");
+const catalogIntegrity = require("./catalogIntegrity");
+const supplierStockIntegrity = require("./supplierStockIntegrity");
+const pricingProfitIntegrity = require("./pricingProfitIntegrity");
+const orderPaymentReturnIntegrity = require("./orderPaymentReturnIntegrity");
+const marketplaceInternationalIntegrity = require("./marketplaceInternationalIntegrity");
+const logisticsCustomerIntegrity = require("./logisticsCustomerIntegrity");
+const aiAutomationIntegrity = require("./aiAutomationIntegrity");
+const testReliabilityOpsIntegrity = require("./testReliabilityOpsIntegrity");
+const coreRunwayIntegrity = require("./coreRunwayIntegrity");
+const storefrontRunwayIntegrity = require("./storefrontRunwayIntegrity");
+const buzzard80SoftwareLine = require("./buzzard80SoftwareLine");
+const productionConfigGate = require("./productionConfigGate");
+const productionDeployGate = require("./productionDeployGate");
+const goLiveGate = require("./goLiveGate");
+const dnsAccessGate = require("./dnsAccessGate");
+const firstOrderGate = require("./firstOrderGate");
+const protectedBranchMergeGate = require("./protectedBranchMergeGate");
 
 function initialize(db) {
   if (!db) throw new Error("database required");
@@ -65,10 +89,12 @@ module.exports = {
   tracking,
   marketplace,
   voice,
+  phoneAssistant,
   customerAccess,
   orders,
   searchCatalog,
   searchCanonicalCatalog,
+  getLocalSearchIndexStatus,
   returns,
   reporting,
   supplierFeeds,
@@ -90,6 +116,9 @@ module.exports = {
   competitorPrices,
   bankAdapters,
   carrierWebhooks,
+  eta,
+  liveMap,
+  architectureInventory,
   secretVault,
   monitoringReady,
   reportingModels,
@@ -97,4 +126,24 @@ module.exports = {
   orderInventoryBridge,
   orderIdentity,
   qrLoyalty,
+  gatedActions,
+  pimPublish,
+  sotActivation,
+  catalogIntegrity,
+  supplierStockIntegrity,
+  pricingProfitIntegrity,
+  orderPaymentReturnIntegrity,
+  marketplaceInternationalIntegrity,
+  logisticsCustomerIntegrity,
+  aiAutomationIntegrity,
+  testReliabilityOpsIntegrity,
+  coreRunwayIntegrity,
+  storefrontRunwayIntegrity,
+  buzzard80SoftwareLine,
+  productionConfigGate,
+  productionDeployGate,
+  goLiveGate,
+  dnsAccessGate,
+  firstOrderGate,
+  protectedBranchMergeGate,
 };

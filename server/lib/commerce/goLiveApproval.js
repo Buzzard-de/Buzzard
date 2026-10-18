@@ -8,6 +8,14 @@ const { logSecurityEvent } = require("../securityLog");
 const orderService = require("./orderService");
 
 const PRODUCTION_SAFETY_LOCK = true;
+const AI_ACTORS = new Set(["pusat", "guardian", "orchestrator", "esat", "agent", "ai"]);
+
+function actorIsAi(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw) return false;
+  if (AI_ACTORS.has(raw)) return true;
+  return AI_ACTORS.has(raw.split("@")[0]);
+}
 
 function newId() {
   return `gl_${crypto.randomBytes(8).toString("hex")}`;
@@ -33,6 +41,17 @@ function requestGoLive({ requestedBy, notes } = {}) {
 }
 
 function approveGoLive({ requestId, decidedBy } = {}) {
+  if (actorIsAi(decidedBy)) {
+    return {
+      error: "self_approve_denied",
+      reason: "SELF_APPROVE_DENIED",
+      status: 403,
+      salesEnabled: false,
+      executed: false,
+      mutated: false,
+      productionSafetyLock: PRODUCTION_SAFETY_LOCK,
+    };
+  }
   const row = db.prepare("SELECT * FROM commerce_go_live WHERE id = ?").get(requestId);
   if (!row) return { error: "request_not_found", status: 404 };
 

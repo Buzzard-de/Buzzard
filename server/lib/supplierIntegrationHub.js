@@ -13,7 +13,7 @@ function randomCode() {
 
 function createSupplier(body = {}) {
   if (!body.code || !body.name) {
-    return { error: "Supplier code and name required", status: 400 };
+    return { error: "validation.codeNameRequired", status: 400 };
   }
 
   try {
@@ -53,7 +53,7 @@ function createSupplier(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "Supplier code already exists", status: 409 };
+    return { error: "supplier.codeExists", status: 409 };
   }
 }
 
@@ -63,7 +63,7 @@ function listSuppliers() {
 
 function getSupplierByCode(code) {
   const supplier = db.prepare("SELECT * FROM supih_suppliers WHERE code = ?").get(code);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   return {
     supplier,
@@ -78,12 +78,12 @@ function getSupplierByCode(code) {
 
 function upsertMapping(code, body = {}) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   const supplierSku = body.supplierSku || body.supplier_sku;
   const buzzardSku = body.buzzardSku || body.buzzard_sku;
   if (!supplierSku || !buzzardSku) {
-    return { error: "Supplier SKU and Buzzard SKU required", status: 400 };
+    return { error: "supplier.skuMapRequired", status: 400 };
   }
 
   db.prepare(`
@@ -112,7 +112,7 @@ function upsertMapping(code, body = {}) {
 
 function queueSync(code, body = {}) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   const result = db
     .prepare(`
@@ -155,7 +155,7 @@ function listSyncJobs() {
 
 function addSnapshot(code, body = {}) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   db.prepare(`
     INSERT INTO supih_product_snapshots(
@@ -178,7 +178,7 @@ function addSnapshot(code, body = {}) {
 
 function addShippingMethod(code, body = {}) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
 
   const result = db
     .prepare(`
@@ -212,13 +212,13 @@ function createSupplierOrder(body = {}, req = null) {
   const supplierCode = body.supplierCode || body.supplier_code;
   const buzzardOrderNumber = body.buzzardOrderNumber || body.buzzard_order_number;
   if (!supplierCode || !buzzardOrderNumber) {
-    return { error: "Supplier code and Buzzard order required", status: 400 };
+    return { error: "supplier.orderRequired", status: 400 };
   }
 
   const supplier = db.prepare("SELECT * FROM supih_suppliers WHERE code = ?").get(supplierCode);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
+  if (!supplier) return { error: "supplier.notFound", status: 404 };
   if (!supplier.supports_dropshipping) {
-    return { error: "Supplier does not support dropshipping", status: 400 };
+    return { error: "supplier.dropshipUnsupported", status: 400 };
   }
 
   const result = db

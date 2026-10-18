@@ -127,7 +127,11 @@ function updatePasswordHash(customerId, newPassword) {
 function exportCustomerData(customerId) {
   const customer = findById(customerId);
   if (!customer) return null;
-  const { password_hash, ...safe } = customer;
+  const safe = {};
+  for (const [key, value] of Object.entries(customer)) {
+    if (/password|secret|token|authorization|credential|api[_-]?key|hash/i.test(key)) continue;
+    safe[key] = value;
+  }
   return {
     exportedAt: new Date().toISOString(),
     customer: safe,

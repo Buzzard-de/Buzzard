@@ -116,15 +116,19 @@ function attachProviderRef(db, paymentId, providerPaymentId) {
        WHERE id = ?`
     ).run(String(providerPaymentId), JSON.stringify(details), paymentId);
   } catch (err) {
-    if (!isUniqueConstraint(err)) throw err;
-    writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
-    return payment;
+    if (isUniqueConstraint(err)) {
+      writeAudit(db, "payment.provider_ref_conflict", paymentId, { providerPaymentId });
+      return payment;
+    }
+    const classified = new Error("db.error");
+    classified.code = require("../security").publicTaskError(err, "db.error");
+    throw classified;
   }
   return getPayment(db, paymentId);
 }
 
 function isUniqueConstraint(err) {
-  return err && (err.code === "SQLITE_CONSTRAINT_UNIQUE" || /UNIQUE/i.test(String(err.message || "")));
+  return require("../security").isUniqueConstraint(err);
 }
 
 function recordEventExclusive(db, input = {}) {
@@ -145,7 +149,9 @@ function recordEventExclusive(db, input = {}) {
     return { inserted: true, duplicate: false };
   } catch (err) {
     if (isUniqueConstraint(err)) return { inserted: false, duplicate: true };
-    throw err;
+    const classified = new Error("db.error");
+    classified.code = require("../security").publicTaskError(err, "db.error");
+    throw classified;
   }
 }
 
@@ -153,6 +159,13 @@ function applyState(db, paymentId, to, reason) {
   const row = db.prepare("SELECT * FROM software_payments WHERE id = ?").get(paymentId);
   if (!row) return { ok: false, reason: "PAYMENT_NOT_FOUND" };
   if (row.state === to) return { ok: true, duplicate: true, payment: mapPayment(row) };
+  if (
+    row.state === PAYMENT_STATE.PAYMENT_RECONCILIATION_REQUIRED &&
+    to === PAYMENT_STATE.PAYMENT_CAPTURED
+  ) {
+    writeAudit(db, "payment.illegal_transition", paymentId, { from: row.state, to, reason: "uncertain_no_auto_capture" });
+    return { ok: false, reason: "RECONCILIATION_CAPTURE_REQUIRES_HUMAN", from: row.state, to };
+  }
   if (!canTransition(row.state, to)) {
     writeAudit(db, "payment.illegal_transition", paymentId, { from: row.state, to, reason });
     return { ok: false, reason: "ILLEGAL_TRANSITION", from: row.state, to };
@@ -162,7 +175,7 @@ function applyState(db, paymentId, to, reason) {
   return { ok: true, payment: getPayment(db, paymentId), from: row.state, to };
 }
 
-function verifyWebhookSignature({ rawBody, signature, secret, timestamp } = {}) {
+function verifyWebhookSignature({ rawBody, signature, secret, timestamp, now = Date.now(), maxAgeSec = 300 } = {}) {
   if (!secret) {
     return { ok: false, accepted: false, reason: "WEBHOOK_SECRET_MISSING", status: "NOT_CONFIGURED" };
   }
@@ -170,19 +183,35 @@ function verifyWebhookSignature({ rawBody, signature, secret, timestamp } = {}) 
     return { ok: false, accepted: false, reason: "WEBHOOK_SIGNATURE_MISSING" };
   }
   const body = String(rawBody || "");
+  let ts = timestamp;
+  const header = String(signature);
+  if (!ts && header.includes("t=")) {
+    const match = header.match(/(?:^|,)t=(\d+)/);
+    ts = match ? match[1] : null;
+  }
+  if (ts != null && ts !== "") {
+    const numeric = Number(ts);
+    if (!Number.isFinite(numeric)) {
+      return { ok: false, accepted: false, reason: "WEBHOOK_TIMESTAMP_INVALID" };
+    }
+    const ageSec = Math.abs(now / 1000 - numeric);
+    if (ageSec > maxAgeSec) {
+      return { ok: false, accepted: false, reason: "WEBHOOK_TIMESTAMP_STALE" };
+    }
+  }
   let expected;
-  if (timestamp) {
-    expected = crypto.createHmac("sha256", secret).update(`${timestamp}.${body}`).digest("hex");
+  if (ts) {
+    expected = crypto.createHmac("sha256", secret).update(`${ts}.${body}`).digest("hex");
   } else {
     expected = crypto.createHmac("sha256", secret).update(body).digest("hex");
   }
-  const provided = String(signature).includes("=")
-    ? String(signature).split("v1=").pop().split(",")[0]
-    : String(signature);
+  const provided = header.includes("=")
+    ? header.split("v1=").pop().split(",")[0]
+    : header;
   if (!timingEqualHex(expected, provided)) {
     return { ok: false, accepted: false, reason: "WEBHOOK_SIGNATURE_INVALID" };
   }
-  return { ok: true, accepted: true, reason: "WEBHOOK_SIGNATURE_OK" };
+  return { ok: true, accepted: true, reason: "WEBHOOK_SIGNATURE_OK", timestamp: ts || null };
 }
 
 function ingestEvent(db, input = {}) {

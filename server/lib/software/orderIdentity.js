@@ -144,7 +144,7 @@ function ensureBound(db, input = {}) {
       return { ok: true, canonicalId, bound, rewrittenStores: false };
     })();
   } catch (error) {
-    return { ok: false, reason: "IDENTITY_BIND_FAILED", error: error.message };
+    return { ok: false, reason: "IDENTITY_BIND_FAILED", error: require("../security").publicTaskError(error, "IDENTITY_BIND_FAILED") };
   }
 }
 

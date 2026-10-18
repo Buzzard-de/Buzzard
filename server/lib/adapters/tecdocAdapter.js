@@ -13,24 +13,85 @@ const MOCK_COMPATIBILITY = [
 
 const capabilities = ["vehicle_lookup", "compatibility", "catalog"];
 
+function describeStatus() {
+  return {
+    id: "tecdoc",
+    name: "TecDoc Mock Adapter",
+    mock: true,
+    live: false,
+    liveVerified: false,
+    httpAttempted: false,
+    purchaseOrderSent: false,
+    keyPresent: Boolean(process.env.TECDOC_API_KEY),
+    blocked: "BLOCKED_EXTERNAL_DEPENDENCY",
+    note: "Key presence is not live catalog access. This adapter never opens HTTP.",
+  };
+}
+
 async function fetchCatalog(options = {}) {
+  const status = describeStatus();
+  if (options.vendorCatalogId || options.liveCatalogId) {
+    return {
+      ok: false,
+      mock: true,
+      live: false,
+      httpAttempted: false,
+      inventedCatalog: false,
+      records: [],
+      reason: "VENDOR_CATALOG_ID_REJECTED",
+      ...status,
+    };
+  }
   return {
     ok: true,
     mock: true,
-    message: "TecDoc catalog mock — configure TECDOC_API_KEY for production integration.",
+    live: false,
+    httpAttempted: false,
+    inventedCatalog: false,
+    message: "TecDoc catalog mock. TECDOC_API_KEY does not enable HTTP from this adapter.",
     records: [],
     vehicles: MOCK_VEHICLES,
     compatibility: MOCK_COMPATIBILITY,
-    configured: Boolean(process.env.TECDOC_API_KEY),
+    configured: status.keyPresent,
+    forceLiveIgnored: options.forceLive === true,
+    ...status,
   };
 }
 
 async function fetchStock() {
-  return { ok: true, mock: true, records: [] };
+  return {
+    ok: true,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedStock: false,
+    records: [],
+    ...describeStatus(),
+  };
 }
 
 async function fetchPrices() {
-  return { ok: true, mock: true, records: [] };
+  return {
+    ok: true,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedPrice: false,
+    records: [],
+    ...describeStatus(),
+  };
+}
+
+function confirmLiveCatalog() {
+  return {
+    ok: false,
+    mock: true,
+    live: false,
+    httpAttempted: false,
+    inventedCatalog: false,
+    reason: "LIVE_TECDOC_UNKNOWN",
+    ...describeStatus(),
+  };
 }
 
 function lookupVehicle(query = {}) {
@@ -54,10 +115,13 @@ function getCompatibility(articleOrSku) {
 module.exports = {
   name: "TecDoc Mock Adapter",
   mock: true,
+  live: false,
   capabilities,
+  describeStatus,
   fetchCatalog,
   fetchStock,
   fetchPrices,
   lookupVehicle,
   getCompatibility,
+  confirmLiveCatalog,
 };

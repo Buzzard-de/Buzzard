@@ -127,7 +127,9 @@ describe("Part 25 — audit redaction", () => {
 describe("Part 25 — RBAC", () => {
   it("11. public release health route is public", () => {
     const { resolveRoutePermission } = require("../lib/routePermissions.js");
-    expect(resolveRoutePermission("GET", "/api/health/release-readiness").public).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/health/release-readiness")).toEqual({
+      permission: "system.read",
+    });
   });
 
   it("12. admin release routes require system.read", () => {

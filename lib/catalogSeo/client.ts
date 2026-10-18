@@ -15,8 +15,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("catalogSeo.apiUnavailable");
   const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "catalogSeo.requestFailed");
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "catalogSeo.requestFailed");
   return data;
 }
 
@@ -60,8 +60,8 @@ export async function fetchCatalogProductBySlug(slug: string): Promise<CatalogPr
   const res = await fetch(`${base}/api/catalog/products/slug/${encodeURIComponent(slug)}`, {
     headers: { Accept: "application/json" },
   });
-  const data = (await res.json()) as CatalogProduct & { error?: string };
-  if (!res.ok) throw new Error(data.error || "catalogSeo.requestFailed");
+  const data = (await res.json()) as CatalogProduct & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "catalogSeo.requestFailed");
   return data;
 }
 

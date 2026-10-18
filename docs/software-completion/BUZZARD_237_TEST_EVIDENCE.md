@@ -426,3 +426,13 @@ Structured logs redact secrets. Restore execute blocked even with `BUZZARD_ALLOW
 | npm audit --audit-level=high | 1 | high=5 critical=0; no force fix |
 
 Items **183,196–201,203,204,206,207,209,210** →100 PARTIAL. **202 remains 90**. Not VERIFIED_100. Mean **98.11%** (23253/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Core runway software (items 20, 21, 24, 25, 26, 28, 29, 31–34)
+
+Shared checkout/order transitions refuse illegal moves. Public errors have no stack/path. Guest token stripped from order map. PIM canonical fields local; SoT off; dual-write refused. Local software schema migrate; production migrate HUMAN-blocked. Idempotency replay + fingerprint 409. Correlation ids sanitized; headers set locally. Health limiter prefix distinct from API. Unregistered POST fail-closed 401. Sales off => catalog mode. **22, 23, 27, 30 not rescored.** **202 stays 90.** Storefront leftover unchanged.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| coreRunwayIntegritySoftware | 0 | 1 file, **3 passed** |
+
+Items **20,21,24,25,26,28,29,31–34** →100 PARTIAL. Not VERIFIED_100. Mean **98.61%** (23371/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

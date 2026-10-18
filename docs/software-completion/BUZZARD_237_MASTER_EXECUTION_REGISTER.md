@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **98.11%** (Σ 23253 / 237 = 98.1139…; one decimal **98.1%**). Was **97.00%** (22988/237). This pass **+1.12 pp**. **%80 reached: YES** (need Σ 18960; surplus 4293). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Test/reliability leftover **183,196–201,203,204,206,207,209,210** established-scope **100%**. **202 production build stays 90%** (next build not re-run). **185 stays EXTERNAL**. **213/214/219/221/225/226 stay HUMAN**. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **98.61%** (Σ 23371 / 237 = 98.6118…; one decimal **98.6%**). Was **98.11%** (23253/237). This pass **+0.50 pp**. **%80 reached: YES** (need Σ 18960; surplus 4411). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Core leftover **20, 21, 24, 25, 26, 28, 29, 31–34** established-scope **100%**. Band items **22, 23, 27, 30** not rescored. **202 production build stays 90%**. Storefront leftover **137–141, 143, 148–151** remain below 100. **185 stays EXTERNAL**. HUMAN stay HUMAN. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -676,22 +676,22 @@ Next (cannot be finished locally):
 | Established scope | Shared commerce constants and state machines |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Checkout and order transitions enforced |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceConstants.js |
-| Identified gaps | part8Foundation |
+| Existing implementation evidence | `server/lib/software/coreRunwayIntegrity.js`; commerceConstants.js |
+| Identified gaps | Established local transition software complete; live commerce not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceConstants.js |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — illegal checkout/order transitions refused |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | part8Foundation |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established commerce state machines; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live checkout/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 21
 
@@ -702,22 +702,22 @@ Next (cannot be finished locally):
 | Established scope | Common error contracts |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Public error keys without stack traces |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `publicErrorBody` + `toPublicError` + `sanitizeErrorKey`; Control Center catch blocks |
-| Identified gaps | Not every remaining plugin audited; original criteria UNKNOWN |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; publicErrorBody / toPublicError |
+| Identified gaps | Established local public-error software complete; live HTTP not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | publicErrorBody |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `continuousIntegrity237.test.mjs` public-error cases; full vitest 991 passed |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — stack/path stripped; plugin errors keyed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 99% (sqlite public keys db.uniqueConstraint/db.constraint/db.error; original UNKNOWN) |
-| Remaining work | `aiAutomationPlugin` internal `{ error: err.message }` remains |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established public error contract; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production error path not probed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 22
 
@@ -780,22 +780,22 @@ Next (cannot be finished locally):
 | Established scope | Order data contract |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Guest token stripped from public map |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | orderService.js |
-| Identified gaps | Unit + E2E blocked commercial path |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; orderService.mapOrder guestToken strip |
+| Identified gaps | Established local order map complete; live OMS not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | orderService.js |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — guest token absent from public map |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (OMS English errors replaced with order.* keys) |
-| Remaining work | Unit + E2E blocked commercial path |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order public contract; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Commercial order path stays sales-locked; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 25
 
@@ -806,22 +806,22 @@ Next (cannot be finished locally):
 | Established scope | Product data contract |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Canonical product fields via PIM core |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | productCore.js |
-| Identified gaps | Multiple stores still classified; SoT off |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; productCore.mapProduct; refuseDualWrite |
+| Identified gaps | Established local PIM map complete; SoT not activated |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | productCore.js |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — canonical fields; SoT off; dual-write refused |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (PIM catalog brand/variant errors keyed) |
-| Remaining work | Multiple stores still classified; SoT off |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local product contract; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | SoT remains HUMAN/off; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 26
 
@@ -832,22 +832,22 @@ Next (cannot be finished locally):
 | Established scope | Core DB schema and migrations |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Additive software/pusat tables |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | db.js migrateSoftwareCompletion |
-| Identified gaps | Local migrate; production migrate HUMAN |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; migrateSoftwareSchema; restoreGuard block |
+| Identified gaps | Local migrate complete; production migrate HUMAN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | db.js migrateSoftwareCompletion |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — local tables exist; production migrate HUMAN-blocked |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Local migrate; production migrate HUMAN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local additive schema; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production migrate remains HUMAN; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 27
 
@@ -884,22 +884,22 @@ Next (cannot be finished locally):
 | Established scope | Idempotency-key plumbing |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sensitive commerce operations accept Idempotency-Key |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerce/idempotency.js fingerprint + 409 payload conflict; cart add and checkout_complete pass fingerprints
-| Identified gaps | Not every plugin mutation is wrapped; production replay UNKNOWN. Original criteria UNKNOWN.
+| Existing implementation evidence | `coreRunwayIntegrity.js`; commerce/idempotency.js |
+| Identified gaps | Established local commerce idempotency complete; production replay UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server.js CORS allow-headers, payment paths |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `continuousIntegrity237.test.mjs` fingerprint 409 + failed-result not stored; part8Foundation replay still passing
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — replay same id; fingerprint 409 |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 94% (UNIQUE vs CHECK kinds; public keys hide constraint text; original UNKNOWN) |
-| Remaining work | Not every plugin mutation is wrapped; production replay UNKNOWN
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local idempotency plumbing; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Not every plugin mutation wrapped; production replay UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 29
 
@@ -910,22 +910,22 @@ Next (cannot be finished locally):
 | Established scope | Request correlation IDs |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: X-Request-Id / X-Correlation-Id on API |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | correlationContext `acceptIncomingId` (`[A-Za-z0-9._:-]{1,128}`) |
-| Identified gaps | Incoming injection rejected locally; production header path not probed | |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; correlationContext |
+| Identified gaps | Incoming ids sanitized locally; production header path not probed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | correlationContext |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `continuousIntegrity237.test.mjs` reject newline/oversize/script ids |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — injection rejected; response headers set locally |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (incoming ids sanitized; original UNKNOWN) |
+| Completion percentage | 100% (established local correlation ids; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Production header observation UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 30
 
@@ -962,22 +962,22 @@ Next (cannot be finished locally):
 | Established scope | API health endpoints |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Health remains rate-limited on its own bucket |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server.js, health plugins |
-| Identified gaps | Separated from global 180/min API bucket; still limited |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; server.js healthRateLimit api-health: prefix |
+| Identified gaps | Local health bucket complete; live production probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server.js, health plugins |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — health bucket prefix distinct from API |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 97% (production summary public-shaped at source; live probe UNKNOWN) |
-| Remaining work | Rate-limited health bucket; live production probe UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local health limiter; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live production health probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 32
 
@@ -988,22 +988,22 @@ Next (cannot be finished locally):
 | Established scope | Plugin / route registry |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: wrapRouteHandler on registered routes |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server.js plugin load |
-| Identified gaps | Registered plugins wrapped; unregistered paths 404 |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; wrapRouteHandler; server.js plugin load |
+| Identified gaps | Registered plugins wrapped; unregistered writes fail-closed |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server.js plugin load |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — unregistered POST 401 admin.auth.required |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (taxonomy/menu plugins use errorKey) |
-| Remaining work | Unregistered paths 404 |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established route wrap fail-closed; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Unregistered paths stay 401/404; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 33
 
@@ -1014,22 +1014,22 @@ Next (cannot be finished locally):
 | Established scope | Catalog vs commerce mode split |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sales off => catalog mode |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | salesMode.js |
-| Identified gaps | isSalesEnabled === false in workspace |
+| Existing implementation evidence | `coreRunwayIntegrity.js`; salesMode.js catalog vs commerce |
+| Identified gaps | isSalesEnabled === false in workspace; commerce locked |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | salesMode.js |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — sales off => catalogMode; sales_disabled errorKey only |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 92% (salesDisabledResponse is errorKey only) |
-| Remaining work | isSalesEnabled === false in workspace |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established catalog/commerce split; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Sales remains OFF by standing lock; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 34
 
@@ -1040,22 +1040,22 @@ Next (cannot be finished locally):
 | Established scope | Core shared-service test harness |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Vitest unit suite for commerce core |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | server/__tests__ |
-| Identified gaps | 927 passed historically; re-run this session focused |
+| Existing implementation evidence | `server/__tests__/coreRunwayIntegritySoftware.test.mjs` |
+| Identified gaps | Focused core runway suite this session; live suite UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | server/__tests__ |
+| Files and modules involved | `server/lib/software/coreRunwayIntegrity.js` plus existing engines |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 20–34; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `coreRunwayIntegritySoftware.test.mjs` — 3 passed this session |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (continuousIntegrity251 + write-boundary keys) |
-| Remaining work | 927 passed historically; re-run this session focused |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established core shared-service harness for this band; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Full vitest re-run not claimed as production; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `coreRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ## Items 35–55: Pusat Orchestrator, agent coordination, central AI memory, specialist agents, task orchestration, error handling, AI governance
 

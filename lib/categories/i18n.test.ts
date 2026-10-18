@@ -31,10 +31,11 @@ describe("category labels", () => {
   it("uses Turkish locale uppercase for menu labels", () => {
     expect(toCategoryDisplayUpperCase("Tekstil", "tr")).toBe("TEKSTİL");
     expect(toCategoryDisplayUpperCase("Otomotiv ve motorlu araçlar", "tr")).toBe("OTOMOTİV VE MOTORLU ARAÇLAR");
-    expect(formatMenuLabel({ id: "cat-01", menu_order: 1, name: "Textil" }, "tr")).toBe("01. TEKSTİL");
+    expect(formatMenuLabel({ id: "cat-01", menu_order: 1, name: "Textil" }, "tr")).toBe("TEKSTİL");
     expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe(
-      "05. OTOMOTİV VE MOTORLU ARAÇLAR",
+      "OTOMOTİV VE MOTORLU ARAÇLAR",
     );
+    expect(formatMenuLabel({ id: "cat-01", menu_order: 1, name: "Textil" }, "tr")).not.toMatch(/^\d{2}\./);
   });
 
   it("uses Arabic catalog instead of Turkish source names", () => {

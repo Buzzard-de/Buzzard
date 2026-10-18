@@ -151,7 +151,7 @@ describe("homepage canonical content", () => {
       "Otomotiv ve motorlu araçlar",
     );
     expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe(
-      "05. OTOMOTİV VE MOTORLU ARAÇLAR",
+      "OTOMOTİV VE MOTORLU ARAÇLAR",
     );
   });
 

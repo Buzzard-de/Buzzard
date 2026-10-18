@@ -82,7 +82,7 @@ export function formatMenuLabel(
 ): string {
   const label = getCategoryLabel(category, locale);
   if (category.id.match(/^cat-\d{2}$/)) {
-    return `${String(category.menu_order).padStart(2, "0")}. ${toCategoryDisplayUpperCase(label, locale)}`;
+    return toCategoryDisplayUpperCase(label, locale);
   }
   return label;
 }

@@ -52,6 +52,7 @@ const sotActivation = require("./sotActivation");
 const catalogIntegrity = require("./catalogIntegrity");
 const supplierStockIntegrity = require("./supplierStockIntegrity");
 const pricingProfitIntegrity = require("./pricingProfitIntegrity");
+const orderPaymentReturnIntegrity = require("./orderPaymentReturnIntegrity");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
@@ -124,6 +125,7 @@ module.exports = {
   catalogIntegrity,
   supplierStockIntegrity,
   pricingProfitIntegrity,
+  orderPaymentReturnIntegrity,
   productionConfigGate,
   productionDeployGate,
   goLiveGate,

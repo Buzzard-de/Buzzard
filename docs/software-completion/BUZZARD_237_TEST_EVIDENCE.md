@@ -373,3 +373,13 @@ Client totals and client-paid are not proof. Missing supplier cost is not invent
 | pricingProfitIntegritySoftware + part8Foundation | 0 | 2 files, **27 passed** |
 
 **22** 93→100. **23** 93→100. **27** 90→100. **104** 82→100. All PARTIAL (not VERIFIED_100). Mean **95.00%** (22514/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Order, payment, and return software (items 95–113)
+
+Commercial create blocked. Stripe/PayPal live HTTP blocked. Confirm/refund provider-gated. Unsigned webhook cannot mark paid. UNCERTAIN not retried as success. Customer refund is not supplier credit. Sales off.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| orderPaymentReturnIntegritySoftware | 0 | 1 file, **3 passed** |
+
+Items **95–113** established-scope **100** PARTIAL (**104** already 100). Not VERIFIED_100. Mean **96.27%** (22817/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

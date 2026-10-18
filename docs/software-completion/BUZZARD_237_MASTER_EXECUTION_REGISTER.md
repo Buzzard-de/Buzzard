@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **95.00%** (Σ 22514 / 237 = 94.9958…; one decimal **95.0%**). Was **94.82%** (22472/237). This pass **+0.18 pp**. **%80 reached: YES** (need Σ 18960; surplus 3554). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Pricing/profit remaining **22/23/27/104** established-scope **100%** (75–94 already 100). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **96.27%** (Σ 22817 / 237 = 96.2743…; one decimal **96.3%**). Was **95.00%** (22514/237). This pass **+1.27 pp**. **%80 reached: YES** (need Σ 18960; surplus 3857). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Order/payment/return 95–113 established-scope **100%**. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -150,10 +150,11 @@ Mean established-scope completion: **95.00%** (Σ 22514 / 237 = 94.9958…; one 
 100. Product and catalog infrastructure software (items 56–74): exact sku/ean match only; live import/OpenSearch/catalog blocked; invented live price/image blocked; taxonomy honesty 53 shop / 50 customer-facing / 48 legacy; ACTIVE create rejected; SoT stays off. **67/73 stay HUMAN**. Mean **93.07%** (22057/237). Not VERIFIED_100. No live PIM publish or SoT cutover.
 101. Supplier and stock infrastructure software (items 75–94): live PO/feed/sync blocked; outage/malformed/stale ≠ stock; no own-stock buy; €0.50 floor; €0.10 undercut unimplemented; WMS vs commerce reserves split. **87/88 stay EXTERNAL**. Mean **94.82%** (22472/237). Not VERIFIED_100. No live Inter-Cars or TecDoc.
 102. Pricing and profitability software (items 22, 23, 27, 104; 75/76/82/89/90/91 already 100): client totals rejected; missing cost fail-closed; €0.50 floor; undercut unimplemented; competitor prices not invented; UNCERTAIN is not revenue. Mean **95.00%** (22514/237). Not VERIFIED_100. No live price publish.
+103. Order, payment, and return software (items 95–113): commercial create blocked; Stripe/PayPal live HTTP blocked; confirm/refund provider-gated; unsigned webhook cannot mark paid; UNCERTAIN not retried as success; refund ≠ supplier credit; guest IDOR/loyalty mint blocked. Mean **96.27%** (22817/237). Not VERIFIED_100. No live charge.
 
 ## Resume pointer
 
-Pricing and profitability software pass (2026-10-17): items **22, 23, 27, 104** (band 75–94 already at 100). Client totals and client-paid are not proof. Missing supplier cost is not invented. UNCERTAIN payments are not revenue. €0.10 undercut stays unimplemented. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **95.00%** (22514/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Order, payment, and return software pass (2026-10-18): items **95–113**. Commercial orders, live Stripe/PayPal, confirm, refund, and unsigned webhooks stay refused. Customer refund is not supplier credit. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.27%** (22817/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -2629,22 +2630,22 @@ Next (cannot be finished locally):
 | Established scope | Cart service |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Session-bound writes |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | cartService.js |
-| Identified gaps | assertCartAccess |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | cartService.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 93% (cartCheckout notFound/invalid keyed) |
-| Remaining work | assertCartAccess |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 96
 
@@ -2655,22 +2656,22 @@ Next (cannot be finished locally):
 | Established scope | Checkout service |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Sales lock + guest proof |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | checkoutService.js |
-| Identified gaps | Commercial blocked |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | checkoutService.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (checkout notFound keyed) |
-| Remaining work | Commercial blocked |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 97
 
@@ -2681,22 +2682,22 @@ Next (cannot be finished locally):
 | Established scope | Order service |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: skipAccessCheck only internal |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | orderService.js |
-| Identified gaps | Guest token stripped |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | orderService.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 86% (orderManagement English replaced with keys) |
-| Remaining work | Guest token stripped |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 98
 
@@ -2707,22 +2708,22 @@ Next (cannot be finished locally):
 | Established scope | Stripe payment adapter |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Live HTTP requires sales AND LIVE_PAYMENTS |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | stripeAdapter.js |
-| Identified gaps | ADAPTER_IMPLEMENTED; LIVE_VERIFIED false; MOCK/sandbox UNKNOWN |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | stripeAdapter.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (paymentsFinance errors keyed; live Stripe UNKNOWN) |
-| Remaining work | LIVE_VERIFIED false; sandbox UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 99
 
@@ -2733,22 +2734,22 @@ Next (cannot be finished locally):
 | Established scope | PayPal payment adapter |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Same live gate |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | paypalAdapter.js |
-| Identified gaps | ADAPTER_IMPLEMENTED; not live |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | paypalAdapter.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (paymentsFinance errors keyed; live PayPal UNKNOWN) |
-| Remaining work | LIVE_VERIFIED false |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 100
 
@@ -2759,22 +2760,22 @@ Next (cannot be finished locally):
 | Established scope | Dual payment engine |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Diagnostics use effective flags not raw env |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | dualPaymentEngine.js |
-| Identified gaps | providerDiagnostics now effective flags |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | dualPaymentEngine.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 74% (payment intent errors keyed; live dual UNKNOWN) |
-| Remaining work | providerDiagnostics now effective flags |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 101
 
@@ -2785,22 +2786,22 @@ Next (cannot be finished locally):
 | Established scope | Finance confirm fail-closed |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PROVIDER_CONFIRMATION_REQUIRED 409 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | finance paths |
-| Identified gaps | fortressAuthz |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | finance paths |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (payment confirm blocked is a key) |
-| Remaining work | fortressAuthz |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 102
 
@@ -2811,22 +2812,22 @@ Next (cannot be finished locally):
 | Established scope | Refund fail-closed |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PROVIDER_REFUND_REQUIRED 409 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | finance paths |
-| Identified gaps | fortressAuthz |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | finance paths |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (refund blocked is a key) |
-| Remaining work | fortressAuthz |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 103
 
@@ -2837,22 +2838,22 @@ Next (cannot be finished locally):
 | Established scope | Returns RMA |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Customer refund ≠ supplier credit |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | returnsRma + software/returns |
-| Identified gaps | Ledger wrap |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | returnsRma + software/returns |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 91% (returnsRma English replaced with rma.* keys) |
-| Remaining work | Ledger wrap; live refund UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 104
 
@@ -2863,22 +2864,22 @@ Next (cannot be finished locally):
 | Established scope | Financial reconciliation local |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: No invented revenue |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `server/lib/software/pricingProfitIntegrity.js`; reporting.js; payments.js |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Identified gaps | Live provider reconciliation remaining; invented revenue still refused |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | `server/lib/software/pricingProfitIntegrity.js`; reporting.js; payments.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 100% (established pricing/profit software; original unknown criteria cannot be VERIFIED_100) |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live provider reconciliation HUMAN; original criteria UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `pricingProfitIntegritySoftware.test.mjs` |
-| Final state and date | PARTIAL / 2026-10-17 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 105
 
@@ -2889,22 +2890,22 @@ Next (cannot be finished locally):
 | Established scope | Payment idempotency |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Timeout UNCERTAIN never retried as success |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/payments.js |
-| Identified gaps | Timeout policy |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/payments.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 87% (payment unique events classified; non-unique sqlite rethrow is keyed) |
-| Remaining work | Timeout policy; live payments off |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 106
 
@@ -2915,22 +2916,22 @@ Next (cannot be finished locally):
 | Established scope | Fraud safeguards |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Client cannot mark paid |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | dualPaymentEngine.clientCannotMarkPaid |
-| Identified gaps | Unit secureCommerce |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | dualPaymentEngine.clientCannotMarkPaid |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Unit secureCommerce |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 107
 
@@ -2941,22 +2942,22 @@ Next (cannot be finished locally):
 | Established scope | Financial authorization |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Finance endpoints not public |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | routePermissions / fortress |
-| Identified gaps | Authz tests |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | routePermissions / fortress |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 80% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Authz tests |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 108
 
@@ -2967,22 +2968,22 @@ Next (cannot be finished locally):
 | Established scope | Live payments gated |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: livePaymentsEnabled false in this workspace |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceFeatureFlags |
-| Identified gaps | Flag off; adapters gated |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceFeatureFlags |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Flag off; adapters gated |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 109
 
@@ -2993,22 +2994,22 @@ Next (cannot be finished locally):
 | Established scope | Webhook signature verification |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Unsigned cannot mark paid |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | officialPaymentIngress + webhookFoundation eventId/timestamp/signature + paymentLifecycle.verifyWebhookSignature |
-| Identified gaps | Live Stripe/PayPal verification not executed; sales-off blocks delivery |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | officialPaymentIngress |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 88% (webhook 501 errorKey only; no adapter hint leak) |
-| Remaining work | Live provider verification not authorized |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 110
 
@@ -3019,22 +3020,22 @@ Next (cannot be finished locally):
 | Established scope | Guest checkout proof |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: 401 without proof |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | commerceGuards |
-| Identified gaps | guestCommerceAccess |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | commerceGuards |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | guestCommerceAccess |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 111
 
@@ -3045,22 +3046,22 @@ Next (cannot be finished locally):
 | Established scope | Order identity / QR |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Phase 3 identity |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | orderIdentityLoyalty tests |
-| Identified gaps | Historical unit |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | orderIdentityLoyalty tests |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 82% (IDENTITY_BIND_FAILED no longer embeds exception text; original UNKNOWN) |
-| Remaining work | Historical unit; live QR UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 112
 
@@ -3071,22 +3072,22 @@ Next (cannot be finished locally):
 | Established scope | Loyalty non-abuse |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Cannot mint value via guest IDOR |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | loyalty + guards |
-| Identified gaps | Not fully re-audited this pass |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | loyalty + guards |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 77% (loyalty/campaign errors keyed) |
-| Remaining work | Abuse paths not fully re-audited |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 113
 
@@ -3097,22 +3098,22 @@ Next (cannot be finished locally):
 | Established scope | Official payment ingress |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Single official webhook path |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | officialPaymentIngress.js |
-| Identified gaps | describeIngress uses effective flags |
+| Existing implementation evidence | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
+| Identified gaps | Established local fail-closed software complete; live money not proven |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | officialPaymentIngress.js |
+| Files and modules involved | `server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 95–113; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `orderPaymentReturnIntegritySoftware.test.mjs` — commercial/charge/refund/unsigned webhook/return refuse |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | describeIngress uses effective flags |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established order/payment/return software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live Stripe/PayPal/refund/order not claimed; original criteria UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `orderPaymentReturnIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ## Items 114–136: Marketplace connectors, listings, market configuration, VAT, localization, multilingual, international expansion
 

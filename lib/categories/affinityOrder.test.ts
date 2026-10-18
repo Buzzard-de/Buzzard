@@ -24,7 +24,7 @@ describe("customer-facing category affinity order", () => {
   });
 
   it("keeps close families next to each other", () => {
-    const index = new Map(CUSTOMER_FACING_AFFINITY_ORDER.map((id, i) => [id, i]));
+    const index = new Map<string, number>(CUSTOMER_FACING_AFFINITY_ORDER.map((id, i) => [id, i]));
     const neighbors: Array<[string, string]> = [
       ["cat-01", "cat-42"],
       ["cat-15", "cat-16"],

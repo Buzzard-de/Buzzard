@@ -86,9 +86,44 @@ export function getDefaultSubCategoryId(mainId: string): string {
   return getChildren(mainId)[0]?.id ?? "";
 }
 
+const AUTOMOTIVE_HUB_SLUGS = new Set([
+  "pkw",
+  "transporter",
+  "lkw",
+  "bus",
+  "motorrad",
+  "traktor",
+  "baumaschinen",
+  "kfz",
+]);
+
+const TIRE_LEAF_KIND: Record<string, "reifen" | "felgen"> = {
+  "yaz-lastigi": "reifen",
+  "k-s-lastigi": "reifen",
+  "doert-mevsim-reifen": "reifen",
+  "reifen-aksesuarlar": "reifen",
+  "celik-jant": "felgen",
+  "alueminyum-jant": "felgen",
+};
+
 export function findCategoryBySlugPath(slugPath: string): BuzzardCategory | undefined {
   const normalized = slugPath.replace(/^\/+|\/+$/g, "");
-  return bySlugPath.get(normalized) ?? byLegacySlugPath.get(normalized);
+  const direct = bySlugPath.get(normalized) ?? byLegacySlugPath.get(normalized);
+  if (direct) return direct;
+
+  const parts = normalized.split("/").filter(Boolean);
+  if (parts[0] === "automotive" && parts[1] && !AUTOMOTIVE_HUB_SLUGS.has(parts[1])) {
+    if (parts[1] === "reifen-und-felgen") {
+      const leaf = parts[2];
+      const kind = leaf ? TIRE_LEAF_KIND[leaf] : undefined;
+      const tirePath = kind && leaf
+        ? `reifen-und-felgen/pkw/${kind}/${leaf}`
+        : "reifen-und-felgen/pkw";
+      return bySlugPath.get(tirePath);
+    }
+    return bySlugPath.get(["automotive", "pkw", ...parts.slice(1)].join("/"));
+  }
+  return undefined;
 }
 
 export function findCategoryByUrl(url: string): BuzzardCategory | undefined {

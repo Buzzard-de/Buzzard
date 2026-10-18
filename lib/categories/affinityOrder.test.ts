@@ -32,7 +32,7 @@ describe("customer-facing category affinity order", () => {
       ["cat-27", "cat-45"],
       ["cat-17", "cat-18"],
       ["cat-06", "cat-26"],
-      ["cat-25", "cat-46"],
+      ["cat-05", "cat-54"],
       ["cat-07", "cat-33"],
       ["cat-12", "cat-36"],
       ["cat-36", "cat-38"],

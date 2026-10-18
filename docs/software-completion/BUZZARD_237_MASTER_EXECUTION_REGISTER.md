@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **96.65%** (Σ 22907 / 237 = 96.6540…; one decimal **96.7%**). Was **96.27%** (22817/237). This pass **+0.38 pp**. **%80 reached: YES** (need Σ 18960; surplus 3947). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 144–146 established-scope **100%**. Band **114–136 not rescored** (already 100; 115/129 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **96.90%** (Σ 22966 / 237 = 96.9029…; one decimal **96.9%**). Was **96.65%** (22907/237). This pass **+0.25 pp**. **%80 reached: YES** (need Σ 18960; surplus 4006). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Items 156/157/164/166 established-scope **100%**. Band **152–155, 158–163, 165, 167 not rescored** (already 100; 155/165 HUMAN). Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -152,10 +152,11 @@ Mean established-scope completion: **96.65%** (Σ 22907 / 237 = 96.6540…; one 
 102. Pricing and profitability software (items 22, 23, 27, 104; 75/76/82/89/90/91 already 100): client totals rejected; missing cost fail-closed; €0.50 floor; undercut unimplemented; competitor prices not invented; UNCERTAIN is not revenue. Mean **95.00%** (22514/237). Not VERIFIED_100. No live price publish.
 103. Order, payment, and return software (items 95–113): commercial create blocked; Stripe/PayPal live HTTP blocked; confirm/refund provider-gated; unsigned webhook cannot mark paid; UNCERTAIN not retried as success; refund ≠ supplier credit; guest IDOR/loyalty mint blocked. Mean **96.27%** (22817/237). Not VERIFIED_100. No live charge.
 104. Marketplace and international infrastructure software (items 144–146 leftover; 114–136 already 100, not rescored): language selection does not rewrite market; country selection does not rewrite language; RTL uses stylesheet + logical start, not `text-align:right`; listings unpublished; unknown VAT not DE; FX not invented. **115/129 stay HUMAN**. Mean **96.65%** (22907/237). Not VERIFIED_100. No live listing.
+105. Logistics and customer-service software (items 156, 157, 164, 166 leftover; 152–155/158–163/165/167 already 100, not rescored): login policy 8/15min; reset tokens hashed; HTTP omits reset token; order history owner-scoped; RMA refund ≠ supplier credit; local Control Center events; SIEM export blocked. Labels/GPS/send remain blocked. **155/165 stay HUMAN**. Mean **96.90%** (22966/237). Not VERIFIED_100. No live label, GPS, or customer send.
 
 ## Resume pointer
 
-Marketplace and international software pass (2026-10-18): leftover items **144–146**. Language/country independence and RTL honesty closed locally. Band **114–136 not rescored**. Listings stay unpublished. **115/129 stay HUMAN**. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.65%** (22907/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
+Logistics and customer-service software pass (2026-10-18): leftover items **156, 157, 164, 166**. Labels, GPS, and customer send stay refused. **155/165 stay HUMAN**. Carriers/tracking already 100 not rescored. Established-scope 100% PARTIAL (not VERIFIED_100). Mean **96.90%** (22966/237). HUMAN still **13**. EXTERNAL still **87, 88, 185**. LIVE_VERIFIED **0**. Do not merge #431.
 
 Next (cannot be finished locally):
 1. HUMAN still **13** — live PIM/SoT/listing/send/config/deploy/go-live/DNS/first order/merge
@@ -4223,22 +4224,22 @@ Next (cannot be finished locally):
 | Established scope | Customer accounts |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: customerAuth login rate limit |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | customerAuth.js |
-| Identified gaps | Rate limit 8/15min |
+| Existing implementation evidence | `logisticsCustomerIntegrity.probeLoginRateLimit`; reset tokens hashed; HTTP reset omits token |
+| Identified gaps | TEST_MODE still disables limiter in CI; production login 429 UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | customerAuth.js |
+| Files and modules involved | logisticsCustomerIntegrity.js; customerAuth.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `logisticsCustomerIntegritySoftware.test.mjs` — 8/15min policy; hashed reset; no session on invalid login |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 96% (reset tokens stored as SHA-256 hashes; confirm still works; original UNKNOWN) |
-| Remaining work | Rate limit 8/15min |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established customer-account software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production login 429 UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `logisticsCustomerIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 157
 
@@ -4249,22 +4250,22 @@ Next (cannot be finished locally):
 | Established scope | Returns workflows |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: RMA + ledger |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | software/returns.js |
-| Identified gaps | Refund ≠ supplier credit |
+| Existing implementation evidence | `logisticsCustomerIntegrity.openReturn`; software/returns.js ledger |
+| Identified gaps | Live refund/credit UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | software/returns.js |
+| Files and modules involved | logisticsCustomerIntegrity.js; software/returns.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `logisticsCustomerIntegritySoftware.test.mjs` — refundExecuted false; supplier credit not assumed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 90% (RMA refund/exchange keys) |
+| Completion percentage | 100% (established RMA ledger software; original unknown criteria cannot be VERIFIED_100) |
 | Remaining work | Live refund/credit UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `logisticsCustomerIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 158
 
@@ -4431,22 +4432,22 @@ Next (cannot be finished locally):
 | Established scope | Operational visibility |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Control Center events |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | controlCenter.js |
-| Identified gaps | System events recorded |
+| Existing implementation evidence | `logisticsCustomerIntegrity.recordLocalEvent`; `exportAuditToSiem` SIEM_EXPORT_BLOCKED |
+| Identified gaps | External SIEM / live ops dashboard UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | controlCenter.js |
+| Files and modules involved | logisticsCustomerIntegrity.js; controlCenter.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `logisticsCustomerIntegritySoftware.test.mjs` — local event; SIEM_EXPORT_BLOCKED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 85% (v32–v40 record.* keys) |
-| Remaining work | System events recorded |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established local visibility software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | External SIEM UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `logisticsCustomerIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 165
 
@@ -4483,22 +4484,22 @@ Next (cannot be finished locally):
 | Established scope | Customer order bridge |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Existing engine |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | customerOrderBridge |
-| Identified gaps | Reused |
+| Existing implementation evidence | `logisticsCustomerIntegrity.ownOrder` / `assertOwner`; customerOrderBridge owner-scoped |
+| Identified gaps | Production order-history probe UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | customerOrderBridge |
+| Files and modules involved | logisticsCustomerIntegrity.js; customerAccess.js; customerOrderBridge.js |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 152–167; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | See HUMAN_APPROVAL_BLOCKERS.md if state is HUMAN or BLOCKED |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `logisticsCustomerIntegritySoftware.test.mjs` — CUSTOMER_REQUIRED / ACCESS_DENIED |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Reused |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established owner-scoped order-bridge software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production order-history probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `logisticsCustomerIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 167
 

@@ -393,3 +393,13 @@ Language selection does not rewrite market. Country selection does not rewrite l
 | marketplaceInternationalIntegritySoftware + internationalMarketSoftware | 0 | 2 files, **9 passed** |
 
 Items **144–146** 70→100 PARTIAL. Not VERIFIED_100. Mean **96.65%** (22907/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Logistics and customer-service software (items 156, 157, 164, 166)
+
+Login policy 8/15min (TEST_MODE still disables limiter in CI). Reset tokens hashed; HTTP omits token. Order history owner-scoped. RMA refund ≠ supplier credit. Local Control Center events; SIEM export blocked. Labels/GPS/send remain blocked. 155/165 stay HUMAN. Carriers/tracking not rescored.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| logisticsCustomerIntegritySoftware | 0 | 1 file, **3 passed** |
+
+Items **156** 96→100, **157** 90→100, **164** 85→100, **166** 70→100 PARTIAL. Not VERIFIED_100. Mean **96.90%** (22966/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

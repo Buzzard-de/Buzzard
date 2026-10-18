@@ -10,7 +10,7 @@ describe("main category visuals", () => {
     const ids = getVisibleMainCategories().map((cat) => cat.id);
     expect(ids).toHaveLength(APPROVED_CUSTOMER_FACING_L1_COUNT);
     expect(ids[0]).toBe("cat-01");
-    expect(ids.at(-1)).toBe("cat-54");
+    expect(ids.at(-1)).toBe("cat-56");
     expect(ids).not.toContain("cat-30");
     expect(ids).not.toContain("cat-37");
     expect(ids).not.toContain("cat-39");

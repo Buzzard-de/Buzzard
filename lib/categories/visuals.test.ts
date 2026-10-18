@@ -3,7 +3,8 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { APPROVED_CUSTOMER_FACING_L1_COUNT } from "./customerFacing";
 import { getVisibleMainCategories } from "./service";
-import { getMainCategoryVisual } from "./visuals";
+import { getChildren } from "./service";
+import { getCategoryVisual, getMainCategoryVisual, hasHubSubcategoryVisual } from "./visuals";
 
 describe("main category visuals", () => {
   it("maps every customer-facing L1 to a public WebP tile", () => {
@@ -21,5 +22,20 @@ describe("main category visuals", () => {
       expect(getMainCategoryVisual(id)).toBe(`/images/categories/${id}.webp`);
     }
     expect(missing).toEqual([]);
+  });
+
+  it("gives construction-machine and livestock L2 hubs their own photographs", () => {
+    const hubs = [...getChildren("cat-55"), ...getChildren("cat-56")];
+    expect(hubs).toHaveLength(18);
+    const missing = hubs.filter(
+      (cat) => !existsSync(join(process.cwd(), "public", "images", "categories", `${cat.id}.webp`)),
+    );
+    for (const cat of hubs) {
+      expect(hasHubSubcategoryVisual(cat.id)).toBe(true);
+      expect(getCategoryVisual(cat.id)).toBe(`/images/categories/${cat.id}.webp`);
+    }
+    expect(missing).toEqual([]);
+    expect(hasHubSubcategoryVisual("cat-55")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-55-01-01")).toBe(false);
   });
 });

@@ -7,6 +7,7 @@ import { getHomeCategoryIds, getHomeCategoryList, HOME_CATALOG_HREF } from "@/li
 import { getHomeFeaturedCategoryIds } from "@/lib/navigation/home-config";
 import { isPhoneViewport, PHONE_MEDIA_QUERY } from "@/lib/mobile/phoneViewport";
 import { translate } from "@/lib/i18n/translations";
+import { formatMenuLabel, getCategoryLabel } from "@/lib/categories/i18n";
 import { getDeliverableMarketCountries } from "@/lib/market/countries";
 import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 
@@ -146,6 +147,12 @@ describe("homepage canonical content", () => {
   it("keeps automotive as a category, not the homepage definition", () => {
     expect(getHomeCategoryList().some((c) => c.id === "cat-05")).toBe(true);
     expect(HOME_CATALOG_HREF).toBe("/products/");
+    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "tr")).toBe(
+      "Otomotiv ve motorlu araçlar",
+    );
+    expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe(
+      "05. OTOMOTİV VE MOTORLU ARAÇLAR",
+    );
   });
 
   it("exposes 30 locales and 35 markets", () => {

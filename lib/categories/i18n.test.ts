@@ -11,16 +11,24 @@ import {
 describe("category labels", () => {
   it("uses Turkish catalog for main categories, not English", () => {
     expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "tr")).toBe("Tekstil");
-    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "tr")).toBe("Otomotiv");
+    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "tr")).toBe("Otomotiv ve motorlu araçlar");
+    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "de")).toBe(
+      "Automotive und motorisierte Fahrzeuge",
+    );
+    expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "en")).toBe(
+      "Automotive and motor vehicles",
+    );
     expect(getCategoryLabel({ id: "cat-01", name: "Textil" }, "tr")).not.toBe("Textiles");
     expect(getCategoryLabel({ id: "cat-05", name: "Automotive" }, "tr")).not.toBe("Automotive");
   });
 
   it("uses Turkish locale uppercase for menu labels", () => {
     expect(toCategoryDisplayUpperCase("Tekstil", "tr")).toBe("TEKSTİL");
-    expect(toCategoryDisplayUpperCase("Otomotiv", "tr")).toBe("OTOMOTİV");
+    expect(toCategoryDisplayUpperCase("Otomotiv ve motorlu araçlar", "tr")).toBe("OTOMOTİV VE MOTORLU ARAÇLAR");
     expect(formatMenuLabel({ id: "cat-01", menu_order: 1, name: "Textil" }, "tr")).toBe("01. TEKSTİL");
-    expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe("05. OTOMOTİV");
+    expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe(
+      "05. OTOMOTİV VE MOTORLU ARAÇLAR",
+    );
   });
 
   it("uses Arabic catalog instead of Turkish source names", () => {

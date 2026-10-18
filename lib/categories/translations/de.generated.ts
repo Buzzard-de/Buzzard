@@ -201,7 +201,7 @@ export const categoryLabelsDe: Record<string, string> = {
   "cat-04-06-02": "Premium",
   "cat-04-06-03": "Setler",
   "cat-04-06-04": "Zubehör",
-  "cat-05": "Automotive",
+  "cat-05": "Automotive und motorisierte Fahrzeuge",
   "cat-05-01": "Motoröle & Flüssigkeiten",
   "cat-05-01-01": "Motoröl",
   "cat-05-01-02": "Sanz Man Yag",

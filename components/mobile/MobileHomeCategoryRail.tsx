@@ -6,15 +6,15 @@ import {
   categoryHref,
   getCategoryLabel,
   getMainCategoryIcon,
+  getVisibleMainCategories,
 } from "@/lib/categories";
 import { useHomeUI } from "@/lib/home-ui";
-import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function MobileHomeCategoryRail() {
   const homeUI = useHomeUI();
   const { locale, t } = useLocale();
-  const categories = getHomeCategoryList();
+  const categories = getVisibleMainCategories();
 
   return (
     <nav className="buzzard-mobile-only mobile-home-category-rail" aria-label={t("home.mainCategories")}>

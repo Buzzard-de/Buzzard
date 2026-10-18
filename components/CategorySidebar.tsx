@@ -13,6 +13,7 @@ import {
   isCategoryVisibleToCustomer,
   MAIN_CATEGORY_COUNT,
 } from "@/lib/categories";
+import { orderCustomerFacingCategories } from "@/lib/categories/affinityOrder";
 import { toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
@@ -112,7 +113,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
   const visibilityMap = useCategoryVisibilityMap();
   const { locale, t } = useLocale();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
-  const mainCategoryNodes = getVisibleMainCategories(visibilityMap);
+  const mainCategoryNodes = orderCustomerFacingCategories(getVisibleMainCategories(visibilityMap));
 
   useEffect(() => {
     if (!homeUI?.sidebarOpen) return;

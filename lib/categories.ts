@@ -28,6 +28,7 @@ import {
 import { APPROVED_CUSTOMER_FACING_L1_COUNT, INTERNAL_SHOP_L1_COUNT } from "@/lib/categories/customerFacing";
 
 import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
+import { orderCustomerFacingCategories } from "@/lib/categories/affinityOrder";
 import { getMainCategoryIcon, getCategoryRowIcon } from "@/lib/categories/icons";
 import { getMainCategoryVisual } from "@/lib/categories/visuals";
 import { getProductsForCategory } from "@/lib/products";
@@ -69,7 +70,7 @@ export {
 };
 
 /** Linke Spalte: customer-facing Hauptkategorien (50; JSON still holds 53). */
-export const mainCategories = getVisibleMainCategories().map((cat) => ({
+export const mainCategories = orderCustomerFacingCategories(getVisibleMainCategories()).map((cat) => ({
   id: cat.id,
   slug: cat.slug,
   label: formatMenuLabel(cat, DEFAULT_LOCALE),

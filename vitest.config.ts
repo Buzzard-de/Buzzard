@@ -16,6 +16,7 @@ export default defineConfig({
       "lib/i18n/localeFinalization.test.ts",
       "lib/i18n/international/international.test.ts",
       "lib/market-engine/marketEngine.test.ts",
+      "lib/categories/affinityOrder.test.ts",
       "lib/categories/i18n.test.ts",
       "lib/categories/visuals.test.ts",
       "lib/home/homepage.test.ts",

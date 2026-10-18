@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { APPROVED_CUSTOMER_FACING_L1_COUNT, INTERNAL_ONLY_L1_IDS } from "@/lib/categories/customerFacing";
 import { getVisibleMainCategories } from "@/lib/categories";
+import { getCustomerFacingAffinityIds } from "@/lib/categories/affinityOrder";
 import { getHomeCategoryIds, getHomeCategoryList, HOME_CATALOG_HREF } from "@/lib/home/homepageContent";
 import { getHomeFeaturedCategoryIds } from "@/lib/navigation/home-config";
 import { isPhoneViewport, PHONE_MEDIA_QUERY } from "@/lib/mobile/phoneViewport";
@@ -15,7 +16,8 @@ describe("homepage canonical content", () => {
   it("uses the same 50 customer-facing L1 categories for every viewport", () => {
     const home = getHomeCategoryIds();
     const nav = getVisibleMainCategories().map((c) => c.id);
-    expect(home).toEqual(nav);
+    expect(home).toEqual(getCustomerFacingAffinityIds());
+    expect([...home].sort()).toEqual([...nav].sort());
     expect(home).toHaveLength(APPROVED_CUSTOMER_FACING_L1_COUNT);
     expect(getHomeFeaturedCategoryIds()).toEqual(home);
     for (const hidden of INTERNAL_ONLY_L1_IDS) {
@@ -56,7 +58,7 @@ describe("homepage canonical content", () => {
 
   it("keeps the mobile category rail on the canonical homepage category source", () => {
     const rail = readFileSync(resolve("components/mobile/MobileHomeCategoryRail.tsx"), "utf8");
-    expect(rail).toContain("getHomeCategoryList");
+    expect(rail).toContain("getVisibleMainCategories");
     expect(rail).toContain("categoryHref");
     expect(rail).not.toContain("const categories = [");
     expect(rail).not.toContain("RAIL_CATEGORY_COUNT");

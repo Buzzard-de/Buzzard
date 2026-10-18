@@ -1,10 +1,11 @@
 import { getVisibleMainCategories } from "@/lib/categories";
+import { orderCustomerFacingCategories } from "@/lib/categories/affinityOrder";
 import { APPROVED_CUSTOMER_FACING_L1_COUNT } from "@/lib/categories/customerFacing";
 import type { BuzzardCategory } from "@/lib/categories/types";
 
-/** Canonical homepage category source — same IDs for desktop and mobile. */
+/** Canonical homepage category source — same IDs for desktop and mobile, affinity order. */
 export function getHomeCategoryList(): BuzzardCategory[] {
-  return getVisibleMainCategories();
+  return orderCustomerFacingCategories(getVisibleMainCategories());
 }
 
 export function getHomeCategoryIds(): string[] {

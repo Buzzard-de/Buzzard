@@ -219,8 +219,10 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
     };
   });
   expect(result.ids[0]).toBe("cat-01");
-  expect(result.ids.at(-1)).toBe("cat-53");
-  expect(result.numbers).toEqual([...result.numbers].sort((a, b) => a - b));
+  expect(result.ids.at(-1)).toBe("cat-31");
+  expect(new Set(result.ids).size).toBe(50);
+  expect(result.ids.indexOf("cat-06") + 1).toBe(result.ids.indexOf("cat-26"));
+  expect(result.ids.indexOf("cat-12") + 1).toBe(result.ids.indexOf("cat-36"));
   expect(result.numbers).not.toContain(30);
   expect(result.numbers).not.toContain(37);
   expect(result.numbers).not.toContain(39);

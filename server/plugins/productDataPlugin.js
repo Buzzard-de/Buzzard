@@ -35,7 +35,7 @@ module.exports = {
       const id = Number(req.params.id);
       const product = products.find(item => item.id === id);
       if (!product) {
-        return res.status(404).json({ message: 'Produkt nicht gefunden.' });
+        return res.status(404).json({ success: false, errorKey: 'product.notFound' });
       }
       res.json({ product });
     });

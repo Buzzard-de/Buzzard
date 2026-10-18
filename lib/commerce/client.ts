@@ -1,4 +1,4 @@
-import { getAccountToken } from "@/lib/account/client";
+import { withAccountCredentials } from "@/lib/admin/authTransport";
 import type {
   CommerceCartResponse,
   CommerceCompleteResponse,
@@ -13,20 +13,13 @@ import {
   getCommerceSessionId,
   getStoredCommerceCartId,
   setStoredCommerceCartId,
+  getStoredCommerceGuestToken,
+  setStoredCommerceGuestToken,
 } from "@/lib/commerce/runtime";
 import type { CommerceAddress } from "@/lib/commerce/types";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
-}
-
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? getAccountToken() : null;
-  return {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
 }
 
 export class CommerceClientError extends Error {
@@ -48,16 +41,24 @@ async function request<T>(
   if (!base) throw new CommerceClientError("commerce.apiUnavailable", "commerce.apiUnavailable", 503);
 
   const headers: HeadersInit = {
-    ...authHeaders(),
     ...(init?.headers || {}),
   };
+  const headerMap = headers as Record<string, string>;
   if (init?.idempotencyKey) {
-    (headers as Record<string, string>)["Idempotency-Key"] = init.idempotencyKey;
+    headerMap["Idempotency-Key"] = init.idempotencyKey;
+  }
+  const sessionId = getCommerceSessionId();
+  if (sessionId && sessionId !== "ssr") {
+    headerMap["X-Buzzard-Commerce-Session"] = sessionId;
+  }
+  const guestToken = getStoredCommerceGuestToken();
+  if (guestToken) {
+    headerMap["X-Buzzard-Guest-Token"] = guestToken;
   }
 
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, { ...init, headers });
+    res = await fetch(`${base}${path}`, withAccountCredentials({ ...init, headers }));
   } catch {
     throw new CommerceClientError("commerce.networkError", "commerce.networkError", 0);
   }
@@ -70,7 +71,7 @@ async function request<T>(
 
   if (!res.ok) {
     throw new CommerceClientError(
-      data.message || data.errorKey || "commerce.requestFailed",
+      data.errorKey || "commerce.requestFailed",
       data.errorKey || "commerce.requestFailed",
       res.status
     );
@@ -239,11 +240,18 @@ export async function startCheckout(input: {
   cartId: string;
   customerId?: string;
   orderType?: CommerceOrderType;
-}): Promise<{ success: boolean; checkout: { id: string; orderType?: string } }> {
-  return request("/api/commerce/checkout/start", {
+}): Promise<{ success: boolean; checkout: { id: string; orderType?: string; guestToken?: string } }> {
+  const data = await request<{
+    success: boolean;
+    checkout: { id: string; orderType?: string; guestToken?: string };
+  }>("/api/commerce/checkout/start", {
     method: "POST",
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, sessionId: getCommerceSessionId() }),
   });
+  if (data.checkout?.guestToken) {
+    setStoredCommerceGuestToken(data.checkout.guestToken);
+  }
+  return data;
 }
 
 export async function validateCheckout(

@@ -26,7 +26,12 @@ async function getMonitoringSnapshot() {
     alerts.push({ level: "WARNING", component: "BACKUP", reason: backup.latestStatus || "no valid backup", timestamp: production.timestamp });
   }
   if (!config.ok) {
-    alerts.push({ level: "CRITICAL", component: "CONFIG", reason: config.errors[0]?.message, timestamp: config.timestamp });
+    alerts.push({
+      level: "CRITICAL",
+      component: "CONFIG",
+      reason: config.errors[0]?.code || "config.invalid",
+      timestamp: config.timestamp,
+    });
   }
   if (production.commerce?.salesEnabled) {
     alerts.push({ level: "CRITICAL", component: "SALES", reason: "Sales enabled unexpectedly", timestamp: production.timestamp });
@@ -43,7 +48,7 @@ async function getMonitoringSnapshot() {
     overall: production.overall,
     components: {
       db: { status: production.database?.integrity?.status, persistent: production.database?.persistence?.persistent },
-      backup: { status: backup.latestStatus, dir: backup.backupDir },
+      backup: { status: backup.latestStatus, dirExists: Boolean(backup.dirExists) },
       workers: production.worker,
       jobs: operations.jobs,
       catalog: production.catalog,

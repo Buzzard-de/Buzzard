@@ -1,7 +1,7 @@
 /**
  * Part 13 — Production health aggregation (no secrets)
  */
-const { getDatabaseHealth } = require("./db");
+const { getDatabaseHealth, toPublicDatabaseHealth } = require("./db");
 const { getDatabaseStartupStatus } = require("./dbStartup");
 const { runIntegrityCheck } = require("./dbIntegrity");
 const { getDeploymentIdentity, getDeploymentDrift } = require("./deploymentIdentity");
@@ -9,6 +9,26 @@ const { validateEnvironment } = require("./environmentValidation");
 const { getStoreInfo } = require("./rateLimitStore");
 const { isSalesEnabled } = require("./salesMode");
 const goLiveApproval = require("./commerce/goLiveApproval");
+
+const SAFE_PROBE_ERROR = /^[A-Za-z0-9._:-]{1,64}$/;
+
+function logProbeFailure(probe, err) {
+  console.error("[productionHealth]", probe, {
+    name: err?.name || "Error",
+    code: typeof err?.code === "string" ? err.code : undefined,
+  });
+}
+
+function probeFailure(probe, err, extra = {}) {
+  logProbeFailure(probe, err);
+  return { ...extra, errorKey: `health.${probe}Failed` };
+}
+
+function publicProbeError(value) {
+  if (value == null) return null;
+  const text = String(value).trim();
+  return SAFE_PROBE_ERROR.test(text) ? text : "health.probeFailed";
+}
 
 async function getRedisHealth() {
   const redisClient = require("./redisClient");
@@ -33,10 +53,10 @@ async function getRedisHealth() {
       ok: health.ok,
       status: health.ok ? "OK" : "FAILED",
       latencyMs: health.latencyMs,
-      error: health.error,
+      error: publicProbeError(health.error),
     };
   } catch (err) {
-    return { ...base, ok: false, status: "FAILED", error: err.message };
+    return probeFailure("redis", err, { ...base, ok: false, status: "FAILED" });
   }
 }
 
@@ -64,7 +84,7 @@ function getWorkerHealth() {
       supplierOrdersBlocked: !isSalesEnabled(),
     };
   } catch (err) {
-    return { enabled: false, status: "ERROR", error: err.message };
+    return probeFailure("worker", err, { enabled: false, status: "ERROR" });
   }
 }
 
@@ -83,7 +103,7 @@ function getSchedulerHealth() {
         .map((s) => ({ id: s.id, name: s.name, nextRunAt: s.nextRunAt })),
     };
   } catch (err) {
-    return { enabled: false, error: err.message };
+    return probeFailure("scheduler", err, { enabled: false });
   }
 }
 
@@ -114,7 +134,7 @@ async function getAiHealthSummary() {
       provider: process.env.AI_PROVIDER || "rules",
     };
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("ai", err);
   }
 }
 
@@ -130,7 +150,7 @@ function getCatalogHealthSummary() {
       taxonomy: { ok: taxonomy.ok, count: taxonomy.count },
     };
   } catch (err) {
-    return { status: "ERROR", error: err.message };
+    return probeFailure("catalog", err, { status: "ERROR" });
   }
 }
 
@@ -151,16 +171,18 @@ function getSupplierIntegrationHealth() {
       note: "No real supplier connected — Part 15/16 scaffold only",
     };
   } catch (err) {
-    return { connected: false, error: err.message };
+    return probeFailure("supplier", err, { connected: false });
   }
 }
 
 function getBackupHealthSummary() {
   try {
     const backupAutomation = require("./backupAutomation");
-    return backupAutomation.getBackupReadiness();
+    const readiness = backupAutomation.getBackupReadiness();
+    const { backupDir: _backupDir, ...publicReady } = readiness;
+    return publicReady;
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("backup", err);
   }
 }
 
@@ -179,8 +201,28 @@ function getCommerceHealthSummary() {
       violations: flags.violations?.length || 0,
     };
   } catch (err) {
-    return { error: err.message };
+    return probeFailure("commerce", err);
   }
+}
+
+function publicStartup(startup) {
+  if (!startup || typeof startup !== "object") return startup;
+  return {
+    ok: startup.ok,
+    message: startup.message,
+    errors: startup.errors,
+    warnings: startup.warnings,
+    validatedAt: startup.validatedAt,
+    integrity: startup.integrity,
+    persistence: startup.persistence
+      ? {
+          mode: startup.persistence.mode,
+          persistent: startup.persistence.persistent,
+          ephemeralRisk: Boolean(startup.persistence.ephemeralRisk),
+        }
+      : undefined,
+    migrated: Boolean(startup.migration),
+  };
 }
 
 async function getProductionSummary() {
@@ -202,7 +244,7 @@ async function getProductionSummary() {
   try {
     jobSafety = require("./jobSafetyGate").getJobSafetyStatus();
   } catch (err) {
-    jobSafety = { error: err.message };
+    jobSafety = probeFailure("jobSafety", err);
   }
 
   let overall = "OK";
@@ -216,8 +258,8 @@ async function getProductionSummary() {
     deployment: drift,
     environment: envValidation,
     database: {
-      ...dbHealth,
-      startup: dbStartup,
+      ...toPublicDatabaseHealth(dbHealth),
+      startup: publicStartup(dbStartup),
       integrity,
     },
     redis,
@@ -259,4 +301,6 @@ module.exports = {
   getCommerceHealthSummary,
   getSupplierIntegrationHealth,
   getBackupHealthSummary,
+  probeFailure,
+  publicProbeError,
 };

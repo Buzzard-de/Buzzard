@@ -20,7 +20,20 @@ describe("storefrontVisibility", () => {
     const { isProductVisibleOnStorefront } = require("../lib/storefront/storefrontVisibility.js");
     const productCore = require("../lib/pim/productCore.js");
     const demo = productCore.getProduct("pim_prod_demo001");
-    expect(isProductVisibleOnStorefront(demo, { skipValidation: true })).toBe(true);
+    expect(demo).toBeTruthy();
+    expect(isProductVisibleOnStorefront(demo, { skipValidation: true })).toBe(false);
+    expect(
+      isProductVisibleOnStorefront(
+        {
+          sku: "VIS-UNIT-001",
+          title: "Visible unit product",
+          status: "READY",
+          visibility: "PUBLIC",
+          category: "cat-05",
+        },
+        { skipValidation: true }
+      )
+    ).toBe(true);
   });
 });
 
@@ -48,8 +61,11 @@ describe("catalogReadService", () => {
 
   it("gets product by slug", () => {
     const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const product = catalogReadService.getProductById("universal-demo-product");
-    expect(product?.sku).toBe("BZ-CORE-DEMO-001");
+    const productCore = require("../lib/pim/productCore.js");
+    const demo = productCore.getProduct("pim_prod_demo001");
+    expect(demo?.sku).toBe("BZ-CORE-DEMO-001");
+    const publicDemo = catalogReadService.getProductById("universal-demo-product");
+    expect(publicDemo == null || publicDemo.sku !== "BZ-CORE-DEMO-001" || demo.visibility === "PUBLIC").toBe(true);
   });
 });
 

@@ -13,11 +13,18 @@ function newCorrelationId() {
   return `corr_${crypto.randomBytes(8).toString("hex")}`;
 }
 
+const SAFE_INCOMING_ID = /^[A-Za-z0-9._:-]{1,128}$/;
+
+function acceptIncomingId(value) {
+  const text = String(value || "").trim();
+  return SAFE_INCOMING_ID.test(text) ? text : undefined;
+}
+
 function createContext({ requestId, correlationId, jobId, actor } = {}) {
   const ctx = {
-    requestId: requestId || newRequestId(),
-    correlationId: correlationId || newCorrelationId(),
-    jobId: jobId || null,
+    requestId: acceptIncomingId(requestId) || newRequestId(),
+    correlationId: acceptIncomingId(correlationId) || newCorrelationId(),
+    jobId: acceptIncomingId(jobId) || null,
     actor: actor || null,
     createdAt: new Date().toISOString(),
   };
@@ -64,6 +71,7 @@ function middleware() {
 module.exports = {
   newRequestId,
   newCorrelationId,
+  acceptIncomingId,
   createContext,
   getContext,
   bindJob,

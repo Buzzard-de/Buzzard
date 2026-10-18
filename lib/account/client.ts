@@ -20,41 +20,37 @@ import {
   storeUpdateMe,
 } from "@/lib/store";
 
-const TOKEN_KEY = "buzzard_account_token";
+import {
+  clearAccountSessionFlag,
+  hasAccountSession,
+  markAccountSession,
+  withAccountCredentials,
+} from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("account.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
+  const res = await fetch(`${base}${path}`, withAccountCredentials(init));
   const data = (await res.json()) as T & { errorKey?: string };
   if (!res.ok) throw new Error(data.errorKey || "account.requestFailed");
   return data;
 }
 
-export function saveAccountToken(token: string): void {
-  sessionStorage.setItem(TOKEN_KEY, token);
+export function saveAccountToken(_token?: string, csrfToken?: string): void {
+  markAccountSession(csrfToken);
 }
 
 export function clearAccountToken(): void {
-  sessionStorage.removeItem(TOKEN_KEY);
+  clearAccountSessionFlag();
 }
 
 export function getAccountToken(): string | null {
   if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(TOKEN_KEY);
+  return hasAccountSession() ? "cookie" : null;
 }
 
 export async function accountRegister(body: Record<string, unknown>): Promise<{ token: string; user: AccountUser }> {
@@ -68,11 +64,14 @@ export async function accountRegister(body: Record<string, unknown>): Promise<{ 
     saveAccountToken(data.token);
     return { token: data.token, user: mapStoreUser(data.user, String(body.country || "DE")) };
   }
-  const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/register", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
-  saveAccountToken(data.token);
+  const data = await request<{ success: boolean; token: string; csrfToken?: string; user: AccountUser }>(
+    "/api/account/register",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+    }
+  );
+  saveAccountToken(data.token, data.csrfToken);
   return { token: data.token, user: data.user };
 }
 
@@ -82,11 +81,14 @@ export async function accountLogin(email: string, password: string): Promise<{ t
     saveAccountToken(data.token);
     return { token: data.token, user: mapStoreUser(data.user) };
   }
-  const data = await request<{ success: boolean; token: string; user: AccountUser }>("/api/account/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
-  saveAccountToken(data.token);
+  const data = await request<{ success: boolean; token: string; csrfToken?: string; user: AccountUser }>(
+    "/api/account/login",
+    {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    }
+  );
+  saveAccountToken(data.token, data.csrfToken);
   return { token: data.token, user: data.user };
 }
 
@@ -255,7 +257,7 @@ export async function updateAccountPreferences(preferences: AccountPreferences):
   return data.preferences;
 }
 
-export async function requestPasswordReset(email: string): Promise<{ resetToken?: string }> {
+export async function requestPasswordReset(email: string): Promise<{ success?: boolean; errorKey?: string }> {
   if (isSqliteStoreEnabled()) throw new Error("account.featureUnavailable");
   return request("/api/account/password-reset/request", {
     method: "POST",
@@ -281,4 +283,4 @@ export async function requestAccountDeletion(): Promise<string> {
   return data.requestedAt;
 }
 
-export { TOKEN_KEY };
+export const TOKEN_KEY = "buzzard_account_session";

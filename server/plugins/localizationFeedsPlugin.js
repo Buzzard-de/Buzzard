@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -59,7 +59,7 @@ module.exports = {
 
     app.get("/api/localization/products/slug/:slug", (req, res) => {
       const product = localizationFeeds.getLocalizedProductBySlug(req.params.slug, req.query?.locale || "de-DE");
-      if (!product) return res.status(404).json({ error: "Product not found" });
+      if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       return res.json(product);
     });
 
@@ -83,21 +83,21 @@ module.exports = {
     app.post("/api/admin/localization/products/:id/translation", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = localizationFeeds.upsertProductTranslation(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/localization/products/:id/price", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = localizationFeeds.upsertPriceOverride(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/localization/shipping-rate", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = localizationFeeds.upsertShippingRate(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
   },

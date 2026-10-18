@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -46,7 +46,7 @@ function requireIdentityAuth(req, res) {
     return req.user;
   }
 
-  res.status(401).json({ error: "Authentication required" });
+  res.status(401).json({ success: false, errorKey: "security.authRequired" });
   return null;
 }
 
@@ -59,25 +59,25 @@ module.exports = {
 
     app.post("/api/identity-security/auth/register", (req, res) => {
       const result = identitySecurity.registerUser(req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json({ ok: true, userId: result.userId, verificationTokenForDevelopment: result.verificationTokenForDevelopment });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.status(201).json({ ok: true, userId: result.userId });
     });
 
     app.post("/api/identity-security/auth/verify-email", (req, res) => {
       const result = identitySecurity.verifyEmail(req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/identity-security/auth/login", (req, res) => {
       const result = identitySecurity.loginUser(req.body || {}, req);
-      if (result.error) return res.status(result.status || 401).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/identity-security/auth/refresh", (req, res) => {
       const result = identitySecurity.refreshAccessToken(req.body || {});
-      if (result.error) return res.status(result.status || 401).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -89,13 +89,13 @@ module.exports = {
     });
 
     app.post("/api/identity-security/auth/password-reset-request", (req, res) => {
-      const result = identitySecurity.requestPasswordReset(req.body || {}, req);
-      return res.json(result);
+      identitySecurity.requestPasswordReset(req.body || {}, req);
+      return res.json({ ok: true });
     });
 
     app.post("/api/identity-security/auth/password-reset", (req, res) => {
       const result = identitySecurity.completePasswordReset(req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -103,7 +103,7 @@ module.exports = {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
       const result = identitySecurity.getAccount(user.sub);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.account);
     });
 
@@ -124,7 +124,7 @@ module.exports = {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
       const result = identitySecurity.createAddress(user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.address);
     });
 
@@ -137,20 +137,34 @@ module.exports = {
     app.post("/api/identity-security/account/2fa/setup", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      return res.json(identitySecurity.setupTwoFactor(user.sub, req));
+      const result = identitySecurity.setupTwoFactor(user.sub, req);
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      const { secretForDevelopment, secret, recoveryCodes, ...publicResult } = result;
+      return res.json(publicResult);
+    });
+
+    app.post("/api/identity-security/account/2fa/confirm", (req, res) => {
+      const user = requireIdentityAuth(req, res);
+      if (!user) return;
+      const result = identitySecurity.confirmTwoFactor(user.sub, req.body || {}, req);
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      const { secretForDevelopment, secret, twofa_secret, ...publicResult } = result;
+      return res.json(publicResult);
     });
 
     app.post("/api/identity-security/account/2fa/disable", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      return res.json(identitySecurity.disableTwoFactor(user.sub, req));
+      const result = identitySecurity.disableTwoFactor(user.sub, req, req.body || {});
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.json(result);
     });
 
     app.post("/api/identity-security/privacy/request", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
       const result = identitySecurity.createPrivacyRequest(user.sub, req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.request);
     });
 

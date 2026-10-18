@@ -83,9 +83,10 @@ async function main() {
   });
 
   await test("Price tampering still blocked", async () => {
-    const catalog = await fetchJson("/api/catalog/products?q=BZ-CORE&limit=1");
-    const productId = catalog.body.items?.[0]?.id;
-    if (!productId) throw new Error("demo product missing");
+    const catalog = await fetchJson("/api/catalog/products?page=1&limit=20");
+    const product = (catalog.body.items || []).find((item) => item?.id && Number(item.price) > 0);
+    const productId = product?.id;
+    if (!productId) throw new Error("no public priced catalog product");
     const cart = await fetchJson("/api/commerce/cart", {
       method: "POST",
       body: JSON.stringify({ sessionId: "prod-safety-tamper" }),

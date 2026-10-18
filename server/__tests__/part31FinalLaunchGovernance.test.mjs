@@ -207,11 +207,11 @@ test('Final state cannot authorize activation', () => {
   assert.equal(result.humanApprovalRequired, true);
 });
 
-test('RBAC public health route is public', () => {
+test('RBAC operational health route requires system.read', () => {
   const { resolveRoutePermission } = require('../lib/routePermissions.js');
   assert.equal(
-    resolveRoutePermission('GET', '/api/health/final-launch-governance').public,
-    true
+    resolveRoutePermission('GET', '/api/health/final-launch-governance').permission,
+    'system.read'
   );
 });
 

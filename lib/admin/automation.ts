@@ -1,26 +1,20 @@
 import type { BackgroundJob, Schedule, WorkerState, IntegrationHealthRow } from "./automationTypes";
 
-const TOKEN_KEY = "buzzard_admin_token";
+import { adminApiBase } from "./apiBase";
+import { withAdminCredentials } from "@/lib/admin/authTransport";
+
 
 function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+  return adminApiBase();
 }
 
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
+  const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string; message?: string };
-  if (!res.ok) throw new Error(data.errorKey || data.message || "admin.requestFailed");
+  if (!res.ok) throw new Error(data.errorKey || "admin.requestFailed");
   return data;
 }
 

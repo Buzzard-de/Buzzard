@@ -1,4 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
+import fs from "node:fs";
+import path from "node:path";
+
+/** Default isolated API so admin/storefront specs do not skip for a missing URL. */
+if (!process.env.BUZZARD_API_URL && !process.env.NEXT_PUBLIC_BUZZARD_API_URL) {
+  process.env.BUZZARD_API_URL = "http://127.0.0.1:3001";
+  process.env.NEXT_PUBLIC_BUZZARD_API_URL = "http://127.0.0.1:3001";
+}
+
+const E2E_SPEC_DIR = path.join(process.cwd(), "e2e");
+
+function listE2eSpecs() {
+  return fs
+    .readdirSync(E2E_SPEC_DIR)
+    .filter((name) => name.endsWith(".spec.ts"))
+    .sort();
+}
 
 const VIEWPORTS = {
   desktop1280: { width: 1280, height: 720 },
@@ -29,12 +46,12 @@ export default defineConfig({
   projects: [
     {
       name: "api",
-      testMatch: /commerce-(storefront|security)\.spec\.ts/,
+      testMatch: /commerce-(storefront|security|readiness)\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "chromium-desktop",
-      testMatch: /customer-journey|admin\.spec\.ts/,
+      testMatch: /customer-journey|admin\.spec\.ts|admin-pim-core\.spec\.ts|storefront-bridge\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {
@@ -57,10 +74,10 @@ export default defineConfig({
     ? undefined
     : {
         command: "node scripts/e2e-webserver.mjs",
-        url: "http://localhost:3000",
+        url: process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${process.env.PLAYWRIGHT_WEB_PORT || 3000}`,
         reuseExistingServer: true,
         timeout: 180_000,
       },
 });
 
-export { VIEWPORTS };
+export { VIEWPORTS, listE2eSpecs };

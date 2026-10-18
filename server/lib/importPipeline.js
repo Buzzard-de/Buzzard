@@ -178,7 +178,14 @@ function processRecords(records, supplierId, ctx = {}) {
       }
 
       const { product, action } = buildBuzzardProduct(normalized, supplier, ctx);
-      productStore.upsertProduct(product);
+      const saved = productStore.upsertProduct(product, {
+        authorized: true,
+        source: "IMPORT",
+        actorId: ctx.actorId || "import-pipeline",
+      });
+      if (saved.error) {
+        throw new Error(saved.error);
+      }
       if (action === "created") created += 1;
       else updated += 1;
     } catch (error) {
@@ -187,7 +194,7 @@ function processRecords(records, supplierId, ctx = {}) {
         supplier_id: supplierId,
         record_reference: raw?.supplier_sku || raw?.sku || "unknown",
         error_type: "processing",
-        error_message: error.message,
+        error_message: require("./security").publicTaskError(error, "import.record_failed"),
         sync_job_id: job.id,
         retry_status: "pending",
       });

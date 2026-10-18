@@ -25,7 +25,7 @@ module.exports = {
     app.get("/api/taxonomy/category/:nodeId", (req, res) => {
       const node = embedded.getNode(req.params.nodeId);
       if (!node) {
-        return res.status(404).json({ success: false, error: "category_not_found" });
+        return res.status(404).json({ success: false, errorKey: "category_not_found" });
       }
       return res.json({
         success: true,
@@ -38,7 +38,7 @@ module.exports = {
     app.get("/api/taxonomy/search", (req, res) => {
       const query = String(req.query?.q || "").trim();
       if (!query) {
-        return res.status(400).json({ success: false, error: "query_required" });
+        return res.status(400).json({ success: false, errorKey: "query_required" });
       }
       return res.json({ success: true, items: embedded.search(query).slice(0, 50) });
     });
@@ -54,7 +54,7 @@ module.exports = {
     app.get("/api/taxonomy/canonical/:nodeId", (req, res) => {
       const node = unification.getCanonicalNode(req.params.nodeId);
       if (!node) {
-        return res.status(404).json({ success: false, error: "category_not_found" });
+        return res.status(404).json({ success: false, errorKey: "category_not_found" });
       }
       return res.json({
         success: true,
@@ -67,7 +67,7 @@ module.exports = {
     app.get("/api/taxonomy/resolve", (req, res) => {
       const legacyId = String(req.query?.legacy_id || "").trim();
       if (!legacyId) {
-        return res.status(400).json({ success: false, error: "legacy_id_required" });
+        return res.status(400).json({ success: false, errorKey: "legacy_id_required" });
       }
       const system = String(req.query?.system || "shop");
       return res.json({ success: true, ...unification.resolveLegacy(legacyId, system) });

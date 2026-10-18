@@ -30,7 +30,7 @@ function submitSupplierOrder(supplierOrder, supplier, req = null) {
   }
 
   if (!supplier?.active) {
-    return { ok: false, error: "Supplier inactive" };
+    return { ok: false, error: "supplier.inactive" };
   }
 
   if (!process.env.SUPPLIER_API_SECRET && supplier?.auth_type !== "none") {

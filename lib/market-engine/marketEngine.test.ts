@@ -94,7 +94,7 @@ describe("International Market Engine — currency", () => {
 describe("International Market Engine — VAT context", () => {
   it("B2C domestic Germany applies DE VAT", () => {
     const ctx = getVatContext({ sellerCountry: "DE", buyerCountry: "DE", customerType: "B2C" });
-    expect(ctx.rate).toBe(getMarketVat("DE").standardRate);
+    expect(ctx.rate).toBe(getMarketVat("DE")!.standardRate);
     expect(ctx.included).toBe(true);
     expect(ctx.reverseCharge).toBe(false);
     expect(ctx.reason).toBe("B2C_DOMESTIC");
@@ -114,7 +114,7 @@ describe("International Market Engine — VAT context", () => {
 
   it("B2C intra-EU uses destination VAT", () => {
     const ctx = getVatContext({ sellerCountry: "DE", buyerCountry: "FR", customerType: "B2C" });
-    expect(ctx.rate).toBe(getMarketVat("FR").standardRate);
+    expect(ctx.rate).toBe(getMarketVat("FR")!.standardRate);
     expect(ctx.reason).toBe("B2C_INTRA_EU_DESTINATION");
   });
 
@@ -127,7 +127,7 @@ describe("International Market Engine — VAT context", () => {
 
   it("non-EU to EU import", () => {
     const ctx = getVatContext({ sellerCountry: "TR", buyerCountry: "DE", customerType: "B2C" });
-    expect(ctx.rate).toBe(getMarketVat("DE").standardRate);
+    expect(ctx.rate).toBe(getMarketVat("DE")!.standardRate);
   });
 });
 

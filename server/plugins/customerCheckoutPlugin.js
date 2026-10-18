@@ -23,21 +23,21 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
 function requireCustomer(req, res) {
   const bearer = extractToken(req);
   if (!bearer) {
-    res.status(401).json({ error: "Authentication required" });
+    res.status(401).json({ success: false, errorKey: "security.authRequired" });
     return null;
   }
   try {
     req.user = verifyToken(bearer);
     return req.user;
   } catch {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ success: false, errorKey: "security.invalidToken" });
     return null;
   }
 }
@@ -56,21 +56,21 @@ module.exports = {
     app.get("/api/customer/profile", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const profile = customerCheckout.getCustomerProfile(req.user.sub);
-      if (!profile) return res.status(404).json({ error: "User not found" });
+      if (!profile) return res.status(404).json({ success: false, errorKey: "user.notFound" });
       return res.json(profile);
     });
 
     app.post("/api/customer/addresses", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.createAddress(req.user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.address);
     });
 
     app.patch("/api/customer/addresses/:id", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.updateAddress(req.user.sub, req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.address);
     });
 
@@ -92,7 +92,7 @@ module.exports = {
     app.post("/api/customer/reviews", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.createReview(req.user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result);
     });
 
@@ -103,7 +103,7 @@ module.exports = {
     app.post("/api/customer/coupons/validate", (req, res) => {
       const { code, subtotal } = req.body || {};
       const result = customerCheckout.validateCouponCode(code, subtotal);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -156,7 +156,7 @@ module.exports = {
     app.post("/api/admin/customer-checkout/coupons", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerCheckout.createCouponAdmin(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result);
     });
   },

@@ -147,9 +147,10 @@ function getSession(token) {
 }
 
 function extractToken(req) {
-  const header = req.headers.authorization || "";
+  const header = req.headers?.authorization || "";
   if (header.startsWith("Bearer ")) return header.slice(7).trim();
-  return null;
+  const { readCustomerSessionCookie } = require("./authCookies");
+  return readCustomerSessionCookie(req);
 }
 
 function requireCustomer(req, res) {
@@ -169,24 +170,61 @@ function requireCustomer(req, res) {
   return session;
 }
 
+function hashResetToken(token) {
+  return crypto.createHash("sha256").update(String(token || ""), "utf8").digest("hex");
+}
+
+function tokenHashMatches(entry, hashed) {
+  const stored = String(entry?.tokenHash || "");
+  if (!stored || stored.length !== hashed.length) return false;
+  const { timingEqualHex } = require("./software/secureIds");
+  return timingEqualHex(stored, hashed);
+}
+
 function createResetToken(customerId, req) {
   if (resetRateLimit(req, { key: customerId })) {
     return { limited: true };
   }
   const token = createToken();
-  const tokens = readJson(resetFile, []).filter((entry) => entry.expiresAt > Date.now());
-  tokens.push({ token, customerId, expiresAt: Date.now() + RESET_TTL_MS, createdAt: new Date().toISOString() });
+  const tokens = readJson(resetFile, [])
+    .filter((entry) => entry.expiresAt > Date.now())
+    .filter((entry) => entry.tokenHash && !entry.token)
+    .map((entry) => ({
+      tokenHash: entry.tokenHash,
+      customerId: entry.customerId,
+      expiresAt: entry.expiresAt,
+      createdAt: entry.createdAt,
+    }));
+  tokens.push({
+    tokenHash: hashResetToken(token),
+    customerId,
+    expiresAt: Date.now() + RESET_TTL_MS,
+    createdAt: new Date().toISOString(),
+  });
   writeJson(resetFile, tokens);
   return { token };
 }
 
 function consumeResetToken(token) {
+  const incoming = String(token || "");
+  if (!incoming) return null;
+  const hashed = hashResetToken(incoming);
   const tokens = readJson(resetFile, []);
-  const idx = tokens.findIndex((entry) => entry.token === token && entry.expiresAt > Date.now());
+  const idx = tokens.findIndex((entry) => entry.expiresAt > Date.now() && tokenHashMatches(entry, hashed));
   if (idx < 0) return null;
   const entry = tokens[idx];
   tokens.splice(idx, 1);
-  writeJson(resetFile, tokens);
+  writeJson(
+    resetFile,
+    tokens
+      .filter((row) => row.expiresAt > Date.now())
+      .map((row) => ({
+        tokenHash: row.tokenHash,
+        customerId: row.customerId,
+        expiresAt: row.expiresAt,
+        createdAt: row.createdAt,
+      }))
+  );
   return entry.customerId;
 }
 
@@ -201,4 +239,5 @@ module.exports = {
   requireCustomer,
   createResetToken,
   consumeResetToken,
+  hashResetToken,
 };

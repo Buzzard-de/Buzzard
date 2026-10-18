@@ -1,0 +1,500 @@
+{
+  "generatedAt": "2026-10-11T16:06:02.205Z",
+  "liveReady": false,
+  "secretsIncluded": false,
+  "counts": {
+    "total": 31,
+    "configured": 0,
+    "notConfigured": 31,
+    "notVerified": 0,
+    "live": 0
+  },
+  "checklist": [
+    {
+      "integration": "OpenAI",
+      "id": "openai",
+      "category": "ai",
+      "environmentVariables": [
+        "OPENAI_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide OPENAI_API_KEY in a non-production environment and run a guarded live probe. Do not enable BUZZARD_AI_LIVE_PROBE in production from this task."
+    },
+    {
+      "integration": "Anthropic",
+      "id": "anthropic",
+      "category": "ai",
+      "environmentVariables": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide ANTHROPIC_API_KEY and select the Anthropic provider in a non-production environment."
+    },
+    {
+      "integration": "Google AI",
+      "id": "google_ai",
+      "category": "ai",
+      "environmentVariables": [
+        "GOOGLE_AI_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide GOOGLE_AI_API_KEY and select the Google provider in a non-production environment."
+    },
+    {
+      "integration": "Stripe",
+      "id": "stripe",
+      "category": "payments",
+      "environmentVariables": [
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "read + webhook verify; no live capture in this task",
+      "webhookRequired": true,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Stripe secret + webhook secret. Do not capture live charges from this task. Webhooks must fail closed without a signature."
+    },
+    {
+      "integration": "PayPal",
+      "id": "paypal",
+      "category": "payments",
+      "environmentVariables": [
+        "PAYPAL_CLIENT_ID",
+        "PAYPAL_CLIENT_SECRET"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "read + webhook verify; no live capture in this task",
+      "webhookRequired": true,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide PayPal client credentials. Live capture remains disabled while sales are locked."
+    },
+    {
+      "integration": "SMTP email",
+      "id": "smtp_email",
+      "category": "communications",
+      "environmentVariables": [
+        "SMTP_HOST",
+        "SMTP_USER",
+        "SMTP_PASS"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide SMTP host/user/password. Customer send remains BLOCKED without approval and a dedicated send flag."
+    },
+    {
+      "integration": "Twilio",
+      "id": "twilio",
+      "category": "communications",
+      "environmentVariables": [
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Twilio SID/token. Do not place paid calls from this task."
+    },
+    {
+      "integration": "Supplier API",
+      "id": "supplier_api",
+      "category": "supplier",
+      "environmentVariables": [
+        "REAL_SUPPLIER_API_URL",
+        "REAL_SUPPLIER_API_KEY",
+        "SUPPLIER_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide supplier API URL and key. Keep REAL_SUPPLIER_LIVE_IMPORT unset. PO send stays blocked."
+    },
+    {
+      "integration": "TecDoc",
+      "id": "tecdoc",
+      "category": "supplier",
+      "environmentVariables": [
+        "TECDOC_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide TECDOC_API_KEY for catalog mapping only. Not a purchase-order channel."
+    },
+    {
+      "integration": "DHL",
+      "id": "carrier_dhl",
+      "category": "shipping",
+      "environmentVariables": [
+        "DHL_API_KEY",
+        "DHL_CLIENT_ID"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide DHL API credentials. Tracking stays scan-based. Do not create live shipments."
+    },
+    {
+      "integration": "DPD",
+      "id": "carrier_dpd",
+      "category": "shipping",
+      "environmentVariables": [
+        "DPD_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide DPD API credentials. Tracking stays scan-based. Do not create live shipments."
+    },
+    {
+      "integration": "GLS",
+      "id": "carrier_gls",
+      "category": "shipping",
+      "environmentVariables": [
+        "GLS_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide GLS API credentials. Tracking stays scan-based. Do not create live shipments."
+    },
+    {
+      "integration": "Hermes",
+      "id": "carrier_hermes",
+      "category": "shipping",
+      "environmentVariables": [
+        "HERMES_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Hermes API credentials. Tracking stays scan-based. Do not create live shipments."
+    },
+    {
+      "integration": "UPS",
+      "id": "carrier_ups",
+      "category": "shipping",
+      "environmentVariables": [
+        "UPS_API_KEY",
+        "UPS_CLIENT_ID"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide UPS API credentials. Tracking stays scan-based. Do not create live shipments."
+    },
+    {
+      "integration": "Amazon",
+      "id": "marketplace_amazon",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Amazon account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "eBay",
+      "id": "marketplace_ebay",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide eBay account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Google Shopping",
+      "id": "marketplace_google_shopping",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Google Shopping account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "TikTok Shop",
+      "id": "marketplace_tiktok_shop",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide TikTok Shop account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Kaufland",
+      "id": "marketplace_kaufland",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Kaufland account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Allegro",
+      "id": "marketplace_allegro",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Allegro account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "bol.com",
+      "id": "marketplace_bol",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide bol.com account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Cdiscount",
+      "id": "marketplace_cdiscount",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Cdiscount account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "OTTO",
+      "id": "marketplace_otto",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide OTTO account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "eMAG",
+      "id": "marketplace_emag",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide eMAG account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Skroutz",
+      "id": "marketplace_skroutz",
+      "category": "marketplace",
+      "environmentVariables": [],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Provide Skroutz account credentials and a non-production app. Publish remains BLOCKED. APPROVED ≠ PUBLISHED."
+    },
+    {
+      "integration": "Voice twilio",
+      "id": "voice_twilio",
+      "category": "voice",
+      "environmentVariables": [
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure twilio credentials. Signaling success is not media proof. Paid calls stay disabled."
+    },
+    {
+      "integration": "Voice stt",
+      "id": "voice_stt",
+      "category": "voice",
+      "environmentVariables": [
+        "OPENAI_API_KEY",
+        "DEEPGRAM_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure stt credentials. Signaling success is not media proof. Paid calls stay disabled."
+    },
+    {
+      "integration": "Voice tts",
+      "id": "voice_tts",
+      "category": "voice",
+      "environmentVariables": [
+        "OPENAI_API_KEY",
+        "ELEVENLABS_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure tts credentials. Signaling success is not media proof. Paid calls stay disabled."
+    },
+    {
+      "integration": "Voice webrtc",
+      "id": "voice_webrtc",
+      "category": "voice",
+      "environmentVariables": [
+        "WEBRTC_SIGNALING_URL"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure webrtc credentials. Signaling success is not media proof. Paid calls stay disabled."
+    },
+    {
+      "integration": "Voice realtime",
+      "id": "voice_realtime",
+      "category": "voice",
+      "environmentVariables": [
+        "OPENAI_API_KEY"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure realtime credentials. Signaling success is not media proof. Paid calls stay disabled."
+    },
+    {
+      "integration": "Voice digital_human",
+      "id": "voice_digital_human",
+      "category": "voice",
+      "environmentVariables": [
+        "DIGITAL_HUMAN_ENDPOINT"
+      ],
+      "credentialsPresent": false,
+      "accountRequired": true,
+      "permissionsRequired": "non-production read first",
+      "webhookRequired": false,
+      "networkRequired": false,
+      "testMethod": "presence + fail-closed adapter tests; no live write",
+      "status": "NOT_CONFIGURED",
+      "humanAction": "Configure digital_human credentials. Signaling success is not media proof. Paid calls stay disabled."
+    }
+  ]
+}

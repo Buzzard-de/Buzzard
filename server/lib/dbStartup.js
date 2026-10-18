@@ -3,8 +3,9 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath } = require("./dbPaths");
+const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath, assertDurableOpenAllowed } = require("./dbPaths");
 const { runIntegrityCheck } = require("./dbIntegrity");
+const { publicTaskError } = require("./security");
 
 let startupResult = null;
 
@@ -21,10 +22,10 @@ function migrateEphemeralToPersistentIfNeeded(targetPath) {
     const stat = fs.statSync(legacyPath);
     if (!stat.isFile() || stat.size === 0) return null;
     fs.copyFileSync(legacyPath, targetPath);
-    console.log(`[db-startup] Migrated SQLite ${legacyPath} → ${targetPath}`);
-    return { from: legacyPath, to: targetPath, bytes: stat.size };
+    console.log("[db-startup] Migrated SQLite ephemeral→persistent");
+    return { from: "ephemeral", to: "persistent", bytes: stat.size };
   } catch (err) {
-    console.warn("[db-startup] Ephemeral→persistent migration skipped:", err.message);
+    console.warn("[db-startup] Ephemeral→persistent migration skipped:", publicTaskError(err, "database.migration_skipped"));
     return null;
   }
 }
@@ -35,9 +36,29 @@ function validateDatabaseStartup() {
   const warnings = [];
 
   try {
+    assertDurableOpenAllowed({ dbPath });
+  } catch (err) {
+    errors.push(publicTaskError(err, "database.open_refused"));
+    startupResult = {
+      ok: false,
+      dbPath,
+      persistence: getPersistenceInfo(dbPath),
+      migration: null,
+      integrity: { status: "NOT_OPENED" },
+      errors,
+      warnings,
+      validatedAt: new Date().toISOString(),
+    };
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+    return startupResult;
+  }
+
+  try {
     ensureDbDirectory(dbPath);
   } catch (err) {
-    errors.push(`Cannot create DB directory: ${err.message}`);
+    errors.push(publicTaskError(err, "database.directory_create_failed"));
   }
 
   const migration = migrateEphemeralToPersistentIfNeeded(dbPath);
@@ -47,17 +68,17 @@ function validateDatabaseStartup() {
   try {
     fs.accessSync(dir, fs.constants.W_OK);
   } catch {
-    errors.push(`Database directory not writable: ${dir}`);
+    errors.push("database.directory_unwritable");
   }
 
-  if (process.env.NODE_ENV === "production" && !persistence.persistent) {
-    const msg =
-      "Production without persistent disk — set BUZZARD_DB_PATH=/var/data/buzzard.db (catalog mode allows ephemeral on Render free tier)";
-    if (process.env.REQUIRE_PERSISTENT_DB === "1" || process.env.BUZZARD_SALES_ENABLED === "1") {
-      errors.push(msg);
-    } else {
-      warnings.push(msg);
-    }
+  if (process.env.NODE_ENV === "production" && !process.env.BUZZARD_DB_PATH) {
+    errors.push(
+      "Production BUZZARD_DB_PATH is unset — refusing to use the local default database as production storage"
+    );
+  } else if (process.env.NODE_ENV === "production" && !persistence.persistent) {
+    errors.push(
+      "Production database path is not persistent — set BUZZARD_DB_PATH to the Render disk mount (typically /var/data/buzzard.db)"
+    );
   }
 
   if (persistence.ephemeralRisk) {
@@ -68,12 +89,12 @@ function validateDatabaseStartup() {
   try {
     integrity = runIntegrityCheck();
     if (integrity.status === "FAILED") {
-      errors.push(`SQLite integrity_check failed: ${integrity.integrityCheck}`);
+      errors.push(publicTaskError({ error: integrity.integrityCheck }, "database.integrity_failed"));
     } else if (integrity.status === "DEGRADED") {
       warnings.push(`Missing critical tables: ${integrity.missingCritical.join(", ")}`);
     }
   } catch (err) {
-    errors.push(`Database integrity check error: ${err.message}`);
+    errors.push(publicTaskError(err, "database.integrity_check_failed"));
   }
 
   startupResult = {

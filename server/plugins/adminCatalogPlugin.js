@@ -79,21 +79,32 @@ module.exports = {
 
       const supplierPrice = body.supplier_price || { amount: 0, currency: "EUR" };
 
-      const product = productStore.upsertProduct({
-        ...validated.product,
-        id: productStore.nextProductId(),
-        sku: body.sku || validated.product.sku || `BUZ-NEW-${Date.now()}`,
-        price:
-          body.price ||
-          pricing.calculateSalePrice({
-            supplierPrice: supplierPrice.amount,
-            markupPercent: supplier.default_markup_percent,
-            minimumMarginPercent: supplier.minimum_margin_percent,
-          }),
-        supplier_price: supplierPrice,
-        buy_now_enabled: body.buy_now_enabled ?? false,
-        created_at: new Date().toISOString(),
-      });
+      const product = productStore.upsertProduct(
+        {
+          ...validated.product,
+          id: productStore.nextProductId(),
+          sku: body.sku || validated.product.sku || `BUZ-NEW-${Date.now()}`,
+          status: validated.product.status || body.status || "draft",
+          price:
+            body.price ||
+            pricing.calculateSalePrice({
+              supplierPrice: supplierPrice.amount,
+              markupPercent: supplier.default_markup_percent,
+              minimumMarginPercent: supplier.minimum_margin_percent,
+            }),
+          supplier_price: supplierPrice,
+          buy_now_enabled: body.buy_now_enabled ?? false,
+          created_at: new Date().toISOString(),
+        },
+        {
+          authorized: true,
+          source: "ADMIN",
+          actorId: req.adminUser.email || req.adminUser.userId || null,
+        }
+      );
+      if (product.error) {
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, product);
+      }
 
       audit(req, { action: "create", entityType: "product", entityId: product.id, field: null, oldValue: null, newValue: product.id });
       return res.status(201).json({ success: true, product });
@@ -122,7 +133,17 @@ module.exports = {
         return res.status(409).json({ success: false, errorKey: "admin.product.duplicate", productId: duplicate.id });
       }
 
-      const updated = productStore.upsertProduct({ ...validated.product, id: existing.id });
+      const updated = productStore.upsertProduct(
+        { ...validated.product, id: existing.id },
+        {
+          authorized: true,
+          source: "ADMIN",
+          actorId: req.adminUser.email || req.adminUser.userId || null,
+        }
+      );
+      if (updated.error) {
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, updated);
+      }
       Object.keys(body).forEach((field) => {
         audit(req, {
           action: "update",
@@ -145,7 +166,17 @@ module.exports = {
       if (!["draft", "active", "paused", "archived"].includes(status)) {
         return res.status(400).json({ success: false, errorKey: "admin.product.invalidStatus" });
       }
-      const updated = productStore.upsertProduct({ ...existing, status });
+      const updated = productStore.upsertProduct(
+        { ...existing, status },
+        {
+          authorized: true,
+          source: "ADMIN",
+          actorId: req.adminUser.email || req.adminUser.userId || null,
+        }
+      );
+      if (updated.error) {
+        return require("../lib/http/publicPluginError").sendKeyedResult(res, updated);
+      }
       audit(req, { action: "status", entityType: "product", entityId: existing.id, field: "status", oldValue: existing.status, newValue: status });
       return res.json({ success: true, product: updated });
     });

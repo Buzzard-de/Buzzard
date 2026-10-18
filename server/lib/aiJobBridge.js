@@ -67,11 +67,14 @@ async function runAiJobSafely(job) {
     }
   }
 
+  const pusat = require("./pusat");
+  const executed = await pusat.executeTask(taskId);
   return {
-    ok: true,
+    ok: Boolean(executed && executed.status !== "FAILED"),
     taskId,
-    status: task.status,
-    note: "AI worker executed permission/approval checks — provider call deferred in Part 5",
+    status: executed?.status || task.status,
+    result: executed,
+    note: "AI worker executed through Pusat after permission/approval checks",
     adminPermissionsInherited: false,
   };
 }

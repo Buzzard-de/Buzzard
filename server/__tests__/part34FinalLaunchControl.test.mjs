@@ -233,11 +233,11 @@ test('Public health summary is diagnostic only', () => {
   assert.equal(summary.activationAllowed, false);
 });
 
-test('RBAC public health route is public', () => {
+test('RBAC operational health route requires system.read', () => {
   const { resolveRoutePermission } = require('../lib/routePermissions.js');
   assert.equal(
-    resolveRoutePermission('GET', '/api/health/final-launch-control').public,
-    true
+    resolveRoutePermission('GET', '/api/health/final-launch-control').permission,
+    'system.read'
   );
 });
 

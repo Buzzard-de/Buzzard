@@ -1,3 +1,4 @@
+import { withAdminCredentials } from "@/lib/admin/authTransport";
 import type {
   IdentityAccount,
   IdentitySecurityAuditEvent,
@@ -10,25 +11,13 @@ function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
-function adminHeaders(): HeadersInit {
-  const adminToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
-  };
-}
 
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("identitySecurity.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: { ...adminHeaders(), ...(init?.headers || {}) },
-  });
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "identitySecurity.requestFailed");
+  const res = await fetch(`${base}${path}`, withAdminCredentials(init));
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "identitySecurity.requestFailed");
   return data;
 }
 
@@ -61,7 +50,7 @@ export async function fetchIdentitySessions(): Promise<IdentitySessionRow[]> {
 export async function fetchIdentityAccount(): Promise<IdentityAccount | null> {
   const base = apiBase();
   if (!base) return null;
-  const res = await fetch(`${base}/api/identity-security/account`, { headers: adminHeaders() });
+  const res = await fetch(`${base}/api/identity-security/account`, withAdminCredentials());
   if (!res.ok) return null;
   return (await res.json()) as IdentityAccount;
 }

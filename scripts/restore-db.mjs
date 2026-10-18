@@ -8,7 +8,11 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+
+const require = createRequire(import.meta.url);
+const { assertRestoreAllowed } = require("../server/lib/software/restoreGuard");
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -26,14 +30,10 @@ const dbPath = process.env.BUZZARD_DB_PATH
   ? path.resolve(process.env.BUZZARD_DB_PATH)
   : path.join(root, "server", "data", "buzzard.db");
 
-const isProduction = process.env.NODE_ENV === "production";
-const onRenderDisk = dbPath.startsWith("/var/data");
-const productionTarget = isProduction || onRenderDisk;
-
-if (productionTarget && process.env.BUZZARD_ALLOW_PRODUCTION_RESTORE !== "1") {
-  console.error(
-    "Refusing restore to production target without BUZZARD_ALLOW_PRODUCTION_RESTORE=1"
-  );
+try {
+  assertRestoreAllowed(dbPath, process.env);
+} catch (error) {
+  console.error(error.message);
   console.error(`Target: ${dbPath}`);
   process.exit(1);
 }

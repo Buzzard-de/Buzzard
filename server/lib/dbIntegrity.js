@@ -2,6 +2,7 @@
  * Part 13 — SQLite integrity and schema availability checks
  */
 const { db } = require("./db");
+const { publicTaskError } = require("./security");
 
 const CRITICAL_TABLES = [
   "users",
@@ -38,7 +39,7 @@ function runIntegrityCheck() {
     const row = db.prepare("PRAGMA integrity_check").get();
     integrityResult = row?.integrity_check || "unknown";
   } catch (err) {
-    integrityResult = `error:${err.message}`;
+    integrityResult = `error:${publicTaskError(err, "database.integrity_failed")}`;
   }
 
   const tables = {};

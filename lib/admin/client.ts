@@ -15,6 +15,7 @@ import type {
   SecurityOverview,
 } from "./securityTypes";
 import { isSqliteStoreEnabled } from "@/lib/store/config";
+import { adminApiBase } from "./apiBase";
 import {
   mapStoreAdminOrder,
   mapStoreAdminUser,
@@ -28,42 +29,32 @@ import {
   storeLogout,
   storeMe,
 } from "@/lib/store";
-
-const TOKEN_KEY = "buzzard_admin_token";
+import { clearAdminSessionFlag, hasAdminSession, markAdminSession, withAdminCredentials } from "./authTransport";
 
 function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
-}
-
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  return adminApiBase();
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
+  const res = await fetch(`${base}${path}`, withAdminCredentials(init));
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string };
   if (!res.ok) throw new Error((data as { errorKey?: string }).errorKey || "admin.requestFailed");
   return data;
 }
 
-export function saveAdminToken(token: string): void {
-  sessionStorage.setItem(TOKEN_KEY, token);
+export function saveAdminToken(_token?: string, csrfToken?: string): void {
+  markAdminSession(csrfToken);
 }
 
 export function clearAdminToken(): void {
-  sessionStorage.removeItem(TOKEN_KEY);
+  clearAdminSessionFlag();
 }
 
 export function getAdminToken(): string | null {
   if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(TOKEN_KEY);
+  return hasAdminSession() ? "cookie" : null;
 }
 
 export async function adminLogin(
@@ -86,18 +77,20 @@ export async function adminLogin(
     const data = await request<{
       success: boolean;
       token: string;
+      csrfToken?: string;
       user: AdminUser;
     }>("/api/admin/login/2fa", {
       method: "POST",
       body: JSON.stringify({ challengeToken, code: totpCode }),
     });
-    saveAdminToken(data.token);
+    saveAdminToken(data.token, data.csrfToken);
     return { token: data.token, user: data.user };
   }
 
   const data = await request<{
     success: boolean;
     token?: string;
+    csrfToken?: string;
     user: AdminUser;
     requires2FA?: boolean;
     challengeToken?: string;
@@ -115,7 +108,7 @@ export async function adminLogin(
   }
 
   if (!data.token) throw new Error("admin.auth.invalid");
-  saveAdminToken(data.token);
+  saveAdminToken(data.token, data.csrfToken);
   return { token: data.token, user: data.user };
 }
 

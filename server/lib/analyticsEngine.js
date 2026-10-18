@@ -557,6 +557,22 @@ function toCsv(rows) {
   return lines.join("\n");
 }
 
+function stripSensitiveExportFields(value, depth = 0) {
+  if (depth > 8 || value == null) return value;
+  if (typeof value === "string") {
+    const { redactSecretString } = require("./security");
+    return redactSecretString(value);
+  }
+  if (Array.isArray(value)) return value.map((item) => stripSensitiveExportFields(item, depth + 1));
+  if (typeof value !== "object") return value;
+  const out = {};
+  for (const [key, nested] of Object.entries(value)) {
+    if (/password|secret|token|authorization|credential|api[_-]?key|stack|sqlError|password_hash/i.test(key)) continue;
+    out[key] = stripSensitiveExportFields(nested, depth + 1);
+  }
+  return out;
+}
+
 function buildExport(section, range, role, format = "csv") {
   let payload;
   switch (section) {
@@ -579,6 +595,7 @@ function buildExport(section, range, role, format = "csv") {
       payload = computeOverview(range, role);
   }
   if (payload.forbidden) return { forbidden: true };
+  payload = stripSensitiveExportFields(payload);
   if (format === "json") return { contentType: "application/json", body: JSON.stringify(payload, null, 2) };
 
   let rows = [];

@@ -3,9 +3,10 @@ const { requirePermission } = require("../lib/rbac");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const controlCenter = require("../lib/controlCenter");
 const { enqueueTaskProcessing, resumeAfterApproval } = require("../lib/aiOrchestrator");
-const { getDatabaseHealth } = require("../lib/db");
+const { toPublicDatabaseHealth } = require("../lib/db");
 const { getOrchestratorStatus } = require("../lib/orchestratorBridge");
 const { getGuardianStatus } = require("../lib/guardianBridge");
+const { toPublicError } = require("../lib/security");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -28,7 +29,7 @@ function requirePerm(req, res, permission) {
 module.exports = {
   register(app) {
     app.get("/api/health/db", (_req, res) => {
-      res.json({ success: true, database: getDatabaseHealth() });
+      res.json({ success: true, database: toPublicDatabaseHealth() });
     });
 
     app.get("/api/health/ai", async (_req, res) => {
@@ -90,7 +91,7 @@ module.exports = {
         });
         res.json({ success: true, config: result });
       } catch (error) {
-        res.status(400).json({ success: false, errorKey: "core.config.forbidden", message: error.message });
+        res.status(400).json(toPublicError(error, "core.config.forbidden"));
       }
     });
 
@@ -131,25 +132,35 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "ai.assign")) return;
       try {
-        const task = controlCenter.createAiTask({
+        const pusat = require("../lib/pusat");
+        const submitted = pusat.submitTask({
           title: req.body?.title,
           description: req.body?.description,
           employeeId: req.body?.employeeId,
+          agentCode: req.body?.agentCode,
           priority: req.body?.priority,
           permissionsRequired: req.body?.permissionsRequired,
           payload: req.body?.payload,
           createdBy: req.adminUser.email,
           dependsOnTaskId: req.body?.dependsOnTaskId,
+          idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
+          correlationId: req.body?.correlationId,
+          timeoutMs: req.body?.timeoutMs,
+          enqueue: false,
         });
         logAuditFromRequest(req, {
           action: "ai.task.create",
           entityType: "ai_task",
-          entityId: task.id,
+          entityId: submitted.task?.id,
         });
-        enqueueTaskProcessing(task.id);
-        res.status(201).json({ success: true, task });
+        if (!submitted.duplicate) enqueueTaskProcessing(submitted.task.id);
+        res.status(submitted.duplicate ? 200 : 201).json({
+          success: true,
+          duplicate: Boolean(submitted.duplicate),
+          task: submitted.task,
+        });
       } catch (error) {
-        res.status(400).json({ success: false, errorKey: "ai.task.createFailed", message: error.message });
+        res.status(400).json(toPublicError(error, "ai.task.createFailed"));
       }
     });
 
@@ -191,18 +202,22 @@ module.exports = {
     app.post("/api/admin/approvals/:id/decide", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "ai.execute")) return;
-      const decision = req.body?.decision === "approve" ? "approve" : "reject";
-      const approval = controlCenter.decideApproval(req.params.id, decision, req.adminUser.email);
-      if (!approval) return res.status(404).json({ success: false, errorKey: "approval.notFound" });
+      const decision = req.body?.decision === "approve" ? "approve" : req.body?.decision === "cancel" ? "cancel" : "reject";
+      const pusat = require("../lib/pusat");
+      const decided = pusat.approval.decide(req.params.id, decision, req.adminUser.email, {
+        currentInput: req.body?.currentInput,
+      });
+      if (!decided) return res.status(404).json({ success: false, errorKey: "approval.notFound" });
+      const approval = decided.approval;
       logAuditFromRequest(req, {
         action: `approval.${decision}`,
         entityType: "approval",
         entityId: req.params.id,
       });
-      if (decision === "approve" && approval?.taskId) {
+      if (decision === "approve" && approval?.taskId && !decided.inputChanged && !decided.expired && !decided.duplicate) {
         resumeAfterApproval(approval.taskId);
       }
-      res.json({ success: true, approval });
+      res.json({ success: true, ...decided });
     });
 
     app.get("/api/admin/control-center/escalations", (req, res) => {
@@ -240,7 +255,7 @@ module.exports = {
           }),
         });
       } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json(toPublicError(error, "system.jobs.listFailed"));
       }
     });
 
@@ -263,7 +278,7 @@ module.exports = {
         });
         res.status(201).json({ success: true, job });
       } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json(toPublicError(error, "system.jobs.enqueueFailed"));
       }
     });
 
@@ -305,7 +320,7 @@ module.exports = {
         });
         res.json({ success: true, visibility: entry });
       } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json(toPublicError(error, "categories.visibility.invalid"));
       }
     });
   },

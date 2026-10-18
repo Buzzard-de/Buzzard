@@ -160,7 +160,7 @@ function isEnabled() {
 
 function createRecord(body = {}) {
   if (!body.code || !body.name) {
-    return { error: "code and name required", status: 400 };
+    return { error: "validation.codeNameRequired", status: 400 };
   }
   try {
     const result = db
@@ -174,7 +174,7 @@ function createRecord(body = {}) {
       created: true,
     };
   } catch {
-    return { error: "code already exists", status: 409 };
+    return { error: "record.codeExists", status: 409 };
   }
 }
 
@@ -188,7 +188,7 @@ function getRecordByCode(code) {
 
 function updateRecord(id, body = {}) {
   const existing = db.prepare("SELECT * FROM ${m.prefix}_records WHERE id = ?").get(id);
-  if (!existing) return { error: "not found", status: 404 };
+  if (!existing) return { error: "record.notFound", status: 404 };
   db.prepare(\`
     UPDATE ${m.prefix}_records
     SET name = ?, status = ?, data_json = ?, updated_at = CURRENT_TIMESTAMP
@@ -276,7 +276,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -299,7 +299,7 @@ module.exports = {
 
     app.get("/api/${m.slug}/records/:code", (req, res) => {
       const record = mod.getRecordByCode(req.params.code);
-      if (!record) return res.status(404).json({ error: "not found" });
+      if (!record) return res.status(404).json({ error: "record.notFound" });
       return res.json(record);
     });
 

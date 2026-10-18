@@ -189,11 +189,11 @@ test('Fail-closed when upstream gate missing', () => {
   assert.equal(result.status, 'BLOCKED');
 });
 
-test('RBAC public health route is public', () => {
+test('RBAC operational health route requires system.read', () => {
   const { resolveRoutePermission } = require('../lib/routePermissions.js');
   assert.equal(
-    resolveRoutePermission('GET', '/api/health/final-prelaunch-control').public,
-    true
+    resolveRoutePermission('GET', '/api/health/final-prelaunch-control').permission,
+    'system.read'
   );
 });
 

@@ -113,7 +113,8 @@ function emit(eventType, payload = {}, options = {}) {
     markDelivered(idempotencyKey, event.id);
   } catch (err) {
     event.status = "failed";
-    event.error = String(err.message || err);
+    const { publicTaskError } = require("./security");
+    event.error = publicTaskError(err, "automation.failed");
   }
 
   const updated = readEvents();

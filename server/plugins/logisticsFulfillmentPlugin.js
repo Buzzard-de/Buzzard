@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -45,7 +45,7 @@ function requireAnyAuth(req, res) {
     return session;
   }
 
-  res.status(401).json({ error: "Authentication required" });
+  res.status(401).json({ success: false, errorKey: "security.authRequired" });
   return null;
 }
 
@@ -65,21 +65,21 @@ module.exports = {
     app.post("/api/admin/logistics-fulfillment/shipments/quote", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = logisticsFulfillment.quoteShipment(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.quote);
     });
 
     app.post("/api/admin/logistics-fulfillment/shipments", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = logisticsFulfillment.createShipment(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.shipment);
     });
 
     app.post("/api/admin/logistics-fulfillment/shipments/:id/label-result", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = logisticsFulfillment.updateLabelResult(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.shipment);
     });
 
@@ -96,13 +96,13 @@ module.exports = {
     app.get("/api/logistics-fulfillment/shipments/:orderNumber/tracking", (req, res) => {
       if (!requireAnyAuth(req, res)) return;
       const result = logisticsFulfillment.getShipmentTracking(req.params.orderNumber);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.tracking);
     });
 
     app.post("/api/logistics-fulfillment/carrier/webhook", (req, res) => {
       const result = logisticsFulfillment.handleCarrierWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.status || 202).json({ ok: result.ok });
     });
 
@@ -110,9 +110,9 @@ module.exports = {
       const user = requireAnyAuth(req, res);
       if (!user) return;
       const customerId = user.sub || user.customerId;
-      if (!customerId) return res.status(400).json({ error: "Customer id required" });
+      if (!customerId) return res.status(400).json({ success: false, errorKey: "customer.idRequired" });
       const result = logisticsFulfillment.createReturn(req.body || {}, customerId);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.returnRequest);
     });
 
@@ -120,7 +120,7 @@ module.exports = {
       const user = requireAnyAuth(req, res);
       if (!user) return;
       const customerId = user.sub || user.customerId;
-      if (!customerId) return res.status(400).json({ error: "Customer id required" });
+      if (!customerId) return res.status(400).json({ success: false, errorKey: "customer.idRequired" });
       return res.json(logisticsFulfillment.listCustomerReturns(customerId));
     });
 
@@ -132,7 +132,7 @@ module.exports = {
     app.patch("/api/admin/logistics-fulfillment/returns/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = logisticsFulfillment.updateReturn(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.returnRequest);
     });
 

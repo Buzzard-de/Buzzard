@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const TOKEN_KEY = "buzzard_admin_token";
-
-function authHeaders(): HeadersInit {
-  const token = typeof window !== "undefined" ? sessionStorage.getItem(TOKEN_KEY) : null;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
+import { withAdminCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
@@ -29,7 +20,7 @@ export default function AdminSeoPanel() {
   async function loadRedirects() {
     const base = apiBase();
     if (!base) return;
-    const res = await fetch(`${base}/api/admin/seo/redirects`, { headers: authHeaders() });
+    const res = await fetch(`${base}/api/admin/seo/redirects`, withAdminCredentials());
     if (!res.ok) return;
     const data = await res.json();
     setRedirects(data.redirects || []);
@@ -42,11 +33,10 @@ export default function AdminSeoPanel() {
   async function saveRedirect() {
     const base = apiBase();
     if (!base || !from || !to) return;
-    await fetch(`${base}/api/admin/seo/redirects`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({ from, to, permanent: true }),
-    });
+    await fetch(
+      `${base}/api/admin/seo/redirects`,
+      withAdminCredentials({ method: "POST", body: JSON.stringify({ from, to, permanent: true }) })
+    );
     setFrom("");
     setTo("");
     setMessage("Redirect gespeichert.");
@@ -56,11 +46,13 @@ export default function AdminSeoPanel() {
   async function saveProductSeo() {
     const base = apiBase();
     if (!base || !productId) return;
-    await fetch(`${base}/api/admin/seo/overrides/products/${encodeURIComponent(productId)}`, {
-      method: "PUT",
-      headers: authHeaders(),
-      body: JSON.stringify({ title: seoTitle, description: seoDescription }),
-    });
+    await fetch(
+      `${base}/api/admin/seo/overrides/products/${encodeURIComponent(productId)}`,
+      withAdminCredentials({
+        method: "PUT",
+        body: JSON.stringify({ title: seoTitle, description: seoDescription }),
+      })
+    );
     setMessage("Produkt-SEO gespeichert.");
   }
 

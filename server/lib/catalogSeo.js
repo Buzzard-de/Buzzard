@@ -1,4 +1,5 @@
 const { db } = require("./db");
+const productWriteBoundary = require("./pim/productWriteBoundary");
 
 function isEnabled() {
   return process.env.BUZZARD_CATALOG_SEO !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -140,19 +141,18 @@ function listAdminProducts() {
 
 function createCategory(body = {}) {
   const { name } = body;
-  if (!name) return { error: "name required", status: 400 };
+  if (!name) return { error: "validation.nameRequired", status: 400 };
   try {
     const slug = slugify(name);
     const result = db.prepare("INSERT INTO categories(name, slug) VALUES(?, ?)").run(name, slug);
     return { category: db.prepare("SELECT * FROM categories WHERE id = ?").get(result.lastInsertRowid) };
   } catch {
-    return { error: "Category already exists", status: 409 };
+    return { error: "category.exists", status: 409 };
   }
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, context = {}) {
   const {
-    sku,
     name,
     description = "",
     categoryId,
@@ -165,21 +165,37 @@ function createProduct(body = {}) {
     seoDescription,
     slug,
   } = body;
-  if (!sku || !name) return { error: "sku and name required", status: 400 };
+  const gate = productWriteBoundary.authorizeCreate(body, {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "products",
+  });
+  if (!gate.ok) {
+    if (gate.reason === "SKU_REQUIRED") {
+      return { error: "product.skuNameRequired", status: 400, reason: gate.reason, boundary: gate.boundary };
+    }
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
+  const productName = String(name || "").trim();
+  if (!productName) {
+    return { error: "product.skuNameRequired", status: 400 };
+  }
   const cost = Number(supplierCostEur) || 0;
   const floor = Number(marginFloor);
   const price = priceEur != null && priceEur !== "" ? Number(priceEur) : autoPrice(cost, floor);
-  const productSlug = slugify(slug || name);
+  const productSlug = slugify(slug || productName);
   try {
     const result = db
       .prepare(`
         INSERT INTO products
-        (sku, name, slug, description, category_id, supplier_cost_eur, price_eur, margin_floor, stock, image_url, seo_title, seo_description)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+        (sku, name, slug, description, category_id, supplier_cost_eur, price_eur, margin_floor, stock, active, image_url, seo_title, seo_description)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
       `)
       .run(
-        sku,
-        name,
+        gate.sku,
+        productName,
         productSlug,
         description,
         categoryId || null,
@@ -187,20 +203,42 @@ function createProduct(body = {}) {
         price,
         floor,
         Number(stock) || 0,
+        0,
         imageUrl,
-        seoTitle || name,
-        seoDescription || description || name
+        seoTitle || productName,
+        seoDescription || description || productName
       );
-    audit(result.lastInsertRowid, "created", body);
-    return { product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)) };
+    audit(result.lastInsertRowid, "created", { sku: gate.sku, source: context.source || "ADMIN" });
+    return {
+      product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)),
+      boundary: gate.boundary,
+      dualWrite: false,
+      productSourceOfTruthActive: false,
+    };
   } catch {
-    return { error: "SKU or slug already exists", status: 409 };
+    return { error: "product.skuOrSlugExists", status: 409 };
   }
 }
 
-function updateProduct(id, body = {}) {
+function updateProduct(id, body = {}, context = {}) {
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
+
+  const nextActive = body.active === undefined ? product.active : body.active ? 1 : 0;
+  const gate = productWriteBoundary.authorizeUpdate(
+    { ...body, active: nextActive, sku: product.sku },
+    {
+      source: context.source || "ADMIN",
+      actorId: context.actorId || null,
+      authorized: context.authorized === true,
+      requireExplicitAuth: true,
+      destination: "products",
+      existing: product,
+    }
+  );
+  if (!gate.ok) {
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
 
   const cost =
     body.supplierCostEur === undefined ? product.supplier_cost_eur : Number(body.supplierCostEur);
@@ -225,7 +263,7 @@ function updateProduct(id, body = {}) {
     price,
     floor,
     body.stock ?? product.stock,
-    body.active === undefined ? product.active : body.active ? 1 : 0,
+    nextActive,
     body.imageUrl ?? product.image_url,
     body.seoTitle ?? product.seo_title,
     body.seoDescription ?? product.seo_description,
@@ -249,9 +287,9 @@ function bulkUpdatePrices(margin = 0.3) {
 
 function addProductImage(productId, body = {}) {
   const { url, altText = "", sortOrder = 0 } = body;
-  if (!url) return { error: "url required", status: 400 };
+  if (!url) return { error: "validation.urlRequired", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);
-  if (!product) return { error: "Product not found", status: 404 };
+  if (!product) return { error: "product.notFound", status: 404 };
   const result = db
     .prepare("INSERT INTO product_images(product_id, url, alt_text, sort_order) VALUES(?,?,?,?)")
     .run(product.id, url, altText, sortOrder);

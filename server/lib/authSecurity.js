@@ -53,7 +53,7 @@ function enforceAuthRateLimit(req, res, { scope, email, path }) {
       email: normalizedEmail || null,
       path,
     });
-    res.status(429).json({ error: "Too many attempts. Please try again later." });
+    res.status(429).json({ success: false, errorKey: "security.rateLimited" });
     return false;
   }
 

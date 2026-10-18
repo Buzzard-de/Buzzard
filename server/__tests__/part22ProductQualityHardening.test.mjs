@@ -182,7 +182,9 @@ describe("Part 22 — readiness center", () => {
 describe("Part 22 — RBAC", () => {
   it("19. routes require proper permissions", () => {
     const { resolveRoutePermission } = require("../lib/routePermissions.js");
-    expect(resolveRoutePermission("GET", "/api/health/product-quality-readiness").public).toBe(true);
+    expect(resolveRoutePermission("GET", "/api/health/product-quality-readiness")).toEqual({
+      permission: "system.read",
+    });
     expect(resolveRoutePermission("GET", "/api/admin/catalog/product-quality").permission).toBe("products.read");
   });
 });

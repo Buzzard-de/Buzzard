@@ -10,33 +10,19 @@ import type {
   SupplierHubSyncRun,
   SupplierHubVehicle,
 } from "./types";
+import { withAdminOrAccountCredentials } from "@/lib/admin/authTransport";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
 }
 
-function authHeaders(): HeadersInit {
-  const adminToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_admin_token") : null;
-  const accountToken =
-    typeof window !== "undefined" ? sessionStorage.getItem("buzzard_account_token") : null;
-  const token = adminToken || accountToken;
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("supplierHub.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
-    ...init,
-    headers: { ...authHeaders(), ...init?.headers },
-  });
-  const data = (await res.json()) as T & { error?: string };
-  if (!res.ok) throw new Error(data.error || "supplierHub.requestFailed");
+  const res = await fetch(`${base}${path}`, withAdminOrAccountCredentials(init));
+  const data = (await res.json()) as T & { errorKey?: string };
+  if (!res.ok) throw new Error(data.errorKey || "supplierHub.requestFailed");
   return data;
 }
 

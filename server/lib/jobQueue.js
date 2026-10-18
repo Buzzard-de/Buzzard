@@ -11,8 +11,22 @@ const {
   DEFAULT_LOCK_TTL_MS,
 } = require("../core/jobConstants");
 
+const FINANCIAL_JOB_TYPE = /payment|refund|payout|capture|charge|purchase.?order|marketplace\.publish|supplier\.order/i;
+
+function isFinancialJobType(jobType) {
+  return FINANCIAL_JOB_TYPE.test(String(jobType || ""));
+}
+
 function newId() {
   return `job_${crypto.randomBytes(8).toString("hex")}`;
+}
+
+function sanitizePublicJobError(raw) {
+  const text = String(raw || "").trim();
+  if (!text) return null;
+  if (/^[A-Z][A-Z0-9_]{1,40}$/.test(text)) return text;
+  if (/^[A-Za-z0-9._:-]{1,64}$/.test(text)) return text;
+  return "job.failed";
 }
 
 function parseJson(val, fallback) {
@@ -37,7 +51,7 @@ function mapRow(row) {
     payload,
     priority: row.priority || payload.priority || JOB_PRIORITY.NORMAL,
     result: parseJson(row.result_json, null),
-    error: row.error_message,
+    error: sanitizePublicJobError(row.error_message),
     retryCount: row.retry_count,
     maxRetries: payload.maxRetries ?? DEFAULT_MAX_RETRIES,
     nextRunAt: row.next_run_at,
@@ -85,11 +99,13 @@ function enqueueJob({
 
   const id = newId();
   const pri = priority || JOB_PRIORITY.NORMAL;
+  const financial = isFinancialJobType(jobType);
   const body = {
     ...(payload || {}),
     priority: pri,
-    maxRetries: maxRetries ?? DEFAULT_MAX_RETRIES,
+    maxRetries: financial ? 0 : maxRetries ?? DEFAULT_MAX_RETRIES,
     createdBy: createdBy || null,
+    financial,
   };
   db.prepare(`
     INSERT INTO core_background_jobs(
@@ -197,41 +213,60 @@ function updateJob(id, fields) {
 function releaseStaleLocks(now = new Date()) {
   const iso = now.toISOString();
   const stale = db.prepare(`
-    SELECT id FROM core_background_jobs
+    SELECT id, job_type FROM core_background_jobs
     WHERE status = 'RUNNING'
     AND lock_expires_at IS NOT NULL
     AND lock_expires_at < ?
   `).all(iso);
 
   for (const row of stale) {
+    const financial = isFinancialJobType(row.job_type);
     updateJob(row.id, {
-      status: JOB_STATUS.RETRYING,
-      error: "Lock expired — worker may have crashed",
+      status: financial ? JOB_STATUS.DEAD_LETTER : JOB_STATUS.RETRYING,
+      error: financial
+        ? "Lock expired — financial job will not auto-retry"
+        : "Lock expired — worker may have crashed",
       lockOwner: null,
       lockExpiresAt: null,
+      failureKind: financial ? "FINANCIAL_NO_RETRY" : undefined,
     });
   }
   return stale.length;
 }
 
-function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
+function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS, options = {}) {
   releaseStaleLocks();
   const now = new Date();
   const lockExpires = new Date(now.getTime() + lockTtlMs).toISOString();
   const nowIso = now.toISOString();
+  const jobType = options.jobType || null;
 
-  const candidates = db.prepare(`
-    SELECT * FROM core_background_jobs
-    WHERE status IN ('QUEUED', 'RETRYING')
-    AND (next_run_at IS NULL OR next_run_at <= ?)
-    AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
-    ORDER BY
-      CASE priority
-        WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
-      END DESC,
-      created_at ASC
-    LIMIT 5
-  `).all(nowIso, nowIso);
+  const candidates = jobType
+    ? db.prepare(`
+        SELECT * FROM core_background_jobs
+        WHERE status IN ('QUEUED', 'RETRYING')
+        AND job_type = ?
+        AND (next_run_at IS NULL OR next_run_at <= ?)
+        AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
+        ORDER BY
+          CASE priority
+            WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
+          END DESC,
+          created_at ASC
+        LIMIT 5
+      `).all(jobType, nowIso, nowIso)
+    : db.prepare(`
+        SELECT * FROM core_background_jobs
+        WHERE status IN ('QUEUED', 'RETRYING')
+        AND (next_run_at IS NULL OR next_run_at <= ?)
+        AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
+        ORDER BY
+          CASE priority
+            WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'NORMAL' THEN 2 WHEN 'LOW' THEN 1 ELSE 2
+          END DESC,
+          created_at ASC
+        LIMIT 5
+      `).all(nowIso, nowIso);
 
   for (const row of candidates) {
     const result = db.prepare(`
@@ -253,12 +288,20 @@ function cancelJob(id) {
   const job = getJob(id);
   if (!job) return null;
   if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELLED].includes(job.status)) return job;
-  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "Cancelled by admin" });
+  return updateJob(id, { status: JOB_STATUS.CANCELLED, error: "job.cancelled" });
 }
 
 function retryJob(id) {
   const job = getJob(id);
   if (!job) return null;
+  if (isFinancialJobType(job.jobType)) {
+    return {
+      ok: false,
+      retried: false,
+      reason: "FINANCIAL_NO_RETRY",
+      job,
+    };
+  }
   if (![JOB_STATUS.FAILED, JOB_STATUS.DEAD_LETTER, JOB_STATUS.RETRYING].includes(job.status)) {
     throw new Error(`Cannot retry job in status ${job.status}`);
   }
@@ -292,6 +335,8 @@ function extendLock(id, workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
 module.exports = {
   JOB_STATUS,
   JOB_PRIORITY,
+  isFinancialJobType,
+  sanitizePublicJobError,
   enqueueJob,
   getJob,
   listJobs,

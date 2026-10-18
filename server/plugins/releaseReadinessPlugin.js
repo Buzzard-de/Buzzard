@@ -11,6 +11,7 @@ const { getDeploymentIdentity } = require("../lib/deploymentIdentity");
 const { recordReleaseAction } = require("../lib/release/releaseAudit");
 const { evaluateReleaseSafety } = require("../lib/release/releaseSafetyGate");
 const { AUDIT_ACTIONS } = require("../core/operationsConstants");
+const { sendAdminGateError } = require("../lib/http/publicPluginError");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -62,7 +63,7 @@ module.exports = {
       try {
         adminSafetyGate.requireAdminAction("go_live", { req, body: req.body, dryRun: true });
       } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
+        return sendAdminGateError(res, err);
       }
       const safety = evaluateReleaseSafety(
         releaseReadinessCenter.buildSafeEnv(),

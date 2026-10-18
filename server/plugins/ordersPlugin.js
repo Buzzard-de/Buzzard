@@ -248,7 +248,7 @@ module.exports = {
                 shippingAddress: body.shippingAddress || {},
               });
               if (result.error) {
-                return res.status(result.status || 400).json({ success: false, error: result.error });
+                return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
               }
               return res.status(201).json({
                 success: true,
@@ -404,9 +404,22 @@ module.exports = {
     });
 
     app.get("/api/orders/:orderNumber", (req, res) => {
+      const session = getSession(extractToken(req));
+      if (!session) {
+        return res.status(401).json({ success: false, errorKey: "checkout.authRequired" });
+      }
       const orderNumber = decodeURIComponent(req.params.orderNumber || "");
       const order = readOrders().find((o) => o.orderNumber === orderNumber);
       if (!order) {
+        return res.status(404).json({ success: false, errorKey: "checkout.orderNotFound" });
+      }
+      const sessionEmail = String(session.email || "").toLowerCase();
+      const orderEmail = String(order.customer?.email || order.email || "").toLowerCase();
+      const sessionCustomerId = session.customerId || session.userId || session.id;
+      const owns =
+        (orderEmail && sessionEmail && orderEmail === sessionEmail) ||
+        (order.customerId && sessionCustomerId && String(order.customerId) === String(sessionCustomerId));
+      if (!owns) {
         return res.status(404).json({ success: false, errorKey: "checkout.orderNotFound" });
       }
       return res.json({ success: true, order: attachShipments(order) });

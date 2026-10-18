@@ -1,17 +1,26 @@
 const fs = require("fs");
 const path = require("path");
+const productWriteBoundary = require("./pim/productWriteBoundary");
 
 const rootDir = path.join(__dirname, "..", "..");
 const productsFile = path.join(rootDir, "data", "buzzard_products.json");
 
+function catalogFile() {
+  return process.env.BUZZARD_PRODUCT_STORE_PATH || productsFile;
+}
+
 function readCatalog() {
-  const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));
+  const file = catalogFile();
+  if (!fs.existsSync(file)) {
+    return { products: [], updated_at: new Date().toISOString() };
+  }
+  const raw = JSON.parse(fs.readFileSync(file, "utf8"));
   return raw;
 }
 
 function writeCatalog(catalog) {
   catalog.updated_at = new Date().toISOString();
-  fs.writeFileSync(productsFile, JSON.stringify(catalog, null, 2), "utf8");
+  fs.writeFileSync(catalogFile(), JSON.stringify(catalog, null, 2), "utf8");
 }
 
 function listProducts(filters = {}) {
@@ -60,25 +69,73 @@ function nextProductId() {
   return `prod-${String(next).padStart(6, "0")}`;
 }
 
-function upsertProduct(product) {
+function upsertProduct(product = {}, context = {}) {
   const catalog = readCatalog();
-  const idx = catalog.products.findIndex((p) => p.id === product.id);
+  if (!Array.isArray(catalog.products)) catalog.products = [];
+  const idx = catalog.products.findIndex((p) => p.id && product.id && p.id === product.id);
+  const existing = idx >= 0 ? catalog.products[idx] : null;
+  const gateContext = {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "buzzard_products.json",
+    existing: existing || undefined,
+  };
+  const gate = existing
+    ? productWriteBoundary.authorizeUpdate(product, gateContext)
+    : productWriteBoundary.authorizeCreate(product, gateContext);
+  if (!gate.ok) {
+    if (gate.reason === "SKU_REQUIRED") {
+      return { error: "product.skuRequired", status: 400, reason: gate.reason, boundary: gate.boundary };
+    }
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
+  if (
+    gate.sku &&
+    catalog.products.some((row) => row.sku === gate.sku && (!existing || row.id !== existing.id))
+  ) {
+    return { error: "product.skuExists", status: 409 };
+  }
+
   const now = new Date().toISOString();
-  const next = { ...product, updated_at: now };
+  const next = existing
+    ? { ...existing, ...product, sku: gate.sku || existing.sku, updated_at: now }
+    : {
+        ...product,
+        sku: gate.sku,
+        status: product.status || "draft",
+        created_at: product.created_at || now,
+        updated_at: now,
+      };
   if (idx >= 0) {
-    catalog.products[idx] = { ...catalog.products[idx], ...next };
+    catalog.products[idx] = next;
   } else {
-    next.created_at = next.created_at || now;
     catalog.products.push(next);
   }
   writeCatalog(catalog);
   return next;
 }
 
-function deleteProduct(id) {
+function deleteProduct(id, context = {}) {
   const catalog = readCatalog();
+  if (!Array.isArray(catalog.products)) catalog.products = [];
+  const existing = catalog.products.find((p) => p.id === id);
+  if (!existing) return { error: "product.notFound", status: 404 };
+  const gate = productWriteBoundary.authorizeDelete(existing, {
+    source: context.source || "ADMIN",
+    actorId: context.actorId || null,
+    authorized: context.authorized === true,
+    requireExplicitAuth: true,
+    destination: "buzzard_products.json",
+    existing,
+  });
+  if (!gate.ok) {
+    return { error: gate.message, status: gate.status, reason: gate.reason, boundary: gate.boundary };
+  }
   catalog.products = catalog.products.filter((p) => p.id !== id);
   writeCatalog(catalog);
+  return { deleted: true, id, dualWrite: false, productSourceOfTruthActive: false };
 }
 
 module.exports = {

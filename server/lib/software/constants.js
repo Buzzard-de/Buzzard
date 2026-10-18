@@ -1,0 +1,171 @@
+/**
+ * Software-completion constants. Does not replace Pusat or commerce constants.
+ * MARKET_UNDERCUT stays unimplemented in this slice.
+ */
+
+const SOFTWARE_VERSION = "1.10.0";
+
+const CANONICAL_ENGINES = Object.freeze({
+  orchestrator: "pusat",
+  pricing: "server/lib/pricing.js",
+  productCreate: "server/lib/pim/productCore.createProduct",
+  productWriteBoundary: "server/lib/pim/productWriteBoundary",
+  productValidate: "server/lib/pim/productValidation + productValidator",
+  inventory: "server/lib/operations/stockEngine + server/lib/software/inventory",
+  order: "server/lib/commerce/orderService + pusat.automations.orderAutomation",
+  supplier: "server/lib/supplier/adapterRegistry",
+  payment: "server/lib/commerce/paymentService",
+  returns: "server/lib/returnsRma",
+  marketplace: "server/lib/software/marketplace",
+  shipping: "server/lib/commerce/shippingProvider",
+  tracking: "server/lib/software/tracking",
+  customer: "server/lib/customer/customerOrderBridge",
+  customs: "server/lib/productValidator.validateCustomsDecision",
+  memory: "server/lib/pusat/memory",
+  guardian: "server/lib/pusat/guardian",
+  approval: "server/lib/pusat/approval",
+});
+
+const STOCK_SOURCE = Object.freeze({
+  SUPPLIER_FEED: "supplier_feed",
+  WAREHOUSE: "warehouse",
+  ESTIMATE: "estimate",
+  FORECAST: "forecast",
+  UNVERIFIED: "unverified",
+});
+
+const RESERVATION_STATUS = Object.freeze({
+  ACTIVE: "ACTIVE",
+  RELEASED: "RELEASED",
+  EXPIRED: "EXPIRED",
+  BLOCKED: "BLOCKED",
+  CONSUMED: "CONSUMED",
+});
+
+const TRACKING_STATUS = Object.freeze({
+  CREATED: "CREATED",
+  IN_TRANSIT: "IN_TRANSIT",
+  OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
+  DELIVERED: "DELIVERED",
+  FAILED_DELIVERY: "FAILED_DELIVERY",
+  RETURN_TO_SENDER: "RETURN_TO_SENDER",
+  EXCEPTION: "EXCEPTION",
+  DELAYED: "DELAYED",
+  UNKNOWN: "UNKNOWN",
+});
+
+const LOCATION_TYPE = Object.freeze({
+  CARRIER_GPS: "carrier_gps",
+  CARRIER_EVENT: "carrier_event",
+  ESTIMATED: "estimated",
+  VERIFIED_DELIVERY: "verified_delivery",
+  PLANNED_DESTINATION: "planned_destination",
+  CARRIER_DEPOT: "carrier_depot",
+  NOT_AVAILABLE: "not_available",
+});
+
+const CONNECTOR_STATUS = Object.freeze({
+  NONE: "connector_absent",
+  DRAFT: "connector_draft",
+  MOCK: "mock_connector",
+  INTEGRATION_CODE: "integration_code",
+  TESTED: "tested_integration",
+  CREDENTIALS_PENDING: "credentials_pending",
+  LIVE_VERIFIED: "live_verified",
+  BLOCKED: "blocked",
+});
+
+const VOICE_ADAPTERS = Object.freeze([
+  "twilio",
+  "stt",
+  "tts",
+  "webrtc",
+  "realtime",
+  "digital_human",
+]);
+
+const DEFAULT_STALE_STOCK_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_STALE_TRACKING_MS = 6 * 60 * 60 * 1000;
+
+const HEALTH_STATUS = Object.freeze({
+  PASS: "PASS",
+  PARTIAL: "PARTIAL",
+  BLOCKED: "BLOCKED",
+  NOT_CONFIGURED: "NOT_CONFIGURED",
+  NOT_TESTED: "NOT_TESTED",
+  FAILED: "FAILED",
+});
+
+const RETURN_SIDE_STATUS = Object.freeze({
+  NOT_REQUESTED: "NOT_REQUESTED",
+  REQUESTED: "REQUESTED",
+  DRAFTED: "DRAFTED",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  PENDING: "PENDING",
+  RECEIVED: "RECEIVED",
+  BLOCKED: "BLOCKED",
+});
+
+const LOYALTY_STATE = Object.freeze({
+  NOT_ELIGIBLE: "NOT_ELIGIBLE",
+  PENDING_FIRST_ORDER: "PENDING_FIRST_ORDER",
+  PENDING_RETURN_WINDOW: "PENDING_RETURN_WINDOW",
+  ELIGIBLE: "ELIGIBLE",
+  RESERVED: "RESERVED",
+  REDEEMED: "REDEEMED",
+  EXPIRED: "EXPIRED",
+  REVOKED: "REVOKED",
+});
+
+const ORDER_ALIAS_KIND = Object.freeze({
+  CANONICAL: "CANONICAL",
+  OMS_ID: "OMS_ID",
+  OMS_NUMBER: "OMS_NUMBER",
+  COMMERCE_ID: "COMMERCE_ID",
+  MARKETPLACE_REF: "MARKETPLACE_REF",
+  SUPPLIER_REF: "SUPPLIER_REF",
+  PAYMENT_ORDER_ID: "PAYMENT_ORDER_ID",
+  LEGACY_RAW: "LEGACY_RAW",
+});
+
+const QR_ATTRIBUTION = Object.freeze({
+  AMAZON: "AMAZON",
+  EBAY: "EBAY",
+  KAUFLAND: "KAUFLAND",
+  ALLEGRO: "ALLEGRO",
+  OTHER_MARKETPLACE: "OTHER_MARKETPLACE",
+  BUZZARD_DIRECT: "BUZZARD_DIRECT",
+  ORGANIC: "ORGANIC",
+  UNKNOWN: "UNKNOWN",
+});
+
+const TASK_STATUS_VIEW = Object.freeze({
+  QUEUED: "PENDING",
+  RUNNING: "RUNNING",
+  WAITING_FOR_APPROVAL: "WAITING_APPROVAL",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+  CANCELLED: "CANCELLED",
+  BLOCKED: "FAILED",
+  DEAD_LETTERED: "DEAD_LETTER",
+});
+
+module.exports = {
+  SOFTWARE_VERSION,
+  CANONICAL_ENGINES,
+  STOCK_SOURCE,
+  RESERVATION_STATUS,
+  TRACKING_STATUS,
+  LOCATION_TYPE,
+  CONNECTOR_STATUS,
+  VOICE_ADAPTERS,
+  DEFAULT_STALE_STOCK_MS,
+  DEFAULT_STALE_TRACKING_MS,
+  HEALTH_STATUS,
+  RETURN_SIDE_STATUS,
+  TASK_STATUS_VIEW,
+  LOYALTY_STATE,
+  ORDER_ALIAS_KIND,
+  QR_ATTRIBUTION,
+};

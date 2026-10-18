@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -42,7 +42,7 @@ module.exports = {
     app.post("/api/automation/order-created", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const { orderNumber } = req.body || {};
-      if (!orderNumber) return res.status(400).json({ error: "orderNumber required" });
+      if (!orderNumber) return res.status(400).json({ success: false, errorKey: "order.numberRequired" });
       const result = orderAutomation.queueOrderCreated(orderNumber);
       if (!result.ok) return res.status(400).json(result);
       return res.status(202).json(result);
@@ -51,20 +51,23 @@ module.exports = {
     app.post("/api/webhooks/payment", (req, res) => {
       const result = orderAutomation.handlePaymentWebhook(req.body || {});
       if (!result.ok) return res.status(result.status || 400).json(result);
-      return res.json(result);
+      return res.status(202).json({
+        ...result,
+        officialPath: "/api/commerce/webhooks/:provider",
+      });
     });
 
     app.post("/api/admin/shipment-created", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const { orderNumber, carrier, trackingNumber } = req.body || {};
-      if (!orderNumber) return res.status(400).json({ error: "orderNumber required" });
+      if (!orderNumber) return res.status(400).json({ success: false, errorKey: "order.numberRequired" });
       return res.json(orderAutomation.recordShipmentCreated({ orderNumber, carrier, trackingNumber }));
     });
 
     app.post("/api/admin/supplier-result", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const { orderNumber, supplier, status, supplierOrderId } = req.body || {};
-      if (!orderNumber) return res.status(400).json({ error: "orderNumber required" });
+      if (!orderNumber) return res.status(400).json({ success: false, errorKey: "order.numberRequired" });
       return res.json(
         orderAutomation.recordSupplierResult({ orderNumber, supplier, status, supplierOrderId })
       );

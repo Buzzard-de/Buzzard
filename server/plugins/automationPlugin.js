@@ -9,6 +9,7 @@ const integrationHealth = require("../lib/integrationHealth");
 const { listAdapters } = require("../lib/supplier/adapterRegistry");
 const categoryReadiness = require("../lib/categoryReadiness");
 const { JOB_TYPES } = require("../core/jobConstants");
+const { sendPublicError } = require("../lib/http/publicPluginError");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -103,7 +104,7 @@ module.exports = {
         });
         res.json({ success: true, job });
       } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+        sendPublicError(res, 400, "automation.job.retryFailed", err);
       }
     });
 

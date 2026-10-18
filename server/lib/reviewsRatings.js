@@ -43,7 +43,7 @@ function createReview(body = {}) {
   const productSku = body.productSku || body.product_sku;
 
   if (!productSku || rating < 1 || rating > 5 || reviewBody.length < 10) {
-    return { error: "Product, rating and review body are required", status: 400 };
+    return { error: "review.fieldsRequired", status: 400 };
   }
 
   const result = db
@@ -129,7 +129,7 @@ function markHelpful(reviewId, body = {}) {
 
 function reportReview(reviewId, body = {}) {
   const review = db.prepare("SELECT id FROM revr_reviews WHERE id = ?").get(reviewId);
-  if (!review) return { error: "Review not found", status: 404 };
+  if (!review) return { error: "review.notFound", status: 404 };
 
   db.prepare(`
     INSERT INTO revr_review_reports(review_id, customer_id, reason)
@@ -148,7 +148,7 @@ function reportReview(reviewId, body = {}) {
 
 function addReply(reviewId, body = {}) {
   const review = db.prepare("SELECT id FROM revr_reviews WHERE id = ?").get(reviewId);
-  if (!review) return { error: "Review not found", status: 404 };
+  if (!review) return { error: "review.notFound", status: 404 };
 
   db.prepare(`
     INSERT INTO revr_review_replies(review_id, author_type, author_name, body)
@@ -165,11 +165,11 @@ function addReply(reviewId, body = {}) {
 
 function moderateReview(reviewId, body = {}) {
   const review = db.prepare("SELECT * FROM revr_reviews WHERE id = ?").get(reviewId);
-  if (!review) return { error: "Review not found", status: 404 };
+  if (!review) return { error: "review.notFound", status: 404 };
 
   const status = body.status;
   if (!VALID_STATUSES.includes(status)) {
-    return { error: "Invalid review status", status: 400 };
+    return { error: "review.statusInvalid", status: 400 };
   }
 
   db.prepare(`
@@ -184,7 +184,7 @@ function moderateReview(reviewId, body = {}) {
 
 function moderateMedia(mediaId, body = {}) {
   const media = db.prepare("SELECT id FROM revr_review_media WHERE id = ?").get(mediaId);
-  if (!media) return { error: "Media not found", status: 404 };
+  if (!media) return { error: "review.mediaNotFound", status: 404 };
 
   db.prepare("UPDATE revr_review_media SET status = ? WHERE id = ?").run(
     body.status || "approved",

@@ -47,12 +47,30 @@ class MockPaymentProvider extends PaymentProvider {
   }
 }
 
+function liveProviderBlocked(code) {
+  return {
+    error: `${code}_disabled`,
+    status: 403,
+    executed: false,
+    captured: false,
+    refunded: false,
+    realMoneyMovement: false,
+    blocked: true,
+  };
+}
+
 class StripeProvider extends PaymentProvider {
   constructor() {
     super("stripe");
   }
   async authorize() {
-    return { error: "stripe_disabled", status: 403, realMoneyMovement: false };
+    return liveProviderBlocked("stripe");
+  }
+  async capture() {
+    return liveProviderBlocked("stripe");
+  }
+  async refund() {
+    return liveProviderBlocked("stripe");
   }
 }
 
@@ -61,7 +79,13 @@ class PayPalProvider extends PaymentProvider {
     super("paypal");
   }
   async authorize() {
-    return { error: "paypal_disabled", status: 403, realMoneyMovement: false };
+    return liveProviderBlocked("paypal");
+  }
+  async capture() {
+    return liveProviderBlocked("paypal");
+  }
+  async refund() {
+    return liveProviderBlocked("paypal");
   }
 }
 
@@ -91,6 +115,12 @@ function createPaymentIntent({ amount, currency = "EUR", customerId, idempotency
 
 function getProviderHealth() {
   const flags = getEffectiveFlags();
+  let dual = null;
+  try {
+    dual = require("./providers/dualPaymentEngine").providerDiagnostics();
+  } catch {
+    dual = null;
+  }
   return {
     activeProvider: flags.stripeEnabled ? "stripe" : flags.paypalEnabled ? "paypal" : "mock",
     stripeEnabled: flags.stripeEnabled,
@@ -98,6 +128,10 @@ function getProviderHealth() {
     mockPaymentOnly: flags.mockPaymentOnly,
     realMoneyMovement: false,
     credentialsStored: false,
+    stripe: dual?.stripe || { status: "IMPLEMENTED", liveVerified: false },
+    paypal: dual?.paypal || { status: "IMPLEMENTED", liveVerified: false },
+    liveVerified: false,
+    sandboxVerified: false,
   };
 }
 

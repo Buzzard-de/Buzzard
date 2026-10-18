@@ -28,7 +28,7 @@ async function evaluateGoLiveReadiness() {
     gate(
       "DATABASE",
       integrity.status === "OK" && dbHealth.enabled !== false ? READINESS_GATE_STATUS.PASS : READINESS_GATE_STATUS.CONDITION,
-      `integrity=${integrity.status} path=${dbHealth.path || "unknown"} persistent=${dbHealth.persistence?.persistent ?? false}`
+      `integrity=${integrity.status} persistent=${dbHealth.persistence?.persistent ?? false}`
     )
   );
 
@@ -91,7 +91,7 @@ async function evaluateGoLiveReadiness() {
     gate(
       "SECURITY",
       config.ok ? READINESS_GATE_STATUS.PASS : READINESS_GATE_STATUS.FAIL,
-      config.errors[0]?.message || "configuration valid",
+      config.errors[0]?.code || "configuration valid",
       { errorCount: config.errors.length }
     )
   );

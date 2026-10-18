@@ -29,7 +29,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -67,7 +67,7 @@ module.exports = {
         customerEmail: session.email,
       };
       const result = returnsRma.createReturn(body);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
 
       recordCustomerAction(req, {
         action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_RETURN_REQUEST,
@@ -97,7 +97,7 @@ module.exports = {
 
     app.get("/api/returns-rma/returns/:rmaNumber", (req, res) => {
       const result = returnsRma.getReturnByRma(req.params.rmaNumber);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -114,42 +114,42 @@ module.exports = {
     app.patch("/api/admin/returns-rma/returns/:id/status", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.updateReturnStatus(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.return);
     });
 
     app.patch("/api/admin/returns-rma/returns/:id/inspection", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.updateInspection(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/returns-rma/returns/:id/label", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.createReturnLabel(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.label);
     });
 
     app.post("/api/admin/returns-rma/returns/:id/refund", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.processRefund(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/returns-rma/returns/:id/exchange", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.processExchange(req.params.id);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/admin/returns-rma/returns/:id/warranty", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = returnsRma.createWarrantyClaim(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.claim);
     });
 

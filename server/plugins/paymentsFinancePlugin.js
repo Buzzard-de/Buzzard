@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -39,44 +39,53 @@ module.exports = {
     });
 
     app.post("/api/payments-finance/intents", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createPaymentIntent(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.intent?.id ? 201 : 200).json(result.intent);
     });
 
     app.post("/api/payments-finance/intents/:id/confirm", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.confirmPaymentIntent(req.params.id);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.intent);
     });
 
     app.post("/api/payments-finance/intents/:id/refunds", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createRefund(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.refund);
     });
 
     app.post("/api/payments-finance/webhook", (req, res) => {
       const result = paymentsFinance.handlePaymentWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(result.status || 202).json({ ok: result.ok });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
+      return res.status(result.status || 202).json({
+        ok: result.ok,
+        applied: result.applied === true,
+        reason: result.reason || null,
+        officialPath: result.officialPath || "/api/commerce/webhooks/:provider",
+      });
     });
 
     app.post("/api/payments-finance/invoices", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = paymentsFinance.createInvoice(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.invoice);
     });
 
     app.post("/api/payments-finance/provider/payout-webhook", (req, res) => {
       const result = paymentsFinance.handlePayoutWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.status || 202).json({ ok: result.ok });
     });
 
     app.post("/api/payments-finance/provider/dispute-webhook", (req, res) => {
       const result = paymentsFinance.handleDisputeWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(result.status || 202).json({ ok: result.ok });
     });
 

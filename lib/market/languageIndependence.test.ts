@@ -20,6 +20,7 @@ describe("language and country independence", () => {
     const source = readFileSync(resolve("components/LanguageSelector.tsx"), "utf8");
     expect(source).toContain("setLocale");
     expect(source).not.toContain("setCountryCode");
+    expect(source).toContain("disabled={!ready}");
   });
 
   it("Germany background is language-only", () => {

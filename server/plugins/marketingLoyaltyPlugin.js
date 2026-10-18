@@ -23,7 +23,7 @@ function requireAnyAdmin(req, res) {
     return session;
   }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(403).json({ success: false, errorKey: "security.adminRequired" });
   return null;
 }
 
@@ -36,7 +36,7 @@ module.exports = {
 
     app.post("/api/marketing-loyalty/campaigns", (req, res) => {
       const result = marketingLoyalty.createCampaign(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.campaign);
     });
 
@@ -47,43 +47,43 @@ module.exports = {
     app.patch("/api/admin/marketing-loyalty/campaigns/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketingLoyalty.updateCampaign(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.campaign);
     });
 
     app.post("/api/marketing-loyalty/campaigns/:code/apply", (req, res) => {
       const result = marketingLoyalty.applyCampaign(req.params.code, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/marketing-loyalty/campaigns/:code/use", (req, res) => {
       const result = marketingLoyalty.useCampaign(req.params.code, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/marketing-loyalty/accounts", (req, res) => {
       const result = marketingLoyalty.createLoyaltyAccount(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
     app.post("/api/marketing-loyalty/points", (req, res) => {
       const result = marketingLoyalty.adjustPoints(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result.account);
     });
 
     app.post("/api/marketing-loyalty/referrals/create", (req, res) => {
       const result = marketingLoyalty.createReferral(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.status(201).json(result.referral);
     });
 
     app.post("/api/marketing-loyalty/referrals/complete", (req, res) => {
       const result = marketingLoyalty.completeReferral(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 
@@ -98,7 +98,7 @@ module.exports = {
 
     app.get("/api/marketing-loyalty/:customerId", (req, res) => {
       const result = marketingLoyalty.getLoyaltyProfile(req.params.customerId);
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
+      if (result.error) return require("../lib/http/publicPluginError").sendKeyedResult(res, result);
       return res.json(result);
     });
 

@@ -11,14 +11,6 @@ const FORBIDDEN = [
   "Sichere Zahlung",
 ];
 
-const HERO_TITLE: Record<(typeof LOCALES)[number], string> = {
-  de: "Entdecken Sie unser Sortiment",
-  en: "Discover our range",
-  tr: "Ürün yelpazemizi keşfedin",
-  fr: "Découvrez notre assortiment",
-  ar: "اكتشف مجموعتنا",
-};
-
 async function dismissConsent(page: import("@playwright/test").Page, locale = "de") {
   await page.addInitScript(
     ({ locale: code }) => {
@@ -215,6 +207,10 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
         const visual = tile.querySelector(".home-category-tile-visual");
         return !visual || window.getComputedStyle(visual).display === "none";
       }),
+      vehicleHidden: tiles.every((tile) => {
+        const vehicle = tile.querySelector(".home-category-tile-vehicle");
+        return !vehicle || window.getComputedStyle(vehicle).display === "none";
+      }),
       innerLinesHidden: tiles.every((tile) => Number.parseFloat(window.getComputedStyle(tile).borderTopWidth) === 0),
     };
   });
@@ -233,6 +229,7 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   expect(result.labelsHidden).toBe(true);
   expect(result.iconsHidden).toBe(true);
   expect(result.visualsHidden).toBe(true);
+  expect(result.vehicleHidden).toBe(true);
   expect(result.innerLinesHidden).toBe(true);
 }
 
@@ -422,16 +419,10 @@ async function assertNoForbiddenCopy(page: import("@playwright/test").Page) {
 async function assertCanonicalHome(
   page: import("@playwright/test").Page,
   locale: (typeof LOCALES)[number],
-  heroVisible = true,
+  _heroVisible = false,
 ) {
-  const hero = page.locator(".home-hero-campaign");
-  if (heroVisible) {
-    await expect(hero.locator("h1")).toBeVisible();
-    await expect(hero.locator("h1")).toHaveText(HERO_TITLE[locale]);
-  } else {
-    await expect(hero).toBeHidden();
-    await expect(page.locator(".home-category-discovery .home-section-head")).toBeHidden();
-  }
+  await expect(page.locator(".home-hero-campaign")).toHaveCount(0);
+  await expect(page.locator(".home-category-discovery .home-section-head")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
   await expect(page.locator(".home-category-tile")).toHaveCount(50);
@@ -453,17 +444,12 @@ test.describe("homepage viewports", () => {
     expect(railWidth).toBeLessThanOrEqual(64);
     const frames = await page.evaluate(() => {
       const rail = document.querySelector(".mobile-home-category-rail");
-      const hero = document.querySelector(".home-hero-campaign");
-      if (!rail || !hero) return null;
-      const railStyle = window.getComputedStyle(rail);
-      const heroStyle = window.getComputedStyle(hero);
+      if (!rail) return null;
       return {
-        railBorder: Number.parseFloat(railStyle.borderInlineEndWidth),
-        heroBorder: Number.parseFloat(heroStyle.borderWidth),
+        railBorder: Number.parseFloat(window.getComputedStyle(rail).borderInlineEndWidth),
       };
     });
     expect(frames?.railBorder).toBe(0);
-    expect(frames?.heroBorder).toBe(0);
     await expect(page.locator(".mobile-home-category-rail-link")).toHaveCount(52);
     await expect(page.locator(".mobile-home-category-rail a").first()).toHaveAttribute("href", "/");
     await expect(page.locator(".mobile-home-category-rail-more")).toBeVisible();
@@ -650,9 +636,8 @@ test.describe("homepage viewports", () => {
     await dismissConsent(page);
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto("/");
-    await expect(page.locator(".home-hero-campaign")).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator(".home-hero-campaign")).toHaveCount(0);
     await expect(page.locator("body.buzzard-phone-storefront")).toHaveCount(0);
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.de);
     await expect(page.locator(".home-category-tile")).toHaveCount(50);
     await expect(page.locator(".home-phone-germany-bg")).toBeHidden();
   });
@@ -662,14 +647,15 @@ test.describe("homepage viewports", () => {
     await page.setViewportSize(VIEWPORTS.desktop1440);
     await page.goto("/");
     await assertCanonicalHome(page, "de");
-    await expect(page.locator(".vehicle-select-btn")).toBeVisible();
+    await expect(page.locator(".vehicle-select-btn")).toHaveCount(0);
+    await expect(page.locator(".home-category-tile[data-category-id='cat-05'] .home-category-tile-vehicle")).toBeVisible();
     const languageSelect = page.locator(".site-header .language-selector select");
     const marketSelect = page.locator(".site-header .country-selector select");
     await expect(languageSelect.locator("option")).toHaveCount(30);
     await expect(marketSelect.locator("option")).toHaveCount(35);
     const marketBefore = await marketSelect.inputValue();
     await languageSelect.selectOption("tr");
-    await expect(page.locator(".home-hero-campaign h1")).toHaveText(HERO_TITLE.tr);
+    await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", "tr");
     await expect(marketSelect).toHaveValue(marketBefore);
     await assertNoHorizontalOverflow(page);
     await page.screenshot({ path: "test-results/homepage-de-desktop.png", fullPage: false });

@@ -1,7 +1,6 @@
 "use client";
 
 import HomeCategoryDiscovery from "./home/HomeCategoryDiscovery";
-import HomeHeroCampaign from "./home/HomeHeroCampaign";
 import HomePhoneGermanyBackground from "./home/HomePhoneGermanyBackground";
 import HomeNewsletter from "./home/HomeNewsletter";
 import HomeTrustReviews from "./home/HomeTrustReviews";
@@ -29,7 +28,6 @@ export default function HomePageContent() {
             <MobileLocaleMarketBar />
             <MobileSearch />
           </div>
-          <HomeHeroCampaign />
           <HomeCategoryDiscovery />
         </div>
       </div>

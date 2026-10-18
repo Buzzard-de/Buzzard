@@ -11,6 +11,9 @@ import {
 } from "@/lib/categories";
 import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { useLocale } from "@/lib/i18n/context";
+import { useShop } from "@/lib/shop";
+import type { BuzzardCategory } from "@/lib/categories/types";
+import type { BuzzardLocale } from "@/lib/i18n/types";
 
 function resetPhoneBoxLayout(boxes: HTMLElement, grid: HTMLElement | null) {
   boxes.style.marginTop = "0px";
@@ -97,6 +100,76 @@ function alignBoxesWithAutomotive() {
   boxes.style.marginTop = `${Math.max(0, Math.round(currentMargin + delta))}px`;
 }
 
+function AutomotiveVehicleButton() {
+  const { openVehicleModal, vehicle, vin } = useShop();
+  const { t } = useLocale();
+  const vehicleLabel = vehicle
+    ? `${vehicle.brand} ${vehicle.model}`
+    : vin
+      ? `VIN: ${vin.slice(0, 8)}…`
+      : t("nav.vehiclePlaceholder");
+
+  return (
+    <button
+      type="button"
+      className="home-category-tile-vehicle"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openVehicleModal();
+      }}
+    >
+      <strong>{t("nav.vehicleSelect")}</strong>
+      <small>{vehicleLabel}</small>
+    </button>
+  );
+}
+
+function CategoryTile({ cat, locale }: { cat: BuzzardCategory; locale: BuzzardLocale }) {
+  const label = formatMenuLabel(cat, locale);
+  const body = (
+    <>
+      <span className="home-category-tile-visual">
+        <img
+          src={getMainCategoryVisual(cat.id)}
+          alt=""
+          width={640}
+          height={640}
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+      <span className="home-category-tile-icon">
+        <CategoryIcon name={getMainCategoryIcon(cat.id)} size={22} />
+      </span>
+      <span className="home-category-tile-label">{label}</span>
+    </>
+  );
+
+  if (cat.id === "cat-05") {
+    return (
+      <div className="home-category-tile" role="listitem" data-category-id={cat.id}>
+        <Link href={categoryHref(cat)} className="home-category-tile-main" aria-label={label}>
+          {body}
+        </Link>
+        <AutomotiveVehicleButton />
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={categoryHref(cat)}
+      className="home-category-tile"
+      role="listitem"
+      data-category-id={cat.id}
+      aria-label={label}
+    >
+      {body}
+    </Link>
+  );
+}
+
 function groupCategories<T>(items: T[], size: number): T[][] {
   const groups: T[][] = [];
   for (let index = 0; index < items.length; index += size) {
@@ -128,40 +201,12 @@ export default function HomeCategoryDiscovery() {
   }, []);
 
   return (
-    <section className="home-section home-category-discovery" aria-labelledby="home-categories-title">
-      <div className="home-section-head">
-        <h2 id="home-categories-title">{t("home.mainCategories")}</h2>
-        <Link href="/products/" className="home-section-link">
-          {t("home.allCategories")}
-        </Link>
-      </div>
+    <section className="home-section home-category-discovery" aria-label={t("home.mainCategories")}>
       <div className="home-category-grid" role="list">
         {groupCategories(categories, 3).map((group) => (
           <div key={group.map((cat) => cat.id).join("-")} className="home-category-tile-group">
             {group.map((cat) => (
-              <Link
-                key={cat.id}
-                href={categoryHref(cat)}
-                className="home-category-tile"
-                role="listitem"
-                data-category-id={cat.id}
-                aria-label={formatMenuLabel(cat, locale)}
-              >
-                <span className="home-category-tile-visual">
-                  <img
-                    src={getMainCategoryVisual(cat.id)}
-                    alt=""
-                    width={640}
-                    height={640}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
-                <span className="home-category-tile-icon">
-                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={22} />
-                </span>
-                <span className="home-category-tile-label">{formatMenuLabel(cat, locale)}</span>
-              </Link>
+              <CategoryTile key={cat.id} cat={cat} locale={locale} />
             ))}
           </div>
         ))}

@@ -8,7 +8,7 @@ import MobileVehicleSelector from "./MobileVehicleSelector";
 
 /**
  * Legacy phone shell. Not mounted by app/page.tsx / HomePageContent.
- * Homepage rendering is HomeHeroCampaign + HomeCategoryDiscovery only.
+ * Homepage rendering is HomeCategoryDiscovery only.
  */
 export default function MobileHome() {
   return (

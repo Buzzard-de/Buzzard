@@ -1744,7 +1744,8 @@
 
   .home-page-canonical .home-category-tile-icon,
   .home-page-canonical .home-category-tile-label,
-  .home-page-canonical .home-category-tile-visual {
+  .home-page-canonical .home-category-tile-visual,
+  .home-page-canonical .home-category-tile-vehicle {
     display: none;
   }
 

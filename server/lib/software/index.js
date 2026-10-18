@@ -58,6 +58,8 @@ const logisticsCustomerIntegrity = require("./logisticsCustomerIntegrity");
 const aiAutomationIntegrity = require("./aiAutomationIntegrity");
 const testReliabilityOpsIntegrity = require("./testReliabilityOpsIntegrity");
 const coreRunwayIntegrity = require("./coreRunwayIntegrity");
+const storefrontRunwayIntegrity = require("./storefrontRunwayIntegrity");
+const buzzard80SoftwareLine = require("./buzzard80SoftwareLine");
 const productionConfigGate = require("./productionConfigGate");
 const productionDeployGate = require("./productionDeployGate");
 const goLiveGate = require("./goLiveGate");
@@ -136,6 +138,8 @@ module.exports = {
   aiAutomationIntegrity,
   testReliabilityOpsIntegrity,
   coreRunwayIntegrity,
+  storefrontRunwayIntegrity,
+  buzzard80SoftwareLine,
   productionConfigGate,
   productionDeployGate,
   goLiveGate,

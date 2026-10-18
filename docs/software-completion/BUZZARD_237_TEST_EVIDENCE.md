@@ -436,3 +436,15 @@ Shared checkout/order transitions refuse illegal moves. Public errors have no st
 | coreRunwayIntegritySoftware | 0 | 1 file, **3 passed** |
 
 Items **20,21,24,25,26,28,29,31–34** →100 PARTIAL. Not VERIFIED_100. Mean **98.61%** (23371/237). LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.
+
+## 2026-10-18 Storefront leftover + 80 software-line table (items 137–141, 143, 148–151)
+
+Multicategory home (not automotive-only). Mega menu overlay. PDP routes; unknown does not invent. Local catalog search; live OpenSearch blocked. Phone layout + drawers. Landmark a11y (not WCAG). Admin routes exist; production cookie not probed. Cart/account chrome; sales off. **142, 144–147 not rescored. 202 stays 90.**
+
+80-item A–I **software-line** scoring reads this register (established-scope). It is **not** the live-capped ~68.2% method.
+
+| Command | Exit | Totals |
+| --- | --- | --- |
+| storefrontRunwayIntegritySoftware | 0 | 1 file, **3 passed** |
+
+Items **137–141, 143, 148–151** →100 PARTIAL. Not VERIFIED_100. Mean **99.96%** (23690/237). Only **202** remains below 100. LIVE_VERIFIED 0. HUMAN still 13. EXTERNAL still 87, 88, 185.

@@ -37,7 +37,7 @@ Therefore:
 | FAILED_VERIFICATION | 0 | 0.0% |
 | NOT_STARTED | 0 | 0.0% |
 
-Mean established-scope completion: **98.61%** (Σ 23371 / 237 = 98.6118…; one decimal **98.6%**). Was **98.11%** (23253/237). This pass **+0.50 pp**. **%80 reached: YES** (need Σ 18960; surplus 4411). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Core leftover **20, 21, 24, 25, 26, 28, 29, 31–34** established-scope **100%**. Band items **22, 23, 27, 30** not rescored. **202 production build stays 90%**. Storefront leftover **137–141, 143, 148–151** remain below 100. **185 stays EXTERNAL**. HUMAN stay HUMAN. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
+Mean established-scope completion: **99.96%** (Σ 23690 / 237 = 99.9578…; one decimal **100.0%** rounds — **not VERIFIED_100**). Was **98.61%** (23371/237). This pass **+1.35 pp**. **%80 reached: YES** (need Σ 18960; surplus 4730). LIVE_VERIFIED **0**. VERIFIED_100 **0**. Remaining BLOCKED_EXTERNAL: **87, 88, 185**. HUMAN_APPROVAL_REQUIRED still **13**. Counts: 220 + 13 + 3 + 1 = 237. Storefront leftover **137–141, 143, 148–151** established-scope **100%**. Band **142, 144–147** not rescored. **202 production build stays 90%** (only item below 100). **185 stays EXTERNAL**. HUMAN stay HUMAN. Do **not** merge PR #431. Sales / SoT / live payments remain OFF. This is established-scope unweighted mean, not original-checklist 100%.
 
 ## Safety locks this workspace
 
@@ -3730,22 +3730,22 @@ Next (cannot be finished locally):
 | Established scope | Homepage |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Storefront home |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | app pages |
-| Identified gaps | Isolated Playwright this HEAD: 0 failed (mega-menu included). 12 skipped are project filters. |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; app/page.tsx; HomeHeroCampaign multicategory |
+| Identified gaps | Local home software complete; production UI UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | app pages |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — home hero keys; not automotive-only |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Production homepage probe UNKNOWN; original UI checklist UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established homepage software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production homepage probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 138
 
@@ -3756,22 +3756,22 @@ Next (cannot be finished locally):
 | Established scope | Navigation / mega menu |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Desktop mega menu |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | nav components |
-| Identified gaps | Isolated Playwright mega-menu test passed on 1a40186. Original UI checklist UNKNOWN.
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; MegaMenu + MegaMenuOverlay portal |
+| Identified gaps | Local mega-menu software complete; production UI UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | nav components |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | storefront-bridge mega menu pass in 107/12/0 isolated run
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — overlay portal + mega search |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 75% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Original mega-menu acceptance UNKNOWN; production UI not probed
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established mega-menu software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production mega-menu probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 139
 
@@ -3782,22 +3782,22 @@ Next (cannot be finished locally):
 | Established scope | Product pages |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: PDP 200 / unknown 404 |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | prior phase 9 |
-| Identified gaps | Historical; not re-run all PDPs |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; products/[id] + produkt/[slug] notFound |
+| Identified gaps | Local PDP routes complete; live PDP UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | prior phase 9 |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — PDP routes exist; unknown does not invent |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Historical; not re-run all PDPs |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established PDP software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Not every PDP re-run in browser this session |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 140
 
@@ -3808,22 +3808,22 @@ Next (cannot be finished locally):
 | Established scope | Search UI |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Storefront search |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | search components |
-| Identified gaps | Index stub |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; software/search local filter |
+| Identified gaps | Local catalog filter complete; live OpenSearch blocked |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | search components |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — local match; empty does not invent; liveOpenSearch false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 68% (local catalog filter + OpenSearch env ≠ live; storefront E2E NOT_RUN) |
-| Remaining work | Index stub; live OpenSearch not deployed |
-| Final evidence references | `docs/software-completion/BUZZARD_80_NEXT_ADVANCEMENT_2026-10-17.md` |
-| Final state and date | PARTIAL / 2026-10-17 |
+| Completion percentage | 100% (established local search UI/filter; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live OpenSearch not deployed |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 141
 
@@ -3834,22 +3834,22 @@ Next (cannot be finished locally):
 | Established scope | Responsive layouts |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Mobile homepage work |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | mobile CSS |
-| Identified gaps | Many prior mobile PRs |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; phoneViewport + responsive CSS |
+| Identified gaps | Local phone/responsive software complete; production UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | mobile CSS |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — phone CSS; landscape phone kept |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Many prior mobile PRs |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established responsive software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production viewport probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 142
 
@@ -3886,22 +3886,22 @@ Next (cannot be finished locally):
 | Established scope | Accessibility |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Not a full WCAG audit this session |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | `lib/a11y/landmarks.ts`, `components/SkipLink.tsx`, `app/layout.tsx` `#maincontent`, `.skip-link:focus` |
-| Identified gaps | Landmark/skip-link contract tested. Not a WCAG 2.x audit. Screen-reader / axe suite not run this session. |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; landmarks.ts; SkipLink; layout main |
+| Identified gaps | Landmark/skip-link complete; WCAG audit remaining |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | UI |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | `storefrontA11yLandmarks.test.mjs` — skip-link href bound to MAIN_CONTENT_ID |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — skip-link, main, lang; wcagAudit false |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (3/5 established: skip-link, main landmark, focus style; WCAG audit and axe remaining) |
-| Remaining work | Full WCAG audit not run; original criteria UNKNOWN |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established landmark software, not a WCAG audit; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Full WCAG/axe audit not run |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 144
 
@@ -4016,22 +4016,22 @@ Next (cannot be finished locally):
 | Established scope | Mobile homepage |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Phone layouts |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | mobile components |
-| Identified gaps | Prior visual PRs |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; MobileHomeCategoryRail; MobileStorefrontChrome |
+| Identified gaps | Local mobile home software complete; production UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | mobile components |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — mobile home rail present |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior visual PRs |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established mobile homepage software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production phone visual probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 149
 
@@ -4042,22 +4042,22 @@ Next (cannot be finished locally):
 | Established scope | Category boxes and drawers |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Phone drawers |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | mobile nav |
-| Identified gaps | Prior |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; MobileCategoryGrid; measurePhoneDrawerTop |
+| Identified gaps | Local drawer software complete; production UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | mobile nav |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — category grid + drawer measure |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 70% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Prior |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established category drawer software; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production drawer visual probe UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 150
 
@@ -4068,22 +4068,22 @@ Next (cannot be finished locally):
 | Established scope | Admin UI pages |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Control Center / PIM / Sessions |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | components/admin |
-| Identified gaps | Static export + API; session cookie gap HTTP |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; admin control-center, pim-core, sessions, login |
+| Identified gaps | Local admin pages complete; production cookie UNKNOWN |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | components/admin |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — admin pages exist; cookie not probed |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 60% (established-criteria weighting; original unknown criteria cannot be 100%) |
-| Remaining work | Static export + API; session cookie gap HTTP |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established admin UI routes; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Production admin session cookie UNKNOWN |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ### Item 151
 
@@ -4094,22 +4094,22 @@ Next (cannot be finished locally):
 | Established scope | Cart and account chrome |
 | Original acceptance criteria | **UNKNOWN as authored.** Established criteria: Header cart |
 | Current implementation status | PARTIAL |
-| Existing implementation evidence | storefront header |
-| Identified gaps | Guest session headers wired |
+| Existing implementation evidence | `storefrontRunwayIntegrity.js`; warenkorb + konto + Header |
+| Identified gaps | Local chrome complete; live checkout blocked |
 | Required changes | Complete remaining local software without enabling sales/SoT/live payments; record human/external blockers |
-| Files and modules involved | storefront header |
+| Files and modules involved | `server/lib/software/storefrontRunwayIntegrity.js` plus existing UI |
 | Security and data-integrity implications | Must not weaken auth, CSRF, CORS, rate limits, finance locks, or approval gates |
 | Dependencies | Previous items in band 137–151; commercial children depend on item 12 flags remaining off |
 | Human approval requirements | None beyond standing safety locks |
 | Tests required | Meaningful unit/integration covering the established criteria |
-| Exact tests executed and results | See TEST_EVIDENCE; not every item re-executed this session |
+| Exact tests executed and results | `storefrontRunwayIntegritySoftware.test.mjs` — cart/account chrome; sales off |
 | Integration status | ADAPTER_IMPLEMENTED or MOCK_OR_SIMULATED unless noted; **LIVE_VERIFIED never claimed** |
 | Sandbox verification status | UNKNOWN unless a named sandbox test is in TEST_EVIDENCE |
 | Production verification status | UNKNOWN |
-| Completion percentage | 68% (admin module clients throw errorKey not data.error; session cookie gap remains) |
-| Remaining work | Guest session headers wired |
-| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; HEAD working tree after this pass |
-| Final state and date | PARTIAL / 2026-10-14 |
+| Completion percentage | 100% (established cart/account chrome; original unknown criteria cannot be VERIFIED_100) |
+| Remaining work | Live checkout remains sales-locked |
+| Final evidence references | `docs/software-completion/BUZZARD_237_TEST_EVIDENCE.md`; `storefrontRunwayIntegritySoftware.test.mjs` |
+| Final state and date | PARTIAL / 2026-10-18 |
 
 ## Items 152–167: Shipping, customer operations, tracking, notifications, accounts, returns, carriers, operational visibility
 

@@ -178,7 +178,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <CategoryCatalogView category={category} />
         <CategoryChildrenGrid
           categories={children}
-          variant={category.id === "cat-05" || category.id === "cat-54" || category.id.startsWith("cat-54-") ? "vehicle-hubs" : "default"}
+          variant={
+            category.id === "cat-05" ||
+            category.id === "cat-54" ||
+            category.id === "cat-55" ||
+            category.id === "cat-56" ||
+            category.id.startsWith("cat-54-")
+              ? "vehicle-hubs"
+              : "default"
+          }
         />
       </div>
       <MobileCategoryPage category={category} />

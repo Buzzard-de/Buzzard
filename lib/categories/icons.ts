@@ -42,6 +42,8 @@ export const mainCategoryIcons: Record<string, string> = {
   "cat-40": "electronics",
   "cat-41": "star",
   "cat-54": "tire",
+  "cat-55": "build",
+  "cat-56": "pet",
 };
 
 export function getMainCategoryIcon(id: string): string {

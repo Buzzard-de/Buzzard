@@ -101,11 +101,11 @@ async function assertRailRevealsRemainingCategories(page: import("@playwright/te
 
   await page.locator(".mobile-home-category-rail [data-category-id='cat-09']").scrollIntoViewIfNeeded();
   await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeVisible();
-  await page.locator(".mobile-home-category-rail [data-category-id='cat-54']").scrollIntoViewIfNeeded();
-  await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-54']")).toBeVisible();
+  await page.locator(".mobile-home-category-rail [data-category-id='cat-56']").scrollIntoViewIfNeeded();
+  await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-56']")).toBeVisible();
 
   const clearance = await page.evaluate(() => {
-    const last = document.querySelector(".mobile-home-category-rail [data-category-id='cat-54']");
+    const last = document.querySelector(".mobile-home-category-rail [data-category-id='cat-56']");
     const nav = document.querySelector(".buzzard-mobile-bottom-nav");
     if (!last || !nav) return -1;
     return nav.getBoundingClientRect().top - last.getBoundingClientRect().bottom;
@@ -178,7 +178,7 @@ async function assertLocaleControlsAreReadable(page: import("@playwright/test").
 
 async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   const categories = page.locator(".home-category-tile");
-  await expect(categories).toHaveCount(48);
+  await expect(categories).toHaveCount(50);
   const result = await page.evaluate(() => {
     const tiles = [...document.querySelectorAll(".home-category-tile")];
     const groups = [...document.querySelectorAll(".home-category-tile-group")];
@@ -216,14 +216,15 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   });
   expect(result.ids[0]).toBe("cat-01");
   expect(result.ids.at(-1)).toBe("cat-31");
-  expect(new Set(result.ids).size).toBe(48);
+  expect(new Set(result.ids).size).toBe(50);
   expect(result.ids.indexOf("cat-06") + 1).toBe(result.ids.indexOf("cat-26"));
   expect(result.ids.indexOf("cat-12") + 1).toBe(result.ids.indexOf("cat-36"));
   expect(result.numbers).not.toContain(30);
   expect(result.numbers).not.toContain(37);
   expect(result.numbers).not.toContain(39);
-  expect(result.groupCount).toBe(16);
-  expect(result.groupSizes.every((size) => size === 3)).toBe(true);
+  expect(result.groupCount).toBe(17);
+  expect(result.groupSizes.slice(0, -1).every((size) => size === 3)).toBe(true);
+  expect(result.groupSizes.at(-1)).toBe(2);
   expect(result.twoColumns).toBe(true);
   expect(result.labelsHidden).toBe(true);
   expect(result.iconsHidden).toBe(true);
@@ -263,7 +264,7 @@ async function assertBoxesContinueToRailEnd(page: import("@playwright/test").Pag
         const lastGroup = groups.at(-1);
         const tools = document.querySelector(".mobile-home-category-rail [data-category-id='cat-09']");
         const home = document.querySelector(".mobile-home-category-rail [data-category-id='cat-10']");
-        const lastCat = document.querySelector(".mobile-home-category-rail [data-category-id='cat-54']");
+        const lastCat = document.querySelector(".mobile-home-category-rail [data-category-id='cat-56']");
         if (!first || !lastGroup || !tools || !home || !lastCat) return 99;
         const start = Math.abs(first.getBoundingClientRect().top - tools.getBoundingClientRect().top);
         const firstBand = Math.abs(first.getBoundingClientRect().bottom - home.getBoundingClientRect().bottom);
@@ -424,7 +425,7 @@ async function assertCanonicalHome(
   await expect(page.locator(".home-category-discovery .home-section-head")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-hero")).toHaveCount(0);
   await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
-  await expect(page.locator(".home-category-tile")).toHaveCount(48);
+  await expect(page.locator(".home-category-tile")).toHaveCount(50);
   await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", locale);
   await expect(page.locator("html")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
   await assertNoForbiddenCopy(page);
@@ -468,10 +469,10 @@ test.describe("homepage viewports", () => {
     });
     expect(railStack?.stacked).toBe(true);
     expect(railStack?.between).toBe(true);
-    await expect(page.locator(".mobile-home-category-rail [data-category-id]")).toHaveCount(48);
+    await expect(page.locator(".mobile-home-category-rail [data-category-id]")).toHaveCount(50);
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-08']")).toBeVisible();
     await expect(page.locator(".mobile-home-category-rail [data-category-id='cat-09']")).toBeAttached();
-    await expect(page.locator(".mobile-home-category-rail [data-category-id]").last()).toHaveAttribute("data-category-id", "cat-54");
+    await expect(page.locator(".mobile-home-category-rail [data-category-id]").last()).toHaveAttribute("data-category-id", "cat-56");
     await assertRailRevealsRemainingCategories(page);
     await assertLabelsAreNotClipped(page, ".mobile-home-category-rail-link > span:last-child");
     await assertLabelsAreNotClipped(page, ".home-category-tile-label");
@@ -530,7 +531,7 @@ test.describe("homepage viewports", () => {
     await assertLastCategoryClearsBottomNav(page);
     await page.locator(".buzzard-mobile-header-btn").first().click();
     await expect(page.locator(".mega-menu-overlay")).toBeVisible();
-    await expect(page.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)")).toHaveCount(48);
+    await expect(page.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)")).toHaveCount(50);
     await expect(page.locator(".home-sidebar.embedded .home-sidebar-all")).toHaveCount(1);
     await assertNoHorizontalOverflow(page);
   });
@@ -637,7 +638,7 @@ test.describe("homepage viewports", () => {
     await page.goto("/");
     await expect(page.locator(".home-hero-campaign")).toHaveCount(0);
     await expect(page.locator("body.buzzard-phone-storefront")).toHaveCount(0);
-    await expect(page.locator(".home-category-tile")).toHaveCount(48);
+    await expect(page.locator(".home-category-tile")).toHaveCount(50);
     await expect(page.locator(".home-phone-germany-bg")).toBeHidden();
   });
 

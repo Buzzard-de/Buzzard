@@ -18,7 +18,7 @@ import { resolveLocaleAfterMarketChange } from "@/lib/i18n/marketCompatibility";
 import { isRtlLocale, localeDirection } from "@/lib/i18n/types";
 
 describe("approved customer-facing category count", () => {
-  it("exposes 48 customer L1 and keeps 54 internal records", () => {
+  it("exposes 50 customer L1 and keeps 56 internal records", () => {
     expect(getMainCategories()).toHaveLength(INTERNAL_SHOP_L1_COUNT);
     expect(getVisibleMainCategories()).toHaveLength(APPROVED_CUSTOMER_FACING_L1_COUNT);
     expect(getVisibleMainCategories().map((c) => c.id)).not.toEqual(expect.arrayContaining([...INTERNAL_ONLY_L1_IDS]));

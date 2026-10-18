@@ -1743,7 +1743,8 @@
   }
 
   .home-page-canonical .home-category-tile-icon,
-  .home-page-canonical .home-category-tile-label {
+  .home-page-canonical .home-category-tile-label,
+  .home-page-canonical .home-category-tile-visual {
     display: none;
   }
 

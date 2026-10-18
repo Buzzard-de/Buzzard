@@ -75,10 +75,12 @@ describe("homepage canonical content", () => {
     expect(css).toMatch(/\.home-page-canonical \.home-hero-campaign \{\s*display: none !important;/);
     expect(css).toMatch(/\.home-page-canonical \.home-section-head \{\s*display: none !important;/);
     expect(css).toMatch(/\.home-page-canonical \.home-category-grid \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/);
-    expect(css).toMatch(/\.home-page-canonical \.home-category-tile-icon,\s*\.home-page-canonical \.home-category-tile-label \{\s*display: none;/);
+    expect(css).toMatch(/\.home-page-canonical \.home-category-tile-icon,\s*\.home-page-canonical \.home-category-tile-label,\s*\.home-page-canonical \.home-category-tile-visual \{\s*display: none;/);
     expect(css).toMatch(/\.home-page-canonical \.home-category-tile \+ \.home-category-tile \{\s*border-top: 0;/);
     expect(css).toMatch(/\.mobile-home-category-rail-link \{[\s\S]*?color: #e2b957;/);
     const discovery = readFileSync(resolve("components/home/HomeCategoryDiscovery.tsx"), "utf8");
+    expect(discovery).toContain("home-category-tile-visual");
+    expect(discovery).toContain("getMainCategoryVisual");
     expect(discovery).toContain("home-category-tile-group");
     expect(discovery).toContain("groupCategories(categories, 3)");
     expect(discovery).toContain("alignBoxesWithAutomotive");

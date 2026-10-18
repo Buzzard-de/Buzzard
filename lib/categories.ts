@@ -29,6 +29,7 @@ import { APPROVED_CUSTOMER_FACING_L1_COUNT, INTERNAL_SHOP_L1_COUNT } from "@/lib
 
 import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
 import { getMainCategoryIcon, getCategoryRowIcon } from "@/lib/categories/icons";
+import { getMainCategoryVisual } from "@/lib/categories/visuals";
 import { getProductsForCategory } from "@/lib/products";
 
 /** Customer-facing L1 count (50). Internal JSON still has 53 records. */
@@ -64,6 +65,7 @@ export {
   formatMenuLabel,
   getMainCategoryIcon,
   getCategoryRowIcon,
+  getMainCategoryVisual,
 };
 
 /** Linke Spalte: customer-facing Hauptkategorien (50; JSON still holds 53). */

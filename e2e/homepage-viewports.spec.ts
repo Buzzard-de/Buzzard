@@ -211,6 +211,10 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
         const icon = tile.querySelector(".home-category-tile-icon");
         return !icon || window.getComputedStyle(icon).display === "none";
       }),
+      visualsHidden: tiles.every((tile) => {
+        const visual = tile.querySelector(".home-category-tile-visual");
+        return !visual || window.getComputedStyle(visual).display === "none";
+      }),
       innerLinesHidden: tiles.every((tile) => Number.parseFloat(window.getComputedStyle(tile).borderTopWidth) === 0),
     };
   });
@@ -226,6 +230,7 @@ async function assertPhoneCategoryBoxes(page: import("@playwright/test").Page) {
   expect(result.twoColumns).toBe(true);
   expect(result.labelsHidden).toBe(true);
   expect(result.iconsHidden).toBe(true);
+  expect(result.visualsHidden).toBe(true);
   expect(result.innerLinesHidden).toBe(true);
 }
 

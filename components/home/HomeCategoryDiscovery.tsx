@@ -7,6 +7,7 @@ import {
   categoryHref,
   formatMenuLabel,
   getMainCategoryIcon,
+  getMainCategoryVisual,
 } from "@/lib/categories";
 import { getHomeCategoryList } from "@/lib/home/homepageContent";
 import { useLocale } from "@/lib/i18n/context";
@@ -146,8 +147,18 @@ export default function HomeCategoryDiscovery() {
                 data-category-id={cat.id}
                 aria-label={formatMenuLabel(cat, locale)}
               >
+                <span className="home-category-tile-visual">
+                  <img
+                    src={getMainCategoryVisual(cat.id)}
+                    alt=""
+                    width={640}
+                    height={640}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
                 <span className="home-category-tile-icon">
-                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={28} />
+                  <CategoryIcon name={getMainCategoryIcon(cat.id)} size={22} />
                 </span>
                 <span className="home-category-tile-label">{formatMenuLabel(cat, locale)}</span>
               </Link>

@@ -176,8 +176,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <CategoryJsonLd category={category} breadcrumb={breadcrumb} />
       <div className="buzzard-desktop-chrome">
         <CategoryCatalogView category={category} />
-        <CategoryChildrenGrid categories={children} />
-        {category.id === "cat-05" && <KfzPartsBrowse compact />}
+        <CategoryChildrenGrid
+          categories={children}
+          variant={category.id === "cat-05" || category.id === "cat-54" || category.id.startsWith("cat-54-") ? "vehicle-hubs" : "default"}
+        />
       </div>
       <MobileCategoryPage category={category} />
 

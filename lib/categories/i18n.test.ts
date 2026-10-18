@@ -55,7 +55,11 @@ describe("category labels", () => {
 
   it("covers every master category in every enabled locale", () => {
     const ids = listMasterCategoryIds();
-    expect(ids).toHaveLength(50);
+    expect(ids).toHaveLength(48);
+    expect(ids).toContain("cat-54");
+    expect(ids).not.toContain("cat-25");
+    expect(ids).not.toContain("cat-43");
+    expect(ids).not.toContain("cat-53");
     expect(ids).toContain("cat-01");
     expect(ids).toContain("cat-50");
     expect(ids).not.toContain("cat-30");

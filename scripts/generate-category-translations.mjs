@@ -52,6 +52,7 @@ const mainDe = {
   "cat-39": "Fahrzeug & Mobilität",
   "cat-40": "Energie & Solar",
   "cat-41": "Angebote & Sonderkollektionen",
+  "cat-54": "Reifen und Felgen",
 };
 
 const mainEn = {
@@ -96,6 +97,7 @@ const mainEn = {
   "cat-39": "Vehicle & Mobility",
   "cat-40": "Energy & Solar",
   "cat-41": "Offers & Special Collections",
+  "cat-54": "Tires and rims",
 };
 
 const mainAr = {
@@ -140,6 +142,7 @@ const mainAr = {
   "cat-39": "المركبات والتنقل",
   "cat-40": "الطاقة والطاقة الشمسية",
   "cat-41": "العروض والمجموعات الخاصة",
+  "cat-54": "إطارات وجنوط",
 };
 
 const mainTr = {
@@ -184,6 +187,7 @@ const mainTr = {
   "cat-39": "Araç ve Mobilite",
   "cat-40": "Enerji ve Solar",
   "cat-41": "Fırsatlar ve Özel Koleksiyonlar",
+  "cat-54": "Lastik ve jant",
 };
 
 /** Turkish word/phrase → German */

@@ -24,11 +24,11 @@ describe("Part 12 P1 production hardening", () => {
     expect(dbPaths.getPersistenceInfo().mode).toBeTruthy();
   });
 
-  it("53-category taxonomy validates", async () => {
+  it("54-category taxonomy validates", async () => {
     const taxonomy = await import("../lib/taxonomyCanonical.js");
     const validation = taxonomy.validateCanonicalTaxonomy();
     expect(validation.ok).toBe(true);
-    expect(validation.count).toBe(53);
+    expect(validation.count).toBe(54);
   });
 
   it("Part 12 scripts wired in package.json", () => {

@@ -9976,5 +9976,431 @@
     "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/zubehoer/",
     "permanent": true,
     "note": "Legacy TR category firsatlar-and-ozel-koleksiyonlar/kurumsal-ozel-urunler/aksesuarlar"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/motor-yag/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/motor-yag/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/sanz-man-yag/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/sanz-man-yag/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/bremse-hidroligi/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/bremse-hidroligi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/antifriz/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/antifriz/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/cam-suyu/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/cam-suyu/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/motoroele-und-fluessigkeiten/adblue/",
+    "to": "/kategorie/automotive/pkw/motoroele-und-fluessigkeiten/adblue/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/",
+    "to": "/kategorie/automotive/pkw/filter/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/yag-filtresi/",
+    "to": "/kategorie/automotive/pkw/filter/yag-filtresi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/hava-filtresi/",
+    "to": "/kategorie/automotive/pkw/filter/hava-filtresi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/yak-t-filtresi/",
+    "to": "/kategorie/automotive/pkw/filter/yak-t-filtresi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/polen-filtresi/",
+    "to": "/kategorie/automotive/pkw/filter/polen-filtresi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/filter/sanz-man-filtresi/",
+    "to": "/kategorie/automotive/pkw/filter/sanz-man-filtresi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/",
+    "to": "/kategorie/automotive/pkw/bremssystem/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-balatas/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-balatas/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-diski/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-diski/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-tamburu/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-tamburu/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-kaliperi/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-kaliperi/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-hortumu/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-hortumu/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/bremssystem/bremse-sensoerue/",
+    "to": "/kategorie/automotive/pkw/bremssystem/bremse-sensoerue/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/batterie/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/batterie/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/batterie-sarj-cihaz/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/batterie-sarj-cihaz/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/mars-motoru/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/mars-motoru/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/alternatoer/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/alternatoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/sigorta/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/sigorta/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/batterie-und-elektrik/roele/",
+    "to": "/kategorie/automotive/pkw/batterie-und-elektrik/roele/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/far/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/far/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/stop-lambas/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/stop-lambas/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/sinyal/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/sinyal/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/sis-far/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/sis-far/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/led-ampul/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/led-ampul/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/beleuchtung/xenon/",
+    "to": "/kategorie/automotive/pkw/beleuchtung/xenon/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/scheibenwischer-und-glasprodukte/",
+    "to": "/kategorie/automotive/pkw/scheibenwischer-und-glasprodukte/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/scheibenwischer-und-glasprodukte/standard/",
+    "to": "/kategorie/automotive/pkw/scheibenwischer-und-glasprodukte/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/scheibenwischer-und-glasprodukte/premium/",
+    "to": "/kategorie/automotive/pkw/scheibenwischer-und-glasprodukte/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/scheibenwischer-und-glasprodukte/sets/",
+    "to": "/kategorie/automotive/pkw/scheibenwischer-und-glasprodukte/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/scheibenwischer-und-glasprodukte/zubehoer/",
+    "to": "/kategorie/automotive/pkw/scheibenwischer-und-glasprodukte/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/fahrzeugpflege-und-reinigung/",
+    "to": "/kategorie/automotive/pkw/fahrzeugpflege-und-reinigung/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/fahrzeugpflege-und-reinigung/standard/",
+    "to": "/kategorie/automotive/pkw/fahrzeugpflege-und-reinigung/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/fahrzeugpflege-und-reinigung/premium/",
+    "to": "/kategorie/automotive/pkw/fahrzeugpflege-und-reinigung/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/fahrzeugpflege-und-reinigung/sets/",
+    "to": "/kategorie/automotive/pkw/fahrzeugpflege-und-reinigung/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/fahrzeugpflege-und-reinigung/zubehoer/",
+    "to": "/kategorie/automotive/pkw/fahrzeugpflege-und-reinigung/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/innenraum-zubehoer/",
+    "to": "/kategorie/automotive/pkw/innenraum-zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/innenraum-zubehoer/standard/",
+    "to": "/kategorie/automotive/pkw/innenraum-zubehoer/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/innenraum-zubehoer/premium/",
+    "to": "/kategorie/automotive/pkw/innenraum-zubehoer/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/innenraum-zubehoer/sets/",
+    "to": "/kategorie/automotive/pkw/innenraum-zubehoer/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/innenraum-zubehoer/zubehoer/",
+    "to": "/kategorie/automotive/pkw/innenraum-zubehoer/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/aussenzubehoer/",
+    "to": "/kategorie/automotive/pkw/aussenzubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/aussenzubehoer/standard/",
+    "to": "/kategorie/automotive/pkw/aussenzubehoer/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/aussenzubehoer/premium/",
+    "to": "/kategorie/automotive/pkw/aussenzubehoer/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/aussenzubehoer/sets/",
+    "to": "/kategorie/automotive/pkw/aussenzubehoer/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/aussenzubehoer/zubehoer/",
+    "to": "/kategorie/automotive/pkw/aussenzubehoer/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/ersatzteile/",
+    "to": "/kategorie/automotive/pkw/ersatzteile/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/ersatzteile/standard/",
+    "to": "/kategorie/automotive/pkw/ersatzteile/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/ersatzteile/premium/",
+    "to": "/kategorie/automotive/pkw/ersatzteile/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/ersatzteile/sets/",
+    "to": "/kategorie/automotive/pkw/ersatzteile/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/ersatzteile/zubehoer/",
+    "to": "/kategorie/automotive/pkw/ersatzteile/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/garagen-und-serviceausruestung/",
+    "to": "/kategorie/automotive/pkw/garagen-und-serviceausruestung/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/garagen-und-serviceausruestung/standard/",
+    "to": "/kategorie/automotive/pkw/garagen-und-serviceausruestung/standard/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/garagen-und-serviceausruestung/premium/",
+    "to": "/kategorie/automotive/pkw/garagen-und-serviceausruestung/premium/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/garagen-und-serviceausruestung/sets/",
+    "to": "/kategorie/automotive/pkw/garagen-und-serviceausruestung/sets/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/garagen-und-serviceausruestung/zubehoer/",
+    "to": "/kategorie/automotive/pkw/garagen-und-serviceausruestung/zubehoer/",
+    "permanent": true,
+    "note": "Automotive vehicle-hub URL"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/",
+    "to": "/kategorie/reifen-und-felgen/pkw/",
+    "permanent": true,
+    "note": "Tires moved to dedicated L1"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/yaz-lastigi/",
+    "to": "/kategorie/reifen-und-felgen/pkw/reifen/yaz-lastigi/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/k-s-lastigi/",
+    "to": "/kategorie/reifen-und-felgen/pkw/reifen/k-s-lastigi/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/doert-mevsim-reifen/",
+    "to": "/kategorie/reifen-und-felgen/pkw/reifen/doert-mevsim-reifen/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/celik-jant/",
+    "to": "/kategorie/reifen-und-felgen/pkw/felgen/celik-jant/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/alueminyum-jant/",
+    "to": "/kategorie/reifen-und-felgen/pkw/felgen/alueminyum-jant/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/automotive/reifen-und-felgen/reifen-aksesuarlar/",
+    "to": "/kategorie/reifen-und-felgen/pkw/reifen/reifen-aksesuarlar/",
+    "permanent": true,
+    "note": "Tires/rims vehicle hub"
   }
 ]

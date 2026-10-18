@@ -1,5 +1,5 @@
 /**
- * Part 12 — Authoritative 53-category shop taxonomy + legacy 48 compatibility
+ * Part 12 — Authoritative 54-category shop taxonomy + legacy 48 compatibility
  * Source of truth: data/buzzard_categories.json
  */
 const fs = require("fs");
@@ -25,7 +25,7 @@ function loadCanonicalTaxonomy() {
     const doc = JSON.parse(fs.readFileSync(CANONICAL_FILE, "utf8"));
     const categories = doc.categories || doc.main_categories || [];
     return {
-      version: doc.version || "53",
+      version: doc.version || "54",
       mainCategoryCount: doc.main_category_count || categories.length,
       categories,
       source: CANONICAL_FILE,
@@ -33,7 +33,7 @@ function loadCanonicalTaxonomy() {
     };
   } catch (err) {
     return {
-      version: "53",
+      version: "54",
       mainCategoryCount: 0,
       categories: [],
       source: CANONICAL_FILE,
@@ -85,8 +85,8 @@ function getTaxonomyMeta() {
 function validateCanonicalTaxonomy() {
   const canonical = loadCanonicalTaxonomy();
   const issues = [];
-  if (canonical.mainCategoryCount !== 53) {
-    issues.push(`expected 53 L1 categories, got ${canonical.mainCategoryCount}`);
+  if (canonical.mainCategoryCount !== 54) {
+    issues.push(`expected 54 L1 categories, got ${canonical.mainCategoryCount}`);
   }
   const slugs = new Set();
   for (const cat of canonical.categories) {

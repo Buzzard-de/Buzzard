@@ -55,7 +55,7 @@ async function assertPhoneOverlayLayout(page: import("@playwright/test").Page) {
   const allRow = drawer.locator(".home-sidebar.embedded .home-sidebar-all");
   const rows = drawer.locator(".home-sidebar.embedded .home-sidebar-item:not(.home-sidebar-all)");
   await expect(allRow).toHaveCount(1);
-  await expect(rows).toHaveCount(50);
+  await expect(rows).toHaveCount(48);
   for (let i = 0; i < 4; i += 1) {
     await expect(rows.nth(i)).toBeVisible();
   }

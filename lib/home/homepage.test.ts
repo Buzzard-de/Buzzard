@@ -13,7 +13,7 @@ import { getDeliverableMarketCountries } from "@/lib/market/countries";
 import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 
 describe("homepage canonical content", () => {
-  it("uses the same 50 customer-facing L1 categories for every viewport", () => {
+  it("uses the same 48 customer-facing L1 categories for every viewport", () => {
     const home = getHomeCategoryIds();
     const nav = getVisibleMainCategories().map((c) => c.id);
     expect(home).toEqual(getCustomerFacingAffinityIds());

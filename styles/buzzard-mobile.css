@@ -853,6 +853,23 @@
     outline-offset: 2px;
   }
 
+  .buzzard-mobile-category-row-photo {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #111;
+  }
+
+  .buzzard-mobile-category-row-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   .buzzard-mobile-category-row-icon {
     display: inline-flex;
     align-items: center;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { categoryHref, getCategoryLabel } from "@/lib/categories";
+import { categoryHref, getCategoryLabel, getCategoryVisual, hasHubSubcategoryVisual } from "@/lib/categories";
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { useLocale } from "@/lib/i18n/context";
 
@@ -51,20 +51,28 @@ export default function CategoryChildrenGrid({
 
   return (
     <section className={`subpage-content category-children-grid${hub ? " vehicle-hub-grid" : ""}`}>
-      {categories.map((child) => (
-        <Link
-          key={child.id}
-          href={categoryHref(child)}
-          className={hub ? "vehicle-hub-card" : "category-child-card"}
-        >
-          {hub && VEHICLE_HUB_MARK[child.slug] ? (
-            <span className="vehicle-hub-mark" aria-hidden="true">
-              {VEHICLE_HUB_MARK[child.slug]}
-            </span>
-          ) : null}
-          {hub ? <strong>{getCategoryLabel(child, locale)}</strong> : getCategoryLabel(child, locale)}
-        </Link>
-      ))}
+      {categories.map((child) => {
+        const photo = hasHubSubcategoryVisual(child.id);
+        const label = getCategoryLabel(child, locale);
+        return (
+          <Link
+            key={child.id}
+            href={categoryHref(child)}
+            className={hub ? `vehicle-hub-card${photo ? " vehicle-hub-card--photo" : ""}` : "category-child-card"}
+          >
+            {photo ? (
+              <span className="vehicle-hub-visual">
+                <img src={getCategoryVisual(child.id)} alt="" width={320} height={320} />
+              </span>
+            ) : hub && VEHICLE_HUB_MARK[child.slug] ? (
+              <span className="vehicle-hub-mark" aria-hidden="true">
+                {VEHICLE_HUB_MARK[child.slug]}
+              </span>
+            ) : null}
+            {hub ? <strong>{label}</strong> : label}
+          </Link>
+        );
+      })}
     </section>
   );
 }

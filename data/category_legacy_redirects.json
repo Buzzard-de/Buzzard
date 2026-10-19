@@ -14308,5 +14308,317 @@
     "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/handschuhe/",
     "permanent": true,
     "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/fitness/damb-l/",
+    "to": "/kategorie/sport-und-outdoor/fitness/hanteln/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/fitness/kettlebell/",
+    "to": "/kategorie/sport-und-outdoor/fitness/kettlebells/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/fitness/direnc-band/",
+    "to": "/kategorie/sport-und-outdoor/fitness/widerstandsbaender/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/fitness/yoga-mat/",
+    "to": "/kategorie/sport-und-outdoor/fitness/yogamatten/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/fitness/fitness-aleti/",
+    "to": "/kategorie/sport-und-outdoor/fitness/kraftgeraete/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/kosu-ayakkab-s/",
+    "to": "/kategorie/sport-und-outdoor/kosu/laufschuhe/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/kosu-tisoertue/",
+    "to": "/kategorie/sport-und-outdoor/kosu/laufshirts/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/kosu-sortu/",
+    "to": "/kategorie/sport-und-outdoor/kosu/laufshorts/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/kosu-tayt/",
+    "to": "/kategorie/sport-und-outdoor/kosu/lauftights/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/kosu-corab/",
+    "to": "/kategorie/sport-und-outdoor/kosu/laufsocken/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/kosu/hidrasyon/",
+    "to": "/kategorie/sport-und-outdoor/kosu/trinkguertel/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet/baslang-c/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet/citybikes/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet/performans/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet/mountainbikes/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet/professionell/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet/rennraeder/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet/set/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet/e-bikes/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet/zubehoer/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet/fahrrad-zubehoer/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/bisiklet-formas/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/trikots/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/bisiklet-sortu/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/radhosen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/bisiklet-ayakkab-s/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/radschuhe/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/kask/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/helme/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/eldiven/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/handschuhe/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/hidrasyon/",
+    "to": "/kategorie/sport-und-outdoor/bisiklet-bekleidung-und-ekipman/trinkflaschen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/cad-r/",
+    "to": "/kategorie/sport-und-outdoor/camping/zelte/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/uyku-tulumu/",
+    "to": "/kategorie/sport-und-outdoor/camping/schlafsacke/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/camping-sandalyesi/",
+    "to": "/kategorie/sport-und-outdoor/camping/campingstuehle/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/camping-masas/",
+    "to": "/kategorie/sport-und-outdoor/camping/campingtische/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/camping-ocag/",
+    "to": "/kategorie/sport-und-outdoor/camping/campingkocher/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/camping/mat/",
+    "to": "/kategorie/sport-und-outdoor/camping/isomatten/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/yuerueyues/trekking-ayakkab-s/",
+    "to": "/kategorie/sport-und-outdoor/yuerueyues/trekkingschuhe/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/yuerueyues/trekking-pantolonu/",
+    "to": "/kategorie/sport-und-outdoor/yuerueyues/trekkinghosen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/yuerueyues/outdoor-mont/",
+    "to": "/kategorie/sport-und-outdoor/yuerueyues/outdoorjacken/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/yuerueyues/s-rt-cantas/",
+    "to": "/kategorie/sport-und-outdoor/yuerueyues/wanderrucksaecke/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/yuerueyues/baton/",
+    "to": "/kategorie/sport-und-outdoor/yuerueyues/wanderstoecke/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/outdoor-bekleidung/baslang-c/",
+    "to": "/kategorie/sport-und-outdoor/outdoor-bekleidung/hardshell/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/outdoor-bekleidung/performans/",
+    "to": "/kategorie/sport-und-outdoor/outdoor-bekleidung/softshell/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/outdoor-bekleidung/professionell/",
+    "to": "/kategorie/sport-und-outdoor/outdoor-bekleidung/baselayer/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/outdoor-bekleidung/set/",
+    "to": "/kategorie/sport-und-outdoor/outdoor-bekleidung/muetzen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/outdoor-bekleidung/zubehoer/",
+    "to": "/kategorie/sport-und-outdoor/outdoor-bekleidung/handschuhe/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/sport-cantalar/baslang-c/",
+    "to": "/kategorie/sport-und-outdoor/sport-cantalar/gymbags/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/sport-cantalar/performans/",
+    "to": "/kategorie/sport-und-outdoor/sport-cantalar/duffels/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/sport-cantalar/professionell/",
+    "to": "/kategorie/sport-und-outdoor/sport-cantalar/sportrucksaecke/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/sport-cantalar/set/",
+    "to": "/kategorie/sport-und-outdoor/sport-cantalar/schuhtaschen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/sport-cantalar/zubehoer/",
+    "to": "/kategorie/sport-und-outdoor/sport-cantalar/huefttaschen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/hidrasyon/matara/",
+    "to": "/kategorie/sport-und-outdoor/hidrasyon/trinkflaschen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/hidrasyon/hidrasyon-cantas/",
+    "to": "/kategorie/sport-und-outdoor/hidrasyon/trinkblasen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/hidrasyon/termos/",
+    "to": "/kategorie/sport-und-outdoor/hidrasyon/thermosflaschen/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/hidrasyon/wasser-filtresi/",
+    "to": "/kategorie/sport-und-outdoor/hidrasyon/wasserfilter/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/set-sporlar/baslang-c/",
+    "to": "/kategorie/sport-und-outdoor/set-sporlar/fussball/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/set-sporlar/performans/",
+    "to": "/kategorie/sport-und-outdoor/set-sporlar/basketball/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/set-sporlar/professionell/",
+    "to": "/kategorie/sport-und-outdoor/set-sporlar/volleyball/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/set-sporlar/set/",
+    "to": "/kategorie/sport-und-outdoor/set-sporlar/tennis/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sport-und-outdoor/set-sporlar/zubehoer/",
+    "to": "/kategorie/sport-und-outdoor/set-sporlar/badminton/",
+    "permanent": true,
+    "note": "Sport placeholder L3 replaced with a real product group"
   }
 ]

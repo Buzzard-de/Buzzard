@@ -24295,7 +24295,7 @@
         {
           "id": "cat-35-01",
           "menu_order": 1,
-          "name": "Wand Dekor",
+          "name": "Wanddekor",
           "slug": "duvar-dekoru",
           "url": "/kategorie/dekoration/duvar-dekoru",
           "level": 2,
@@ -24303,54 +24303,50 @@
             {
               "id": "cat-35-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/duvar-dekoru/standard",
+              "name": "Poster",
+              "slug": "poster",
+              "url": "/kategorie/dekoration/duvar-dekoru/poster",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/duvar-dekoru/standart",
-              "legacy_url": "/kategori/dekorasyon/duvar-dekoru/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/duvar-dekoru/standard"
             },
             {
               "id": "cat-35-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/duvar-dekoru/premium",
+              "name": "Leinwände",
+              "slug": "leinwaende",
+              "url": "/kategorie/dekoration/duvar-dekoru/leinwaende",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/duvar-dekoru/premium",
-              "legacy_url": "/kategori/dekorasyon/duvar-dekoru/premium"
+              "legacy_url": "/kategorie/dekoration/duvar-dekoru/premium"
             },
             {
               "id": "cat-35-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/duvar-dekoru/sets",
+              "name": "Wandtattoos",
+              "slug": "wandtattoos",
+              "url": "/kategorie/dekoration/duvar-dekoru/wandtattoos",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/duvar-dekoru/setler",
-              "legacy_url": "/kategori/dekorasyon/duvar-dekoru/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/duvar-dekoru/sets"
             },
             {
               "id": "cat-35-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/duvar-dekoru/zubehoer",
+              "name": "Wandbuchstaben",
+              "slug": "wandbuchstaben",
+              "url": "/kategorie/dekoration/duvar-dekoru/wandbuchstaben",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/duvar-dekoru/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/duvar-dekoru/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/duvar-dekoru/zubehoer"
             }
           ],
           "legacy_name": "Duvar Dekoru",
@@ -24369,54 +24365,50 @@
             {
               "id": "cat-35-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/mum-und-koku/standard",
+              "name": "Stumpenkerzen",
+              "slug": "stumpenkerzen",
+              "url": "/kategorie/dekoration/mum-und-koku/stumpenkerzen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/mum-and-koku/standart",
-              "legacy_url": "/kategori/dekorasyon/mum-and-koku/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/mum-und-koku/standard"
             },
             {
               "id": "cat-35-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/mum-und-koku/premium",
+              "name": "Teelichter",
+              "slug": "teelichter",
+              "url": "/kategorie/dekoration/mum-und-koku/teelichter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/mum-and-koku/premium",
-              "legacy_url": "/kategori/dekorasyon/mum-and-koku/premium"
+              "legacy_url": "/kategorie/dekoration/mum-und-koku/premium"
             },
             {
               "id": "cat-35-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/mum-und-koku/sets",
+              "name": "Duftkerzen",
+              "slug": "duftkerzen",
+              "url": "/kategorie/dekoration/mum-und-koku/duftkerzen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/mum-and-koku/setler",
-              "legacy_url": "/kategori/dekorasyon/mum-and-koku/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/mum-und-koku/sets"
             },
             {
               "id": "cat-35-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/mum-und-koku/zubehoer",
+              "name": "Laternen",
+              "slug": "laternen",
+              "url": "/kategorie/dekoration/mum-und-koku/laternen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/mum-and-koku/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/mum-and-koku/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/mum-und-koku/zubehoer"
             }
           ],
           "legacy_name": "Mum & Koku",
@@ -24435,54 +24427,50 @@
             {
               "id": "cat-35-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/ayna/standard",
+              "name": "Wandspiegel",
+              "slug": "wandspiegel",
+              "url": "/kategorie/dekoration/ayna/wandspiegel",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/ayna/standart",
-              "legacy_url": "/kategori/dekorasyon/ayna/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/ayna/standard"
             },
             {
               "id": "cat-35-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/ayna/premium",
+              "name": "Standspiegel",
+              "slug": "standspiegel",
+              "url": "/kategorie/dekoration/ayna/standspiegel",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/ayna/premium",
-              "legacy_url": "/kategori/dekorasyon/ayna/premium"
+              "legacy_url": "/kategorie/dekoration/ayna/premium"
             },
             {
               "id": "cat-35-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/ayna/sets",
+              "name": "Kosmetikspiegel",
+              "slug": "kosmetikspiegel",
+              "url": "/kategorie/dekoration/ayna/kosmetikspiegel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/ayna/setler",
-              "legacy_url": "/kategori/dekorasyon/ayna/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/ayna/sets"
             },
             {
               "id": "cat-35-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/ayna/zubehoer",
+              "name": "Dekorspiegel",
+              "slug": "dekorspiegel",
+              "url": "/kategorie/dekoration/ayna/dekorspiegel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/ayna/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/ayna/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/ayna/zubehoer"
             }
           ],
           "legacy_name": "Ayna",
@@ -24501,54 +24489,50 @@
             {
               "id": "cat-35-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/cerceve/standard",
+              "name": "Bilderrahmen",
+              "slug": "bilderrahmen",
+              "url": "/kategorie/dekoration/cerceve/bilderrahmen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/cerceve/standart",
-              "legacy_url": "/kategori/dekorasyon/cerceve/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/cerceve/standard"
             },
             {
               "id": "cat-35-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/cerceve/premium",
+              "name": "Collagen",
+              "slug": "collagen",
+              "url": "/kategorie/dekoration/cerceve/collagen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/cerceve/premium",
-              "legacy_url": "/kategori/dekorasyon/cerceve/premium"
+              "legacy_url": "/kategorie/dekoration/cerceve/premium"
             },
             {
               "id": "cat-35-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/cerceve/sets",
+              "name": "Passepartouts",
+              "slug": "passepartouts",
+              "url": "/kategorie/dekoration/cerceve/passepartouts",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/cerceve/setler",
-              "legacy_url": "/kategori/dekorasyon/cerceve/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/cerceve/sets"
             },
             {
               "id": "cat-35-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/cerceve/zubehoer",
+              "name": "Digitalrahmen",
+              "slug": "digitalrahmen",
+              "url": "/kategorie/dekoration/cerceve/digitalrahmen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/cerceve/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/cerceve/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/cerceve/zubehoer"
             }
           ],
           "legacy_name": "Çerçeve",
@@ -24559,7 +24543,7 @@
         {
           "id": "cat-35-05",
           "menu_order": 5,
-          "name": "Dekorativ Zubehör",
+          "name": "Dekoratives Zubehör",
           "slug": "dekoratif-zubehoer",
           "url": "/kategorie/dekoration/dekoratif-zubehoer",
           "level": 2,
@@ -24567,54 +24551,50 @@
             {
               "id": "cat-35-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/dekoratif-zubehoer/standard",
+              "name": "Schalen",
+              "slug": "schalen",
+              "url": "/kategorie/dekoration/dekoratif-zubehoer/schalen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/dekoratif-aksesuar/standart",
-              "legacy_url": "/kategori/dekorasyon/dekoratif-aksesuar/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/dekoratif-zubehoer/standard"
             },
             {
               "id": "cat-35-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/dekoratif-zubehoer/premium",
+              "name": "Figuren",
+              "slug": "figuren",
+              "url": "/kategorie/dekoration/dekoratif-zubehoer/figuren",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/dekoratif-aksesuar/premium",
-              "legacy_url": "/kategori/dekorasyon/dekoratif-aksesuar/premium"
+              "legacy_url": "/kategorie/dekoration/dekoratif-zubehoer/premium"
             },
             {
               "id": "cat-35-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/dekoratif-zubehoer/sets",
+              "name": "Windlichter",
+              "slug": "windlichter",
+              "url": "/kategorie/dekoration/dekoratif-zubehoer/windlichter",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/dekoratif-aksesuar/setler",
-              "legacy_url": "/kategori/dekorasyon/dekoratif-aksesuar/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/dekoratif-zubehoer/sets"
             },
             {
               "id": "cat-35-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/dekoratif-zubehoer/zubehoer",
+              "name": "Dekotabletts",
+              "slug": "dekotabletts",
+              "url": "/kategorie/dekoration/dekoratif-zubehoer/dekotabletts",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/dekoratif-aksesuar/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/dekoratif-aksesuar/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/dekoratif-zubehoer/zubehoer"
             }
           ],
           "legacy_name": "Dekoratif Aksesuar",
@@ -24625,7 +24605,7 @@
         {
           "id": "cat-35-06",
           "menu_order": 6,
-          "name": "Saison Dekor",
+          "name": "Saisondekor",
           "slug": "mevsim-dekoru",
           "url": "/kategorie/dekoration/mevsim-dekoru",
           "level": 2,
@@ -24633,60 +24613,148 @@
             {
               "id": "cat-35-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/dekoration/mevsim-dekoru/standard",
+              "name": "Weihnachten",
+              "slug": "weihnachten",
+              "url": "/kategorie/dekoration/mevsim-dekoru/weihnachten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "dekorasyon/mevsim-dekoru/standart",
-              "legacy_url": "/kategori/dekorasyon/mevsim-dekoru/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/dekoration/mevsim-dekoru/standard"
             },
             {
               "id": "cat-35-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/dekoration/mevsim-dekoru/premium",
+              "name": "Ostern",
+              "slug": "ostern",
+              "url": "/kategorie/dekoration/mevsim-dekoru/ostern",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "dekorasyon/mevsim-dekoru/premium",
-              "legacy_url": "/kategori/dekorasyon/mevsim-dekoru/premium"
+              "legacy_url": "/kategorie/dekoration/mevsim-dekoru/premium"
             },
             {
               "id": "cat-35-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/dekoration/mevsim-dekoru/sets",
+              "name": "Halloween",
+              "slug": "halloween",
+              "url": "/kategorie/dekoration/mevsim-dekoru/halloween",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "dekorasyon/mevsim-dekoru/setler",
-              "legacy_url": "/kategori/dekorasyon/mevsim-dekoru/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/dekoration/mevsim-dekoru/sets"
             },
             {
               "id": "cat-35-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/dekoration/mevsim-dekoru/zubehoer",
+              "name": "Sommerdeko",
+              "slug": "sommerdeko",
+              "url": "/kategorie/dekoration/mevsim-dekoru/sommerdeko",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "dekorasyon/mevsim-dekoru/aksesuarlar",
-              "legacy_url": "/kategori/dekorasyon/mevsim-dekoru/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/dekoration/mevsim-dekoru/zubehoer"
             }
           ],
           "legacy_name": "Mevsim Dekoru",
           "legacy_slug": "mevsim-dekoru",
           "legacy_slug_path": "dekorasyon/mevsim-dekoru",
           "legacy_url": "/kategori/dekorasyon/mevsim-dekoru"
+        },
+        {
+          "id": "cat-35-07",
+          "menu_order": 7,
+          "name": "Pflanzen & Blüten",
+          "slug": "pflanzen-und-blueten",
+          "url": "/kategorie/dekoration/pflanzen-und-blueten",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-35-07-01",
+              "menu_order": 1,
+              "name": "Kunstpflanzen",
+              "slug": "kunstpflanzen",
+              "url": "/kategorie/dekoration/pflanzen-und-blueten/kunstpflanzen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-07-02",
+              "menu_order": 2,
+              "name": "Trockenblumen",
+              "slug": "trockenblumen",
+              "url": "/kategorie/dekoration/pflanzen-und-blueten/trockenblumen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-07-03",
+              "menu_order": 3,
+              "name": "Übertöpfe",
+              "slug": "uebertoepfe",
+              "url": "/kategorie/dekoration/pflanzen-und-blueten/uebertoepfe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-07-04",
+              "menu_order": 4,
+              "name": "Kränze",
+              "slug": "kraenze",
+              "url": "/kategorie/dekoration/pflanzen-und-blueten/kraenze",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-35-08",
+          "menu_order": 8,
+          "name": "Dekolicht",
+          "slug": "dekolicht",
+          "url": "/kategorie/dekoration/dekolicht",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-35-08-01",
+              "menu_order": 1,
+              "name": "Lichterketten",
+              "slug": "lichterketten",
+              "url": "/kategorie/dekoration/dekolicht/lichterketten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-08-02",
+              "menu_order": 2,
+              "name": "Tischlampen Deko",
+              "slug": "tischlampen-deko",
+              "url": "/kategorie/dekoration/dekolicht/tischlampen-deko",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-08-03",
+              "menu_order": 3,
+              "name": "LED-Laternen",
+              "slug": "led-laternen",
+              "url": "/kategorie/dekoration/dekolicht/led-laternen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-35-08-04",
+              "menu_order": 4,
+              "name": "Kerzenlampen",
+              "slug": "kerzenlampen",
+              "url": "/kategorie/dekoration/dekolicht/kerzenlampen",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Dekorasyon",

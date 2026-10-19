@@ -12496,5 +12496,149 @@
     "to": "/kategorie/moebel/masa-und-sandalye/bartische/",
     "permanent": true,
     "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/duvar-dekoru/standard/",
+    "to": "/kategorie/dekoration/duvar-dekoru/poster/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/duvar-dekoru/premium/",
+    "to": "/kategorie/dekoration/duvar-dekoru/leinwaende/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/duvar-dekoru/sets/",
+    "to": "/kategorie/dekoration/duvar-dekoru/wandtattoos/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/duvar-dekoru/zubehoer/",
+    "to": "/kategorie/dekoration/duvar-dekoru/wandbuchstaben/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mum-und-koku/standard/",
+    "to": "/kategorie/dekoration/mum-und-koku/stumpenkerzen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mum-und-koku/premium/",
+    "to": "/kategorie/dekoration/mum-und-koku/teelichter/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mum-und-koku/sets/",
+    "to": "/kategorie/dekoration/mum-und-koku/duftkerzen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mum-und-koku/zubehoer/",
+    "to": "/kategorie/dekoration/mum-und-koku/laternen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/ayna/standard/",
+    "to": "/kategorie/dekoration/ayna/wandspiegel/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/ayna/premium/",
+    "to": "/kategorie/dekoration/ayna/standspiegel/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/ayna/sets/",
+    "to": "/kategorie/dekoration/ayna/kosmetikspiegel/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/ayna/zubehoer/",
+    "to": "/kategorie/dekoration/ayna/dekorspiegel/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/cerceve/standard/",
+    "to": "/kategorie/dekoration/cerceve/bilderrahmen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/cerceve/premium/",
+    "to": "/kategorie/dekoration/cerceve/collagen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/cerceve/sets/",
+    "to": "/kategorie/dekoration/cerceve/passepartouts/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/cerceve/zubehoer/",
+    "to": "/kategorie/dekoration/cerceve/digitalrahmen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/dekoratif-zubehoer/standard/",
+    "to": "/kategorie/dekoration/dekoratif-zubehoer/schalen/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/dekoratif-zubehoer/premium/",
+    "to": "/kategorie/dekoration/dekoratif-zubehoer/figuren/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/dekoratif-zubehoer/sets/",
+    "to": "/kategorie/dekoration/dekoratif-zubehoer/windlichter/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/dekoratif-zubehoer/zubehoer/",
+    "to": "/kategorie/dekoration/dekoratif-zubehoer/dekotabletts/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mevsim-dekoru/standard/",
+    "to": "/kategorie/dekoration/mevsim-dekoru/weihnachten/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mevsim-dekoru/premium/",
+    "to": "/kategorie/dekoration/mevsim-dekoru/ostern/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mevsim-dekoru/sets/",
+    "to": "/kategorie/dekoration/mevsim-dekoru/halloween/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/dekoration/mevsim-dekoru/zubehoer/",
+    "to": "/kategorie/dekoration/mevsim-dekoru/sommerdeko/",
+    "permanent": true,
+    "note": "Decoration placeholder L3 replaced with a real product group"
   }
 ]

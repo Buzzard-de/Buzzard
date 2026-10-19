@@ -19,6 +19,7 @@ export function hasHubSubcategoryVisual(categoryId: string): boolean {
     /^cat-27-\d{2}$/.test(categoryId) ||
     /^cat-45-\d{2}$/.test(categoryId) ||
     /^cat-52-\d{2}$/.test(categoryId) ||
+    /^cat-17-\d{2}$/.test(categoryId) ||
     /^cat-05-2[1-7]$/.test(categoryId) ||
     /^cat-5[56]-\d{2}$/.test(categoryId)
   );

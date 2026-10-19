@@ -11536,5 +11536,173 @@
     "to": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/algizide/",
     "permanent": true,
     "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-bak-m/standard/",
+    "to": "/kategorie/mutter-und-baby/baby-bak-m/pflegecremes/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-bak-m/premium/",
+    "to": "/kategorie/mutter-und-baby/baby-bak-m/badezusaetze/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-bak-m/sets/",
+    "to": "/kategorie/mutter-und-baby/baby-bak-m/wickeln/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-bak-m/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/baby-bak-m/watte-und-oel/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/beslenme/standard/",
+    "to": "/kategorie/mutter-und-baby/beslenme/flaschen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/beslenme/premium/",
+    "to": "/kategorie/mutter-und-baby/beslenme/schnuller/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/beslenme/sets/",
+    "to": "/kategorie/mutter-und-baby/beslenme/sterilisatoren/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/beslenme/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/beslenme/breikochgeraete/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-odas/standard/",
+    "to": "/kategorie/mutter-und-baby/baby-odas/babybetten/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-odas/premium/",
+    "to": "/kategorie/mutter-und-baby/baby-odas/wickelkommoden/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-odas/sets/",
+    "to": "/kategorie/mutter-und-baby/baby-odas/babytextilien/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-odas/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/baby-odas/nachtlichter/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/spielzeug/standard/",
+    "to": "/kategorie/mutter-und-baby/spielzeug/greiflinge/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/spielzeug/premium/",
+    "to": "/kategorie/mutter-und-baby/spielzeug/spielboegen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/spielzeug/sets/",
+    "to": "/kategorie/mutter-und-baby/spielzeug/kuscheltiere/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/spielzeug/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/spielzeug/beissringe/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/standard/",
+    "to": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/kinderwagen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/premium/",
+    "to": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/autositze/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/sets/",
+    "to": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/tragen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/baby-arabas-und-tas-ma/reisetaschen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/sicherheit/standard/",
+    "to": "/kategorie/mutter-und-baby/sicherheit/babyphones/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/sicherheit/premium/",
+    "to": "/kategorie/mutter-und-baby/sicherheit/steckdosenschutz/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/sicherheit/sets/",
+    "to": "/kategorie/mutter-und-baby/sicherheit/treppenschutzgitter/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/sicherheit/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/sicherheit/eckenschutz/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/mutter-ueruenleri/standard/",
+    "to": "/kategorie/mutter-und-baby/mutter-ueruenleri/stillkissen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/mutter-ueruenleri/premium/",
+    "to": "/kategorie/mutter-und-baby/mutter-ueruenleri/milchpumpen/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/mutter-ueruenleri/sets/",
+    "to": "/kategorie/mutter-und-baby/mutter-ueruenleri/still-bhs/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/mutter-und-baby/mutter-ueruenleri/zubehoer/",
+    "to": "/kategorie/mutter-und-baby/mutter-ueruenleri/wochenbett/",
+    "permanent": true,
+    "note": "Baby placeholder L3 replaced with a real product group"
   }
 ]

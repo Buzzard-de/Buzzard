@@ -15082,5 +15082,173 @@
     "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/fanggurte/",
     "permanent": true,
     "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-malzemeleri/standard/",
+    "to": "/kategorie/bau-und-konstruktion/yap-malzemeleri/zement/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-malzemeleri/premium/",
+    "to": "/kategorie/bau-und-konstruktion/yap-malzemeleri/gipskarton/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-malzemeleri/sets/",
+    "to": "/kategorie/bau-und-konstruktion/yap-malzemeleri/ziegel/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-malzemeleri/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/yap-malzemeleri/bauholz/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/izolasyon/standard/",
+    "to": "/kategorie/bau-und-konstruktion/izolasyon/mineralwolle/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/izolasyon/premium/",
+    "to": "/kategorie/bau-und-konstruktion/izolasyon/hartschaum/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/izolasyon/sets/",
+    "to": "/kategorie/bau-und-konstruktion/izolasyon/spruehschaum/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/izolasyon/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/izolasyon/dampfsperre/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/boya-und-s-va/standard/",
+    "to": "/kategorie/bau-und-konstruktion/boya-und-s-va/innenfarbe/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/boya-und-s-va/premium/",
+    "to": "/kategorie/bau-und-konstruktion/boya-und-s-va/aussenfarbe/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/boya-und-s-va/sets/",
+    "to": "/kategorie/bau-und-konstruktion/boya-und-s-va/putz/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/boya-und-s-va/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/boya-und-s-va/spachtel/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/standard/",
+    "to": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/montagekleber/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/premium/",
+    "to": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/holzleim/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/sets/",
+    "to": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/silikon/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/yap-st-r-c-lar/malerband/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/cat-und-oluk/standard/",
+    "to": "/kategorie/bau-und-konstruktion/cat-und-oluk/dachziegel/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/cat-und-oluk/premium/",
+    "to": "/kategorie/bau-und-konstruktion/cat-und-oluk/dachrinnen/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/cat-und-oluk/sets/",
+    "to": "/kategorie/bau-und-konstruktion/cat-und-oluk/fallrohre/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/cat-und-oluk/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/cat-und-oluk/bleche/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/standard/",
+    "to": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/griffe/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/premium/",
+    "to": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/schliesszylinder/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/sets/",
+    "to": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/fensterbeschlaege/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/kap-und-pencere-aksesuarlar/dichtungen/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/standard/",
+    "to": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/duebel/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/premium/",
+    "to": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/schienen/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/sets/",
+    "to": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/konsolen/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/zubehoer/",
+    "to": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/verbundmoertel/",
+    "permanent": true,
+    "note": "DIY placeholder L3 replaced with a real product group"
   }
 ]

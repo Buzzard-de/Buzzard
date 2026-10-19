@@ -17266,5 +17266,173 @@
     "to": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/kundendisplays/",
     "permanent": true,
     "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/karton-kutular/standard/",
+    "to": "/kategorie/verpackung-und-versand/karton-kutular/faltkartons/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/karton-kutular/premium/",
+    "to": "/kategorie/verpackung-und-versand/karton-kutular/wellpappkartons/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/karton-kutular/sets/",
+    "to": "/kategorie/verpackung-und-versand/karton-kutular/maxibrief-kartons/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/karton-kutular/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/karton-kutular/umzugskartons/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/kargo-posetleri/standard/",
+    "to": "/kategorie/verpackung-und-versand/kargo-posetleri/versandtaschen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/kargo-posetleri/premium/",
+    "to": "/kategorie/verpackung-und-versand/kargo-posetleri/luftpolstertaschen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/kargo-posetleri/sets/",
+    "to": "/kategorie/verpackung-und-versand/kargo-posetleri/dokumententaschen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/kargo-posetleri/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/kargo-posetleri/ruecksendetaschen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/balonlu-ambalaj/standard/",
+    "to": "/kategorie/verpackung-und-versand/balonlu-ambalaj/luftpolsterfolie/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/balonlu-ambalaj/premium/",
+    "to": "/kategorie/verpackung-und-versand/balonlu-ambalaj/luftkissen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/balonlu-ambalaj/sets/",
+    "to": "/kategorie/verpackung-und-versand/balonlu-ambalaj/schaumfolie/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/balonlu-ambalaj/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/balonlu-ambalaj/kantenschutz/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/bant/standard/",
+    "to": "/kategorie/verpackung-und-versand/bant/paketklebeband/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/bant/premium/",
+    "to": "/kategorie/verpackung-und-versand/bant/abroller/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/bant/sets/",
+    "to": "/kategorie/verpackung-und-versand/bant/filamentband/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/bant/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/bant/caution-tape/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/etiketler/standard/",
+    "to": "/kategorie/verpackung-und-versand/etiketler/versandetiketten/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/etiketler/premium/",
+    "to": "/kategorie/verpackung-und-versand/etiketler/thermoetiketten/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/etiketler/sets/",
+    "to": "/kategorie/verpackung-und-versand/etiketler/fragile-aufkleber/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/etiketler/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/etiketler/adressetiketten/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/standard/",
+    "to": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/packpapier/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/premium/",
+    "to": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/chips/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/sets/",
+    "to": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/seidenpapier/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/dolgu-malzemeleri/wellpappe-zuschnitte/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/palet-und-strec/standard/",
+    "to": "/kategorie/verpackung-und-versand/palet-und-strec/stretchfolie/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/palet-und-strec/premium/",
+    "to": "/kategorie/verpackung-und-versand/palet-und-strec/kantenschutzwinkel/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/palet-und-strec/sets/",
+    "to": "/kategorie/verpackung-und-versand/palet-und-strec/umreifungsband/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/verpackung-und-versand/palet-und-strec/zubehoer/",
+    "to": "/kategorie/verpackung-und-versand/palet-und-strec/palettenabdeckungen/",
+    "permanent": true,
+    "note": "Packaging placeholder L3 replaced with a real product group"
   }
 ]

@@ -11944,5 +11944,149 @@
     "to": "/kategorie/kinder-schule/kinderaccessoires/caps/",
     "permanent": true,
     "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/arbeitshefte/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/scheren/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/klebstoff/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/geodreiecke/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/k-rtasiye/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/k-rtasiye/kugelschreiber/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/k-rtasiye/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/k-rtasiye/bleistifte/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/k-rtasiye/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/k-rtasiye/textmarker/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/k-rtasiye/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/k-rtasiye/fueller/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/locher/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/hefter/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/klammern/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/briefumschlaege/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/aquarell/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/acrylfarben/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/skizzenbloecke/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/marker/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/federmaeppchen/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/aktentaschen/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/dokumentenmappen/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/rollkoffer-buero/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/standard/",
+    "to": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/schultueten/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/premium/",
+    "to": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/einschulung/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/sets/",
+    "to": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/glueckwunschkarten/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/zubehoer/",
+    "to": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/namensschilder/",
+    "permanent": true,
+    "note": "Office-school placeholder L3 replaced with a real product group"
   }
 ]

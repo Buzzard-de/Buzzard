@@ -2784,7 +2784,7 @@
         {
           "id": "cat-04-01",
           "menu_order": 1,
-          "name": "Schule Materialien",
+          "name": "Schulmaterial",
           "slug": "schule-malzemeleri",
           "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri",
           "level": 2,
@@ -2792,54 +2792,50 @@
             {
               "id": "cat-04-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/standard",
+              "name": "Arbeitshefte",
+              "slug": "arbeitshefte",
+              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/arbeitshefte",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/okul-malzemeleri/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/okul-malzemeleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/standard"
             },
             {
               "id": "cat-04-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/premium",
+              "name": "Scheren",
+              "slug": "scheren",
+              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/scheren",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/okul-malzemeleri/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/okul-malzemeleri/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/premium"
             },
             {
               "id": "cat-04-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/sets",
+              "name": "Klebstoff",
+              "slug": "klebstoff",
+              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/klebstoff",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/okul-malzemeleri/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/okul-malzemeleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/sets"
             },
             {
               "id": "cat-04-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/zubehoer",
+              "name": "Geodreiecke",
+              "slug": "geodreiecke",
+              "url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/geodreiecke",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/okul-malzemeleri/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/okul-malzemeleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schule-malzemeleri/zubehoer"
             }
           ],
           "legacy_name": "Okul Malzemeleri",
@@ -2858,54 +2854,50 @@
             {
               "id": "cat-04-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/standard",
+              "name": "Kugelschreiber",
+              "slug": "kugelschreiber",
+              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/kugelschreiber",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/kirtasiye/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/kirtasiye/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/k-rtasiye/standard"
             },
             {
               "id": "cat-04-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/premium",
+              "name": "Bleistifte",
+              "slug": "bleistifte",
+              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/bleistifte",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/kirtasiye/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/kirtasiye/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/k-rtasiye/premium"
             },
             {
               "id": "cat-04-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/sets",
+              "name": "Textmarker",
+              "slug": "textmarker",
+              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/textmarker",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/kirtasiye/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/kirtasiye/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/k-rtasiye/sets"
             },
             {
               "id": "cat-04-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/zubehoer",
+              "name": "Füller",
+              "slug": "fueller",
+              "url": "/kategorie/schule-und-buerobedarf/k-rtasiye/fueller",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/kirtasiye/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/kirtasiye/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/k-rtasiye/zubehoer"
             }
           ],
           "legacy_name": "Kırtasiye",
@@ -2916,7 +2908,7 @@
         {
           "id": "cat-04-03",
           "menu_order": 3,
-          "name": "Büro Materialien",
+          "name": "Büromaterial",
           "slug": "ofis-malzemeleri",
           "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri",
           "level": 2,
@@ -2924,54 +2916,50 @@
             {
               "id": "cat-04-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/standard",
+              "name": "Locher",
+              "slug": "locher",
+              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/locher",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/ofis-malzemeleri/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/ofis-malzemeleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/standard"
             },
             {
               "id": "cat-04-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/premium",
+              "name": "Hefter",
+              "slug": "hefter",
+              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/hefter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/ofis-malzemeleri/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/ofis-malzemeleri/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/premium"
             },
             {
               "id": "cat-04-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/sets",
+              "name": "Klammern",
+              "slug": "klammern",
+              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/klammern",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/ofis-malzemeleri/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/ofis-malzemeleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/sets"
             },
             {
               "id": "cat-04-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/zubehoer",
+              "name": "Briefumschläge",
+              "slug": "briefumschlaege",
+              "url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/briefumschlaege",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/ofis-malzemeleri/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/ofis-malzemeleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/ofis-malzemeleri/zubehoer"
             }
           ],
           "legacy_name": "Ofis Malzemeleri",
@@ -2982,7 +2970,7 @@
         {
           "id": "cat-04-04",
           "menu_order": 4,
-          "name": "Kunst & Hobby Materialien",
+          "name": "Kunst & Hobby",
           "slug": "sanat-und-hobby-malzemeleri",
           "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri",
           "level": 2,
@@ -2990,54 +2978,50 @@
             {
               "id": "cat-04-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/standard",
+              "name": "Aquarell",
+              "slug": "aquarell",
+              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/aquarell",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/sanat-and-hobi-malzemeleri/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/sanat-and-hobi-malzemeleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/standard"
             },
             {
               "id": "cat-04-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/premium",
+              "name": "Acrylfarben",
+              "slug": "acrylfarben",
+              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/acrylfarben",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/sanat-and-hobi-malzemeleri/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/sanat-and-hobi-malzemeleri/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/premium"
             },
             {
               "id": "cat-04-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/sets",
+              "name": "Skizzenblöcke",
+              "slug": "skizzenbloecke",
+              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/skizzenbloecke",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/sanat-and-hobi-malzemeleri/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/sanat-and-hobi-malzemeleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/sets"
             },
             {
               "id": "cat-04-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/zubehoer",
+              "name": "Marker",
+              "slug": "marker",
+              "url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/marker",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/sanat-and-hobi-malzemeleri/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/sanat-and-hobi-malzemeleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/sanat-und-hobby-malzemeleri/zubehoer"
             }
           ],
           "legacy_name": "Sanat & Hobi Malzemeleri",
@@ -3048,7 +3032,7 @@
         {
           "id": "cat-04-05",
           "menu_order": 5,
-          "name": "Tasche & Stift Boxen",
+          "name": "Taschen & Etui",
           "slug": "tasche-und-kalem-kutular",
           "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular",
           "level": 2,
@@ -3056,54 +3040,50 @@
             {
               "id": "cat-04-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/standard",
+              "name": "Federmäppchen",
+              "slug": "federmaeppchen",
+              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/federmaeppchen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/canta-and-kalem-kutulari/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/canta-and-kalem-kutulari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/standard"
             },
             {
               "id": "cat-04-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/premium",
+              "name": "Aktentaschen",
+              "slug": "aktentaschen",
+              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/aktentaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/canta-and-kalem-kutulari/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/canta-and-kalem-kutulari/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/premium"
             },
             {
               "id": "cat-04-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/sets",
+              "name": "Dokumentenmappen",
+              "slug": "dokumentenmappen",
+              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/dokumentenmappen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/canta-and-kalem-kutulari/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/canta-and-kalem-kutulari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/sets"
             },
             {
               "id": "cat-04-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/zubehoer",
+              "name": "Rollkoffer Büro",
+              "slug": "rollkoffer-buero",
+              "url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/rollkoffer-buero",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/canta-and-kalem-kutulari/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/canta-and-kalem-kutulari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/tasche-und-kalem-kutular/zubehoer"
             }
           ],
           "legacy_name": "Çanta & Kalem Kutuları",
@@ -3114,7 +3094,7 @@
         {
           "id": "cat-04-06",
           "menu_order": 6,
-          "name": "Schultüte & Schule Anfang",
+          "name": "Schultüte & Einschulung",
           "slug": "schultuete-und-schule-baslang-c",
           "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c",
           "level": 2,
@@ -3122,60 +3102,148 @@
             {
               "id": "cat-04-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/standard",
+              "name": "Schultüten",
+              "slug": "schultueten",
+              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/schultueten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "okul-and-kirtasiye/schultute-and-okul-baslangici/standart",
-              "legacy_url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/standard"
             },
             {
               "id": "cat-04-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/premium",
+              "name": "Einschulung",
+              "slug": "einschulung",
+              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/einschulung",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "okul-and-kirtasiye/schultute-and-okul-baslangici/premium",
-              "legacy_url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici/premium"
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/premium"
             },
             {
               "id": "cat-04-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/sets",
+              "name": "Glückwunschkarten",
+              "slug": "glueckwunschkarten",
+              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/glueckwunschkarten",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "okul-and-kirtasiye/schultute-and-okul-baslangici/setler",
-              "legacy_url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/sets"
             },
             {
               "id": "cat-04-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/zubehoer",
+              "name": "Namensschilder",
+              "slug": "namensschilder",
+              "url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/namensschilder",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "okul-and-kirtasiye/schultute-and-okul-baslangici/aksesuarlar",
-              "legacy_url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/zubehoer"
             }
           ],
           "legacy_name": "Schultüte & Okul Başlangıcı",
           "legacy_slug": "schultute-and-okul-baslangici",
           "legacy_slug_path": "okul-and-kirtasiye/schultute-and-okul-baslangici",
           "legacy_url": "/kategori/okul-and-kirtasiye/schultute-and-okul-baslangici"
+        },
+        {
+          "id": "cat-04-07",
+          "menu_order": 7,
+          "name": "Papier & Druck",
+          "slug": "papier-und-druck",
+          "url": "/kategorie/schule-und-buerobedarf/papier-und-druck",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-04-07-01",
+              "menu_order": 1,
+              "name": "Druckerpapier",
+              "slug": "druckerpapier",
+              "url": "/kategorie/schule-und-buerobedarf/papier-und-druck/druckerpapier",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-07-02",
+              "menu_order": 2,
+              "name": "Kopierpapier",
+              "slug": "kopierpapier",
+              "url": "/kategorie/schule-und-buerobedarf/papier-und-druck/kopierpapier",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-07-03",
+              "menu_order": 3,
+              "name": "Notizblöcke",
+              "slug": "notizbloecke",
+              "url": "/kategorie/schule-und-buerobedarf/papier-und-druck/notizbloecke",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-07-04",
+              "menu_order": 4,
+              "name": "Briefpapier",
+              "slug": "briefpapier",
+              "url": "/kategorie/schule-und-buerobedarf/papier-und-druck/briefpapier",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-04-08",
+          "menu_order": 8,
+          "name": "Organisation & Archiv",
+          "slug": "organisation-und-archiv",
+          "url": "/kategorie/schule-und-buerobedarf/organisation-und-archiv",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-04-08-01",
+              "menu_order": 1,
+              "name": "Ordner",
+              "slug": "ordner",
+              "url": "/kategorie/schule-und-buerobedarf/organisation-und-archiv/ordner",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-08-02",
+              "menu_order": 2,
+              "name": "Register",
+              "slug": "register",
+              "url": "/kategorie/schule-und-buerobedarf/organisation-und-archiv/register",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-08-03",
+              "menu_order": 3,
+              "name": "Etiketten",
+              "slug": "etiketten",
+              "url": "/kategorie/schule-und-buerobedarf/organisation-und-archiv/etiketten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-04-08-04",
+              "menu_order": 4,
+              "name": "Schubladenboxen",
+              "slug": "schubladenboxen",
+              "url": "/kategorie/schule-und-buerobedarf/organisation-und-archiv/schubladenboxen",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Okul & Kırtasiye",

@@ -28395,27 +28395,45 @@
             {
               "id": "cat-45-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/standard",
+              "name": "Blutdruckmessgeräte",
+              "slug": "blutdruckmessgeraete",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/blutdruckmessgeraete",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/standard"
             },
             {
               "id": "cat-45-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/premium",
+              "name": "Inhalatoren",
+              "slug": "inhalatoren",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/inhalatoren",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/premium"
             },
             {
               "id": "cat-45-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/sets-sparpakete",
+              "name": "Kompression",
+              "slug": "kompression",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/kompression",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/sets-sparpakete"
+            },
+            {
+              "id": "cat-45-01-04",
+              "menu_order": 4,
+              "name": "Blutzuckermessung",
+              "slug": "blutzuckermessung",
+              "url": "/kategorie/apotheke-medizinprodukte/medizinprodukte/blutzuckermessung",
               "level": 3,
               "children": []
             }
@@ -28432,27 +28450,45 @@
             {
               "id": "cat-45-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/standard",
+              "name": "Wundversorgung",
+              "slug": "wundversorgung",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/wundversorgung",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/standard"
             },
             {
               "id": "cat-45-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/premium",
+              "name": "Verbandskästen",
+              "slug": "verbandskaesten",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/verbandskaesten",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/premium"
             },
             {
               "id": "cat-45-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/sets-sparpakete",
+              "name": "Desinfektion",
+              "slug": "desinfektion",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/desinfektion",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/sets-sparpakete"
+            },
+            {
+              "id": "cat-45-02-04",
+              "menu_order": 4,
+              "name": "Rettungsdecken",
+              "slug": "rettungsdecken",
+              "url": "/kategorie/apotheke-medizinprodukte/erste-hilfe/rettungsdecken",
               "level": 3,
               "children": []
             }
@@ -28469,27 +28505,45 @@
             {
               "id": "cat-45-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/standard",
+              "name": "Vitamine",
+              "slug": "vitamine",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/vitamine",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/standard"
             },
             {
               "id": "cat-45-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/premium",
+              "name": "Mineralstoffe",
+              "slug": "mineralstoffe",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/mineralstoffe",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/premium"
             },
             {
               "id": "cat-45-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/sets-sparpakete",
+              "name": "Omega-3",
+              "slug": "omega-3",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/omega-3",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/sets-sparpakete"
+            },
+            {
+              "id": "cat-45-03-04",
+              "menu_order": 4,
+              "name": "Probiotika",
+              "slug": "probiotika",
+              "url": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/probiotika",
               "level": 3,
               "children": []
             }
@@ -28506,27 +28560,229 @@
             {
               "id": "cat-45-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/standard",
+              "name": "Inkontinenz",
+              "slug": "inkontinenz",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/inkontinenz",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/standard"
             },
             {
               "id": "cat-45-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/premium",
+              "name": "Bettschutz",
+              "slug": "bettschutz",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/bettschutz",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/premium"
             },
             {
               "id": "cat-45-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/sets-sparpakete",
+              "name": "Gehhilfen",
+              "slug": "gehhilfen",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/gehhilfen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/sets-sparpakete"
+            },
+            {
+              "id": "cat-45-04-04",
+              "menu_order": 4,
+              "name": "Greifhilfen",
+              "slug": "greifhilfen",
+              "url": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/greifhilfen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-05",
+          "menu_order": 5,
+          "name": "Diagnostik & Tests",
+          "slug": "diagnostik-und-tests",
+          "url": "/kategorie/apotheke-medizinprodukte/diagnostik-und-tests",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-05-01",
+              "menu_order": 1,
+              "name": "Schwangerschaftstests",
+              "slug": "schwangerschaftstests",
+              "url": "/kategorie/apotheke-medizinprodukte/diagnostik-und-tests/schwangerschaftstests",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-05-02",
+              "menu_order": 2,
+              "name": "Schnelltests",
+              "slug": "schnelltests",
+              "url": "/kategorie/apotheke-medizinprodukte/diagnostik-und-tests/schnelltests",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-05-03",
+              "menu_order": 3,
+              "name": "Urintests",
+              "slug": "urintests",
+              "url": "/kategorie/apotheke-medizinprodukte/diagnostik-und-tests/urintests",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-05-04",
+              "menu_order": 4,
+              "name": "Cholesterintests",
+              "slug": "cholesterintests",
+              "url": "/kategorie/apotheke-medizinprodukte/diagnostik-und-tests/cholesterintests",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-06",
+          "menu_order": 6,
+          "name": "Erkältung & Immun",
+          "slug": "erkaeltung-und-immun",
+          "url": "/kategorie/apotheke-medizinprodukte/erkaeltung-und-immun",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-06-01",
+              "menu_order": 1,
+              "name": "Halstabletten",
+              "slug": "halstabletten",
+              "url": "/kategorie/apotheke-medizinprodukte/erkaeltung-und-immun/halstabletten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-06-02",
+              "menu_order": 2,
+              "name": "Nasensprays",
+              "slug": "nasensprays",
+              "url": "/kategorie/apotheke-medizinprodukte/erkaeltung-und-immun/nasensprays",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-06-03",
+              "menu_order": 3,
+              "name": "Inhalate",
+              "slug": "inhalate",
+              "url": "/kategorie/apotheke-medizinprodukte/erkaeltung-und-immun/inhalate",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-06-04",
+              "menu_order": 4,
+              "name": "Immunpräparate",
+              "slug": "immunpraeparate",
+              "url": "/kategorie/apotheke-medizinprodukte/erkaeltung-und-immun/immunpraeparate",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-07",
+          "menu_order": 7,
+          "name": "Augen & Ohren",
+          "slug": "augen-und-ohren",
+          "url": "/kategorie/apotheke-medizinprodukte/augen-und-ohren",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-07-01",
+              "menu_order": 1,
+              "name": "Augentropfen",
+              "slug": "augentropfen",
+              "url": "/kategorie/apotheke-medizinprodukte/augen-und-ohren/augentropfen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-07-02",
+              "menu_order": 2,
+              "name": "Kontaktlinsenpflege",
+              "slug": "kontaktlinsenpflege",
+              "url": "/kategorie/apotheke-medizinprodukte/augen-und-ohren/kontaktlinsenpflege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-07-03",
+              "menu_order": 3,
+              "name": "Ohrentropfen",
+              "slug": "ohrentropfen",
+              "url": "/kategorie/apotheke-medizinprodukte/augen-und-ohren/ohrentropfen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-07-04",
+              "menu_order": 4,
+              "name": "Brillenpflege",
+              "slug": "brillenpflege",
+              "url": "/kategorie/apotheke-medizinprodukte/augen-und-ohren/brillenpflege",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-45-08",
+          "menu_order": 8,
+          "name": "Mundhygiene medizinisch",
+          "slug": "mundhygiene-medizinisch",
+          "url": "/kategorie/apotheke-medizinprodukte/mundhygiene-medizinisch",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-45-08-01",
+              "menu_order": 1,
+              "name": "Interdentalpflege",
+              "slug": "interdentalpflege",
+              "url": "/kategorie/apotheke-medizinprodukte/mundhygiene-medizinisch/interdentalpflege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-08-02",
+              "menu_order": 2,
+              "name": "Mundspülungen",
+              "slug": "mundspuelungen",
+              "url": "/kategorie/apotheke-medizinprodukte/mundhygiene-medizinisch/mundspuelungen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-08-03",
+              "menu_order": 3,
+              "name": "Prothesenpflege",
+              "slug": "prothesenpflege",
+              "url": "/kategorie/apotheke-medizinprodukte/mundhygiene-medizinisch/prothesenpflege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-45-08-04",
+              "menu_order": 4,
+              "name": "Zahnfleischpflege",
+              "slug": "zahnfleischpflege",
+              "url": "/kategorie/apotheke-medizinprodukte/mundhygiene-medizinisch/zahnfleischpflege",
               "level": 3,
               "children": []
             }

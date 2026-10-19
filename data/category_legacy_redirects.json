@@ -11392,5 +11392,77 @@
     "to": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/tageslichtlampen/",
     "permanent": true,
     "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/medizinprodukte/standard/",
+    "to": "/kategorie/apotheke-medizinprodukte/medizinprodukte/blutdruckmessgeraete/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/medizinprodukte/premium/",
+    "to": "/kategorie/apotheke-medizinprodukte/medizinprodukte/inhalatoren/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/medizinprodukte/sets-sparpakete/",
+    "to": "/kategorie/apotheke-medizinprodukte/medizinprodukte/kompression/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/erste-hilfe/standard/",
+    "to": "/kategorie/apotheke-medizinprodukte/erste-hilfe/wundversorgung/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/erste-hilfe/premium/",
+    "to": "/kategorie/apotheke-medizinprodukte/erste-hilfe/verbandskaesten/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/erste-hilfe/sets-sparpakete/",
+    "to": "/kategorie/apotheke-medizinprodukte/erste-hilfe/desinfektion/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/standard/",
+    "to": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/vitamine/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/premium/",
+    "to": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/mineralstoffe/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/sets-sparpakete/",
+    "to": "/kategorie/apotheke-medizinprodukte/nahrungsergaenzung/omega-3/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/standard/",
+    "to": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/inkontinenz/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/premium/",
+    "to": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/bettschutz/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/sets-sparpakete/",
+    "to": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/gehhilfen/",
+    "permanent": true,
+    "note": "Pharmacy placeholder L3 replaced with a real product group"
   }
 ]

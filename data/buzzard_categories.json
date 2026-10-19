@@ -31016,27 +31016,45 @@
             {
               "id": "cat-50-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/standard",
+              "name": "Für Sie",
+              "slug": "fuer-sie",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-sie",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/geschenke/standard"
             },
             {
               "id": "cat-50-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/premium",
+              "name": "Für Ihn",
+              "slug": "fuer-ihn",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-ihn",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/geschenke/premium"
             },
             {
               "id": "cat-50-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/sets-sparpakete",
+              "name": "Für Kinder",
+              "slug": "fuer-kinder",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-kinder",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/geschenke/sets-sparpakete"
+            },
+            {
+              "id": "cat-50-01-04",
+              "menu_order": 4,
+              "name": "Für Paare",
+              "slug": "fuer-paare",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-paare",
               "level": 3,
               "children": []
             }
@@ -31053,27 +31071,45 @@
             {
               "id": "cat-50-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/standard",
+              "name": "Schnittblumen",
+              "slug": "schnittblumen",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/schnittblumen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/standard"
             },
             {
               "id": "cat-50-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/premium",
+              "name": "Sträuße",
+              "slug": "straeusse",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/straeusse",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/premium"
             },
             {
               "id": "cat-50-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/sets-sparpakete",
+              "name": "Trockenblumen",
+              "slug": "trockenblumen",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/trockenblumen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/sets-sparpakete"
+            },
+            {
+              "id": "cat-50-02-04",
+              "menu_order": 4,
+              "name": "Blumenvasen",
+              "slug": "blumenvasen",
+              "url": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/blumenvasen",
               "level": 3,
               "children": []
             }
@@ -31090,27 +31126,45 @@
             {
               "id": "cat-50-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/standard",
+              "name": "Geburtstag",
+              "slug": "geburtstag",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/geburtstag",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/standard"
             },
             {
               "id": "cat-50-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/premium",
+              "name": "Hochzeit",
+              "slug": "hochzeit",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/hochzeit",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/premium"
             },
             {
               "id": "cat-50-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/sets-sparpakete",
+              "name": "Jubiläum",
+              "slug": "jubilaeum",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/jubilaeum",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/sets-sparpakete"
+            },
+            {
+              "id": "cat-50-03-04",
+              "menu_order": 4,
+              "name": "Danke",
+              "slug": "danke",
+              "url": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/danke",
               "level": 3,
               "children": []
             }
@@ -31127,27 +31181,229 @@
             {
               "id": "cat-50-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/standard",
+              "name": "Gutscheine",
+              "slug": "gutscheine",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/gutscheine",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/standard"
             },
             {
               "id": "cat-50-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/premium",
+              "name": "Geschenksets",
+              "slug": "geschenksets",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/geschenksets",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/premium"
             },
             {
               "id": "cat-50-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/sets-sparpakete",
+              "name": "Präsentkörbe",
+              "slug": "praesentkoerbe",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/praesentkoerbe",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/sets-sparpakete"
+            },
+            {
+              "id": "cat-50-04-04",
+              "menu_order": 4,
+              "name": "Mini-Sets",
+              "slug": "mini-sets",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/mini-sets",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-05",
+          "menu_order": 5,
+          "name": "Gourmet-Geschenke",
+          "slug": "gourmet-geschenke",
+          "url": "/kategorie/geschenke-blumen-anlaesse/gourmet-geschenke",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-05-01",
+              "menu_order": 1,
+              "name": "Schokolade",
+              "slug": "schokolade",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gourmet-geschenke/schokolade",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-05-02",
+              "menu_order": 2,
+              "name": "Honig & Konfitüre",
+              "slug": "honig-und-konfituere",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gourmet-geschenke/honig-und-konfituere",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-05-03",
+              "menu_order": 3,
+              "name": "Tee & Kaffee",
+              "slug": "tee-und-kaffee",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gourmet-geschenke/tee-und-kaffee",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-05-04",
+              "menu_order": 4,
+              "name": "Naschkörbe",
+              "slug": "naschkoerbe",
+              "url": "/kategorie/geschenke-blumen-anlaesse/gourmet-geschenke/naschkoerbe",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-06",
+          "menu_order": 6,
+          "name": "Zimmerpflanzen",
+          "slug": "zimmerpflanzen",
+          "url": "/kategorie/geschenke-blumen-anlaesse/zimmerpflanzen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-06-01",
+              "menu_order": 1,
+              "name": "Zimmerpflanzen",
+              "slug": "zimmerpflanzen",
+              "url": "/kategorie/geschenke-blumen-anlaesse/zimmerpflanzen/zimmerpflanzen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-06-02",
+              "menu_order": 2,
+              "name": "Sukkulenten",
+              "slug": "sukkulenten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/zimmerpflanzen/sukkulenten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-06-03",
+              "menu_order": 3,
+              "name": "Übertöpfe",
+              "slug": "uebertoepfe",
+              "url": "/kategorie/geschenke-blumen-anlaesse/zimmerpflanzen/uebertoepfe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-06-04",
+              "menu_order": 4,
+              "name": "Pflanzenpflege",
+              "slug": "pflanzenpflege",
+              "url": "/kategorie/geschenke-blumen-anlaesse/zimmerpflanzen/pflanzenpflege",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-07",
+          "menu_order": 7,
+          "name": "Grußkarten",
+          "slug": "grusskarten",
+          "url": "/kategorie/geschenke-blumen-anlaesse/grusskarten",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-07-01",
+              "menu_order": 1,
+              "name": "Glückwunschkarten",
+              "slug": "glueckwunschkarten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/grusskarten/glueckwunschkarten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-07-02",
+              "menu_order": 2,
+              "name": "Einladungskarten",
+              "slug": "einladungskarten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/grusskarten/einladungskarten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-07-03",
+              "menu_order": 3,
+              "name": "Trauerkarten",
+              "slug": "trauerkarten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/grusskarten/trauerkarten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-07-04",
+              "menu_order": 4,
+              "name": "Blankokarten",
+              "slug": "blankokarten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/grusskarten/blankokarten",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-50-08",
+          "menu_order": 8,
+          "name": "Geschenkverpackung",
+          "slug": "geschenkverpackung",
+          "url": "/kategorie/geschenke-blumen-anlaesse/geschenkverpackung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-50-08-01",
+              "menu_order": 1,
+              "name": "Geschenkpapier",
+              "slug": "geschenkpapier",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenkverpackung/geschenkpapier",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-08-02",
+              "menu_order": 2,
+              "name": "Geschenktüten",
+              "slug": "geschenktueten",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenkverpackung/geschenktueten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-08-03",
+              "menu_order": 3,
+              "name": "Schleifen",
+              "slug": "schleifen",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenkverpackung/schleifen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-50-08-04",
+              "menu_order": 4,
+              "name": "Geschenkkartons",
+              "slug": "geschenkkartons",
+              "url": "/kategorie/geschenke-blumen-anlaesse/geschenkverpackung/geschenkkartons",
               "level": 3,
               "children": []
             }

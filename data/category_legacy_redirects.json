@@ -14860,5 +14860,227 @@
     "to": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/aufbewahrung/",
     "permanent": true,
     "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/celik-burun/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/stahlkappe/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/latzhosen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/bundhosen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/arbeitsjacken/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/polos/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnwesten/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnjacken/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnhosen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/overalls/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/nitril/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/schnittschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/leder/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/chemikalienschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/bauhelme/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/anstosskappen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/helmzubehoer/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/kinnriemen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/schutzbrillen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/vollsichtbrillen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/gesichtsschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/schweisserschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/kapselgehoerschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/gehoerschutzstoepsel/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/buegelgehoerschutz/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/elektronisch/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/ffp2/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/ffp3/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/halbmasken/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/filter/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/knieschoner/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/gel-einlagen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/schaumstoff/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/knietaschen/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/standard/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/erste-hilfe/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/premium/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/warnband/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/sets/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/schilder/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/zubehoer/",
+    "to": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/fanggurte/",
+    "permanent": true,
+    "note": "Workwear placeholder L3 replaced with a real product group"
   }
 ]

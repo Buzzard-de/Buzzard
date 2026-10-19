@@ -9959,7 +9959,7 @@
         {
           "id": "cat-08-01",
           "menu_order": 1,
-          "name": "Arbeit Schuhe",
+          "name": "Sicherheitsschuhe",
           "slug": "is-ayakkab-lar",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar",
           "level": 2,
@@ -9974,8 +9974,7 @@
               "children": [],
               "legacy_name": "S1",
               "legacy_slug": "s1",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s1",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s1"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/s1"
             },
             {
               "id": "cat-08-01-02",
@@ -9987,8 +9986,7 @@
               "children": [],
               "legacy_name": "S1P",
               "legacy_slug": "s1p",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s1p",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s1p"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/s1p"
             },
             {
               "id": "cat-08-01-03",
@@ -10000,8 +9998,7 @@
               "children": [],
               "legacy_name": "S2",
               "legacy_slug": "s2",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s2",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s2"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/s2"
             },
             {
               "id": "cat-08-01-04",
@@ -10013,8 +10010,7 @@
               "children": [],
               "legacy_name": "S3",
               "legacy_slug": "s3",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s3",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/s3"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/s3"
             },
             {
               "id": "cat-08-01-05",
@@ -10026,21 +10022,19 @@
               "children": [],
               "legacy_name": "SRC",
               "legacy_slug": "src",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/src",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/src"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/src"
             },
             {
               "id": "cat-08-01-06",
               "menu_order": 6,
-              "name": "Celik Burun",
-              "slug": "celik-burun",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/celik-burun",
+              "name": "Stahlkappe",
+              "slug": "stahlkappe",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/stahlkappe",
               "level": 3,
               "children": [],
-              "legacy_name": "Çelik Burun",
+              "legacy_name": "Celik Burun",
               "legacy_slug": "celik-burun",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/celik-burun",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-ayakkabilari/celik-burun"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-ayakkab-lar/celik-burun"
             }
           ],
           "legacy_name": "İş Ayakkabıları",
@@ -10051,7 +10045,7 @@
         {
           "id": "cat-08-02",
           "menu_order": 2,
-          "name": "Arbeit Kleider",
+          "name": "Arbeitskleidung",
           "slug": "is-elbiseleri",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri",
           "level": 2,
@@ -10059,54 +10053,50 @@
             {
               "id": "cat-08-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/standard",
+              "name": "Latzhosen",
+              "slug": "latzhosen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/latzhosen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-elbiseleri/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-elbiseleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/standard"
             },
             {
               "id": "cat-08-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/premium",
+              "name": "Bundhosen",
+              "slug": "bundhosen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/bundhosen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-elbiseleri/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-elbiseleri/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/premium"
             },
             {
               "id": "cat-08-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/sets",
+              "name": "Arbeitsjacken",
+              "slug": "arbeitsjacken",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/arbeitsjacken",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-elbiseleri/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-elbiseleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/sets"
             },
             {
               "id": "cat-08-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/zubehoer",
+              "name": "Polos",
+              "slug": "polos",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/polos",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-elbiseleri/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-elbiseleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-elbiseleri/zubehoer"
             }
           ],
           "legacy_name": "İş Elbiseleri",
@@ -10117,7 +10107,7 @@
         {
           "id": "cat-08-03",
           "menu_order": 3,
-          "name": "Reflektierend Kleidung",
+          "name": "Warnschutz",
           "slug": "reflektif-k-yafetler",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler",
           "level": 2,
@@ -10125,54 +10115,50 @@
             {
               "id": "cat-08-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/standard",
+              "name": "Warnwesten",
+              "slug": "warnwesten",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnwesten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/standard"
             },
             {
               "id": "cat-08-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/premium",
+              "name": "Warnjacken",
+              "slug": "warnjacken",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnjacken",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/premium"
             },
             {
               "id": "cat-08-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/sets",
+              "name": "Warnhosen",
+              "slug": "warnhosen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/warnhosen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/sets"
             },
             {
               "id": "cat-08-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/zubehoer",
+              "name": "Overalls",
+              "slug": "overalls",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/overalls",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/reflektif-kiyafetler/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/reflektif-k-yafetler/zubehoer"
             }
           ],
           "legacy_name": "Reflektif Kıyafetler",
@@ -10183,7 +10169,7 @@
         {
           "id": "cat-08-04",
           "menu_order": 4,
-          "name": "Handschuhe",
+          "name": "Schutzhandschuhe",
           "slug": "eldiven",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven",
           "level": 2,
@@ -10191,54 +10177,50 @@
             {
               "id": "cat-08-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/standard",
+              "name": "Nitril",
+              "slug": "nitril",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/nitril",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/eldiven/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/eldiven/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/standard"
             },
             {
               "id": "cat-08-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/premium",
+              "name": "Schnittschutz",
+              "slug": "schnittschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/schnittschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/eldiven/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/eldiven/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/premium"
             },
             {
               "id": "cat-08-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/sets",
+              "name": "Leder",
+              "slug": "leder",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/leder",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/eldiven/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/eldiven/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/sets"
             },
             {
               "id": "cat-08-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/zubehoer",
+              "name": "Chemikalienschutz",
+              "slug": "chemikalienschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/chemikalienschutz",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/eldiven/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/eldiven/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/eldiven/zubehoer"
             }
           ],
           "legacy_name": "Eldiven",
@@ -10249,7 +10231,7 @@
         {
           "id": "cat-08-05",
           "menu_order": 5,
-          "name": "Schutzhelm & Kopf Schutz",
+          "name": "Kopfschutz",
           "slug": "baret-und-bas-koruma",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma",
           "level": 2,
@@ -10257,54 +10239,50 @@
             {
               "id": "cat-08-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/standard",
+              "name": "Bauhelme",
+              "slug": "bauhelme",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/bauhelme",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/standard"
             },
             {
               "id": "cat-08-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/premium",
+              "name": "Anstoßkappen",
+              "slug": "anstosskappen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/anstosskappen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/premium"
             },
             {
               "id": "cat-08-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/sets",
+              "name": "Helmzubehör",
+              "slug": "helmzubehoer",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/helmzubehoer",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/sets"
             },
             {
               "id": "cat-08-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/zubehoer",
+              "name": "Kinnriemen",
+              "slug": "kinnriemen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/kinnriemen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/baret-and-bas-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/baret-und-bas-koruma/zubehoer"
             }
           ],
           "legacy_name": "Baret & Baş Koruma",
@@ -10315,7 +10293,7 @@
         {
           "id": "cat-08-06",
           "menu_order": 6,
-          "name": "Auge Schutz",
+          "name": "Augenschutz",
           "slug": "goez-koruma",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma",
           "level": 2,
@@ -10323,54 +10301,50 @@
             {
               "id": "cat-08-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/standard",
+              "name": "Schutzbrillen",
+              "slug": "schutzbrillen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/schutzbrillen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/goz-koruma/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/goz-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/standard"
             },
             {
               "id": "cat-08-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/premium",
+              "name": "Vollsichtbrillen",
+              "slug": "vollsichtbrillen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/vollsichtbrillen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/goz-koruma/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/goz-koruma/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/premium"
             },
             {
               "id": "cat-08-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/sets",
+              "name": "Gesichtsschutz",
+              "slug": "gesichtsschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/gesichtsschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/goz-koruma/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/goz-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/sets"
             },
             {
               "id": "cat-08-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/zubehoer",
+              "name": "Schweißerschutz",
+              "slug": "schweisserschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/schweisserschutz",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/goz-koruma/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/goz-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/goez-koruma/zubehoer"
             }
           ],
           "legacy_name": "Göz Koruma",
@@ -10381,7 +10355,7 @@
         {
           "id": "cat-08-07",
           "menu_order": 7,
-          "name": "Ohr Schutz",
+          "name": "Gehörschutz",
           "slug": "kulak-koruma",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma",
           "level": 2,
@@ -10389,54 +10363,50 @@
             {
               "id": "cat-08-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/standard",
+              "name": "Kapselgehörschutz",
+              "slug": "kapselgehoerschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/kapselgehoerschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/kulak-koruma/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/kulak-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/standard"
             },
             {
               "id": "cat-08-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/premium",
+              "name": "Gehörschutzstöpsel",
+              "slug": "gehoerschutzstoepsel",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/gehoerschutzstoepsel",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/kulak-koruma/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/kulak-koruma/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/premium"
             },
             {
               "id": "cat-08-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/sets",
+              "name": "Bügelgehörschutz",
+              "slug": "buegelgehoerschutz",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/buegelgehoerschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/kulak-koruma/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/kulak-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/sets"
             },
             {
               "id": "cat-08-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/zubehoer",
+              "name": "Elektronisch",
+              "slug": "elektronisch",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/elektronisch",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/kulak-koruma/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/kulak-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/kulak-koruma/zubehoer"
             }
           ],
           "legacy_name": "Kulak Koruma",
@@ -10447,7 +10417,7 @@
         {
           "id": "cat-08-08",
           "menu_order": 8,
-          "name": "Atmung Schutz",
+          "name": "Atemschutz",
           "slug": "solunum-koruma",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma",
           "level": 2,
@@ -10455,54 +10425,50 @@
             {
               "id": "cat-08-08-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/standard",
+              "name": "FFP2",
+              "slug": "ffp2",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/ffp2",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/solunum-koruma/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/solunum-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/standard"
             },
             {
               "id": "cat-08-08-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/premium",
+              "name": "FFP3",
+              "slug": "ffp3",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/ffp3",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/solunum-koruma/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/solunum-koruma/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/premium"
             },
             {
               "id": "cat-08-08-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/sets",
+              "name": "Halbmasken",
+              "slug": "halbmasken",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/halbmasken",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/solunum-koruma/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/solunum-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/sets"
             },
             {
               "id": "cat-08-08-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/zubehoer",
+              "name": "Filter",
+              "slug": "filter",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/filter",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/solunum-koruma/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/solunum-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/solunum-koruma/zubehoer"
             }
           ],
           "legacy_name": "Solunum Koruma",
@@ -10513,7 +10479,7 @@
         {
           "id": "cat-08-09",
           "menu_order": 9,
-          "name": "Knie Schutz",
+          "name": "Knieschutz",
           "slug": "diz-koruma",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma",
           "level": 2,
@@ -10521,54 +10487,50 @@
             {
               "id": "cat-08-09-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/standard",
+              "name": "Knieschoner",
+              "slug": "knieschoner",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/knieschoner",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/diz-koruma/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/diz-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/standard"
             },
             {
               "id": "cat-08-09-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/premium",
+              "name": "Gel-Einlagen",
+              "slug": "gel-einlagen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/gel-einlagen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/diz-koruma/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/diz-koruma/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/premium"
             },
             {
               "id": "cat-08-09-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/sets",
+              "name": "Schaumstoff",
+              "slug": "schaumstoff",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/schaumstoff",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/diz-koruma/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/diz-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/sets"
             },
             {
               "id": "cat-08-09-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/zubehoer",
+              "name": "Knietaschen",
+              "slug": "knietaschen",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/knietaschen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/diz-koruma/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/diz-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/diz-koruma/zubehoer"
             }
           ],
           "legacy_name": "Diz Koruma",
@@ -10579,7 +10541,7 @@
         {
           "id": "cat-08-10",
           "menu_order": 10,
-          "name": "Arbeit Sicherheit Zubehör",
+          "name": "Sicherheitszubehör",
           "slug": "is-guevenligi-aksesuarlar",
           "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar",
           "level": 2,
@@ -10587,54 +10549,50 @@
             {
               "id": "cat-08-10-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/standard",
+              "name": "Erste Hilfe",
+              "slug": "erste-hilfe",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/erste-hilfe",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/standart",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/standard"
             },
             {
               "id": "cat-08-10-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/premium",
+              "name": "Warnband",
+              "slug": "warnband",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/warnband",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/premium",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/premium"
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/premium"
             },
             {
               "id": "cat-08-10-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/sets",
+              "name": "Schilder",
+              "slug": "schilder",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/schilder",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/setler",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/sets"
             },
             {
               "id": "cat-08-10-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/zubehoer",
+              "name": "Fanggurte",
+              "slug": "fanggurte",
+              "url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/fanggurte",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/is-guvenligi-and-is-kiyafetleri/is-guvenligi-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/arbeitsschutz-und-berufskleidung/is-guevenligi-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "İş Güvenliği Aksesuarları",

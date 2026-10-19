@@ -17242,7 +17242,7 @@
         {
           "id": "cat-20-01",
           "menu_order": 1,
-          "name": "Stall Ausrüstung",
+          "name": "Stallausrüstung",
           "slug": "ah-r-ekipmanlar",
           "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar",
           "level": 2,
@@ -17250,67 +17250,62 @@
             {
               "id": "cat-20-01-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/guenluek",
+              "name": "Boxen & Trennwände",
+              "slug": "boxen-und-trennwaende",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/boxen-und-trennwaende",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/guenluek"
             },
             {
               "id": "cat-20-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/premium",
+              "name": "Stallmatten",
+              "slug": "stallmatten",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/stallmatten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/premium"
             },
             {
               "id": "cat-20-01-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/set",
+              "name": "Tröge",
+              "slug": "troege",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/troege",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/set"
             },
             {
               "id": "cat-20-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/zubehoer",
+              "name": "Beleuchtung",
+              "slug": "beleuchtung",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/beleuchtung",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/zubehoer"
             },
             {
               "id": "cat-20-01-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/organizer",
+              "name": "Lüftung",
+              "slug": "lueftung",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/lueftung",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ahir-ekipmanlari/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/organizer"
             }
           ],
           "legacy_name": "Ahır Ekipmanları",
@@ -17321,7 +17316,7 @@
         {
           "id": "cat-20-02",
           "menu_order": 2,
-          "name": "Farm Ausrüstung",
+          "name": "Hofausrüstung",
           "slug": "ciftlik-ekipmanlar",
           "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar",
           "level": 2,
@@ -17329,67 +17324,62 @@
             {
               "id": "cat-20-02-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/guenluek",
+              "name": "Schubkarren",
+              "slug": "schubkarren",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/schubkarren",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/guenluek"
             },
             {
               "id": "cat-20-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/premium",
+              "name": "Mistgabeln",
+              "slug": "mistgabeln",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/mistgabeln",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/premium"
             },
             {
               "id": "cat-20-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/set",
+              "name": "Schaufeln",
+              "slug": "schaufeln",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/schaufeln",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/set"
             },
             {
               "id": "cat-20-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/zubehoer",
+              "name": "Mühlen",
+              "slug": "muehlen",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/muehlen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/zubehoer"
             },
             {
               "id": "cat-20-02-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/organizer",
+              "name": "Anhänger-Zubehör",
+              "slug": "anhaenger-zubehoer",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/anhaenger-zubehoer",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/ciftlik-ekipmanlari/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/organizer"
             }
           ],
           "legacy_name": "Çiftlik Ekipmanları",
@@ -17400,7 +17390,7 @@
         {
           "id": "cat-20-03",
           "menu_order": 3,
-          "name": "Tier Tränken",
+          "name": "Tränken",
           "slug": "hayvan-suluklar",
           "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar",
           "level": 2,
@@ -17408,67 +17398,62 @@
             {
               "id": "cat-20-03-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/guenluek",
+              "name": "Selbsttränken",
+              "slug": "selbsttraenken",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/selbsttraenken",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/guenluek"
             },
             {
               "id": "cat-20-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/premium",
+              "name": "Trogtränken",
+              "slug": "trogtraenken",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/trogtraenken",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/premium"
             },
             {
               "id": "cat-20-03-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/set",
+              "name": "Nippeltränken",
+              "slug": "nippeltraenken",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/nippeltraenken",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/set"
             },
             {
               "id": "cat-20-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/zubehoer",
+              "name": "Heiztränken",
+              "slug": "heiztraenken",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/heiztraenken",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/zubehoer"
             },
             {
               "id": "cat-20-03-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/organizer",
+              "name": "Schwimmer",
+              "slug": "schwimmer",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/schwimmer",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-suluklari/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/organizer"
             }
           ],
           "legacy_name": "Hayvan Sulukları",
@@ -17487,67 +17472,62 @@
             {
               "id": "cat-20-04-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/guenluek",
+              "name": "Raufen",
+              "slug": "raufen",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/raufen",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/guenluek"
             },
             {
               "id": "cat-20-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/premium",
+              "name": "Futterautomaten",
+              "slug": "futterautomaten",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/futterautomaten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/premium"
             },
             {
               "id": "cat-20-04-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/set",
+              "name": "Minerallecken",
+              "slug": "minerallecken",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/minerallecken",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/set"
             },
             {
               "id": "cat-20-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/zubehoer",
+              "name": "Kükentröge",
+              "slug": "kuekentroeg",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/kuekentroeg",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/zubehoer"
             },
             {
               "id": "cat-20-04-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/organizer",
+              "name": "Silo-Deckel",
+              "slug": "silo-deckel",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/silo-deckel",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/yemlikler/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/organizer"
             }
           ],
           "legacy_name": "Yemlikler",
@@ -17566,67 +17546,62 @@
             {
               "id": "cat-20-05-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/guenluek",
+              "name": "Drahtgitter",
+              "slug": "drahtgitter",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/drahtgitter",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/guenluek"
             },
             {
               "id": "cat-20-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/premium",
+              "name": "Pfähle",
+              "slug": "pfaehle",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/pfaehle",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/premium"
             },
             {
               "id": "cat-20-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/set",
+              "name": "Weidetore",
+              "slug": "weidetore",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/weidetore",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/set"
             },
             {
               "id": "cat-20-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/zubehoer",
+              "name": "Elektrozaun",
+              "slug": "elektrozaun",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/elektrozaun",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/zubehoer"
             },
             {
               "id": "cat-20-05-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/organizer",
+              "name": "Isolatoren",
+              "slug": "isolatoren",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/isolatoren",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/cit-and-kafes/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/organizer"
             }
           ],
           "legacy_name": "Çit & Kafes",
@@ -17637,7 +17612,7 @@
         {
           "id": "cat-20-06",
           "menu_order": 6,
-          "name": "Tier Pflege Ausrüstung",
+          "name": "Tierpflege",
           "slug": "hayvan-pflege-ekipmanlar",
           "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar",
           "level": 2,
@@ -17645,73 +17620,178 @@
             {
               "id": "cat-20-06-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/guenluek",
+              "name": "Hufpflege",
+              "slug": "hufpflege",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/hufpflege",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/guenluek"
             },
             {
               "id": "cat-20-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/premium",
+              "name": "Bürsten",
+              "slug": "buersten",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/buersten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/premium",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/premium"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/premium"
             },
             {
               "id": "cat-20-06-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/set",
+              "name": "Klauenmesser",
+              "slug": "klauenmesser",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/klauenmesser",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/set",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/set"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/set"
             },
             {
               "id": "cat-20-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/zubehoer",
+              "name": "Drenchen",
+              "slug": "drenchen",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/drenchen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/zubehoer"
             },
             {
               "id": "cat-20-06-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/organizer",
+              "name": "Handschuhe",
+              "slug": "handschuhe",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/handschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari/organizer"
+              "legacy_url": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/organizer"
             }
           ],
           "legacy_name": "Hayvan Bakım Ekipmanları",
           "legacy_slug": "hayvan-bakim-ekipmanlari",
           "legacy_slug_path": "evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari",
           "legacy_url": "/kategori/evcil-hayvan-and-hayvancilik-ekipmanlari/hayvan-bakim-ekipmanlari"
+        },
+        {
+          "id": "cat-20-07",
+          "menu_order": 7,
+          "name": "Melk & Milch",
+          "slug": "melk-und-milch",
+          "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-20-07-01",
+              "menu_order": 1,
+              "name": "Melkeimer",
+              "slug": "melkeimer",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch/melkeimer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-07-02",
+              "menu_order": 2,
+              "name": "Melkbecher",
+              "slug": "melkbecher",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch/melkbecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-07-03",
+              "menu_order": 3,
+              "name": "Milchfilter",
+              "slug": "milchfilter",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch/milchfilter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-07-04",
+              "menu_order": 4,
+              "name": "Kannen",
+              "slug": "kannen",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch/kannen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-07-05",
+              "menu_order": 5,
+              "name": "Kühlung",
+              "slug": "kuehlung",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/melk-und-milch/kuehlung",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-20-08",
+          "menu_order": 8,
+          "name": "Stallhygiene",
+          "slug": "stallhygiene",
+          "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-20-08-01",
+              "menu_order": 1,
+              "name": "Desinfektion",
+              "slug": "desinfektion",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene/desinfektion",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-08-02",
+              "menu_order": 2,
+              "name": "Sprüher",
+              "slug": "sprueher",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene/sprueher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-08-03",
+              "menu_order": 3,
+              "name": "Einstreu",
+              "slug": "einstreu",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene/einstreu",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-08-04",
+              "menu_order": 4,
+              "name": "Kalk",
+              "slug": "kalk",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene/kalk",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-20-08-05",
+              "menu_order": 5,
+              "name": "Besen & Schieber",
+              "slug": "besen-und-schieber",
+              "url": "/kategorie/tier-und-landwirtschaftsausruestung/stallhygiene/besen-und-schieber",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Evcil Hayvan & Hayvancılık Ekipmanları",

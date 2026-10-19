@@ -14128,5 +14128,185 @@
     "to": "/kategorie/gartenhobby-und-camping/fener-und-is-k/solarlampen/",
     "permanent": true,
     "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/boxen-und-trennwaende/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/stallmatten/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/troege/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/beleuchtung/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ah-r-ekipmanlar/lueftung/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/schubkarren/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/mistgabeln/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/schaufeln/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/muehlen/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/ciftlik-ekipmanlar/anhaenger-zubehoer/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/selbsttraenken/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/trogtraenken/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/nippeltraenken/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/heiztraenken/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-suluklar/schwimmer/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/raufen/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/futterautomaten/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/minerallecken/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/kuekentroeg/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/yemlikler/silo-deckel/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/drahtgitter/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/pfaehle/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/weidetore/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/elektrozaun/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/cit-und-kafes/isolatoren/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/guenluek/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/hufpflege/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/premium/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/buersten/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/set/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/klauenmesser/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/zubehoer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/drenchen/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/organizer/",
+    "to": "/kategorie/tier-und-landwirtschaftsausruestung/hayvan-pflege-ekipmanlar/handschuhe/",
+    "permanent": true,
+    "note": "Agriculture placeholder L3 replaced with a real product group"
   }
 ]

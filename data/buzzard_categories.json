@@ -13137,7 +13137,7 @@
         {
           "id": "cat-13-01",
           "menu_order": 1,
-          "name": "Küche Werkzeuge",
+          "name": "Küchengeräte",
           "slug": "kueche-aletleri",
           "url": "/kategorie/haushaltsgeraete/kueche-aletleri",
           "level": 2,
@@ -13145,67 +13145,62 @@
             {
               "id": "cat-13-01-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/guenluek",
+              "name": "Mixer",
+              "slug": "mixer",
+              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/mixer",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/mutfak-aletleri/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/kueche-aletleri/guenluek"
             },
             {
               "id": "cat-13-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/premium",
+              "name": "Toaster",
+              "slug": "toaster",
+              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/toaster",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/mutfak-aletleri/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/kueche-aletleri/premium"
             },
             {
               "id": "cat-13-01-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/set",
+              "name": "Wasserkocher",
+              "slug": "wasserkocher",
+              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/wasserkocher",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/mutfak-aletleri/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/kueche-aletleri/set"
             },
             {
               "id": "cat-13-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/zubehoer",
+              "name": "Fritteusen",
+              "slug": "fritteusen",
+              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/fritteusen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/mutfak-aletleri/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/kueche-aletleri/zubehoer"
             },
             {
               "id": "cat-13-01-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/organizer",
+              "name": "Stabmixer",
+              "slug": "stabmixer",
+              "url": "/kategorie/haushaltsgeraete/kueche-aletleri/stabmixer",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/mutfak-aletleri/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/mutfak-aletleri/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/kueche-aletleri/organizer"
             }
           ],
           "legacy_name": "Mutfak Aletleri",
@@ -13216,7 +13211,7 @@
         {
           "id": "cat-13-02",
           "menu_order": 2,
-          "name": "Kaffee & Getränk",
+          "name": "Kaffee & Getränke",
           "slug": "kahve-und-icecek",
           "url": "/kategorie/haushaltsgeraete/kahve-und-icecek",
           "level": 2,
@@ -13224,67 +13219,62 @@
             {
               "id": "cat-13-02-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/guenluek",
+              "name": "Kaffeevollautomaten",
+              "slug": "kaffeevollautomaten",
+              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/kaffeevollautomaten",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kahve-and-icecek/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/kahve-und-icecek/guenluek"
             },
             {
               "id": "cat-13-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/premium",
+              "name": "Espressomaschinen",
+              "slug": "espressomaschinen",
+              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/espressomaschinen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kahve-and-icecek/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/kahve-und-icecek/premium"
             },
             {
               "id": "cat-13-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/set",
+              "name": "Filterkaffee",
+              "slug": "filterkaffee",
+              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/filterkaffee",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kahve-and-icecek/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/kahve-und-icecek/set"
             },
             {
               "id": "cat-13-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/zubehoer",
+              "name": "Entsafter",
+              "slug": "entsafter",
+              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/entsafter",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kahve-and-icecek/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/kahve-und-icecek/zubehoer"
             },
             {
               "id": "cat-13-02-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/organizer",
+              "name": "Smoothiemaker",
+              "slug": "smoothiemaker",
+              "url": "/kategorie/haushaltsgeraete/kahve-und-icecek/smoothiemaker",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kahve-and-icecek/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kahve-and-icecek/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/kahve-und-icecek/organizer"
             }
           ],
           "legacy_name": "Kahve & İçecek",
@@ -13295,7 +13285,7 @@
         {
           "id": "cat-13-03",
           "menu_order": 3,
-          "name": "Reinigung Werkzeuge",
+          "name": "Reinigungsgeräte",
           "slug": "reinigung-aletleri",
           "url": "/kategorie/haushaltsgeraete/reinigung-aletleri",
           "level": 2,
@@ -13303,67 +13293,62 @@
             {
               "id": "cat-13-03-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/guenluek",
+              "name": "Staubsauger",
+              "slug": "staubsauger",
+              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/staubsauger",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/temizlik-aletleri/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/reinigung-aletleri/guenluek"
             },
             {
               "id": "cat-13-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/premium",
+              "name": "Dampfreiniger",
+              "slug": "dampfreiniger",
+              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/dampfreiniger",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/temizlik-aletleri/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/reinigung-aletleri/premium"
             },
             {
               "id": "cat-13-03-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/set",
+              "name": "Fensterroboter",
+              "slug": "fensterroboter",
+              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/fensterroboter",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/temizlik-aletleri/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/reinigung-aletleri/set"
             },
             {
               "id": "cat-13-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/zubehoer",
+              "name": "Waschsauger",
+              "slug": "waschsauger",
+              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/waschsauger",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/temizlik-aletleri/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/reinigung-aletleri/zubehoer"
             },
             {
               "id": "cat-13-03-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/organizer",
+              "name": "Teppichreiniger",
+              "slug": "teppichreiniger",
+              "url": "/kategorie/haushaltsgeraete/reinigung-aletleri/teppichreiniger",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/temizlik-aletleri/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/temizlik-aletleri/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/reinigung-aletleri/organizer"
             }
           ],
           "legacy_name": "Temizlik Aletleri",
@@ -13374,7 +13359,7 @@
         {
           "id": "cat-13-04",
           "menu_order": 4,
-          "name": "Persönliche Pflege Werkzeuge",
+          "name": "Körperpflege-Geräte",
           "slug": "kisisel-pflege-aletleri",
           "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri",
           "level": 2,
@@ -13382,67 +13367,62 @@
             {
               "id": "cat-13-04-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/guenluek",
+              "name": "Haartrockner",
+              "slug": "haartrockner",
+              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/haartrockner",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kisisel-bakim-aletleri/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/guenluek"
             },
             {
               "id": "cat-13-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/premium",
+              "name": "Glätteisen",
+              "slug": "glaetteisen",
+              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/glaetteisen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kisisel-bakim-aletleri/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/premium"
             },
             {
               "id": "cat-13-04-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/set",
+              "name": "Elektrorasierer",
+              "slug": "elektrorasierer",
+              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/elektrorasierer",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kisisel-bakim-aletleri/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/set"
             },
             {
               "id": "cat-13-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/zubehoer",
+              "name": "Mundduschen",
+              "slug": "mundduschen",
+              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/mundduschen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kisisel-bakim-aletleri/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/zubehoer"
             },
             {
               "id": "cat-13-04-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/organizer",
+              "name": "Epilierer",
+              "slug": "epilierer",
+              "url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/epilierer",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kisisel-bakim-aletleri/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kisisel-bakim-aletleri/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/organizer"
             }
           ],
           "legacy_name": "Kişisel Bakım Aletleri",
@@ -13453,7 +13433,7 @@
         {
           "id": "cat-13-05",
           "menu_order": 5,
-          "name": "Heizung & Kühlung",
+          "name": "Heizen & Kühlen",
           "slug": "is-tma-und-sogutma",
           "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma",
           "level": 2,
@@ -13461,67 +13441,62 @@
             {
               "id": "cat-13-05-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/guenluek",
+              "name": "Ventilatoren",
+              "slug": "ventilatoren",
+              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/ventilatoren",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/isitma-and-sogutma/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/guenluek"
             },
             {
               "id": "cat-13-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/premium",
+              "name": "Heizlüfter",
+              "slug": "heizluefter",
+              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/heizluefter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/isitma-and-sogutma/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/premium"
             },
             {
               "id": "cat-13-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/set",
+              "name": "Luftbefeuchter",
+              "slug": "luftbefeuchter",
+              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/luftbefeuchter",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/isitma-and-sogutma/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/set"
             },
             {
               "id": "cat-13-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/zubehoer",
+              "name": "Luftreiniger",
+              "slug": "luftreiniger",
+              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/luftreiniger",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/isitma-and-sogutma/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/zubehoer"
             },
             {
               "id": "cat-13-05-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/organizer",
+              "name": "Klimageräte",
+              "slug": "klimageraete",
+              "url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/klimageraete",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/isitma-and-sogutma/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/isitma-and-sogutma/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/organizer"
             }
           ],
           "legacy_name": "Isıtma & Soğutma",
@@ -13532,7 +13507,7 @@
         {
           "id": "cat-13-06",
           "menu_order": 6,
-          "name": "Klein Haushalt Werkzeuge",
+          "name": "Kleingeräte",
           "slug": "kuecuek-haus-aletleri",
           "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri",
           "level": 2,
@@ -13540,73 +13515,160 @@
             {
               "id": "cat-13-06-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/guenluek",
+              "name": "Eierkocher",
+              "slug": "eierkocher",
+              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/eierkocher",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri/gunluk",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/guenluek"
             },
             {
               "id": "cat-13-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/premium",
+              "name": "Sandwichmaker",
+              "slug": "sandwichmaker",
+              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/sandwichmaker",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri/premium",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri/premium"
+              "legacy_url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/premium"
             },
             {
               "id": "cat-13-06-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/set",
+              "name": "Küchenwaagen",
+              "slug": "kuechenwaagen",
+              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/kuechenwaagen",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri/set",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri/set"
+              "legacy_url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/set"
             },
             {
               "id": "cat-13-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/zubehoer",
+              "name": "Dosenöffner",
+              "slug": "dosenoeffner",
+              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/dosenoeffner",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri/aksesuar",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/zubehoer"
             },
             {
               "id": "cat-13-06-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/organizer",
+              "name": "Popcornmaker",
+              "slug": "popcornmaker",
+              "url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/popcornmaker",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri/organizer",
-              "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri/organizer"
+              "legacy_url": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/organizer"
             }
           ],
           "legacy_name": "Küçük Ev Aletleri",
           "legacy_slug": "kucuk-ev-aletleri",
           "legacy_slug_path": "elektrikli-ev-aletleri/kucuk-ev-aletleri",
           "legacy_url": "/kategori/elektrikli-ev-aletleri/kucuk-ev-aletleri"
+        },
+        {
+          "id": "cat-13-07",
+          "menu_order": 7,
+          "name": "Bügeln",
+          "slug": "buegeln",
+          "url": "/kategorie/haushaltsgeraete/buegeln",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-13-07-01",
+              "menu_order": 1,
+              "name": "Bügeleisen",
+              "slug": "buegeleisen",
+              "url": "/kategorie/haushaltsgeraete/buegeln/buegeleisen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-07-02",
+              "menu_order": 2,
+              "name": "Bügelstationen",
+              "slug": "buegelstationen",
+              "url": "/kategorie/haushaltsgeraete/buegeln/buegelstationen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-07-03",
+              "menu_order": 3,
+              "name": "Bügelbretter",
+              "slug": "buegelbretter",
+              "url": "/kategorie/haushaltsgeraete/buegeln/buegelbretter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-07-04",
+              "menu_order": 4,
+              "name": "Dampfbürsten",
+              "slug": "dampfbruesten",
+              "url": "/kategorie/haushaltsgeraete/buegeln/dampfbruesten",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-13-08",
+          "menu_order": 8,
+          "name": "Ersatzteile & Filter",
+          "slug": "ersatzteile-und-filter",
+          "url": "/kategorie/haushaltsgeraete/ersatzteile-und-filter",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-13-08-01",
+              "menu_order": 1,
+              "name": "Staubsaugerbeutel",
+              "slug": "staubsaugerbeutel",
+              "url": "/kategorie/haushaltsgeraete/ersatzteile-und-filter/staubsaugerbeutel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-08-02",
+              "menu_order": 2,
+              "name": "Wasserfilter",
+              "slug": "wasserfilter",
+              "url": "/kategorie/haushaltsgeraete/ersatzteile-und-filter/wasserfilter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-08-03",
+              "menu_order": 3,
+              "name": "Ersatzklingen",
+              "slug": "ersatzklingen",
+              "url": "/kategorie/haushaltsgeraete/ersatzteile-und-filter/ersatzklingen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-13-08-04",
+              "menu_order": 4,
+              "name": "Dichtungen",
+              "slug": "dichtungen",
+              "url": "/kategorie/haushaltsgeraete/ersatzteile-und-filter/dichtungen",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Elektrikli Ev Aletleri",

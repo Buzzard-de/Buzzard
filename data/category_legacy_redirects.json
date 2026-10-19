@@ -14620,5 +14620,245 @@
     "to": "/kategorie/sport-und-outdoor/set-sporlar/badminton/",
     "permanent": true,
     "note": "Sport placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/tornavida/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/schraubendreher/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/pense/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/zangen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/anahtar/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/schraubenschluessel/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/lokma/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/steckschluessel/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/cekic/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/haemmer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/maket-b-cag/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/el-aletleri/cuttermesser/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/matkap/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/bohrmaschinen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/darbeli-matkap/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/schlagbohrer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/taslama/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/winkelschleifer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/dekupaj/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/stichsaegen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/daire-testere/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/kreissaegen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/z-mpara/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/elektrikli-el-aletleri/schleifer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akuelue-matkap/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akkubohrer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akuelue-vidalama/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akkuschrauber/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akuelue-taslama/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akku-schleifer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akuelue-testere/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akku-saegen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/batterie-und-sarj/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/akuelue-werkzeuge/akkus-und-ladegeraete/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/metre/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/massbaender/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/lazer-metre/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/laser-entfernungsmesser/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/wasser-terazisi/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/wasserwaagen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/kumpas/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/messschieber/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/multimetre/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/oelcuem-aletleri/multimeter/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/standard/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/bohrer/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/premium/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/saegeblaetter/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/sets/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/fraeser/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/zubehoer/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/kesme-und-delme/lochsaegen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/vida/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/schrauben/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/somun/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/muttern/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/c-vata/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/duebel/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/duebel/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/unterlegscheiben/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/pul/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/nieten/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/rondela/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/baglant-elemanlar/anker/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/standard/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/scharniere/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/premium/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/beschlaege/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/sets/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/vorhaengeschloesser/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/zubehoer/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/h-rdavat/ketten/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/standard/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/werkbaenke/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/premium/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/schraubstoecke/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/sets/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/werkstattwagen/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/zubehoer/",
+    "to": "/kategorie/werkzeuge-und-eisenwaren/atoelye-ekipmanlar/aufbewahrung/",
+    "permanent": true,
+    "note": "Tools placeholder L3 replaced with a real product group"
   }
 ]

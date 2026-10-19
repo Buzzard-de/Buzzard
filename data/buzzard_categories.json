@@ -26856,27 +26856,63 @@
             {
               "id": "cat-42-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/heimtextilien/bettwaesche/standard",
+              "name": "Bettwäsche-Sets",
+              "slug": "bettwaesche-sets",
+              "url": "/kategorie/heimtextilien/bettwaesche/bettwaesche-sets",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/heimtextilien/bettwaesche/standard"
             },
             {
               "id": "cat-42-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/heimtextilien/bettwaesche/premium",
+              "name": "Spannbettlaken",
+              "slug": "spannbettlaken",
+              "url": "/kategorie/heimtextilien/bettwaesche/spannbettlaken",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/heimtextilien/bettwaesche/premium"
             },
             {
               "id": "cat-42-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/heimtextilien/bettwaesche/sets-sparpakete",
+              "name": "Kissenbezüge",
+              "slug": "kissenbezuege",
+              "url": "/kategorie/heimtextilien/bettwaesche/kissenbezuege",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/heimtextilien/bettwaesche/sets-sparpakete"
+            },
+            {
+              "id": "cat-42-01-04",
+              "menu_order": 4,
+              "name": "Bettbezüge",
+              "slug": "bettbezuege",
+              "url": "/kategorie/heimtextilien/bettwaesche/bettbezuege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-01-05",
+              "menu_order": 5,
+              "name": "Baby- & Kinderbettwäsche",
+              "slug": "baby-und-kinderbettwaesche",
+              "url": "/kategorie/heimtextilien/bettwaesche/baby-und-kinderbettwaesche",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-01-06",
+              "menu_order": 6,
+              "name": "Jersey-Bettwäsche",
+              "slug": "jersey-bettwaesche",
+              "url": "/kategorie/heimtextilien/bettwaesche/jersey-bettwaesche",
               "level": 3,
               "children": []
             }
@@ -26893,27 +26929,63 @@
             {
               "id": "cat-42-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/standard",
+              "name": "Badetücher",
+              "slug": "badetuecher",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/badetuecher",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/heimtextilien/handtuecher-badtextilien/standard"
             },
             {
               "id": "cat-42-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/premium",
+              "name": "Handtücher",
+              "slug": "handtuecher",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/handtuecher",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/heimtextilien/handtuecher-badtextilien/premium"
             },
             {
               "id": "cat-42-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/sets-sparpakete",
+              "name": "Waschlappen",
+              "slug": "waschlappen",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/waschlappen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/heimtextilien/handtuecher-badtextilien/sets-sparpakete"
+            },
+            {
+              "id": "cat-42-02-04",
+              "menu_order": 4,
+              "name": "Badematten",
+              "slug": "badematten",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/badematten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-02-05",
+              "menu_order": 5,
+              "name": "Saunatücher",
+              "slug": "saunatuecher",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/saunatuecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-02-06",
+              "menu_order": 6,
+              "name": "Gästehandtücher",
+              "slug": "gaestehandtuecher",
+              "url": "/kategorie/heimtextilien/handtuecher-badtextilien/gaestehandtuecher",
               "level": 3,
               "children": []
             }
@@ -26930,27 +27002,54 @@
             {
               "id": "cat-42-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/standard",
+              "name": "Vorhänge",
+              "slug": "vorhaenge",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/vorhaenge",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/heimtextilien/gardinen-vorhaenge/standard"
             },
             {
               "id": "cat-42-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/premium",
+              "name": "Stores",
+              "slug": "stores",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/stores",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/heimtextilien/gardinen-vorhaenge/premium"
             },
             {
               "id": "cat-42-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/sets-sparpakete",
+              "name": "Raffrollos",
+              "slug": "raffrollos",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/raffrollos",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/heimtextilien/gardinen-vorhaenge/sets-sparpakete"
+            },
+            {
+              "id": "cat-42-03-04",
+              "menu_order": 4,
+              "name": "Schiebegardinen",
+              "slug": "schiebegardinen",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/schiebegardinen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-03-05",
+              "menu_order": 5,
+              "name": "Verdunklungsvorhänge",
+              "slug": "verdunklungsvorhaenge",
+              "url": "/kategorie/heimtextilien/gardinen-vorhaenge/verdunklungsvorhaenge",
               "level": 3,
               "children": []
             }
@@ -26967,27 +27066,339 @@
             {
               "id": "cat-42-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/heimtextilien/teppiche-laeufer/standard",
+              "name": "Kurzflorteppiche",
+              "slug": "kurzflorteppiche",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/kurzflorteppiche",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/heimtextilien/teppiche-laeufer/standard"
             },
             {
               "id": "cat-42-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/heimtextilien/teppiche-laeufer/premium",
+              "name": "Hochflorteppiche",
+              "slug": "hochflorteppiche",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/hochflorteppiche",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/heimtextilien/teppiche-laeufer/premium"
             },
             {
               "id": "cat-42-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/heimtextilien/teppiche-laeufer/sets-sparpakete",
+              "name": "Läufer",
+              "slug": "laeufer",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/laeufer",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/heimtextilien/teppiche-laeufer/sets-sparpakete"
+            },
+            {
+              "id": "cat-42-04-04",
+              "menu_order": 4,
+              "name": "Badematte & WC-Vorleger",
+              "slug": "badematte-und-wc-vorleger",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/badematte-und-wc-vorleger",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-04-05",
+              "menu_order": 5,
+              "name": "Outdoor-Teppiche",
+              "slug": "outdoor-teppiche",
+              "url": "/kategorie/heimtextilien/teppiche-laeufer/outdoor-teppiche",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-05",
+          "menu_order": 5,
+          "name": "Tischwäsche",
+          "slug": "tischwaesche",
+          "url": "/kategorie/heimtextilien/tischwaesche",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-05-01",
+              "menu_order": 1,
+              "name": "Tischdecken",
+              "slug": "tischdecken",
+              "url": "/kategorie/heimtextilien/tischwaesche/tischdecken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-05-02",
+              "menu_order": 2,
+              "name": "Tischläufer",
+              "slug": "tischlaeufer",
+              "url": "/kategorie/heimtextilien/tischwaesche/tischlaeufer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-05-03",
+              "menu_order": 3,
+              "name": "Platzsets",
+              "slug": "platzsets",
+              "url": "/kategorie/heimtextilien/tischwaesche/platzsets",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-05-04",
+              "menu_order": 4,
+              "name": "Stoffservietten",
+              "slug": "stoffservietten",
+              "url": "/kategorie/heimtextilien/tischwaesche/stoffservietten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-05-05",
+              "menu_order": 5,
+              "name": "Tischsets",
+              "slug": "tischsets",
+              "url": "/kategorie/heimtextilien/tischwaesche/tischsets",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-06",
+          "menu_order": 6,
+          "name": "Küchentextilien",
+          "slug": "kuechentextilien",
+          "url": "/kategorie/heimtextilien/kuechentextilien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-06-01",
+              "menu_order": 1,
+              "name": "Geschirrtücher",
+              "slug": "geschirrtuecher",
+              "url": "/kategorie/heimtextilien/kuechentextilien/geschirrtuecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-06-02",
+              "menu_order": 2,
+              "name": "Schürzen",
+              "slug": "schuerzen",
+              "url": "/kategorie/heimtextilien/kuechentextilien/schuerzen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-06-03",
+              "menu_order": 3,
+              "name": "Topflappen & Ofenhandschuhe",
+              "slug": "topflappen-und-ofenhandschuhe",
+              "url": "/kategorie/heimtextilien/kuechentextilien/topflappen-und-ofenhandschuhe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-06-04",
+              "menu_order": 4,
+              "name": "Küchenläufer",
+              "slug": "kuechenlaeufer",
+              "url": "/kategorie/heimtextilien/kuechentextilien/kuechenlaeufer",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-07",
+          "menu_order": 7,
+          "name": "Decken & Kissen",
+          "slug": "decken-und-kissen",
+          "url": "/kategorie/heimtextilien/decken-und-kissen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-07-01",
+              "menu_order": 1,
+              "name": "Wohndecken",
+              "slug": "wohndecken",
+              "url": "/kategorie/heimtextilien/decken-und-kissen/wohndecken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-07-02",
+              "menu_order": 2,
+              "name": "Zierkissen",
+              "slug": "zierkissen",
+              "url": "/kategorie/heimtextilien/decken-und-kissen/zierkissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-07-03",
+              "menu_order": 3,
+              "name": "Zierkissenbezüge",
+              "slug": "zierkissenbezuege",
+              "url": "/kategorie/heimtextilien/decken-und-kissen/zierkissenbezuege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-07-04",
+              "menu_order": 4,
+              "name": "Tagesdecken",
+              "slug": "tagesdecken",
+              "url": "/kategorie/heimtextilien/decken-und-kissen/tagesdecken",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-08",
+          "menu_order": 8,
+          "name": "Bettwaren",
+          "slug": "bettwaren",
+          "url": "/kategorie/heimtextilien/bettwaren",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-08-01",
+              "menu_order": 1,
+              "name": "Kopfkissen",
+              "slug": "kopfkissen",
+              "url": "/kategorie/heimtextilien/bettwaren/kopfkissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-08-02",
+              "menu_order": 2,
+              "name": "Bettdecken",
+              "slug": "bettdecken",
+              "url": "/kategorie/heimtextilien/bettwaren/bettdecken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-08-03",
+              "menu_order": 3,
+              "name": "Matratzenschoner",
+              "slug": "matratzenschoner",
+              "url": "/kategorie/heimtextilien/bettwaren/matratzenschoner",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-08-04",
+              "menu_order": 4,
+              "name": "Matratzenauflagen",
+              "slug": "matratzenauflagen",
+              "url": "/kategorie/heimtextilien/bettwaren/matratzenauflagen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-09",
+          "menu_order": 9,
+          "name": "Möbelbezüge",
+          "slug": "moebelbezuege",
+          "url": "/kategorie/heimtextilien/moebelbezuege",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-09-01",
+              "menu_order": 1,
+              "name": "Sofabezüge",
+              "slug": "sofabezuege",
+              "url": "/kategorie/heimtextilien/moebelbezuege/sofabezuege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-09-02",
+              "menu_order": 2,
+              "name": "Sesselbezüge",
+              "slug": "sesselbezuege",
+              "url": "/kategorie/heimtextilien/moebelbezuege/sesselbezuege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-09-03",
+              "menu_order": 3,
+              "name": "Stuhlhussen",
+              "slug": "stuhlhussen",
+              "url": "/kategorie/heimtextilien/moebelbezuege/stuhlhussen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-09-04",
+              "menu_order": 4,
+              "name": "Elastische Möbelbezüge",
+              "slug": "elastische-moebelbezuege",
+              "url": "/kategorie/heimtextilien/moebelbezuege/elastische-moebelbezuege",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-42-10",
+          "menu_order": 10,
+          "name": "Outdoor-Textilien",
+          "slug": "outdoor-textilien",
+          "url": "/kategorie/heimtextilien/outdoor-textilien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-42-10-01",
+              "menu_order": 1,
+              "name": "Gartenmöbel-Auflagen",
+              "slug": "gartenmoebel-auflagen",
+              "url": "/kategorie/heimtextilien/outdoor-textilien/gartenmoebel-auflagen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-10-02",
+              "menu_order": 2,
+              "name": "Outdoor-Kissen",
+              "slug": "outdoor-kissen",
+              "url": "/kategorie/heimtextilien/outdoor-textilien/outdoor-kissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-10-03",
+              "menu_order": 3,
+              "name": "Strandtücher",
+              "slug": "strandtuecher",
+              "url": "/kategorie/heimtextilien/outdoor-textilien/strandtuecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-42-10-04",
+              "menu_order": 4,
+              "name": "Hängematten-Textilien",
+              "slug": "haengematten-textilien",
+              "url": "/kategorie/heimtextilien/outdoor-textilien/haengematten-textilien",
               "level": 3,
               "children": []
             }

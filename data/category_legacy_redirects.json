@@ -10498,5 +10498,77 @@
     "to": "/kategorie/textil/arbeits-und-outdoor-textilien/fleece-und-softshell/",
     "permanent": true,
     "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/bettwaesche/standard/",
+    "to": "/kategorie/heimtextilien/bettwaesche/bettwaesche-sets/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/bettwaesche/premium/",
+    "to": "/kategorie/heimtextilien/bettwaesche/spannbettlaken/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/bettwaesche/sets-sparpakete/",
+    "to": "/kategorie/heimtextilien/bettwaesche/kissenbezuege/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/handtuecher-badtextilien/standard/",
+    "to": "/kategorie/heimtextilien/handtuecher-badtextilien/badetuecher/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/handtuecher-badtextilien/premium/",
+    "to": "/kategorie/heimtextilien/handtuecher-badtextilien/handtuecher/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/handtuecher-badtextilien/sets-sparpakete/",
+    "to": "/kategorie/heimtextilien/handtuecher-badtextilien/waschlappen/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/gardinen-vorhaenge/standard/",
+    "to": "/kategorie/heimtextilien/gardinen-vorhaenge/vorhaenge/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/gardinen-vorhaenge/premium/",
+    "to": "/kategorie/heimtextilien/gardinen-vorhaenge/stores/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/gardinen-vorhaenge/sets-sparpakete/",
+    "to": "/kategorie/heimtextilien/gardinen-vorhaenge/raffrollos/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/teppiche-laeufer/standard/",
+    "to": "/kategorie/heimtextilien/teppiche-laeufer/kurzflorteppiche/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/teppiche-laeufer/premium/",
+    "to": "/kategorie/heimtextilien/teppiche-laeufer/hochflorteppiche/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/heimtextilien/teppiche-laeufer/sets-sparpakete/",
+    "to": "/kategorie/heimtextilien/teppiche-laeufer/laeufer/",
+    "permanent": true,
+    "note": "Home-textile placeholder L3 replaced with a real product group"
   }
 ]

@@ -25782,7 +25782,7 @@
         {
           "id": "cat-38-01",
           "menu_order": 1,
-          "name": "Laptop Zubehör",
+          "name": "Laptop-Zubehör",
           "slug": "laptop-aksesuarlar",
           "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar",
           "level": 2,
@@ -25790,54 +25790,59 @@
             {
               "id": "cat-38-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/standard",
+              "name": "Laptop-Taschen",
+              "slug": "laptop-taschen",
+              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/laptop-taschen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/laptop-aksesuarlari/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/laptop-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/standard"
             },
             {
               "id": "cat-38-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/premium",
+              "name": "Laptop-Ständer",
+              "slug": "laptop-staender",
+              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/laptop-staender",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/laptop-aksesuarlari/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/laptop-aksesuarlari/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/premium"
             },
             {
               "id": "cat-38-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/sets",
+              "name": "Kühlpads",
+              "slug": "kuehlpads",
+              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/kuehlpads",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/laptop-aksesuarlari/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/laptop-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/sets"
             },
             {
               "id": "cat-38-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/zubehoer",
+              "name": "Dockingstations",
+              "slug": "dockingstations",
+              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/dockingstations",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/laptop-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/laptop-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/zubehoer"
+            },
+            {
+              "id": "cat-38-01-05",
+              "menu_order": 5,
+              "name": "Laptop-Netzteile",
+              "slug": "laptop-netzteile",
+              "url": "/kategorie/computer-und-gaming/laptop-aksesuarlar/laptop-netzteile",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Laptop Aksesuarları",
@@ -25856,54 +25861,50 @@
             {
               "id": "cat-38-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/standard",
+              "name": "Tastaturen",
+              "slug": "tastaturen",
+              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/tastaturen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/klavye-and-mouse/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/klavye-and-mouse/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/klavye-und-mouse/standard"
             },
             {
               "id": "cat-38-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/premium",
+              "name": "Mäuse",
+              "slug": "maeuse",
+              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/maeuse",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/klavye-and-mouse/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/klavye-and-mouse/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/klavye-und-mouse/premium"
             },
             {
               "id": "cat-38-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/sets",
+              "name": "Tastatur-Maus-Sets",
+              "slug": "tastatur-maus-sets",
+              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/tastatur-maus-sets",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/klavye-and-mouse/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/klavye-and-mouse/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/klavye-und-mouse/sets"
             },
             {
               "id": "cat-38-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/zubehoer",
+              "name": "Handballenauflagen",
+              "slug": "handballenauflagen",
+              "url": "/kategorie/computer-und-gaming/klavye-und-mouse/handballenauflagen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/klavye-and-mouse/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/klavye-and-mouse/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/klavye-und-mouse/zubehoer"
             }
           ],
           "legacy_name": "Klavye & Mouse",
@@ -25914,7 +25915,7 @@
         {
           "id": "cat-38-03",
           "menu_order": 3,
-          "name": "Monitor Zubehör",
+          "name": "Monitor-Zubehör",
           "slug": "monitoer-aksesuarlar",
           "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar",
           "level": 2,
@@ -25922,54 +25923,50 @@
             {
               "id": "cat-38-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/standard",
+              "name": "Monitorarme",
+              "slug": "monitorarme",
+              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorarme",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/monitor-aksesuarlari/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/monitor-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/standard"
             },
             {
               "id": "cat-38-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/premium",
+              "name": "Monitorständer",
+              "slug": "monitorstaender",
+              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorstaender",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/monitor-aksesuarlari/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/monitor-aksesuarlari/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/premium"
             },
             {
               "id": "cat-38-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/sets",
+              "name": "Kabelkanäle",
+              "slug": "kabelkanaele",
+              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/kabelkanaele",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/monitor-aksesuarlari/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/monitor-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/sets"
             },
             {
               "id": "cat-38-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/zubehoer",
+              "name": "Monitorhauben",
+              "slug": "monitorhauben",
+              "url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorhauben",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/monitor-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/monitor-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Monitör Aksesuarları",
@@ -25980,7 +25977,7 @@
         {
           "id": "cat-38-04",
           "menu_order": 4,
-          "name": "Gaming Zubehör",
+          "name": "Gaming-Zubehör",
           "slug": "gaming-aksesuarlar",
           "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar",
           "level": 2,
@@ -25988,54 +25985,59 @@
             {
               "id": "cat-38-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/standard",
+              "name": "Gaming-Headsets",
+              "slug": "gaming-headsets",
+              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-headsets",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/gaming-aksesuarlari/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/gaming-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/standard"
             },
             {
               "id": "cat-38-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/premium",
+              "name": "Gaming-Mäuse",
+              "slug": "gaming-maeuse",
+              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-maeuse",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/gaming-aksesuarlari/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/gaming-aksesuarlari/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/premium"
             },
             {
               "id": "cat-38-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/sets",
+              "name": "Controller",
+              "slug": "controller",
+              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/controller",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/gaming-aksesuarlari/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/gaming-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/sets"
             },
             {
               "id": "cat-38-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/zubehoer",
+              "name": "Gaming-Tastaturen",
+              "slug": "gaming-tastaturen",
+              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-tastaturen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/gaming-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/gaming-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/zubehoer"
+            },
+            {
+              "id": "cat-38-04-05",
+              "menu_order": 5,
+              "name": "Mauspads",
+              "slug": "mauspads",
+              "url": "/kategorie/computer-und-gaming/gaming-aksesuarlar/mauspads",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Gaming Aksesuarları",
@@ -26046,7 +26048,7 @@
         {
           "id": "cat-38-05",
           "menu_order": 5,
-          "name": "Webcam",
+          "name": "Webcams",
           "slug": "webcam",
           "url": "/kategorie/computer-und-gaming/webcam",
           "level": 2,
@@ -26054,54 +26056,50 @@
             {
               "id": "cat-38-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/webcam/standard",
+              "name": "Full-HD-Webcams",
+              "slug": "full-hd-webcams",
+              "url": "/kategorie/computer-und-gaming/webcam/full-hd-webcams",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/webcam/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/webcam/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/webcam/standard"
             },
             {
               "id": "cat-38-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/webcam/premium",
+              "name": "4K-Webcams",
+              "slug": "4k-webcams",
+              "url": "/kategorie/computer-und-gaming/webcam/4k-webcams",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/webcam/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/webcam/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/webcam/premium"
             },
             {
               "id": "cat-38-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/webcam/sets",
+              "name": "Webcam-Stative",
+              "slug": "webcam-stative",
+              "url": "/kategorie/computer-und-gaming/webcam/webcam-stative",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/webcam/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/webcam/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/webcam/sets"
             },
             {
               "id": "cat-38-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/webcam/zubehoer",
+              "name": "Abdeckungen",
+              "slug": "abdeckungen",
+              "url": "/kategorie/computer-und-gaming/webcam/abdeckungen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/webcam/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/webcam/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/webcam/zubehoer"
             }
           ],
           "legacy_name": "Webcam",
@@ -26112,7 +26110,7 @@
         {
           "id": "cat-38-06",
           "menu_order": 6,
-          "name": "USB Zubehör",
+          "name": "USB-Zubehör",
           "slug": "usb-aksesuarlar",
           "url": "/kategorie/computer-und-gaming/usb-aksesuarlar",
           "level": 2,
@@ -26120,60 +26118,148 @@
             {
               "id": "cat-38-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/standard",
+              "name": "USB-Sticks",
+              "slug": "usb-sticks",
+              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-sticks",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "bilgisayar-and-gaming/usb-aksesuarlari/standart",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/computer-und-gaming/usb-aksesuarlar/standard"
             },
             {
               "id": "cat-38-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/premium",
+              "name": "USB-Hubs",
+              "slug": "usb-hubs",
+              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-hubs",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "bilgisayar-and-gaming/usb-aksesuarlari/premium",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari/premium"
+              "legacy_url": "/kategorie/computer-und-gaming/usb-aksesuarlar/premium"
             },
             {
               "id": "cat-38-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/sets",
+              "name": "USB-C Adapter",
+              "slug": "usb-c-adapter",
+              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-c-adapter",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "bilgisayar-and-gaming/usb-aksesuarlari/setler",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/computer-und-gaming/usb-aksesuarlar/sets"
             },
             {
               "id": "cat-38-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/zubehoer",
+              "name": "Verlängerungen",
+              "slug": "verlaengerungen",
+              "url": "/kategorie/computer-und-gaming/usb-aksesuarlar/verlaengerungen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "bilgisayar-and-gaming/usb-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/computer-und-gaming/usb-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "USB Aksesuarları",
           "legacy_slug": "usb-aksesuarlari",
           "legacy_slug_path": "bilgisayar-and-gaming/usb-aksesuarlari",
           "legacy_url": "/kategori/bilgisayar-and-gaming/usb-aksesuarlari"
+        },
+        {
+          "id": "cat-38-07",
+          "menu_order": 7,
+          "name": "PC-Audio",
+          "slug": "pc-audio",
+          "url": "/kategorie/computer-und-gaming/pc-audio",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-38-07-01",
+              "menu_order": 1,
+              "name": "PC-Lautsprecher",
+              "slug": "pc-lautsprecher",
+              "url": "/kategorie/computer-und-gaming/pc-audio/pc-lautsprecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-07-02",
+              "menu_order": 2,
+              "name": "Studiomonitore",
+              "slug": "studiomonitore",
+              "url": "/kategorie/computer-und-gaming/pc-audio/studiomonitore",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-07-03",
+              "menu_order": 3,
+              "name": "Soundkarten",
+              "slug": "soundkarten",
+              "url": "/kategorie/computer-und-gaming/pc-audio/soundkarten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-07-04",
+              "menu_order": 4,
+              "name": "Mikrofone",
+              "slug": "mikrofone",
+              "url": "/kategorie/computer-und-gaming/pc-audio/mikrofone",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-38-08",
+          "menu_order": 8,
+          "name": "Speicher",
+          "slug": "speicher",
+          "url": "/kategorie/computer-und-gaming/speicher",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-38-08-01",
+              "menu_order": 1,
+              "name": "Externe SSDs",
+              "slug": "externe-ssds",
+              "url": "/kategorie/computer-und-gaming/speicher/externe-ssds",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-08-02",
+              "menu_order": 2,
+              "name": "Externe Festplatten",
+              "slug": "externe-festplatten",
+              "url": "/kategorie/computer-und-gaming/speicher/externe-festplatten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-08-03",
+              "menu_order": 3,
+              "name": "Kartenleser",
+              "slug": "kartenleser",
+              "url": "/kategorie/computer-und-gaming/speicher/kartenleser",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-38-08-04",
+              "menu_order": 4,
+              "name": "NAS-Zubehör",
+              "slug": "nas-zubehoer",
+              "url": "/kategorie/computer-und-gaming/speicher/nas-zubehoer",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Bilgisayar & Gaming",

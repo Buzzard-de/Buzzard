@@ -16048,5 +16048,149 @@
     "to": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/ladekabel/",
     "permanent": true,
     "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/laptop-aksesuarlar/standard/",
+    "to": "/kategorie/computer-und-gaming/laptop-aksesuarlar/laptop-taschen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/laptop-aksesuarlar/premium/",
+    "to": "/kategorie/computer-und-gaming/laptop-aksesuarlar/laptop-staender/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/laptop-aksesuarlar/sets/",
+    "to": "/kategorie/computer-und-gaming/laptop-aksesuarlar/kuehlpads/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/laptop-aksesuarlar/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/laptop-aksesuarlar/dockingstations/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/klavye-und-mouse/standard/",
+    "to": "/kategorie/computer-und-gaming/klavye-und-mouse/tastaturen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/klavye-und-mouse/premium/",
+    "to": "/kategorie/computer-und-gaming/klavye-und-mouse/maeuse/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/klavye-und-mouse/sets/",
+    "to": "/kategorie/computer-und-gaming/klavye-und-mouse/tastatur-maus-sets/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/klavye-und-mouse/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/klavye-und-mouse/handballenauflagen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/standard/",
+    "to": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorarme/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/premium/",
+    "to": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorstaender/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/sets/",
+    "to": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/kabelkanaele/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/monitoer-aksesuarlar/monitorhauben/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/gaming-aksesuarlar/standard/",
+    "to": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-headsets/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/gaming-aksesuarlar/premium/",
+    "to": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-maeuse/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/gaming-aksesuarlar/sets/",
+    "to": "/kategorie/computer-und-gaming/gaming-aksesuarlar/controller/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/gaming-aksesuarlar/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/gaming-aksesuarlar/gaming-tastaturen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/webcam/standard/",
+    "to": "/kategorie/computer-und-gaming/webcam/full-hd-webcams/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/webcam/premium/",
+    "to": "/kategorie/computer-und-gaming/webcam/4k-webcams/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/webcam/sets/",
+    "to": "/kategorie/computer-und-gaming/webcam/webcam-stative/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/webcam/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/webcam/abdeckungen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/usb-aksesuarlar/standard/",
+    "to": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-sticks/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/usb-aksesuarlar/premium/",
+    "to": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-hubs/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/usb-aksesuarlar/sets/",
+    "to": "/kategorie/computer-und-gaming/usb-aksesuarlar/usb-c-adapter/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/computer-und-gaming/usb-aksesuarlar/zubehoer/",
+    "to": "/kategorie/computer-und-gaming/usb-aksesuarlar/verlaengerungen/",
+    "permanent": true,
+    "note": "Computer IT placeholder L3 replaced with a real product group"
   }
 ]

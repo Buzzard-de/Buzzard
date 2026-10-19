@@ -12088,5 +12088,245 @@
     "to": "/kategorie/schule-und-buerobedarf/schultuete-und-schule-baslang-c/namensschilder/",
     "permanent": true,
     "note": "Office-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/kueche/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/kueche/kochutensilien/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/kueche/premium/",
+    "to": "/kategorie/haus-und-wohnen/kueche/geschirr/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/kueche/set/",
+    "to": "/kategorie/haus-und-wohnen/kueche/besteck/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/kueche/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/kueche/vorratsdosen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/kueche/organizer/",
+    "to": "/kategorie/haus-und-wohnen/kueche/kuechenhelfer/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/banyo/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/banyo/badaccessoires/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/banyo/premium/",
+    "to": "/kategorie/haus-und-wohnen/banyo/seifenspender/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/banyo/set/",
+    "to": "/kategorie/haus-und-wohnen/banyo/waeschekoerbe/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/banyo/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/banyo/haken-und-stangen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/banyo/organizer/",
+    "to": "/kategorie/haus-und-wohnen/banyo/duschzubehoer/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/yatak-odas/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/yatak-odas/kleiderbuegel/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/yatak-odas/premium/",
+    "to": "/kategorie/haus-und-wohnen/yatak-odas/waescheboxen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/yatak-odas/set/",
+    "to": "/kategorie/haus-und-wohnen/yatak-odas/unterbettkommoden/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/yatak-odas/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/yatak-odas/schmuckablagen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/yatak-odas/organizer/",
+    "to": "/kategorie/haus-und-wohnen/yatak-odas/raumsprays-schlaf/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/salon/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/salon/vasen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/salon/premium/",
+    "to": "/kategorie/haus-und-wohnen/salon/bilderrahmen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/salon/set/",
+    "to": "/kategorie/haus-und-wohnen/salon/tabletts/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/salon/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/salon/kerzenhalter/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/salon/organizer/",
+    "to": "/kategorie/haus-und-wohnen/salon/wanduhren/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/depolama/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/depolama/aufbewahrungsboxen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/depolama/premium/",
+    "to": "/kategorie/haus-und-wohnen/depolama/koerbe/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/depolama/set/",
+    "to": "/kategorie/haus-und-wohnen/depolama/vakuumbeutel/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/depolama/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/depolama/kleiderhuellen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/depolama/organizer/",
+    "to": "/kategorie/haus-und-wohnen/depolama/regaleinsaetze/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-organizasyonu/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/haus-organizasyonu/schluesselboards/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-organizasyonu/premium/",
+    "to": "/kategorie/haus-und-wohnen/haus-organizasyonu/kabelboxen/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-organizasyonu/set/",
+    "to": "/kategorie/haus-und-wohnen/haus-organizasyonu/waeschesortierer/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-organizasyonu/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/haus-organizasyonu/kalender/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-organizasyonu/organizer/",
+    "to": "/kategorie/haus-und-wohnen/haus-organizasyonu/whiteboards/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-aksesuarlar/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/haus-aksesuarlar/tuerstopper/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-aksesuarlar/premium/",
+    "to": "/kategorie/haus-und-wohnen/haus-aksesuarlar/filzgleiter/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-aksesuarlar/set/",
+    "to": "/kategorie/haus-und-wohnen/haus-aksesuarlar/moebelfuesse/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-aksesuarlar/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/haus-aksesuarlar/klebefolien/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-aksesuarlar/organizer/",
+    "to": "/kategorie/haus-und-wohnen/haus-aksesuarlar/treppenkanten/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-guevenligi/guenluek/",
+    "to": "/kategorie/haus-und-wohnen/haus-guevenligi/rauchmelder/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-guevenligi/premium/",
+    "to": "/kategorie/haus-und-wohnen/haus-guevenligi/co-melder/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-guevenligi/set/",
+    "to": "/kategorie/haus-und-wohnen/haus-guevenligi/tuersicherheit/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-guevenligi/zubehoer/",
+    "to": "/kategorie/haus-und-wohnen/haus-guevenligi/fenstersicherung/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haus-und-wohnen/haus-guevenligi/organizer/",
+    "to": "/kategorie/haus-und-wohnen/haus-guevenligi/tresore/",
+    "permanent": true,
+    "note": "Home placeholder L3 replaced with a real product group"
   }
 ]

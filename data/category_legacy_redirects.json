@@ -15412,5 +15412,179 @@
     "to": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/aussenstrahler/",
     "permanent": true,
     "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/hauswassertanks/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/zisternen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/ibc-anschluss/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/wasser-depolar/schwimmerventile/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/pompa/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/pompa/gartenpumpen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/pompa/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/pompa/umwaelzpumpen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/pompa/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/pompa/tauchpumpen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/pompa/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/pompa/hauswasserwerke/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/mischbatterien/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/kugelhaehne/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/eckventile/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/musluk-und-vana/rueckschlagventile/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/kupferrohre/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/mehrschicht/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/pex/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/boru-und-baglant/fittings/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/filter/yag-filtresi/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/filter/hauswasserfilter/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/filter/hava-filtresi/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/filter/kartuschen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/filter/yak-t-filtresi/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/filter/umkehrosmose/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/filter/polen-filtresi/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/filter/kalkfilter/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/filter/sanz-man-filtresi/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/filter/untertisch/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/hahnanschluesse/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/tropfer/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/schlauchkupplungen/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/garten-sulama/bewaesserungsuhren/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/standard/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/heizkoerper/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/premium/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/thermostate/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/sets/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/handtuchtrockner/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/zubehoer/",
+    "to": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/ausdehnungsgefaesse/",
+    "permanent": true,
+    "note": "Plumbing placeholder L3 replaced with a real product group"
   }
 ]

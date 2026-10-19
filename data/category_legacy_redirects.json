@@ -17098,5 +17098,173 @@
     "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/musterpackungen/",
     "permanent": true,
     "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/standard/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/buerostuehle/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/schreibtische/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/set/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/aktenschraenke/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-mobilyalar/besprechungstische/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/standard/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/kopierpapier/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/stifte/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/set/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/hefter/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/ofis-k-rtasiye/ordner/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/yaz-c-sarf/standard/",
+    "to": "/kategorie/buero-und-gewerbe/yaz-c-sarf/toner/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/yaz-c-sarf/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/yaz-c-sarf/tintenpatronen/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/yaz-c-sarf/set/",
+    "to": "/kategorie/buero-und-gewerbe/yaz-c-sarf/trommeln/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/yaz-c-sarf/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/yaz-c-sarf/fotopapier/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/paketleme/standard/",
+    "to": "/kategorie/buero-und-gewerbe/paketleme/kartons/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/paketleme/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/paketleme/klebeband/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/paketleme/set/",
+    "to": "/kategorie/buero-und-gewerbe/paketleme/luftpolsterfolie/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/paketleme/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/paketleme/fuellmaterial/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/etiketleme/standard/",
+    "to": "/kategorie/buero-und-gewerbe/etiketleme/etikettendrucker/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/etiketleme/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/etiketleme/etikettenrollen/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/etiketleme/set/",
+    "to": "/kategorie/buero-und-gewerbe/etiketleme/barcode-etiketten/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/etiketleme/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/etiketleme/handetikettierer/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/depo-organizasyonu/standard/",
+    "to": "/kategorie/buero-und-gewerbe/depo-organizasyonu/sichtlagerkaesten/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/depo-organizasyonu/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/depo-organizasyonu/regalteile/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/depo-organizasyonu/set/",
+    "to": "/kategorie/buero-und-gewerbe/depo-organizasyonu/palettenboxen/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/depo-organizasyonu/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/depo-organizasyonu/rollenwagen/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/standard/",
+    "to": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/bondrucker/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/professionell/",
+    "to": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/barcode-scanner/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/set/",
+    "to": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/kassenschubladen/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/zubehoer/",
+    "to": "/kategorie/buero-und-gewerbe/pos-und-magaza-ekipman/kundendisplays/",
+    "permanent": true,
+    "note": "Industry placeholder L3 replaced with a real product group"
   }
 ]

@@ -12640,5 +12640,185 @@
     "to": "/kategorie/dekoration/mevsim-dekoru/sommerdeko/",
     "permanent": true,
     "note": "Decoration placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/tencere-und-tavalar/tencere/",
+    "to": "/kategorie/kueche-und-essen/tencere-und-tavalar/toepfe/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/tencere-und-tavalar/tava/",
+    "to": "/kategorie/kueche-und-essen/tencere-und-tavalar/pfannen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/tencere-und-tavalar/sahan/",
+    "to": "/kategorie/kueche-und-essen/tencere-und-tavalar/kasserollen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/tencere-und-tavalar/duedueklue/",
+    "to": "/kategorie/kueche-und-essen/tencere-und-tavalar/schnellkochtopfe/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/tencere-und-tavalar/wok/",
+    "to": "/kategorie/kueche-und-essen/tencere-und-tavalar/woks/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/pisirme-gerecleri/standard/",
+    "to": "/kategorie/kueche-und-essen/pisirme-gerecleri/backformen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/pisirme-gerecleri/premium/",
+    "to": "/kategorie/kueche-und-essen/pisirme-gerecleri/backbleche/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/pisirme-gerecleri/sets/",
+    "to": "/kategorie/kueche-und-essen/pisirme-gerecleri/spritzbeutel/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/pisirme-gerecleri/zubehoer/",
+    "to": "/kategorie/kueche-und-essen/pisirme-gerecleri/teigschaber/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/saklama-kaplar/standard/",
+    "to": "/kategorie/kueche-und-essen/saklama-kaplar/vorratsglaeser/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/saklama-kaplar/premium/",
+    "to": "/kategorie/kueche-und-essen/saklama-kaplar/lunchboxen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/saklama-kaplar/sets/",
+    "to": "/kategorie/kueche-und-essen/saklama-kaplar/vakuumdosen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/saklama-kaplar/zubehoer/",
+    "to": "/kategorie/kueche-und-essen/saklama-kaplar/oelflaschen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kueche-gerecleri/rende/",
+    "to": "/kategorie/kueche-und-essen/kueche-gerecleri/reiben/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kueche-gerecleri/soyacak/",
+    "to": "/kategorie/kueche-und-essen/kueche-gerecleri/schaeler/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kueche-gerecleri/dogray-c/",
+    "to": "/kategorie/kueche-und-essen/kueche-gerecleri/messbecher/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kueche-gerecleri/oelcue-kab/",
+    "to": "/kategorie/kueche-und-essen/kueche-gerecleri/siebe/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kueche-gerecleri/suezgec/",
+    "to": "/kategorie/kueche-und-essen/kueche-gerecleri/schneidebretter/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/b-caklar/sef-b-cag/",
+    "to": "/kategorie/kueche-und-essen/b-caklar/kochmesser/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/b-caklar/ekmek-b-cag/",
+    "to": "/kategorie/kueche-und-essen/b-caklar/brotmesser/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/b-caklar/sebze-b-cag/",
+    "to": "/kategorie/kueche-und-essen/b-caklar/gemuesemesser/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/b-caklar/b-cak-seti/",
+    "to": "/kategorie/kueche-und-essen/b-caklar/messersets/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/masa-servisi/standard/",
+    "to": "/kategorie/kueche-und-essen/masa-servisi/teller/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/masa-servisi/premium/",
+    "to": "/kategorie/kueche-und-essen/masa-servisi/tassen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/masa-servisi/sets/",
+    "to": "/kategorie/kueche-und-essen/masa-servisi/glaswaren/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/masa-servisi/zubehoer/",
+    "to": "/kategorie/kueche-und-essen/masa-servisi/servierteller/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/standard/",
+    "to": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/kaffeebereiter/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/premium/",
+    "to": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/teekannen/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/sets/",
+    "to": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/milchschaeumer/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/zubehoer/",
+    "to": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/filter-und-pads/",
+    "permanent": true,
+    "note": "Kitchen placeholder L3 replaced with a real product group"
   }
 ]

@@ -24,9 +24,14 @@ describe("main category visuals", () => {
     expect(missing).toEqual([]);
   });
 
-  it("gives automotive, construction-machine and livestock L2 hubs their own photographs", () => {
-    const hubs = [...getChildren("cat-05"), ...getChildren("cat-55"), ...getChildren("cat-56")];
-    expect(hubs).toHaveLength(25);
+  it("gives textile, automotive, construction-machine and livestock L2 hubs their own photographs", () => {
+    const hubs = [
+      ...getChildren("cat-01"),
+      ...getChildren("cat-05"),
+      ...getChildren("cat-55"),
+      ...getChildren("cat-56"),
+    ];
+    expect(hubs).toHaveLength(38);
     const missing = hubs.filter(
       (cat) => !existsSync(join(process.cwd(), "public", "images", "categories", `${cat.id}.webp`)),
     );
@@ -35,6 +40,8 @@ describe("main category visuals", () => {
       expect(getCategoryVisual(cat.id)).toBe(`/images/categories/${cat.id}.webp`);
     }
     expect(missing).toEqual([]);
+    expect(hasHubSubcategoryVisual("cat-01")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-01-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-55")).toBe(false);

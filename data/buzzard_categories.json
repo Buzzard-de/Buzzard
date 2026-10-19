@@ -30044,27 +30044,45 @@
             {
               "id": "cat-48-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/standard",
+              "name": "E-Gitarren",
+              "slug": "e-gitarren",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/e-gitarren",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/musik-musikinstrumente/gitarren-baesse/standard"
             },
             {
               "id": "cat-48-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/premium",
+              "name": "Westerngitarren",
+              "slug": "westerngitarren",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/westerngitarren",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/musik-musikinstrumente/gitarren-baesse/premium"
             },
             {
               "id": "cat-48-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/sets-sparpakete",
+              "name": "Bässe",
+              "slug": "baesse",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/baesse",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/musik-musikinstrumente/gitarren-baesse/sets-sparpakete"
+            },
+            {
+              "id": "cat-48-01-04",
+              "menu_order": 4,
+              "name": "Ukulelen",
+              "slug": "ukulelen",
+              "url": "/kategorie/musik-musikinstrumente/gitarren-baesse/ukulelen",
               "level": 3,
               "children": []
             }
@@ -30081,27 +30099,45 @@
             {
               "id": "cat-48-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/standard",
+              "name": "Digitalpianos",
+              "slug": "digitalpianos",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/digitalpianos",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/musik-musikinstrumente/tasteninstrumente/standard"
             },
             {
               "id": "cat-48-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/premium",
+              "name": "Keyboards",
+              "slug": "keyboards",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/keyboards",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/musik-musikinstrumente/tasteninstrumente/premium"
             },
             {
               "id": "cat-48-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/sets-sparpakete",
+              "name": "Synthesizer",
+              "slug": "synthesizer",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/synthesizer",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/musik-musikinstrumente/tasteninstrumente/sets-sparpakete"
+            },
+            {
+              "id": "cat-48-02-04",
+              "menu_order": 4,
+              "name": "MIDI-Controller",
+              "slug": "midi-controller",
+              "url": "/kategorie/musik-musikinstrumente/tasteninstrumente/midi-controller",
               "level": 3,
               "children": []
             }
@@ -30118,27 +30154,45 @@
             {
               "id": "cat-48-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/standard",
+              "name": "E-Drums",
+              "slug": "e-drums",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/e-drums",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/standard"
             },
             {
               "id": "cat-48-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/premium",
+              "name": "Akustik-Sets",
+              "slug": "akustik-sets",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/akustik-sets",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/premium"
             },
             {
               "id": "cat-48-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/sets-sparpakete",
+              "name": "Cymbals",
+              "slug": "cymbals",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/cymbals",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/sets-sparpakete"
+            },
+            {
+              "id": "cat-48-03-04",
+              "menu_order": 4,
+              "name": "Percussion",
+              "slug": "percussion",
+              "url": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/percussion",
               "level": 3,
               "children": []
             }
@@ -30155,27 +30209,229 @@
             {
               "id": "cat-48-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/standard",
+              "name": "Saiten",
+              "slug": "saiten",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/saiten",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/musik-musikinstrumente/musikzubehoer/standard"
             },
             {
               "id": "cat-48-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/premium",
+              "name": "Plektren",
+              "slug": "plektren",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/plektren",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/musik-musikinstrumente/musikzubehoer/premium"
             },
             {
               "id": "cat-48-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/sets-sparpakete",
+              "name": "Kapodaster",
+              "slug": "kapodaster",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/kapodaster",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/musik-musikinstrumente/musikzubehoer/sets-sparpakete"
+            },
+            {
+              "id": "cat-48-04-04",
+              "menu_order": 4,
+              "name": "Stimmgeräte",
+              "slug": "stimmgeraete",
+              "url": "/kategorie/musik-musikinstrumente/musikzubehoer/stimmgeraete",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-05",
+          "menu_order": 5,
+          "name": "DJ & Controller",
+          "slug": "dj-und-controller",
+          "url": "/kategorie/musik-musikinstrumente/dj-und-controller",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-05-01",
+              "menu_order": 1,
+              "name": "DJ-Controller",
+              "slug": "dj-controller",
+              "url": "/kategorie/musik-musikinstrumente/dj-und-controller/dj-controller",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-05-02",
+              "menu_order": 2,
+              "name": "Mischpulte",
+              "slug": "mischpulte",
+              "url": "/kategorie/musik-musikinstrumente/dj-und-controller/mischpulte",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-05-03",
+              "menu_order": 3,
+              "name": "Kopfhörer",
+              "slug": "kopfhoerer",
+              "url": "/kategorie/musik-musikinstrumente/dj-und-controller/kopfhoerer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-05-04",
+              "menu_order": 4,
+              "name": "DJ-Software",
+              "slug": "dj-software",
+              "url": "/kategorie/musik-musikinstrumente/dj-und-controller/dj-software",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-06",
+          "menu_order": 6,
+          "name": "Mikrofon & Recording",
+          "slug": "mikrofon-und-recording",
+          "url": "/kategorie/musik-musikinstrumente/mikrofon-und-recording",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-06-01",
+              "menu_order": 1,
+              "name": "Kondensatormikrofone",
+              "slug": "kondensatormikrofone",
+              "url": "/kategorie/musik-musikinstrumente/mikrofon-und-recording/kondensatormikrofone",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-06-02",
+              "menu_order": 2,
+              "name": "Dynamische Mikrofone",
+              "slug": "dynamische-mikrofone",
+              "url": "/kategorie/musik-musikinstrumente/mikrofon-und-recording/dynamische-mikrofone",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-06-03",
+              "menu_order": 3,
+              "name": "Audio-Interfaces",
+              "slug": "audio-interfaces",
+              "url": "/kategorie/musik-musikinstrumente/mikrofon-und-recording/audio-interfaces",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-06-04",
+              "menu_order": 4,
+              "name": "Popfilter",
+              "slug": "popfilter",
+              "url": "/kategorie/musik-musikinstrumente/mikrofon-und-recording/popfilter",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-07",
+          "menu_order": 7,
+          "name": "Stative & Hardware",
+          "slug": "stative-und-hardware",
+          "url": "/kategorie/musik-musikinstrumente/stative-und-hardware",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-07-01",
+              "menu_order": 1,
+              "name": "Gitarrenständer",
+              "slug": "gitarrenstaender",
+              "url": "/kategorie/musik-musikinstrumente/stative-und-hardware/gitarrenstaender",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-07-02",
+              "menu_order": 2,
+              "name": "Keyboardständer",
+              "slug": "keyboardstaender",
+              "url": "/kategorie/musik-musikinstrumente/stative-und-hardware/keyboardstaender",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-07-03",
+              "menu_order": 3,
+              "name": "Mikrofonstative",
+              "slug": "mikrofonstative",
+              "url": "/kategorie/musik-musikinstrumente/stative-und-hardware/mikrofonstative",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-07-04",
+              "menu_order": 4,
+              "name": "Notenständer",
+              "slug": "notenstaender",
+              "url": "/kategorie/musik-musikinstrumente/stative-und-hardware/notenstaender",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-48-08",
+          "menu_order": 8,
+          "name": "Blasinstrumente",
+          "slug": "blasinstrumente",
+          "url": "/kategorie/musik-musikinstrumente/blasinstrumente",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-48-08-01",
+              "menu_order": 1,
+              "name": "Saxophone",
+              "slug": "saxophone",
+              "url": "/kategorie/musik-musikinstrumente/blasinstrumente/saxophone",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-08-02",
+              "menu_order": 2,
+              "name": "Flöten",
+              "slug": "floeten",
+              "url": "/kategorie/musik-musikinstrumente/blasinstrumente/floeten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-08-03",
+              "menu_order": 3,
+              "name": "Klarinetten",
+              "slug": "klarinetten",
+              "url": "/kategorie/musik-musikinstrumente/blasinstrumente/klarinetten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-48-08-04",
+              "menu_order": 4,
+              "name": "Mundharmonikas",
+              "slug": "mundharmonikas",
+              "url": "/kategorie/musik-musikinstrumente/blasinstrumente/mundharmonikas",
               "level": 3,
               "children": []
             }

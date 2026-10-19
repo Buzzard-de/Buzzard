@@ -20766,54 +20766,50 @@
             {
               "id": "cat-27-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/standard",
+              "name": "Fitnessbänder",
+              "slug": "fitnessbaender",
+              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/fitnessbaender",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "saglik-and-wellness/fitness-and-wellness/standart",
-              "legacy_url": "/kategori/saglik-and-wellness/fitness-and-wellness/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/standard"
             },
             {
               "id": "cat-27-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/premium",
+              "name": "Yogamatten",
+              "slug": "yogamatten",
+              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/yogamatten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "saglik-and-wellness/fitness-and-wellness/premium",
-              "legacy_url": "/kategori/saglik-and-wellness/fitness-and-wellness/premium"
+              "legacy_url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/premium"
             },
             {
               "id": "cat-27-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/sets",
+              "name": "Hanteln",
+              "slug": "hanteln",
+              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/hanteln",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "saglik-and-wellness/fitness-and-wellness/setler",
-              "legacy_url": "/kategori/saglik-and-wellness/fitness-and-wellness/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/sets"
             },
             {
               "id": "cat-27-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/zubehoer",
+              "name": "Faszienrollen",
+              "slug": "faszienrollen",
+              "url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/faszienrollen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "saglik-and-wellness/fitness-and-wellness/aksesuarlar",
-              "legacy_url": "/kategori/saglik-and-wellness/fitness-and-wellness/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/zubehoer"
             }
           ],
           "legacy_name": "Fitness & Wellness",
@@ -20824,7 +20820,7 @@
         {
           "id": "cat-27-02",
           "menu_order": 2,
-          "name": "Massage Produkte",
+          "name": "Massage",
           "slug": "masaj-ueruenleri",
           "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri",
           "level": 2,
@@ -20832,54 +20828,50 @@
             {
               "id": "cat-27-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/standard",
+              "name": "Massagegeräte",
+              "slug": "massagegeraete",
+              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massagegeraete",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "saglik-and-wellness/masaj-urunleri/standart",
-              "legacy_url": "/kategori/saglik-and-wellness/masaj-urunleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/standard"
             },
             {
               "id": "cat-27-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/premium",
+              "name": "Massageöle",
+              "slug": "massageoele",
+              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massageoele",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "saglik-and-wellness/masaj-urunleri/premium",
-              "legacy_url": "/kategori/saglik-and-wellness/masaj-urunleri/premium"
+              "legacy_url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/premium"
             },
             {
               "id": "cat-27-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/sets",
+              "name": "Massagekissen",
+              "slug": "massagekissen",
+              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massagekissen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "saglik-and-wellness/masaj-urunleri/setler",
-              "legacy_url": "/kategori/saglik-and-wellness/masaj-urunleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/sets"
             },
             {
               "id": "cat-27-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/zubehoer",
+              "name": "Hot-Stone",
+              "slug": "hot-stone",
+              "url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/hot-stone",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "saglik-and-wellness/masaj-urunleri/aksesuarlar",
-              "legacy_url": "/kategori/saglik-and-wellness/masaj-urunleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/zubehoer"
             }
           ],
           "legacy_name": "Masaj Ürünleri",
@@ -20898,54 +20890,50 @@
             {
               "id": "cat-27-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/standard",
+              "name": "Schlafmasken",
+              "slug": "schlafmasken",
+              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/schlafmasken",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "saglik-and-wellness/uyku-and-rahatlama/standart",
-              "legacy_url": "/kategori/saglik-and-wellness/uyku-and-rahatlama/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/standard"
             },
             {
               "id": "cat-27-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/premium",
+              "name": "Ohrstöpsel",
+              "slug": "ohrstoepsel",
+              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/ohrstoepsel",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "saglik-and-wellness/uyku-and-rahatlama/premium",
-              "legacy_url": "/kategori/saglik-and-wellness/uyku-and-rahatlama/premium"
+              "legacy_url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/premium"
             },
             {
               "id": "cat-27-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/sets",
+              "name": "Gewichtsdecken",
+              "slug": "gewichtsdecken",
+              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/gewichtsdecken",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "saglik-and-wellness/uyku-and-rahatlama/setler",
-              "legacy_url": "/kategori/saglik-and-wellness/uyku-and-rahatlama/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/sets"
             },
             {
               "id": "cat-27-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/zubehoer",
+              "name": "Nackenkissen",
+              "slug": "nackenkissen",
+              "url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/nackenkissen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "saglik-and-wellness/uyku-and-rahatlama/aksesuarlar",
-              "legacy_url": "/kategori/saglik-and-wellness/uyku-and-rahatlama/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/zubehoer"
             }
           ],
           "legacy_name": "Uyku & Rahatlama",
@@ -20956,7 +20944,7 @@
         {
           "id": "cat-27-04",
           "menu_order": 4,
-          "name": "Persönliche Pflege Zubehör",
+          "name": "Gesundheitsmessung",
           "slug": "kisisel-pflege-aksesuarlar",
           "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar",
           "level": 2,
@@ -20964,54 +20952,50 @@
             {
               "id": "cat-27-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/standard",
+              "name": "Blutdruckmessgeräte",
+              "slug": "blutdruckmessgeraete",
+              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/blutdruckmessgeraete",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "saglik-and-wellness/kisisel-bakim-aksesuarlari/standart",
-              "legacy_url": "/kategori/saglik-and-wellness/kisisel-bakim-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/standard"
             },
             {
               "id": "cat-27-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/premium",
+              "name": "Fieberthermometer",
+              "slug": "fieberthermometer",
+              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/fieberthermometer",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "saglik-and-wellness/kisisel-bakim-aksesuarlari/premium",
-              "legacy_url": "/kategori/saglik-and-wellness/kisisel-bakim-aksesuarlari/premium"
+              "legacy_url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/premium"
             },
             {
               "id": "cat-27-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/sets",
+              "name": "Pulsoximeter",
+              "slug": "pulsoximeter",
+              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/pulsoximeter",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "saglik-and-wellness/kisisel-bakim-aksesuarlari/setler",
-              "legacy_url": "/kategori/saglik-and-wellness/kisisel-bakim-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/sets"
             },
             {
               "id": "cat-27-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/zubehoer",
+              "name": "Personenwaagen",
+              "slug": "personenwaagen",
+              "url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/personenwaagen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "saglik-and-wellness/kisisel-bakim-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/saglik-and-wellness/kisisel-bakim-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Kişisel Bakım Aksesuarları",
@@ -21022,7 +21006,7 @@
         {
           "id": "cat-27-05",
           "menu_order": 5,
-          "name": "Zuhause Pflege Produkte",
+          "name": "Raumklima & Aroma",
           "slug": "evde-pflege-ueruenleri",
           "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri",
           "level": 2,
@@ -21030,60 +21014,194 @@
             {
               "id": "cat-27-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/standard",
+              "name": "Luftbefeuchter",
+              "slug": "luftbefeuchter",
+              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/luftbefeuchter",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "saglik-and-wellness/evde-bakim-urunleri/standart",
-              "legacy_url": "/kategori/saglik-and-wellness/evde-bakim-urunleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/standard"
             },
             {
               "id": "cat-27-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/premium",
+              "name": "Aroma-Diffuser",
+              "slug": "aroma-diffuser",
+              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/aroma-diffuser",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "saglik-and-wellness/evde-bakim-urunleri/premium",
-              "legacy_url": "/kategori/saglik-and-wellness/evde-bakim-urunleri/premium"
+              "legacy_url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/premium"
             },
             {
               "id": "cat-27-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/sets",
+              "name": "Salzinhalatoren",
+              "slug": "salzinhalatoren",
+              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/salzinhalatoren",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "saglik-and-wellness/evde-bakim-urunleri/setler",
-              "legacy_url": "/kategori/saglik-and-wellness/evde-bakim-urunleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/sets"
             },
             {
               "id": "cat-27-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/zubehoer",
+              "name": "Tageslichtlampen",
+              "slug": "tageslichtlampen",
+              "url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/tageslichtlampen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "saglik-and-wellness/evde-bakim-urunleri/aksesuarlar",
-              "legacy_url": "/kategori/saglik-and-wellness/evde-bakim-urunleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/zubehoer"
             }
           ],
           "legacy_name": "Evde Bakım Ürünleri",
           "legacy_slug": "evde-bakim-urunleri",
           "legacy_slug_path": "saglik-and-wellness/evde-bakim-urunleri",
           "legacy_url": "/kategori/saglik-and-wellness/evde-bakim-urunleri"
+        },
+        {
+          "id": "cat-27-06",
+          "menu_order": 6,
+          "name": "Aroma & Duft",
+          "slug": "aroma-und-duft",
+          "url": "/kategorie/gesundheit-und-wellness/aroma-und-duft",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-27-06-01",
+              "menu_order": 1,
+              "name": "Ätherische Öle",
+              "slug": "aetherische-oele",
+              "url": "/kategorie/gesundheit-und-wellness/aroma-und-duft/aetherische-oele",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-06-02",
+              "menu_order": 2,
+              "name": "Duftkerzen",
+              "slug": "duftkerzen",
+              "url": "/kategorie/gesundheit-und-wellness/aroma-und-duft/duftkerzen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-06-03",
+              "menu_order": 3,
+              "name": "Räucherstäbchen",
+              "slug": "raeucherstaebchen",
+              "url": "/kategorie/gesundheit-und-wellness/aroma-und-duft/raeucherstaebchen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-06-04",
+              "menu_order": 4,
+              "name": "Raumsprays",
+              "slug": "raumsprays",
+              "url": "/kategorie/gesundheit-und-wellness/aroma-und-duft/raumsprays",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-27-07",
+          "menu_order": 7,
+          "name": "Wärme & Kälte",
+          "slug": "waerme-und-kaelte",
+          "url": "/kategorie/gesundheit-und-wellness/waerme-und-kaelte",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-27-07-01",
+              "menu_order": 1,
+              "name": "Heizkissen",
+              "slug": "heizkissen",
+              "url": "/kategorie/gesundheit-und-wellness/waerme-und-kaelte/heizkissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-07-02",
+              "menu_order": 2,
+              "name": "Infrarotlampen",
+              "slug": "infrarotlampen",
+              "url": "/kategorie/gesundheit-und-wellness/waerme-und-kaelte/infrarotlampen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-07-03",
+              "menu_order": 3,
+              "name": "Wärmepflaster",
+              "slug": "waermepflaster",
+              "url": "/kategorie/gesundheit-und-wellness/waerme-und-kaelte/waermepflaster",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-07-04",
+              "menu_order": 4,
+              "name": "Kühlpads",
+              "slug": "kuehlpads",
+              "url": "/kategorie/gesundheit-und-wellness/waerme-und-kaelte/kuehlpads",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-27-08",
+          "menu_order": 8,
+          "name": "Erste Hilfe",
+          "slug": "erste-hilfe",
+          "url": "/kategorie/gesundheit-und-wellness/erste-hilfe",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-27-08-01",
+              "menu_order": 1,
+              "name": "Pflaster",
+              "slug": "pflaster",
+              "url": "/kategorie/gesundheit-und-wellness/erste-hilfe/pflaster",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-08-02",
+              "menu_order": 2,
+              "name": "Verbandmaterial",
+              "slug": "verbandmaterial",
+              "url": "/kategorie/gesundheit-und-wellness/erste-hilfe/verbandmaterial",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-08-03",
+              "menu_order": 3,
+              "name": "Desinfektion",
+              "slug": "desinfektion",
+              "url": "/kategorie/gesundheit-und-wellness/erste-hilfe/desinfektion",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-27-08-04",
+              "menu_order": 4,
+              "name": "Erste-Hilfe-Sets",
+              "slug": "erste-hilfe-sets",
+              "url": "/kategorie/gesundheit-und-wellness/erste-hilfe/erste-hilfe-sets",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Sağlık & Wellness",

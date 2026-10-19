@@ -13264,5 +13264,269 @@
     "to": "/kategorie/getraenke/wein-spirituosen/sekt/",
     "permanent": true,
     "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/katze/spielzeug/",
+    "to": "/kategorie/haustierbedarf/katze/katzenspielzeug/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/katze/pflege/",
+    "to": "/kategorie/haustierbedarf/katze/katzenstreu/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/katze/zubehoer/",
+    "to": "/kategorie/haustierbedarf/katze/kratzbaeume/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/hund/spielzeug/",
+    "to": "/kategorie/haustierbedarf/hund/hundespielzeug/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/hund/pflege/",
+    "to": "/kategorie/haustierbedarf/hund/leinen-und-halsbaender/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/hund/zubehoer/",
+    "to": "/kategorie/haustierbedarf/hund/naepfe-und-traenken/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kus/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/kus/koernerfutter/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kus/nassfutter/",
+    "to": "/kategorie/haustierbedarf/kus/saemereien/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kus/spielzeug/",
+    "to": "/kategorie/haustierbedarf/kus/kaefige/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kus/pflege/",
+    "to": "/kategorie/haustierbedarf/kus/sitzstangen/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kus/zubehoer/",
+    "to": "/kategorie/haustierbedarf/kus/vogelsand/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/bal-k-und-akvaryum/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/bal-k-und-akvaryum/flockenfutter/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/bal-k-und-akvaryum/nassfutter/",
+    "to": "/kategorie/haustierbedarf/bal-k-und-akvaryum/granulat/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/bal-k-und-akvaryum/spielzeug/",
+    "to": "/kategorie/haustierbedarf/bal-k-und-akvaryum/aquarien/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/bal-k-und-akvaryum/pflege/",
+    "to": "/kategorie/haustierbedarf/bal-k-und-akvaryum/filtertechnik/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/bal-k-und-akvaryum/zubehoer/",
+    "to": "/kategorie/haustierbedarf/bal-k-und-akvaryum/wasserpflege/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kemirgenler/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/kemirgenler/pellets/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kemirgenler/nassfutter/",
+    "to": "/kategorie/haustierbedarf/kemirgenler/heu/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kemirgenler/spielzeug/",
+    "to": "/kategorie/haustierbedarf/kemirgenler/kaefige/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kemirgenler/pflege/",
+    "to": "/kategorie/haustierbedarf/kemirgenler/einstreu/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/kemirgenler/zubehoer/",
+    "to": "/kategorie/haustierbedarf/kemirgenler/laufraeder/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/haustier-mama/spielzeug/",
+    "to": "/kategorie/haustierbedarf/haustier-mama/barf/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/haustier-mama/pflege/",
+    "to": "/kategorie/haustierbedarf/haustier-mama/diaetfutter/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/haustier-mama/zubehoer/",
+    "to": "/kategorie/haustierbedarf/haustier-mama/juniorfutter/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/hundeleckerlis/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/nassfutter/",
+    "to": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/katzenleckerli/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/spielzeug/",
+    "to": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/kauartikel/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/pflege/",
+    "to": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/dentalsticks/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/zubehoer/",
+    "to": "/kategorie/haustierbedarf/oeduel-und-at-st-rmal-k/trainingssnacks/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/spielzeug/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/spielzeug/intelligenzspielzeug/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/spielzeug/nassfutter/",
+    "to": "/kategorie/haustierbedarf/spielzeug/baelle/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/spielzeug/spielzeug/",
+    "to": "/kategorie/haustierbedarf/spielzeug/pluesch/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/spielzeug/pflege/",
+    "to": "/kategorie/haustierbedarf/spielzeug/interaktiv/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/spielzeug/zubehoer/",
+    "to": "/kategorie/haustierbedarf/spielzeug/outdoor/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/yatak-und-tas-ma/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/yatak-und-tas-ma/hundebetten/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/yatak-und-tas-ma/nassfutter/",
+    "to": "/kategorie/haustierbedarf/yatak-und-tas-ma/katzenkoerbe/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/yatak-und-tas-ma/spielzeug/",
+    "to": "/kategorie/haustierbedarf/yatak-und-tas-ma/transportboxen/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/yatak-und-tas-ma/pflege/",
+    "to": "/kategorie/haustierbedarf/yatak-und-tas-ma/autositze/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/yatak-und-tas-ma/zubehoer/",
+    "to": "/kategorie/haustierbedarf/yatak-und-tas-ma/reisedecken/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/pflege-und-hijyen/trockenfutter/",
+    "to": "/kategorie/haustierbedarf/pflege-und-hijyen/shampoo/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/pflege-und-hijyen/nassfutter/",
+    "to": "/kategorie/haustierbedarf/pflege-und-hijyen/buersten/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/pflege-und-hijyen/spielzeug/",
+    "to": "/kategorie/haustierbedarf/pflege-und-hijyen/zahnpflege/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/pflege-und-hijyen/pflege/",
+    "to": "/kategorie/haustierbedarf/pflege-und-hijyen/ohrenpflege/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haustierbedarf/pflege-und-hijyen/zubehoer/",
+    "to": "/kategorie/haustierbedarf/pflege-und-hijyen/kotbeutel/",
+    "permanent": true,
+    "note": "Pets placeholder L3 replaced with a real product group"
   }
 ]

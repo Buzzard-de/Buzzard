@@ -15586,5 +15586,143 @@
     "to": "/kategorie/wasser-heizung-und-sanitaer/is-tma-ekipmanlar/ausdehnungsgefaesse/",
     "permanent": true,
     "note": "Plumbing placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-paneller/monokristal/",
+    "to": "/kategorie/energie-und-solar/solar-paneller/monokristallin/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-paneller/polikristal/",
+    "to": "/kategorie/energie-und-solar/solar-paneller/polykristallin/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-paneller/katlanabilir/",
+    "to": "/kategorie/energie-und-solar/solar-paneller/faltbar/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-paneller/balkon-solar/",
+    "to": "/kategorie/energie-und-solar/solar-paneller/balkonkraftwerk/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-sarj/standard/",
+    "to": "/kategorie/energie-und-solar/solar-sarj/mppt/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-sarj/premium/",
+    "to": "/kategorie/energie-und-solar/solar-sarj/pwm/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-sarj/sets/",
+    "to": "/kategorie/energie-und-solar/solar-sarj/laderegler-sets/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/solar-sarj/zubehoer/",
+    "to": "/kategorie/energie-und-solar/solar-sarj/mc4-zubehoer/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/power-station/haus-ersatz/",
+    "to": "/kategorie/energie-und-solar/power-station/haus-backup/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/power-station/bueyuek-kapasiteli/",
+    "to": "/kategorie/energie-und-solar/power-station/high-capacity/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/akueler/standard/",
+    "to": "/kategorie/energie-und-solar/akueler/lifepo4/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/akueler/premium/",
+    "to": "/kategorie/energie-und-solar/akueler/agm/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/akueler/sets/",
+    "to": "/kategorie/energie-und-solar/akueler/gel/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/akueler/zubehoer/",
+    "to": "/kategorie/energie-und-solar/akueler/12v-bloecke/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/invertoerler/solar-inverter/",
+    "to": "/kategorie/energie-und-solar/invertoerler/reiner-sinus/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/camping-enerjisi/standard/",
+    "to": "/kategorie/energie-und-solar/camping-enerjisi/solarkoffer/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/camping-enerjisi/premium/",
+    "to": "/kategorie/energie-und-solar/camping-enerjisi/12v-versorgung/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/camping-enerjisi/sets/",
+    "to": "/kategorie/energie-und-solar/camping-enerjisi/bordbatterien/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/camping-enerjisi/zubehoer/",
+    "to": "/kategorie/energie-und-solar/camping-enerjisi/ladegeraete-12v/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/enerji-aksesuarlar/standard/",
+    "to": "/kategorie/energie-und-solar/enerji-aksesuarlar/solarkabel/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/enerji-aksesuarlar/premium/",
+    "to": "/kategorie/energie-und-solar/enerji-aksesuarlar/montageschienen/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/enerji-aksesuarlar/sets/",
+    "to": "/kategorie/energie-und-solar/enerji-aksesuarlar/mc4/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/energie-und-solar/enerji-aksesuarlar/zubehoer/",
+    "to": "/kategorie/energie-und-solar/enerji-aksesuarlar/combiner/",
+    "permanent": true,
+    "note": "Energy placeholder L3 replaced with a real product group"
   }
 ]

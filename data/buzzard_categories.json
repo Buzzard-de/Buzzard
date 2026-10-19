@@ -26457,7 +26457,7 @@
         {
           "id": "cat-40-01",
           "menu_order": 1,
-          "name": "Solar Panels",
+          "name": "Solarmodule",
           "slug": "solar-paneller",
           "url": "/kategorie/energie-und-solar/solar-paneller",
           "level": 2,
@@ -26465,54 +26465,50 @@
             {
               "id": "cat-40-01-01",
               "menu_order": 1,
-              "name": "Monokristal",
-              "slug": "monokristal",
-              "url": "/kategorie/energie-und-solar/solar-paneller/monokristal",
+              "name": "Monokristallin",
+              "slug": "monokristallin",
+              "url": "/kategorie/energie-und-solar/solar-paneller/monokristallin",
               "level": 3,
               "children": [],
               "legacy_name": "Monokristal",
               "legacy_slug": "monokristal",
-              "legacy_slug_path": "enerji-and-solar/solar-paneller/monokristal",
-              "legacy_url": "/kategori/enerji-and-solar/solar-paneller/monokristal"
+              "legacy_url": "/kategorie/energie-und-solar/solar-paneller/monokristal"
             },
             {
               "id": "cat-40-01-02",
               "menu_order": 2,
-              "name": "Polikristal",
-              "slug": "polikristal",
-              "url": "/kategorie/energie-und-solar/solar-paneller/polikristal",
+              "name": "Polykristallin",
+              "slug": "polykristallin",
+              "url": "/kategorie/energie-und-solar/solar-paneller/polykristallin",
               "level": 3,
               "children": [],
               "legacy_name": "Polikristal",
               "legacy_slug": "polikristal",
-              "legacy_slug_path": "enerji-and-solar/solar-paneller/polikristal",
-              "legacy_url": "/kategori/enerji-and-solar/solar-paneller/polikristal"
+              "legacy_url": "/kategorie/energie-und-solar/solar-paneller/polikristal"
             },
             {
               "id": "cat-40-01-03",
               "menu_order": 3,
-              "name": "Katlanabilir",
-              "slug": "katlanabilir",
-              "url": "/kategorie/energie-und-solar/solar-paneller/katlanabilir",
+              "name": "Faltbar",
+              "slug": "faltbar",
+              "url": "/kategorie/energie-und-solar/solar-paneller/faltbar",
               "level": 3,
               "children": [],
               "legacy_name": "Katlanabilir",
               "legacy_slug": "katlanabilir",
-              "legacy_slug_path": "enerji-and-solar/solar-paneller/katlanabilir",
-              "legacy_url": "/kategori/enerji-and-solar/solar-paneller/katlanabilir"
+              "legacy_url": "/kategorie/energie-und-solar/solar-paneller/katlanabilir"
             },
             {
               "id": "cat-40-01-04",
               "menu_order": 4,
-              "name": "Balkon Solar",
-              "slug": "balkon-solar",
-              "url": "/kategorie/energie-und-solar/solar-paneller/balkon-solar",
+              "name": "Balkonkraftwerk",
+              "slug": "balkonkraftwerk",
+              "url": "/kategorie/energie-und-solar/solar-paneller/balkonkraftwerk",
               "level": 3,
               "children": [],
               "legacy_name": "Balkon Solar",
               "legacy_slug": "balkon-solar",
-              "legacy_slug_path": "enerji-and-solar/solar-paneller/balkon-solar",
-              "legacy_url": "/kategori/enerji-and-solar/solar-paneller/balkon-solar"
+              "legacy_url": "/kategorie/energie-und-solar/solar-paneller/balkon-solar"
             }
           ],
           "legacy_name": "Solar Paneller",
@@ -26523,7 +26519,7 @@
         {
           "id": "cat-40-02",
           "menu_order": 2,
-          "name": "Solar Laden",
+          "name": "Solarladung",
           "slug": "solar-sarj",
           "url": "/kategorie/energie-und-solar/solar-sarj",
           "level": 2,
@@ -26531,54 +26527,50 @@
             {
               "id": "cat-40-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/energie-und-solar/solar-sarj/standard",
+              "name": "MPPT",
+              "slug": "mppt",
+              "url": "/kategorie/energie-und-solar/solar-sarj/mppt",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "enerji-and-solar/solar-sarj/standart",
-              "legacy_url": "/kategori/enerji-and-solar/solar-sarj/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/energie-und-solar/solar-sarj/standard"
             },
             {
               "id": "cat-40-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/energie-und-solar/solar-sarj/premium",
+              "name": "PWM",
+              "slug": "pwm",
+              "url": "/kategorie/energie-und-solar/solar-sarj/pwm",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "enerji-and-solar/solar-sarj/premium",
-              "legacy_url": "/kategori/enerji-and-solar/solar-sarj/premium"
+              "legacy_url": "/kategorie/energie-und-solar/solar-sarj/premium"
             },
             {
               "id": "cat-40-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/energie-und-solar/solar-sarj/sets",
+              "name": "Laderegler-Sets",
+              "slug": "laderegler-sets",
+              "url": "/kategorie/energie-und-solar/solar-sarj/laderegler-sets",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "enerji-and-solar/solar-sarj/setler",
-              "legacy_url": "/kategori/enerji-and-solar/solar-sarj/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/energie-und-solar/solar-sarj/sets"
             },
             {
               "id": "cat-40-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/energie-und-solar/solar-sarj/zubehoer",
+              "name": "MC4-Zubehör",
+              "slug": "mc4-zubehoer",
+              "url": "/kategorie/energie-und-solar/solar-sarj/mc4-zubehoer",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "enerji-and-solar/solar-sarj/aksesuarlar",
-              "legacy_url": "/kategori/enerji-and-solar/solar-sarj/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/energie-und-solar/solar-sarj/zubehoer"
             }
           ],
           "legacy_name": "Solar Şarj",
@@ -26589,7 +26581,7 @@
         {
           "id": "cat-40-03",
           "menu_order": 3,
-          "name": "Power Station",
+          "name": "Powerstations",
           "slug": "power-station",
           "url": "/kategorie/energie-und-solar/power-station",
           "level": 2,
@@ -26602,23 +26594,21 @@
               "url": "/kategorie/energie-und-solar/power-station/camping",
               "level": 3,
               "children": [],
-              "legacy_name": "Kamp",
-              "legacy_slug": "kamp",
-              "legacy_slug_path": "enerji-and-solar/power-station/kamp",
-              "legacy_url": "/kategori/enerji-and-solar/power-station/kamp"
+              "legacy_name": "Camping",
+              "legacy_slug": "camping",
+              "legacy_url": "/kategorie/energie-und-solar/power-station/camping"
             },
             {
               "id": "cat-40-03-02",
               "menu_order": 2,
-              "name": "Haushalt Ersatz",
-              "slug": "haus-ersatz",
-              "url": "/kategorie/energie-und-solar/power-station/haus-ersatz",
+              "name": "Haus-Backup",
+              "slug": "haus-backup",
+              "url": "/kategorie/energie-und-solar/power-station/haus-backup",
               "level": 3,
               "children": [],
-              "legacy_name": "Ev Yedek",
-              "legacy_slug": "ev-yedek",
-              "legacy_slug_path": "enerji-and-solar/power-station/ev-yedek",
-              "legacy_url": "/kategori/enerji-and-solar/power-station/ev-yedek"
+              "legacy_name": "Haushalt Ersatz",
+              "legacy_slug": "haus-ersatz",
+              "legacy_url": "/kategorie/energie-und-solar/power-station/haus-ersatz"
             },
             {
               "id": "cat-40-03-03",
@@ -26630,21 +26620,19 @@
               "children": [],
               "legacy_name": "Mini",
               "legacy_slug": "mini",
-              "legacy_slug_path": "enerji-and-solar/power-station/mini",
-              "legacy_url": "/kategori/enerji-and-solar/power-station/mini"
+              "legacy_url": "/kategorie/energie-und-solar/power-station/mini"
             },
             {
               "id": "cat-40-03-04",
               "menu_order": 4,
-              "name": "Büyük Kapasiteli",
-              "slug": "bueyuek-kapasiteli",
-              "url": "/kategorie/energie-und-solar/power-station/bueyuek-kapasiteli",
+              "name": "High-Capacity",
+              "slug": "high-capacity",
+              "url": "/kategorie/energie-und-solar/power-station/high-capacity",
               "level": 3,
               "children": [],
               "legacy_name": "Büyük Kapasiteli",
-              "legacy_slug": "buyuk-kapasiteli",
-              "legacy_slug_path": "enerji-and-solar/power-station/buyuk-kapasiteli",
-              "legacy_url": "/kategori/enerji-and-solar/power-station/buyuk-kapasiteli"
+              "legacy_slug": "bueyuek-kapasiteli",
+              "legacy_url": "/kategorie/energie-und-solar/power-station/bueyuek-kapasiteli"
             }
           ],
           "legacy_name": "Power Station",
@@ -26663,54 +26651,50 @@
             {
               "id": "cat-40-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/energie-und-solar/akueler/standard",
+              "name": "LiFePO4",
+              "slug": "lifepo4",
+              "url": "/kategorie/energie-und-solar/akueler/lifepo4",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "enerji-and-solar/akuler/standart",
-              "legacy_url": "/kategori/enerji-and-solar/akuler/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/energie-und-solar/akueler/standard"
             },
             {
               "id": "cat-40-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/energie-und-solar/akueler/premium",
+              "name": "AGM",
+              "slug": "agm",
+              "url": "/kategorie/energie-und-solar/akueler/agm",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "enerji-and-solar/akuler/premium",
-              "legacy_url": "/kategori/enerji-and-solar/akuler/premium"
+              "legacy_url": "/kategorie/energie-und-solar/akueler/premium"
             },
             {
               "id": "cat-40-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/energie-und-solar/akueler/sets",
+              "name": "Gel",
+              "slug": "gel",
+              "url": "/kategorie/energie-und-solar/akueler/gel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "enerji-and-solar/akuler/setler",
-              "legacy_url": "/kategori/enerji-and-solar/akuler/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/energie-und-solar/akueler/sets"
             },
             {
               "id": "cat-40-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/energie-und-solar/akueler/zubehoer",
+              "name": "12V-Blöcke",
+              "slug": "12v-bloecke",
+              "url": "/kategorie/energie-und-solar/akueler/12v-bloecke",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "enerji-and-solar/akuler/aksesuarlar",
-              "legacy_url": "/kategori/enerji-and-solar/akuler/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/energie-und-solar/akueler/zubehoer"
             }
           ],
           "legacy_name": "Aküler",
@@ -26736,8 +26720,7 @@
               "children": [],
               "legacy_name": "Off-Grid",
               "legacy_slug": "off-grid",
-              "legacy_slug_path": "enerji-and-solar/invertorler/off-grid",
-              "legacy_url": "/kategori/enerji-and-solar/invertorler/off-grid"
+              "legacy_url": "/kategorie/energie-und-solar/invertoerler/off-grid"
             },
             {
               "id": "cat-40-05-02",
@@ -26749,8 +26732,7 @@
               "children": [],
               "legacy_name": "On-Grid",
               "legacy_slug": "on-grid",
-              "legacy_slug_path": "enerji-and-solar/invertorler/on-grid",
-              "legacy_url": "/kategori/enerji-and-solar/invertorler/on-grid"
+              "legacy_url": "/kategorie/energie-und-solar/invertoerler/on-grid"
             },
             {
               "id": "cat-40-05-03",
@@ -26762,21 +26744,19 @@
               "children": [],
               "legacy_name": "Hybrid",
               "legacy_slug": "hybrid",
-              "legacy_slug_path": "enerji-and-solar/invertorler/hybrid",
-              "legacy_url": "/kategori/enerji-and-solar/invertorler/hybrid"
+              "legacy_url": "/kategorie/energie-und-solar/invertoerler/hybrid"
             },
             {
               "id": "cat-40-05-04",
               "menu_order": 4,
-              "name": "Solar Inverter",
-              "slug": "solar-inverter",
-              "url": "/kategorie/energie-und-solar/invertoerler/solar-inverter",
+              "name": "Reiner Sinus",
+              "slug": "reiner-sinus",
+              "url": "/kategorie/energie-und-solar/invertoerler/reiner-sinus",
               "level": 3,
               "children": [],
               "legacy_name": "Solar Inverter",
               "legacy_slug": "solar-inverter",
-              "legacy_slug_path": "enerji-and-solar/invertorler/solar-inverter",
-              "legacy_url": "/kategori/enerji-and-solar/invertorler/solar-inverter"
+              "legacy_url": "/kategorie/energie-und-solar/invertoerler/solar-inverter"
             }
           ],
           "legacy_name": "İnvertörler",
@@ -26795,54 +26775,50 @@
             {
               "id": "cat-40-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/energie-und-solar/camping-enerjisi/standard",
+              "name": "Solarkoffer",
+              "slug": "solarkoffer",
+              "url": "/kategorie/energie-und-solar/camping-enerjisi/solarkoffer",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "enerji-and-solar/kamp-enerjisi/standart",
-              "legacy_url": "/kategori/enerji-and-solar/kamp-enerjisi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/energie-und-solar/camping-enerjisi/standard"
             },
             {
               "id": "cat-40-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/energie-und-solar/camping-enerjisi/premium",
+              "name": "12V-Versorgung",
+              "slug": "12v-versorgung",
+              "url": "/kategorie/energie-und-solar/camping-enerjisi/12v-versorgung",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "enerji-and-solar/kamp-enerjisi/premium",
-              "legacy_url": "/kategori/enerji-and-solar/kamp-enerjisi/premium"
+              "legacy_url": "/kategorie/energie-und-solar/camping-enerjisi/premium"
             },
             {
               "id": "cat-40-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/energie-und-solar/camping-enerjisi/sets",
+              "name": "Bordbatterien",
+              "slug": "bordbatterien",
+              "url": "/kategorie/energie-und-solar/camping-enerjisi/bordbatterien",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "enerji-and-solar/kamp-enerjisi/setler",
-              "legacy_url": "/kategori/enerji-and-solar/kamp-enerjisi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/energie-und-solar/camping-enerjisi/sets"
             },
             {
               "id": "cat-40-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/energie-und-solar/camping-enerjisi/zubehoer",
+              "name": "Ladegeräte 12V",
+              "slug": "ladegeraete-12v",
+              "url": "/kategorie/energie-und-solar/camping-enerjisi/ladegeraete-12v",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "enerji-and-solar/kamp-enerjisi/aksesuarlar",
-              "legacy_url": "/kategori/enerji-and-solar/kamp-enerjisi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/energie-und-solar/camping-enerjisi/zubehoer"
             }
           ],
           "legacy_name": "Kamp Enerjisi",
@@ -26861,60 +26837,102 @@
             {
               "id": "cat-40-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/standard",
+              "name": "Solarkabel",
+              "slug": "solarkabel",
+              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/solarkabel",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "enerji-and-solar/enerji-aksesuarlari/standart",
-              "legacy_url": "/kategori/enerji-and-solar/enerji-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/energie-und-solar/enerji-aksesuarlar/standard"
             },
             {
               "id": "cat-40-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/premium",
+              "name": "Montageschienen",
+              "slug": "montageschienen",
+              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/montageschienen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "enerji-and-solar/enerji-aksesuarlari/premium",
-              "legacy_url": "/kategori/enerji-and-solar/enerji-aksesuarlari/premium"
+              "legacy_url": "/kategorie/energie-und-solar/enerji-aksesuarlar/premium"
             },
             {
               "id": "cat-40-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/sets",
+              "name": "MC4",
+              "slug": "mc4",
+              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/mc4",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "enerji-and-solar/enerji-aksesuarlari/setler",
-              "legacy_url": "/kategori/enerji-and-solar/enerji-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/energie-und-solar/enerji-aksesuarlar/sets"
             },
             {
               "id": "cat-40-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/zubehoer",
+              "name": "Combiner",
+              "slug": "combiner",
+              "url": "/kategorie/energie-und-solar/enerji-aksesuarlar/combiner",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "enerji-and-solar/enerji-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/enerji-and-solar/enerji-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/energie-und-solar/enerji-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Enerji Aksesuarları",
           "legacy_slug": "enerji-aksesuarlari",
           "legacy_slug_path": "enerji-and-solar/enerji-aksesuarlari",
           "legacy_url": "/kategori/enerji-and-solar/enerji-aksesuarlari"
+        },
+        {
+          "id": "cat-40-08",
+          "menu_order": 8,
+          "name": "Wallbox & EV",
+          "slug": "wallbox-und-ev",
+          "url": "/kategorie/energie-und-solar/wallbox-und-ev",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-40-08-01",
+              "menu_order": 1,
+              "name": "Wallboxen",
+              "slug": "wallboxen",
+              "url": "/kategorie/energie-und-solar/wallbox-und-ev/wallboxen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-40-08-02",
+              "menu_order": 2,
+              "name": "Typ-2-Kabel",
+              "slug": "typ-2-kabel",
+              "url": "/kategorie/energie-und-solar/wallbox-und-ev/typ-2-kabel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-40-08-03",
+              "menu_order": 3,
+              "name": "Mobile Ladegeräte",
+              "slug": "mobile-ladegeraete",
+              "url": "/kategorie/energie-und-solar/wallbox-und-ev/mobile-ladegeraete",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-40-08-04",
+              "menu_order": 4,
+              "name": "Adapter",
+              "slug": "adapter",
+              "url": "/kategorie/energie-und-solar/wallbox-und-ev/adapter",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Enerji & Solar",

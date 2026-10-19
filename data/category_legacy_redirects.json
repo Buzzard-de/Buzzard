@@ -11200,5 +11200,77 @@
     "to": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/feuchttuecher/",
     "permanent": true,
     "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/haarpflege/standard/",
+    "to": "/kategorie/koerperpflege/haarpflege/shampoo/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/haarpflege/premium/",
+    "to": "/kategorie/koerperpflege/haarpflege/spuelung/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/haarpflege/sets-sparpakete/",
+    "to": "/kategorie/koerperpflege/haarpflege/styling/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/zahnpflege/standard/",
+    "to": "/kategorie/koerperpflege/zahnpflege/zahnpasta/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/zahnpflege/premium/",
+    "to": "/kategorie/koerperpflege/zahnpflege/zahnbruesten/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/zahnpflege/sets-sparpakete/",
+    "to": "/kategorie/koerperpflege/zahnpflege/mundspuelung/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/rasur-enthaarung/standard/",
+    "to": "/kategorie/koerperpflege/rasur-enthaarung/rasierer/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/rasur-enthaarung/premium/",
+    "to": "/kategorie/koerperpflege/rasur-enthaarung/enthaarung/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/rasur-enthaarung/sets-sparpakete/",
+    "to": "/kategorie/koerperpflege/rasur-enthaarung/aftershave/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/deodorants-koerperhygiene/standard/",
+    "to": "/kategorie/koerperpflege/deodorants-koerperhygiene/deosprays/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/deodorants-koerperhygiene/premium/",
+    "to": "/kategorie/koerperpflege/deodorants-koerperhygiene/deo-roller/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/koerperpflege/deodorants-koerperhygiene/sets-sparpakete/",
+    "to": "/kategorie/koerperpflege/deodorants-koerperhygiene/antitranspirant/",
+    "permanent": true,
+    "note": "Body-care placeholder L3 replaced with a real product group"
   }
 ]

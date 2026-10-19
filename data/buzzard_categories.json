@@ -22667,7 +22667,7 @@
         {
           "id": "cat-31-01",
           "menu_order": 1,
-          "name": "Sicherheit Kameras",
+          "name": "Sicherheitskameras",
           "slug": "sicherheit-kameralar",
           "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar",
           "level": 2,
@@ -22675,41 +22675,38 @@
             {
               "id": "cat-31-01-01",
               "menu_order": 1,
-              "name": "Innen Raum Kamera",
-              "slug": "innen-mekan-kamera",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/innen-mekan-kamera",
+              "name": "Innenkameras",
+              "slug": "innenkameras",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/innenkameras",
               "level": 3,
               "children": [],
-              "legacy_name": "İç Mekan Kamera",
-              "legacy_slug": "ic-mekan-kamera",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-kameralari/ic-mekan-kamera",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari/ic-mekan-kamera"
+              "legacy_name": "Innen Raum Kamera",
+              "legacy_slug": "innen-mekan-kamera",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/innen-mekan-kamera"
             },
             {
               "id": "cat-31-01-02",
               "menu_order": 2,
-              "name": "Außen Raum Kamera",
-              "slug": "aussen-mekan-kamera",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/aussen-mekan-kamera",
+              "name": "Außenkameras",
+              "slug": "aussenkameras",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/aussenkameras",
               "level": 3,
               "children": [],
-              "legacy_name": "Dış Mekan Kamera",
-              "legacy_slug": "dis-mekan-kamera",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-kameralari/dis-mekan-kamera",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari/dis-mekan-kamera"
+              "legacy_name": "Außen Raum Kamera",
+              "legacy_slug": "aussen-mekan-kamera",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/aussen-mekan-kamera"
             },
             {
               "id": "cat-31-01-03",
               "menu_order": 3,
-              "name": "Wi-Fi Kamera",
-              "slug": "wi-fi-kamera",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/wi-fi-kamera",
+              "name": "WLAN-Kameras",
+              "slug": "wlan-kameras",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/wlan-kameras",
               "level": 3,
               "children": [],
               "legacy_name": "Wi-Fi Kamera",
               "legacy_slug": "wi-fi-kamera",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-kameralari/wi-fi-kamera",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari/wi-fi-kamera"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/wi-fi-kamera"
             },
             {
               "id": "cat-31-01-04",
@@ -22721,21 +22718,19 @@
               "children": [],
               "legacy_name": "NVR",
               "legacy_slug": "nvr",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-kameralari/nvr",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari/nvr"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/nvr"
             },
             {
               "id": "cat-31-01-05",
               "menu_order": 5,
-              "name": "Kamera Zubehör",
-              "slug": "kamera-aksesuarlar",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/kamera-aksesuarlar",
+              "name": "Kamera-Zubehör",
+              "slug": "kamera-zubehoer",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/kamera-zubehoer",
               "level": 3,
               "children": [],
-              "legacy_name": "Kamera Aksesuarları",
-              "legacy_slug": "kamera-aksesuarlari",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-kameralari/kamera-aksesuarlari",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-kameralari/kamera-aksesuarlari"
+              "legacy_name": "Kamera Zubehör",
+              "legacy_slug": "kamera-aksesuarlar",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/kamera-aksesuarlar"
             }
           ],
           "legacy_name": "Güvenlik Kameraları",
@@ -22746,7 +22741,7 @@
         {
           "id": "cat-31-02",
           "menu_order": 2,
-          "name": "Alarm Systeme",
+          "name": "Alarmanlagen",
           "slug": "alarm-sistemleri",
           "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri",
           "level": 2,
@@ -22754,54 +22749,50 @@
             {
               "id": "cat-31-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/standard",
+              "name": "Alarmanlagen",
+              "slug": "alarmanlagen",
+              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/alarmanlagen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "guvenlik-and-gozetim/alarm-sistemleri/standart",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/alarm-sistemleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/standard"
             },
             {
               "id": "cat-31-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/premium",
+              "name": "Funk-Alarme",
+              "slug": "funk-alarme",
+              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/funk-alarme",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "guvenlik-and-gozetim/alarm-sistemleri/premium",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/alarm-sistemleri/premium"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/premium"
             },
             {
               "id": "cat-31-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/sets",
+              "name": "Sirenen",
+              "slug": "sirenen",
+              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/sirenen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "guvenlik-and-gozetim/alarm-sistemleri/setler",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/alarm-sistemleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/sets"
             },
             {
               "id": "cat-31-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/zubehoer",
+              "name": "Bedienteile",
+              "slug": "bedienteile",
+              "url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/bedienteile",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "guvenlik-and-gozetim/alarm-sistemleri/aksesuarlar",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/alarm-sistemleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/zubehoer"
             }
           ],
           "legacy_name": "Alarm Sistemleri",
@@ -22820,54 +22811,50 @@
             {
               "id": "cat-31-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/standard",
+              "name": "Bewegungsmelder",
+              "slug": "bewegungsmelder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/bewegungsmelder",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "guvenlik-and-gozetim/sensorler/standart",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/sensorler/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/standard"
             },
             {
               "id": "cat-31-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/premium",
+              "name": "Türkontakte",
+              "slug": "tuerkontakte",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/tuerkontakte",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "guvenlik-and-gozetim/sensorler/premium",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/sensorler/premium"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/premium"
             },
             {
               "id": "cat-31-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/sets",
+              "name": "Glasbruchmelder",
+              "slug": "glasbruchmelder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/glasbruchmelder",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "guvenlik-and-gozetim/sensorler/setler",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/sensorler/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/sets"
             },
             {
               "id": "cat-31-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/zubehoer",
+              "name": "Wassermelder",
+              "slug": "wassermelder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/wassermelder",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "guvenlik-and-gozetim/sensorler/aksesuarlar",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/sensorler/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sensoerler/zubehoer"
             }
           ],
           "legacy_name": "Sensörler",
@@ -22878,7 +22865,7 @@
         {
           "id": "cat-31-04",
           "menu_order": 4,
-          "name": "Tür Sicherheit",
+          "name": "Türsicherheit",
           "slug": "kap-guevenligi",
           "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi",
           "level": 2,
@@ -22886,54 +22873,50 @@
             {
               "id": "cat-31-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/standard",
+              "name": "Türschlösser",
+              "slug": "tuerschloesser",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/tuerschloesser",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "guvenlik-and-gozetim/kapi-guvenligi/standart",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kapi-guvenligi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/standard"
             },
             {
               "id": "cat-31-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/premium",
+              "name": "Smart Locks",
+              "slug": "smart-locks",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/smart-locks",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "guvenlik-and-gozetim/kapi-guvenligi/premium",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kapi-guvenligi/premium"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/premium"
             },
             {
               "id": "cat-31-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/sets",
+              "name": "Türspione",
+              "slug": "tuerspione",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/tuerspione",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "guvenlik-and-gozetim/kapi-guvenligi/setler",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kapi-guvenligi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/sets"
             },
             {
               "id": "cat-31-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/zubehoer",
+              "name": "Sicherheitsketten",
+              "slug": "sicherheitsketten",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/sicherheitsketten",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "guvenlik-and-gozetim/kapi-guvenligi/aksesuarlar",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kapi-guvenligi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/zubehoer"
             }
           ],
           "legacy_name": "Kapı Güvenliği",
@@ -22944,7 +22927,7 @@
         {
           "id": "cat-31-05",
           "menu_order": 5,
-          "name": "Kasse & Schloss",
+          "name": "Tresor & Schloss",
           "slug": "kasa-und-kilit",
           "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit",
           "level": 2,
@@ -22952,54 +22935,50 @@
             {
               "id": "cat-31-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/standard",
+              "name": "Möbeltresore",
+              "slug": "moebeltresore",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/moebeltresore",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "guvenlik-and-gozetim/kasa-and-kilit/standart",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kasa-and-kilit/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/standard"
             },
             {
               "id": "cat-31-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/premium",
+              "name": "Wandtresore",
+              "slug": "wandtresore",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/wandtresore",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "guvenlik-and-gozetim/kasa-and-kilit/premium",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kasa-and-kilit/premium"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/premium"
             },
             {
               "id": "cat-31-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/sets",
+              "name": "Vorhängeschlösser",
+              "slug": "vorhaengeschloesser",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/vorhaengeschloesser",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "guvenlik-and-gozetim/kasa-and-kilit/setler",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kasa-and-kilit/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/sets"
             },
             {
               "id": "cat-31-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/zubehoer",
+              "name": "Schlüsselkästen",
+              "slug": "schluesselkaesten",
+              "url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/schluesselkaesten",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "guvenlik-and-gozetim/kasa-and-kilit/aksesuarlar",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/kasa-and-kilit/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/zubehoer"
             }
           ],
           "legacy_name": "Kasa & Kilit",
@@ -23010,7 +22989,7 @@
         {
           "id": "cat-31-06",
           "menu_order": 6,
-          "name": "Sicherheit Zubehör",
+          "name": "Sicherheits-Zubehör",
           "slug": "sicherheit-aksesuarlar",
           "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar",
           "level": 2,
@@ -23018,60 +22997,148 @@
             {
               "id": "cat-31-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/standard",
+              "name": "Attrappen",
+              "slug": "attrappen",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/attrappen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-aksesuarlari/standart",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/standard"
             },
             {
               "id": "cat-31-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/premium",
+              "name": "Fensteralarme",
+              "slug": "fensteralarme",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/fensteralarme",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-aksesuarlari/premium",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari/premium"
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/premium"
             },
             {
               "id": "cat-31-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/sets",
+              "name": "Montagezubehör",
+              "slug": "montagezubehoer",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/montagezubehoer",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-aksesuarlari/setler",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/sets"
             },
             {
               "id": "cat-31-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/zubehoer",
+              "name": "Ersatzakkus",
+              "slug": "ersatzakkus",
+              "url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/ersatzakkus",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Güvenlik Aksesuarları",
           "legacy_slug": "guvenlik-aksesuarlari",
           "legacy_slug_path": "guvenlik-and-gozetim/guvenlik-aksesuarlari",
           "legacy_url": "/kategori/guvenlik-and-gozetim/guvenlik-aksesuarlari"
+        },
+        {
+          "id": "cat-31-07",
+          "menu_order": 7,
+          "name": "Video-Türklingeln",
+          "slug": "video-tuerklingeln",
+          "url": "/kategorie/sicherheit-und-ueberwachung/video-tuerklingeln",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-31-07-01",
+              "menu_order": 1,
+              "name": "Video-Türklingeln",
+              "slug": "video-tuerklingeln",
+              "url": "/kategorie/sicherheit-und-ueberwachung/video-tuerklingeln/video-tuerklingeln",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-07-02",
+              "menu_order": 2,
+              "name": "Funkklingeln",
+              "slug": "funkklingeln",
+              "url": "/kategorie/sicherheit-und-ueberwachung/video-tuerklingeln/funkklingeln",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-07-03",
+              "menu_order": 3,
+              "name": "Gong",
+              "slug": "gong",
+              "url": "/kategorie/sicherheit-und-ueberwachung/video-tuerklingeln/gong",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-07-04",
+              "menu_order": 4,
+              "name": "Klingel-Zubehör",
+              "slug": "klingel-zubehoer",
+              "url": "/kategorie/sicherheit-und-ueberwachung/video-tuerklingeln/klingel-zubehoer",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-31-08",
+          "menu_order": 8,
+          "name": "Rauch- & CO-Melder",
+          "slug": "rauch-und-co",
+          "url": "/kategorie/sicherheit-und-ueberwachung/rauch-und-co",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-31-08-01",
+              "menu_order": 1,
+              "name": "Rauchmelder",
+              "slug": "rauchmelder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/rauch-und-co/rauchmelder",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-08-02",
+              "menu_order": 2,
+              "name": "CO-Melder",
+              "slug": "co-melder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/rauch-und-co/co-melder",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-08-03",
+              "menu_order": 3,
+              "name": "Hitzemelder",
+              "slug": "hitzemelder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/rauch-und-co/hitzemelder",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-31-08-04",
+              "menu_order": 4,
+              "name": "Vernetzte Melder",
+              "slug": "vernetzte-melder",
+              "url": "/kategorie/sicherheit-und-ueberwachung/rauch-und-co/vernetzte-melder",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Güvenlik & Gözetim",

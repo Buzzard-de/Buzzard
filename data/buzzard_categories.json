@@ -28955,27 +28955,45 @@
             {
               "id": "cat-46-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/getraenke/wasser/standard",
+              "name": "Stilles Wasser",
+              "slug": "stilles-wasser",
+              "url": "/kategorie/getraenke/wasser/stilles-wasser",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/getraenke/wasser/standard"
             },
             {
               "id": "cat-46-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/getraenke/wasser/premium",
+              "name": "Medium",
+              "slug": "medium",
+              "url": "/kategorie/getraenke/wasser/medium",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/getraenke/wasser/premium"
             },
             {
               "id": "cat-46-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/getraenke/wasser/sets-sparpakete",
+              "name": "Sprudel",
+              "slug": "sprudel",
+              "url": "/kategorie/getraenke/wasser/sprudel",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/getraenke/wasser/sets-sparpakete"
+            },
+            {
+              "id": "cat-46-01-04",
+              "menu_order": 4,
+              "name": "Glasflaschen",
+              "slug": "glasflaschen",
+              "url": "/kategorie/getraenke/wasser/glasflaschen",
               "level": 3,
               "children": []
             }
@@ -28992,27 +29010,45 @@
             {
               "id": "cat-46-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/getraenke/saefte-softdrinks/standard",
+              "name": "Orangensaft",
+              "slug": "orangensaft",
+              "url": "/kategorie/getraenke/saefte-softdrinks/orangensaft",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/getraenke/saefte-softdrinks/standard"
             },
             {
               "id": "cat-46-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/getraenke/saefte-softdrinks/premium",
+              "name": "Multivitamin",
+              "slug": "multivitamin",
+              "url": "/kategorie/getraenke/saefte-softdrinks/multivitamin",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/getraenke/saefte-softdrinks/premium"
             },
             {
               "id": "cat-46-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/getraenke/saefte-softdrinks/sets-sparpakete",
+              "name": "Schorle",
+              "slug": "schorle",
+              "url": "/kategorie/getraenke/saefte-softdrinks/schorle",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/getraenke/saefte-softdrinks/sets-sparpakete"
+            },
+            {
+              "id": "cat-46-02-04",
+              "menu_order": 4,
+              "name": "Smoothies",
+              "slug": "smoothies",
+              "url": "/kategorie/getraenke/saefte-softdrinks/smoothies",
               "level": 3,
               "children": []
             }
@@ -29029,27 +29065,45 @@
             {
               "id": "cat-46-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/getraenke/kaffee-tee/standard",
+              "name": "Röstkaffee",
+              "slug": "roestkaffee",
+              "url": "/kategorie/getraenke/kaffee-tee/roestkaffee",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/getraenke/kaffee-tee/standard"
             },
             {
               "id": "cat-46-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/getraenke/kaffee-tee/premium",
+              "name": "Kapseln",
+              "slug": "kapseln",
+              "url": "/kategorie/getraenke/kaffee-tee/kapseln",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/getraenke/kaffee-tee/premium"
             },
             {
               "id": "cat-46-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/getraenke/kaffee-tee/sets-sparpakete",
+              "name": "Schwarztee",
+              "slug": "schwarztee",
+              "url": "/kategorie/getraenke/kaffee-tee/schwarztee",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/getraenke/kaffee-tee/sets-sparpakete"
+            },
+            {
+              "id": "cat-46-03-04",
+              "menu_order": 4,
+              "name": "Kräutertee",
+              "slug": "kraeutertee",
+              "url": "/kategorie/getraenke/kaffee-tee/kraeutertee",
               "level": 3,
               "children": []
             }
@@ -29066,27 +29120,229 @@
             {
               "id": "cat-46-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/getraenke/wein-spirituosen/standard",
+              "name": "Rotwein",
+              "slug": "rotwein",
+              "url": "/kategorie/getraenke/wein-spirituosen/rotwein",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/getraenke/wein-spirituosen/standard"
             },
             {
               "id": "cat-46-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/getraenke/wein-spirituosen/premium",
+              "name": "Weißwein",
+              "slug": "weisswein",
+              "url": "/kategorie/getraenke/wein-spirituosen/weisswein",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/getraenke/wein-spirituosen/premium"
             },
             {
               "id": "cat-46-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/getraenke/wein-spirituosen/sets-sparpakete",
+              "name": "Sekt",
+              "slug": "sekt",
+              "url": "/kategorie/getraenke/wein-spirituosen/sekt",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/getraenke/wein-spirituosen/sets-sparpakete"
+            },
+            {
+              "id": "cat-46-04-04",
+              "menu_order": 4,
+              "name": "Spirituosen",
+              "slug": "spirituosen",
+              "url": "/kategorie/getraenke/wein-spirituosen/spirituosen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-05",
+          "menu_order": 5,
+          "name": "Bier",
+          "slug": "bier",
+          "url": "/kategorie/getraenke/bier",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-05-01",
+              "menu_order": 1,
+              "name": "Pils",
+              "slug": "pils",
+              "url": "/kategorie/getraenke/bier/pils",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-05-02",
+              "menu_order": 2,
+              "name": "Weizen",
+              "slug": "weizen",
+              "url": "/kategorie/getraenke/bier/weizen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-05-03",
+              "menu_order": 3,
+              "name": "Alkoholfrei",
+              "slug": "alkoholfrei",
+              "url": "/kategorie/getraenke/bier/alkoholfrei",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-05-04",
+              "menu_order": 4,
+              "name": "Craft",
+              "slug": "craft",
+              "url": "/kategorie/getraenke/bier/craft",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-06",
+          "menu_order": 6,
+          "name": "Sport & Energy",
+          "slug": "sport-und-energy",
+          "url": "/kategorie/getraenke/sport-und-energy",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-06-01",
+              "menu_order": 1,
+              "name": "Energy-Drinks",
+              "slug": "energy-drinks",
+              "url": "/kategorie/getraenke/sport-und-energy/energy-drinks",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-06-02",
+              "menu_order": 2,
+              "name": "Isotonisch",
+              "slug": "isotonisch",
+              "url": "/kategorie/getraenke/sport-und-energy/isotonisch",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-06-03",
+              "menu_order": 3,
+              "name": "Protein-Drinks",
+              "slug": "protein-drinks",
+              "url": "/kategorie/getraenke/sport-und-energy/protein-drinks",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-06-04",
+              "menu_order": 4,
+              "name": "Vitaminwasser",
+              "slug": "vitaminwasser",
+              "url": "/kategorie/getraenke/sport-und-energy/vitaminwasser",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-07",
+          "menu_order": 7,
+          "name": "Sirup & Mixer",
+          "slug": "sirup-und-mixer",
+          "url": "/kategorie/getraenke/sirup-und-mixer",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-07-01",
+              "menu_order": 1,
+              "name": "Sirupe",
+              "slug": "sirupe",
+              "url": "/kategorie/getraenke/sirup-und-mixer/sirupe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-07-02",
+              "menu_order": 2,
+              "name": "Tonic",
+              "slug": "tonic",
+              "url": "/kategorie/getraenke/sirup-und-mixer/tonic",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-07-03",
+              "menu_order": 3,
+              "name": "Bitter Lemon",
+              "slug": "bitter-lemon",
+              "url": "/kategorie/getraenke/sirup-und-mixer/bitter-lemon",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-07-04",
+              "menu_order": 4,
+              "name": "Soda",
+              "slug": "soda",
+              "url": "/kategorie/getraenke/sirup-und-mixer/soda",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-46-08",
+          "menu_order": 8,
+          "name": "Heißgetränke",
+          "slug": "heissgetraenke",
+          "url": "/kategorie/getraenke/heissgetraenke",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-46-08-01",
+              "menu_order": 1,
+              "name": "Kakao",
+              "slug": "kakao",
+              "url": "/kategorie/getraenke/heissgetraenke/kakao",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-08-02",
+              "menu_order": 2,
+              "name": "Chai",
+              "slug": "chai",
+              "url": "/kategorie/getraenke/heissgetraenke/chai",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-08-03",
+              "menu_order": 3,
+              "name": "Matcha",
+              "slug": "matcha",
+              "url": "/kategorie/getraenke/heissgetraenke/matcha",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-46-08-04",
+              "menu_order": 4,
+              "name": "Instant-Kaffee",
+              "slug": "instant-kaffee",
+              "url": "/kategorie/getraenke/heissgetraenke/instant-kaffee",
               "level": 3,
               "children": []
             }

@@ -45,11 +45,12 @@ describe("main category visuals", () => {
       ...getChildren("cat-24"),
       ...getChildren("cat-13"),
       ...getChildren("cat-03"),
+      ...getChildren("cat-46"),
       ...getChildren("cat-05"),
       ...getChildren("cat-55"),
       ...getChildren("cat-56"),
     ];
-    expect(hubs).toHaveLength(190);
+    expect(hubs).toHaveLength(198);
     const missing = hubs.filter(
       (cat) => !existsSync(join(process.cwd(), "public", "images", "categories", `${cat.id}.webp`)),
     );
@@ -96,6 +97,8 @@ describe("main category visuals", () => {
     expect(hasHubSubcategoryVisual("cat-13-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-03")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-03-01-01")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-46")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-46-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-55")).toBe(false);

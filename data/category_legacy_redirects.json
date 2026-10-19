@@ -13192,5 +13192,77 @@
     "to": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/schwaemme/",
     "permanent": true,
     "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wasser/standard/",
+    "to": "/kategorie/getraenke/wasser/stilles-wasser/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wasser/premium/",
+    "to": "/kategorie/getraenke/wasser/medium/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wasser/sets-sparpakete/",
+    "to": "/kategorie/getraenke/wasser/sprudel/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/saefte-softdrinks/standard/",
+    "to": "/kategorie/getraenke/saefte-softdrinks/orangensaft/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/saefte-softdrinks/premium/",
+    "to": "/kategorie/getraenke/saefte-softdrinks/multivitamin/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/saefte-softdrinks/sets-sparpakete/",
+    "to": "/kategorie/getraenke/saefte-softdrinks/schorle/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/kaffee-tee/standard/",
+    "to": "/kategorie/getraenke/kaffee-tee/roestkaffee/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/kaffee-tee/premium/",
+    "to": "/kategorie/getraenke/kaffee-tee/kapseln/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/kaffee-tee/sets-sparpakete/",
+    "to": "/kategorie/getraenke/kaffee-tee/schwarztee/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wein-spirituosen/standard/",
+    "to": "/kategorie/getraenke/wein-spirituosen/rotwein/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wein-spirituosen/premium/",
+    "to": "/kategorie/getraenke/wein-spirituosen/weisswein/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/getraenke/wein-spirituosen/sets-sparpakete/",
+    "to": "/kategorie/getraenke/wein-spirituosen/sekt/",
+    "permanent": true,
+    "note": "Beverages placeholder L3 replaced with a real product group"
   }
 ]

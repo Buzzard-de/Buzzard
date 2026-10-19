@@ -12328,5 +12328,173 @@
     "to": "/kategorie/haus-und-wohnen/haus-guevenligi/tresore/",
     "permanent": true,
     "note": "Home placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/salon-mobilyalar/standard/",
+    "to": "/kategorie/moebel/salon-mobilyalar/sofas/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/salon-mobilyalar/premium/",
+    "to": "/kategorie/moebel/salon-mobilyalar/sessel/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/salon-mobilyalar/sets/",
+    "to": "/kategorie/moebel/salon-mobilyalar/couchtische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/salon-mobilyalar/zubehoer/",
+    "to": "/kategorie/moebel/salon-mobilyalar/tv-moebel/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/yatak-odas-mobilyalar/standard/",
+    "to": "/kategorie/moebel/yatak-odas-mobilyalar/betten/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/yatak-odas-mobilyalar/premium/",
+    "to": "/kategorie/moebel/yatak-odas-mobilyalar/nachttische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/yatak-odas-mobilyalar/sets/",
+    "to": "/kategorie/moebel/yatak-odas-mobilyalar/kleiderschraenke/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/yatak-odas-mobilyalar/zubehoer/",
+    "to": "/kategorie/moebel/yatak-odas-mobilyalar/kommoden/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/ofis-mobilyalar/standard/",
+    "to": "/kategorie/moebel/ofis-mobilyalar/schreibtische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/ofis-mobilyalar/premium/",
+    "to": "/kategorie/moebel/ofis-mobilyalar/buerostuehle/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/ofis-mobilyalar/sets/",
+    "to": "/kategorie/moebel/ofis-mobilyalar/aktenregale/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/ofis-mobilyalar/zubehoer/",
+    "to": "/kategorie/moebel/ofis-mobilyalar/sideboards-buero/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/garten-mobilyalar/standard/",
+    "to": "/kategorie/moebel/garten-mobilyalar/lounge-sets/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/garten-mobilyalar/premium/",
+    "to": "/kategorie/moebel/garten-mobilyalar/gartenstuehle/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/garten-mobilyalar/sets/",
+    "to": "/kategorie/moebel/garten-mobilyalar/gartentische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/garten-mobilyalar/zubehoer/",
+    "to": "/kategorie/moebel/garten-mobilyalar/auflagen/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/kinder-mobilyalar/standard/",
+    "to": "/kategorie/moebel/kinder-mobilyalar/kinderbetten/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/kinder-mobilyalar/premium/",
+    "to": "/kategorie/moebel/kinder-mobilyalar/hochstuehle/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/kinder-mobilyalar/sets/",
+    "to": "/kategorie/moebel/kinder-mobilyalar/kinderschreibtische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/kinder-mobilyalar/zubehoer/",
+    "to": "/kategorie/moebel/kinder-mobilyalar/spielregale/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/raf-und-dolap/standard/",
+    "to": "/kategorie/moebel/raf-und-dolap/buecherregale/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/raf-und-dolap/premium/",
+    "to": "/kategorie/moebel/raf-und-dolap/vitrinen/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/raf-und-dolap/sets/",
+    "to": "/kategorie/moebel/raf-und-dolap/garderoben/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/raf-und-dolap/zubehoer/",
+    "to": "/kategorie/moebel/raf-und-dolap/schuhschraenke/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/masa-und-sandalye/standard/",
+    "to": "/kategorie/moebel/masa-und-sandalye/esstische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/masa-und-sandalye/premium/",
+    "to": "/kategorie/moebel/masa-und-sandalye/stuehle/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/masa-und-sandalye/sets/",
+    "to": "/kategorie/moebel/masa-und-sandalye/baenke/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/moebel/masa-und-sandalye/zubehoer/",
+    "to": "/kategorie/moebel/masa-und-sandalye/bartische/",
+    "permanent": true,
+    "note": "Furniture placeholder L3 replaced with a real product group"
   }
 ]

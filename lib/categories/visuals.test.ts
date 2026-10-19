@@ -24,15 +24,16 @@ describe("main category visuals", () => {
     expect(missing).toEqual([]);
   });
 
-  it("gives textile, home-textile, automotive, construction-machine and livestock L2 hubs their own photographs", () => {
+  it("gives textile, home-textile, shoe, automotive, construction-machine and livestock L2 hubs their own photographs", () => {
     const hubs = [
       ...getChildren("cat-01"),
       ...getChildren("cat-42"),
+      ...getChildren("cat-15"),
       ...getChildren("cat-05"),
       ...getChildren("cat-55"),
       ...getChildren("cat-56"),
     ];
-    expect(hubs).toHaveLength(48);
+    expect(hubs).toHaveLength(58);
     const missing = hubs.filter(
       (cat) => !existsSync(join(process.cwd(), "public", "images", "categories", `${cat.id}.webp`)),
     );
@@ -45,6 +46,8 @@ describe("main category visuals", () => {
     expect(hasHubSubcategoryVisual("cat-01-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-42")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-42-01-01")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-15")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-15-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-05-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-55")).toBe(false);

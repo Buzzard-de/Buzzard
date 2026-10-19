@@ -24832,7 +24832,7 @@
         {
           "id": "cat-36-01",
           "menu_order": 1,
-          "name": "Smart Uhr",
+          "name": "Smartwatches",
           "slug": "ak-ll-saat",
           "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat",
           "level": 2,
@@ -24840,54 +24840,59 @@
             {
               "id": "cat-36-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/standard",
+              "name": "Smartwatches",
+              "slug": "smartwatches",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/smartwatches",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/akilli-saat/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/akilli-saat/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/standard"
             },
             {
               "id": "cat-36-01-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/pro",
+              "name": "Sportuhren",
+              "slug": "sportuhren",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/sportuhren",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/akilli-saat/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/akilli-saat/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/pro"
             },
             {
               "id": "cat-36-01-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/set",
+              "name": "Fitness-Tracker",
+              "slug": "fitness-tracker",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/fitness-tracker",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/akilli-saat/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/akilli-saat/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/set"
             },
             {
               "id": "cat-36-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/zubehoer",
+              "name": "Wechselarmbänder",
+              "slug": "wechselarmbaender",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/wechselarmbaender",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/akilli-saat/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/akilli-saat/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/zubehoer"
+            },
+            {
+              "id": "cat-36-01-05",
+              "menu_order": 5,
+              "name": "Uhr-Ladegeräte",
+              "slug": "uhr-ladegeraete",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/uhr-ladegeraete",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Akıllı Saat",
@@ -24906,54 +24911,59 @@
             {
               "id": "cat-36-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/standard",
+              "name": "In-Ear",
+              "slug": "in-ear",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/in-ear",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/kulaklik/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/kulaklik/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/standard"
             },
             {
               "id": "cat-36-02-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/pro",
+              "name": "Over-Ear",
+              "slug": "over-ear",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/over-ear",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/kulaklik/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/kulaklik/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/pro"
             },
             {
               "id": "cat-36-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/set",
+              "name": "True Wireless",
+              "slug": "true-wireless",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/true-wireless",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/kulaklik/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/kulaklik/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/set"
             },
             {
               "id": "cat-36-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/zubehoer",
+              "name": "Sportkopfhörer",
+              "slug": "sportkopfhoerer",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/sportkopfhoerer",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/kulaklik/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/kulaklik/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/zubehoer"
+            },
+            {
+              "id": "cat-36-02-05",
+              "menu_order": 5,
+              "name": "Kopfhörer-Zubehör",
+              "slug": "kopfhoerer-zubehoer",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/kopfhoerer-zubehoer",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Kulaklık",
@@ -24964,7 +24974,7 @@
         {
           "id": "cat-36-03",
           "menu_order": 3,
-          "name": "Powerbank",
+          "name": "Powerbanks",
           "slug": "powerbank",
           "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank",
           "level": 2,
@@ -24972,54 +24982,59 @@
             {
               "id": "cat-36-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/standard",
+              "name": "Kompakt",
+              "slug": "kompakt",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/kompakt",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/powerbank/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/powerbank/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/standard"
             },
             {
               "id": "cat-36-03-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/pro",
+              "name": "High Capacity",
+              "slug": "high-capacity",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/high-capacity",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/powerbank/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/powerbank/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/pro"
             },
             {
               "id": "cat-36-03-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/set",
+              "name": "Magnetisch",
+              "slug": "magnetisch",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/magnetisch",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/powerbank/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/powerbank/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/set"
             },
             {
               "id": "cat-36-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/zubehoer",
+              "name": "Solar-Powerbanks",
+              "slug": "solar-powerbanks",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/solar-powerbanks",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/powerbank/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/powerbank/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/zubehoer"
+            },
+            {
+              "id": "cat-36-03-05",
+              "menu_order": 5,
+              "name": "Powerbank-Kabel",
+              "slug": "powerbank-kabel",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/powerbank-kabel",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Powerbank",
@@ -25030,7 +25045,7 @@
         {
           "id": "cat-36-04",
           "menu_order": 4,
-          "name": "Telefon Hüllen",
+          "name": "Smartphone-Hüllen",
           "slug": "telefon-k-l-flar",
           "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar",
           "level": 2,
@@ -25038,54 +25053,59 @@
             {
               "id": "cat-36-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/standard",
+              "name": "Silikonhüllen",
+              "slug": "silikonhuellen",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/silikonhuellen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/telefon-kiliflari/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/telefon-kiliflari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/standard"
             },
             {
               "id": "cat-36-04-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/pro",
+              "name": "Hardcases",
+              "slug": "hardcases",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/hardcases",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/telefon-kiliflari/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/telefon-kiliflari/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/pro"
             },
             {
               "id": "cat-36-04-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/set",
+              "name": "Bookcovers",
+              "slug": "bookcovers",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/bookcovers",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/telefon-kiliflari/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/telefon-kiliflari/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/set"
             },
             {
               "id": "cat-36-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/zubehoer",
+              "name": "Kameraschutz",
+              "slug": "kameraschutz",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/kameraschutz",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/telefon-kiliflari/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/telefon-kiliflari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/zubehoer"
+            },
+            {
+              "id": "cat-36-04-05",
+              "menu_order": 5,
+              "name": "Displayschutz",
+              "slug": "displayschutz",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/displayschutz",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Telefon Kılıfları",
@@ -25096,7 +25116,7 @@
         {
           "id": "cat-36-05",
           "menu_order": 5,
-          "name": "Tablet Zubehör",
+          "name": "Tablet-Zubehör",
           "slug": "tablet-aksesuarlar",
           "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar",
           "level": 2,
@@ -25104,54 +25124,59 @@
             {
               "id": "cat-36-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/standard",
+              "name": "Tablet-Hüllen",
+              "slug": "tablet-huellen",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/tablet-huellen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/tablet-aksesuarlari/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/tablet-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/standard"
             },
             {
               "id": "cat-36-05-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/pro",
+              "name": "Tastaturen",
+              "slug": "tastaturen",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/tastaturen",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/tablet-aksesuarlari/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/tablet-aksesuarlari/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/pro"
             },
             {
               "id": "cat-36-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/set",
+              "name": "Stifte",
+              "slug": "stifte",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/stifte",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/tablet-aksesuarlari/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/tablet-aksesuarlari/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/set"
             },
             {
               "id": "cat-36-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/zubehoer",
+              "name": "Displayschutz",
+              "slug": "displayschutz",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/displayschutz",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/tablet-aksesuarlari/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/tablet-aksesuarlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/zubehoer"
+            },
+            {
+              "id": "cat-36-05-05",
+              "menu_order": 5,
+              "name": "Tablet-Ständer",
+              "slug": "tablet-staender",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/tablet-staender",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Tablet Aksesuarları",
@@ -25162,7 +25187,7 @@
         {
           "id": "cat-36-06",
           "menu_order": 6,
-          "name": "Mobil Laden",
+          "name": "Mobil-Laden",
           "slug": "mobil-sarj",
           "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj",
           "level": 2,
@@ -25170,60 +25195,157 @@
             {
               "id": "cat-36-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/standard",
+              "name": "USB-C Ladegeräte",
+              "slug": "usb-c-ladegeraete",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/usb-c-ladegeraete",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/mobil-sarj/standart",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/standard"
             },
             {
               "id": "cat-36-06-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/pro",
+              "name": "Kfz-Ladegeräte",
+              "slug": "kfz-ladegeraete",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/kfz-ladegeraete",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/mobil-sarj/pro",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj/pro"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/pro"
             },
             {
               "id": "cat-36-06-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/set",
+              "name": "Induktiv",
+              "slug": "induktiv",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/induktiv",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/mobil-sarj/set",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj/set"
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/set"
             },
             {
               "id": "cat-36-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/zubehoer",
+              "name": "Ladekabel",
+              "slug": "ladekabel",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/ladekabel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "kisisel-elektronik-and-mobil/mobil-sarj/aksesuar",
-              "legacy_url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/zubehoer"
+            },
+            {
+              "id": "cat-36-06-05",
+              "menu_order": 5,
+              "name": "Mehrfach-Ladestationen",
+              "slug": "mehrfach-ladestationen",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/mehrfach-ladestationen",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Mobil Şarj",
           "legacy_slug": "mobil-sarj",
           "legacy_slug_path": "kisisel-elektronik-and-mobil/mobil-sarj",
           "legacy_url": "/kategori/kisisel-elektronik-and-mobil/mobil-sarj"
+        },
+        {
+          "id": "cat-36-07",
+          "menu_order": 7,
+          "name": "Bluetooth-Lautsprecher",
+          "slug": "bluetooth-lautsprecher",
+          "url": "/kategorie/persoenliche-elektronik-und-mobil/bluetooth-lautsprecher",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-36-07-01",
+              "menu_order": 1,
+              "name": "Portable",
+              "slug": "portable",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/bluetooth-lautsprecher/portable",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-07-02",
+              "menu_order": 2,
+              "name": "Wasserdicht",
+              "slug": "wasserdicht",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/bluetooth-lautsprecher/wasserdicht",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-07-03",
+              "menu_order": 3,
+              "name": "Party-Lautsprecher",
+              "slug": "party-lautsprecher",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/bluetooth-lautsprecher/party-lautsprecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-07-04",
+              "menu_order": 4,
+              "name": "Mini-Speaker",
+              "slug": "mini-speaker",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/bluetooth-lautsprecher/mini-speaker",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-36-08",
+          "menu_order": 8,
+          "name": "Smartphone-Fotografie",
+          "slug": "smartphone-fotografie",
+          "url": "/kategorie/persoenliche-elektronik-und-mobil/smartphone-fotografie",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-36-08-01",
+              "menu_order": 1,
+              "name": "Selfie-Sticks",
+              "slug": "selfie-sticks",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/smartphone-fotografie/selfie-sticks",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-08-02",
+              "menu_order": 2,
+              "name": "Stative",
+              "slug": "stative",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/smartphone-fotografie/stative",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-08-03",
+              "menu_order": 3,
+              "name": "Handy-Objektive",
+              "slug": "handy-objektive",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/smartphone-fotografie/handy-objektive",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-36-08-04",
+              "menu_order": 4,
+              "name": "Ringleuchten",
+              "slug": "ringleuchten",
+              "url": "/kategorie/persoenliche-elektronik-und-mobil/smartphone-fotografie/ringleuchten",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Kişisel Elektronik & Mobil",

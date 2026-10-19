@@ -16930,5 +16930,173 @@
     "to": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/praesentkoerbe/",
     "permanent": true,
     "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/diese-woche/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/vorbestellungen/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/limitierte-editionen/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/neu-gelenler/restocks/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/top-10/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/meistgekauft/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/kundenfavoriten/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/cok-satanlar/editor-picks/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/tagesangebote/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/wochenangebote/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/mengenrabatte/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/f-rsat-ueruenleri/last-minute/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/fruehling/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/sommer/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/herbst/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/sezon-ueruenleri/winter/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/outlet/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/outlet/b-ware/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/outlet/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/outlet/auslaufmodelle/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/outlet/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/outlet/ueberbestaende/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/outlet/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/outlet/retouren-deals/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/hausmarken/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/premium-marken/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/eigenmarken-sets/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/markal-koleksiyonlar/kollaborationen/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/standard/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/palettenware/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/premium/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/kartonweise/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/sets/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/mindestmengen/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/zubehoer/",
+    "to": "/kategorie/angebote-und-sonderkollektionen/kurumsal-oezel-ueruenler/musterpackungen/",
+    "permanent": true,
+    "note": "Marketplace placeholder L3 replaced with a real product group"
   }
 ]

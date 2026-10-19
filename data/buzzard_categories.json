@@ -37,7 +37,7 @@
             {
               "id": "cat-01-01-01",
               "menu_order": 1,
-              "name": "Elbise",
+              "name": "Kleid",
               "slug": "kleid",
               "url": "/kategorie/textil/damen-bekleidung/kleid",
               "level": 3,
@@ -50,7 +50,7 @@
             {
               "id": "cat-01-01-02",
               "menu_order": 2,
-              "name": "Bluz",
+              "name": "Bluse",
               "slug": "bluse",
               "url": "/kategorie/textil/damen-bekleidung/bluse",
               "level": 3,
@@ -63,7 +63,7 @@
             {
               "id": "cat-01-01-03",
               "menu_order": 3,
-              "name": "Gömlek",
+              "name": "Hemd",
               "slug": "hemd",
               "url": "/kategorie/textil/damen-bekleidung/hemd",
               "level": 3,
@@ -76,7 +76,7 @@
             {
               "id": "cat-01-01-04",
               "menu_order": 4,
-              "name": "T Shirt",
+              "name": "T-Shirt",
               "slug": "t-shirt",
               "url": "/kategorie/textil/damen-bekleidung/t-shirt",
               "level": 3,
@@ -89,7 +89,7 @@
             {
               "id": "cat-01-01-05",
               "menu_order": 5,
-              "name": "Kazak & Triko",
+              "name": "Pullover & Strick",
               "slug": "pullover-und-strick",
               "url": "/kategorie/textil/damen-bekleidung/pullover-und-strick",
               "level": 3,
@@ -128,7 +128,7 @@
             {
               "id": "cat-01-01-08",
               "menu_order": 8,
-              "name": "Pantolon",
+              "name": "Hose",
               "slug": "hose",
               "url": "/kategorie/textil/damen-bekleidung/hose",
               "level": 3,
@@ -141,7 +141,7 @@
             {
               "id": "cat-01-01-09",
               "menu_order": 9,
-              "name": "Jean",
+              "name": "Jeans",
               "slug": "jeans",
               "url": "/kategorie/textil/damen-bekleidung/jeans",
               "level": 3,
@@ -154,7 +154,7 @@
             {
               "id": "cat-01-01-10",
               "menu_order": 10,
-              "name": "Etek",
+              "name": "Rock",
               "slug": "rock",
               "url": "/kategorie/textil/damen-bekleidung/rock",
               "level": 3,
@@ -180,7 +180,7 @@
             {
               "id": "cat-01-01-12",
               "menu_order": 12,
-              "name": "Ceket",
+              "name": "Jacke",
               "slug": "jacke",
               "url": "/kategorie/textil/damen-bekleidung/jacke",
               "level": 3,
@@ -193,7 +193,7 @@
             {
               "id": "cat-01-01-13",
               "menu_order": 13,
-              "name": "Mont & Kaban",
+              "name": "Mantel & Parka",
               "slug": "mantel-und-parka",
               "url": "/kategorie/textil/damen-bekleidung/mantel-und-parka",
               "level": 3,
@@ -206,7 +206,7 @@
             {
               "id": "cat-01-01-14",
               "menu_order": 14,
-              "name": "Set & Kombin",
+              "name": "Anzug & Set",
               "slug": "anzug-und-set",
               "url": "/kategorie/textil/damen-bekleidung/anzug-und-set",
               "level": 3,
@@ -215,6 +215,51 @@
               "legacy_slug": "takim-and-kombin",
               "legacy_slug_path": "tekstil/kadin-giyim/takim-and-kombin",
               "legacy_url": "/kategori/tekstil/kadin-giyim/takim-and-kombin"
+            },
+            {
+              "id": "cat-01-01-15",
+              "menu_order": 15,
+              "name": "Sportbekleidung",
+              "slug": "sportbekleidung",
+              "url": "/kategorie/textil/damen-bekleidung/sportbekleidung",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-01-16",
+              "menu_order": 16,
+              "name": "Blazer & Sakko",
+              "slug": "blazer-und-sakko",
+              "url": "/kategorie/textil/damen-bekleidung/blazer-und-sakko",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-01-17",
+              "menu_order": 17,
+              "name": "Westen",
+              "slug": "westen",
+              "url": "/kategorie/textil/damen-bekleidung/westen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-01-18",
+              "menu_order": 18,
+              "name": "Jumpsuits & Overalls",
+              "slug": "jumpsuits",
+              "url": "/kategorie/textil/damen-bekleidung/jumpsuits",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-01-19",
+              "menu_order": 19,
+              "name": "Tuniken",
+              "slug": "tuniken",
+              "url": "/kategorie/textil/damen-bekleidung/tuniken",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Kadın Giyim",
@@ -233,7 +278,7 @@
             {
               "id": "cat-01-02-01",
               "menu_order": 1,
-              "name": "T Shirt",
+              "name": "T-Shirt",
               "slug": "t-shirt",
               "url": "/kategorie/textil/herren-bekleidung/t-shirt",
               "level": 3,
@@ -259,7 +304,7 @@
             {
               "id": "cat-01-02-03",
               "menu_order": 3,
-              "name": "Gömlek",
+              "name": "Hemd",
               "slug": "hemd",
               "url": "/kategorie/textil/herren-bekleidung/hemd",
               "level": 3,
@@ -272,7 +317,7 @@
             {
               "id": "cat-01-02-04",
               "menu_order": 4,
-              "name": "Kazak & Triko",
+              "name": "Pullover & Strick",
               "slug": "pullover-und-strick",
               "url": "/kategorie/textil/herren-bekleidung/pullover-und-strick",
               "level": 3,
@@ -311,7 +356,7 @@
             {
               "id": "cat-01-02-07",
               "menu_order": 7,
-              "name": "Pantolon",
+              "name": "Hose",
               "slug": "hose",
               "url": "/kategorie/textil/herren-bekleidung/hose",
               "level": 3,
@@ -324,7 +369,7 @@
             {
               "id": "cat-01-02-08",
               "menu_order": 8,
-              "name": "Jean",
+              "name": "Jeans",
               "slug": "jeans",
               "url": "/kategorie/textil/herren-bekleidung/jeans",
               "level": 3,
@@ -337,7 +382,7 @@
             {
               "id": "cat-01-02-09",
               "menu_order": 9,
-              "name": "Keten Pantolon",
+              "name": "Leinenhose",
               "slug": "keten-hose",
               "url": "/kategorie/textil/herren-bekleidung/keten-hose",
               "level": 3,
@@ -363,7 +408,7 @@
             {
               "id": "cat-01-02-11",
               "menu_order": 11,
-              "name": "Set Elbise",
+              "name": "Anzug",
               "slug": "anzug",
               "url": "/kategorie/textil/herren-bekleidung/anzug",
               "level": 3,
@@ -376,7 +421,7 @@
             {
               "id": "cat-01-02-12",
               "menu_order": 12,
-              "name": "Ceket",
+              "name": "Jacke",
               "slug": "jacke",
               "url": "/kategorie/textil/herren-bekleidung/jacke",
               "level": 3,
@@ -389,7 +434,7 @@
             {
               "id": "cat-01-02-13",
               "menu_order": 13,
-              "name": "Mont & Kaban",
+              "name": "Mantel & Parka",
               "slug": "mantel-und-parka",
               "url": "/kategorie/textil/herren-bekleidung/mantel-und-parka",
               "level": 3,
@@ -415,7 +460,7 @@
             {
               "id": "cat-01-02-15",
               "menu_order": 15,
-              "name": "Sport Bekleidung",
+              "name": "Sportbekleidung",
               "slug": "sportbekleidung",
               "url": "/kategorie/textil/herren-bekleidung/sportbekleidung",
               "level": 3,
@@ -424,6 +469,33 @@
               "legacy_slug": "spor-giyim",
               "legacy_slug_path": "tekstil/erkek-giyim/spor-giyim",
               "legacy_url": "/kategori/tekstil/erkek-giyim/spor-giyim"
+            },
+            {
+              "id": "cat-01-02-16",
+              "menu_order": 16,
+              "name": "Westen",
+              "slug": "westen",
+              "url": "/kategorie/textil/herren-bekleidung/westen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-02-17",
+              "menu_order": 17,
+              "name": "Sakko & Blazer",
+              "slug": "sakko-und-blazer",
+              "url": "/kategorie/textil/herren-bekleidung/sakko-und-blazer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-02-18",
+              "menu_order": 18,
+              "name": "Nachtwäsche",
+              "slug": "nachtwaesche",
+              "url": "/kategorie/textil/herren-bekleidung/nachtwaesche",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Erkek Giyim",
@@ -442,7 +514,7 @@
             {
               "id": "cat-01-03-01",
               "menu_order": 1,
-              "name": "T Shirt",
+              "name": "T-Shirt",
               "slug": "t-shirt",
               "url": "/kategorie/textil/kinder-bekleidung/t-shirt",
               "level": 3,
@@ -455,7 +527,7 @@
             {
               "id": "cat-01-03-02",
               "menu_order": 2,
-              "name": "Kazak",
+              "name": "Pullover",
               "slug": "pullover",
               "url": "/kategorie/textil/kinder-bekleidung/pullover",
               "level": 3,
@@ -481,7 +553,7 @@
             {
               "id": "cat-01-03-04",
               "menu_order": 4,
-              "name": "Pantolon",
+              "name": "Hose",
               "slug": "hose",
               "url": "/kategorie/textil/kinder-bekleidung/hose",
               "level": 3,
@@ -494,7 +566,7 @@
             {
               "id": "cat-01-03-05",
               "menu_order": 5,
-              "name": "Jean",
+              "name": "Jeans",
               "slug": "jeans",
               "url": "/kategorie/textil/kinder-bekleidung/jeans",
               "level": 3,
@@ -520,7 +592,7 @@
             {
               "id": "cat-01-03-07",
               "menu_order": 7,
-              "name": "Elbise & Etek",
+              "name": "Kleid & Rock",
               "slug": "kleid-und-rock",
               "url": "/kategorie/textil/kinder-bekleidung/kleid-und-rock",
               "level": 3,
@@ -533,7 +605,7 @@
             {
               "id": "cat-01-03-08",
               "menu_order": 8,
-              "name": "Mont & Kaban",
+              "name": "Mantel & Parka",
               "slug": "mantel-und-parka",
               "url": "/kategorie/textil/kinder-bekleidung/mantel-und-parka",
               "level": 3,
@@ -546,7 +618,7 @@
             {
               "id": "cat-01-03-09",
               "menu_order": 9,
-              "name": "Pijama",
+              "name": "Pyjama",
               "slug": "pyjama",
               "url": "/kategorie/textil/kinder-bekleidung/pyjama",
               "level": 3,
@@ -559,7 +631,7 @@
             {
               "id": "cat-01-03-10",
               "menu_order": 10,
-              "name": "Schule Bekleidung",
+              "name": "Schulbekleidung",
               "slug": "schulbekleidung",
               "url": "/kategorie/textil/kinder-bekleidung/schulbekleidung",
               "level": 3,
@@ -568,6 +640,42 @@
               "legacy_slug": "okul-giyim",
               "legacy_slug_path": "tekstil/cocuk-giyim/okul-giyim",
               "legacy_url": "/kategori/tekstil/cocuk-giyim/okul-giyim"
+            },
+            {
+              "id": "cat-01-03-11",
+              "menu_order": 11,
+              "name": "Jacken",
+              "slug": "jacken",
+              "url": "/kategorie/textil/kinder-bekleidung/jacken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-03-12",
+              "menu_order": 12,
+              "name": "Sportbekleidung",
+              "slug": "sportbekleidung",
+              "url": "/kategorie/textil/kinder-bekleidung/sportbekleidung",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-03-13",
+              "menu_order": 13,
+              "name": "Badebekleidung",
+              "slug": "badebekleidung",
+              "url": "/kategorie/textil/kinder-bekleidung/badebekleidung",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-03-14",
+              "menu_order": 14,
+              "name": "Mützen & Sets",
+              "slug": "muetzen-und-sets",
+              "url": "/kategorie/textil/kinder-bekleidung/muetzen-und-sets",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Çocuk Giyim",
@@ -599,7 +707,7 @@
             {
               "id": "cat-01-04-02",
               "menu_order": 2,
-              "name": "Tulum",
+              "name": "Strampler",
               "slug": "strampler",
               "url": "/kategorie/textil/baby-bekleidung/strampler",
               "level": 3,
@@ -625,7 +733,7 @@
             {
               "id": "cat-01-04-04",
               "menu_order": 4,
-              "name": "Pijama",
+              "name": "Pyjama",
               "slug": "pyjama",
               "url": "/kategorie/textil/baby-bekleidung/pyjama",
               "level": 3,
@@ -638,7 +746,7 @@
             {
               "id": "cat-01-04-05",
               "menu_order": 5,
-              "name": "Baby Pantolonu",
+              "name": "Babyhose",
               "slug": "babyhose",
               "url": "/kategorie/textil/baby-bekleidung/babyhose",
               "level": 3,
@@ -651,7 +759,7 @@
             {
               "id": "cat-01-04-06",
               "menu_order": 6,
-              "name": "Baby Kazak",
+              "name": "Babypullover",
               "slug": "babypullover",
               "url": "/kategorie/textil/baby-bekleidung/babypullover",
               "level": 3,
@@ -664,7 +772,7 @@
             {
               "id": "cat-01-04-07",
               "menu_order": 7,
-              "name": "Baby Elbisesi",
+              "name": "Babykleid",
               "slug": "baby-elbisesi",
               "url": "/kategorie/textil/baby-bekleidung/baby-elbisesi",
               "level": 3,
@@ -677,7 +785,7 @@
             {
               "id": "cat-01-04-08",
               "menu_order": 8,
-              "name": "Baby Mont",
+              "name": "Babymantel",
               "slug": "baby-mont",
               "url": "/kategorie/textil/baby-bekleidung/baby-mont",
               "level": 3,
@@ -686,6 +794,24 @@
               "legacy_slug": "bebek-mont",
               "legacy_slug_path": "tekstil/bebek-giyim/bebek-mont",
               "legacy_url": "/kategori/tekstil/bebek-giyim/bebek-mont"
+            },
+            {
+              "id": "cat-01-04-09",
+              "menu_order": 9,
+              "name": "Mützen & Set",
+              "slug": "muetzen-und-sets",
+              "url": "/kategorie/textil/baby-bekleidung/muetzen-und-sets",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-04-10",
+              "menu_order": 10,
+              "name": "Erstausstattung",
+              "slug": "erstausstattung",
+              "url": "/kategorie/textil/baby-bekleidung/erstausstattung",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Bebek Giyim",
@@ -743,7 +869,7 @@
             {
               "id": "cat-01-05-04",
               "menu_order": 4,
-              "name": "Atlet",
+              "name": "Unterhemd",
               "slug": "atlet",
               "url": "/kategorie/textil/unterwaesche/atlet",
               "level": 3,
@@ -769,7 +895,7 @@
             {
               "id": "cat-01-05-06",
               "menu_order": 6,
-              "name": "Kinder Innen Bekleidung",
+              "name": "Kinderunterwäsche",
               "slug": "kinder-innen-bekleidung",
               "url": "/kategorie/textil/unterwaesche/kinder-innen-bekleidung",
               "level": 3,
@@ -778,6 +904,33 @@
               "legacy_slug": "cocuk-ic-giyim",
               "legacy_slug_path": "tekstil/ic-giyim/cocuk-ic-giyim",
               "legacy_url": "/kategori/tekstil/ic-giyim/cocuk-ic-giyim"
+            },
+            {
+              "id": "cat-01-05-07",
+              "menu_order": 7,
+              "name": "Strumpfhosen",
+              "slug": "strumpfhosen",
+              "url": "/kategorie/textil/unterwaesche/strumpfhosen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-05-08",
+              "menu_order": 8,
+              "name": "Shapewear",
+              "slug": "shapewear",
+              "url": "/kategorie/textil/unterwaesche/shapewear",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-05-09",
+              "menu_order": 9,
+              "name": "Nachtwäsche-Basics",
+              "slug": "nachtwaesche-basics",
+              "url": "/kategorie/textil/unterwaesche/nachtwaesche-basics",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "İç Giyim",
@@ -796,22 +949,22 @@
             {
               "id": "cat-01-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/textil/haushaltstextilien/standard",
+              "name": "Bettwäsche",
+              "slug": "bettwaesche",
+              "url": "/kategorie/textil/haushaltstextilien/bettwaesche",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
+              "legacy_slug": "standard",
               "legacy_slug_path": "tekstil/ev-tekstili/standart",
               "legacy_url": "/kategori/tekstil/ev-tekstili/standart"
             },
             {
               "id": "cat-01-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/textil/haushaltstextilien/premium",
+              "name": "Handtücher & Badetextilien",
+              "slug": "handtuecher-und-badetextilien",
+              "url": "/kategorie/textil/haushaltstextilien/handtuecher-und-badetextilien",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
@@ -822,28 +975,55 @@
             {
               "id": "cat-01-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/textil/haushaltstextilien/sets",
+              "name": "Tischwäsche",
+              "slug": "tischwaesche",
+              "url": "/kategorie/textil/haushaltstextilien/tischwaesche",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
+              "legacy_slug": "sets",
               "legacy_slug_path": "tekstil/ev-tekstili/setler",
               "legacy_url": "/kategori/tekstil/ev-tekstili/setler"
             },
             {
               "id": "cat-01-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/textil/haushaltstextilien/zubehoer",
+              "name": "Küchentextilien",
+              "slug": "kuechentextilien",
+              "url": "/kategorie/textil/haushaltstextilien/kuechentextilien",
               "level": 3,
               "children": [],
               "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
+              "legacy_slug": "zubehoer",
               "legacy_slug_path": "tekstil/ev-tekstili/aksesuarlar",
               "legacy_url": "/kategori/tekstil/ev-tekstili/aksesuarlar"
+            },
+            {
+              "id": "cat-01-06-05",
+              "menu_order": 5,
+              "name": "Vorhänge",
+              "slug": "vorhaenge",
+              "url": "/kategorie/textil/haushaltstextilien/vorhaenge",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-06-06",
+              "menu_order": 6,
+              "name": "Decken & Kissen",
+              "slug": "decken-und-kissen",
+              "url": "/kategorie/textil/haushaltstextilien/decken-und-kissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-06-07",
+              "menu_order": 7,
+              "name": "Badematten",
+              "slug": "badematten",
+              "url": "/kategorie/textil/haushaltstextilien/badematten",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Ev Tekstili",
@@ -854,7 +1034,7 @@
         {
           "id": "cat-01-07",
           "menu_order": 7,
-          "name": "Socken",
+          "name": "Socken & Strümpfe",
           "slug": "socken",
           "url": "/kategorie/textil/socken",
           "level": 2,
@@ -862,22 +1042,22 @@
             {
               "id": "cat-01-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/textil/socken/standard",
+              "name": "Damensocken",
+              "slug": "damensocken",
+              "url": "/kategorie/textil/socken/damensocken",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
+              "legacy_slug": "standard",
               "legacy_slug_path": "tekstil/corap/standart",
               "legacy_url": "/kategori/tekstil/corap/standart"
             },
             {
               "id": "cat-01-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/textil/socken/premium",
+              "name": "Herrensocken",
+              "slug": "herrensocken",
+              "url": "/kategorie/textil/socken/herrensocken",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
@@ -888,28 +1068,46 @@
             {
               "id": "cat-01-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/textil/socken/sets",
+              "name": "Kindersocken",
+              "slug": "kindersocken",
+              "url": "/kategorie/textil/socken/kindersocken",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
+              "legacy_slug": "sets",
               "legacy_slug_path": "tekstil/corap/setler",
               "legacy_url": "/kategori/tekstil/corap/setler"
             },
             {
               "id": "cat-01-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/textil/socken/zubehoer",
+              "name": "Sportsocken",
+              "slug": "sportsocken",
+              "url": "/kategorie/textil/socken/sportsocken",
               "level": 3,
               "children": [],
               "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
+              "legacy_slug": "zubehoer",
               "legacy_slug_path": "tekstil/corap/aksesuarlar",
               "legacy_url": "/kategori/tekstil/corap/aksesuarlar"
+            },
+            {
+              "id": "cat-01-07-05",
+              "menu_order": 5,
+              "name": "Thermosocken",
+              "slug": "thermosocken",
+              "url": "/kategorie/textil/socken/thermosocken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-07-06",
+              "menu_order": 6,
+              "name": "Kniestrümpfe",
+              "slug": "kniestruempfe",
+              "url": "/kategorie/textil/socken/kniestruempfe",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Çorap",
@@ -920,7 +1118,7 @@
         {
           "id": "cat-01-08",
           "menu_order": 8,
-          "name": "Taschen & Accessoires",
+          "name": "Accessoires",
           "slug": "taschen-und-accessoires",
           "url": "/kategorie/textil/taschen-und-accessoires",
           "level": 2,
@@ -928,22 +1126,22 @@
             {
               "id": "cat-01-08-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/textil/taschen-und-accessoires/standard",
+              "name": "Schals & Tücher",
+              "slug": "schals-und-tuecher",
+              "url": "/kategorie/textil/taschen-und-accessoires/schals-und-tuecher",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
+              "legacy_slug": "standard",
               "legacy_slug_path": "tekstil/canta-and-aksesuar/standart",
               "legacy_url": "/kategori/tekstil/canta-and-aksesuar/standart"
             },
             {
               "id": "cat-01-08-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/textil/taschen-und-accessoires/premium",
+              "name": "Mützen & Caps",
+              "slug": "muetzen-und-caps",
+              "url": "/kategorie/textil/taschen-und-accessoires/muetzen-und-caps",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
@@ -954,28 +1152,46 @@
             {
               "id": "cat-01-08-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/textil/taschen-und-accessoires/sets",
+              "name": "Handschuhe",
+              "slug": "handschuhe",
+              "url": "/kategorie/textil/taschen-und-accessoires/handschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
+              "legacy_slug": "sets",
               "legacy_slug_path": "tekstil/canta-and-aksesuar/setler",
               "legacy_url": "/kategori/tekstil/canta-and-aksesuar/setler"
             },
             {
               "id": "cat-01-08-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/textil/taschen-und-accessoires/zubehoer",
+              "name": "Gürtel",
+              "slug": "guertel",
+              "url": "/kategorie/textil/taschen-und-accessoires/guertel",
               "level": 3,
               "children": [],
               "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
+              "legacy_slug": "zubehoer",
               "legacy_slug_path": "tekstil/canta-and-aksesuar/aksesuarlar",
               "legacy_url": "/kategori/tekstil/canta-and-aksesuar/aksesuarlar"
+            },
+            {
+              "id": "cat-01-08-05",
+              "menu_order": 5,
+              "name": "Krawatten & Fliegen",
+              "slug": "krawatten-und-fliegen",
+              "url": "/kategorie/textil/taschen-und-accessoires/krawatten-und-fliegen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-08-06",
+              "menu_order": 6,
+              "name": "Stofftaschen",
+              "slug": "stofftaschen",
+              "url": "/kategorie/textil/taschen-und-accessoires/stofftaschen",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Çanta & Aksesuar",
@@ -994,22 +1210,22 @@
             {
               "id": "cat-01-09-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/standard",
+              "name": "Arbeitsjacken",
+              "slug": "arbeitsjacken",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/arbeitsjacken",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
+              "legacy_slug": "standard",
               "legacy_slug_path": "tekstil/is-and-outdoor-tekstili/standart",
               "legacy_url": "/kategori/tekstil/is-and-outdoor-tekstili/standart"
             },
             {
               "id": "cat-01-09-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/premium",
+              "name": "Arbeitshosen",
+              "slug": "arbeitshosen",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/arbeitshosen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
@@ -1020,34 +1236,245 @@
             {
               "id": "cat-01-09-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/sets",
+              "name": "Warnschutz",
+              "slug": "warnschutz",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/warnschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
+              "legacy_slug": "sets",
               "legacy_slug_path": "tekstil/is-and-outdoor-tekstili/setler",
               "legacy_url": "/kategori/tekstil/is-and-outdoor-tekstili/setler"
             },
             {
               "id": "cat-01-09-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/zubehoer",
+              "name": "Fleece & Softshell",
+              "slug": "fleece-und-softshell",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/fleece-und-softshell",
               "level": 3,
               "children": [],
               "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
+              "legacy_slug": "zubehoer",
               "legacy_slug_path": "tekstil/is-and-outdoor-tekstili/aksesuarlar",
               "legacy_url": "/kategori/tekstil/is-and-outdoor-tekstili/aksesuarlar"
+            },
+            {
+              "id": "cat-01-09-05",
+              "menu_order": 5,
+              "name": "Outdoorhosen",
+              "slug": "outdoorhosen",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/outdoorhosen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-09-06",
+              "menu_order": 6,
+              "name": "Regenbekleidung",
+              "slug": "regenbekleidung",
+              "url": "/kategorie/textil/arbeits-und-outdoor-textilien/regenbekleidung",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "İş & Outdoor Tekstili",
           "legacy_slug": "is-and-outdoor-tekstili",
           "legacy_slug_path": "tekstil/is-and-outdoor-tekstili",
           "legacy_url": "/kategori/tekstil/is-and-outdoor-tekstili"
+        },
+        {
+          "id": "cat-01-10",
+          "menu_order": 10,
+          "name": "Bademode",
+          "slug": "bademode",
+          "url": "/kategorie/textil/bademode",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-01-10-01",
+              "menu_order": 1,
+              "name": "Damen-Bademode",
+              "slug": "damen-bademode",
+              "url": "/kategorie/textil/bademode/damen-bademode",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-10-02",
+              "menu_order": 2,
+              "name": "Herren-Bademode",
+              "slug": "herren-bademode",
+              "url": "/kategorie/textil/bademode/herren-bademode",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-10-03",
+              "menu_order": 3,
+              "name": "Kinder-Bademode",
+              "slug": "kinder-bademode",
+              "url": "/kategorie/textil/bademode/kinder-bademode",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-10-04",
+              "menu_order": 4,
+              "name": "Strandtextilien",
+              "slug": "strandtextilien",
+              "url": "/kategorie/textil/bademode/strandtextilien",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-01-11",
+          "menu_order": 11,
+          "name": "Nachtwäsche & Loungewear",
+          "slug": "nachtwaesche-und-loungewear",
+          "url": "/kategorie/textil/nachtwaesche-und-loungewear",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-01-11-01",
+              "menu_order": 1,
+              "name": "Pyjamas",
+              "slug": "pyjamas",
+              "url": "/kategorie/textil/nachtwaesche-und-loungewear/pyjamas",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-11-02",
+              "menu_order": 2,
+              "name": "Nachthemden",
+              "slug": "nachthemden",
+              "url": "/kategorie/textil/nachtwaesche-und-loungewear/nachthemden",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-11-03",
+              "menu_order": 3,
+              "name": "Loungewear",
+              "slug": "loungewear",
+              "url": "/kategorie/textil/nachtwaesche-und-loungewear/loungewear",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-11-04",
+              "menu_order": 4,
+              "name": "Bademäntel",
+              "slug": "bademaentel",
+              "url": "/kategorie/textil/nachtwaesche-und-loungewear/bademaentel",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-01-12",
+          "menu_order": 12,
+          "name": "Sportbekleidung",
+          "slug": "sportbekleidung",
+          "url": "/kategorie/textil/sportbekleidung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-01-12-01",
+              "menu_order": 1,
+              "name": "Sportshirts",
+              "slug": "sportshirts",
+              "url": "/kategorie/textil/sportbekleidung/sportshirts",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-12-02",
+              "menu_order": 2,
+              "name": "Tights & Leggings",
+              "slug": "tights-und-leggings",
+              "url": "/kategorie/textil/sportbekleidung/tights-und-leggings",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-12-03",
+              "menu_order": 3,
+              "name": "Trainingsjacken",
+              "slug": "trainingsjacken",
+              "url": "/kategorie/textil/sportbekleidung/trainingsjacken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-12-04",
+              "menu_order": 4,
+              "name": "Trainingsanzüge",
+              "slug": "trainingsanzuege",
+              "url": "/kategorie/textil/sportbekleidung/trainingsanzuege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-12-05",
+              "menu_order": 5,
+              "name": "Sport-Unterwäsche",
+              "slug": "sport-unterwaesche",
+              "url": "/kategorie/textil/sportbekleidung/sport-unterwaesche",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-01-13",
+          "menu_order": 13,
+          "name": "Umstandsmode",
+          "slug": "umstandsmode",
+          "url": "/kategorie/textil/umstandsmode",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-01-13-01",
+              "menu_order": 1,
+              "name": "Umstandskleider",
+              "slug": "umstandskleider",
+              "url": "/kategorie/textil/umstandsmode/umstandskleider",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-13-02",
+              "menu_order": 2,
+              "name": "Umstandshosen",
+              "slug": "umstandshosen",
+              "url": "/kategorie/textil/umstandsmode/umstandshosen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-13-03",
+              "menu_order": 3,
+              "name": "Umstandsshirts",
+              "slug": "umstandsshirts",
+              "url": "/kategorie/textil/umstandsmode/umstandsshirts",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-01-13-04",
+              "menu_order": 4,
+              "name": "Still- & Umstandsunterwäsche",
+              "slug": "still-und-umstandsunterwaesche",
+              "url": "/kategorie/textil/umstandsmode/still-und-umstandsunterwaesche",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Tekstil",

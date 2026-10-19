@@ -10402,5 +10402,101 @@
     "to": "/kategorie/reifen-und-felgen/pkw/reifen/reifen-aksesuarlar/",
     "permanent": true,
     "note": "Tires/rims vehicle hub"
+  },
+  {
+    "from": "/kategorie/textil/haushaltstextilien/standard/",
+    "to": "/kategorie/textil/haushaltstextilien/bettwaesche/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/haushaltstextilien/premium/",
+    "to": "/kategorie/textil/haushaltstextilien/handtuecher-und-badetextilien/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/haushaltstextilien/sets/",
+    "to": "/kategorie/textil/haushaltstextilien/tischwaesche/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/haushaltstextilien/zubehoer/",
+    "to": "/kategorie/textil/haushaltstextilien/kuechentextilien/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/socken/standard/",
+    "to": "/kategorie/textil/socken/damensocken/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/socken/premium/",
+    "to": "/kategorie/textil/socken/herrensocken/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/socken/sets/",
+    "to": "/kategorie/textil/socken/kindersocken/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/socken/zubehoer/",
+    "to": "/kategorie/textil/socken/sportsocken/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/taschen-und-accessoires/standard/",
+    "to": "/kategorie/textil/taschen-und-accessoires/schals-und-tuecher/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/taschen-und-accessoires/premium/",
+    "to": "/kategorie/textil/taschen-und-accessoires/muetzen-und-caps/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/taschen-und-accessoires/sets/",
+    "to": "/kategorie/textil/taschen-und-accessoires/handschuhe/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/taschen-und-accessoires/zubehoer/",
+    "to": "/kategorie/textil/taschen-und-accessoires/guertel/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/arbeits-und-outdoor-textilien/standard/",
+    "to": "/kategorie/textil/arbeits-und-outdoor-textilien/arbeitsjacken/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/arbeits-und-outdoor-textilien/premium/",
+    "to": "/kategorie/textil/arbeits-und-outdoor-textilien/arbeitshosen/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/arbeits-und-outdoor-textilien/sets/",
+    "to": "/kategorie/textil/arbeits-und-outdoor-textilien/warnschutz/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/textil/arbeits-und-outdoor-textilien/zubehoer/",
+    "to": "/kategorie/textil/arbeits-und-outdoor-textilien/fleece-und-softshell/",
+    "permanent": true,
+    "note": "Textile placeholder L3 replaced with a real product group"
   }
 ]

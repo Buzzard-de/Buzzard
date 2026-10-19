@@ -16858,5 +16858,77 @@
     "to": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/windlichter/",
     "permanent": true,
     "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/geschenke/standard/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-sie/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/geschenke/premium/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-ihn/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/geschenke/sets-sparpakete/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/geschenke/fuer-kinder/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/standard/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/schnittblumen/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/premium/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/straeusse/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/sets-sparpakete/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/blumen-pflanzen/trockenblumen/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/standard/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/geburtstag/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/premium/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/hochzeit/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/sets-sparpakete/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/anlaesse-feiern/jubilaeum/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/standard/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/gutscheine/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/premium/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/geschenksets/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/sets-sparpakete/",
+    "to": "/kategorie/geschenke-blumen-anlaesse/gutscheine-sets/praesentkoerbe/",
+    "permanent": true,
+    "note": "Gifts placeholder L3 replaced with a real product group"
   }
 ]

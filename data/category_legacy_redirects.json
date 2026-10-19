@@ -13528,5 +13528,185 @@
     "to": "/kategorie/haustierbedarf/pflege-und-hijyen/kotbeutel/",
     "permanent": true,
     "note": "Pets placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/katze-mamas/guenluek/",
+    "to": "/kategorie/tierfutter/katze-mamas/kitten/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/katze-mamas/premium/",
+    "to": "/kategorie/tierfutter/katze-mamas/adult/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/katze-mamas/set/",
+    "to": "/kategorie/tierfutter/katze-mamas/senior/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/katze-mamas/zubehoer/",
+    "to": "/kategorie/tierfutter/katze-mamas/sterilisiert/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/katze-mamas/organizer/",
+    "to": "/kategorie/tierfutter/katze-mamas/indoor/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/hund-mamas/guenluek/",
+    "to": "/kategorie/tierfutter/hund-mamas/welpe/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/hund-mamas/premium/",
+    "to": "/kategorie/tierfutter/hund-mamas/adult/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/hund-mamas/set/",
+    "to": "/kategorie/tierfutter/hund-mamas/senior/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/hund-mamas/zubehoer/",
+    "to": "/kategorie/tierfutter/hund-mamas/grosse-rassen/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/hund-mamas/organizer/",
+    "to": "/kategorie/tierfutter/hund-mamas/kleine-rassen/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kus-yemi/guenluek/",
+    "to": "/kategorie/tierfutter/kus-yemi/wellensittich/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kus-yemi/premium/",
+    "to": "/kategorie/tierfutter/kus-yemi/papagei/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kus-yemi/set/",
+    "to": "/kategorie/tierfutter/kus-yemi/kanarien/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kus-yemi/zubehoer/",
+    "to": "/kategorie/tierfutter/kus-yemi/exoten/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kus-yemi/organizer/",
+    "to": "/kategorie/tierfutter/kus-yemi/wildvoegel/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/bal-k-yemi/guenluek/",
+    "to": "/kategorie/tierfutter/bal-k-yemi/flocken/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/bal-k-yemi/premium/",
+    "to": "/kategorie/tierfutter/bal-k-yemi/granulat/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/bal-k-yemi/set/",
+    "to": "/kategorie/tierfutter/bal-k-yemi/tabletten/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/bal-k-yemi/zubehoer/",
+    "to": "/kategorie/tierfutter/bal-k-yemi/frostfutter/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/bal-k-yemi/organizer/",
+    "to": "/kategorie/tierfutter/bal-k-yemi/lebendfutter/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kemirgen-yemi/guenluek/",
+    "to": "/kategorie/tierfutter/kemirgen-yemi/hamster/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kemirgen-yemi/premium/",
+    "to": "/kategorie/tierfutter/kemirgen-yemi/meerschweinchen/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kemirgen-yemi/set/",
+    "to": "/kategorie/tierfutter/kemirgen-yemi/kaninchen/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kemirgen-yemi/zubehoer/",
+    "to": "/kategorie/tierfutter/kemirgen-yemi/chinchilla/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/kemirgen-yemi/organizer/",
+    "to": "/kategorie/tierfutter/kemirgen-yemi/ratte-und-maus/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/oezel-beslenme/guenluek/",
+    "to": "/kategorie/tierfutter/oezel-beslenme/hypoallergen/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/oezel-beslenme/premium/",
+    "to": "/kategorie/tierfutter/oezel-beslenme/getreidefrei/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/oezel-beslenme/set/",
+    "to": "/kategorie/tierfutter/oezel-beslenme/light/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/oezel-beslenme/zubehoer/",
+    "to": "/kategorie/tierfutter/oezel-beslenme/sensitive/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/tierfutter/oezel-beslenme/organizer/",
+    "to": "/kategorie/tierfutter/oezel-beslenme/veterinary/",
+    "permanent": true,
+    "note": "Pet food placeholder L3 replaced with a real product group"
   }
 ]

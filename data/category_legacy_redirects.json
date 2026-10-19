@@ -10774,5 +10774,197 @@
     "to": "/kategorie/schuhe/terlik-und-sandalet/badeschuhe/",
     "permanent": true,
     "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/guenluek-cantalar/standard/",
+    "to": "/kategorie/taschen-und-accessoires/guenluek-cantalar/shopper/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/guenluek-cantalar/premium/",
+    "to": "/kategorie/taschen-und-accessoires/guenluek-cantalar/umhaengetaschen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/guenluek-cantalar/sets/",
+    "to": "/kategorie/taschen-und-accessoires/guenluek-cantalar/handtaschen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/guenluek-cantalar/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/guenluek-cantalar/clutches/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/s-rt-cantalar/standard/",
+    "to": "/kategorie/taschen-und-accessoires/s-rt-cantalar/tagesrucksaecke/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/s-rt-cantalar/premium/",
+    "to": "/kategorie/taschen-und-accessoires/s-rt-cantalar/laptop-rucksaecke/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/s-rt-cantalar/sets/",
+    "to": "/kategorie/taschen-und-accessoires/s-rt-cantalar/wanderrucksaecke/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/s-rt-cantalar/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/s-rt-cantalar/schulrucksaecke/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/seyahat-cantalar/duffle/",
+    "to": "/kategorie/taschen-und-accessoires/seyahat-cantalar/reisetaschen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/seyahat-cantalar/s-rt-cantas/",
+    "to": "/kategorie/taschen-und-accessoires/seyahat-cantalar/weekender/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/seyahat-cantalar/organizer/",
+    "to": "/kategorie/taschen-und-accessoires/seyahat-cantalar/kulturbeutel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/seyahat-cantalar/laptop-cantas/",
+    "to": "/kategorie/taschen-und-accessoires/seyahat-cantalar/packwuerfel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/cuezdan/standard/",
+    "to": "/kategorie/taschen-und-accessoires/cuezdan/damengeldborsoen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/cuezdan/premium/",
+    "to": "/kategorie/taschen-und-accessoires/cuezdan/herrengeldborsoen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/cuezdan/sets/",
+    "to": "/kategorie/taschen-und-accessoires/cuezdan/kartenetuis/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/cuezdan/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/cuezdan/muenzboersen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/koffer/kabin/",
+    "to": "/kategorie/taschen-und-accessoires/koffer/kabinentrolley/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/koffer/orta-boy/",
+    "to": "/kategorie/taschen-und-accessoires/koffer/mittelgrosser-koffer/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/koffer/bueyuek-boy/",
+    "to": "/kategorie/taschen-und-accessoires/koffer/grosser-koffer/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/koffer/set/",
+    "to": "/kategorie/taschen-und-accessoires/koffer/kofferset/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/kemer/standard/",
+    "to": "/kategorie/taschen-und-accessoires/kemer/damenguertel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/kemer/premium/",
+    "to": "/kategorie/taschen-und-accessoires/kemer/herrenguertel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/kemer/sets/",
+    "to": "/kategorie/taschen-und-accessoires/kemer/lederguertel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/kemer/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/kemer/stoffguertel/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/sapka-und-bere/standard/",
+    "to": "/kategorie/taschen-und-accessoires/sapka-und-bere/caps/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/sapka-und-bere/premium/",
+    "to": "/kategorie/taschen-und-accessoires/sapka-und-bere/muetzen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/sapka-und-bere/sets/",
+    "to": "/kategorie/taschen-und-accessoires/sapka-und-bere/sonnenhuete/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/sapka-und-bere/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/sapka-und-bere/wintermuetzen/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/semsiye/standard/",
+    "to": "/kategorie/taschen-und-accessoires/semsiye/taschenschirme/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/semsiye/premium/",
+    "to": "/kategorie/taschen-und-accessoires/semsiye/stockschirme/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/semsiye/sets/",
+    "to": "/kategorie/taschen-und-accessoires/semsiye/xxl-schirme/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/taschen-und-accessoires/semsiye/zubehoer/",
+    "to": "/kategorie/taschen-und-accessoires/semsiye/sonnenschirme-klein/",
+    "permanent": true,
+    "note": "Bags placeholder L3 replaced with a real product group"
   }
 ]

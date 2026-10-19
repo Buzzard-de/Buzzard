@@ -15032,7 +15032,7 @@
         {
           "id": "cat-16-01",
           "menu_order": 1,
-          "name": "Alltag Taschen",
+          "name": "Alltagstaschen",
           "slug": "guenluek-cantalar",
           "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar",
           "level": 2,
@@ -15040,54 +15040,59 @@
             {
               "id": "cat-16-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/standard",
+              "name": "Shopper",
+              "slug": "shopper",
+              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/shopper",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/gunluk-cantalar/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/gunluk-cantalar/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/standard"
             },
             {
               "id": "cat-16-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/premium",
+              "name": "Umhängetaschen",
+              "slug": "umhaengetaschen",
+              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/umhaengetaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/gunluk-cantalar/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/gunluk-cantalar/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/premium"
             },
             {
               "id": "cat-16-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/sets",
+              "name": "Handtaschen",
+              "slug": "handtaschen",
+              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/handtaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/gunluk-cantalar/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/gunluk-cantalar/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/sets"
             },
             {
               "id": "cat-16-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/zubehoer",
+              "name": "Clutches",
+              "slug": "clutches",
+              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/clutches",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/gunluk-cantalar/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/gunluk-cantalar/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/zubehoer"
+            },
+            {
+              "id": "cat-16-01-05",
+              "menu_order": 5,
+              "name": "Crossbody-Taschen",
+              "slug": "crossbody-taschen",
+              "url": "/kategorie/taschen-und-accessoires/guenluek-cantalar/crossbody-taschen",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Günlük Çantalar",
@@ -15098,7 +15103,7 @@
         {
           "id": "cat-16-02",
           "menu_order": 2,
-          "name": "Rücken Taschen",
+          "name": "Rucksäcke",
           "slug": "s-rt-cantalar",
           "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar",
           "level": 2,
@@ -15106,54 +15111,50 @@
             {
               "id": "cat-16-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/standard",
+              "name": "Tagesrucksäcke",
+              "slug": "tagesrucksaecke",
+              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/tagesrucksaecke",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/sirt-cantalari/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/sirt-cantalari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/standard"
             },
             {
               "id": "cat-16-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/premium",
+              "name": "Laptop-Rucksäcke",
+              "slug": "laptop-rucksaecke",
+              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/laptop-rucksaecke",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/sirt-cantalari/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/sirt-cantalari/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/premium"
             },
             {
               "id": "cat-16-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/sets",
+              "name": "Wanderrucksäcke",
+              "slug": "wanderrucksaecke",
+              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/wanderrucksaecke",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/sirt-cantalari/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/sirt-cantalari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/sets"
             },
             {
               "id": "cat-16-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/zubehoer",
+              "name": "Schulrucksäcke",
+              "slug": "schulrucksaecke",
+              "url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/schulrucksaecke",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/sirt-cantalari/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/sirt-cantalari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/s-rt-cantalar/zubehoer"
             }
           ],
           "legacy_name": "Sırt Çantaları",
@@ -15164,7 +15165,7 @@
         {
           "id": "cat-16-03",
           "menu_order": 3,
-          "name": "Reise Taschen",
+          "name": "Reisetaschen",
           "slug": "seyahat-cantalar",
           "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar",
           "level": 2,
@@ -15172,54 +15173,50 @@
             {
               "id": "cat-16-03-01",
               "menu_order": 1,
-              "name": "Duffle",
-              "slug": "duffle",
-              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/duffle",
+              "name": "Reisetaschen",
+              "slug": "reisetaschen",
+              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/reisetaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Duffle",
               "legacy_slug": "duffle",
-              "legacy_slug_path": "canta-and-aksesuar/seyahat-cantalari/duffle",
-              "legacy_url": "/kategori/canta-and-aksesuar/seyahat-cantalari/duffle"
+              "legacy_url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/duffle"
             },
             {
               "id": "cat-16-03-02",
               "menu_order": 2,
-              "name": "S Rt Cantas",
-              "slug": "s-rt-cantas",
-              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/s-rt-cantas",
+              "name": "Weekender",
+              "slug": "weekender",
+              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/weekender",
               "level": 3,
               "children": [],
-              "legacy_name": "Sırt Çantası",
-              "legacy_slug": "sirt-cantasi",
-              "legacy_slug_path": "canta-and-aksesuar/seyahat-cantalari/sirt-cantasi",
-              "legacy_url": "/kategori/canta-and-aksesuar/seyahat-cantalari/sirt-cantasi"
+              "legacy_name": "S Rt Cantas",
+              "legacy_slug": "s-rt-cantas",
+              "legacy_url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/s-rt-cantas"
             },
             {
               "id": "cat-16-03-03",
               "menu_order": 3,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/organizer",
+              "name": "Kulturbeutel",
+              "slug": "kulturbeutel",
+              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/kulturbeutel",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "canta-and-aksesuar/seyahat-cantalari/organizer",
-              "legacy_url": "/kategori/canta-and-aksesuar/seyahat-cantalari/organizer"
+              "legacy_url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/organizer"
             },
             {
               "id": "cat-16-03-04",
               "menu_order": 4,
-              "name": "Laptop Cantas",
-              "slug": "laptop-cantas",
-              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/laptop-cantas",
+              "name": "Packwürfel",
+              "slug": "packwuerfel",
+              "url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/packwuerfel",
               "level": 3,
               "children": [],
-              "legacy_name": "Laptop Çantası",
-              "legacy_slug": "laptop-cantasi",
-              "legacy_slug_path": "canta-and-aksesuar/seyahat-cantalari/laptop-cantasi",
-              "legacy_url": "/kategori/canta-and-aksesuar/seyahat-cantalari/laptop-cantasi"
+              "legacy_name": "Laptop Cantas",
+              "legacy_slug": "laptop-cantas",
+              "legacy_url": "/kategorie/taschen-und-accessoires/seyahat-cantalar/laptop-cantas"
             }
           ],
           "legacy_name": "Seyahat Çantaları",
@@ -15230,7 +15227,7 @@
         {
           "id": "cat-16-04",
           "menu_order": 4,
-          "name": "Geldbörse",
+          "name": "Geldbörsen",
           "slug": "cuezdan",
           "url": "/kategorie/taschen-und-accessoires/cuezdan",
           "level": 2,
@@ -15238,54 +15235,50 @@
             {
               "id": "cat-16-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/cuezdan/standard",
+              "name": "Damengeldbörsen",
+              "slug": "damengeldborsoen",
+              "url": "/kategorie/taschen-und-accessoires/cuezdan/damengeldborsoen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/cuzdan/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/cuzdan/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/cuezdan/standard"
             },
             {
               "id": "cat-16-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/cuezdan/premium",
+              "name": "Herrengeldbörsen",
+              "slug": "herrengeldborsoen",
+              "url": "/kategorie/taschen-und-accessoires/cuezdan/herrengeldborsoen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/cuzdan/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/cuzdan/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/cuezdan/premium"
             },
             {
               "id": "cat-16-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/cuezdan/sets",
+              "name": "Kartenetuis",
+              "slug": "kartenetuis",
+              "url": "/kategorie/taschen-und-accessoires/cuezdan/kartenetuis",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/cuzdan/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/cuzdan/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/cuezdan/sets"
             },
             {
               "id": "cat-16-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/cuezdan/zubehoer",
+              "name": "Münzbörsen",
+              "slug": "muenzboersen",
+              "url": "/kategorie/taschen-und-accessoires/cuezdan/muenzboersen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/cuzdan/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/cuzdan/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/cuezdan/zubehoer"
             }
           ],
           "legacy_name": "Cüzdan",
@@ -15304,54 +15297,50 @@
             {
               "id": "cat-16-05-01",
               "menu_order": 1,
-              "name": "Kabin",
-              "slug": "kabin",
-              "url": "/kategorie/taschen-und-accessoires/koffer/kabin",
+              "name": "Kabinentrolley",
+              "slug": "kabinentrolley",
+              "url": "/kategorie/taschen-und-accessoires/koffer/kabinentrolley",
               "level": 3,
               "children": [],
               "legacy_name": "Kabin",
               "legacy_slug": "kabin",
-              "legacy_slug_path": "canta-and-aksesuar/valiz/kabin",
-              "legacy_url": "/kategori/canta-and-aksesuar/valiz/kabin"
+              "legacy_url": "/kategorie/taschen-und-accessoires/koffer/kabin"
             },
             {
               "id": "cat-16-05-02",
               "menu_order": 2,
-              "name": "Orta Boy",
-              "slug": "orta-boy",
-              "url": "/kategorie/taschen-und-accessoires/koffer/orta-boy",
+              "name": "Mittelgroßer Koffer",
+              "slug": "mittelgrosser-koffer",
+              "url": "/kategorie/taschen-und-accessoires/koffer/mittelgrosser-koffer",
               "level": 3,
               "children": [],
               "legacy_name": "Orta Boy",
               "legacy_slug": "orta-boy",
-              "legacy_slug_path": "canta-and-aksesuar/valiz/orta-boy",
-              "legacy_url": "/kategori/canta-and-aksesuar/valiz/orta-boy"
+              "legacy_url": "/kategorie/taschen-und-accessoires/koffer/orta-boy"
             },
             {
               "id": "cat-16-05-03",
               "menu_order": 3,
-              "name": "Büyük Boy",
-              "slug": "bueyuek-boy",
-              "url": "/kategorie/taschen-und-accessoires/koffer/bueyuek-boy",
+              "name": "Großer Koffer",
+              "slug": "grosser-koffer",
+              "url": "/kategorie/taschen-und-accessoires/koffer/grosser-koffer",
               "level": 3,
               "children": [],
               "legacy_name": "Büyük Boy",
-              "legacy_slug": "buyuk-boy",
-              "legacy_slug_path": "canta-and-aksesuar/valiz/buyuk-boy",
-              "legacy_url": "/kategori/canta-and-aksesuar/valiz/buyuk-boy"
+              "legacy_slug": "bueyuek-boy",
+              "legacy_url": "/kategorie/taschen-und-accessoires/koffer/bueyuek-boy"
             },
             {
               "id": "cat-16-05-04",
               "menu_order": 4,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/taschen-und-accessoires/koffer/set",
+              "name": "Kofferset",
+              "slug": "kofferset",
+              "url": "/kategorie/taschen-und-accessoires/koffer/kofferset",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "canta-and-aksesuar/valiz/set",
-              "legacy_url": "/kategori/canta-and-aksesuar/valiz/set"
+              "legacy_url": "/kategorie/taschen-und-accessoires/koffer/set"
             }
           ],
           "legacy_name": "Valiz",
@@ -15370,54 +15359,50 @@
             {
               "id": "cat-16-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/kemer/standard",
+              "name": "Damengürtel",
+              "slug": "damenguertel",
+              "url": "/kategorie/taschen-und-accessoires/kemer/damenguertel",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/kemer/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/kemer/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/kemer/standard"
             },
             {
               "id": "cat-16-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/kemer/premium",
+              "name": "Herrengürtel",
+              "slug": "herrenguertel",
+              "url": "/kategorie/taschen-und-accessoires/kemer/herrenguertel",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/kemer/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/kemer/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/kemer/premium"
             },
             {
               "id": "cat-16-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/kemer/sets",
+              "name": "Ledergürtel",
+              "slug": "lederguertel",
+              "url": "/kategorie/taschen-und-accessoires/kemer/lederguertel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/kemer/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/kemer/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/kemer/sets"
             },
             {
               "id": "cat-16-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/kemer/zubehoer",
+              "name": "Stoffgürtel",
+              "slug": "stoffguertel",
+              "url": "/kategorie/taschen-und-accessoires/kemer/stoffguertel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/kemer/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/kemer/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/kemer/zubehoer"
             }
           ],
           "legacy_name": "Kemer",
@@ -15428,7 +15413,7 @@
         {
           "id": "cat-16-07",
           "menu_order": 7,
-          "name": "Hut & Mütze",
+          "name": "Hüte & Mützen",
           "slug": "sapka-und-bere",
           "url": "/kategorie/taschen-und-accessoires/sapka-und-bere",
           "level": 2,
@@ -15436,54 +15421,50 @@
             {
               "id": "cat-16-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/standard",
+              "name": "Caps",
+              "slug": "caps",
+              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/caps",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/sapka-and-bere/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/sapka-and-bere/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/sapka-und-bere/standard"
             },
             {
               "id": "cat-16-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/premium",
+              "name": "Mützen",
+              "slug": "muetzen",
+              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/muetzen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/sapka-and-bere/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/sapka-and-bere/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/sapka-und-bere/premium"
             },
             {
               "id": "cat-16-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/sets",
+              "name": "Sonnenhüte",
+              "slug": "sonnenhuete",
+              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/sonnenhuete",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/sapka-and-bere/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/sapka-and-bere/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/sapka-und-bere/sets"
             },
             {
               "id": "cat-16-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/zubehoer",
+              "name": "Wintermützen",
+              "slug": "wintermuetzen",
+              "url": "/kategorie/taschen-und-accessoires/sapka-und-bere/wintermuetzen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/sapka-and-bere/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/sapka-and-bere/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/sapka-und-bere/zubehoer"
             }
           ],
           "legacy_name": "Şapka & Bere",
@@ -15494,7 +15475,7 @@
         {
           "id": "cat-16-08",
           "menu_order": 8,
-          "name": "Regenschirm",
+          "name": "Regenschirme",
           "slug": "semsiye",
           "url": "/kategorie/taschen-und-accessoires/semsiye",
           "level": 2,
@@ -15502,60 +15483,148 @@
             {
               "id": "cat-16-08-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/taschen-und-accessoires/semsiye/standard",
+              "name": "Taschenschirme",
+              "slug": "taschenschirme",
+              "url": "/kategorie/taschen-und-accessoires/semsiye/taschenschirme",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "canta-and-aksesuar/semsiye/standart",
-              "legacy_url": "/kategori/canta-and-aksesuar/semsiye/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/taschen-und-accessoires/semsiye/standard"
             },
             {
               "id": "cat-16-08-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/taschen-und-accessoires/semsiye/premium",
+              "name": "Stockschirme",
+              "slug": "stockschirme",
+              "url": "/kategorie/taschen-und-accessoires/semsiye/stockschirme",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "canta-and-aksesuar/semsiye/premium",
-              "legacy_url": "/kategori/canta-and-aksesuar/semsiye/premium"
+              "legacy_url": "/kategorie/taschen-und-accessoires/semsiye/premium"
             },
             {
               "id": "cat-16-08-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/taschen-und-accessoires/semsiye/sets",
+              "name": "XXL-Schirme",
+              "slug": "xxl-schirme",
+              "url": "/kategorie/taschen-und-accessoires/semsiye/xxl-schirme",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "canta-and-aksesuar/semsiye/setler",
-              "legacy_url": "/kategori/canta-and-aksesuar/semsiye/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/taschen-und-accessoires/semsiye/sets"
             },
             {
               "id": "cat-16-08-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/taschen-und-accessoires/semsiye/zubehoer",
+              "name": "Sonnenschirme klein",
+              "slug": "sonnenschirme-klein",
+              "url": "/kategorie/taschen-und-accessoires/semsiye/sonnenschirme-klein",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "canta-and-aksesuar/semsiye/aksesuarlar",
-              "legacy_url": "/kategori/canta-and-aksesuar/semsiye/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/taschen-und-accessoires/semsiye/zubehoer"
             }
           ],
           "legacy_name": "Şemsiye",
           "legacy_slug": "semsiye",
           "legacy_slug_path": "canta-and-aksesuar/semsiye",
           "legacy_url": "/kategori/canta-and-aksesuar/semsiye"
+        },
+        {
+          "id": "cat-16-09",
+          "menu_order": 9,
+          "name": "Laptoptaschen & Business",
+          "slug": "laptoptaschen-und-business",
+          "url": "/kategorie/taschen-und-accessoires/laptoptaschen-und-business",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-16-09-01",
+              "menu_order": 1,
+              "name": "Laptoptaschen",
+              "slug": "laptoptaschen",
+              "url": "/kategorie/taschen-und-accessoires/laptoptaschen-und-business/laptoptaschen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-09-02",
+              "menu_order": 2,
+              "name": "Aktentaschen",
+              "slug": "aktentaschen",
+              "url": "/kategorie/taschen-und-accessoires/laptoptaschen-und-business/aktentaschen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-09-03",
+              "menu_order": 3,
+              "name": "Messenger-Bags",
+              "slug": "messenger-bags",
+              "url": "/kategorie/taschen-und-accessoires/laptoptaschen-und-business/messenger-bags",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-09-04",
+              "menu_order": 4,
+              "name": "Tablethüllen",
+              "slug": "tablethuellen",
+              "url": "/kategorie/taschen-und-accessoires/laptoptaschen-und-business/tablethuellen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-16-10",
+          "menu_order": 10,
+          "name": "Reiseaccessoires",
+          "slug": "reiseaccessoires",
+          "url": "/kategorie/taschen-und-accessoires/reiseaccessoires",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-16-10-01",
+              "menu_order": 1,
+              "name": "Adressanhänger",
+              "slug": "adressanhaenger",
+              "url": "/kategorie/taschen-und-accessoires/reiseaccessoires/adressanhaenger",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-10-02",
+              "menu_order": 2,
+              "name": "Zahlenschlösser",
+              "slug": "zahlenschloesser",
+              "url": "/kategorie/taschen-und-accessoires/reiseaccessoires/zahlenschloesser",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-10-03",
+              "menu_order": 3,
+              "name": "Reisekissen",
+              "slug": "reisekissen",
+              "url": "/kategorie/taschen-und-accessoires/reiseaccessoires/reisekissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-16-10-04",
+              "menu_order": 4,
+              "name": "Dokumente-Organizer",
+              "slug": "dokumente-organizer",
+              "url": "/kategorie/taschen-und-accessoires/reiseaccessoires/dokumente-organizer",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Çanta & Aksesuar",

@@ -16432,5 +16432,77 @@
     "to": "/kategorie/musik-musikinstrumente/musikzubehoer/kapodaster/",
     "permanent": true,
     "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/buecher/standard/",
+    "to": "/kategorie/buecher-medien-unterhaltung/buecher/belletristik/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/buecher/premium/",
+    "to": "/kategorie/buecher-medien-unterhaltung/buecher/sachbuecher/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/buecher/sets-sparpakete/",
+    "to": "/kategorie/buecher-medien-unterhaltung/buecher/kinderbuecher/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/filme-serien/standard/",
+    "to": "/kategorie/buecher-medien-unterhaltung/filme-serien/blu-ray/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/filme-serien/premium/",
+    "to": "/kategorie/buecher-medien-unterhaltung/filme-serien/dvd/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/filme-serien/sets-sparpakete/",
+    "to": "/kategorie/buecher-medien-unterhaltung/filme-serien/4k-uhd/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/musik-games/standard/",
+    "to": "/kategorie/buecher-medien-unterhaltung/musik-games/vinyl/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/musik-games/premium/",
+    "to": "/kategorie/buecher-medien-unterhaltung/musik-games/cds/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/musik-games/sets-sparpakete/",
+    "to": "/kategorie/buecher-medien-unterhaltung/musik-games/pc-spiele/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/standard/",
+    "to": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/zeitschriften/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/premium/",
+    "to": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/zeitungen/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/sets-sparpakete/",
+    "to": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/jahresabos/",
+    "permanent": true,
+    "note": "Books media placeholder L3 replaced with a real product group"
   }
 ]

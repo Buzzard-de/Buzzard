@@ -29785,27 +29785,45 @@
             {
               "id": "cat-52-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/standard",
+              "name": "Aufstellpools",
+              "slug": "aufstellpools",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/aufstellpools",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/standard"
             },
             {
               "id": "cat-52-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/premium",
+              "name": "Filteranlagen",
+              "slug": "filteranlagen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/filteranlagen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/premium"
             },
             {
               "id": "cat-52-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/sets-sparpakete",
+              "name": "Pumpen",
+              "slug": "pumpen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/pumpen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/sets-sparpakete"
+            },
+            {
+              "id": "cat-52-01-04",
+              "menu_order": 4,
+              "name": "Poolleitern",
+              "slug": "poolleitern",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/poolleitern",
               "level": 3,
               "children": []
             }
@@ -29822,27 +29840,45 @@
             {
               "id": "cat-52-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/standard",
+              "name": "Whirlpools",
+              "slug": "whirlpools",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/whirlpools",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/standard"
             },
             {
               "id": "cat-52-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/premium",
+              "name": "Saunaöfen",
+              "slug": "saunaoefen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/saunaoefen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/premium"
             },
             {
               "id": "cat-52-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/sets-sparpakete",
+              "name": "Infrarotkabinen",
+              "slug": "infrarotkabinen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/infrarotkabinen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/sets-sparpakete"
+            },
+            {
+              "id": "cat-52-02-04",
+              "menu_order": 4,
+              "name": "Aufguss & Duft",
+              "slug": "aufguss-und-duft",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/aufguss-und-duft",
               "level": 3,
               "children": []
             }
@@ -29859,27 +29895,45 @@
             {
               "id": "cat-52-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/standard",
+              "name": "Gegenstromanlagen",
+              "slug": "gegenstromanlagen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/gegenstromanlagen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/standard"
             },
             {
               "id": "cat-52-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/premium",
+              "name": "Massagedüsen",
+              "slug": "massageduesen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/massageduesen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/premium"
             },
             {
               "id": "cat-52-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/sets-sparpakete",
+              "name": "Poolheizungen",
+              "slug": "poolheizungen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/poolheizungen",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/sets-sparpakete"
+            },
+            {
+              "id": "cat-52-03-04",
+              "menu_order": 4,
+              "name": "Wasserfälle",
+              "slug": "wasserfaelle",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/wasserfaelle",
               "level": 3,
               "children": []
             }
@@ -29896,27 +29950,229 @@
             {
               "id": "cat-52-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/standard",
+              "name": "Chlor & Desinfektion",
+              "slug": "chlor-und-desinfektion",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/chlor-und-desinfektion",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/standard"
             },
             {
               "id": "cat-52-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/premium",
+              "name": "pH-Regulierung",
+              "slug": "ph-regulierung",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/ph-regulierung",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/premium"
             },
             {
               "id": "cat-52-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/sets-sparpakete",
+              "name": "Algizide",
+              "slug": "algizide",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/algizide",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/sets-sparpakete"
+            },
+            {
+              "id": "cat-52-04-04",
+              "menu_order": 4,
+              "name": "Wassertests",
+              "slug": "wassertests",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/wassertests",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-05",
+          "menu_order": 5,
+          "name": "Reinigung & Roboter",
+          "slug": "reinigung-und-roboter",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/reinigung-und-roboter",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-05-01",
+              "menu_order": 1,
+              "name": "Poolroboter",
+              "slug": "poolroboter",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/reinigung-und-roboter/poolroboter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-05-02",
+              "menu_order": 2,
+              "name": "Kescher",
+              "slug": "kescher",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/reinigung-und-roboter/kescher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-05-03",
+              "menu_order": 3,
+              "name": "Bürsten",
+              "slug": "buersten",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/reinigung-und-roboter/buersten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-05-04",
+              "menu_order": 4,
+              "name": "Sauger",
+              "slug": "sauger",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/reinigung-und-roboter/sauger",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-06",
+          "menu_order": 6,
+          "name": "Abdeckungen",
+          "slug": "abdeckungen",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/abdeckungen",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-06-01",
+              "menu_order": 1,
+              "name": "Solarabdeckungen",
+              "slug": "solarabdeckungen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/abdeckungen/solarabdeckungen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-06-02",
+              "menu_order": 2,
+              "name": "Winterplanen",
+              "slug": "winterplanen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/abdeckungen/winterplanen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-06-03",
+              "menu_order": 3,
+              "name": "Sicherheitsabdeckungen",
+              "slug": "sicherheitsabdeckungen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/abdeckungen/sicherheitsabdeckungen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-06-04",
+              "menu_order": 4,
+              "name": "Aufroller",
+              "slug": "aufroller",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/abdeckungen/aufroller",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-07",
+          "menu_order": 7,
+          "name": "Planschbecken & Kinder",
+          "slug": "planschbecken-und-kinder",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/planschbecken-und-kinder",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-07-01",
+              "menu_order": 1,
+              "name": "Planschbecken",
+              "slug": "planschbecken",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/planschbecken-und-kinder/planschbecken",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-07-02",
+              "menu_order": 2,
+              "name": "Aufblasbare Pools",
+              "slug": "aufblasbare-pools",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/planschbecken-und-kinder/aufblasbare-pools",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-07-03",
+              "menu_order": 3,
+              "name": "Wasserspielzeug",
+              "slug": "wasserspielzeug",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/planschbecken-und-kinder/wasserspielzeug",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-07-04",
+              "menu_order": 4,
+              "name": "Schwimmhilfen",
+              "slug": "schwimmhilfen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/planschbecken-und-kinder/schwimmhilfen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-52-08",
+          "menu_order": 8,
+          "name": "Einwinterung",
+          "slug": "einwinterung",
+          "url": "/kategorie/pool-spa-wellness-ausstattung/einwinterung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-52-08-01",
+              "menu_order": 1,
+              "name": "Frostschutz",
+              "slug": "frostschutz",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/einwinterung/frostschutz",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-08-02",
+              "menu_order": 2,
+              "name": "Poolkissen",
+              "slug": "poolkissen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/einwinterung/poolkissen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-08-03",
+              "menu_order": 3,
+              "name": "Ventile & Stopfen",
+              "slug": "ventile-und-stopfen",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/einwinterung/ventile-und-stopfen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-52-08-04",
+              "menu_order": 4,
+              "name": "Einwinterungssets",
+              "slug": "einwinterungssets",
+              "url": "/kategorie/pool-spa-wellness-ausstattung/einwinterung/einwinterungssets",
               "level": 3,
               "children": []
             }

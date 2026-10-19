@@ -197,6 +197,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             category.id === "cat-35" ||
             category.id === "cat-24" ||
             category.id === "cat-13" ||
+            category.id === "cat-03" ||
             category.id === "cat-05" ||
             category.id === "cat-54" ||
             category.id === "cat-55" ||

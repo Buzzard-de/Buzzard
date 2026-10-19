@@ -13000,5 +13000,197 @@
     "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/popcornmaker/",
     "permanent": true,
     "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/camas-r-temizligi/standard/",
+    "to": "/kategorie/reinigungsprodukte/camas-r-temizligi/waschmittel/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/camas-r-temizligi/premium/",
+    "to": "/kategorie/reinigungsprodukte/camas-r-temizligi/weichspueler/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/camas-r-temizligi/sets/",
+    "to": "/kategorie/reinigungsprodukte/camas-r-temizligi/fleckentferner/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/camas-r-temizligi/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/camas-r-temizligi/waescheduft/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/bulas-k-temizligi/standard/",
+    "to": "/kategorie/reinigungsprodukte/bulas-k-temizligi/spuelmittel/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/bulas-k-temizligi/premium/",
+    "to": "/kategorie/reinigungsprodukte/bulas-k-temizligi/tabs/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/bulas-k-temizligi/sets/",
+    "to": "/kategorie/reinigungsprodukte/bulas-k-temizligi/klarspueler/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/bulas-k-temizligi/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/bulas-k-temizligi/maschinensalz/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/haus-temizligi/standard/",
+    "to": "/kategorie/reinigungsprodukte/haus-temizligi/allzweckreiniger/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/haus-temizligi/premium/",
+    "to": "/kategorie/reinigungsprodukte/haus-temizligi/bodenreiniger/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/haus-temizligi/sets/",
+    "to": "/kategorie/reinigungsprodukte/haus-temizligi/glasreiniger/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/haus-temizligi/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/haus-temizligi/moebelpflege/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kueche-temizligi/standard/",
+    "to": "/kategorie/reinigungsprodukte/kueche-temizligi/entfetter/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kueche-temizligi/premium/",
+    "to": "/kategorie/reinigungsprodukte/kueche-temizligi/edelstahlpflege/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kueche-temizligi/sets/",
+    "to": "/kategorie/reinigungsprodukte/kueche-temizligi/spuelbeckenpflege/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kueche-temizligi/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/kueche-temizligi/backofenreiniger/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/banyo-und-wc/standard/",
+    "to": "/kategorie/reinigungsprodukte/banyo-und-wc/wc-reiniger/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/banyo-und-wc/premium/",
+    "to": "/kategorie/reinigungsprodukte/banyo-und-wc/kalkloeser/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/banyo-und-wc/sets/",
+    "to": "/kategorie/reinigungsprodukte/banyo-und-wc/duschkabinenpflege/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/banyo-und-wc/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/banyo-und-wc/lufterfrischer/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/professionell-reinigung/standard/",
+    "to": "/kategorie/reinigungsprodukte/professionell-reinigung/konzentrate/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/professionell-reinigung/premium/",
+    "to": "/kategorie/reinigungsprodukte/professionell-reinigung/desinfektion/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/professionell-reinigung/sets/",
+    "to": "/kategorie/reinigungsprodukte/professionell-reinigung/industriepackungen/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/professionell-reinigung/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/professionell-reinigung/dosiersysteme/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/standard/",
+    "to": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/kuechenrolle/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/premium/",
+    "to": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/toilettenpapier/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/sets/",
+    "to": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/taschentuecher/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/kag-t-ueruenleri/wischtuecher/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/standard/",
+    "to": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/besen/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/premium/",
+    "to": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/eimer/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/sets/",
+    "to": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/wischmops/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/zubehoer/",
+    "to": "/kategorie/reinigungsprodukte/reinigung-ekipmanlar/schwaemme/",
+    "permanent": true,
+    "note": "Cleaning placeholder L3 replaced with a real product group"
   }
 ]

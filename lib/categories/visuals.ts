@@ -7,7 +7,7 @@ export function getMainCategoryVisual(categoryId: string): string {
   return getCategoryVisual(categoryId);
 }
 
-/** Construction-machine and livestock L2 hubs have their own photographs. */
+/** Automotive, construction-machine, and livestock L2 hubs have photographs. */
 export function hasHubSubcategoryVisual(categoryId: string): boolean {
-  return /^cat-5[56]-\d{2}$/.test(categoryId);
+  return /^cat-05-2[1-7]$/.test(categoryId) || /^cat-5[56]-\d{2}$/.test(categoryId);
 }

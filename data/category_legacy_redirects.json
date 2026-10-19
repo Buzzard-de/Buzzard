@@ -16192,5 +16192,173 @@
     "to": "/kategorie/computer-und-gaming/usb-aksesuarlar/verlaengerungen/",
     "permanent": true,
     "note": "Computer IT placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/el-sanatlar/standard/",
+    "to": "/kategorie/hobby-und-freizeit/el-sanatlar/stricken/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/el-sanatlar/premium/",
+    "to": "/kategorie/hobby-und-freizeit/el-sanatlar/haekeln/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/el-sanatlar/sets/",
+    "to": "/kategorie/hobby-und-freizeit/el-sanatlar/stickerei/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/el-sanatlar/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/el-sanatlar/perlen/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/modelcilik/standard/",
+    "to": "/kategorie/hobby-und-freizeit/modelcilik/modellautos/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/modelcilik/premium/",
+    "to": "/kategorie/hobby-und-freizeit/modelcilik/flugmodelle/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/modelcilik/sets/",
+    "to": "/kategorie/hobby-und-freizeit/modelcilik/schiffsmodelle/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/modelcilik/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/modelcilik/farben-und-werkzeug/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/koleksiyon/standard/",
+    "to": "/kategorie/hobby-und-freizeit/koleksiyon/briefmarken/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/koleksiyon/premium/",
+    "to": "/kategorie/hobby-und-freizeit/koleksiyon/muenzen/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/koleksiyon/sets/",
+    "to": "/kategorie/hobby-und-freizeit/koleksiyon/sammelkarten/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/koleksiyon/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/koleksiyon/vitrinen/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/standard/",
+    "to": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/saiten/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/premium/",
+    "to": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/plektren/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/sets/",
+    "to": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/stimmgeraete/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/muezik-aksesuarlar/kabel/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/puzzle/standard/",
+    "to": "/kategorie/hobby-und-freizeit/puzzle/1000-teile/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/puzzle/premium/",
+    "to": "/kategorie/hobby-und-freizeit/puzzle/3d-puzzles/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/puzzle/sets/",
+    "to": "/kategorie/hobby-und-freizeit/puzzle/kinderpuzzles/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/puzzle/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/puzzle/puzzle-zubehoer/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/masa-oyunlar/standard/",
+    "to": "/kategorie/hobby-und-freizeit/masa-oyunlar/familienspiele/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/masa-oyunlar/premium/",
+    "to": "/kategorie/hobby-und-freizeit/masa-oyunlar/strategiespiele/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/masa-oyunlar/sets/",
+    "to": "/kategorie/hobby-und-freizeit/masa-oyunlar/kartenspiele/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/masa-oyunlar/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/masa-oyunlar/wuerfel-und-tokens/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/kendin-yap/standard/",
+    "to": "/kategorie/hobby-und-freizeit/kendin-yap/heissklebepistolen/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/kendin-yap/premium/",
+    "to": "/kategorie/hobby-und-freizeit/kendin-yap/bastelscheren/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/kendin-yap/sets/",
+    "to": "/kategorie/hobby-und-freizeit/kendin-yap/holzstaebchen/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/hobby-und-freizeit/kendin-yap/zubehoer/",
+    "to": "/kategorie/hobby-und-freizeit/kendin-yap/bastelsets/",
+    "permanent": true,
+    "note": "Hobby placeholder L3 replaced with a real product group"
   }
 ]

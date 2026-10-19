@@ -11464,5 +11464,77 @@
     "to": "/kategorie/apotheke-medizinprodukte/pflegehilfsmittel/gehhilfen/",
     "permanent": true,
     "note": "Pharmacy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/standard/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/aufstellpools/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/premium/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/filteranlagen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/sets-sparpakete/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/pool-schwimmbad/pumpen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/standard/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/whirlpools/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/premium/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/saunaoefen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/sets-sparpakete/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/spa-sauna/infrarotkabinen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/standard/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/gegenstromanlagen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/premium/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/massageduesen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/sets-sparpakete/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/wellness-geraete/poolheizungen/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/standard/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/chlor-und-desinfektion/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/premium/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/ph-regulierung/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/sets-sparpakete/",
+    "to": "/kategorie/pool-spa-wellness-ausstattung/poolpflege/algizide/",
+    "permanent": true,
+    "note": "Pool placeholder L3 replaced with a real product group"
   }
 ]

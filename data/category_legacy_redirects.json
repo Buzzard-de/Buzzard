@@ -16360,5 +16360,77 @@
     "to": "/kategorie/hobby-und-freizeit/kendin-yap/bastelsets/",
     "permanent": true,
     "note": "Hobby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/gitarren-baesse/standard/",
+    "to": "/kategorie/musik-musikinstrumente/gitarren-baesse/e-gitarren/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/gitarren-baesse/premium/",
+    "to": "/kategorie/musik-musikinstrumente/gitarren-baesse/westerngitarren/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/gitarren-baesse/sets-sparpakete/",
+    "to": "/kategorie/musik-musikinstrumente/gitarren-baesse/baesse/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/tasteninstrumente/standard/",
+    "to": "/kategorie/musik-musikinstrumente/tasteninstrumente/digitalpianos/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/tasteninstrumente/premium/",
+    "to": "/kategorie/musik-musikinstrumente/tasteninstrumente/keyboards/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/tasteninstrumente/sets-sparpakete/",
+    "to": "/kategorie/musik-musikinstrumente/tasteninstrumente/synthesizer/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/standard/",
+    "to": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/e-drums/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/premium/",
+    "to": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/akustik-sets/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/sets-sparpakete/",
+    "to": "/kategorie/musik-musikinstrumente/schlagzeug-percussion/cymbals/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/musikzubehoer/standard/",
+    "to": "/kategorie/musik-musikinstrumente/musikzubehoer/saiten/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/musikzubehoer/premium/",
+    "to": "/kategorie/musik-musikinstrumente/musikzubehoer/plektren/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/musik-musikinstrumente/musikzubehoer/sets-sparpakete/",
+    "to": "/kategorie/musik-musikinstrumente/musikzubehoer/kapodaster/",
+    "permanent": true,
+    "note": "Music placeholder L3 replaced with a real product group"
   }
 ]

@@ -28957,27 +28957,45 @@
             {
               "id": "cat-47-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kinder-schule/schulbedarf/standard",
+              "name": "Hefte",
+              "slug": "hefte",
+              "url": "/kategorie/kinder-schule/schulbedarf/hefte",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kinder-schule/schulbedarf/standard"
             },
             {
               "id": "cat-47-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kinder-schule/schulbedarf/premium",
+              "name": "Stifte",
+              "slug": "stifte",
+              "url": "/kategorie/kinder-schule/schulbedarf/stifte",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kinder-schule/schulbedarf/premium"
             },
             {
               "id": "cat-47-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kinder-schule/schulbedarf/sets-sparpakete",
+              "name": "Lineale",
+              "slug": "lineale",
+              "url": "/kategorie/kinder-schule/schulbedarf/lineale",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kinder-schule/schulbedarf/sets-sparpakete"
+            },
+            {
+              "id": "cat-47-01-04",
+              "menu_order": 4,
+              "name": "Mappen",
+              "slug": "mappen",
+              "url": "/kategorie/kinder-schule/schulbedarf/mappen",
               "level": 3,
               "children": []
             }
@@ -28994,27 +29012,45 @@
             {
               "id": "cat-47-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kinder-schule/lernspiele/standard",
+              "name": "Rechenspiele",
+              "slug": "rechenspiele",
+              "url": "/kategorie/kinder-schule/lernspiele/rechenspiele",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kinder-schule/lernspiele/standard"
             },
             {
               "id": "cat-47-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kinder-schule/lernspiele/premium",
+              "name": "Sprachspiele",
+              "slug": "sprachspiele",
+              "url": "/kategorie/kinder-schule/lernspiele/sprachspiele",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kinder-schule/lernspiele/premium"
             },
             {
               "id": "cat-47-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kinder-schule/lernspiele/sets-sparpakete",
+              "name": "Quizspiele",
+              "slug": "quizspiele",
+              "url": "/kategorie/kinder-schule/lernspiele/quizspiele",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kinder-schule/lernspiele/sets-sparpakete"
+            },
+            {
+              "id": "cat-47-02-04",
+              "menu_order": 4,
+              "name": "Lernkarten",
+              "slug": "lernkarten",
+              "url": "/kategorie/kinder-schule/lernspiele/lernkarten",
               "level": 3,
               "children": []
             }
@@ -29031,27 +29067,45 @@
             {
               "id": "cat-47-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kinder-schule/schulrucksaecke/standard",
+              "name": "Schulrucksäcke",
+              "slug": "schulrucksaecke",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/schulrucksaecke",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kinder-schule/schulrucksaecke/standard"
             },
             {
               "id": "cat-47-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kinder-schule/schulrucksaecke/premium",
+              "name": "Federmappen",
+              "slug": "federmappen",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/federmappen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kinder-schule/schulrucksaecke/premium"
             },
             {
               "id": "cat-47-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kinder-schule/schulrucksaecke/sets-sparpakete",
+              "name": "Turnbeutel",
+              "slug": "turnbeutel",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/turnbeutel",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kinder-schule/schulrucksaecke/sets-sparpakete"
+            },
+            {
+              "id": "cat-47-03-04",
+              "menu_order": 4,
+              "name": "Schlamper",
+              "slug": "schlamper",
+              "url": "/kategorie/kinder-schule/schulrucksaecke/schlamper",
               "level": 3,
               "children": []
             }
@@ -29068,27 +29122,229 @@
             {
               "id": "cat-47-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kinder-schule/kinderaccessoires/standard",
+              "name": "Haarspangen",
+              "slug": "haarspangen",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/haarspangen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kinder-schule/kinderaccessoires/standard"
             },
             {
               "id": "cat-47-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kinder-schule/kinderaccessoires/premium",
+              "name": "Kinderschals",
+              "slug": "kinderschals",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/kinderschals",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kinder-schule/kinderaccessoires/premium"
             },
             {
               "id": "cat-47-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kinder-schule/kinderaccessoires/sets-sparpakete",
+              "name": "Caps",
+              "slug": "caps",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/caps",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kinder-schule/kinderaccessoires/sets-sparpakete"
+            },
+            {
+              "id": "cat-47-04-04",
+              "menu_order": 4,
+              "name": "Kinderuhren",
+              "slug": "kinderuhren",
+              "url": "/kategorie/kinder-schule/kinderaccessoires/kinderuhren",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-05",
+          "menu_order": 5,
+          "name": "Brotdosen & Trinken",
+          "slug": "brotdosen-und-trinken",
+          "url": "/kategorie/kinder-schule/brotdosen-und-trinken",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-05-01",
+              "menu_order": 1,
+              "name": "Brotdosen",
+              "slug": "brotdosen",
+              "url": "/kategorie/kinder-schule/brotdosen-und-trinken/brotdosen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-05-02",
+              "menu_order": 2,
+              "name": "Trinkflaschen",
+              "slug": "trinkflaschen",
+              "url": "/kategorie/kinder-schule/brotdosen-und-trinken/trinkflaschen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-05-03",
+              "menu_order": 3,
+              "name": "Ice-Packs",
+              "slug": "ice-packs",
+              "url": "/kategorie/kinder-schule/brotdosen-und-trinken/ice-packs",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-05-04",
+              "menu_order": 4,
+              "name": "Besteck-Sets",
+              "slug": "besteck-sets",
+              "url": "/kategorie/kinder-schule/brotdosen-und-trinken/besteck-sets",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-06",
+          "menu_order": 6,
+          "name": "Pause & Sport",
+          "slug": "pause-und-sport",
+          "url": "/kategorie/kinder-schule/pause-und-sport",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-06-01",
+              "menu_order": 1,
+              "name": "Sportbeutel",
+              "slug": "sportbeutel",
+              "url": "/kategorie/kinder-schule/pause-und-sport/sportbeutel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-06-02",
+              "menu_order": 2,
+              "name": "Trinkflaschen Sport",
+              "slug": "sport-trinkflaschen",
+              "url": "/kategorie/kinder-schule/pause-und-sport/sport-trinkflaschen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-06-03",
+              "menu_order": 3,
+              "name": "Sprungseile",
+              "slug": "sprungseile",
+              "url": "/kategorie/kinder-schule/pause-und-sport/sprungseile",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-06-04",
+              "menu_order": 4,
+              "name": "Bälle Pause",
+              "slug": "baelle-pause",
+              "url": "/kategorie/kinder-schule/pause-und-sport/baelle-pause",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-07",
+          "menu_order": 7,
+          "name": "Kunstunterricht",
+          "slug": "kunstunterricht",
+          "url": "/kategorie/kinder-schule/kunstunterricht",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-07-01",
+              "menu_order": 1,
+              "name": "Malfarben",
+              "slug": "malfarben",
+              "url": "/kategorie/kinder-schule/kunstunterricht/malfarben",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-07-02",
+              "menu_order": 2,
+              "name": "Pinsel",
+              "slug": "pinsel",
+              "url": "/kategorie/kinder-schule/kunstunterricht/pinsel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-07-03",
+              "menu_order": 3,
+              "name": "Tonpapier",
+              "slug": "tonpapier",
+              "url": "/kategorie/kinder-schule/kunstunterricht/tonpapier",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-07-04",
+              "menu_order": 4,
+              "name": "Knete Schule",
+              "slug": "knete-schule",
+              "url": "/kategorie/kinder-schule/kunstunterricht/knete-schule",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-47-08",
+          "menu_order": 8,
+          "name": "Etiketten & Ordnung",
+          "slug": "etiketten-und-ordnung",
+          "url": "/kategorie/kinder-schule/etiketten-und-ordnung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-47-08-01",
+              "menu_order": 1,
+              "name": "Namensaufkleber",
+              "slug": "namensaufkleber",
+              "url": "/kategorie/kinder-schule/etiketten-und-ordnung/namensaufkleber",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-08-02",
+              "menu_order": 2,
+              "name": "Heftaufkleber",
+              "slug": "heftaufkleber",
+              "url": "/kategorie/kinder-schule/etiketten-und-ordnung/heftaufkleber",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-08-03",
+              "menu_order": 3,
+              "name": "Stundenpläne",
+              "slug": "stundenplaene",
+              "url": "/kategorie/kinder-schule/etiketten-und-ordnung/stundenplaene",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-47-08-04",
+              "menu_order": 4,
+              "name": "Buchhüllen",
+              "slug": "buchhuellen",
+              "url": "/kategorie/kinder-schule/etiketten-und-ordnung/buchhuellen",
               "level": 3,
               "children": []
             }

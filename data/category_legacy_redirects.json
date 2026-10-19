@@ -11872,5 +11872,77 @@
     "to": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/tischdeko/",
     "permanent": true,
     "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulbedarf/standard/",
+    "to": "/kategorie/kinder-schule/schulbedarf/hefte/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulbedarf/premium/",
+    "to": "/kategorie/kinder-schule/schulbedarf/stifte/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulbedarf/sets-sparpakete/",
+    "to": "/kategorie/kinder-schule/schulbedarf/lineale/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/lernspiele/standard/",
+    "to": "/kategorie/kinder-schule/lernspiele/rechenspiele/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/lernspiele/premium/",
+    "to": "/kategorie/kinder-schule/lernspiele/sprachspiele/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/lernspiele/sets-sparpakete/",
+    "to": "/kategorie/kinder-schule/lernspiele/quizspiele/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulrucksaecke/standard/",
+    "to": "/kategorie/kinder-schule/schulrucksaecke/schulrucksaecke/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulrucksaecke/premium/",
+    "to": "/kategorie/kinder-schule/schulrucksaecke/federmappen/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/schulrucksaecke/sets-sparpakete/",
+    "to": "/kategorie/kinder-schule/schulrucksaecke/turnbeutel/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/kinderaccessoires/standard/",
+    "to": "/kategorie/kinder-schule/kinderaccessoires/haarspangen/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/kinderaccessoires/premium/",
+    "to": "/kategorie/kinder-schule/kinderaccessoires/kinderschals/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kinder-schule/kinderaccessoires/sets-sparpakete/",
+    "to": "/kategorie/kinder-schule/kinderaccessoires/caps/",
+    "permanent": true,
+    "note": "Kids-school placeholder L3 replaced with a real product group"
   }
 ]

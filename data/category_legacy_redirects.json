@@ -11272,5 +11272,125 @@
     "to": "/kategorie/koerperpflege/deodorants-koerperhygiene/antitranspirant/",
     "permanent": true,
     "note": "Body-care placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/standard/",
+    "to": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/fitnessbaender/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/premium/",
+    "to": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/yogamatten/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/sets/",
+    "to": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/hanteln/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/zubehoer/",
+    "to": "/kategorie/gesundheit-und-wellness/fitness-und-wellness/faszienrollen/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/standard/",
+    "to": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massagegeraete/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/premium/",
+    "to": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massageoele/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/sets/",
+    "to": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/massagekissen/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/zubehoer/",
+    "to": "/kategorie/gesundheit-und-wellness/masaj-ueruenleri/hot-stone/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/standard/",
+    "to": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/schlafmasken/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/premium/",
+    "to": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/ohrstoepsel/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/sets/",
+    "to": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/gewichtsdecken/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/zubehoer/",
+    "to": "/kategorie/gesundheit-und-wellness/uyku-und-rahatlama/nackenkissen/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/standard/",
+    "to": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/blutdruckmessgeraete/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/premium/",
+    "to": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/fieberthermometer/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/sets/",
+    "to": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/pulsoximeter/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/zubehoer/",
+    "to": "/kategorie/gesundheit-und-wellness/kisisel-pflege-aksesuarlar/personenwaagen/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/standard/",
+    "to": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/luftbefeuchter/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/premium/",
+    "to": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/aroma-diffuser/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/sets/",
+    "to": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/salzinhalatoren/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/zubehoer/",
+    "to": "/kategorie/gesundheit-und-wellness/evde-pflege-ueruenleri/tageslichtlampen/",
+    "permanent": true,
+    "note": "Wellness placeholder L3 replaced with a real product group"
   }
 ]

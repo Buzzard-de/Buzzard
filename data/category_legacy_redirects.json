@@ -16504,5 +16504,77 @@
     "to": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/jahresabos/",
     "permanent": true,
     "note": "Books media placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/standard/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/naehmaschinen-zubehoer/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/premium/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/garne/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/sets-sparpakete/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/stoffe/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/standard/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/papierbasteln/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/premium/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/klebstoffe/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/sets-sparpakete/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/stempel/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/standard/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/cutter/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/premium/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/schneidematten/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/sets-sparpakete/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/lineale/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/standard/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/kinder-sets/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/premium/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/schmuck-sets/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/sets-sparpakete/",
+    "to": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/naeh-sets/",
+    "permanent": true,
+    "note": "Craft DIY placeholder L3 replaced with a real product group"
   }
 ]

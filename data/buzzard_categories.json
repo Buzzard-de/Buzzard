@@ -31042,27 +31042,45 @@
             {
               "id": "cat-51-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/standard",
+              "name": "Nähmaschinen-Zubehör",
+              "slug": "naehmaschinen-zubehoer",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/naehmaschinen-zubehoer",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/standard"
             },
             {
               "id": "cat-51-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/premium",
+              "name": "Garne",
+              "slug": "garne",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/garne",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/premium"
             },
             {
               "id": "cat-51-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/sets-sparpakete",
+              "name": "Stoffe",
+              "slug": "stoffe",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/stoffe",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/sets-sparpakete"
+            },
+            {
+              "id": "cat-51-01-04",
+              "menu_order": 4,
+              "name": "Nadeln",
+              "slug": "nadeln",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/naehen-stricken/nadeln",
               "level": 3,
               "children": []
             }
@@ -31079,27 +31097,45 @@
             {
               "id": "cat-51-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/standard",
+              "name": "Papierbasteln",
+              "slug": "papierbasteln",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/papierbasteln",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/standard"
             },
             {
               "id": "cat-51-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/premium",
+              "name": "Klebstoffe",
+              "slug": "klebstoffe",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/klebstoffe",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/premium"
             },
             {
               "id": "cat-51-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/sets-sparpakete",
+              "name": "Stempel",
+              "slug": "stempel",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/stempel",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/sets-sparpakete"
+            },
+            {
+              "id": "cat-51-02-04",
+              "menu_order": 4,
+              "name": "Dekobänder",
+              "slug": "dekobaender",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/basteln-hobby/dekobaender",
               "level": 3,
               "children": []
             }
@@ -31116,27 +31152,45 @@
             {
               "id": "cat-51-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/standard",
+              "name": "Cutter",
+              "slug": "cutter",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/cutter",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/standard"
             },
             {
               "id": "cat-51-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/premium",
+              "name": "Schneidematten",
+              "slug": "schneidematten",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/schneidematten",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/premium"
             },
             {
               "id": "cat-51-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/sets-sparpakete",
+              "name": "Lineale",
+              "slug": "lineale",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/lineale",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/sets-sparpakete"
+            },
+            {
+              "id": "cat-51-03-04",
+              "menu_order": 4,
+              "name": "Heißklebepistolen",
+              "slug": "heissklebepistolen",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/diy-werkzeug/heissklebepistolen",
               "level": 3,
               "children": []
             }
@@ -31153,27 +31207,229 @@
             {
               "id": "cat-51-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/standard",
+              "name": "Kinder-Sets",
+              "slug": "kinder-sets",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/kinder-sets",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/standard"
             },
             {
               "id": "cat-51-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/premium",
+              "name": "Schmuck-Sets",
+              "slug": "schmuck-sets",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/schmuck-sets",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/premium"
             },
             {
               "id": "cat-51-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/sets-sparpakete",
+              "name": "Näh-Sets",
+              "slug": "naeh-sets",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/naeh-sets",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/sets-sparpakete"
+            },
+            {
+              "id": "cat-51-04-04",
+              "menu_order": 4,
+              "name": "Mal-Sets",
+              "slug": "mal-sets",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/mal-sets",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-05",
+          "menu_order": 5,
+          "name": "Stoffe & Textilien",
+          "slug": "stoffe-und-textilien",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/stoffe-und-textilien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-05-01",
+              "menu_order": 1,
+              "name": "Baumwolle",
+              "slug": "baumwolle",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/stoffe-und-textilien/baumwolle",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-05-02",
+              "menu_order": 2,
+              "name": "Jersey",
+              "slug": "jersey",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/stoffe-und-textilien/jersey",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-05-03",
+              "menu_order": 3,
+              "name": "Filz",
+              "slug": "filz",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/stoffe-und-textilien/filz",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-05-04",
+              "menu_order": 4,
+              "name": "Lederreste",
+              "slug": "lederreste",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/stoffe-und-textilien/lederreste",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-06",
+          "menu_order": 6,
+          "name": "Papierarbeiten",
+          "slug": "papierarbeiten",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/papierarbeiten",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-06-01",
+              "menu_order": 1,
+              "name": "Origami",
+              "slug": "origami",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/papierarbeiten/origami",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-06-02",
+              "menu_order": 2,
+              "name": "Kartenbasteln",
+              "slug": "kartenbasteln",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/papierarbeiten/kartenbasteln",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-06-03",
+              "menu_order": 3,
+              "name": "Scrapbooking",
+              "slug": "scrapbooking",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/papierarbeiten/scrapbooking",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-06-04",
+              "menu_order": 4,
+              "name": "Stanzformen",
+              "slug": "stanzformen",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/papierarbeiten/stanzformen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-07",
+          "menu_order": 7,
+          "name": "Schmuckbasteln",
+          "slug": "schmuckbasteln",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/schmuckbasteln",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-07-01",
+              "menu_order": 1,
+              "name": "Zangen",
+              "slug": "zangen",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/schmuckbasteln/zangen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-07-02",
+              "menu_order": 2,
+              "name": "Perlen",
+              "slug": "perlen",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/schmuckbasteln/perlen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-07-03",
+              "menu_order": 3,
+              "name": "Verschlüsse",
+              "slug": "verschluesse",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/schmuckbasteln/verschluesse",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-07-04",
+              "menu_order": 4,
+              "name": "Draht",
+              "slug": "draht",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/schmuckbasteln/draht",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-51-08",
+          "menu_order": 8,
+          "name": "Töpfern",
+          "slug": "toepfern",
+          "url": "/kategorie/kunsthandwerk-naehen-diy/toepfern",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-51-08-01",
+              "menu_order": 1,
+              "name": "Modelliermasse",
+              "slug": "modelliermasse",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/toepfern/modelliermasse",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-08-02",
+              "menu_order": 2,
+              "name": "Töpferwerkzeug",
+              "slug": "toepferwerkzeug",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/toepfern/toepferwerkzeug",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-08-03",
+              "menu_order": 3,
+              "name": "Glasuren",
+              "slug": "glasuren",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/toepfern/glasuren",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-51-08-04",
+              "menu_order": 4,
+              "name": "Brennhilfen",
+              "slug": "brennhilfen",
+              "url": "/kategorie/kunsthandwerk-naehen-diy/toepfern/brennhilfen",
               "level": 3,
               "children": []
             }

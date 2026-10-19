@@ -13708,5 +13708,281 @@
     "to": "/kategorie/tierfutter/oezel-beslenme/veterinary/",
     "permanent": true,
     "note": "Pet food placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/budama-makas/",
+    "to": "/kategorie/garten/garten-aletleri/gartenscheren/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/capa/",
+    "to": "/kategorie/garten/garten-aletleri/hacken/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/kuerek/",
+    "to": "/kategorie/garten/garten-aletleri/spaten/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/t-rm-k/",
+    "to": "/kategorie/garten/garten-aletleri/rechen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/garten-testeresi/",
+    "to": "/kategorie/garten/garten-aletleri/gartensaegen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-aletleri/el-alet-seti/",
+    "to": "/kategorie/garten/garten-aletleri/handwerkzeug-sets/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/sulama-und-wasser-depolama/garten-hortumu/",
+    "to": "/kategorie/garten/sulama-und-wasser-depolama/gartenschlaeuche/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/sulama-und-wasser-depolama/sulama-tabancas/",
+    "to": "/kategorie/garten/sulama-und-wasser-depolama/brausen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/sulama-und-wasser-depolama/damla-sulama/",
+    "to": "/kategorie/garten/sulama-und-wasser-depolama/tropfbewaesserung/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/sulama-und-wasser-depolama/wasser-tank/",
+    "to": "/kategorie/garten/sulama-und-wasser-depolama/wassertanks/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/sulama-und-wasser-depolama/pompa/",
+    "to": "/kategorie/garten/sulama-und-wasser-depolama/pumpen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-musluk/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-haehne/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-vana/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-ventile/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-filtre/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-filter/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-kapak/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-deckel/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-kafes/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-kaefige/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-palet/",
+    "to": "/kategorie/garten/ibc-tanklar-und-aksesuarlar/ibc-paletten/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/yagmur-suyu-toplama/yagmur-varili/",
+    "to": "/kategorie/garten/yagmur-suyu-toplama/regenfaesser/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/yagmur-suyu-toplama/yagmur-suyu-tank/",
+    "to": "/kategorie/garten/yagmur-suyu-toplama/regenwassertanks/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/yagmur-suyu-toplama/oluk-seti/",
+    "to": "/kategorie/garten/yagmur-suyu-toplama/dachrinnen-sets/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/yagmur-suyu-toplama/yagmur-filtresi/",
+    "to": "/kategorie/garten/yagmur-suyu-toplama/regenfilter/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/yagmur-suyu-toplama/toplama-kiti/",
+    "to": "/kategorie/garten/yagmur-suyu-toplama/sammelkits/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/seralar/standard/",
+    "to": "/kategorie/garten/seralar/foliengewaechshaeuser/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/seralar/professionell/",
+    "to": "/kategorie/garten/seralar/glasgewaechshaeuser/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/seralar/set/",
+    "to": "/kategorie/garten/seralar/anzuchthaeuser/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/seralar/zubehoer/",
+    "to": "/kategorie/garten/seralar/gewaechshaus-zubehoer/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/tohum-und-yetistirme/standard/",
+    "to": "/kategorie/garten/tohum-und-yetistirme/gemuesesamen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/tohum-und-yetistirme/professionell/",
+    "to": "/kategorie/garten/tohum-und-yetistirme/blumensamen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/tohum-und-yetistirme/set/",
+    "to": "/kategorie/garten/tohum-und-yetistirme/kraeutersamen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/tohum-und-yetistirme/zubehoer/",
+    "to": "/kategorie/garten/tohum-und-yetistirme/anzuchtsets/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/saks-und-dikim/standard/",
+    "to": "/kategorie/garten/saks-und-dikim/blumentoepfe/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/saks-und-dikim/professionell/",
+    "to": "/kategorie/garten/saks-und-dikim/pflanzkaesten/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/saks-und-dikim/set/",
+    "to": "/kategorie/garten/saks-und-dikim/uebertoepfe/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/saks-und-dikim/zubehoer/",
+    "to": "/kategorie/garten/saks-und-dikim/pflanzerde/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-mobilyalar/standard/",
+    "to": "/kategorie/garten/garten-mobilyalar/gartenstuehle/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-mobilyalar/professionell/",
+    "to": "/kategorie/garten/garten-mobilyalar/gartentische/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-mobilyalar/set/",
+    "to": "/kategorie/garten/garten-mobilyalar/lounges/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/garten-mobilyalar/zubehoer/",
+    "to": "/kategorie/garten/garten-mobilyalar/sonnenschirme/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/barbekue-und-mangal/standard/",
+    "to": "/kategorie/garten/barbekue-und-mangal/gasgrills/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/barbekue-und-mangal/professionell/",
+    "to": "/kategorie/garten/barbekue-und-mangal/holzkohlegrills/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/barbekue-und-mangal/set/",
+    "to": "/kategorie/garten/barbekue-und-mangal/grillzubehoer/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/barbekue-und-mangal/zubehoer/",
+    "to": "/kategorie/garten/barbekue-und-mangal/smoker/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/bitki-bak-m/standard/",
+    "to": "/kategorie/garten/bitki-bak-m/duenger/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/bitki-bak-m/professionell/",
+    "to": "/kategorie/garten/bitki-bak-m/pflanzenschutz/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/bitki-bak-m/set/",
+    "to": "/kategorie/garten/bitki-bak-m/erde-und-substrat/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/garten/bitki-bak-m/zubehoer/",
+    "to": "/kategorie/garten/bitki-bak-m/giesskannen/",
+    "permanent": true,
+    "note": "Garden L3 replaced with a real German product group"
   }
 ]

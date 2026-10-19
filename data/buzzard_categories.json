@@ -12339,7 +12339,7 @@
         {
           "id": "cat-12-01",
           "menu_order": 1,
-          "name": "Telefon Zubehör",
+          "name": "Telefonzubehör",
           "slug": "telefon-aksesuarlar",
           "url": "/kategorie/elektronik/telefon-aksesuarlar",
           "level": 2,
@@ -12347,67 +12347,62 @@
             {
               "id": "cat-12-01-01",
               "menu_order": 1,
-              "name": "Telefon K L F",
-              "slug": "telefon-k-l-f",
-              "url": "/kategorie/elektronik/telefon-aksesuarlar/telefon-k-l-f",
+              "name": "Hüllen",
+              "slug": "huellen",
+              "url": "/kategorie/elektronik/telefon-aksesuarlar/huellen",
               "level": 3,
               "children": [],
-              "legacy_name": "Telefon Kılıfı",
-              "legacy_slug": "telefon-kilifi",
-              "legacy_slug_path": "elektronik/telefon-aksesuarlari/telefon-kilifi",
-              "legacy_url": "/kategori/elektronik/telefon-aksesuarlari/telefon-kilifi"
+              "legacy_name": "Telefon K L F",
+              "legacy_slug": "telefon-k-l-f",
+              "legacy_url": "/kategorie/elektronik/telefon-aksesuarlar/telefon-k-l-f"
             },
             {
               "id": "cat-12-01-02",
               "menu_order": 2,
-              "name": "Ekran Koruyucu",
-              "slug": "ekran-koruyucu",
-              "url": "/kategorie/elektronik/telefon-aksesuarlar/ekran-koruyucu",
+              "name": "Displayschutz",
+              "slug": "displayschutz",
+              "url": "/kategorie/elektronik/telefon-aksesuarlar/displayschutz",
               "level": 3,
               "children": [],
               "legacy_name": "Ekran Koruyucu",
               "legacy_slug": "ekran-koruyucu",
-              "legacy_slug_path": "elektronik/telefon-aksesuarlari/ekran-koruyucu",
-              "legacy_url": "/kategori/elektronik/telefon-aksesuarlari/ekran-koruyucu"
+              "legacy_url": "/kategorie/elektronik/telefon-aksesuarlar/ekran-koruyucu"
             },
             {
               "id": "cat-12-01-03",
               "menu_order": 3,
-              "name": "Telefon Tutucu",
-              "slug": "telefon-tutucu",
-              "url": "/kategorie/elektronik/telefon-aksesuarlar/telefon-tutucu",
+              "name": "Halterungen",
+              "slug": "halterungen",
+              "url": "/kategorie/elektronik/telefon-aksesuarlar/halterungen",
               "level": 3,
               "children": [],
               "legacy_name": "Telefon Tutucu",
               "legacy_slug": "telefon-tutucu",
-              "legacy_slug_path": "elektronik/telefon-aksesuarlari/telefon-tutucu",
-              "legacy_url": "/kategori/elektronik/telefon-aksesuarlari/telefon-tutucu"
+              "legacy_url": "/kategorie/elektronik/telefon-aksesuarlar/telefon-tutucu"
             },
             {
               "id": "cat-12-01-04",
               "menu_order": 4,
-              "name": "Kabel",
-              "slug": "kablo",
-              "url": "/kategorie/elektronik/telefon-aksesuarlar/kablo",
+              "name": "Ladekabel",
+              "slug": "ladekabel",
+              "url": "/kategorie/elektronik/telefon-aksesuarlar/ladekabel",
               "level": 3,
               "children": [],
-              "legacy_name": "Kablo",
+              "legacy_name": "Kabel",
               "legacy_slug": "kablo",
-              "legacy_slug_path": "elektronik/telefon-aksesuarlari/kablo",
-              "legacy_url": "/kategori/elektronik/telefon-aksesuarlari/kablo"
+              "legacy_url": "/kategorie/elektronik/telefon-aksesuarlar/kablo"
             },
             {
               "id": "cat-12-01-05",
               "menu_order": 5,
-              "name": "Laden Adaptörü",
-              "slug": "sarj-adaptoerue",
-              "url": "/kategorie/elektronik/telefon-aksesuarlar/sarj-adaptoerue",
+              "name": "Netzteile",
+              "slug": "netzteile",
+              "url": "/kategorie/elektronik/telefon-aksesuarlar/netzteile",
               "level": 3,
               "children": [],
-              "legacy_name": "Şarj Adaptörü",
-              "legacy_slug": "sarj-adaptoru",
-              "legacy_slug_path": "elektronik/telefon-aksesuarlari/sarj-adaptoru",
-              "legacy_url": "/kategori/elektronik/telefon-aksesuarlari/sarj-adaptoru"
+              "legacy_name": "Laden Adaptörü",
+              "legacy_slug": "sarj-adaptoerue",
+              "legacy_url": "/kategorie/elektronik/telefon-aksesuarlar/sarj-adaptoerue"
             }
           ],
           "legacy_name": "Telefon Aksesuarları",
@@ -12418,7 +12413,7 @@
         {
           "id": "cat-12-02",
           "menu_order": 2,
-          "name": "Computer Zubehör",
+          "name": "Computerzubehör",
           "slug": "computer-aksesuarlar",
           "url": "/kategorie/elektronik/computer-aksesuarlar",
           "level": 2,
@@ -12426,54 +12421,50 @@
             {
               "id": "cat-12-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektronik/computer-aksesuarlar/standard",
+              "name": "Mäuse",
+              "slug": "maeuse",
+              "url": "/kategorie/elektronik/computer-aksesuarlar/maeuse",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektronik/bilgisayar-aksesuarlari/standart",
-              "legacy_url": "/kategori/elektronik/bilgisayar-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektronik/computer-aksesuarlar/standard"
             },
             {
               "id": "cat-12-02-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/elektronik/computer-aksesuarlar/pro",
+              "name": "Tastaturen",
+              "slug": "tastaturen",
+              "url": "/kategorie/elektronik/computer-aksesuarlar/tastaturen",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "elektronik/bilgisayar-aksesuarlari/pro",
-              "legacy_url": "/kategori/elektronik/bilgisayar-aksesuarlari/pro"
+              "legacy_url": "/kategorie/elektronik/computer-aksesuarlar/pro"
             },
             {
               "id": "cat-12-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/elektronik/computer-aksesuarlar/set",
+              "name": "USB-Hubs",
+              "slug": "usb-hubs",
+              "url": "/kategorie/elektronik/computer-aksesuarlar/usb-hubs",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektronik/bilgisayar-aksesuarlari/set",
-              "legacy_url": "/kategori/elektronik/bilgisayar-aksesuarlari/set"
+              "legacy_url": "/kategorie/elektronik/computer-aksesuarlar/set"
             },
             {
               "id": "cat-12-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektronik/computer-aksesuarlar/zubehoer",
+              "name": "Webcams",
+              "slug": "webcams",
+              "url": "/kategorie/elektronik/computer-aksesuarlar/webcams",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektronik/bilgisayar-aksesuarlari/aksesuar",
-              "legacy_url": "/kategori/elektronik/bilgisayar-aksesuarlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektronik/computer-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Bilgisayar Aksesuarları",
@@ -12499,8 +12490,7 @@
               "children": [],
               "legacy_name": "USB-C",
               "legacy_slug": "usb-c",
-              "legacy_slug_path": "elektronik/kablo-and-adaptor/usb-c",
-              "legacy_url": "/kategori/elektronik/kablo-and-adaptor/usb-c"
+              "legacy_url": "/kategorie/elektronik/kablo-und-adapter/usb-c"
             },
             {
               "id": "cat-12-03-02",
@@ -12512,8 +12502,7 @@
               "children": [],
               "legacy_name": "HDMI",
               "legacy_slug": "hdmi",
-              "legacy_slug_path": "elektronik/kablo-and-adaptor/hdmi",
-              "legacy_url": "/kategori/elektronik/kablo-and-adaptor/hdmi"
+              "legacy_url": "/kategorie/elektronik/kablo-und-adapter/hdmi"
             },
             {
               "id": "cat-12-03-03",
@@ -12525,8 +12514,7 @@
               "children": [],
               "legacy_name": "DisplayPort",
               "legacy_slug": "displayport",
-              "legacy_slug_path": "elektronik/kablo-and-adaptor/displayport",
-              "legacy_url": "/kategori/elektronik/kablo-and-adaptor/displayport"
+              "legacy_url": "/kategorie/elektronik/kablo-und-adapter/displayport"
             },
             {
               "id": "cat-12-03-04",
@@ -12538,21 +12526,19 @@
               "children": [],
               "legacy_name": "Ethernet",
               "legacy_slug": "ethernet",
-              "legacy_slug_path": "elektronik/kablo-and-adaptor/ethernet",
-              "legacy_url": "/kategori/elektronik/kablo-and-adaptor/ethernet"
+              "legacy_url": "/kategorie/elektronik/kablo-und-adapter/ethernet"
             },
             {
               "id": "cat-12-03-05",
               "menu_order": 5,
-              "name": "Laden Adaptörü",
-              "slug": "sarj-adaptoerue",
-              "url": "/kategorie/elektronik/kablo-und-adapter/sarj-adaptoerue",
+              "name": "Ladeadapter",
+              "slug": "ladeadapter",
+              "url": "/kategorie/elektronik/kablo-und-adapter/ladeadapter",
               "level": 3,
               "children": [],
-              "legacy_name": "Şarj Adaptörü",
-              "legacy_slug": "sarj-adaptoru",
-              "legacy_slug_path": "elektronik/kablo-and-adaptor/sarj-adaptoru",
-              "legacy_url": "/kategori/elektronik/kablo-and-adaptor/sarj-adaptoru"
+              "legacy_name": "Laden Adaptörü",
+              "legacy_slug": "sarj-adaptoerue",
+              "legacy_url": "/kategorie/elektronik/kablo-und-adapter/sarj-adaptoerue"
             }
           ],
           "legacy_name": "Kablo & Adaptör",
@@ -12563,7 +12549,7 @@
         {
           "id": "cat-12-04",
           "menu_order": 4,
-          "name": "Laden Produkte",
+          "name": "Laden",
           "slug": "sarj-ueruenleri",
           "url": "/kategorie/elektronik/sarj-ueruenleri",
           "level": 2,
@@ -12571,54 +12557,50 @@
             {
               "id": "cat-12-04-01",
               "menu_order": 1,
-              "name": "Duvar Sarj",
-              "slug": "duvar-sarj",
-              "url": "/kategorie/elektronik/sarj-ueruenleri/duvar-sarj",
+              "name": "Wandladegeräte",
+              "slug": "wandladegeraete",
+              "url": "/kategorie/elektronik/sarj-ueruenleri/wandladegeraete",
               "level": 3,
               "children": [],
-              "legacy_name": "Duvar Şarjı",
-              "legacy_slug": "duvar-sarji",
-              "legacy_slug_path": "elektronik/sarj-urunleri/duvar-sarji",
-              "legacy_url": "/kategori/elektronik/sarj-urunleri/duvar-sarji"
+              "legacy_name": "Duvar Sarj",
+              "legacy_slug": "duvar-sarj",
+              "legacy_url": "/kategorie/elektronik/sarj-ueruenleri/duvar-sarj"
             },
             {
               "id": "cat-12-04-02",
               "menu_order": 2,
-              "name": "Fahrzeug Sarj",
-              "slug": "fahrzeug-sarj",
-              "url": "/kategorie/elektronik/sarj-ueruenleri/fahrzeug-sarj",
+              "name": "Kfz-Ladegeräte",
+              "slug": "kfz-ladegeraete",
+              "url": "/kategorie/elektronik/sarj-ueruenleri/kfz-ladegeraete",
               "level": 3,
               "children": [],
-              "legacy_name": "Araç Şarjı",
-              "legacy_slug": "arac-sarji",
-              "legacy_slug_path": "elektronik/sarj-urunleri/arac-sarji",
-              "legacy_url": "/kategori/elektronik/sarj-urunleri/arac-sarji"
+              "legacy_name": "Fahrzeug Sarj",
+              "legacy_slug": "fahrzeug-sarj",
+              "legacy_url": "/kategorie/elektronik/sarj-ueruenleri/fahrzeug-sarj"
             },
             {
               "id": "cat-12-04-03",
               "menu_order": 3,
-              "name": "Kablosuz Laden",
-              "slug": "kablosuz-sarj",
-              "url": "/kategorie/elektronik/sarj-ueruenleri/kablosuz-sarj",
+              "name": "Induktiv",
+              "slug": "induktiv",
+              "url": "/kategorie/elektronik/sarj-ueruenleri/induktiv",
               "level": 3,
               "children": [],
-              "legacy_name": "Kablosuz Şarj",
+              "legacy_name": "Kablosuz Laden",
               "legacy_slug": "kablosuz-sarj",
-              "legacy_slug_path": "elektronik/sarj-urunleri/kablosuz-sarj",
-              "legacy_url": "/kategori/elektronik/sarj-urunleri/kablosuz-sarj"
+              "legacy_url": "/kategorie/elektronik/sarj-ueruenleri/kablosuz-sarj"
             },
             {
               "id": "cat-12-04-04",
               "menu_order": 4,
-              "name": "Powerbank",
-              "slug": "powerbank",
-              "url": "/kategorie/elektronik/sarj-ueruenleri/powerbank",
+              "name": "Powerbanks",
+              "slug": "powerbanks",
+              "url": "/kategorie/elektronik/sarj-ueruenleri/powerbanks",
               "level": 3,
               "children": [],
               "legacy_name": "Powerbank",
               "legacy_slug": "powerbank",
-              "legacy_slug_path": "elektronik/sarj-urunleri/powerbank",
-              "legacy_url": "/kategori/elektronik/sarj-urunleri/powerbank"
+              "legacy_url": "/kategorie/elektronik/sarj-ueruenleri/powerbank"
             }
           ],
           "legacy_name": "Şarj Ürünleri",
@@ -12629,7 +12611,7 @@
         {
           "id": "cat-12-05",
           "menu_order": 5,
-          "name": "Ton Systeme",
+          "name": "Audio",
           "slug": "ses-sistemleri",
           "url": "/kategorie/elektronik/ses-sistemleri",
           "level": 2,
@@ -12637,54 +12619,50 @@
             {
               "id": "cat-12-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektronik/ses-sistemleri/standard",
+              "name": "Kopfhörer",
+              "slug": "kopfhoerer",
+              "url": "/kategorie/elektronik/ses-sistemleri/kopfhoerer",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektronik/ses-sistemleri/standart",
-              "legacy_url": "/kategori/elektronik/ses-sistemleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektronik/ses-sistemleri/standard"
             },
             {
               "id": "cat-12-05-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/elektronik/ses-sistemleri/pro",
+              "name": "True Wireless",
+              "slug": "true-wireless",
+              "url": "/kategorie/elektronik/ses-sistemleri/true-wireless",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "elektronik/ses-sistemleri/pro",
-              "legacy_url": "/kategori/elektronik/ses-sistemleri/pro"
+              "legacy_url": "/kategorie/elektronik/ses-sistemleri/pro"
             },
             {
               "id": "cat-12-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/elektronik/ses-sistemleri/set",
+              "name": "Bluetooth-Lautsprecher",
+              "slug": "bluetooth-lautsprecher",
+              "url": "/kategorie/elektronik/ses-sistemleri/bluetooth-lautsprecher",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektronik/ses-sistemleri/set",
-              "legacy_url": "/kategori/elektronik/ses-sistemleri/set"
+              "legacy_url": "/kategorie/elektronik/ses-sistemleri/set"
             },
             {
               "id": "cat-12-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektronik/ses-sistemleri/zubehoer",
+              "name": "Mikrofone",
+              "slug": "mikrofone",
+              "url": "/kategorie/elektronik/ses-sistemleri/mikrofone",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektronik/ses-sistemleri/aksesuar",
-              "legacy_url": "/kategori/elektronik/ses-sistemleri/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektronik/ses-sistemleri/zubehoer"
             }
           ],
           "legacy_name": "Ses Sistemleri",
@@ -12703,54 +12681,50 @@
             {
               "id": "cat-12-06-01",
               "menu_order": 1,
-              "name": "Smart Steckdose",
-              "slug": "ak-ll-priz",
-              "url": "/kategorie/elektronik/ak-ll-haus/ak-ll-priz",
+              "name": "Smart-Steckdosen",
+              "slug": "smart-steckdosen",
+              "url": "/kategorie/elektronik/ak-ll-haus/smart-steckdosen",
               "level": 3,
               "children": [],
-              "legacy_name": "Akıllı Priz",
-              "legacy_slug": "akilli-priz",
-              "legacy_slug_path": "elektronik/akilli-ev/akilli-priz",
-              "legacy_url": "/kategori/elektronik/akilli-ev/akilli-priz"
+              "legacy_name": "Smart Steckdose",
+              "legacy_slug": "ak-ll-priz",
+              "legacy_url": "/kategorie/elektronik/ak-ll-haus/ak-ll-priz"
             },
             {
               "id": "cat-12-06-02",
               "menu_order": 2,
-              "name": "Smart Ampul",
-              "slug": "ak-ll-ampul",
-              "url": "/kategorie/elektronik/ak-ll-haus/ak-ll-ampul",
+              "name": "Smart-Lampen",
+              "slug": "smart-lampen",
+              "url": "/kategorie/elektronik/ak-ll-haus/smart-lampen",
               "level": 3,
               "children": [],
-              "legacy_name": "Akıllı Ampul",
-              "legacy_slug": "akilli-ampul",
-              "legacy_slug_path": "elektronik/akilli-ev/akilli-ampul",
-              "legacy_url": "/kategori/elektronik/akilli-ev/akilli-ampul"
+              "legacy_name": "Smart Ampul",
+              "legacy_slug": "ak-ll-ampul",
+              "legacy_url": "/kategorie/elektronik/ak-ll-haus/ak-ll-ampul"
             },
             {
               "id": "cat-12-06-03",
               "menu_order": 3,
-              "name": "Sensör",
-              "slug": "sensoer",
-              "url": "/kategorie/elektronik/ak-ll-haus/sensoer",
+              "name": "Sensoren",
+              "slug": "sensoren",
+              "url": "/kategorie/elektronik/ak-ll-haus/sensoren",
               "level": 3,
               "children": [],
               "legacy_name": "Sensör",
-              "legacy_slug": "sensor",
-              "legacy_slug_path": "elektronik/akilli-ev/sensor",
-              "legacy_url": "/kategori/elektronik/akilli-ev/sensor"
+              "legacy_slug": "sensoer",
+              "legacy_url": "/kategorie/elektronik/ak-ll-haus/sensoer"
             },
             {
               "id": "cat-12-06-04",
               "menu_order": 4,
-              "name": "Smart Hub",
-              "slug": "ak-ll-hub",
-              "url": "/kategorie/elektronik/ak-ll-haus/ak-ll-hub",
+              "name": "Hubs",
+              "slug": "hubs",
+              "url": "/kategorie/elektronik/ak-ll-haus/hubs",
               "level": 3,
               "children": [],
-              "legacy_name": "Akıllı Hub",
-              "legacy_slug": "akilli-hub",
-              "legacy_slug_path": "elektronik/akilli-ev/akilli-hub",
-              "legacy_url": "/kategori/elektronik/akilli-ev/akilli-hub"
+              "legacy_name": "Smart Hub",
+              "legacy_slug": "ak-ll-hub",
+              "legacy_url": "/kategorie/elektronik/ak-ll-haus/ak-ll-hub"
             }
           ],
           "legacy_name": "Akıllı Ev",
@@ -12761,7 +12735,7 @@
         {
           "id": "cat-12-07",
           "menu_order": 7,
-          "name": "Sicherheit Kameras",
+          "name": "Sicherheitskameras",
           "slug": "sicherheit-kameralar",
           "url": "/kategorie/elektronik/sicherheit-kameralar",
           "level": 2,
@@ -12769,41 +12743,38 @@
             {
               "id": "cat-12-07-01",
               "menu_order": 1,
-              "name": "Innen Raum Kamera",
-              "slug": "innen-mekan-kamera",
-              "url": "/kategorie/elektronik/sicherheit-kameralar/innen-mekan-kamera",
+              "name": "Innenkameras",
+              "slug": "innenkameras",
+              "url": "/kategorie/elektronik/sicherheit-kameralar/innenkameras",
               "level": 3,
               "children": [],
-              "legacy_name": "İç Mekan Kamera",
-              "legacy_slug": "ic-mekan-kamera",
-              "legacy_slug_path": "elektronik/guvenlik-kameralari/ic-mekan-kamera",
-              "legacy_url": "/kategori/elektronik/guvenlik-kameralari/ic-mekan-kamera"
+              "legacy_name": "Innen Raum Kamera",
+              "legacy_slug": "innen-mekan-kamera",
+              "legacy_url": "/kategorie/elektronik/sicherheit-kameralar/innen-mekan-kamera"
             },
             {
               "id": "cat-12-07-02",
               "menu_order": 2,
-              "name": "Außen Raum Kamera",
-              "slug": "aussen-mekan-kamera",
-              "url": "/kategorie/elektronik/sicherheit-kameralar/aussen-mekan-kamera",
+              "name": "Außenkameras",
+              "slug": "aussenkameras",
+              "url": "/kategorie/elektronik/sicherheit-kameralar/aussenkameras",
               "level": 3,
               "children": [],
-              "legacy_name": "Dış Mekan Kamera",
-              "legacy_slug": "dis-mekan-kamera",
-              "legacy_slug_path": "elektronik/guvenlik-kameralari/dis-mekan-kamera",
-              "legacy_url": "/kategori/elektronik/guvenlik-kameralari/dis-mekan-kamera"
+              "legacy_name": "Außen Raum Kamera",
+              "legacy_slug": "aussen-mekan-kamera",
+              "legacy_url": "/kategorie/elektronik/sicherheit-kameralar/aussen-mekan-kamera"
             },
             {
               "id": "cat-12-07-03",
               "menu_order": 3,
-              "name": "Wi-Fi Kamera",
-              "slug": "wi-fi-kamera",
-              "url": "/kategorie/elektronik/sicherheit-kameralar/wi-fi-kamera",
+              "name": "WLAN-Kameras",
+              "slug": "wlan-kameras",
+              "url": "/kategorie/elektronik/sicherheit-kameralar/wlan-kameras",
               "level": 3,
               "children": [],
               "legacy_name": "Wi-Fi Kamera",
               "legacy_slug": "wi-fi-kamera",
-              "legacy_slug_path": "elektronik/guvenlik-kameralari/wi-fi-kamera",
-              "legacy_url": "/kategori/elektronik/guvenlik-kameralari/wi-fi-kamera"
+              "legacy_url": "/kategorie/elektronik/sicherheit-kameralar/wi-fi-kamera"
             },
             {
               "id": "cat-12-07-04",
@@ -12815,21 +12786,19 @@
               "children": [],
               "legacy_name": "NVR",
               "legacy_slug": "nvr",
-              "legacy_slug_path": "elektronik/guvenlik-kameralari/nvr",
-              "legacy_url": "/kategori/elektronik/guvenlik-kameralari/nvr"
+              "legacy_url": "/kategorie/elektronik/sicherheit-kameralar/nvr"
             },
             {
               "id": "cat-12-07-05",
               "menu_order": 5,
-              "name": "Kamera Zubehör",
-              "slug": "kamera-aksesuarlar",
-              "url": "/kategorie/elektronik/sicherheit-kameralar/kamera-aksesuarlar",
+              "name": "Kamera-Zubehör",
+              "slug": "kamera-zubehoer",
+              "url": "/kategorie/elektronik/sicherheit-kameralar/kamera-zubehoer",
               "level": 3,
               "children": [],
-              "legacy_name": "Kamera Aksesuarları",
-              "legacy_slug": "kamera-aksesuarlari",
-              "legacy_slug_path": "elektronik/guvenlik-kameralari/kamera-aksesuarlari",
-              "legacy_url": "/kategori/elektronik/guvenlik-kameralari/kamera-aksesuarlari"
+              "legacy_name": "Kamera Zubehör",
+              "legacy_slug": "kamera-aksesuarlar",
+              "legacy_url": "/kategorie/elektronik/sicherheit-kameralar/kamera-aksesuarlar"
             }
           ],
           "legacy_name": "Güvenlik Kameraları",
@@ -12840,7 +12809,7 @@
         {
           "id": "cat-12-08",
           "menu_order": 8,
-          "name": "Elektronik Zubehör",
+          "name": "Elektronik-Zubehör",
           "slug": "elektronik-zubehoer",
           "url": "/kategorie/elektronik/elektronik-zubehoer",
           "level": 2,
@@ -12848,54 +12817,50 @@
             {
               "id": "cat-12-08-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektronik/elektronik-zubehoer/standard",
+              "name": "SSD & Speicher",
+              "slug": "ssd-und-speicher",
+              "url": "/kategorie/elektronik/elektronik-zubehoer/ssd-und-speicher",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektronik/elektronik-aksesuarlar/standart",
-              "legacy_url": "/kategori/elektronik/elektronik-aksesuarlar/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektronik/elektronik-zubehoer/standard"
             },
             {
               "id": "cat-12-08-02",
               "menu_order": 2,
-              "name": "Pro",
-              "slug": "pro",
-              "url": "/kategorie/elektronik/elektronik-zubehoer/pro",
+              "name": "TV-Zubehör",
+              "slug": "tv-zubehoer",
+              "url": "/kategorie/elektronik/elektronik-zubehoer/tv-zubehoer",
               "level": 3,
               "children": [],
               "legacy_name": "Pro",
               "legacy_slug": "pro",
-              "legacy_slug_path": "elektronik/elektronik-aksesuarlar/pro",
-              "legacy_url": "/kategori/elektronik/elektronik-aksesuarlar/pro"
+              "legacy_url": "/kategorie/elektronik/elektronik-zubehoer/pro"
             },
             {
               "id": "cat-12-08-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/elektronik/elektronik-zubehoer/set",
+              "name": "Fernbedienungen",
+              "slug": "fernbedienungen",
+              "url": "/kategorie/elektronik/elektronik-zubehoer/fernbedienungen",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "elektronik/elektronik-aksesuarlar/set",
-              "legacy_url": "/kategori/elektronik/elektronik-aksesuarlar/set"
+              "legacy_url": "/kategorie/elektronik/elektronik-zubehoer/set"
             },
             {
               "id": "cat-12-08-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektronik/elektronik-zubehoer/zubehoer",
+              "name": "Ständer",
+              "slug": "staender",
+              "url": "/kategorie/elektronik/elektronik-zubehoer/staender",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "elektronik/elektronik-aksesuarlar/aksesuar",
-              "legacy_url": "/kategori/elektronik/elektronik-aksesuarlar/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektronik/elektronik-zubehoer/zubehoer"
             }
           ],
           "legacy_name": "Elektronik Aksesuarlar",

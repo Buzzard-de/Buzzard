@@ -15724,5 +15724,185 @@
     "to": "/kategorie/energie-und-solar/enerji-aksesuarlar/combiner/",
     "permanent": true,
     "note": "Energy placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/telefon-aksesuarlar/telefon-k-l-f/",
+    "to": "/kategorie/elektronik/telefon-aksesuarlar/huellen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/telefon-aksesuarlar/ekran-koruyucu/",
+    "to": "/kategorie/elektronik/telefon-aksesuarlar/displayschutz/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/telefon-aksesuarlar/telefon-tutucu/",
+    "to": "/kategorie/elektronik/telefon-aksesuarlar/halterungen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/telefon-aksesuarlar/kablo/",
+    "to": "/kategorie/elektronik/telefon-aksesuarlar/ladekabel/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/telefon-aksesuarlar/sarj-adaptoerue/",
+    "to": "/kategorie/elektronik/telefon-aksesuarlar/netzteile/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/computer-aksesuarlar/standard/",
+    "to": "/kategorie/elektronik/computer-aksesuarlar/maeuse/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/computer-aksesuarlar/pro/",
+    "to": "/kategorie/elektronik/computer-aksesuarlar/tastaturen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/computer-aksesuarlar/set/",
+    "to": "/kategorie/elektronik/computer-aksesuarlar/usb-hubs/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/computer-aksesuarlar/zubehoer/",
+    "to": "/kategorie/elektronik/computer-aksesuarlar/webcams/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/kablo-und-adapter/sarj-adaptoerue/",
+    "to": "/kategorie/elektronik/kablo-und-adapter/ladeadapter/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sarj-ueruenleri/duvar-sarj/",
+    "to": "/kategorie/elektronik/sarj-ueruenleri/wandladegeraete/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sarj-ueruenleri/fahrzeug-sarj/",
+    "to": "/kategorie/elektronik/sarj-ueruenleri/kfz-ladegeraete/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sarj-ueruenleri/kablosuz-sarj/",
+    "to": "/kategorie/elektronik/sarj-ueruenleri/induktiv/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sarj-ueruenleri/powerbank/",
+    "to": "/kategorie/elektronik/sarj-ueruenleri/powerbanks/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ses-sistemleri/standard/",
+    "to": "/kategorie/elektronik/ses-sistemleri/kopfhoerer/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ses-sistemleri/pro/",
+    "to": "/kategorie/elektronik/ses-sistemleri/true-wireless/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ses-sistemleri/set/",
+    "to": "/kategorie/elektronik/ses-sistemleri/bluetooth-lautsprecher/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ses-sistemleri/zubehoer/",
+    "to": "/kategorie/elektronik/ses-sistemleri/mikrofone/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ak-ll-haus/ak-ll-priz/",
+    "to": "/kategorie/elektronik/ak-ll-haus/smart-steckdosen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ak-ll-haus/ak-ll-ampul/",
+    "to": "/kategorie/elektronik/ak-ll-haus/smart-lampen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ak-ll-haus/sensoer/",
+    "to": "/kategorie/elektronik/ak-ll-haus/sensoren/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/ak-ll-haus/ak-ll-hub/",
+    "to": "/kategorie/elektronik/ak-ll-haus/hubs/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sicherheit-kameralar/innen-mekan-kamera/",
+    "to": "/kategorie/elektronik/sicherheit-kameralar/innenkameras/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sicherheit-kameralar/aussen-mekan-kamera/",
+    "to": "/kategorie/elektronik/sicherheit-kameralar/aussenkameras/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sicherheit-kameralar/wi-fi-kamera/",
+    "to": "/kategorie/elektronik/sicherheit-kameralar/wlan-kameras/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/sicherheit-kameralar/kamera-aksesuarlar/",
+    "to": "/kategorie/elektronik/sicherheit-kameralar/kamera-zubehoer/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/elektronik-zubehoer/standard/",
+    "to": "/kategorie/elektronik/elektronik-zubehoer/ssd-und-speicher/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/elektronik-zubehoer/pro/",
+    "to": "/kategorie/elektronik/elektronik-zubehoer/tv-zubehoer/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/elektronik-zubehoer/set/",
+    "to": "/kategorie/elektronik/elektronik-zubehoer/fernbedienungen/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektronik/elektronik-zubehoer/zubehoer/",
+    "to": "/kategorie/elektronik/elektronik-zubehoer/staender/",
+    "permanent": true,
+    "note": "Electronics placeholder L3 replaced with a real product group"
   }
 ]

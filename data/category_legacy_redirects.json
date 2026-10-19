@@ -10966,5 +10966,239 @@
     "to": "/kategorie/taschen-und-accessoires/semsiye/sonnenschirme-klein/",
     "permanent": true,
     "note": "Bags placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/hautpflege/standard/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/hautpflege/gesichtscreme/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/hautpflege/premium/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/hautpflege/gesichtsreinigung/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/hautpflege/sets/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/hautpflege/seren-und-ampullen/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/hautpflege/zubehoer/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/hautpflege/augenpflege/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haar-kremi/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haarspuelung/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haar-maskesi/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haarmasken/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haar-serumu/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haarseren/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haar-yag/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/haarpflege/haaroele/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/haarpflege/sekillendirici/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/haarpflege/styling/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/fondoeten/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/foundation/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/kapat-c/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/concealer/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/pudra/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/puder/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/all-k/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/rouge-und-bronzer/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/maskara/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/mascara/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/far/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/lidschatten/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/make-up/ruj/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/make-up/lippenstift/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/damen-parfuem/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/damenparfum/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/herren-parfuem/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/herrenparfum/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/unisex-parfuem/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/unisex-duefte/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/edp/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/eau-de-parfum/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/edt/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/eau-de-toilette/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/parfuem/vuecut-spreyi/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/parfuem/koerpersprays/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/dis-macunu/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/zahnpasta/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/dis-f-rcas/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/zahnbruesten/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/ag-z-gargaras/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/mundspuelung/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/dis-ipi/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/zahnseide/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/dis-beyazlatma/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/mund-und-zahnpflege/zahnaufhellung/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/standard/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/duschgel/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/premium/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/bodylotion/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/sets/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/deodorants/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/zubehoer/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/koerperpflege/handcreme/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/standard/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/rasierer/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/premium/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/rasierschaum/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/sets/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/aftershave/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/zubehoer/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/rasur-und-herrenpflege/bartpflege/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/standard/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/damenhygiene/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/premium/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/intimpflege/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/sets/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/taschentuecher/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/zubehoer/",
+    "to": "/kategorie/kosmetik-und-koerperpflege/persoenliche-hygiene/feuchttuecher/",
+    "permanent": true,
+    "note": "Cosmetics placeholder L3 replaced with a real product group"
   }
 ]

@@ -11,6 +11,7 @@ export function getMainCategoryVisual(categoryId: string): string {
 export function hasHubSubcategoryVisual(categoryId: string): boolean {
   return (
     /^cat-01-\d{2}$/.test(categoryId) ||
+    /^cat-02-\d{2}$/.test(categoryId) ||
     /^cat-15-\d{2}$/.test(categoryId) ||
     /^cat-16-\d{2}$/.test(categoryId) ||
     /^cat-42-\d{2}$/.test(categoryId) ||

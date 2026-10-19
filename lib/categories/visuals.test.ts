@@ -27,6 +27,7 @@ describe("main category visuals", () => {
   it("gives dedicated fashion and vehicle L2 hubs their own photographs", () => {
     const hubs = [
       ...getChildren("cat-01"),
+      ...getChildren("cat-02"),
       ...getChildren("cat-42"),
       ...getChildren("cat-15"),
       ...getChildren("cat-16"),
@@ -34,7 +35,7 @@ describe("main category visuals", () => {
       ...getChildren("cat-55"),
       ...getChildren("cat-56"),
     ];
-    expect(hubs).toHaveLength(68);
+    expect(hubs).toHaveLength(78);
     const missing = hubs.filter(
       (cat) => !existsSync(join(process.cwd(), "public", "images", "categories", `${cat.id}.webp`)),
     );
@@ -45,6 +46,8 @@ describe("main category visuals", () => {
     expect(missing).toEqual([]);
     expect(hasHubSubcategoryVisual("cat-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-01-01-01")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-02")).toBe(false);
+    expect(hasHubSubcategoryVisual("cat-02-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-42")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-42-01-01")).toBe(false);
     expect(hasHubSubcategoryVisual("cat-15")).toBe(false);

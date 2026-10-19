@@ -11704,5 +11704,173 @@
     "to": "/kategorie/mutter-und-baby/mutter-ueruenleri/wochenbett/",
     "permanent": true,
     "note": "Baby placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/holzspielzeug/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/montessori/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/experimentierkaesten/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/egitici-oyuncaklar/lernkarten/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/activity-center/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/mobiles/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/quietschetiere/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/baby-oyuncaklar/stapeltuerme/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/spielzeugautos/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/fernsteuerung/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/eisenbahnen/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/fahrzeug-und-kumandal-oyuncaklar/flugzeuge/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/yapboz/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/yapboz/rahmenpuzzle/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/yapboz/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/yapboz/3d-puzzle/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/yapboz/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/yapboz/kinderpuzzle/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/yapboz/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/yapboz/erwachsenenpuzzle/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/familienspiele/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/kinderspiele/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/kartenspiele/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/kutu-oyunlar/strategiespiele/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/sandspielzeug/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/rutschfahrzeuge/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/baelle/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/aussen-mekan-oyuncaklar/wasserspiel/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/standard/",
+    "to": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/luftballons/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/premium/",
+    "to": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/pinatas/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/sets/",
+    "to": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/kostueme/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/zubehoer/",
+    "to": "/kategorie/spielzeug-und-kinder/parti-und-kutlama/tischdeko/",
+    "permanent": true,
+    "note": "Toys placeholder L3 replaced with a real product group"
   }
 ]

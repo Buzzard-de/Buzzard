@@ -12820,5 +12820,185 @@
     "to": "/kategorie/kueche-und-essen/kahve-und-cay-aksesuarlar/filter-und-pads/",
     "permanent": true,
     "note": "Kitchen placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kueche-aletleri/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/kueche-aletleri/mixer/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kueche-aletleri/premium/",
+    "to": "/kategorie/haushaltsgeraete/kueche-aletleri/toaster/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kueche-aletleri/set/",
+    "to": "/kategorie/haushaltsgeraete/kueche-aletleri/wasserkocher/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kueche-aletleri/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/kueche-aletleri/fritteusen/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kueche-aletleri/organizer/",
+    "to": "/kategorie/haushaltsgeraete/kueche-aletleri/stabmixer/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kahve-und-icecek/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/kahve-und-icecek/kaffeevollautomaten/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kahve-und-icecek/premium/",
+    "to": "/kategorie/haushaltsgeraete/kahve-und-icecek/espressomaschinen/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kahve-und-icecek/set/",
+    "to": "/kategorie/haushaltsgeraete/kahve-und-icecek/filterkaffee/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kahve-und-icecek/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/kahve-und-icecek/entsafter/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kahve-und-icecek/organizer/",
+    "to": "/kategorie/haushaltsgeraete/kahve-und-icecek/smoothiemaker/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/reinigung-aletleri/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/reinigung-aletleri/staubsauger/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/reinigung-aletleri/premium/",
+    "to": "/kategorie/haushaltsgeraete/reinigung-aletleri/dampfreiniger/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/reinigung-aletleri/set/",
+    "to": "/kategorie/haushaltsgeraete/reinigung-aletleri/fensterroboter/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/reinigung-aletleri/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/reinigung-aletleri/waschsauger/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/reinigung-aletleri/organizer/",
+    "to": "/kategorie/haushaltsgeraete/reinigung-aletleri/teppichreiniger/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/haartrockner/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/premium/",
+    "to": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/glaetteisen/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/set/",
+    "to": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/elektrorasierer/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/mundduschen/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/organizer/",
+    "to": "/kategorie/haushaltsgeraete/kisisel-pflege-aletleri/epilierer/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/ventilatoren/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/premium/",
+    "to": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/heizluefter/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/set/",
+    "to": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/luftbefeuchter/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/luftreiniger/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/organizer/",
+    "to": "/kategorie/haushaltsgeraete/is-tma-und-sogutma/klimageraete/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/guenluek/",
+    "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/eierkocher/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/premium/",
+    "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/sandwichmaker/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/set/",
+    "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/kuechenwaagen/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/zubehoer/",
+    "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/dosenoeffner/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/organizer/",
+    "to": "/kategorie/haushaltsgeraete/kuecuek-haus-aletleri/popcornmaker/",
+    "permanent": true,
+    "note": "Appliances placeholder L3 replaced with a real product group"
   }
 ]

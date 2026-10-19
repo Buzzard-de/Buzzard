@@ -23494,7 +23494,7 @@
         {
           "id": "cat-33-01",
           "menu_order": 1,
-          "name": "Camping Ausrüstung",
+          "name": "Camping-Ausrüstung",
           "slug": "camping-ekipmanlar",
           "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar",
           "level": 2,
@@ -23502,54 +23502,50 @@
             {
               "id": "cat-33-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/standard",
+              "name": "Zelte",
+              "slug": "zelte",
+              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/zelte",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/kamp-ekipmanlari/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/kamp-ekipmanlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/standard"
             },
             {
               "id": "cat-33-01-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/professionell",
+              "name": "Schlafsäcke",
+              "slug": "schlafsacke",
+              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/schlafsacke",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/kamp-ekipmanlari/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/kamp-ekipmanlari/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/professionell"
             },
             {
               "id": "cat-33-01-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/set",
+              "name": "Isomatten",
+              "slug": "isomatten",
+              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/isomatten",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/kamp-ekipmanlari/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/kamp-ekipmanlari/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/set"
             },
             {
               "id": "cat-33-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/zubehoer",
+              "name": "Campingmöbel",
+              "slug": "campingmoebel",
+              "url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/campingmoebel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/kamp-ekipmanlari/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/kamp-ekipmanlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/zubehoer"
             }
           ],
           "legacy_name": "Kamp Ekipmanları",
@@ -23560,7 +23556,7 @@
         {
           "id": "cat-33-02",
           "menu_order": 2,
-          "name": "Wohnmobil Zubehör",
+          "name": "Wohnmobil-Zubehör",
           "slug": "karavan-aksesuarlar",
           "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar",
           "level": 2,
@@ -23568,54 +23564,50 @@
             {
               "id": "cat-33-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/standard",
+              "name": "Markisen",
+              "slug": "markisen",
+              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/markisen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/karavan-aksesuarlari/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/karavan-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/standard"
             },
             {
               "id": "cat-33-02-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/professionell",
+              "name": "Frischwasser",
+              "slug": "frischwasser",
+              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/frischwasser",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/karavan-aksesuarlari/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/karavan-aksesuarlari/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/professionell"
             },
             {
               "id": "cat-33-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/set",
+              "name": "Bordstrom",
+              "slug": "bordstrom",
+              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/bordstrom",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/karavan-aksesuarlari/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/karavan-aksesuarlari/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/set"
             },
             {
               "id": "cat-33-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/zubehoer",
+              "name": "Sanitär",
+              "slug": "sanitaer",
+              "url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/sanitaer",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/karavan-aksesuarlari/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/karavan-aksesuarlari/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Karavan Aksesuarları",
@@ -23634,54 +23626,50 @@
             {
               "id": "cat-33-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/piknik/standard",
+              "name": "Picknickkörbe",
+              "slug": "picknickkoerbe",
+              "url": "/kategorie/gartenhobby-und-camping/piknik/picknickkoerbe",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/piknik/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/piknik/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/piknik/standard"
             },
             {
               "id": "cat-33-03-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/piknik/professionell",
+              "name": "Kühlboxen",
+              "slug": "kuehlboxen",
+              "url": "/kategorie/gartenhobby-und-camping/piknik/kuehlboxen",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/piknik/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/piknik/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/piknik/professionell"
             },
             {
               "id": "cat-33-03-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/piknik/set",
+              "name": "Geschirr",
+              "slug": "geschirr",
+              "url": "/kategorie/gartenhobby-und-camping/piknik/geschirr",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/piknik/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/piknik/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/piknik/set"
             },
             {
               "id": "cat-33-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/piknik/zubehoer",
+              "name": "Decken",
+              "slug": "decken",
+              "url": "/kategorie/gartenhobby-und-camping/piknik/decken",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/piknik/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/piknik/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/piknik/zubehoer"
             }
           ],
           "legacy_name": "Piknik",
@@ -23700,54 +23688,50 @@
             {
               "id": "cat-33-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/standard",
+              "name": "Ruten",
+              "slug": "ruten",
+              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/ruten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/balikcilik/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/balikcilik/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/standard"
             },
             {
               "id": "cat-33-04-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/professionell",
+              "name": "Rollen",
+              "slug": "rollen",
+              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/rollen",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/balikcilik/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/balikcilik/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/professionell"
             },
             {
               "id": "cat-33-04-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/set",
+              "name": "Köder",
+              "slug": "koeder",
+              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/koeder",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/balikcilik/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/balikcilik/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/set"
             },
             {
               "id": "cat-33-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/zubehoer",
+              "name": "Kescher",
+              "slug": "kescher",
+              "url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/kescher",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/balikcilik/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/balikcilik/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/zubehoer"
             }
           ],
           "legacy_name": "Balıkçılık",
@@ -23758,7 +23742,7 @@
         {
           "id": "cat-33-05",
           "menu_order": 5,
-          "name": "Outdoor Kochen",
+          "name": "Outdoor-Kochen",
           "slug": "outdoor-pisirme",
           "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme",
           "level": 2,
@@ -23766,54 +23750,50 @@
             {
               "id": "cat-33-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/standard",
+              "name": "Campingkocher",
+              "slug": "campingkocher",
+              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/campingkocher",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/outdoor-pisirme/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/outdoor-pisirme/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/standard"
             },
             {
               "id": "cat-33-05-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/professionell",
+              "name": "Gaskartuschen",
+              "slug": "gaskartuschen",
+              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/gaskartuschen",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/outdoor-pisirme/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/outdoor-pisirme/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/professionell"
             },
             {
               "id": "cat-33-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/set",
+              "name": "Outdoor-Geschirr",
+              "slug": "outdoor-geschirr",
+              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/outdoor-geschirr",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/outdoor-pisirme/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/outdoor-pisirme/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/set"
             },
             {
               "id": "cat-33-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/zubehoer",
+              "name": "Dutch Oven",
+              "slug": "dutch-oven",
+              "url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/dutch-oven",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/outdoor-pisirme/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/outdoor-pisirme/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/zubehoer"
             }
           ],
           "legacy_name": "Outdoor Pişirme",
@@ -23824,7 +23804,7 @@
         {
           "id": "cat-33-06",
           "menu_order": 6,
-          "name": "Laterne & Licht",
+          "name": "Licht & Energie",
           "slug": "fener-und-is-k",
           "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k",
           "level": 2,
@@ -23832,60 +23812,148 @@
             {
               "id": "cat-33-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/standard",
+              "name": "Stirnlampen",
+              "slug": "stirnlampen",
+              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/stirnlampen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "hobi-bahce-and-kamp/fener-and-isik/standart",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/fener-and-isik/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/standard"
             },
             {
               "id": "cat-33-06-02",
               "menu_order": 2,
-              "name": "Professionell",
-              "slug": "professionell",
-              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/professionell",
+              "name": "Laternen",
+              "slug": "laternen",
+              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/laternen",
               "level": 3,
               "children": [],
-              "legacy_name": "Profesyonel",
-              "legacy_slug": "profesyonel",
-              "legacy_slug_path": "hobi-bahce-and-kamp/fener-and-isik/profesyonel",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/fener-and-isik/profesyonel"
+              "legacy_name": "Professionell",
+              "legacy_slug": "professionell",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/professionell"
             },
             {
               "id": "cat-33-06-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/set",
+              "name": "Powerbanks",
+              "slug": "powerbanks",
+              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/powerbanks",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "hobi-bahce-and-kamp/fener-and-isik/set",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/fener-and-isik/set"
+              "legacy_url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/set"
             },
             {
               "id": "cat-33-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/zubehoer",
+              "name": "Solarlampen",
+              "slug": "solarlampen",
+              "url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/solarlampen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "hobi-bahce-and-kamp/fener-and-isik/aksesuar",
-              "legacy_url": "/kategori/hobi-bahce-and-kamp/fener-and-isik/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/gartenhobby-und-camping/fener-und-is-k/zubehoer"
             }
           ],
           "legacy_name": "Fener & Işık",
           "legacy_slug": "fener-and-isik",
           "legacy_slug_path": "hobi-bahce-and-kamp/fener-and-isik",
           "legacy_url": "/kategori/hobi-bahce-and-kamp/fener-and-isik"
+        },
+        {
+          "id": "cat-33-07",
+          "menu_order": 7,
+          "name": "Trekking",
+          "slug": "trekking",
+          "url": "/kategorie/gartenhobby-und-camping/trekking",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-33-07-01",
+              "menu_order": 1,
+              "name": "Rucksäcke",
+              "slug": "rucksaecke",
+              "url": "/kategorie/gartenhobby-und-camping/trekking/rucksaecke",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-07-02",
+              "menu_order": 2,
+              "name": "Wanderstöcke",
+              "slug": "wanderstoecke",
+              "url": "/kategorie/gartenhobby-und-camping/trekking/wanderstoecke",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-07-03",
+              "menu_order": 3,
+              "name": "Trinksysteme",
+              "slug": "trinksysteme",
+              "url": "/kategorie/gartenhobby-und-camping/trekking/trinksysteme",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-07-04",
+              "menu_order": 4,
+              "name": "Orientierung",
+              "slug": "orientierung",
+              "url": "/kategorie/gartenhobby-und-camping/trekking/orientierung",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-33-08",
+          "menu_order": 8,
+          "name": "Survival",
+          "slug": "survival",
+          "url": "/kategorie/gartenhobby-und-camping/survival",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-33-08-01",
+              "menu_order": 1,
+              "name": "Multitools",
+              "slug": "multitools",
+              "url": "/kategorie/gartenhobby-und-camping/survival/multitools",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-08-02",
+              "menu_order": 2,
+              "name": "Feuerstarter",
+              "slug": "feuerstarter",
+              "url": "/kategorie/gartenhobby-und-camping/survival/feuerstarter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-08-03",
+              "menu_order": 3,
+              "name": "Survival-Kits",
+              "slug": "survival-kits",
+              "url": "/kategorie/gartenhobby-und-camping/survival/survival-kits",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-33-08-04",
+              "menu_order": 4,
+              "name": "Erste Hilfe",
+              "slug": "erste-hilfe",
+              "url": "/kategorie/gartenhobby-und-camping/survival/erste-hilfe",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Hobi Bahçe & Kamp",

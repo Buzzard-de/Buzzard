@@ -13984,5 +13984,149 @@
     "to": "/kategorie/garten/bitki-bak-m/giesskannen/",
     "permanent": true,
     "note": "Garden L3 replaced with a real German product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/zelte/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/schlafsacke/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/set/",
+    "to": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/isomatten/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/camping-ekipmanlar/campingmoebel/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/markisen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/frischwasser/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/set/",
+    "to": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/bordstrom/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/karavan-aksesuarlar/sanitaer/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/piknik/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/piknik/picknickkoerbe/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/piknik/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/piknik/kuehlboxen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/piknik/set/",
+    "to": "/kategorie/gartenhobby-und-camping/piknik/geschirr/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/piknik/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/piknik/decken/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/ruten/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/rollen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/set/",
+    "to": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/koeder/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/bal-kc-l-k/kescher/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/campingkocher/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/gaskartuschen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/set/",
+    "to": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/outdoor-geschirr/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/outdoor-pisirme/dutch-oven/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/fener-und-is-k/standard/",
+    "to": "/kategorie/gartenhobby-und-camping/fener-und-is-k/stirnlampen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/fener-und-is-k/professionell/",
+    "to": "/kategorie/gartenhobby-und-camping/fener-und-is-k/laternen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/fener-und-is-k/set/",
+    "to": "/kategorie/gartenhobby-und-camping/fener-und-is-k/powerbanks/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/gartenhobby-und-camping/fener-und-is-k/zubehoer/",
+    "to": "/kategorie/gartenhobby-und-camping/fener-und-is-k/solarlampen/",
+    "permanent": true,
+    "note": "Camping placeholder L3 replaced with a real product group"
   }
 ]

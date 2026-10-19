@@ -16714,5 +16714,149 @@
     "to": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sonnenblenden/",
     "permanent": true,
     "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/standard/",
+    "to": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/christbaumschmuck/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/premium/",
+    "to": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/lichterketten/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/sets/",
+    "to": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/adventskraenze/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/silvester/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dogum-guenue/standard/",
+    "to": "/kategorie/saisonales-und-feiern/dogum-guenue/luftballons/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dogum-guenue/premium/",
+    "to": "/kategorie/saisonales-und-feiern/dogum-guenue/geschenkverpackung/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dogum-guenue/sets/",
+    "to": "/kategorie/saisonales-und-feiern/dogum-guenue/geburtstagskerzen/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dogum-guenue/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/dogum-guenue/partytueten/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/standard/",
+    "to": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/tischdeko/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/premium/",
+    "to": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/gastgeschenke/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/sets/",
+    "to": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/girlanden/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/kerzen/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/parti-malzemeleri/standard/",
+    "to": "/kategorie/saisonales-und-feiern/parti-malzemeleri/einweggeschirr/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/parti-malzemeleri/premium/",
+    "to": "/kategorie/saisonales-und-feiern/parti-malzemeleri/servietten/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/parti-malzemeleri/sets/",
+    "to": "/kategorie/saisonales-und-feiern/parti-malzemeleri/luftschlangen/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/parti-malzemeleri/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/parti-malzemeleri/konfetti/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dekoration/standard/",
+    "to": "/kategorie/saisonales-und-feiern/dekoration/kraenze/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dekoration/premium/",
+    "to": "/kategorie/saisonales-und-feiern/dekoration/figuren/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dekoration/sets/",
+    "to": "/kategorie/saisonales-und-feiern/dekoration/fensterdeko/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/dekoration/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/dekoration/tischlaeufer/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/standard/",
+    "to": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/outdoor-lichter/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/premium/",
+    "to": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/zitronella/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/sets/",
+    "to": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/saison-pflanzgefaesse/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/zubehoer/",
+    "to": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/windlichter/",
+    "permanent": true,
+    "note": "Seasonal placeholder L3 replaced with a real product group"
   }
 ]

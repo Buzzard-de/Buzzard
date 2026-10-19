@@ -24030,54 +24030,50 @@
             {
               "id": "cat-34-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/standard",
+              "name": "Christbaumschmuck",
+              "slug": "christbaumschmuck",
+              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/christbaumschmuck",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/noel-and-yilbasi/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/noel-and-yilbasi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/standard"
             },
             {
               "id": "cat-34-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/premium",
+              "name": "Lichterketten",
+              "slug": "lichterketten",
+              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/lichterketten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/noel-and-yilbasi/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/noel-and-yilbasi/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/premium"
             },
             {
               "id": "cat-34-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/sets",
+              "name": "Adventskränze",
+              "slug": "adventskraenze",
+              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/adventskraenze",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/noel-and-yilbasi/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/noel-and-yilbasi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/sets"
             },
             {
               "id": "cat-34-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/zubehoer",
+              "name": "Silvester",
+              "slug": "silvester",
+              "url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/silvester",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/noel-and-yilbasi/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/noel-and-yilbasi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/noel-und-y-lbas/zubehoer"
             }
           ],
           "legacy_name": "Noel & Yılbaşı",
@@ -24088,7 +24084,7 @@
         {
           "id": "cat-34-02",
           "menu_order": 2,
-          "name": "Geburt Tag",
+          "name": "Geburtstag",
           "slug": "dogum-guenue",
           "url": "/kategorie/saisonales-und-feiern/dogum-guenue",
           "level": 2,
@@ -24096,54 +24092,50 @@
             {
               "id": "cat-34-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/standard",
+              "name": "Luftballons",
+              "slug": "luftballons",
+              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/luftballons",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dogum-gunu/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dogum-gunu/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dogum-guenue/standard"
             },
             {
               "id": "cat-34-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/premium",
+              "name": "Geschenkverpackung",
+              "slug": "geschenkverpackung",
+              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/geschenkverpackung",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dogum-gunu/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dogum-gunu/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/dogum-guenue/premium"
             },
             {
               "id": "cat-34-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/sets",
+              "name": "Geburtstagskerzen",
+              "slug": "geburtstagskerzen",
+              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/geburtstagskerzen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dogum-gunu/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dogum-gunu/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dogum-guenue/sets"
             },
             {
               "id": "cat-34-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/zubehoer",
+              "name": "Partytüten",
+              "slug": "partytueten",
+              "url": "/kategorie/saisonales-und-feiern/dogum-guenue/partytueten",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dogum-gunu/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dogum-gunu/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dogum-guenue/zubehoer"
             }
           ],
           "legacy_name": "Doğum Günü",
@@ -24162,54 +24154,50 @@
             {
               "id": "cat-34-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/standard",
+              "name": "Tischdeko",
+              "slug": "tischdeko",
+              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/tischdeko",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dugun-and-nisan/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dugun-and-nisan/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/standard"
             },
             {
               "id": "cat-34-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/premium",
+              "name": "Gastgeschenke",
+              "slug": "gastgeschenke",
+              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/gastgeschenke",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dugun-and-nisan/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dugun-and-nisan/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/premium"
             },
             {
               "id": "cat-34-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/sets",
+              "name": "Girlanden",
+              "slug": "girlanden",
+              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/girlanden",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dugun-and-nisan/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dugun-and-nisan/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/sets"
             },
             {
               "id": "cat-34-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/zubehoer",
+              "name": "Kerzen",
+              "slug": "kerzen",
+              "url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/kerzen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dugun-and-nisan/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dugun-and-nisan/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dueguen-und-nisan/zubehoer"
             }
           ],
           "legacy_name": "Düğün & Nişan",
@@ -24220,7 +24208,7 @@
         {
           "id": "cat-34-04",
           "menu_order": 4,
-          "name": "Party Materialien",
+          "name": "Party-Materialien",
           "slug": "parti-malzemeleri",
           "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri",
           "level": 2,
@@ -24228,54 +24216,50 @@
             {
               "id": "cat-34-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/standard",
+              "name": "Einweggeschirr",
+              "slug": "einweggeschirr",
+              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/einweggeschirr",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/parti-malzemeleri/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/parti-malzemeleri/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/standard"
             },
             {
               "id": "cat-34-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/premium",
+              "name": "Servietten",
+              "slug": "servietten",
+              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/servietten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/parti-malzemeleri/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/parti-malzemeleri/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/premium"
             },
             {
               "id": "cat-34-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/sets",
+              "name": "Luftschlangen",
+              "slug": "luftschlangen",
+              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/luftschlangen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/parti-malzemeleri/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/parti-malzemeleri/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/sets"
             },
             {
               "id": "cat-34-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/zubehoer",
+              "name": "Konfetti",
+              "slug": "konfetti",
+              "url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/konfetti",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/parti-malzemeleri/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/parti-malzemeleri/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/parti-malzemeleri/zubehoer"
             }
           ],
           "legacy_name": "Parti Malzemeleri",
@@ -24286,7 +24270,7 @@
         {
           "id": "cat-34-05",
           "menu_order": 5,
-          "name": "Dekoration",
+          "name": "Saison-Dekoration",
           "slug": "dekoration",
           "url": "/kategorie/saisonales-und-feiern/dekoration",
           "level": 2,
@@ -24294,54 +24278,50 @@
             {
               "id": "cat-34-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/dekoration/standard",
+              "name": "Kränze",
+              "slug": "kraenze",
+              "url": "/kategorie/saisonales-und-feiern/dekoration/kraenze",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dekorasyon/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dekorasyon/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dekoration/standard"
             },
             {
               "id": "cat-34-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/dekoration/premium",
+              "name": "Figuren",
+              "slug": "figuren",
+              "url": "/kategorie/saisonales-und-feiern/dekoration/figuren",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dekorasyon/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dekorasyon/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/dekoration/premium"
             },
             {
               "id": "cat-34-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/dekoration/sets",
+              "name": "Fensterdeko",
+              "slug": "fensterdeko",
+              "url": "/kategorie/saisonales-und-feiern/dekoration/fensterdeko",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dekorasyon/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dekorasyon/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dekoration/sets"
             },
             {
               "id": "cat-34-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/dekoration/zubehoer",
+              "name": "Tischläufer",
+              "slug": "tischlaeufer",
+              "url": "/kategorie/saisonales-und-feiern/dekoration/tischlaeufer",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/dekorasyon/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/dekorasyon/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/dekoration/zubehoer"
             }
           ],
           "legacy_name": "Dekorasyon",
@@ -24360,60 +24340,148 @@
             {
               "id": "cat-34-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/standard",
+              "name": "Outdoor-Lichter",
+              "slug": "outdoor-lichter",
+              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/outdoor-lichter",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "mevsimlik-and-kutlama/balkon-and-bahce-sezonu/standart",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/standard"
             },
             {
               "id": "cat-34-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/premium",
+              "name": "Zitronella",
+              "slug": "zitronella",
+              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/zitronella",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "mevsimlik-and-kutlama/balkon-and-bahce-sezonu/premium",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu/premium"
+              "legacy_url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/premium"
             },
             {
               "id": "cat-34-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/sets",
+              "name": "Saison-Pflanzgefäße",
+              "slug": "saison-pflanzgefaesse",
+              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/saison-pflanzgefaesse",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "mevsimlik-and-kutlama/balkon-and-bahce-sezonu/setler",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/sets"
             },
             {
               "id": "cat-34-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/zubehoer",
+              "name": "Windlichter",
+              "slug": "windlichter",
+              "url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/windlichter",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "mevsimlik-and-kutlama/balkon-and-bahce-sezonu/aksesuarlar",
-              "legacy_url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/saisonales-und-feiern/balkon-und-garten-sezonu/zubehoer"
             }
           ],
           "legacy_name": "Balkon & Bahçe Sezonu",
           "legacy_slug": "balkon-and-bahce-sezonu",
           "legacy_slug_path": "mevsimlik-and-kutlama/balkon-and-bahce-sezonu",
           "legacy_url": "/kategori/mevsimlik-and-kutlama/balkon-and-bahce-sezonu"
+        },
+        {
+          "id": "cat-34-07",
+          "menu_order": 7,
+          "name": "Halloween",
+          "slug": "halloween",
+          "url": "/kategorie/saisonales-und-feiern/halloween",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-34-07-01",
+              "menu_order": 1,
+              "name": "Kürbisse",
+              "slug": "kuerbisse",
+              "url": "/kategorie/saisonales-und-feiern/halloween/kuerbisse",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-07-02",
+              "menu_order": 2,
+              "name": "Laternen",
+              "slug": "laternen",
+              "url": "/kategorie/saisonales-und-feiern/halloween/laternen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-07-03",
+              "menu_order": 3,
+              "name": "Kostüm-Zubehör",
+              "slug": "kostuem-zubehoer",
+              "url": "/kategorie/saisonales-und-feiern/halloween/kostuem-zubehoer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-07-04",
+              "menu_order": 4,
+              "name": "Halloween-Lichter",
+              "slug": "halloween-lichter",
+              "url": "/kategorie/saisonales-und-feiern/halloween/halloween-lichter",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-34-08",
+          "menu_order": 8,
+          "name": "Ostern",
+          "slug": "ostern",
+          "url": "/kategorie/saisonales-und-feiern/ostern",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-34-08-01",
+              "menu_order": 1,
+              "name": "Ostereier",
+              "slug": "ostereier",
+              "url": "/kategorie/saisonales-und-feiern/ostern/ostereier",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-08-02",
+              "menu_order": 2,
+              "name": "Osterkörbe",
+              "slug": "ostekoerbe",
+              "url": "/kategorie/saisonales-und-feiern/ostern/ostekoerbe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-08-03",
+              "menu_order": 3,
+              "name": "Frühlingsdeko",
+              "slug": "fruehlingsdeko",
+              "url": "/kategorie/saisonales-und-feiern/ostern/fruehlingsdeko",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-34-08-04",
+              "menu_order": 4,
+              "name": "Hasenfiguren",
+              "slug": "hasenfiguren",
+              "url": "/kategorie/saisonales-und-feiern/ostern/hasenfiguren",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Mevsimlik & Kutlama",

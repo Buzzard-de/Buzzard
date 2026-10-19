@@ -23066,54 +23066,50 @@
             {
               "id": "cat-32-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/reise-und-koffer/valizler/standard",
+              "name": "Handgepäck",
+              "slug": "handgepaeck",
+              "url": "/kategorie/reise-und-koffer/valizler/handgepaeck",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "seyahat-and-valiz/valizler/standart",
-              "legacy_url": "/kategori/seyahat-and-valiz/valizler/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/reise-und-koffer/valizler/standard"
             },
             {
               "id": "cat-32-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/reise-und-koffer/valizler/premium",
+              "name": "Mittelgroße Koffer",
+              "slug": "mittelgrosse-koffer",
+              "url": "/kategorie/reise-und-koffer/valizler/mittelgrosse-koffer",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "seyahat-and-valiz/valizler/premium",
-              "legacy_url": "/kategori/seyahat-and-valiz/valizler/premium"
+              "legacy_url": "/kategorie/reise-und-koffer/valizler/premium"
             },
             {
               "id": "cat-32-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/reise-und-koffer/valizler/sets",
+              "name": "Große Koffer",
+              "slug": "grosse-koffer",
+              "url": "/kategorie/reise-und-koffer/valizler/grosse-koffer",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "seyahat-and-valiz/valizler/setler",
-              "legacy_url": "/kategori/seyahat-and-valiz/valizler/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/reise-und-koffer/valizler/sets"
             },
             {
               "id": "cat-32-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/reise-und-koffer/valizler/zubehoer",
+              "name": "Kofferset",
+              "slug": "kofferset",
+              "url": "/kategorie/reise-und-koffer/valizler/kofferset",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "seyahat-and-valiz/valizler/aksesuarlar",
-              "legacy_url": "/kategori/seyahat-and-valiz/valizler/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/reise-und-koffer/valizler/zubehoer"
             }
           ],
           "legacy_name": "Valizler",
@@ -23124,7 +23120,7 @@
         {
           "id": "cat-32-02",
           "menu_order": 2,
-          "name": "Reise Taschen",
+          "name": "Reisetaschen",
           "slug": "seyahat-cantalar",
           "url": "/kategorie/reise-und-koffer/seyahat-cantalar",
           "level": 2,
@@ -23132,28 +23128,26 @@
             {
               "id": "cat-32-02-01",
               "menu_order": 1,
-              "name": "Duffle",
-              "slug": "duffle",
-              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/duffle",
+              "name": "Reisetaschen",
+              "slug": "reisetaschen",
+              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/reisetaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Duffle",
               "legacy_slug": "duffle",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-cantalari/duffle",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-cantalari/duffle"
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-cantalar/duffle"
             },
             {
               "id": "cat-32-02-02",
               "menu_order": 2,
-              "name": "S Rt Cantas",
-              "slug": "s-rt-cantas",
-              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/s-rt-cantas",
+              "name": "Rucksäcke",
+              "slug": "rucksaecke",
+              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/rucksaecke",
               "level": 3,
               "children": [],
-              "legacy_name": "Sırt Çantası",
-              "legacy_slug": "sirt-cantasi",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-cantalari/sirt-cantasi",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-cantalari/sirt-cantasi"
+              "legacy_name": "S Rt Cantas",
+              "legacy_slug": "s-rt-cantas",
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-cantalar/s-rt-cantas"
             },
             {
               "id": "cat-32-02-03",
@@ -23165,21 +23159,19 @@
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-cantalari/organizer",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-cantalari/organizer"
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-cantalar/organizer"
             },
             {
               "id": "cat-32-02-04",
               "menu_order": 4,
-              "name": "Laptop Cantas",
-              "slug": "laptop-cantas",
-              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/laptop-cantas",
+              "name": "Laptoptaschen",
+              "slug": "laptoptaschen",
+              "url": "/kategorie/reise-und-koffer/seyahat-cantalar/laptoptaschen",
               "level": 3,
               "children": [],
-              "legacy_name": "Laptop Çantası",
-              "legacy_slug": "laptop-cantasi",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-cantalari/laptop-cantasi",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-cantalari/laptop-cantasi"
+              "legacy_name": "Laptop Cantas",
+              "legacy_slug": "laptop-cantas",
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-cantalar/laptop-cantas"
             }
           ],
           "legacy_name": "Seyahat Çantaları",
@@ -23190,7 +23182,7 @@
         {
           "id": "cat-32-03",
           "menu_order": 3,
-          "name": "Reise Zubehör",
+          "name": "Reise-Zubehör",
           "slug": "seyahat-aksesuarlar",
           "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar",
           "level": 2,
@@ -23198,54 +23190,50 @@
             {
               "id": "cat-32-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/standard",
+              "name": "Koffergurte",
+              "slug": "koffergurte",
+              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/koffergurte",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-aksesuarlari/standart",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/standard"
             },
             {
               "id": "cat-32-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/premium",
+              "name": "Schlösser",
+              "slug": "schloesser",
+              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/schloesser",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-aksesuarlari/premium",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-aksesuarlari/premium"
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/premium"
             },
             {
               "id": "cat-32-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/sets",
+              "name": "Kofferanhänger",
+              "slug": "kofferanhaenger",
+              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/kofferanhaenger",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-aksesuarlari/setler",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/sets"
             },
             {
               "id": "cat-32-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/zubehoer",
+              "name": "Waagen",
+              "slug": "waagen",
+              "url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/waagen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "seyahat-and-valiz/seyahat-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/seyahat-and-valiz/seyahat-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Seyahat Aksesuarları",
@@ -23256,7 +23244,7 @@
         {
           "id": "cat-32-04",
           "menu_order": 4,
-          "name": "Nacken Kissen",
+          "name": "Nackenkissen",
           "slug": "boyun-yast-klar",
           "url": "/kategorie/reise-und-koffer/boyun-yast-klar",
           "level": 2,
@@ -23264,54 +23252,50 @@
             {
               "id": "cat-32-04-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/standard",
+              "name": "Nackenkissen",
+              "slug": "nackenkissen",
+              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/nackenkissen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "seyahat-and-valiz/boyun-yastiklari/standart",
-              "legacy_url": "/kategori/seyahat-and-valiz/boyun-yastiklari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/reise-und-koffer/boyun-yast-klar/standard"
             },
             {
               "id": "cat-32-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/premium",
+              "name": "Schlafmasken",
+              "slug": "schlafmasken",
+              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/schlafmasken",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "seyahat-and-valiz/boyun-yastiklari/premium",
-              "legacy_url": "/kategori/seyahat-and-valiz/boyun-yastiklari/premium"
+              "legacy_url": "/kategorie/reise-und-koffer/boyun-yast-klar/premium"
             },
             {
               "id": "cat-32-04-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/sets",
+              "name": "Ohrstöpsel",
+              "slug": "ohrstoepsel",
+              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/ohrstoepsel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "seyahat-and-valiz/boyun-yastiklari/setler",
-              "legacy_url": "/kategori/seyahat-and-valiz/boyun-yastiklari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/reise-und-koffer/boyun-yast-klar/sets"
             },
             {
               "id": "cat-32-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/zubehoer",
+              "name": "Reise-Decken",
+              "slug": "reise-decken",
+              "url": "/kategorie/reise-und-koffer/boyun-yast-klar/reise-decken",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "seyahat-and-valiz/boyun-yastiklari/aksesuarlar",
-              "legacy_url": "/kategori/seyahat-and-valiz/boyun-yastiklari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/reise-und-koffer/boyun-yast-klar/zubehoer"
             }
           ],
           "legacy_name": "Boyun Yastıkları",
@@ -23322,7 +23306,7 @@
         {
           "id": "cat-32-05",
           "menu_order": 5,
-          "name": "Reisepass & Dokumente Zubehör",
+          "name": "Reisepass & Dokumente",
           "slug": "pasaport-und-evrak-aksesuarlar",
           "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar",
           "level": 2,
@@ -23330,54 +23314,50 @@
             {
               "id": "cat-32-05-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/standard",
+              "name": "Reisepassetuis",
+              "slug": "reisepassetuis",
+              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/reisepassetuis",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/standart",
-              "legacy_url": "/kategori/seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/standard"
             },
             {
               "id": "cat-32-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/premium",
+              "name": "RFID-Schutz",
+              "slug": "rfid-schutz",
+              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/rfid-schutz",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/premium",
-              "legacy_url": "/kategori/seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/premium"
+              "legacy_url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/premium"
             },
             {
               "id": "cat-32-05-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/sets",
+              "name": "Dokumente-Mappen",
+              "slug": "dokumente-mappen",
+              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/dokumente-mappen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/setler",
-              "legacy_url": "/kategori/seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/sets"
             },
             {
               "id": "cat-32-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/zubehoer",
+              "name": "Geldgürtel",
+              "slug": "geldguertel",
+              "url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/geldguertel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/aksesuarlar",
-              "legacy_url": "/kategori/seyahat-and-valiz/pasaport-and-evrak-aksesuarlari/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/zubehoer"
             }
           ],
           "legacy_name": "Pasaport & Evrak Aksesuarları",
@@ -23388,7 +23368,7 @@
         {
           "id": "cat-32-06",
           "menu_order": 6,
-          "name": "Fahrzeug Innen Reise",
+          "name": "Fahrzeug-Innenreise",
           "slug": "fahrzeug-ici-seyahat",
           "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat",
           "level": 2,
@@ -23396,60 +23376,148 @@
             {
               "id": "cat-32-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/standard",
+              "name": "Sitz-Organizer",
+              "slug": "sitz-organizer",
+              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sitz-organizer",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "seyahat-and-valiz/arac-ici-seyahat/standart",
-              "legacy_url": "/kategori/seyahat-and-valiz/arac-ici-seyahat/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/standard"
             },
             {
               "id": "cat-32-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/premium",
+              "name": "Tablet-Halter",
+              "slug": "tablet-halter",
+              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/tablet-halter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "seyahat-and-valiz/arac-ici-seyahat/premium",
-              "legacy_url": "/kategori/seyahat-and-valiz/arac-ici-seyahat/premium"
+              "legacy_url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/premium"
             },
             {
               "id": "cat-32-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sets",
+              "name": "Reise-Kühltaschen",
+              "slug": "reise-kuehltaschen",
+              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/reise-kuehltaschen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "seyahat-and-valiz/arac-ici-seyahat/setler",
-              "legacy_url": "/kategori/seyahat-and-valiz/arac-ici-seyahat/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sets"
             },
             {
               "id": "cat-32-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/zubehoer",
+              "name": "Sonnenblenden",
+              "slug": "sonnenblenden",
+              "url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sonnenblenden",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "seyahat-and-valiz/arac-ici-seyahat/aksesuarlar",
-              "legacy_url": "/kategori/seyahat-and-valiz/arac-ici-seyahat/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/zubehoer"
             }
           ],
           "legacy_name": "Araç İçi Seyahat",
           "legacy_slug": "arac-ici-seyahat",
           "legacy_slug_path": "seyahat-and-valiz/arac-ici-seyahat",
           "legacy_url": "/kategori/seyahat-and-valiz/arac-ici-seyahat"
+        },
+        {
+          "id": "cat-32-07",
+          "menu_order": 7,
+          "name": "Reiseadapter",
+          "slug": "reiseadapter",
+          "url": "/kategorie/reise-und-koffer/reiseadapter",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-32-07-01",
+              "menu_order": 1,
+              "name": "Reiseadapter",
+              "slug": "reiseadapter",
+              "url": "/kategorie/reise-und-koffer/reiseadapter/reiseadapter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-07-02",
+              "menu_order": 2,
+              "name": "USB-Adapter",
+              "slug": "usb-adapter",
+              "url": "/kategorie/reise-und-koffer/reiseadapter/usb-adapter",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-07-03",
+              "menu_order": 3,
+              "name": "Spannungswandler",
+              "slug": "spannungswandler",
+              "url": "/kategorie/reise-und-koffer/reiseadapter/spannungswandler",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-07-04",
+              "menu_order": 4,
+              "name": "Ladekabel",
+              "slug": "ladekabel",
+              "url": "/kategorie/reise-und-koffer/reiseadapter/ladekabel",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-32-08",
+          "menu_order": 8,
+          "name": "Packwürfel",
+          "slug": "packwuerfel",
+          "url": "/kategorie/reise-und-koffer/packwuerfel",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-32-08-01",
+              "menu_order": 1,
+              "name": "Packwürfel",
+              "slug": "packwuerfel",
+              "url": "/kategorie/reise-und-koffer/packwuerfel/packwuerfel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-08-02",
+              "menu_order": 2,
+              "name": "Kompressionstaschen",
+              "slug": "kompressionstaschen",
+              "url": "/kategorie/reise-und-koffer/packwuerfel/kompressionstaschen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-08-03",
+              "menu_order": 3,
+              "name": "Schuhbeutel",
+              "slug": "schuhbeutel",
+              "url": "/kategorie/reise-und-koffer/packwuerfel/schuhbeutel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-32-08-04",
+              "menu_order": 4,
+              "name": "Wäschebeutel",
+              "slug": "waeschebeutel",
+              "url": "/kategorie/reise-und-koffer/packwuerfel/waeschebeutel",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Seyahat & Valiz",

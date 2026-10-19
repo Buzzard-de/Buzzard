@@ -16576,5 +16576,143 @@
     "to": "/kategorie/kunsthandwerk-naehen-diy/kreativ-sets/naeh-sets/",
     "permanent": true,
     "note": "Craft DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/valizler/standard/",
+    "to": "/kategorie/reise-und-koffer/valizler/handgepaeck/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/valizler/premium/",
+    "to": "/kategorie/reise-und-koffer/valizler/mittelgrosse-koffer/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/valizler/sets/",
+    "to": "/kategorie/reise-und-koffer/valizler/grosse-koffer/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/valizler/zubehoer/",
+    "to": "/kategorie/reise-und-koffer/valizler/kofferset/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-cantalar/duffle/",
+    "to": "/kategorie/reise-und-koffer/seyahat-cantalar/reisetaschen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-cantalar/s-rt-cantas/",
+    "to": "/kategorie/reise-und-koffer/seyahat-cantalar/rucksaecke/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-cantalar/laptop-cantas/",
+    "to": "/kategorie/reise-und-koffer/seyahat-cantalar/laptoptaschen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/standard/",
+    "to": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/koffergurte/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/premium/",
+    "to": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/schloesser/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/sets/",
+    "to": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/kofferanhaenger/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/zubehoer/",
+    "to": "/kategorie/reise-und-koffer/seyahat-aksesuarlar/waagen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/boyun-yast-klar/standard/",
+    "to": "/kategorie/reise-und-koffer/boyun-yast-klar/nackenkissen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/boyun-yast-klar/premium/",
+    "to": "/kategorie/reise-und-koffer/boyun-yast-klar/schlafmasken/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/boyun-yast-klar/sets/",
+    "to": "/kategorie/reise-und-koffer/boyun-yast-klar/ohrstoepsel/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/boyun-yast-klar/zubehoer/",
+    "to": "/kategorie/reise-und-koffer/boyun-yast-klar/reise-decken/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/standard/",
+    "to": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/reisepassetuis/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/premium/",
+    "to": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/rfid-schutz/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/sets/",
+    "to": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/dokumente-mappen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/zubehoer/",
+    "to": "/kategorie/reise-und-koffer/pasaport-und-evrak-aksesuarlar/geldguertel/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/standard/",
+    "to": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sitz-organizer/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/premium/",
+    "to": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/tablet-halter/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sets/",
+    "to": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/reise-kuehltaschen/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/zubehoer/",
+    "to": "/kategorie/reise-und-koffer/fahrzeug-ici-seyahat/sonnenblenden/",
+    "permanent": true,
+    "note": "Travel placeholder L3 replaced with a real product group"
   }
 ]

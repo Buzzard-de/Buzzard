@@ -17434,5 +17434,149 @@
     "to": "/kategorie/verpackung-und-versand/palet-und-strec/palettenabdeckungen/",
     "permanent": true,
     "note": "Packaging placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/innen-mekan-kamera/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/innenkameras/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/aussen-mekan-kamera/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/aussenkameras/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/wi-fi-kamera/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/wlan-kameras/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/kamera-aksesuarlar/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-kameralar/kamera-zubehoer/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/standard/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/alarmanlagen/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/premium/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/funk-alarme/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/sets/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/sirenen/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/zubehoer/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/alarm-sistemleri/bedienteile/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sensoerler/standard/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sensoerler/bewegungsmelder/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sensoerler/premium/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sensoerler/tuerkontakte/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sensoerler/sets/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sensoerler/glasbruchmelder/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sensoerler/zubehoer/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sensoerler/wassermelder/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/standard/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/tuerschloesser/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/premium/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/smart-locks/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/sets/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/tuerspione/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/zubehoer/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kap-guevenligi/sicherheitsketten/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/standard/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/moebeltresore/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/premium/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/wandtresore/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/sets/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/vorhaengeschloesser/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/zubehoer/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/kasa-und-kilit/schluesselkaesten/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/standard/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/attrappen/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/premium/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/fensteralarme/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/sets/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/montagezubehoer/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/zubehoer/",
+    "to": "/kategorie/sicherheit-und-ueberwachung/sicherheit-aksesuarlar/ersatzakkus/",
+    "permanent": true,
+    "note": "Security placeholder L3 replaced with a real product group"
   }
 ]

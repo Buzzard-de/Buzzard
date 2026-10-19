@@ -15250,5 +15250,167 @@
     "to": "/kategorie/bau-und-konstruktion/montaj-ueruenleri/verbundmoertel/",
     "permanent": true,
     "note": "DIY placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-ampul/",
+    "to": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-lampen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-panel/",
+    "to": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-panels/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-serit/",
+    "to": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-streifen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/spot/",
+    "to": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/spots/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/projektoer/",
+    "to": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/strahler/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/ampuller/halojen/",
+    "to": "/kategorie/elektro-und-beleuchtung/ampuller/halogen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/ampuller/ak-ll-ampul/",
+    "to": "/kategorie/elektro-und-beleuchtung/ampuller/smart-lampen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/standard/",
+    "to": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/steckdosen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/premium/",
+    "to": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/schalter/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/sets/",
+    "to": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/dimmer/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/zubehoer/",
+    "to": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/rahmen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/kablo/elektro-kablosu/",
+    "to": "/kategorie/elektro-und-beleuchtung/kablo/installationskabel/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/kablo/kablo-makaras/",
+    "to": "/kategorie/elektro-und-beleuchtung/kablo/kabeltrommeln/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/kablo/data-kablosu/",
+    "to": "/kategorie/elektro-und-beleuchtung/kablo/datenkabel/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/kablo/hoparloer-kablosu/",
+    "to": "/kategorie/elektro-und-beleuchtung/kablo/lautsprecherkabel/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/3-lue/",
+    "to": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/3-fach/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/5-li/",
+    "to": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/5-fach/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/10-lu/",
+    "to": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/10-fach/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/makara/",
+    "to": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/kabeltrommel/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/standard/",
+    "to": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/sicherungsautomaten/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/premium/",
+    "to": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/fi-schalter/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/sets/",
+    "to": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/feinsicherungen/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/zubehoer/",
+    "to": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/ueberspannungsschutz/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/standard/",
+    "to": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/wandleuchten/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/premium/",
+    "to": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/wegeleuchten/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/sets/",
+    "to": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/solarleuchten/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/zubehoer/",
+    "to": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/aussenstrahler/",
+    "permanent": true,
+    "note": "Lighting placeholder L3 replaced with a real product group"
   }
 ]

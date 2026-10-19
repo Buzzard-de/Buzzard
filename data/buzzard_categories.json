@@ -18178,7 +18178,7 @@
         {
           "id": "cat-22-01",
           "menu_order": 1,
-          "name": "LED Beleuchtung",
+          "name": "LED-Beleuchtung",
           "slug": "led-ayd-nlatma",
           "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma",
           "level": 2,
@@ -18186,67 +18186,62 @@
             {
               "id": "cat-22-01-01",
               "menu_order": 1,
-              "name": "LED Ampul",
-              "slug": "led-ampul",
-              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-ampul",
+              "name": "LED-Lampen",
+              "slug": "led-lampen",
+              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-lampen",
               "level": 3,
               "children": [],
               "legacy_name": "LED Ampul",
               "legacy_slug": "led-ampul",
-              "legacy_slug_path": "elektrik-and-aydinlatma/led-aydinlatma/led-ampul",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma/led-ampul"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-ampul"
             },
             {
               "id": "cat-22-01-02",
               "menu_order": 2,
-              "name": "LED Panel",
-              "slug": "led-panel",
-              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-panel",
+              "name": "LED-Panels",
+              "slug": "led-panels",
+              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-panels",
               "level": 3,
               "children": [],
               "legacy_name": "LED Panel",
               "legacy_slug": "led-panel",
-              "legacy_slug_path": "elektrik-and-aydinlatma/led-aydinlatma/led-panel",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma/led-panel"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-panel"
             },
             {
               "id": "cat-22-01-03",
               "menu_order": 3,
-              "name": "Led Serit",
-              "slug": "led-serit",
-              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-serit",
+              "name": "LED-Streifen",
+              "slug": "led-streifen",
+              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-streifen",
               "level": 3,
               "children": [],
-              "legacy_name": "LED Şerit",
+              "legacy_name": "Led Serit",
               "legacy_slug": "led-serit",
-              "legacy_slug_path": "elektrik-and-aydinlatma/led-aydinlatma/led-serit",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma/led-serit"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/led-serit"
             },
             {
               "id": "cat-22-01-04",
               "menu_order": 4,
-              "name": "Spot",
-              "slug": "spot",
-              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/spot",
+              "name": "Spots",
+              "slug": "spots",
+              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/spots",
               "level": 3,
               "children": [],
               "legacy_name": "Spot",
               "legacy_slug": "spot",
-              "legacy_slug_path": "elektrik-and-aydinlatma/led-aydinlatma/spot",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma/spot"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/spot"
             },
             {
               "id": "cat-22-01-05",
               "menu_order": 5,
-              "name": "Projektör",
-              "slug": "projektoer",
-              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/projektoer",
+              "name": "Strahler",
+              "slug": "strahler",
+              "url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/strahler",
               "level": 3,
               "children": [],
               "legacy_name": "Projektör",
-              "legacy_slug": "projektor",
-              "legacy_slug_path": "elektrik-and-aydinlatma/led-aydinlatma/projektor",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/led-aydinlatma/projektor"
+              "legacy_slug": "projektoer",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/led-ayd-nlatma/projektoer"
             }
           ],
           "legacy_name": "LED Aydınlatma",
@@ -18257,7 +18252,7 @@
         {
           "id": "cat-22-02",
           "menu_order": 2,
-          "name": "Glühbirnen",
+          "name": "Leuchtmittel",
           "slug": "ampuller",
           "url": "/kategorie/elektro-und-beleuchtung/ampuller",
           "level": 2,
@@ -18272,21 +18267,19 @@
               "children": [],
               "legacy_name": "LED",
               "legacy_slug": "led",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/led",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/led"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/led"
             },
             {
               "id": "cat-22-02-02",
               "menu_order": 2,
-              "name": "Halojen",
-              "slug": "halojen",
-              "url": "/kategorie/elektro-und-beleuchtung/ampuller/halojen",
+              "name": "Halogen",
+              "slug": "halogen",
+              "url": "/kategorie/elektro-und-beleuchtung/ampuller/halogen",
               "level": 3,
               "children": [],
               "legacy_name": "Halojen",
               "legacy_slug": "halojen",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/halojen",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/halojen"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/halojen"
             },
             {
               "id": "cat-22-02-03",
@@ -18298,8 +18291,7 @@
               "children": [],
               "legacy_name": "E27",
               "legacy_slug": "e27",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/e27",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/e27"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/e27"
             },
             {
               "id": "cat-22-02-04",
@@ -18311,8 +18303,7 @@
               "children": [],
               "legacy_name": "E14",
               "legacy_slug": "e14",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/e14",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/e14"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/e14"
             },
             {
               "id": "cat-22-02-05",
@@ -18324,21 +18315,19 @@
               "children": [],
               "legacy_name": "GU10",
               "legacy_slug": "gu10",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/gu10",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/gu10"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/gu10"
             },
             {
               "id": "cat-22-02-06",
               "menu_order": 6,
-              "name": "Smart Ampul",
-              "slug": "ak-ll-ampul",
-              "url": "/kategorie/elektro-und-beleuchtung/ampuller/ak-ll-ampul",
+              "name": "Smart-Lampen",
+              "slug": "smart-lampen",
+              "url": "/kategorie/elektro-und-beleuchtung/ampuller/smart-lampen",
               "level": 3,
               "children": [],
-              "legacy_name": "Akıllı Ampul",
-              "legacy_slug": "akilli-ampul",
-              "legacy_slug_path": "elektrik-and-aydinlatma/ampuller/akilli-ampul",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/ampuller/akilli-ampul"
+              "legacy_name": "Smart Ampul",
+              "legacy_slug": "ak-ll-ampul",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/ampuller/ak-ll-ampul"
             }
           ],
           "legacy_name": "Ampuller",
@@ -18349,7 +18338,7 @@
         {
           "id": "cat-22-03",
           "menu_order": 3,
-          "name": "Steckdose & Schlüssel",
+          "name": "Steckdosen & Schalter",
           "slug": "priz-und-anahtar",
           "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar",
           "level": 2,
@@ -18357,54 +18346,50 @@
             {
               "id": "cat-22-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/standard",
+              "name": "Steckdosen",
+              "slug": "steckdosen",
+              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/steckdosen",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektrik-and-aydinlatma/priz-and-anahtar/standart",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/priz-and-anahtar/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/standard"
             },
             {
               "id": "cat-22-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/premium",
+              "name": "Schalter",
+              "slug": "schalter",
+              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/schalter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrik-and-aydinlatma/priz-and-anahtar/premium",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/priz-and-anahtar/premium"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/premium"
             },
             {
               "id": "cat-22-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/sets",
+              "name": "Dimmer",
+              "slug": "dimmer",
+              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/dimmer",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "elektrik-and-aydinlatma/priz-and-anahtar/setler",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/priz-and-anahtar/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/sets"
             },
             {
               "id": "cat-22-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/zubehoer",
+              "name": "Rahmen",
+              "slug": "rahmen",
+              "url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/rahmen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "elektrik-and-aydinlatma/priz-and-anahtar/aksesuarlar",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/priz-and-anahtar/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/priz-und-anahtar/zubehoer"
             }
           ],
           "legacy_name": "Priz & Anahtar",
@@ -18423,54 +18408,50 @@
             {
               "id": "cat-22-04-01",
               "menu_order": 1,
-              "name": "Elektrik Kablosu",
-              "slug": "elektro-kablosu",
-              "url": "/kategorie/elektro-und-beleuchtung/kablo/elektro-kablosu",
+              "name": "Installationskabel",
+              "slug": "installationskabel",
+              "url": "/kategorie/elektro-und-beleuchtung/kablo/installationskabel",
               "level": 3,
               "children": [],
               "legacy_name": "Elektrik Kablosu",
-              "legacy_slug": "elektrik-kablosu",
-              "legacy_slug_path": "elektrik-and-aydinlatma/kablo/elektrik-kablosu",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/kablo/elektrik-kablosu"
+              "legacy_slug": "elektro-kablosu",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/kablo/elektro-kablosu"
             },
             {
               "id": "cat-22-04-02",
               "menu_order": 2,
-              "name": "Kablo Makaras",
-              "slug": "kablo-makaras",
-              "url": "/kategorie/elektro-und-beleuchtung/kablo/kablo-makaras",
+              "name": "Kabeltrommeln",
+              "slug": "kabeltrommeln",
+              "url": "/kategorie/elektro-und-beleuchtung/kablo/kabeltrommeln",
               "level": 3,
               "children": [],
-              "legacy_name": "Kablo Makarası",
-              "legacy_slug": "kablo-makarasi",
-              "legacy_slug_path": "elektrik-and-aydinlatma/kablo/kablo-makarasi",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/kablo/kablo-makarasi"
+              "legacy_name": "Kablo Makaras",
+              "legacy_slug": "kablo-makaras",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/kablo/kablo-makaras"
             },
             {
               "id": "cat-22-04-03",
               "menu_order": 3,
-              "name": "Data Kablosu",
-              "slug": "data-kablosu",
-              "url": "/kategorie/elektro-und-beleuchtung/kablo/data-kablosu",
+              "name": "Datenkabel",
+              "slug": "datenkabel",
+              "url": "/kategorie/elektro-und-beleuchtung/kablo/datenkabel",
               "level": 3,
               "children": [],
               "legacy_name": "Data Kablosu",
               "legacy_slug": "data-kablosu",
-              "legacy_slug_path": "elektrik-and-aydinlatma/kablo/data-kablosu",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/kablo/data-kablosu"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/kablo/data-kablosu"
             },
             {
               "id": "cat-22-04-04",
               "menu_order": 4,
-              "name": "Hoparlör Kablosu",
-              "slug": "hoparloer-kablosu",
-              "url": "/kategorie/elektro-und-beleuchtung/kablo/hoparloer-kablosu",
+              "name": "Lautsprecherkabel",
+              "slug": "lautsprecherkabel",
+              "url": "/kategorie/elektro-und-beleuchtung/kablo/lautsprecherkabel",
               "level": 3,
               "children": [],
               "legacy_name": "Hoparlör Kablosu",
-              "legacy_slug": "hoparlor-kablosu",
-              "legacy_slug_path": "elektrik-and-aydinlatma/kablo/hoparlor-kablosu",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/kablo/hoparlor-kablosu"
+              "legacy_slug": "hoparloer-kablosu",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/kablo/hoparloer-kablosu"
             }
           ],
           "legacy_name": "Kablo",
@@ -18481,7 +18462,7 @@
         {
           "id": "cat-22-05",
           "menu_order": 5,
-          "name": "Verlängerung Kabel",
+          "name": "Verlängerungen",
           "slug": "uzatma-kablolar",
           "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar",
           "level": 2,
@@ -18489,54 +18470,50 @@
             {
               "id": "cat-22-05-01",
               "menu_order": 1,
-              "name": "3'lü",
-              "slug": "3-lue",
-              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/3-lue",
+              "name": "3-fach",
+              "slug": "3-fach",
+              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/3-fach",
               "level": 3,
               "children": [],
               "legacy_name": "3'lü",
-              "legacy_slug": "3-lu",
-              "legacy_slug_path": "elektrik-and-aydinlatma/uzatma-kablolari/3-lu",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari/3-lu"
+              "legacy_slug": "3-lue",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/3-lue"
             },
             {
               "id": "cat-22-05-02",
               "menu_order": 2,
-              "name": "5'li",
-              "slug": "5-li",
-              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/5-li",
+              "name": "5-fach",
+              "slug": "5-fach",
+              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/5-fach",
               "level": 3,
               "children": [],
               "legacy_name": "5'li",
               "legacy_slug": "5-li",
-              "legacy_slug_path": "elektrik-and-aydinlatma/uzatma-kablolari/5-li",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari/5-li"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/5-li"
             },
             {
               "id": "cat-22-05-03",
               "menu_order": 3,
-              "name": "10'lu",
-              "slug": "10-lu",
-              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/10-lu",
+              "name": "10-fach",
+              "slug": "10-fach",
+              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/10-fach",
               "level": 3,
               "children": [],
               "legacy_name": "10'lu",
               "legacy_slug": "10-lu",
-              "legacy_slug_path": "elektrik-and-aydinlatma/uzatma-kablolari/10-lu",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari/10-lu"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/10-lu"
             },
             {
               "id": "cat-22-05-04",
               "menu_order": 4,
-              "name": "Makara",
-              "slug": "makara",
-              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/makara",
+              "name": "Kabeltrommel",
+              "slug": "kabeltrommel",
+              "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/kabeltrommel",
               "level": 3,
               "children": [],
               "legacy_name": "Makara",
               "legacy_slug": "makara",
-              "legacy_slug_path": "elektrik-and-aydinlatma/uzatma-kablolari/makara",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari/makara"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/makara"
             },
             {
               "id": "cat-22-05-05",
@@ -18546,10 +18523,9 @@
               "url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/garten",
               "level": 3,
               "children": [],
-              "legacy_name": "Bahçe",
-              "legacy_slug": "bahce",
-              "legacy_slug_path": "elektrik-and-aydinlatma/uzatma-kablolari/bahce",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/uzatma-kablolari/bahce"
+              "legacy_name": "Garten",
+              "legacy_slug": "garten",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/uzatma-kablolar/garten"
             }
           ],
           "legacy_name": "Uzatma Kabloları",
@@ -18568,54 +18544,50 @@
             {
               "id": "cat-22-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/standard",
+              "name": "Sicherungsautomaten",
+              "slug": "sicherungsautomaten",
+              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/sicherungsautomaten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektrik-and-aydinlatma/sigorta-and-koruma/standart",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/sigorta-and-koruma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/standard"
             },
             {
               "id": "cat-22-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/premium",
+              "name": "FI-Schalter",
+              "slug": "fi-schalter",
+              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/fi-schalter",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrik-and-aydinlatma/sigorta-and-koruma/premium",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/sigorta-and-koruma/premium"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/premium"
             },
             {
               "id": "cat-22-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/sets",
+              "name": "Feinsicherungen",
+              "slug": "feinsicherungen",
+              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/feinsicherungen",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "elektrik-and-aydinlatma/sigorta-and-koruma/setler",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/sigorta-and-koruma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/sets"
             },
             {
               "id": "cat-22-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/zubehoer",
+              "name": "Überspannungsschutz",
+              "slug": "ueberspannungsschutz",
+              "url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/ueberspannungsschutz",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "elektrik-and-aydinlatma/sigorta-and-koruma/aksesuarlar",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/sigorta-and-koruma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/sigorta-und-koruma/zubehoer"
             }
           ],
           "legacy_name": "Sigorta & Koruma",
@@ -18626,7 +18598,7 @@
         {
           "id": "cat-22-07",
           "menu_order": 7,
-          "name": "Außen Raum Beleuchtung",
+          "name": "Außenbeleuchtung",
           "slug": "aussen-mekan-ayd-nlatma",
           "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma",
           "level": 2,
@@ -18634,60 +18606,102 @@
             {
               "id": "cat-22-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/standard",
+              "name": "Wandleuchten",
+              "slug": "wandleuchten",
+              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/wandleuchten",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "elektrik-and-aydinlatma/dis-mekan-aydinlatma/standart",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/standard"
             },
             {
               "id": "cat-22-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/premium",
+              "name": "Wegeleuchten",
+              "slug": "wegeleuchten",
+              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/wegeleuchten",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "elektrik-and-aydinlatma/dis-mekan-aydinlatma/premium",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma/premium"
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/premium"
             },
             {
               "id": "cat-22-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/sets",
+              "name": "Solarleuchten",
+              "slug": "solarleuchten",
+              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/solarleuchten",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "elektrik-and-aydinlatma/dis-mekan-aydinlatma/setler",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/sets"
             },
             {
               "id": "cat-22-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/zubehoer",
+              "name": "Außenstrahler",
+              "slug": "aussenstrahler",
+              "url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/aussenstrahler",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "elektrik-and-aydinlatma/dis-mekan-aydinlatma/aksesuarlar",
-              "legacy_url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/elektro-und-beleuchtung/aussen-mekan-ayd-nlatma/zubehoer"
             }
           ],
           "legacy_name": "Dış Mekan Aydınlatma",
           "legacy_slug": "dis-mekan-aydinlatma",
           "legacy_slug_path": "elektrik-and-aydinlatma/dis-mekan-aydinlatma",
           "legacy_url": "/kategori/elektrik-and-aydinlatma/dis-mekan-aydinlatma"
+        },
+        {
+          "id": "cat-22-08",
+          "menu_order": 8,
+          "name": "Leuchten",
+          "slug": "leuchten",
+          "url": "/kategorie/elektro-und-beleuchtung/leuchten",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-22-08-01",
+              "menu_order": 1,
+              "name": "Tischlampen",
+              "slug": "tischlampen",
+              "url": "/kategorie/elektro-und-beleuchtung/leuchten/tischlampen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-22-08-02",
+              "menu_order": 2,
+              "name": "Stehlampen",
+              "slug": "stehlampen",
+              "url": "/kategorie/elektro-und-beleuchtung/leuchten/stehlampen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-22-08-03",
+              "menu_order": 3,
+              "name": "Pendelleuchten",
+              "slug": "pendelleuchten",
+              "url": "/kategorie/elektro-und-beleuchtung/leuchten/pendelleuchten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-22-08-04",
+              "menu_order": 4,
+              "name": "Deckenleuchten",
+              "slug": "deckenleuchten",
+              "url": "/kategorie/elektro-und-beleuchtung/leuchten/deckenleuchten",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Elektrik & Aydınlatma",

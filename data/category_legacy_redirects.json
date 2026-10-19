@@ -15904,5 +15904,149 @@
     "to": "/kategorie/elektronik/elektronik-zubehoer/staender/",
     "permanent": true,
     "note": "Electronics placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/smartwatches/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/sportuhren/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/fitness-tracker/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/ak-ll-saat/wechselarmbaender/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/in-ear/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/over-ear/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/true-wireless/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/kulakl-k/sportkopfhoerer/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/kompakt/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/high-capacity/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/magnetisch/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/powerbank/solar-powerbanks/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/silikonhuellen/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/hardcases/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/bookcovers/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/telefon-k-l-flar/kameraschutz/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/tablet-huellen/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/tastaturen/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/stifte/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/tablet-aksesuarlar/displayschutz/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/standard/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/usb-c-ladegeraete/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/pro/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/kfz-ladegeraete/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/set/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/induktiv/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/zubehoer/",
+    "to": "/kategorie/persoenliche-elektronik-und-mobil/mobil-sarj/ladekabel/",
+    "permanent": true,
+    "note": "Mobile telecom placeholder L3 replaced with a real product group"
   }
 ]

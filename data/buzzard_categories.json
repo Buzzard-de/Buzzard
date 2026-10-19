@@ -20290,7 +20290,7 @@
         {
           "id": "cat-26-01",
           "menu_order": 1,
-          "name": "Katze Futter",
+          "name": "Katzenfutter",
           "slug": "katze-mamas",
           "url": "/kategorie/tierfutter/katze-mamas",
           "level": 2,
@@ -20298,67 +20298,62 @@
             {
               "id": "cat-26-01-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/katze-mamas/guenluek",
+              "name": "Kitten",
+              "slug": "kitten",
+              "url": "/kategorie/tierfutter/katze-mamas/kitten",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kedi-mamasi/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/katze-mamas/guenluek"
             },
             {
               "id": "cat-26-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/katze-mamas/premium",
+              "name": "Adult",
+              "slug": "adult",
+              "url": "/kategorie/tierfutter/katze-mamas/adult",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kedi-mamasi/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi/premium"
+              "legacy_url": "/kategorie/tierfutter/katze-mamas/premium"
             },
             {
               "id": "cat-26-01-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/katze-mamas/set",
+              "name": "Senior",
+              "slug": "senior",
+              "url": "/kategorie/tierfutter/katze-mamas/senior",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kedi-mamasi/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi/set"
+              "legacy_url": "/kategorie/tierfutter/katze-mamas/set"
             },
             {
               "id": "cat-26-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/katze-mamas/zubehoer",
+              "name": "Sterilisiert",
+              "slug": "sterilisiert",
+              "url": "/kategorie/tierfutter/katze-mamas/sterilisiert",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kedi-mamasi/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/katze-mamas/zubehoer"
             },
             {
               "id": "cat-26-01-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/katze-mamas/organizer",
+              "name": "Indoor",
+              "slug": "indoor",
+              "url": "/kategorie/tierfutter/katze-mamas/indoor",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kedi-mamasi/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kedi-mamasi/organizer"
+              "legacy_url": "/kategorie/tierfutter/katze-mamas/organizer"
             }
           ],
           "legacy_name": "Kedi Maması",
@@ -20369,7 +20364,7 @@
         {
           "id": "cat-26-02",
           "menu_order": 2,
-          "name": "Hund Futter",
+          "name": "Hundefutter",
           "slug": "hund-mamas",
           "url": "/kategorie/tierfutter/hund-mamas",
           "level": 2,
@@ -20377,67 +20372,62 @@
             {
               "id": "cat-26-02-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/hund-mamas/guenluek",
+              "name": "Welpe",
+              "slug": "welpe",
+              "url": "/kategorie/tierfutter/hund-mamas/welpe",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kopek-mamasi/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/hund-mamas/guenluek"
             },
             {
               "id": "cat-26-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/hund-mamas/premium",
+              "name": "Adult",
+              "slug": "adult",
+              "url": "/kategorie/tierfutter/hund-mamas/adult",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kopek-mamasi/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi/premium"
+              "legacy_url": "/kategorie/tierfutter/hund-mamas/premium"
             },
             {
               "id": "cat-26-02-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/hund-mamas/set",
+              "name": "Senior",
+              "slug": "senior",
+              "url": "/kategorie/tierfutter/hund-mamas/senior",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kopek-mamasi/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi/set"
+              "legacy_url": "/kategorie/tierfutter/hund-mamas/set"
             },
             {
               "id": "cat-26-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/hund-mamas/zubehoer",
+              "name": "Große Rassen",
+              "slug": "grosse-rassen",
+              "url": "/kategorie/tierfutter/hund-mamas/grosse-rassen",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kopek-mamasi/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/hund-mamas/zubehoer"
             },
             {
               "id": "cat-26-02-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/hund-mamas/organizer",
+              "name": "Kleine Rassen",
+              "slug": "kleine-rassen",
+              "url": "/kategorie/tierfutter/hund-mamas/kleine-rassen",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kopek-mamasi/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kopek-mamasi/organizer"
+              "legacy_url": "/kategorie/tierfutter/hund-mamas/organizer"
             }
           ],
           "legacy_name": "Köpek Maması",
@@ -20448,7 +20438,7 @@
         {
           "id": "cat-26-03",
           "menu_order": 3,
-          "name": "Vogel Futter",
+          "name": "Vogelfutter",
           "slug": "kus-yemi",
           "url": "/kategorie/tierfutter/kus-yemi",
           "level": 2,
@@ -20456,67 +20446,62 @@
             {
               "id": "cat-26-03-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/kus-yemi/guenluek",
+              "name": "Wellensittich",
+              "slug": "wellensittich",
+              "url": "/kategorie/tierfutter/kus-yemi/wellensittich",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kus-yemi/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kus-yemi/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/kus-yemi/guenluek"
             },
             {
               "id": "cat-26-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/kus-yemi/premium",
+              "name": "Papagei",
+              "slug": "papagei",
+              "url": "/kategorie/tierfutter/kus-yemi/papagei",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kus-yemi/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kus-yemi/premium"
+              "legacy_url": "/kategorie/tierfutter/kus-yemi/premium"
             },
             {
               "id": "cat-26-03-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/kus-yemi/set",
+              "name": "Kanarien",
+              "slug": "kanarien",
+              "url": "/kategorie/tierfutter/kus-yemi/kanarien",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kus-yemi/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kus-yemi/set"
+              "legacy_url": "/kategorie/tierfutter/kus-yemi/set"
             },
             {
               "id": "cat-26-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/kus-yemi/zubehoer",
+              "name": "Exoten",
+              "slug": "exoten",
+              "url": "/kategorie/tierfutter/kus-yemi/exoten",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kus-yemi/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kus-yemi/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/kus-yemi/zubehoer"
             },
             {
               "id": "cat-26-03-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/kus-yemi/organizer",
+              "name": "Wildvögel",
+              "slug": "wildvoegel",
+              "url": "/kategorie/tierfutter/kus-yemi/wildvoegel",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kus-yemi/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kus-yemi/organizer"
+              "legacy_url": "/kategorie/tierfutter/kus-yemi/organizer"
             }
           ],
           "legacy_name": "Kuş Yemi",
@@ -20527,7 +20512,7 @@
         {
           "id": "cat-26-04",
           "menu_order": 4,
-          "name": "Fisch Futter",
+          "name": "Fischfutter",
           "slug": "bal-k-yemi",
           "url": "/kategorie/tierfutter/bal-k-yemi",
           "level": 2,
@@ -20535,67 +20520,62 @@
             {
               "id": "cat-26-04-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/bal-k-yemi/guenluek",
+              "name": "Flocken",
+              "slug": "flocken",
+              "url": "/kategorie/tierfutter/bal-k-yemi/flocken",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/balik-yemi/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/balik-yemi/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/bal-k-yemi/guenluek"
             },
             {
               "id": "cat-26-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/bal-k-yemi/premium",
+              "name": "Granulat",
+              "slug": "granulat",
+              "url": "/kategorie/tierfutter/bal-k-yemi/granulat",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/balik-yemi/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/balik-yemi/premium"
+              "legacy_url": "/kategorie/tierfutter/bal-k-yemi/premium"
             },
             {
               "id": "cat-26-04-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/bal-k-yemi/set",
+              "name": "Tabletten",
+              "slug": "tabletten",
+              "url": "/kategorie/tierfutter/bal-k-yemi/tabletten",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/balik-yemi/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/balik-yemi/set"
+              "legacy_url": "/kategorie/tierfutter/bal-k-yemi/set"
             },
             {
               "id": "cat-26-04-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/bal-k-yemi/zubehoer",
+              "name": "Frostfutter",
+              "slug": "frostfutter",
+              "url": "/kategorie/tierfutter/bal-k-yemi/frostfutter",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/balik-yemi/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/balik-yemi/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/bal-k-yemi/zubehoer"
             },
             {
               "id": "cat-26-04-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/bal-k-yemi/organizer",
+              "name": "Lebendfutter",
+              "slug": "lebendfutter",
+              "url": "/kategorie/tierfutter/bal-k-yemi/lebendfutter",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/balik-yemi/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/balik-yemi/organizer"
+              "legacy_url": "/kategorie/tierfutter/bal-k-yemi/organizer"
             }
           ],
           "legacy_name": "Balık Yemi",
@@ -20606,7 +20586,7 @@
         {
           "id": "cat-26-05",
           "menu_order": 5,
-          "name": "Nagetier Futter",
+          "name": "Nagetierfutter",
           "slug": "kemirgen-yemi",
           "url": "/kategorie/tierfutter/kemirgen-yemi",
           "level": 2,
@@ -20614,67 +20594,62 @@
             {
               "id": "cat-26-05-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/kemirgen-yemi/guenluek",
+              "name": "Hamster",
+              "slug": "hamster",
+              "url": "/kategorie/tierfutter/kemirgen-yemi/hamster",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kemirgen-yemi/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/kemirgen-yemi/guenluek"
             },
             {
               "id": "cat-26-05-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/kemirgen-yemi/premium",
+              "name": "Meerschweinchen",
+              "slug": "meerschweinchen",
+              "url": "/kategorie/tierfutter/kemirgen-yemi/meerschweinchen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kemirgen-yemi/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi/premium"
+              "legacy_url": "/kategorie/tierfutter/kemirgen-yemi/premium"
             },
             {
               "id": "cat-26-05-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/kemirgen-yemi/set",
+              "name": "Kaninchen",
+              "slug": "kaninchen",
+              "url": "/kategorie/tierfutter/kemirgen-yemi/kaninchen",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kemirgen-yemi/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi/set"
+              "legacy_url": "/kategorie/tierfutter/kemirgen-yemi/set"
             },
             {
               "id": "cat-26-05-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/kemirgen-yemi/zubehoer",
+              "name": "Chinchilla",
+              "slug": "chinchilla",
+              "url": "/kategorie/tierfutter/kemirgen-yemi/chinchilla",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kemirgen-yemi/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/kemirgen-yemi/zubehoer"
             },
             {
               "id": "cat-26-05-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/kemirgen-yemi/organizer",
+              "name": "Ratte & Maus",
+              "slug": "ratte-und-maus",
+              "url": "/kategorie/tierfutter/kemirgen-yemi/ratte-und-maus",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/kemirgen-yemi/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/kemirgen-yemi/organizer"
+              "legacy_url": "/kategorie/tierfutter/kemirgen-yemi/organizer"
             }
           ],
           "legacy_name": "Kemirgen Yemi",
@@ -20685,7 +20660,7 @@
         {
           "id": "cat-26-06",
           "menu_order": 6,
-          "name": "Sonder Ernährung",
+          "name": "Sonderernährung",
           "slug": "oezel-beslenme",
           "url": "/kategorie/tierfutter/oezel-beslenme",
           "level": 2,
@@ -20693,73 +20668,178 @@
             {
               "id": "cat-26-06-01",
               "menu_order": 1,
-              "name": "Alltag",
-              "slug": "guenluek",
-              "url": "/kategorie/tierfutter/oezel-beslenme/guenluek",
+              "name": "Hypoallergen",
+              "slug": "hypoallergen",
+              "url": "/kategorie/tierfutter/oezel-beslenme/hypoallergen",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük",
-              "legacy_slug": "gunluk",
-              "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme/gunluk",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme/gunluk"
+              "legacy_name": "Alltag",
+              "legacy_slug": "guenluek",
+              "legacy_url": "/kategorie/tierfutter/oezel-beslenme/guenluek"
             },
             {
               "id": "cat-26-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/tierfutter/oezel-beslenme/premium",
+              "name": "Getreidefrei",
+              "slug": "getreidefrei",
+              "url": "/kategorie/tierfutter/oezel-beslenme/getreidefrei",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme/premium",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme/premium"
+              "legacy_url": "/kategorie/tierfutter/oezel-beslenme/premium"
             },
             {
               "id": "cat-26-06-03",
               "menu_order": 3,
-              "name": "Set",
-              "slug": "set",
-              "url": "/kategorie/tierfutter/oezel-beslenme/set",
+              "name": "Light",
+              "slug": "light",
+              "url": "/kategorie/tierfutter/oezel-beslenme/light",
               "level": 3,
               "children": [],
               "legacy_name": "Set",
               "legacy_slug": "set",
-              "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme/set",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme/set"
+              "legacy_url": "/kategorie/tierfutter/oezel-beslenme/set"
             },
             {
               "id": "cat-26-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/tierfutter/oezel-beslenme/zubehoer",
+              "name": "Sensitive",
+              "slug": "sensitive",
+              "url": "/kategorie/tierfutter/oezel-beslenme/sensitive",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuar",
-              "legacy_slug": "aksesuar",
-              "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme/aksesuar",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme/aksesuar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/tierfutter/oezel-beslenme/zubehoer"
             },
             {
               "id": "cat-26-06-05",
               "menu_order": 5,
-              "name": "Organizer",
-              "slug": "organizer",
-              "url": "/kategorie/tierfutter/oezel-beslenme/organizer",
+              "name": "Veterinary",
+              "slug": "veterinary",
+              "url": "/kategorie/tierfutter/oezel-beslenme/veterinary",
               "level": 3,
               "children": [],
               "legacy_name": "Organizer",
               "legacy_slug": "organizer",
-              "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme/organizer",
-              "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme/organizer"
+              "legacy_url": "/kategorie/tierfutter/oezel-beslenme/organizer"
             }
           ],
           "legacy_name": "Özel Beslenme",
           "legacy_slug": "ozel-beslenme",
           "legacy_slug_path": "evcil-hayvan-mamasi/ozel-beslenme",
           "legacy_url": "/kategori/evcil-hayvan-mamasi/ozel-beslenme"
+        },
+        {
+          "id": "cat-26-07",
+          "menu_order": 7,
+          "name": "Snacks & Ergänzung",
+          "slug": "snacks-und-ergaenzung",
+          "url": "/kategorie/tierfutter/snacks-und-ergaenzung",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-26-07-01",
+              "menu_order": 1,
+              "name": "Leckerlis",
+              "slug": "leckerlis",
+              "url": "/kategorie/tierfutter/snacks-und-ergaenzung/leckerlis",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-07-02",
+              "menu_order": 2,
+              "name": "Nahrungsergänzung",
+              "slug": "nahrungsergaenzung",
+              "url": "/kategorie/tierfutter/snacks-und-ergaenzung/nahrungsergaenzung",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-07-03",
+              "menu_order": 3,
+              "name": "Malzpaste",
+              "slug": "malzpaste",
+              "url": "/kategorie/tierfutter/snacks-und-ergaenzung/malzpaste",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-07-04",
+              "menu_order": 4,
+              "name": "Gelenk & Fell",
+              "slug": "gelenk-und-fell",
+              "url": "/kategorie/tierfutter/snacks-und-ergaenzung/gelenk-und-fell",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-07-05",
+              "menu_order": 5,
+              "name": "Probiotika",
+              "slug": "probiotika",
+              "url": "/kategorie/tierfutter/snacks-und-ergaenzung/probiotika",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-26-08",
+          "menu_order": 8,
+          "name": "Näpfe & Spender",
+          "slug": "naepfe-und-spender",
+          "url": "/kategorie/tierfutter/naepfe-und-spender",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-26-08-01",
+              "menu_order": 1,
+              "name": "Näpfe",
+              "slug": "naepfe",
+              "url": "/kategorie/tierfutter/naepfe-und-spender/naepfe",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-08-02",
+              "menu_order": 2,
+              "name": "Trinkbrunnen",
+              "slug": "trinkbrunnen",
+              "url": "/kategorie/tierfutter/naepfe-und-spender/trinkbrunnen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-08-03",
+              "menu_order": 3,
+              "name": "Futterautomaten",
+              "slug": "futterautomaten",
+              "url": "/kategorie/tierfutter/naepfe-und-spender/futterautomaten",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-08-04",
+              "menu_order": 4,
+              "name": "Reisebecher",
+              "slug": "reisebecher",
+              "url": "/kategorie/tierfutter/naepfe-und-spender/reisebecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-26-08-05",
+              "menu_order": 5,
+              "name": "Unterlagen",
+              "slug": "unterlagen",
+              "url": "/kategorie/tierfutter/naepfe-und-spender/unterlagen",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Evcil Hayvan Maması",

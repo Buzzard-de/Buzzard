@@ -14339,7 +14339,7 @@
         {
           "id": "cat-15-01",
           "menu_order": 1,
-          "name": "Damen Schuhe",
+          "name": "Damenschuhe",
           "slug": "damen-schuhe",
           "url": "/kategorie/schuhe/damen-schuhe",
           "level": 2,
@@ -14347,54 +14347,77 @@
             {
               "id": "cat-15-01-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/damen-schuhe/standard",
+              "name": "Sneaker",
+              "slug": "sneaker",
+              "url": "/kategorie/schuhe/damen-schuhe/sneaker",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/kadin-ayakkabi/standart",
-              "legacy_url": "/kategori/ayakkabi/kadin-ayakkabi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/damen-schuhe/standard"
             },
             {
               "id": "cat-15-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/damen-schuhe/premium",
+              "name": "Pumps",
+              "slug": "pumps",
+              "url": "/kategorie/schuhe/damen-schuhe/pumps",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/kadin-ayakkabi/premium",
-              "legacy_url": "/kategori/ayakkabi/kadin-ayakkabi/premium"
+              "legacy_url": "/kategorie/schuhe/damen-schuhe/premium"
             },
             {
               "id": "cat-15-01-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/damen-schuhe/sets",
+              "name": "Ballerinas",
+              "slug": "ballerinas",
+              "url": "/kategorie/schuhe/damen-schuhe/ballerinas",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/kadin-ayakkabi/setler",
-              "legacy_url": "/kategori/ayakkabi/kadin-ayakkabi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/damen-schuhe/sets"
             },
             {
               "id": "cat-15-01-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/damen-schuhe/zubehoer",
+              "name": "Stiefeletten",
+              "slug": "stiefeletten",
+              "url": "/kategorie/schuhe/damen-schuhe/stiefeletten",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/kadin-ayakkabi/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/kadin-ayakkabi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/damen-schuhe/zubehoer"
+            },
+            {
+              "id": "cat-15-01-05",
+              "menu_order": 5,
+              "name": "Stiefel",
+              "slug": "stiefel",
+              "url": "/kategorie/schuhe/damen-schuhe/stiefel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-01-06",
+              "menu_order": 6,
+              "name": "Loafer",
+              "slug": "loafer",
+              "url": "/kategorie/schuhe/damen-schuhe/loafer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-01-07",
+              "menu_order": 7,
+              "name": "Sandalen",
+              "slug": "sandalen",
+              "url": "/kategorie/schuhe/damen-schuhe/sandalen",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Kadın Ayakkabı",
@@ -14405,7 +14428,7 @@
         {
           "id": "cat-15-02",
           "menu_order": 2,
-          "name": "Herren Schuhe",
+          "name": "Herrenschuhe",
           "slug": "herren-schuhe",
           "url": "/kategorie/schuhe/herren-schuhe",
           "level": 2,
@@ -14413,54 +14436,68 @@
             {
               "id": "cat-15-02-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/herren-schuhe/standard",
+              "name": "Sneaker",
+              "slug": "sneaker",
+              "url": "/kategorie/schuhe/herren-schuhe/sneaker",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/erkek-ayakkabi/standart",
-              "legacy_url": "/kategori/ayakkabi/erkek-ayakkabi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/herren-schuhe/standard"
             },
             {
               "id": "cat-15-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/herren-schuhe/premium",
+              "name": "Halbschuhe",
+              "slug": "halbschuhe",
+              "url": "/kategorie/schuhe/herren-schuhe/halbschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/erkek-ayakkabi/premium",
-              "legacy_url": "/kategori/ayakkabi/erkek-ayakkabi/premium"
+              "legacy_url": "/kategorie/schuhe/herren-schuhe/premium"
             },
             {
               "id": "cat-15-02-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/herren-schuhe/sets",
+              "name": "Businessschuhe",
+              "slug": "businessschuhe",
+              "url": "/kategorie/schuhe/herren-schuhe/businessschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/erkek-ayakkabi/setler",
-              "legacy_url": "/kategori/ayakkabi/erkek-ayakkabi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/herren-schuhe/sets"
             },
             {
               "id": "cat-15-02-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/herren-schuhe/zubehoer",
+              "name": "Boots",
+              "slug": "boots",
+              "url": "/kategorie/schuhe/herren-schuhe/boots",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/erkek-ayakkabi/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/erkek-ayakkabi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/herren-schuhe/zubehoer"
+            },
+            {
+              "id": "cat-15-02-05",
+              "menu_order": 5,
+              "name": "Loafer",
+              "slug": "loafer",
+              "url": "/kategorie/schuhe/herren-schuhe/loafer",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-02-06",
+              "menu_order": 6,
+              "name": "Slipper",
+              "slug": "slipper",
+              "url": "/kategorie/schuhe/herren-schuhe/slipper",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Erkek Ayakkabı",
@@ -14471,7 +14508,7 @@
         {
           "id": "cat-15-03",
           "menu_order": 3,
-          "name": "Kinder Schuhe",
+          "name": "Kinderschuhe",
           "slug": "kinder-schuhe",
           "url": "/kategorie/schuhe/kinder-schuhe",
           "level": 2,
@@ -14479,54 +14516,59 @@
             {
               "id": "cat-15-03-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/kinder-schuhe/standard",
+              "name": "Sneaker",
+              "slug": "sneaker",
+              "url": "/kategorie/schuhe/kinder-schuhe/sneaker",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/cocuk-ayakkabi/standart",
-              "legacy_url": "/kategori/ayakkabi/cocuk-ayakkabi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/kinder-schuhe/standard"
             },
             {
               "id": "cat-15-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/kinder-schuhe/premium",
+              "name": "Sandalen",
+              "slug": "sandalen",
+              "url": "/kategorie/schuhe/kinder-schuhe/sandalen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/cocuk-ayakkabi/premium",
-              "legacy_url": "/kategori/ayakkabi/cocuk-ayakkabi/premium"
+              "legacy_url": "/kategorie/schuhe/kinder-schuhe/premium"
             },
             {
               "id": "cat-15-03-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/kinder-schuhe/sets",
+              "name": "Stiefel",
+              "slug": "stiefel",
+              "url": "/kategorie/schuhe/kinder-schuhe/stiefel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/cocuk-ayakkabi/setler",
-              "legacy_url": "/kategori/ayakkabi/cocuk-ayakkabi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/kinder-schuhe/sets"
             },
             {
               "id": "cat-15-03-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/kinder-schuhe/zubehoer",
+              "name": "Hausschuhe",
+              "slug": "hausschuhe",
+              "url": "/kategorie/schuhe/kinder-schuhe/hausschuhe",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/cocuk-ayakkabi/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/cocuk-ayakkabi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/kinder-schuhe/zubehoer"
+            },
+            {
+              "id": "cat-15-03-05",
+              "menu_order": 5,
+              "name": "Schulsneaker",
+              "slug": "schulsneaker",
+              "url": "/kategorie/schuhe/kinder-schuhe/schulsneaker",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Çocuk Ayakkabı",
@@ -14537,7 +14579,7 @@
         {
           "id": "cat-15-04",
           "menu_order": 4,
-          "name": "Sport Schuhe",
+          "name": "Sportschuhe",
           "slug": "sport-schuhe",
           "url": "/kategorie/schuhe/sport-schuhe",
           "level": 2,
@@ -14545,67 +14587,71 @@
             {
               "id": "cat-15-04-01",
               "menu_order": 1,
-              "name": "Fitness",
-              "slug": "fitness",
-              "url": "/kategorie/schuhe/sport-schuhe/fitness",
+              "name": "Fitnessschuhe",
+              "slug": "fitnessschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/fitnessschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Fitness",
               "legacy_slug": "fitness",
-              "legacy_slug_path": "ayakkabi/spor-ayakkabi/fitness",
-              "legacy_url": "/kategori/ayakkabi/spor-ayakkabi/fitness"
+              "legacy_url": "/kategorie/schuhe/sport-schuhe/fitness"
             },
             {
               "id": "cat-15-04-02",
               "menu_order": 2,
-              "name": "Laufen",
-              "slug": "kosu",
-              "url": "/kategorie/schuhe/sport-schuhe/kosu",
+              "name": "Laufschuhe",
+              "slug": "laufschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/laufschuhe",
               "level": 3,
               "children": [],
-              "legacy_name": "Koşu",
+              "legacy_name": "Laufen",
               "legacy_slug": "kosu",
-              "legacy_slug_path": "ayakkabi/spor-ayakkabi/kosu",
-              "legacy_url": "/kategori/ayakkabi/spor-ayakkabi/kosu"
+              "legacy_url": "/kategorie/schuhe/sport-schuhe/kosu"
             },
             {
               "id": "cat-15-04-03",
               "menu_order": 3,
-              "name": "Futbol",
-              "slug": "futbol",
-              "url": "/kategorie/schuhe/sport-schuhe/futbol",
+              "name": "Fußballschuhe",
+              "slug": "fussballschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/fussballschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Futbol",
               "legacy_slug": "futbol",
-              "legacy_slug_path": "ayakkabi/spor-ayakkabi/futbol",
-              "legacy_url": "/kategori/ayakkabi/spor-ayakkabi/futbol"
+              "legacy_url": "/kategorie/schuhe/sport-schuhe/futbol"
             },
             {
               "id": "cat-15-04-04",
               "menu_order": 4,
-              "name": "Basketbol",
-              "slug": "basketbol",
-              "url": "/kategorie/schuhe/sport-schuhe/basketbol",
+              "name": "Basketballschuhe",
+              "slug": "basketballschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/basketballschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Basketbol",
               "legacy_slug": "basketbol",
-              "legacy_slug_path": "ayakkabi/spor-ayakkabi/basketbol",
-              "legacy_url": "/kategori/ayakkabi/spor-ayakkabi/basketbol"
+              "legacy_url": "/kategorie/schuhe/sport-schuhe/basketbol"
             },
             {
               "id": "cat-15-04-05",
               "menu_order": 5,
-              "name": "Tenis",
-              "slug": "tenis",
-              "url": "/kategorie/schuhe/sport-schuhe/tenis",
+              "name": "Tennisschuhe",
+              "slug": "tennisschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/tennisschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Tenis",
               "legacy_slug": "tenis",
-              "legacy_slug_path": "ayakkabi/spor-ayakkabi/tenis",
-              "legacy_url": "/kategori/ayakkabi/spor-ayakkabi/tenis"
+              "legacy_url": "/kategorie/schuhe/sport-schuhe/tenis"
+            },
+            {
+              "id": "cat-15-04-06",
+              "menu_order": 6,
+              "name": "Hallenschuhe",
+              "slug": "hallenschuhe",
+              "url": "/kategorie/schuhe/sport-schuhe/hallenschuhe",
+              "level": 3,
+              "children": []
             }
           ],
           "legacy_name": "Spor Ayakkabı",
@@ -14616,7 +14662,7 @@
         {
           "id": "cat-15-05",
           "menu_order": 5,
-          "name": "Laufen Schuhe",
+          "name": "Laufschuhe",
           "slug": "kosu-ayakkab-s",
           "url": "/kategorie/schuhe/kosu-ayakkab-s",
           "level": 2,
@@ -14624,67 +14670,62 @@
             {
               "id": "cat-15-05-01",
               "menu_order": 1,
-              "name": "Alltag Laufen",
-              "slug": "guenluek-kosu",
-              "url": "/kategorie/schuhe/kosu-ayakkab-s/guenluek-kosu",
+              "name": "Alltagslaufschuhe",
+              "slug": "alltagslaufschuhe",
+              "url": "/kategorie/schuhe/kosu-ayakkab-s/alltagslaufschuhe",
               "level": 3,
               "children": [],
-              "legacy_name": "Günlük Koşu",
-              "legacy_slug": "gunluk-kosu",
-              "legacy_slug_path": "ayakkabi/kosu-ayakkabisi/gunluk-kosu",
-              "legacy_url": "/kategori/ayakkabi/kosu-ayakkabisi/gunluk-kosu"
+              "legacy_name": "Alltag Laufen",
+              "legacy_slug": "guenluek-kosu",
+              "legacy_url": "/kategorie/schuhe/kosu-ayakkab-s/guenluek-kosu"
             },
             {
               "id": "cat-15-05-02",
               "menu_order": 2,
-              "name": "Yol Kosusu",
-              "slug": "yol-kosusu",
-              "url": "/kategorie/schuhe/kosu-ayakkab-s/yol-kosusu",
+              "name": "Straßenlauf",
+              "slug": "strassenlauf",
+              "url": "/kategorie/schuhe/kosu-ayakkab-s/strassenlauf",
               "level": 3,
               "children": [],
-              "legacy_name": "Yol Koşusu",
+              "legacy_name": "Yol Kosusu",
               "legacy_slug": "yol-kosusu",
-              "legacy_slug_path": "ayakkabi/kosu-ayakkabisi/yol-kosusu",
-              "legacy_url": "/kategori/ayakkabi/kosu-ayakkabisi/yol-kosusu"
+              "legacy_url": "/kategorie/schuhe/kosu-ayakkab-s/yol-kosusu"
             },
             {
               "id": "cat-15-05-03",
               "menu_order": 3,
-              "name": "Trail",
-              "slug": "trail",
-              "url": "/kategorie/schuhe/kosu-ayakkab-s/trail",
+              "name": "Trailrunning",
+              "slug": "trailrunning",
+              "url": "/kategorie/schuhe/kosu-ayakkab-s/trailrunning",
               "level": 3,
               "children": [],
               "legacy_name": "Trail",
               "legacy_slug": "trail",
-              "legacy_slug_path": "ayakkabi/kosu-ayakkabisi/trail",
-              "legacy_url": "/kategori/ayakkabi/kosu-ayakkabisi/trail"
+              "legacy_url": "/kategorie/schuhe/kosu-ayakkab-s/trail"
             },
             {
               "id": "cat-15-05-04",
               "menu_order": 4,
-              "name": "Yar S",
-              "slug": "yar-s",
-              "url": "/kategorie/schuhe/kosu-ayakkab-s/yar-s",
+              "name": "Wettkampfschuhe",
+              "slug": "wettkampfschuhe",
+              "url": "/kategorie/schuhe/kosu-ayakkab-s/wettkampfschuhe",
               "level": 3,
               "children": [],
-              "legacy_name": "Yarış",
-              "legacy_slug": "yaris",
-              "legacy_slug_path": "ayakkabi/kosu-ayakkabisi/yaris",
-              "legacy_url": "/kategori/ayakkabi/kosu-ayakkabisi/yaris"
+              "legacy_name": "Yar S",
+              "legacy_slug": "yar-s",
+              "legacy_url": "/kategorie/schuhe/kosu-ayakkab-s/yar-s"
             },
             {
               "id": "cat-15-05-05",
               "menu_order": 5,
-              "name": "Stabilite",
-              "slug": "stabilite",
-              "url": "/kategorie/schuhe/kosu-ayakkab-s/stabilite",
+              "name": "Stabilitätsschuhe",
+              "slug": "stabilitaetsschuhe",
+              "url": "/kategorie/schuhe/kosu-ayakkab-s/stabilitaetsschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Stabilite",
               "legacy_slug": "stabilite",
-              "legacy_slug_path": "ayakkabi/kosu-ayakkabisi/stabilite",
-              "legacy_url": "/kategori/ayakkabi/kosu-ayakkabisi/stabilite"
+              "legacy_url": "/kategorie/schuhe/kosu-ayakkab-s/stabilite"
             }
           ],
           "legacy_name": "Koşu Ayakkabısı",
@@ -14695,7 +14736,7 @@
         {
           "id": "cat-15-06",
           "menu_order": 6,
-          "name": "Arbeit Schuhe",
+          "name": "Arbeitsschuhe",
           "slug": "is-ayakkab-s",
           "url": "/kategorie/schuhe/is-ayakkab-s",
           "level": 2,
@@ -14703,54 +14744,50 @@
             {
               "id": "cat-15-06-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/is-ayakkab-s/standard",
+              "name": "Sicherheitsschuhe",
+              "slug": "sicherheitsschuhe",
+              "url": "/kategorie/schuhe/is-ayakkab-s/sicherheitsschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/is-ayakkabisi/standart",
-              "legacy_url": "/kategori/ayakkabi/is-ayakkabisi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/is-ayakkab-s/standard"
             },
             {
               "id": "cat-15-06-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/is-ayakkab-s/premium",
+              "name": "Berufsschuhe",
+              "slug": "berufsschuhe",
+              "url": "/kategorie/schuhe/is-ayakkab-s/berufsschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/is-ayakkabisi/premium",
-              "legacy_url": "/kategori/ayakkabi/is-ayakkabisi/premium"
+              "legacy_url": "/kategorie/schuhe/is-ayakkab-s/premium"
             },
             {
               "id": "cat-15-06-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/is-ayakkab-s/sets",
+              "name": "Arbeits-Gummistiefel",
+              "slug": "arbeits-gummistiefel",
+              "url": "/kategorie/schuhe/is-ayakkab-s/arbeits-gummistiefel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/is-ayakkabisi/setler",
-              "legacy_url": "/kategori/ayakkabi/is-ayakkabisi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/is-ayakkab-s/sets"
             },
             {
               "id": "cat-15-06-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/is-ayakkab-s/zubehoer",
+              "name": "Clogs",
+              "slug": "clogs",
+              "url": "/kategorie/schuhe/is-ayakkab-s/clogs",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/is-ayakkabisi/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/is-ayakkabisi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/is-ayakkab-s/zubehoer"
             }
           ],
           "legacy_name": "İş Ayakkabısı",
@@ -14761,7 +14798,7 @@
         {
           "id": "cat-15-07",
           "menu_order": 7,
-          "name": "Outdoor Schuhe",
+          "name": "Outdoorschuhe",
           "slug": "outdoor-schuhe",
           "url": "/kategorie/schuhe/outdoor-schuhe",
           "level": 2,
@@ -14769,54 +14806,50 @@
             {
               "id": "cat-15-07-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/outdoor-schuhe/standard",
+              "name": "Wanderschuhe",
+              "slug": "wanderschuhe",
+              "url": "/kategorie/schuhe/outdoor-schuhe/wanderschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/outdoor-ayakkabi/standart",
-              "legacy_url": "/kategori/ayakkabi/outdoor-ayakkabi/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/outdoor-schuhe/standard"
             },
             {
               "id": "cat-15-07-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/outdoor-schuhe/premium",
+              "name": "Trekkingschuhe",
+              "slug": "trekkingschuhe",
+              "url": "/kategorie/schuhe/outdoor-schuhe/trekkingschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/outdoor-ayakkabi/premium",
-              "legacy_url": "/kategori/ayakkabi/outdoor-ayakkabi/premium"
+              "legacy_url": "/kategorie/schuhe/outdoor-schuhe/premium"
             },
             {
               "id": "cat-15-07-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/outdoor-schuhe/sets",
+              "name": "Winterstiefel",
+              "slug": "winterstiefel",
+              "url": "/kategorie/schuhe/outdoor-schuhe/winterstiefel",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/outdoor-ayakkabi/setler",
-              "legacy_url": "/kategori/ayakkabi/outdoor-ayakkabi/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/outdoor-schuhe/sets"
             },
             {
               "id": "cat-15-07-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/outdoor-schuhe/zubehoer",
+              "name": "Gummistiefel",
+              "slug": "gummistiefel",
+              "url": "/kategorie/schuhe/outdoor-schuhe/gummistiefel",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/outdoor-ayakkabi/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/outdoor-ayakkabi/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/outdoor-schuhe/zubehoer"
             }
           ],
           "legacy_name": "Outdoor Ayakkabı",
@@ -14827,7 +14860,7 @@
         {
           "id": "cat-15-08",
           "menu_order": 8,
-          "name": "Hausschuhe & Sandale",
+          "name": "Hausschuhe & Sandalen",
           "slug": "terlik-und-sandalet",
           "url": "/kategorie/schuhe/terlik-und-sandalet",
           "level": 2,
@@ -14835,60 +14868,148 @@
             {
               "id": "cat-15-08-01",
               "menu_order": 1,
-              "name": "Standart",
-              "slug": "standard",
-              "url": "/kategorie/schuhe/terlik-und-sandalet/standard",
+              "name": "Hausschuhe",
+              "slug": "hausschuhe",
+              "url": "/kategorie/schuhe/terlik-und-sandalet/hausschuhe",
               "level": 3,
               "children": [],
               "legacy_name": "Standart",
-              "legacy_slug": "standart",
-              "legacy_slug_path": "ayakkabi/terlik-and-sandalet/standart",
-              "legacy_url": "/kategori/ayakkabi/terlik-and-sandalet/standart"
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/schuhe/terlik-und-sandalet/standard"
             },
             {
               "id": "cat-15-08-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/schuhe/terlik-und-sandalet/premium",
+              "name": "Sandalen",
+              "slug": "sandalen",
+              "url": "/kategorie/schuhe/terlik-und-sandalet/sandalen",
               "level": 3,
               "children": [],
               "legacy_name": "Premium",
               "legacy_slug": "premium",
-              "legacy_slug_path": "ayakkabi/terlik-and-sandalet/premium",
-              "legacy_url": "/kategori/ayakkabi/terlik-and-sandalet/premium"
+              "legacy_url": "/kategorie/schuhe/terlik-und-sandalet/premium"
             },
             {
               "id": "cat-15-08-03",
               "menu_order": 3,
-              "name": "Setler",
-              "slug": "sets",
-              "url": "/kategorie/schuhe/terlik-und-sandalet/sets",
+              "name": "Pantoletten",
+              "slug": "pantoletten",
+              "url": "/kategorie/schuhe/terlik-und-sandalet/pantoletten",
               "level": 3,
               "children": [],
               "legacy_name": "Setler",
-              "legacy_slug": "setler",
-              "legacy_slug_path": "ayakkabi/terlik-and-sandalet/setler",
-              "legacy_url": "/kategori/ayakkabi/terlik-and-sandalet/setler"
+              "legacy_slug": "sets",
+              "legacy_url": "/kategorie/schuhe/terlik-und-sandalet/sets"
             },
             {
               "id": "cat-15-08-04",
               "menu_order": 4,
-              "name": "Zubehör",
-              "slug": "zubehoer",
-              "url": "/kategorie/schuhe/terlik-und-sandalet/zubehoer",
+              "name": "Badeschuhe",
+              "slug": "badeschuhe",
+              "url": "/kategorie/schuhe/terlik-und-sandalet/badeschuhe",
               "level": 3,
               "children": [],
-              "legacy_name": "Aksesuarlar",
-              "legacy_slug": "aksesuarlar",
-              "legacy_slug_path": "ayakkabi/terlik-and-sandalet/aksesuarlar",
-              "legacy_url": "/kategori/ayakkabi/terlik-and-sandalet/aksesuarlar"
+              "legacy_name": "Zubehör",
+              "legacy_slug": "zubehoer",
+              "legacy_url": "/kategorie/schuhe/terlik-und-sandalet/zubehoer"
             }
           ],
           "legacy_name": "Terlik & Sandalet",
           "legacy_slug": "terlik-and-sandalet",
           "legacy_slug_path": "ayakkabi/terlik-and-sandalet",
           "legacy_url": "/kategori/ayakkabi/terlik-and-sandalet"
+        },
+        {
+          "id": "cat-15-09",
+          "menu_order": 9,
+          "name": "Stiefel",
+          "slug": "stiefel",
+          "url": "/kategorie/schuhe/stiefel",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-15-09-01",
+              "menu_order": 1,
+              "name": "Damenstiefel",
+              "slug": "damenstiefel",
+              "url": "/kategorie/schuhe/stiefel/damenstiefel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-09-02",
+              "menu_order": 2,
+              "name": "Herrenstiefel",
+              "slug": "herrenstiefel",
+              "url": "/kategorie/schuhe/stiefel/herrenstiefel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-09-03",
+              "menu_order": 3,
+              "name": "Winterstiefel",
+              "slug": "winterstiefel",
+              "url": "/kategorie/schuhe/stiefel/winterstiefel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-09-04",
+              "menu_order": 4,
+              "name": "Reitstiefel",
+              "slug": "reitstiefel",
+              "url": "/kategorie/schuhe/stiefel/reitstiefel",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-15-10",
+          "menu_order": 10,
+          "name": "Schuhpflege & Zubehör",
+          "slug": "schuhpflege-und-zubehoer",
+          "url": "/kategorie/schuhe/schuhpflege-und-zubehoer",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-15-10-01",
+              "menu_order": 1,
+              "name": "Schuhpflege",
+              "slug": "schuhpflege",
+              "url": "/kategorie/schuhe/schuhpflege-und-zubehoer/schuhpflege",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-10-02",
+              "menu_order": 2,
+              "name": "Schnürsenkel",
+              "slug": "schnuersenkel",
+              "url": "/kategorie/schuhe/schuhpflege-und-zubehoer/schnuersenkel",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-10-03",
+              "menu_order": 3,
+              "name": "Einlegesohlen",
+              "slug": "einlegesohlen",
+              "url": "/kategorie/schuhe/schuhpflege-und-zubehoer/einlegesohlen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-15-10-04",
+              "menu_order": 4,
+              "name": "Schuhlöffel & Spanner",
+              "slug": "schuhloeffel-und-spanner",
+              "url": "/kategorie/schuhe/schuhpflege-und-zubehoer/schuhloeffel-und-spanner",
+              "level": 3,
+              "children": []
+            }
+          ]
         }
       ],
       "legacy_name": "Ayakkabı",

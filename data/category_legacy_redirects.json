@@ -10570,5 +10570,209 @@
     "to": "/kategorie/heimtextilien/teppiche-laeufer/laeufer/",
     "permanent": true,
     "note": "Home-textile placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/damen-schuhe/standard/",
+    "to": "/kategorie/schuhe/damen-schuhe/sneaker/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/damen-schuhe/premium/",
+    "to": "/kategorie/schuhe/damen-schuhe/pumps/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/damen-schuhe/sets/",
+    "to": "/kategorie/schuhe/damen-schuhe/ballerinas/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/damen-schuhe/zubehoer/",
+    "to": "/kategorie/schuhe/damen-schuhe/stiefeletten/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/herren-schuhe/standard/",
+    "to": "/kategorie/schuhe/herren-schuhe/sneaker/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/herren-schuhe/premium/",
+    "to": "/kategorie/schuhe/herren-schuhe/halbschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/herren-schuhe/sets/",
+    "to": "/kategorie/schuhe/herren-schuhe/businessschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/herren-schuhe/zubehoer/",
+    "to": "/kategorie/schuhe/herren-schuhe/boots/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kinder-schuhe/standard/",
+    "to": "/kategorie/schuhe/kinder-schuhe/sneaker/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kinder-schuhe/premium/",
+    "to": "/kategorie/schuhe/kinder-schuhe/sandalen/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kinder-schuhe/sets/",
+    "to": "/kategorie/schuhe/kinder-schuhe/stiefel/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kinder-schuhe/zubehoer/",
+    "to": "/kategorie/schuhe/kinder-schuhe/hausschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/sport-schuhe/fitness/",
+    "to": "/kategorie/schuhe/sport-schuhe/fitnessschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/sport-schuhe/kosu/",
+    "to": "/kategorie/schuhe/sport-schuhe/laufschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/sport-schuhe/futbol/",
+    "to": "/kategorie/schuhe/sport-schuhe/fussballschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/sport-schuhe/basketbol/",
+    "to": "/kategorie/schuhe/sport-schuhe/basketballschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/sport-schuhe/tenis/",
+    "to": "/kategorie/schuhe/sport-schuhe/tennisschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kosu-ayakkab-s/guenluek-kosu/",
+    "to": "/kategorie/schuhe/kosu-ayakkab-s/alltagslaufschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kosu-ayakkab-s/yol-kosusu/",
+    "to": "/kategorie/schuhe/kosu-ayakkab-s/strassenlauf/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kosu-ayakkab-s/trail/",
+    "to": "/kategorie/schuhe/kosu-ayakkab-s/trailrunning/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kosu-ayakkab-s/yar-s/",
+    "to": "/kategorie/schuhe/kosu-ayakkab-s/wettkampfschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/kosu-ayakkab-s/stabilite/",
+    "to": "/kategorie/schuhe/kosu-ayakkab-s/stabilitaetsschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/is-ayakkab-s/standard/",
+    "to": "/kategorie/schuhe/is-ayakkab-s/sicherheitsschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/is-ayakkab-s/premium/",
+    "to": "/kategorie/schuhe/is-ayakkab-s/berufsschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/is-ayakkab-s/sets/",
+    "to": "/kategorie/schuhe/is-ayakkab-s/arbeits-gummistiefel/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/is-ayakkab-s/zubehoer/",
+    "to": "/kategorie/schuhe/is-ayakkab-s/clogs/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/outdoor-schuhe/standard/",
+    "to": "/kategorie/schuhe/outdoor-schuhe/wanderschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/outdoor-schuhe/premium/",
+    "to": "/kategorie/schuhe/outdoor-schuhe/trekkingschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/outdoor-schuhe/sets/",
+    "to": "/kategorie/schuhe/outdoor-schuhe/winterstiefel/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/outdoor-schuhe/zubehoer/",
+    "to": "/kategorie/schuhe/outdoor-schuhe/gummistiefel/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/terlik-und-sandalet/standard/",
+    "to": "/kategorie/schuhe/terlik-und-sandalet/hausschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/terlik-und-sandalet/premium/",
+    "to": "/kategorie/schuhe/terlik-und-sandalet/sandalen/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/terlik-und-sandalet/sets/",
+    "to": "/kategorie/schuhe/terlik-und-sandalet/pantoletten/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
+  },
+  {
+    "from": "/kategorie/schuhe/terlik-und-sandalet/zubehoer/",
+    "to": "/kategorie/schuhe/terlik-und-sandalet/badeschuhe/",
+    "permanent": true,
+    "note": "Shoe placeholder L3 replaced with a real product group"
   }
 ]

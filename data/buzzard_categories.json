@@ -30462,27 +30462,45 @@
             {
               "id": "cat-49-01-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/buecher-medien-unterhaltung/buecher/standard",
+              "name": "Belletristik",
+              "slug": "belletristik",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/belletristik",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/buecher/standard"
             },
             {
               "id": "cat-49-01-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/buecher-medien-unterhaltung/buecher/premium",
+              "name": "Sachbücher",
+              "slug": "sachbuecher",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/sachbuecher",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/buecher/premium"
             },
             {
               "id": "cat-49-01-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/buecher-medien-unterhaltung/buecher/sets-sparpakete",
+              "name": "Kinderbücher",
+              "slug": "kinderbuecher",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/kinderbuecher",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/buecher/sets-sparpakete"
+            },
+            {
+              "id": "cat-49-01-04",
+              "menu_order": 4,
+              "name": "Ratgeber",
+              "slug": "ratgeber",
+              "url": "/kategorie/buecher-medien-unterhaltung/buecher/ratgeber",
               "level": 3,
               "children": []
             }
@@ -30499,27 +30517,45 @@
             {
               "id": "cat-49-02-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/standard",
+              "name": "Blu-ray",
+              "slug": "blu-ray",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/blu-ray",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/filme-serien/standard"
             },
             {
               "id": "cat-49-02-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/premium",
+              "name": "DVD",
+              "slug": "dvd",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/dvd",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/filme-serien/premium"
             },
             {
               "id": "cat-49-02-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/sets-sparpakete",
+              "name": "4K UHD",
+              "slug": "4k-uhd",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/4k-uhd",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/filme-serien/sets-sparpakete"
+            },
+            {
+              "id": "cat-49-02-04",
+              "menu_order": 4,
+              "name": "Serien-Boxen",
+              "slug": "serien-boxen",
+              "url": "/kategorie/buecher-medien-unterhaltung/filme-serien/serien-boxen",
               "level": 3,
               "children": []
             }
@@ -30536,27 +30572,45 @@
             {
               "id": "cat-49-03-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/standard",
+              "name": "Vinyl",
+              "slug": "vinyl",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/vinyl",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/musik-games/standard"
             },
             {
               "id": "cat-49-03-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/premium",
+              "name": "CDs",
+              "slug": "cds",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/cds",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/musik-games/premium"
             },
             {
               "id": "cat-49-03-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/sets-sparpakete",
+              "name": "PC-Spiele",
+              "slug": "pc-spiele",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/pc-spiele",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/musik-games/sets-sparpakete"
+            },
+            {
+              "id": "cat-49-03-04",
+              "menu_order": 4,
+              "name": "Konsolenspiele",
+              "slug": "konsolenspiele",
+              "url": "/kategorie/buecher-medien-unterhaltung/musik-games/konsolenspiele",
               "level": 3,
               "children": []
             }
@@ -30573,27 +30627,229 @@
             {
               "id": "cat-49-04-01",
               "menu_order": 1,
-              "name": "Standard",
-              "slug": "standard",
-              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/standard",
+              "name": "Zeitschriften",
+              "slug": "zeitschriften",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/zeitschriften",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Standard",
+              "legacy_slug": "standard",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/standard"
             },
             {
               "id": "cat-49-04-02",
               "menu_order": 2,
-              "name": "Premium",
-              "slug": "premium",
-              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/premium",
+              "name": "Zeitungen",
+              "slug": "zeitungen",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/zeitungen",
               "level": 3,
-              "children": []
+              "children": [],
+              "legacy_name": "Premium",
+              "legacy_slug": "premium",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/premium"
             },
             {
               "id": "cat-49-04-03",
               "menu_order": 3,
-              "name": "Sets & Sparpakete",
-              "slug": "sets-sparpakete",
-              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/sets-sparpakete",
+              "name": "Jahresabos",
+              "slug": "jahresabos",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/jahresabos",
+              "level": 3,
+              "children": [],
+              "legacy_name": "Sets & Sparpakete",
+              "legacy_slug": "sets-sparpakete",
+              "legacy_url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/sets-sparpakete"
+            },
+            {
+              "id": "cat-49-04-04",
+              "menu_order": 4,
+              "name": "Sonderhefte",
+              "slug": "sonderhefte",
+              "url": "/kategorie/buecher-medien-unterhaltung/zeitschriften-medien/sonderhefte",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-05",
+          "menu_order": 5,
+          "name": "Hörbücher",
+          "slug": "hoerbuecher",
+          "url": "/kategorie/buecher-medien-unterhaltung/hoerbuecher",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-05-01",
+              "menu_order": 1,
+              "name": "Hörbücher",
+              "slug": "hoerbuecher",
+              "url": "/kategorie/buecher-medien-unterhaltung/hoerbuecher/hoerbuecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-05-02",
+              "menu_order": 2,
+              "name": "Podcast-Boxen",
+              "slug": "podcast-boxen",
+              "url": "/kategorie/buecher-medien-unterhaltung/hoerbuecher/podcast-boxen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-05-03",
+              "menu_order": 3,
+              "name": "Hörspiele",
+              "slug": "hoerspiele",
+              "url": "/kategorie/buecher-medien-unterhaltung/hoerbuecher/hoerspiele",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-05-04",
+              "menu_order": 4,
+              "name": "Sprachkurse Audio",
+              "slug": "sprachkurse-audio",
+              "url": "/kategorie/buecher-medien-unterhaltung/hoerbuecher/sprachkurse-audio",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-06",
+          "menu_order": 6,
+          "name": "E-Reader-Zubehör",
+          "slug": "e-reader-zubehoer",
+          "url": "/kategorie/buecher-medien-unterhaltung/e-reader-zubehoer",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-06-01",
+              "menu_order": 1,
+              "name": "E-Reader-Hüllen",
+              "slug": "e-reader-huellen",
+              "url": "/kategorie/buecher-medien-unterhaltung/e-reader-zubehoer/e-reader-huellen",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-06-02",
+              "menu_order": 2,
+              "name": "Displayschutz",
+              "slug": "displayschutz",
+              "url": "/kategorie/buecher-medien-unterhaltung/e-reader-zubehoer/displayschutz",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-06-03",
+              "menu_order": 3,
+              "name": "Ladegeräte",
+              "slug": "ladegeraete",
+              "url": "/kategorie/buecher-medien-unterhaltung/e-reader-zubehoer/ladegeraete",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-06-04",
+              "menu_order": 4,
+              "name": "Leselampen",
+              "slug": "leselampen",
+              "url": "/kategorie/buecher-medien-unterhaltung/e-reader-zubehoer/leselampen",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-07",
+          "menu_order": 7,
+          "name": "Comics & Manga",
+          "slug": "comics-und-manga",
+          "url": "/kategorie/buecher-medien-unterhaltung/comics-und-manga",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-07-01",
+              "menu_order": 1,
+              "name": "Comics",
+              "slug": "comics",
+              "url": "/kategorie/buecher-medien-unterhaltung/comics-und-manga/comics",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-07-02",
+              "menu_order": 2,
+              "name": "Manga",
+              "slug": "manga",
+              "url": "/kategorie/buecher-medien-unterhaltung/comics-und-manga/manga",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-07-03",
+              "menu_order": 3,
+              "name": "Graphic Novels",
+              "slug": "graphic-novels",
+              "url": "/kategorie/buecher-medien-unterhaltung/comics-und-manga/graphic-novels",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-07-04",
+              "menu_order": 4,
+              "name": "Sammelbände",
+              "slug": "sammelbaende",
+              "url": "/kategorie/buecher-medien-unterhaltung/comics-und-manga/sammelbaende",
+              "level": 3,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cat-49-08",
+          "menu_order": 8,
+          "name": "Lernmedien",
+          "slug": "lernmedien",
+          "url": "/kategorie/buecher-medien-unterhaltung/lernmedien",
+          "level": 2,
+          "children": [
+            {
+              "id": "cat-49-08-01",
+              "menu_order": 1,
+              "name": "Lehrbücher",
+              "slug": "lehrbuecher",
+              "url": "/kategorie/buecher-medien-unterhaltung/lernmedien/lehrbuecher",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-08-02",
+              "menu_order": 2,
+              "name": "Sprachkurse",
+              "slug": "sprachkurse",
+              "url": "/kategorie/buecher-medien-unterhaltung/lernmedien/sprachkurse",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-08-03",
+              "menu_order": 3,
+              "name": "Prüfungsvorbereitung",
+              "slug": "pruefungsvorbereitung",
+              "url": "/kategorie/buecher-medien-unterhaltung/lernmedien/pruefungsvorbereitung",
+              "level": 3,
+              "children": []
+            },
+            {
+              "id": "cat-49-08-04",
+              "menu_order": 4,
+              "name": "Nachschlagewerke",
+              "slug": "nachschlagewerke",
+              "url": "/kategorie/buecher-medien-unterhaltung/lernmedien/nachschlagewerke",
               "level": 3,
               "children": []
             }

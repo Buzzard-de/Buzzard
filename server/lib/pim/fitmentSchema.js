@@ -20,6 +20,9 @@ function normalizeFitmentEntry(entry) {
     kba: String(entry.kba || entry.kba_number || "").trim() || null,
     oemNumber: String(entry.oem_number || entry.oemNumber || entry.part_reference || "").trim() || null,
     tecdocReference: String(entry.tecdoc_reference || entry.tecdocArticle || entry.tecdoc_article || "").trim() || null,
+    generation: String(entry.generation || entry.type || "").trim() || null,
+    engineCode: String(entry.engine_code || entry.engineCode || "").trim() || null,
+    gearboxCode: String(entry.gearbox_code || entry.gearboxCode || "").trim() || null,
     source: entry.source || "supplier_feed",
     verified: Boolean(entry.verified),
   };

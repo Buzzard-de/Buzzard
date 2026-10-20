@@ -83,6 +83,9 @@ export default function AdminDashboard() {
           <li><Link href="/admin/products/">Produkte & Bestand</Link></li>
           <li><Link href="/admin/integrations/">Commercial Integrations</Link></li>
           <li><Link href="/admin/analytics/">Detaillierte Reports</Link></li>
+          <li><Link href="/admin/construction-machinery/">Baumaschinen-Kompatibilität</Link></li>
+          <li><Link href="/admin/agricultural-machinery/">Landmaschinen-Kompatibilität</Link></li>
+          <li><Link href="/admin/vehicle-parts/">Fahrzeugteile-Kompatibilität</Link></li>
         </ul>
       </section>
     </div>

@@ -11,7 +11,8 @@ const { rankOffers, inventoryStatus } = require("./sourcing");
 
 function createAgriculturalMachineryEngine(options = {}) {
   const taxonomy = options.taxonomy || createTaxonomy();
-  const store = options.store || kit.createStore();
+  const bound = kit.persistence.preparePersistentStore(DOMAIN, options);
+  const store = bound.store;
   const observability = options.observability || kit.createObservability();
   const registry = options.registry || createRegistry();
   const imports = createImportJobs(store, { taxonomy, observability });
@@ -100,6 +101,7 @@ function createAgriculturalMachineryEngine(options = {}) {
     rankOffers: (query) => rankOffers(store, query),
     inventoryStatus,
     observability,
+    persistence: bound.persist ? { enabled: true, domain: DOMAIN } : { enabled: false },
   };
 }
 

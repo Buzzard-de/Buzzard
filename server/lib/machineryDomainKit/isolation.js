@@ -87,6 +87,24 @@ function isCommercialVehicleClass(vehicleClass) {
   );
 }
 
+function assertPersistOwnership(domain, record = {}) {
+  const allowed = [DOMAINS.AUTOMOTIVE, DOMAINS.AGRICULTURAL, DOMAINS.CONSTRUCTION];
+  if (!allowed.includes(domain)) {
+    return { ok: false, error: "unknown_domain", domain, items: [] };
+  }
+  if (record.domain && record.domain !== domain) {
+    return { ok: false, error: "domain_mismatch", domain: record.domain, items: [] };
+  }
+  const categoryId = record.categoryId || record.shopCategoryId;
+  if (categoryId) {
+    const resolved = resolveMachineryDomain({ categoryId, domain });
+    if (resolved !== DOMAINS.NONE && resolved !== domain) {
+      return { ok: false, error: "category_domain_mismatch", domain: resolved, items: [] };
+    }
+  }
+  return { ok: true, domain };
+}
+
 module.exports = {
   DOMAINS,
   SHOP_L1,
@@ -94,6 +112,7 @@ module.exports = {
   assertAgriculturalScope,
   assertConstructionScope,
   assertAutomotiveScope,
+  assertPersistOwnership,
   shopCategoryFor,
   isCommercialVehicleClass,
 };

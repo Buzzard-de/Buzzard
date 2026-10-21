@@ -13,7 +13,8 @@ const { inspectVin } = require("./vin");
 
 function createVehiclePartsEngine(options = {}) {
   const taxonomy = options.taxonomy || createTaxonomy();
-  const store = options.store || kit.createStore();
+  const bound = kit.persistence.preparePersistentStore(DOMAIN, options);
+  const store = bound.store;
   const observability = options.observability || kit.createObservability();
   const registry = options.registry || createRegistry();
   const imports = createImportJobs(store, { taxonomy, observability });
@@ -105,6 +106,7 @@ function createVehiclePartsEngine(options = {}) {
     getJob: (id) => imports.getJob(id),
     rankOffers: (query) => rankOffers(store, query),
     observability,
+    persistence: bound.persist ? { enabled: true, domain: DOMAIN } : { enabled: false },
   };
 }
 

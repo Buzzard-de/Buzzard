@@ -7,7 +7,8 @@ const isolation = require("../machineryDomainKit/isolation");
 let singleton = null;
 
 function getEngine() {
-  if (!singleton) singleton = createAgriculturalMachineryEngine();
+  const persist = require("../machineryDomainKit/persistence");
+  if (!singleton) singleton = createAgriculturalMachineryEngine({ persist: persist.shouldPersistSingleton() });
   return singleton;
 }
 

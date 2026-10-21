@@ -1,6 +1,5 @@
 const { CONNECTOR_STATUS, ENGINE_ID, SHOP_L1_ID } = require("./constants");
 const { createTaxonomy } = require("./taxonomy");
-const { createStore } = require("./store");
 const { upsertMachine, getMachine, listMachines, validateMachineInput } = require("./machines");
 const { upsertPart, getPart, listParts, findPartsByNumber, addPartRelation } = require("./parts");
 const { addEvidence, evaluateCompatibility } = require("./compatibility");
@@ -13,10 +12,14 @@ const { createObservability } = require("./observability");
 const { convertUnit } = require("./units");
 const { normalizePartNumber } = require("./identifiers");
 const isolation = require("../machineryDomainKit/isolation");
+const persistBind = require("../machineryDomainKit/persistence");
+
+const DOMAIN = "construction";
 
 function createConstructionMachineryEngine(options = {}) {
   const taxonomy = options.taxonomy || createTaxonomy();
-  const store = options.store || createStore();
+  const bound = persistBind.preparePersistentStore(DOMAIN, options);
+  const store = bound.store;
   const observability = options.observability || createObservability();
   const registry = options.registry || createRegistry();
   const imports = createImportJobs(store, { taxonomy, observability });
@@ -116,6 +119,7 @@ function createConstructionMachineryEngine(options = {}) {
     convertUnit,
     normalizePartNumber,
     observability,
+    persistence: bound.persist ? { enabled: true, domain: DOMAIN } : { enabled: false },
   };
 }
 

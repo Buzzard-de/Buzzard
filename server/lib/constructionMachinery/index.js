@@ -7,7 +7,8 @@ const { assertConnectorContract } = require("./catalog/contracts");
 let singleton = null;
 
 function getEngine() {
-  if (!singleton) singleton = createConstructionMachineryEngine();
+  const persist = require("../machineryDomainKit/persistence");
+  if (!singleton) singleton = createConstructionMachineryEngine({ persist: persist.shouldPersistSingleton() });
   return singleton;
 }
 

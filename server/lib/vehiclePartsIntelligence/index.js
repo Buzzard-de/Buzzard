@@ -8,7 +8,8 @@ const isolation = require("../machineryDomainKit/isolation");
 let singleton = null;
 
 function getEngine() {
-  if (!singleton) singleton = createVehiclePartsEngine();
+  const persist = require("../machineryDomainKit/persistence");
+  if (!singleton) singleton = createVehiclePartsEngine({ persist: persist.shouldPersistSingleton() });
   return singleton;
 }
 

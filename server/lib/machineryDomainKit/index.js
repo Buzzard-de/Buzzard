@@ -10,6 +10,7 @@ const { createProvenance, recordConflict, isFresh } = require("../constructionMa
 const { createObservability } = require("../constructionMachinery/observability");
 const { describeConnector, assertConnectorContract, CONNECTOR_KINDS, INTERFACE_KINDS } = require("../constructionMachinery/catalog/contracts");
 const { createAllStubConnectors, createStubConnector } = require("../constructionMachinery/catalog/stubConnectors");
+const persistence = require("./persistence");
 
 module.exports = {
   isolation,
@@ -34,4 +35,5 @@ module.exports = {
   INTERFACE_KINDS,
   createAllStubConnectors,
   createStubConnector,
+  persistence,
 };

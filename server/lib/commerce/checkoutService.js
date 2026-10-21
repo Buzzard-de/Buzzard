@@ -113,6 +113,12 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
 
   transitionCheckout(checkoutId, CHECKOUT_STATE.VALIDATING);
 
+  const overrides = require("./canonicalCommercePath").rejectClientOverrides(body);
+  if (!overrides.ok) {
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    return { error: overrides.error, code: overrides.code, status: overrides.status || 400 };
+  }
+
   const clientTotalsReject = rejectClientTotals(body.totals || body);
   if (!clientTotalsReject.ok) {
     logSecurityEvent({ type: "price_tampering", success: false, detail: { checkoutId, reason: "client_totals" } });
@@ -130,7 +136,23 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   if (!stock.ok) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
     logCommerceBlock("checkout_blocked", { checkoutId, reason: "stock", issues: stock.issues }, ctx.req);
-    return { error: "stock_validation_failed", status: 400, issues: stock.issues, dryRun: true };
+    return { error: "stock_validation_failed", code: "INVENTORY_INSUFFICIENT", status: 400, issues: stock.issues, dryRun: true };
+  }
+
+  const pathAdapter = require("./canonicalCommercePath");
+  const lines = pathAdapter.validateCheckoutLines(stock.cart.items || []);
+  if (!lines.ok) {
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    const exceptions = require("../exceptionBus");
+    exceptions.emit({
+      type: exceptions.TYPES.CHECKOUT_INVALID,
+      source: "checkoutService",
+      entity: "checkout",
+      entityId: checkoutId,
+      message: lines.error || lines.code,
+      retryable: false,
+    });
+    return { error: lines.error, code: lines.code, status: lines.status || 400 };
   }
 
   const billing = body.billingAddress || body.billing || {};
@@ -191,6 +213,13 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   );
 
   transitionCheckout(checkoutId, CHECKOUT_STATE.READY);
+  const events = require("../eventBus");
+  require("./canonicalCommercePath").emitPath(
+    events.TYPES.CheckoutValidated,
+    "checkout",
+    checkoutId,
+    { cartId: checkout.cartId }
+  );
   return {
     checkoutId,
     state: CHECKOUT_STATE.READY,
@@ -228,15 +257,19 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.PAYMENT_PENDING);
 
     const totals = checkout.totals || {};
-    const isDryRun = checkout.orderType !== ORDER_TYPE.COMMERCIAL || !getEffectiveFlags().salesEnabled;
-    const payment = paymentService.createPaymentIntent({
+    if (body.capture === true || body.capturePayment === true) {
+      const blocked = paymentService.capturePayment({ checkoutId });
+      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
+      return blocked;
+    }
+    const payment = paymentService.authorizePayment({
       amount: totals.total,
       currency: totals.currency || "EUR",
       customerId: checkout.customerId,
       idempotencyKey: body.idempotencyKey || checkout.idempotencyKey,
       req: ctx.req,
       metadata: { checkoutId },
-      dryRun: isDryRun,
+      dryRun: true,
     });
 
     if (payment.blocked || payment.error) {
@@ -258,6 +291,29 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       return order;
     }
 
+    const cart = cartService.getCart(checkout.cartId);
+    const inventory = require("./inventoryIntegration");
+    for (const item of cart.items || []) {
+      const reserved = inventory.reserve({
+        productId: item.productId,
+        quantity: item.quantity,
+        correlationId: checkoutId,
+        idempotencyKey: `chk_${checkoutId}_${item.productId}`,
+      });
+      if (!reserved.ok) {
+        transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
+        return reserved;
+      }
+    }
+
+    const events = require("../eventBus");
+    require("./canonicalCommercePath").emitPath(
+      events.TYPES.OrderCreated,
+      "order",
+      order.id,
+      { checkoutId, paymentStatus: payment.status, captured: false }
+    );
+
     transitionCheckout(checkoutId, CHECKOUT_STATE.COMPLETED);
 
     try {
@@ -271,17 +327,20 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       checkoutId,
       state: CHECKOUT_STATE.COMPLETED,
       order,
-      payment: { ...payment, realMoneyMovement: false },
+      payment: { ...payment, realMoneyMovement: false, captured: false, mode: "DRY_RUN" },
       commercial: checkout.orderType === ORDER_TYPE.COMMERCIAL,
       salesEnabled: getEffectiveFlags().salesEnabled,
     };
   };
 
-  const key = body.idempotencyKey || ctx.idempotencyKey;
-  if (key) {
-    return withIdempotency({ key, scope: "checkout_complete", handler: run, req: ctx.req });
-  }
-  return run();
+  const checkout = getCheckout(checkoutId, ctx);
+  const key = body.idempotencyKey || ctx.idempotencyKey || checkout.idempotencyKey || `checkout:${checkoutId}`;
+  const payload = {
+    checkoutId,
+    cartId: checkout.cartId || null,
+    capture: Boolean(body.capture),
+  };
+  return withIdempotency({ key, scope: "checkout_complete", payload, handler: run, req: ctx.req });
 }
 
 module.exports = {

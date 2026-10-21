@@ -3,8 +3,10 @@
  */
 const crypto = require("crypto");
 const { db } = require("../db");
-const productCore = require("../pim/productCore");
+const productService = require("../productService");
 const catalogReadService = require("../storefront/catalogReadService");
+const pathAdapter = require("./canonicalCommercePath");
+const inventory = require("./inventoryIntegration");
 const { isProductVisibleOnStorefront } = require("../storefront/storefrontVisibility");
 const {
   validateQuantity,
@@ -22,10 +24,10 @@ function newId(prefix) {
 }
 
 function resolveAuthoritativePrice(productId, variantId) {
-  const product = productCore.getProduct(productId);
+  const product = productService.getProduct(productId);
   if (!product) {
-    const bySku = productCore.listProducts({ limit: 500 }).find((p) => p.sku === productId || p.id === productId);
-    if (!bySku) return { error: "product_not_found", status: 404 };
+    const bySku = productService.listProducts({ limit: 500 }).find((p) => p.sku === productId || p.id === productId);
+    if (!bySku) return { error: "product_not_found", code: "PRODUCT_NOT_FOUND", status: 404 };
     return buildPriceSnapshot(bySku, variantId);
   }
   return buildPriceSnapshot(product, variantId);
@@ -92,19 +94,24 @@ function getCart(cartId, { customerId, req } = {}) {
   for (const row of items) {
     const auth = resolveAuthoritativePrice(row.product_id, row.variant_id);
     if (auth.error) continue;
+    const metadata = JSON.parse(row.metadata_json || "{}");
     const line = {
       id: row.id,
       productId: row.product_id,
       variantId: row.variant_id,
       quantity: row.quantity,
       priceSnapshot: auth.priceSnapshot,
+      unitPrice: auth.priceSnapshot,
       currency: auth.currency,
       sku: auth.sku,
       title: auth.title,
       stock: auth.stock,
       purchasable: auth.purchasable,
+      vat: metadata.vat ?? null,
+      snapshotVersion: metadata.snapshotVersion || null,
+      productSnapshot: metadata.productSnapshot || null,
       lineTotal: computeLineTotal(auth.priceSnapshot, row.quantity),
-      metadata: JSON.parse(row.metadata_json || "{}"),
+      metadata,
     };
     subtotal += line.lineTotal;
     validatedItems.push(line);
@@ -143,7 +150,8 @@ function buildCouponTotals(couponCode, subtotal) {
   };
 }
 
-function addItem(cartId, { productId, variantId, quantity, clientPrice, metadata, customerId, req } = {}) {
+function addItem(cartId, input = {}) {
+  const { productId, variantId, quantity, clientPrice, metadata, customerId, req } = input;
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
   if (!cartRow) return { error: "cart_not_found", status: 404 };
 
@@ -159,6 +167,9 @@ function addItem(cartId, { productId, variantId, quantity, clientPrice, metadata
 
   const qtyCheck = validateQuantity(quantity);
   if (!qtyCheck.ok) return { error: qtyCheck.code, message: qtyCheck.message, status: 400 };
+
+  const overrides = pathAdapter.rejectClientOverrides(input);
+  if (!overrides.ok) return overrides;
 
   const auth = resolveAuthoritativePrice(productId, variantId);
   if (auth.error) return { error: auth.error, status: auth.status || 404 };
@@ -189,24 +200,39 @@ function addItem(cartId, { productId, variantId, quantity, clientPrice, metadata
   const countCheck = validateCartItemCount(existing ? existingCount : existingCount + 1);
   if (!countCheck.ok) return { error: countCheck.code, status: 400 };
 
-  if (newQty > auth.stock) {
-    return { error: "insufficient_stock", message: "Not enough stock (dry-run validation)", status: 400, dryRun: true };
+  const inv = inventory.getInventory(auth.productId);
+  const available = inv.error ? auth.stock : inv.saleable;
+  if (newQty > available) {
+    return { error: "insufficient_stock", code: "INVENTORY_INSUFFICIENT", message: "Not enough stock (dry-run validation)", status: 400, dryRun: true };
   }
+
+  const canonical = pathAdapter.buildImmutableSnapshot(auth.productId, newQty);
+  const snapMeta = {
+    ...(metadata || {}),
+    source: "D",
+    snapshotVersion: canonical.ok ? canonical.snapshotVersion : null,
+    productSnapshot: canonical.ok ? canonical.productSnapshot : null,
+    vat: canonical.ok ? canonical.item.vat : null,
+    unitPrice: auth.priceSnapshot,
+  };
 
   const itemId = existing?.id || newId("ci");
   if (existing) {
     db.prepare(`
       UPDATE commerce_cart_items SET quantity = ?, price_snapshot = ?, metadata_json = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `).run(newQty, auth.priceSnapshot, JSON.stringify(metadata || {}), itemId);
+    `).run(newQty, auth.priceSnapshot, JSON.stringify(snapMeta), itemId);
   } else {
     db.prepare(`
       INSERT INTO commerce_cart_items(id, cart_id, product_id, variant_id, quantity, price_snapshot, currency, metadata_json)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(itemId, cartId, auth.productId, auth.variantId, qtyCheck.quantity, auth.priceSnapshot, auth.currency, JSON.stringify(metadata || {}));
+    `).run(itemId, cartId, auth.productId, auth.variantId, qtyCheck.quantity, auth.priceSnapshot, auth.currency, JSON.stringify(snapMeta));
   }
 
   db.prepare("UPDATE commerce_carts SET updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(cartId);
+  const { emitPath } = pathAdapter;
+  const events = require("../eventBus");
+  emitPath(events.TYPES.CartUpdated, "cart", cartId, { productId: auth.productId, quantity: newQty });
   return getCart(cartId, { customerId, req });
 }
 

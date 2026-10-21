@@ -1,6 +1,7 @@
 const { extractToken, verifyToken } = require("../lib/dbAuth");
 const { extractToken: extractAdminToken, getSession } = require("../lib/auth");
 const catalogSeo = require("../lib/catalogSeo");
+const { rejectLegacyProductWrite } = require("../lib/productSotHttp");
 
 function requireAnyAdmin(req, res) {
   const bearer = extractToken(req);
@@ -88,6 +89,7 @@ module.exports = {
 
     app.post("/api/admin/catalog/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
+      if (rejectLegacyProductWrite(res, "E")) return;
       const result = catalogSeo.createProduct(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.product);
@@ -95,6 +97,7 @@ module.exports = {
 
     app.patch("/api/admin/catalog/products/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
+      if (rejectLegacyProductWrite(res, "E")) return;
       const result = catalogSeo.updateProduct(req.params.id, req.body || {});
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.product);

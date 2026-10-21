@@ -1,0 +1,22 @@
+Phase 2 Baseline Freeze — Full Test Run
+Date: 2026-08-22
+Branch: cursor/phase2-final-p2-c293
+Command: cd intelligence/buzzard_ai_complete && BUZZARD_AI_CORE_V2=1 python3 -m pytest tests/ -q
+
+479 passed, 1 skipped, 20 warnings in 14.77s
+
+Skipped:
+  tests/test_category_audit_maximal.py — storefront taxonomy (GAP-M-003)
+
+Phase 2 tests (137):
+  test_ai_core_phase2_p1.py
+  test_ai_core_phase2_category_execution.py
+  test_ai_core_phase2_p2.py
+  test_ai_core_phase2_final_p2.py
+  test_ai_core_phase2_agents_api.py
+  test_ai_core_phase2_category.py
+  test_ai_core_phase2_remaining_p1.py
+  test_ai_core_phase2_workers.py
+  test_ai_core_phase2_foundation.py
+  test_ai_core_phase2_security.py
+  test_ai_core_phase2_kurmay.py

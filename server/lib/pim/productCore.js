@@ -107,10 +107,26 @@ function getProduct(idOrSku) {
   return attachRelations(mapProduct(row));
 }
 
-function createProduct(input, { source = "ADMIN", actorId } = {}) {
+function createProduct(input, { source = "ADMIN", actorId, dryRun = false } = {}) {
   const sku = String(input.sku || "").trim();
   if (!sku) throw new Error("SKU required");
+  if (input.status === PRODUCT_STATUS.ACTIVE) {
+    throw new Error("ACTIVE status is not allowed on create — sales lock and Product SoT remain closed");
+  }
   productIdentifiers.assertUnique({ sku, ean: input.ean, gtin: input.gtin, mpn: input.mpn });
+
+  if (dryRun) {
+    return {
+      dryRun: true,
+      written: false,
+      wouldCreate: true,
+      sku,
+      status: PRODUCT_STATUS.DRAFT,
+      visibility: input.visibility || "HIDDEN",
+      source,
+      actorId: actorId || null,
+    };
+  }
 
   const id = input.id || newId();
   db.prepare(`

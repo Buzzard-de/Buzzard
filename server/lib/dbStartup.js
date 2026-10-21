@@ -3,7 +3,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath } = require("./dbPaths");
+const { resolveDbPath, getPersistenceInfo, ensureDbDirectory, defaultDbPath, assertDurableOpenAllowed } = require("./dbPaths");
 const { runIntegrityCheck } = require("./dbIntegrity");
 
 let startupResult = null;
@@ -35,6 +35,26 @@ function validateDatabaseStartup() {
   const warnings = [];
 
   try {
+    assertDurableOpenAllowed({ dbPath });
+  } catch (err) {
+    errors.push(err.message);
+    startupResult = {
+      ok: false,
+      dbPath,
+      persistence: getPersistenceInfo(dbPath),
+      migration: null,
+      integrity: { status: "NOT_OPENED" },
+      errors,
+      warnings,
+      validatedAt: new Date().toISOString(),
+    };
+    if (process.env.NODE_ENV === "production") {
+      throw err;
+    }
+    return startupResult;
+  }
+
+  try {
     ensureDbDirectory(dbPath);
   } catch (err) {
     errors.push(`Cannot create DB directory: ${err.message}`);
@@ -50,14 +70,14 @@ function validateDatabaseStartup() {
     errors.push(`Database directory not writable: ${dir}`);
   }
 
-  if (process.env.NODE_ENV === "production" && !persistence.persistent) {
-    const msg =
-      "Production without persistent disk — set BUZZARD_DB_PATH=/var/data/buzzard.db (catalog mode allows ephemeral on Render free tier)";
-    if (process.env.REQUIRE_PERSISTENT_DB === "1" || process.env.BUZZARD_SALES_ENABLED === "1") {
-      errors.push(msg);
-    } else {
-      warnings.push(msg);
-    }
+  if (process.env.NODE_ENV === "production" && !process.env.BUZZARD_DB_PATH) {
+    errors.push(
+      "Production BUZZARD_DB_PATH is unset — refusing to use the local default database as production storage"
+    );
+  } else if (process.env.NODE_ENV === "production" && !persistence.persistent) {
+    errors.push(
+      "Production database path is not persistent — set BUZZARD_DB_PATH to the Render disk mount (typically /var/data/buzzard.db)"
+    );
   }
 
   if (persistence.ephemeralRisk) {

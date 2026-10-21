@@ -1,0 +1,21 @@
+component,status,notes
+PostgreSQL configuration,PARTIAL,Configured via DATABASE_URL; only SQLite tested
+Alembic configuration,READY,Migration upgrade/downgrade tested
+Database models,READY,8 ai_core_* tables
+Database migrations,READY,001_ai_core_initial.py
+Unified Orchestrator,PARTIAL,Stub worker execution
+Full task lifecycle,PARTIAL,RETRY/ESCALATED/timeout not enforced
+Central Memory,READY,Versioning + history
+Exception Engine,PARTIAL,Halt lost on process restart
+Audit System,PARTIAL,Append-only by convention only
+API endpoints,PARTIAL,/agents missing; pagination total wrong
+Authentication/authorization,PARTIAL,Empty token allows anonymous
+Error handling,PARTIAL,Differs from API spec envelope
+Transactions,READY,commit/rollback in deps and session_scope
+Idempotency,PARTIAL,Body field only; no HTTP Idempotency-Key header
+Retry handling,PARTIAL,State exists; no auto-retry path
+Tests,PARTIAL,13 Phase 1 tests; gaps for Postgres/retry/halt
+Existing-system compatibility,READY,322 legacy tests pass
+Security,PARTIAL,No RBAC; anonymous bypass if token unset
+Git diff,READY,33 files +5530 lines vs main
+Production blockers,BROKEN,5 P0 blockers documented

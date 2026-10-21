@@ -35,7 +35,7 @@ try {
   execSync("npm audit --audit-level=high", { stdio: "inherit", cwd: root });
   pass("frontend npm audit");
 } catch {
-  warn("frontend has high vulnerabilities — review npm audit (Next/sharp may need major upgrade)");
+  warn("frontend has high vulnerabilities — remaining finding is eslint-config-next/braces/micromatch (no Next-15-compatible patch)");
 }
 
 console.log("\nServer audit (moderate+):");

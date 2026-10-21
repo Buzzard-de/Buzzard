@@ -5,10 +5,12 @@ import type {
   GoLiveRequest,
 } from "./commerceTypes";
 
+import { adminApiBase } from "./apiBase";
+
 const TOKEN_KEY = "buzzard_admin_token";
 
 function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+  return adminApiBase();
 }
 
 function authHeaders(): HeadersInit {

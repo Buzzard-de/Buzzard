@@ -118,6 +118,7 @@ export default function ContactForm() {
     <>
       <form id="contactForm" onSubmit={handleSubmit} noValidate>
         <input type="text" name="_honey" tabIndex={-1} autoComplete="off" style={{ display: "none" }} aria-hidden="true" />
+        <input type="hidden" name="_formStarted" value={String(formStartedAt)} readOnly />
         <input
           type="text"
           name="_website"

@@ -35,6 +35,7 @@ module.exports = {
     }
 
     app.post("/api/product-catalog-pim/brands", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.createBrand(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.brand);
@@ -45,6 +46,7 @@ module.exports = {
     });
 
     app.post("/api/product-catalog-pim/categories", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.createCategory(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.category);
@@ -55,6 +57,7 @@ module.exports = {
     });
 
     app.post("/api/product-catalog-pim/products", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.createProduct(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json({ product: result.product, completeness: result.completeness });
@@ -67,24 +70,28 @@ module.exports = {
     });
 
     app.put("/api/product-catalog-pim/products/:sku/translation/:language", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.upsertTranslation(req.params.sku, req.params.language, req.body || {});
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.translation);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/attributes", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.upsertAttribute(req.params.sku, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.json(result);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/media", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.addMedia(req.params.sku, req.body || {});
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.status(201).json(result.media);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/variants", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = productCatalogPim.createVariant(req.params.sku, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.variant);

@@ -18,6 +18,7 @@
     "postinstall": "npm --prefix server install",
     "security:audit": "npm audit --audit-level=high",
     "security:check": "node scripts/security-check.mjs",
+    "diagnostics:providers": "node scripts/provider-diagnostics.mjs",
     "verify:go-live": "node scripts/verify-go-live.mjs",
     "verify:admin-pages-deploy": "node scripts/verify-admin-pages-deploy.mjs",
     "verify:local": "BUZZARD_SITE_URL=http://localhost:3000 BUZZARD_API_URL=http://localhost:3001 node scripts/verify-go-live.mjs",
@@ -47,6 +48,8 @@
     "test:backup-restore": "node scripts/restore-db.mjs --dry-run --from server/data/buzzard.db",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
+    "test:ai": "vitest run pusatOrchestrator pusatMemoryGuardian pusatApprovalExceptions pusatAgentsAutomations pusatWorkerIntegration pusatMasterCompletion",
+    "test:software": "vitest run softwareCompletion softwareLifecycle",
     "test:e2e": "playwright test",
     "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",
     "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
@@ -104,7 +107,7 @@
     "gizli:start": "python Buzzard/app.py all"
   },
   "dependencies": {
-    "next": "^15.1.0",
+    "next": "15.5.27",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -114,8 +117,16 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.23",
+    "eslint-config-next": "15.5.27",
     "typescript": "^5.7.0",
-    "vitest": "^3.2.7"
+    "vite": "^7.3.7",
+    "vitest": "^5.0.3"
+  },
+  "overrides": {
+    "postcss": "8.5.29",
+    "source-map-js": "1.2.2",
+    "js-yaml": "4.3.2",
+    "brace-expansion": "1.1.21",
+    "sharp": "0.35.5"
   }
 }

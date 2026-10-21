@@ -490,11 +490,13 @@ Note: Existing SQLite `products` catalog and storefront search remain separate. 
 
 The `productCatalogPimPlugin.js` module adds core PIM foundations:
 
-- `POST|GET /api/product-catalog-pim/brands|categories` — brand and category master data
-- `POST /api/product-catalog-pim/products` — create product with supplier/TecDoc fields
+- `POST|GET /api/product-catalog-pim/brands|categories` — brand and category master data; writes require admin authentication
+- `POST /api/product-catalog-pim/products` — create product with supplier/TecDoc fields; requires admin authentication
 - `GET /api/product-catalog-pim/products/:sku` — product detail with translations, attributes, media, variants
-- `PUT /api/product-catalog-pim/products/:sku/translation/:language` — multilingual content and SEO
-- `POST /api/product-catalog-pim/products/:sku/attributes|media|variants` — attributes, media metadata, variants
+- `PUT /api/product-catalog-pim/products/:sku/translation/:language` — multilingual content and SEO; requires admin authentication
+- `POST /api/product-catalog-pim/products/:sku/attributes|media|variants` — attributes, media metadata, variants; requires admin authentication
+
+These routes write to the separate `pim30_*` tables. They are not the canonical Product SoT write path; SoT remains inactive until product-write paths and catalog storage are consolidated and verified.
 - `GET /api/admin/product-catalog-pim/overview|products` — admin PIM dashboard
 
 Requires SQLite (`BUZZARD_DB_ENABLED=1`). Disable with `BUZZARD_PRODUCT_CATALOG_PIM=0`.

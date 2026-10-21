@@ -34,11 +34,16 @@ function inferCustomsHints(product) {
 function assessCustoms(product) {
   const existing = product.customs && typeof product.customs === "object" ? product.customs : null;
   const hints = existing?.gtip ? existing : inferCustomsHints(product);
+  const decision = productValidator.validateCustomsDecision({
+    ...product,
+    ...hints,
+    customs: existing || hints,
+  });
 
   const normalized = productValidator.validateCustoms(hints);
-  const customs = normalized.value || hints;
+  const customs = normalized.value || hints || {};
 
-  if (customs.review_required || (customs.confidence != null && customs.confidence < 0.75)) {
+  if (customs.review_required || (customs.confidence != null && customs.confidence < 0.75) || !decision.ok) {
     productAi.enqueueReview({
       type: "customs_classification",
       product_id: product.id || product.sku,
@@ -51,7 +56,10 @@ function assessCustoms(product) {
 
   return {
     customs,
-    review_required: customs.review_required,
+    review_required: true,
+    legalClaim: false,
+    failClosed: Boolean(decision.failClosed) || !decision.ok,
+    decision,
     disclaimer: "AI-generated customs hint only — not legal/tariff advice.",
   };
 }

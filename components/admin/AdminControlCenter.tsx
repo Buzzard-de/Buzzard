@@ -420,7 +420,17 @@ export default function AdminControlCenter() {
           <ul className="cc-status-list">
             {integrations.map((i) => (
               <li key={i.id}>
-                <span className={i.status === "CONNECTED" ? "cc-status-online" : "cc-status-offline"}>{i.status}</span>
+                <span
+                  className={
+                    i.status === "CONNECTED"
+                      ? "cc-status-online"
+                      : i.status === "BLOCKED" || i.status === "NOT_CONFIGURED" || i.status === "OFFLINE"
+                        ? "cc-status-offline"
+                        : "cc-status-warning"
+                  }
+                >
+                  {i.status}
+                </span>
                 <strong>{i.name}</strong>
                 <span>{i.type}</span>
               </li>

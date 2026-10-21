@@ -7,7 +7,21 @@ import { absoluteUrl } from "@/lib/seo/config";
 
 export const dynamic = "force-static";
 
-const STATIC_PAGES = ["/", "/products/", "/store/", "/kontakt/", "/impressum/", "/datenschutz/", "/hilfe/", "/agb/", "/versand/", "/widerruf/"];
+const STATIC_PAGES = [
+  "/",
+  "/products/",
+  "/store/",
+  "/kontakt/",
+  "/impressum/",
+  "/datenschutz/",
+  "/hilfe/",
+  "/agb/",
+  "/versand/",
+  "/widerruf/",
+  "/fahrzeugteile-suche/",
+  "/landmaschinen-suche/",
+  "/baumaschinen-suche/",
+];
 
 function localizedEntries(path: string, priority = 0.7): MetadataRoute.Sitemap {
   return SUPPORTED_LOCALES.map((locale) => ({

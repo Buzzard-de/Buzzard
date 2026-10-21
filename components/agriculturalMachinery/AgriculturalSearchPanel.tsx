@@ -85,6 +85,10 @@ export default function AgriculturalSearchPanel() {
           Suchen
         </button>
       </form>
+      <p>
+        Beispiel (Mock): OEM <code>OEM-AG-FLT-AIR-01</code>, Hersteller AgriFixture, Modell T-120, Serie
+        T120A00010, Jahr 2019.
+      </p>
       {error && <p className="shop-modal-error">{error}</p>}
       {decision && (
         <section>
@@ -95,13 +99,17 @@ export default function AgriculturalSearchPanel() {
           <p>{String(decision.explanation || "")}</p>
         </section>
       )}
-      <ul>
-        {items.map((item) => (
-          <li key={String(item.id)}>
-            {String(item.oemPartNumber || item.id)} · {String(item.matchKind || "")}
-          </li>
-        ))}
-      </ul>
+      <section>
+        <h2>Ergebnisse</h2>
+        {items.length === 0 ? <p>Keine Treffer. Mock-Katalog startet automatisch; lizenzierte OEM-Daten fehlen.</p> : null}
+        <ul>
+          {items.map((item) => (
+            <li key={String(item.id)}>
+              {String(item.oemPartNumber || item.id)} · {String(item.matchKind || "")}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -35,6 +35,8 @@ function createVehiclePartsEngine(options = {}) {
       liveVerified: false,
       salesFlagsUntouched: true,
       isolation: { agriculturalEngineUsed: false, constructionEngineUsed: false },
+      mockSeeded: store.parts.size > 0,
+      catalogSource: "mock-fixture",
       metrics: observability.snapshot(),
     };
   }

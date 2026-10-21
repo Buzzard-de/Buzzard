@@ -38,6 +38,8 @@ function createAgriculturalMachineryEngine(options = {}) {
         constructionEngineUsed: false,
         automotiveEngineUsed: false,
       },
+      mockSeeded: store.parts.size > 0,
+      catalogSource: "mock-fixture",
       metrics: observability.snapshot(),
     };
   }

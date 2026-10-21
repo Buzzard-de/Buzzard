@@ -128,6 +128,17 @@ const MOCK_FIXTURE = Object.freeze({
       assemblyId: "vpe-cat-commercial",
     },
     {
+      sourceRecordId: "vpe-cabin-filter",
+      manufacturer: "VW",
+      oemPartNumber: "1K0819644",
+      description: "Cabin pollen filter",
+      descriptions: { de: "Innenraumfilter", en: "Cabin pollen filter" },
+      synonyms: ["innenraumfilter", "pollenfilter"],
+      categoryId: "vpe-cat-cabin-filters",
+      assemblyId: "vpe-cat-interior",
+      quantityPerVehicle: 1,
+    },
+    {
       sourceRecordId: "vpe-hv-cable",
       manufacturer: "VW",
       oemPartNumber: "1EA971234",
@@ -197,6 +208,17 @@ const MOCK_FIXTURE = Object.freeze({
       type: "manufacturer_catalog",
       manufacturer: "VW",
       model: "ID.3",
+      providerId: "mock-oem-catalog",
+    },
+    {
+      sourceRecordId: "vpe-ev-cabin",
+      partSourceRecordId: "vpe-cabin-filter",
+      type: "manufacturer_catalog",
+      manufacturer: "VW",
+      model: "Golf",
+      generation: "VII",
+      yearFrom: 2012,
+      yearTo: 2020,
       providerId: "mock-oem-catalog",
     },
     {
@@ -275,7 +297,14 @@ function createMockConnector(options = {}) {
       if (failMode === "partial") {
         return { ok: true, mock: true, records: { ...MOCK_FIXTURE, parts: [...MOCK_FIXTURE.parts, { sourceRecordId: "bad" }] } };
       }
-      return { ok: true, mock: true, liveCalls: false, records: MOCK_FIXTURE };
+      const now = new Date().toISOString();
+      const records = {
+        ...MOCK_FIXTURE,
+        offers: MOCK_FIXTURE.offers.map((offer) =>
+          String(offer.sourceRecordId || "").includes("stale") ? offer : { ...offer, observedAt: now }
+        ),
+      };
+      return { ok: true, mock: true, liveCalls: false, records };
     },
   };
 }

@@ -2,6 +2,7 @@ const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const { getEngine } = require("../lib/agriculturalMachinery");
 const isolation = require("../lib/machineryDomainKit/isolation");
+const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
 
 function publicError(res, status, code, message) {
   return res.status(status).json({ ok: false, error: code, message });
@@ -10,6 +11,9 @@ function publicError(res, status, code, message) {
 module.exports = {
   register(app) {
     const engine = getEngine();
+    ensureEngineSeeded("agricultural").catch((error) => {
+      console.warn("agricultural mock seed skipped:", error.message);
+    });
 
     app.get("/api/agricultural-machinery/health", (_req, res) => {
       return res.json({ ok: true, ...engine.health() });

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPageShell, catalogModeNotice } from "@/components/LegalPageShell";
 import VehiclePartsSearchPanel from "@/components/vehiclePartsIntelligence/VehiclePartsSearchPanel";
+import MachineryDomainLinks from "@/components/machinery/MachineryDomainLinks";
 
 export const metadata: Metadata = {
   title: "Fahrzeugteile-Suche",
@@ -19,6 +20,7 @@ export default function VehiclePartsSearchPage() {
       <p>
         Shop-Kategorie bleibt <Link href="/kategorie/automotive/">Automotive und motorisierte Fahrzeuge</Link>.
       </p>
+      <MachineryDomainLinks current="vehicle" />
       <VehiclePartsSearchPanel />
     </LegalPageShell>
   );

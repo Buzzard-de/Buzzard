@@ -6,6 +6,7 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const { getEngine } = require("../lib/constructionMachinery");
+const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
 
 function publicError(res, status, code, message) {
   return res.status(status).json({ ok: false, error: code, message });
@@ -20,6 +21,9 @@ function parseLimit(value) {
 module.exports = {
   register(app) {
     const engine = getEngine();
+    ensureEngineSeeded("construction").catch((error) => {
+      console.warn("construction mock seed skipped:", error.message);
+    });
 
     app.get("/api/construction-machinery/health", (_req, res) => {
       return res.json({ ok: true, ...engine.health() });

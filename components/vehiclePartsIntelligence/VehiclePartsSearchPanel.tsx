@@ -92,6 +92,10 @@ export default function VehiclePartsSearchPanel() {
           Suchen
         </button>
       </form>
+      <p>
+        Beispiel (Mock): OEM <code>1K0698151</code>, Hersteller VW, Modell Golf, Generation VII, Motor CZEA,
+        Jahr 2016.
+      </p>
       {error && <p className="shop-modal-error">{error}</p>}
       {decision && (
         <section>
@@ -102,14 +106,18 @@ export default function VehiclePartsSearchPanel() {
           <p>{String(decision.explanation || "")}</p>
         </section>
       )}
-      <ul>
-        {items.map((item) => (
-          <li key={String(item.id)}>
-            {String(item.oemPartNumber || item.id)} · {String(item.matchKind || "")}
-            {item.hvWarning ? " · HV" : ""}
-          </li>
-        ))}
-      </ul>
+      <section>
+        <h2>Ergebnisse</h2>
+        {items.length === 0 ? <p>Keine Treffer. Mock-Katalog startet automatisch; lizenzierte OEM-Daten fehlen.</p> : null}
+        <ul>
+          {items.map((item) => (
+            <li key={String(item.id)}>
+              {String(item.oemPartNumber || item.id)} · {String(item.matchKind || "")}
+              {item.hvWarning ? " · HV" : ""}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -413,9 +413,22 @@ describe("import and sourcing", () => {
   });
 });
 
+describe("boot seed", () => {
+  it("loads the mock catalog once so live search is not empty", async () => {
+    resetEngineForTests();
+    const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
+    const first = await ensureEngineSeeded("automotive");
+    expect(first.ok).toBe(true);
+    expect(first.parts).toBeGreaterThan(0);
+    const second = await ensureEngineSeeded("automotive");
+    expect(second.skipped).toBe(true);
+  });
+});
+
 describe("authorization, fitment reuse and safety", () => {
   it("protects admin import, reuses fitment extras, and leaves sales flags off", () => {
     expect(PUBLIC_ROUTES.has("GET /api/vehicle-parts/search")).toBe(true);
+    expect(PUBLIC_ROUTES.has("POST /api/vehicle-parts/compatibility")).toBe(true);
     expect(resolveRoutePermission("POST", "/api/admin/vehicle-parts/import")).toEqual({
       permission: "products.write",
     });

@@ -41,6 +41,8 @@ function createConstructionMachineryEngine(options = {}) {
       liveVerified: false,
       liveCalls: false,
       salesFlagsUntouched: true,
+      mockSeeded: store.parts.size > 0,
+      catalogSource: "mock-fixture",
       mockConnector: mock || null,
       metrics: observability.snapshot(),
     };

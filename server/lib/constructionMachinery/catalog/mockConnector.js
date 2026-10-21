@@ -62,6 +62,16 @@ const MOCK_FIXTURE = Object.freeze({
       categoryId: "cme-cat-crawler-excavators",
     },
     {
+      sourceRecordId: "fx-part-tooth-310",
+      manufacturer: "FixtureWorks",
+      oemPartNumber: "OEM-FX-GET-310",
+      description: "Bucket tooth",
+      descriptions: { de: "Löffelzahn", en: "Bucket tooth", tr: "Kova dişi" },
+      synonyms: ["zahn", "tooth"],
+      categoryId: "cme-cat-crawler-excavators",
+      attributes: { position: "bucket-tooth" },
+    },
+    {
       sourceRecordId: "fx-part-filter-200",
       manufacturer: "AfterFixture",
       oemPartNumber: "AF-FLT-200",
@@ -103,6 +113,17 @@ const MOCK_FIXTURE = Object.freeze({
       serialFrom: "FX220B00001",
       serialTo: "FX220B19999",
       position: "main-pump",
+      providerId: "mock-manufacturer-catalog",
+    },
+    {
+      sourceRecordId: "fx-ev-tooth",
+      partSourceRecordId: "fx-part-tooth-310",
+      type: "manufacturer_catalog",
+      manufacturer: "FixtureWorks",
+      modelCode: "FX-220",
+      yearFrom: 2018,
+      yearTo: 2026,
+      position: "bucket-tooth",
       providerId: "mock-manufacturer-catalog",
     },
     {
@@ -167,6 +188,16 @@ const MOCK_FIXTURE = Object.freeze({
   ],
 });
 
+function withFreshOffers(fixture) {
+  const now = new Date().toISOString();
+  return {
+    ...fixture,
+    offers: (fixture.offers || []).map((offer) =>
+      String(offer.sourceRecordId || "").includes("stale") ? offer : { ...offer, observedAt: now }
+    ),
+  };
+}
+
 function createMockConnector(options = {}) {
   const failMode = options.failMode || null;
   const meta = describeConnector({
@@ -223,7 +254,7 @@ function createMockConnector(options = {}) {
       mock: true,
       configured: false,
       liveCalls: false,
-      records: MOCK_FIXTURE,
+      records: withFreshOffers(MOCK_FIXTURE),
     };
   }
 

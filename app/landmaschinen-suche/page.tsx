@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalPageShell, catalogModeNotice } from "@/components/LegalPageShell";
 import AgriculturalSearchPanel from "@/components/agriculturalMachinery/AgriculturalSearchPanel";
+import MachineryDomainLinks from "@/components/machinery/MachineryDomainLinks";
 
 export const metadata: Metadata = {
   title: "Landmaschinen-Teilesuche",
@@ -20,6 +21,7 @@ export default function AgriculturalMachinerySearchPage() {
         Shop-Kategorie bleibt{" "}
         <Link href="/kategorie/tier-und-landwirtschaftsausruestung/">Landwirtschaft & Agrar</Link>.
       </p>
+      <MachineryDomainLinks current="agricultural" />
       <AgriculturalSearchPanel />
     </LegalPageShell>
   );

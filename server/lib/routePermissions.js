@@ -63,6 +63,11 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/vehicle-parts/vehicles",
   "GET /api/vehicle-parts/offers",
   "GET /api/vehicle-parts/integrations",
+  "POST /api/vehicle-parts/compatibility",
+  "POST /api/vehicle-parts/cross-reference",
+  "POST /api/vehicle-parts/vin-inspect",
+  "POST /api/agricultural-machinery/compatibility",
+  "POST /api/construction-machinery/compatibility",
 ]);
 
 const EXACT = {

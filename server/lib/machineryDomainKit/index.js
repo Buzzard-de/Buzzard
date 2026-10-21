@@ -1,6 +1,7 @@
 const isolation = require("./isolation");
 const router = require("./router");
 const pricingContract = require("./pricingContract");
+const seedMocks = require("./seedMocks");
 const identifiers = require("../constructionMachinery/identifiers");
 const units = require("../constructionMachinery/units");
 const security = require("../constructionMachinery/catalog/security");
@@ -14,6 +15,7 @@ module.exports = {
   isolation,
   router,
   pricingContract,
+  seedMocks,
   identifiers,
   units,
   security,

@@ -1,5 +1,7 @@
+import { machineryApiBase } from "@/lib/machineryApi";
+
 function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+  return machineryApiBase();
 }
 
 function adminHeaders(): HeadersInit {

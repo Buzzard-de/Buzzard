@@ -102,7 +102,9 @@ export default function ConstructionSearchPanel() {
       )}
       <section>
         <h2>Ergebnisse</h2>
-        {items.length === 0 ? <p>Keine Treffer. Ohne Import bleibt der Katalog leer.</p> : null}
+        {items.length === 0 ? (
+          <p>Keine Treffer. Beispiel-Mock: OEM-FX-HYD-1001 / FixtureWorks / FX-220. Lizenzierte OEM-Daten fehlen.</p>
+        ) : null}
         <ul>
           {items.map((item) => (
             <li key={item.id}>

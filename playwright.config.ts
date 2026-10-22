@@ -8,6 +8,7 @@ const VIEWPORTS = {
   mobile360: { width: 360, height: 800 },
   mobile375: { width: 375, height: 812 },
   mobile390: { width: 390, height: 844 },
+  mobile393: { width: 393, height: 852 },
   mobile414: { width: 414, height: 896 },
   tablet768: { width: 768, height: 1024 },
 };
@@ -45,6 +46,11 @@ export default defineConfig({
       name: "chromium-tablet",
       testMatch: /customer-journey\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.tablet768 },
+    },
+    {
+      name: "homepage-viewports",
+      testMatch: /homepage-viewports\.spec\.ts|mobile-category-overlay\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER

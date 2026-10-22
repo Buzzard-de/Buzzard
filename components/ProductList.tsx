@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import ProductCard from "@/components/ProductCard";
+import MobileProductCard from "@/components/mobile/MobileProductCard";
+import MobileProductToolbar from "@/components/mobile/MobileProductToolbar";
+import MobileEmptyState from "@/components/mobile/MobileEmptyState";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useShop } from "@/lib/shop";
@@ -16,7 +19,7 @@ import {
   sortProducts,
 } from "@/lib/products";
 import { localizePublicProduct } from "@/lib/products/i18n";
-import { findCategoryBySlugPath, getCategoryLabel } from "@/lib/categories";
+import { findCategoryBySlugPath, getCategoryLabel, getParentCategory, categoryHref } from "@/lib/categories";
 import { isLiveCatalogEnabled, loadLiveCatalogProducts, mergeCatalogProducts } from "@/lib/catalogSeo/runtime";
 import {
   isLiveLocalizationEnabled,
@@ -53,12 +56,14 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   const page = Math.max(1, Number(searchParams.get("page") || "1") || 1);
   const kategorieSlug = categorySlug || searchParams.get("kategorie");
   const kategorie = kategorieSlug ? findCategoryBySlugPath(kategorieSlug) : null;
+  const parentCategory = kategorie ? getParentCategory(kategorie.id) : null;
   const rawVin = searchParams.get("vin");
   const vin = rawVin ? normalizeVin(rawVin) : null;
   const { vehicle } = useShop();
   const { add } = useCart();
   const { toggle, has } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [mobileView, setMobileView] = useState<"grid" | "list">("list");
   const [catalogProducts, setCatalogProducts] = useState<PublicProduct[]>([]);
   const [compatibleSkus, setCompatibleSkus] = useState<string[] | null>(null);
   const [catalogLoading, setCatalogLoading] = useState(
@@ -209,6 +214,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
   return (
     <div className="products-main">
+      <div className="buzzard-desktop-chrome">
       {kategorie && (
         <div className="vehicle-filter-banner">
           <span>
@@ -237,6 +243,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           )}
         </div>
       )}
+      </div>
 
       {isPimStorefrontEnabled() && pimResult?.catalogMode && !catalogLoading && (
         <p className="admin-note catalog-mode-banner">{t("catalog.browseOnlyText")}</p>
@@ -249,6 +256,7 @@ export default function ProductList({ categorySlug }: ProductListProps) {
         </p>
       )}
 
+      <div className="buzzard-desktop-chrome">
       <div className="products-toolbar">
         <p className="products-result-count">
           {catalogLoading ? "Produkte werden geladen…" : `${result.total} Produkt${result.total === 1 ? "" : "e"} gefunden`}
@@ -277,14 +285,45 @@ export default function ProductList({ categorySlug }: ProductListProps) {
           </select>
         </label>
       </div>
+      </div>
+
+      <div className="buzzard-mobile-only buzzard-mobile-content">
+        <div className="buzzard-mobile-page-pad">
+        {!kategorie ? (
+          <>
+            <h1 className="buzzard-mobile-page-title">{t("product.products")}</h1>
+            <p className="buzzard-mobile-page-count">
+              {catalogLoading
+                ? t("mobile.loadingProducts")
+                : t("mobile.productCount").replace("{count}", String(result.total))}
+            </p>
+          </>
+        ) : null}
+        <MobileProductToolbar view={mobileView} onViewChange={setMobileView} category={kategorie} />
+        {catalogLoading ? (
+          <p className="buzzard-mobile-page-count" role="status">
+            {t("mobile.loadingProducts")}
+          </p>
+        ) : null}
+        </div>
+      </div>
 
       {!catalogLoading && result.items.length === 0 ? (
-        <div className="products-empty">
-          <p>{t("product.empty")}</p>
-        </div>
+        <>
+          <div className="products-empty buzzard-desktop-chrome">
+            <p>{t("product.empty")}</p>
+          </div>
+          <div className="buzzard-mobile-only">
+            <MobileEmptyState
+              title={t("product.empty")}
+              hint={t("mobile.emptyHint")}
+              backHref={parentCategory ? categoryHref(parentCategory) : "/"}
+            />
+          </div>
+        </>
       ) : (
         <>
-          <div className="products-grid">
+          <div className="products-grid buzzard-desktop-chrome">
             {result.items.map((product) => {
               const localized = localizePublicProduct(product, locale);
               return (
@@ -302,6 +341,25 @@ export default function ProductList({ categorySlug }: ProductListProps) {
                   addLabel={t("product.addToCart")}
                   addedLabel={t("product.added")}
                   viewLabel={t("product.viewProduct")}
+                />
+              );
+            })}
+          </div>
+          <div className={`buzzard-mobile-only buzzard-mobile-product-list${mobileView === "grid" ? " is-grid" : ""}`}>
+            {result.items.map((product) => {
+              const localized = localizePublicProduct(product, locale);
+              return (
+                <MobileProductCard
+                  key={`mobile-${product.id}`}
+                  product={localized}
+                  localeName={localized.name}
+                  categoryLabel={
+                    String(product.attributes?.category || getCategoryLabelForProduct(localized, locale))
+                  }
+                  addedId={addedId}
+                  inWishlist={has(product.id)}
+                  onAdd={handleAdd}
+                  onToggleWishlist={toggle}
                 />
               );
             })}

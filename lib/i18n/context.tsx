@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -13,7 +14,8 @@ import { translate } from "./translations";
 import { detectLocale, persistLocale, hasManualLocaleOverride } from "./detect";
 import { setRuntimeLocale } from "./runtime";
 import { formatDate, formatDateTime, formatNumber, formatPrice, formatPercent } from "./format";
-import { isRtlLocale, LOCALE_LABELS, SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
+import { applyDocumentDirection } from "./international/resolveLanguage";
+import { localeDirection, SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
 import { getAccountToken } from "@/lib/account/client";
 
 interface LocaleContextValue {
@@ -30,6 +32,8 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 async function syncAccountLanguage(locale: BuzzardLocale) {
   if (!getAccountToken()) return;
   try {
@@ -44,7 +48,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<BuzzardLocale>("de");
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     setLocaleState(detectLocale());
     setReady(true);
   }, []);
@@ -64,11 +68,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     });
   }, [ready]);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!ready) return;
     setRuntimeLocale(locale);
-    document.documentElement.lang = locale === "ar" ? "ar" : locale;
-    document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
+    applyDocumentDirection(locale);
   }, [locale, ready]);
 
   const setLocale = useCallback((next: BuzzardLocale, manual = true) => {
@@ -82,7 +85,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       locale,
       setLocale,
       t: (key: string) => translate(locale, key),
-      dir: isRtlLocale(locale) ? "rtl" : "ltr",
+      dir: localeDirection(locale),
       formatPrice: (amount, currency = "EUR") => formatPrice(amount, locale, currency),
       formatNumber: (value) => formatNumber(value, locale),
       formatPercent: (value) => formatPercent(value, locale),
@@ -101,4 +104,4 @@ export function useLocale() {
   return ctx;
 }
 
-export { LOCALE_LABELS, SUPPORTED_LOCALES };
+export { LOCALE_LABELS, SUPPORTED_LOCALES } from "./types";

@@ -55,8 +55,10 @@ function salesEnabled() {
   return process.env.BUZZARD_SALES_ENABLED === "1";
 }
 
+const { resolveSupportedLocale } = require("../../../../server/lib/canonicalLocales");
+
 function resolveLocale(locale) {
-  return ["de", "en", "tr", "ar"].includes(locale) ? locale : "de";
+  return resolveSupportedLocale(locale, "en");
 }
 
 function readOrders() {

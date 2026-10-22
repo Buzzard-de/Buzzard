@@ -1,4 +1,4 @@
-import type { BuzzardLocale } from "@/lib/i18n/types";
+import type { BuzzardEmailLocale, BuzzardLocale } from "@/lib/i18n/types";
 
 export const EMAIL_TEMPLATE_KEYS = [
   "account_verification",
@@ -17,7 +17,7 @@ type EmailTemplate = {
   body: string;
 };
 
-const templates: Record<BuzzardLocale, Record<EmailTemplateKey, EmailTemplate>> = {
+const templates: Partial<Record<BuzzardEmailLocale, Record<EmailTemplateKey, EmailTemplate>>> = {
   de: {
     account_verification: { subject: "Bitte bestätigen Sie Ihr Buzzard-Konto", body: "Hallo {firstName},\n\nbitte bestätigen Sie Ihre E-Mail-Adresse." },
     password_reset: { subject: "Passwort zurücksetzen", body: "Hallo {firstName},\n\nsetzen Sie Ihr Passwort über den Link zurück." },
@@ -56,8 +56,29 @@ const templates: Record<BuzzardLocale, Record<EmailTemplateKey, EmailTemplate>> 
   },
 };
 
+const emailFallbackLog = new Set<string>();
+
+function logEmailFallback(locale: BuzzardLocale, key: EmailTemplateKey): void {
+  const token = `${locale}:${key}`;
+  if (emailFallbackLog.has(token)) return;
+  emailFallbackLog.add(token);
+  if (process.env.NODE_ENV === "production") return;
+  console.warn(`[BUZZARD email] English fallback for ${locale}.${key}`);
+}
+
 export function getEmailTemplate(key: EmailTemplateKey, locale: BuzzardLocale): EmailTemplate {
-  return templates[locale]?.[key] ?? templates.de[key];
+  const native = templates[locale as BuzzardEmailLocale];
+  if (native?.[key]) return native[key];
+  logEmailFallback(locale, key);
+  return templates.en![key];
+}
+
+export function listNativeEmailLocales(): BuzzardEmailLocale[] {
+  return Object.keys(templates) as BuzzardEmailLocale[];
+}
+
+export function usesEnglishEmailFallback(locale: BuzzardLocale): boolean {
+  return !(locale in templates);
 }
 
 export function renderEmailTemplate(

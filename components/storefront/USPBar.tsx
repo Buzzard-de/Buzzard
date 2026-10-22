@@ -4,11 +4,10 @@ import CategoryIcon from "@/components/CategoryIcon";
 import { useLocale } from "@/lib/i18n/context";
 
 const USP_ITEMS = [
-  { key: "home.uspShipping", icon: "truck" },
-  { key: "home.uspReturns", icon: "return" },
-  { key: "home.uspPayment", icon: "shield" },
-  { key: "home.uspQuality", icon: "star" },
-  { key: "home.uspSupport", icon: "phone" },
+  { key: "home.trustChoice", icon: "star" },
+  { key: "home.trustInfo", icon: "box" },
+  { key: "home.trustSupport", icon: "phone" },
+  { key: "home.trustAdvice", icon: "shield" },
 ] as const;
 
 export default function USPBar() {

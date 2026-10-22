@@ -1,3 +1,5 @@
+import type { BuzzardLocale } from "@/lib/i18n/types";
+
 export type StockStatus = "in_stock" | "low_stock" | "out_of_stock" | "preorder";
 export type ProductStatus = "draft" | "active" | "paused" | "archived";
 export type VariantType = "size" | "color" | "pack" | "model" | "vehicle" | "custom";
@@ -94,7 +96,7 @@ export interface BuzzardProduct {
   seo: ProductSeo;
   status: ProductStatus;
   buy_now_enabled?: boolean;
-  i18n?: Partial<Record<"de" | "en" | "tr" | "ar", ProductI18nEntry>>;
+  i18n?: Partial<Record<BuzzardLocale, ProductI18nEntry>>;
   vehicle_compatibility?: VehicleCompatibility[];
   customs?: ProductCustoms;
   ai_source?: string;

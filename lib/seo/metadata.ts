@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { BuzzardLocale } from "@/lib/i18n/types";
-import { hreflangAlternates, localizePath } from "@/lib/i18n/routing";
+import { hreflangAlternates, localizePath, toRoutingLocale } from "@/lib/i18n/routing";
 import type { PublicProduct } from "@/lib/products/types";
 import type { BuzzardCategory } from "@/lib/categories/types";
 import { getCategoryLabel } from "@/lib/categories/i18n";
@@ -30,7 +30,7 @@ export function buildProductMetadata(
 ): Metadata {
   const title = override?.title || product.seo.title;
   const description = override?.description || product.seo.description;
-  const canonicalPath = override?.canonical || localizePath(product.url, locale);
+  const canonicalPath = override?.canonical || localizePath(product.url, toRoutingLocale(locale));
   const canonical = absoluteUrl(canonicalPath);
   const alternates = hreflangAlternates(product.url).reduce<Record<string, string>>((acc, alt) => {
     acc[alt.locale] = alt.href;
@@ -70,7 +70,7 @@ export function buildCategoryMetadata(
     override?.description ||
     `${name} bei Buzzard24 entdecken — Produkte und Unterkategorien im Online-Katalog. Beratung und Anfragen jederzeit möglich.`;
   const path = category.url.endsWith("/") ? category.url : `${category.url}/`;
-  const canonical = absoluteUrl(override?.canonical || localizePath(path, locale));
+  const canonical = absoluteUrl(override?.canonical || localizePath(path, toRoutingLocale(locale)));
   const alternates = hreflangAlternates(path).reduce<Record<string, string>>((acc, alt) => {
     acc[alt.locale] = alt.href;
     return acc;

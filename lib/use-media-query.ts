@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PHONE_MEDIA_QUERY } from "@/lib/mobile/phoneViewport";
 
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -17,7 +18,7 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export function useIsMobileNav(): boolean {
-  return useMediaQuery("(max-width: 767px)");
+  return useMediaQuery(PHONE_MEDIA_QUERY);
 }
 
 export function useIsTabletNav(): boolean {

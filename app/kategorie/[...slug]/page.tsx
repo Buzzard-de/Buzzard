@@ -7,6 +7,7 @@ import CategoryCatalogView from "@/components/category/CategoryCatalogView";
 import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
 import CategoryJsonLd from "@/components/category/CategoryJsonLd";
 import CategoryNotFound from "@/components/category/CategoryNotFound";
+import MobileCategoryPage from "@/components/mobile/MobileCategoryPage";
 import KfzSubcategoryCount from "@/components/category/KfzSubcategoryCount";
 import {
   findCategoryBySlugPath,
@@ -173,12 +174,70 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <>
       <CategoryJsonLd category={category} breadcrumb={breadcrumb} />
-      <CategoryCatalogView category={category} />
-      <CategoryChildrenGrid categories={children} />
+      <div className="buzzard-desktop-chrome">
+        <CategoryCatalogView category={category} />
+        <CategoryChildrenGrid
+          categories={children}
+          variant={
+            category.id === "cat-01" ||
+            category.id === "cat-02" ||
+            category.id === "cat-15" ||
+            category.id === "cat-16" ||
+            category.id === "cat-42" ||
+            category.id === "cat-44" ||
+            category.id === "cat-27" ||
+            category.id === "cat-45" ||
+            category.id === "cat-52" ||
+            category.id === "cat-17" ||
+            category.id === "cat-18" ||
+            category.id === "cat-47" ||
+            category.id === "cat-04" ||
+            category.id === "cat-10" ||
+            category.id === "cat-11" ||
+            category.id === "cat-35" ||
+            category.id === "cat-24" ||
+            category.id === "cat-13" ||
+            category.id === "cat-03" ||
+            category.id === "cat-46" ||
+            category.id === "cat-06" ||
+            category.id === "cat-26" ||
+            category.id === "cat-07" ||
+            category.id === "cat-33" ||
+            category.id === "cat-20" ||
+            category.id === "cat-14" ||
+            category.id === "cat-09" ||
+            category.id === "cat-08" ||
+            category.id === "cat-21" ||
+            category.id === "cat-22" ||
+            category.id === "cat-23" ||
+            category.id === "cat-40" ||
+            category.id === "cat-12" ||
+            category.id === "cat-36" ||
+            category.id === "cat-38" ||
+            category.id === "cat-19" ||
+            category.id === "cat-48" ||
+            category.id === "cat-49" ||
+            category.id === "cat-51" ||
+            category.id === "cat-32" ||
+            category.id === "cat-34" ||
+            category.id === "cat-50" ||
+            category.id === "cat-41" ||
+            category.id === "cat-28" ||
+            category.id === "cat-29" ||
+            category.id === "cat-31" ||
+            category.id === "cat-05" ||
+            category.id === "cat-54" ||
+            category.id === "cat-55" ||
+            category.id === "cat-56" ||
+            category.id.startsWith("cat-54-")
+              ? "vehicle-hubs"
+              : "default"
+          }
+        />
+      </div>
+      <MobileCategoryPage category={category} />
 
-      {category.id === "cat-05" && <KfzPartsBrowse compact />}
-
-      <section className="subpage-content products-page-layout">
+      <section className={`subpage-content products-page-layout${children.length > 0 ? " buzzard-desktop-chrome" : ""}`}>
         <Suspense fallback={<div className="products-grid" />}>
           <ProductList categorySlug={slug.join("/")} />
         </Suspense>

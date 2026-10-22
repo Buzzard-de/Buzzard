@@ -1,6 +1,5 @@
-import type { MarketCountry, ShippingRulesMap } from "./types";
-import countries from "@/data/buzzard_europe_countries.json";
+import type { ShippingRulesMap } from "./types";
 import shipping from "@/data/buzzard_europe_shipping.json";
 
-export const marketCountries = countries as MarketCountry[];
+/** Shipping rate tables remain the existing commerce overlay; markets come from Market Engine. */
 export const marketShippingRules = shipping as ShippingRulesMap;

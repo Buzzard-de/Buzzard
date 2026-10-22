@@ -15,9 +15,26 @@ describe("i18n catalog keys", () => {
     expect(translate("en", "home.subcategories")).toBe("Subcategories");
   });
 
+  it("maps mobile.startShopping per locale", () => {
+    expect(translate("de", "mobile.startShopping")).toContain("Einkaufen");
+    expect(translate("tr", "mobile.startShopping")).toContain("Alışverişe");
+    expect(translate("en", "mobile.startShopping")).toContain("Start shopping");
+  });
+
+  it("maps mobile.emptyCategories and trust chips per locale", () => {
+    expect(translate("de", "mobile.emptyCategories")).toContain("Keine Kategorien");
+    expect(translate("tr", "home.trustChoice")).toBeTruthy();
+    expect(translate("en", "home.trustSupport")).toBeTruthy();
+  });
+
   it("maps category.jsonLdDescription from catalog", () => {
     expect(translate("de", "category.jsonLdDescription")).toContain("Unterkategorien");
     expect(translate("tr", "category.jsonLdDescription")).toContain("alt kategoriler");
     expect(translate("en", "category.jsonLdDescription")).toContain("subcategories");
+  });
+
+  it("maps mobile.productCount for Arabic without mixing Turkish", () => {
+    expect(translate("ar", "mobile.productCount")).toMatch(/[\u0600-\u06FF]/);
+    expect(translate("ar", "mobile.productCount")).not.toMatch(/ürün/i);
   });
 });

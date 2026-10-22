@@ -6,7 +6,7 @@
 }
 
 .account-sidebar {
-  border-right: 1px solid var(--border);
+  border-inline-end: 1px solid var(--border);
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
@@ -276,13 +276,13 @@
 }
 
 [dir="rtl"] .account-sidebar {
-  border-right: none;
-  border-left: 1px solid var(--border);
+  border-inline-end: none;
+  border-inline-start: 1px solid var(--border);
 }
 
 [dir="rtl"] .account-table th,
 [dir="rtl"] .account-table td {
-  text-align: right;
+  text-align: start;
 }
 
 @media (max-width: 768px) {
@@ -291,7 +291,7 @@
   }
 
   .account-sidebar {
-    border-right: none;
+    border-inline-end: none;
     border-bottom: 1px solid var(--border);
   }
 

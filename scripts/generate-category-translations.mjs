@@ -15,7 +15,7 @@ const mainDe = {
   "cat-02": "Kosmetik & Körperpflege",
   "cat-03": "Reinigungsprodukte",
   "cat-04": "Schule & Bürobedarf",
-  "cat-05": "Automotive",
+  "cat-05": "Automotive und motorisierte Fahrzeuge",
   "cat-06": "Haustierbedarf",
   "cat-07": "Garten",
   "cat-08": "Arbeitsschutz & Berufskleidung",
@@ -52,6 +52,9 @@ const mainDe = {
   "cat-39": "Fahrzeug & Mobilität",
   "cat-40": "Energie & Solar",
   "cat-41": "Angebote & Sonderkollektionen",
+  "cat-54": "Reifen und Felgen",
+  "cat-55": "Baumaschinen und Ersatzteile",
+  "cat-56": "Nutztierhaltung & Viehzucht",
 };
 
 const mainEn = {
@@ -59,7 +62,7 @@ const mainEn = {
   "cat-02": "Cosmetics & Personal Care",
   "cat-03": "Cleaning Products",
   "cat-04": "School & Office Supplies",
-  "cat-05": "Automotive",
+  "cat-05": "Automotive and motor vehicles",
   "cat-06": "Pet Supplies",
   "cat-07": "Garden",
   "cat-08": "Work Safety & Workwear",
@@ -96,6 +99,9 @@ const mainEn = {
   "cat-39": "Vehicle & Mobility",
   "cat-40": "Energy & Solar",
   "cat-41": "Offers & Special Collections",
+  "cat-54": "Tires and rims",
+  "cat-55": "Construction machines and spare parts",
+  "cat-56": "Livestock and animal husbandry",
 };
 
 const mainAr = {
@@ -103,7 +109,7 @@ const mainAr = {
   "cat-02": "التجميل والعناية الشخصية",
   "cat-03": "منتجات التنظيف",
   "cat-04": "المدرسة والمكتب",
-  "cat-05": "السيارات",
+  "cat-05": "السيارات والمركبات الآلية",
   "cat-06": "مستلزمات الحيوانات",
   "cat-07": "الحديقة",
   "cat-08": "معدات السلامة والملابس المهنية",
@@ -140,6 +146,9 @@ const mainAr = {
   "cat-39": "المركبات والتنقل",
   "cat-40": "الطاقة والطاقة الشمسية",
   "cat-41": "العروض والمجموعات الخاصة",
+  "cat-54": "إطارات وجنوط",
+  "cat-55": "معدات البناء وقطع الغيار",
+  "cat-56": "تربية المواشي",
 };
 
 const mainTr = {
@@ -147,7 +156,7 @@ const mainTr = {
   "cat-02": "Kozmetik ve Kişisel Bakım",
   "cat-03": "Temizlik Ürünleri",
   "cat-04": "Okul ve Ofis Malzemeleri",
-  "cat-05": "Otomotiv",
+  "cat-05": "Otomotiv ve motorlu araçlar",
   "cat-06": "Evcil Hayvan Ürünleri",
   "cat-07": "Bahçe",
   "cat-08": "İş Güvenliği ve İş Kıyafetleri",
@@ -184,6 +193,9 @@ const mainTr = {
   "cat-39": "Araç ve Mobilite",
   "cat-40": "Enerji ve Solar",
   "cat-41": "Fırsatlar ve Özel Koleksiyonlar",
+  "cat-54": "Lastik ve jant",
+  "cat-55": "İnşaat makineleri ve yedek parçaları",
+  "cat-56": "Hayvancılık",
 };
 
 /** Turkish word/phrase → German */

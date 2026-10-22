@@ -17,6 +17,8 @@ import "@/styles/rtl.css";
 import "@/styles/storefront-responsive.css";
 import "@/styles/premium-home.css";
 import "@/styles/language-background.css";
+import "@/styles/buzzard-mobile.css";
+import MobileStorefrontChrome from "@/components/mobile/MobileStorefrontChrome";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,11 +67,12 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0a",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`${inter.variable} ${barlow.variable}`} suppressHydrationWarning>
+    <html lang="de" dir="ltr" className={`${inter.variable} ${barlow.variable}`} suppressHydrationWarning>
       <head>
         {process.env.NODE_ENV === "production" && (
           <meta httpEquiv="Content-Security-Policy" content={SECURITY_HEADERS.contentSecurityPolicy} />
@@ -83,15 +86,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
         <meta name="format-detection" content="telephone=no" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var loc=localStorage.getItem("buzzard_locale");if(loc){var rtl=loc==="ar";document.documentElement.lang=loc;document.documentElement.dir=rtl?"rtl":"ltr";document.documentElement.setAttribute("data-buzzard-locale",loc);document.documentElement.classList.toggle("rtl",rtl);document.documentElement.classList.toggle("ltr",!rtl);}var admin=(location.pathname||"").indexOf("/admin")===0;var phone=window.matchMedia("(max-width: 767px), (max-width: 1023px) and (max-height: 500px)").matches;if(admin){document.body.classList.add("buzzard-admin-route");}else if(phone){document.body.classList.add("buzzard-phone-storefront");document.documentElement.classList.add("buzzard-phone-storefront");}}catch(e){}})();',
+          }}
+        />
         <ShopProviders>
           <SkipLink />
-          <TopUtilityBar />
-          <Header />
-          <Navbar />
+          <div className="buzzard-desktop-chrome">
+            <TopUtilityBar />
+            <Header />
+            <Navbar />
+          </div>
+          <MobileStorefrontChrome />
           <main id="maincontent">{children}</main>
-          <Footer />
-          <MobileBottomNavigation />
+          <div className="buzzard-desktop-chrome">
+            <Footer />
+            <MobileBottomNavigation />
+          </div>
         </ShopProviders>
       </body>
     </html>

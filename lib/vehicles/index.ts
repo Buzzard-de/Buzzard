@@ -1,5 +1,11 @@
 export { vehicleBrands, vehicleEngines, vehicleYears } from "./static";
 export {
+  MIN_VEHICLE_SEARCH_YEAR,
+  maxVehicleSearchYear,
+  buildVehicleSearchYears,
+  isAcceptedVehicleSearchYear,
+} from "./yearRange";
+export {
   buildVehicleCatalogFromApi,
   enginesForVehicleSelection,
   getActiveVehicleCatalog,

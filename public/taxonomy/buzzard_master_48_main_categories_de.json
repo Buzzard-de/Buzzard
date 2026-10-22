@@ -5,7 +5,7 @@
   "research_categories": 47,
   "kfz_benchmark_code": "bz.01",
   "categories": [
-    { "num": 1, "code": "bz.01", "name": "Automotive & Kfz", "slug": "automotive-kfz", "kfz_benchmark": true },
+    { "num": 1, "code": "bz.01", "name": "Automotive und motorisierte Fahrzeuge", "slug": "automotive-kfz", "kfz_benchmark": true },
     { "num": 2, "code": "bz.02", "name": "Garten & Gartenbau", "slug": "garten-gartenbau" },
     { "num": 3, "code": "bz.03", "name": "Werkzeuge & Werkstatt", "slug": "werkzeuge-werkstatt" },
     { "num": 4, "code": "bz.04", "name": "Heimwerken, Bau & Konstruktion", "slug": "heimwerken-bau-konstruktion" },

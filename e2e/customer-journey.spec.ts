@@ -91,6 +91,49 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
   });
 });
 
+test.describe("Mobile five-stage category UX", () => {
+  test("home drills into master-tree categories on phone", async ({ page }, testInfo) => {
+    const width = page.viewportSize()?.width ?? testInfo.project.use.viewport?.width ?? 1280;
+    if (width >= 768) test.skip();
+
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        "buzzard_consent_v1",
+        JSON.stringify({
+          necessary: true,
+          analytics: false,
+          marketing: false,
+          updatedAt: new Date().toISOString(),
+        })
+      );
+    });
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".buzzard-mobile-header img[alt='Buzzard Logo']")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-header-link[href='/konto/']")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-bottom-nav")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-trust")).toHaveCount(0);
+    await expect(page.locator(".home-hero-campaign")).toBeHidden();
+
+    const card = page.locator(".home-category-tile").first();
+    await expect(card).toBeVisible();
+    await card.click({ force: true });
+    await page.waitForURL(/\/kategorie\//, { timeout: 15_000 });
+    const mainCategoryUrl = page.url();
+    await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
+
+    const row = page.locator(".buzzard-mobile-category-row").first();
+    await expect(row).toBeVisible();
+    await expect(row.locator(".buzzard-mobile-category-row-icon")).toBeVisible();
+    await row.click();
+    await expect(page).not.toHaveURL(mainCategoryUrl);
+    await expect(page.locator(".buzzard-mobile-breadcrumb")).toBeVisible();
+    await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
+    await page.getByRole("button", { name: /back|zurück|geri|رجوع/i }).click();
+    await expect(page).toHaveURL(mainCategoryUrl);
+    await expect(page.locator(".buzzard-mobile-category-hero")).toBeVisible();
+  });
+});
+
 test.describe("Part 10 — Mobile layout checks", () => {
   test.describe.configure({ mode: "serial" });
 

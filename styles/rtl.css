@@ -1,3 +1,17 @@
+html[dir="rtl"],
+html.rtl {
+  direction: rtl;
+}
+
+html[dir="ltr"],
+html.ltr {
+  direction: ltr;
+}
+
+html[dir="rtl"] body {
+  overflow-x: clip;
+}
+
 html[dir="rtl"] .site-header,
 html[dir="rtl"] .header-inner,
 html[dir="rtl"] .header-actions,
@@ -10,7 +24,12 @@ html[dir="rtl"] .cart-summary-row,
 html[dir="rtl"] .account-shortcuts,
 html[dir="rtl"] .account-inline-actions,
 html[dir="rtl"] .checkout-head,
-html[dir="rtl"] .shop-page-head {
+html[dir="rtl"] .shop-page-head,
+html[dir="rtl"] .buzzard-mobile-header,
+html[dir="rtl"] .buzzard-mobile-toolbar,
+html[dir="rtl"] .buzzard-mobile-bottom-nav,
+html[dir="rtl"] .buzzard-mobile-breadcrumb,
+html[dir="rtl"] .buzzard-mobile-category-hero {
   direction: rtl;
 }
 
@@ -21,22 +40,27 @@ html[dir="rtl"] .account-auth-card input,
 html[dir="rtl"] .account-form input,
 html[dir="rtl"] .checkout-section input,
 html[dir="rtl"] .checkout-section select,
-html[dir="rtl"] .checkout-section textarea {
-  text-align: right;
+html[dir="rtl"] .checkout-section textarea,
+html[dir="rtl"] .buzzard-mobile-inline-search-input {
+  text-align: start;
 }
 
 html[dir="rtl"] .product-card-price,
 html[dir="rtl"] .cart-badge,
 html[dir="rtl"] .account-stat strong,
-html[dir="rtl"] .hdr-action small {
+html[dir="rtl"] .hdr-action small,
+html[dir="rtl"] .brand-text,
+html[dir="rtl"] .product-detail-price,
+html[dir="rtl"] .cart-summary-total span:last-child {
   direction: ltr;
   unicode-bidi: isolate;
 }
 
 html[dir="rtl"] .checkout-back-link,
-html[dir="rtl"] .home-rail-head a {
+html[dir="rtl"] .home-rail-head a,
+html[dir="rtl"] .buzzard-mobile-header-back,
+html[dir="rtl"] .buzzard-mobile-breadcrumb-sep {
   transform: scaleX(-1);
-  display: inline-block;
 }
 
 html[dir="rtl"] .mega-menu-close {
@@ -44,11 +68,10 @@ html[dir="rtl"] .mega-menu-close {
   margin-inline-end: 0;
 }
 
-html[dir="rtl"] .brand-text,
-html[dir="rtl"] .product-detail-price,
-html[dir="rtl"] .cart-summary-total span:last-child {
-  direction: ltr;
-  unicode-bidi: isolate;
+html[dir="rtl"] .ai-chat-fab,
+html[dir="rtl"] .ai-chat-panel {
+  inset-inline-end: 20px;
+  inset-inline-start: auto;
 }
 
 @media (max-width: 768px) {

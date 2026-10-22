@@ -1,0 +1,296 @@
+{
+  "version": "1.0.0",
+  "scope": "construction-machinery",
+  "shopCategoryId": "cat-55",
+  "note": "Internal construction-machinery taxonomy. Does not replace data/buzzard_categories.json.",
+  "categories": [
+    {
+      "id": "cme-cat-excavators",
+      "parentId": null,
+      "slug": "excavators",
+      "shopCategoryId": "cat-55-01",
+      "names": { "de": "Bagger", "en": "Excavators", "tr": "Ekskavatörler", "fr": "Pelles" },
+      "synonyms": ["Hydraulikbagger", "excavator", "kepçe"],
+      "attributes": ["operatingWeightKg", "bucketCapacityM3", "undercarriage"]
+    },
+    {
+      "id": "cme-cat-mini-excavators",
+      "parentId": "cme-cat-excavators",
+      "slug": "mini-excavators",
+      "shopCategoryId": "cat-55-01",
+      "names": { "de": "Minibagger", "en": "Mini excavators", "tr": "Mini ekskavatörler", "fr": "Mini-pelles" },
+      "synonyms": ["Kompaktbagger", "mini digger"],
+      "attributes": ["operatingWeightKg", "tailSwing"]
+    },
+    {
+      "id": "cme-cat-crawler-excavators",
+      "parentId": "cme-cat-excavators",
+      "slug": "crawler-excavators",
+      "shopCategoryId": "cat-55-01",
+      "names": { "de": "Raupenbagger", "en": "Crawler excavators", "tr": "Paletli ekskavatörler", "fr": "Pelles sur chenilles" },
+      "synonyms": ["Kettenbagger"],
+      "attributes": ["operatingWeightKg", "trackGauge"]
+    },
+    {
+      "id": "cme-cat-wheeled-excavators",
+      "parentId": "cme-cat-excavators",
+      "slug": "wheeled-excavators",
+      "shopCategoryId": "cat-55-01",
+      "names": { "de": "Mobilbagger", "en": "Wheeled excavators", "tr": "Tekerlekli ekskavatörler", "fr": "Pelles sur pneus" },
+      "synonyms": ["Radbagger"],
+      "attributes": ["operatingWeightKg", "axleConfig"]
+    },
+    {
+      "id": "cme-cat-long-reach-excavators",
+      "parentId": "cme-cat-excavators",
+      "slug": "long-reach-excavators",
+      "shopCategoryId": "cat-55-01",
+      "names": { "de": "Long-Reach-Bagger", "en": "Long-reach excavators", "tr": "Uzun bomlu ekskavatörler", "fr": "Pelles longue portée" },
+      "synonyms": ["Langstielbagger"],
+      "attributes": ["reachM"]
+    },
+    {
+      "id": "cme-cat-wheel-loaders",
+      "parentId": null,
+      "slug": "wheel-loaders",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Radlader", "en": "Wheel loaders", "tr": "Lastikli yükleyiciler", "fr": "Chargeuses sur pneus" },
+      "synonyms": ["Frontlader"],
+      "attributes": ["bucketCapacityM3", "operatingWeightKg"]
+    },
+    {
+      "id": "cme-cat-track-loaders",
+      "parentId": null,
+      "slug": "track-loaders",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Raupenlader", "en": "Track loaders", "tr": "Paletli yükleyiciler", "fr": "Chargeuses sur chenilles" },
+      "synonyms": ["Kettenlader"],
+      "attributes": ["operatingWeightKg"]
+    },
+    {
+      "id": "cme-cat-compact-loaders",
+      "parentId": null,
+      "slug": "compact-loaders",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Kompaktlader", "en": "Compact loaders", "tr": "Kompakt yükleyiciler", "fr": "Chargeuses compactes" },
+      "synonyms": ["skid steer", "Kompaktlader"],
+      "attributes": ["operatingWeightKg"]
+    },
+    {
+      "id": "cme-cat-bulldozers",
+      "parentId": null,
+      "slug": "bulldozers",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Planierraupen", "en": "Bulldozers", "tr": "Dozerler", "fr": "Bouteurs" },
+      "synonyms": ["Dozer", "Raupe"],
+      "attributes": ["bladeType", "operatingWeightKg"]
+    },
+    {
+      "id": "cme-cat-motor-graders",
+      "parentId": null,
+      "slug": "motor-graders",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Motorgrader", "en": "Motor graders", "tr": "Greyderler", "fr": "Niveleuses" },
+      "synonyms": ["Grader"],
+      "attributes": ["bladeWidthMm"]
+    },
+    {
+      "id": "cme-cat-backhoe-loaders",
+      "parentId": null,
+      "slug": "backhoe-loaders",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Baggerlader", "en": "Backhoe loaders", "tr": "Bekoloderler", "fr": "Pelles chargeuses" },
+      "synonyms": ["Backhoe"],
+      "attributes": ["digDepthM"]
+    },
+    {
+      "id": "cme-cat-adt",
+      "parentId": null,
+      "slug": "articulated-dump-trucks",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Knicklenker-Dumper", "en": "Articulated dump trucks", "tr": "Mafsallı damperler", "fr": "Tombereaux articulés" },
+      "synonyms": ["ADT"],
+      "attributes": ["payloadT"]
+    },
+    {
+      "id": "cme-cat-rdt",
+      "parentId": null,
+      "slug": "rigid-dump-trucks",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Starre Dumper", "en": "Rigid dump trucks", "tr": "Sabit damperler", "fr": "Tombereaux rigides" },
+      "synonyms": ["Muldenkipper"],
+      "attributes": ["payloadT"]
+    },
+    {
+      "id": "cme-cat-haul-trucks",
+      "parentId": null,
+      "slug": "quarry-haul-trucks",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Steinbruch-Muldenkipper", "en": "Construction and quarry haul trucks", "tr": "Ocak kamyonları", "fr": "Tombereaux de carrière" },
+      "synonyms": ["Haul truck"],
+      "attributes": ["payloadT"]
+    },
+    {
+      "id": "cme-cat-road-rollers",
+      "parentId": null,
+      "slug": "road-rollers",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Straßenwalzen", "en": "Road rollers", "tr": "Yol silindirleri", "fr": "Rouleaux compacteurs" },
+      "synonyms": ["Walze"],
+      "attributes": ["drumWidthMm"]
+    },
+    {
+      "id": "cme-cat-asphalt-pavers",
+      "parentId": null,
+      "slug": "asphalt-pavers",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Asphaltfertiger", "en": "Asphalt pavers", "tr": "Asfalt finişerleri", "fr": "Finisseurs" },
+      "synonyms": ["Fertiger"],
+      "attributes": ["pavingWidthM"]
+    },
+    {
+      "id": "cme-cat-milling",
+      "parentId": null,
+      "slug": "road-milling",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Straßenfräsen", "en": "Road milling machines", "tr": "Yol frezeleri", "fr": "Raboteuses" },
+      "synonyms": ["Kaltfräse"],
+      "attributes": ["millingWidthMm"]
+    },
+    {
+      "id": "cme-cat-crushing",
+      "parentId": null,
+      "slug": "crushing-machines",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Brechanlagen", "en": "Crushing machines", "tr": "Kırıcılar", "fr": "Concasseurs" },
+      "synonyms": ["Crusher"],
+      "attributes": ["feedSizeMm"]
+    },
+    {
+      "id": "cme-cat-screening",
+      "parentId": null,
+      "slug": "screening-machines",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Siebanlagen", "en": "Screening machines", "tr": "Elekler", "fr": "Cribles" },
+      "synonyms": ["Screener"],
+      "attributes": ["deckCount"]
+    },
+    {
+      "id": "cme-cat-conveyors",
+      "parentId": null,
+      "slug": "feeders-conveyors",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Aufgabe- und Fördertechnik", "en": "Feeders and conveyors", "tr": "Besleyiciler ve konveyörler", "fr": "Alimentateurs et convoyeurs" },
+      "synonyms": ["Förderband"],
+      "attributes": ["beltWidthMm"]
+    },
+    {
+      "id": "cme-cat-concrete-pumps",
+      "parentId": null,
+      "slug": "concrete-pumps",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Betonpumpen", "en": "Concrete pumps", "tr": "Beton pompaları", "fr": "Pompes à béton" },
+      "synonyms": ["Autobetonpumpe"],
+      "attributes": ["boomReachM"]
+    },
+    {
+      "id": "cme-cat-concrete-mixers",
+      "parentId": null,
+      "slug": "concrete-mixers",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Fahrmischer", "en": "Concrete mixers", "tr": "Betoniyerler", "fr": "Malaxeurs" },
+      "synonyms": ["Trommelmischer"],
+      "attributes": ["drumVolumeM3"]
+    },
+    {
+      "id": "cme-cat-tower-cranes",
+      "parentId": null,
+      "slug": "tower-cranes",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Turmdrehkrane", "en": "Tower cranes", "tr": "Kule vinçleri", "fr": "Grues à tour" },
+      "synonyms": ["Turmkran"],
+      "attributes": ["jibLengthM"]
+    },
+    {
+      "id": "cme-cat-mobile-cranes",
+      "parentId": null,
+      "slug": "mobile-cranes",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Mobilkrane", "en": "Mobile cranes", "tr": "Mobil vinçler", "fr": "Grues mobiles" },
+      "synonyms": ["Autokran"],
+      "attributes": ["maxLoadT"]
+    },
+    {
+      "id": "cme-cat-telehandlers",
+      "parentId": null,
+      "slug": "telescopic-handlers",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Teleskoplader", "en": "Telescopic handlers", "tr": "Teleskopik yükleyiciler", "fr": "Chariots télescopiques" },
+      "synonyms": ["Telehandler"],
+      "attributes": ["liftHeightM"]
+    },
+    {
+      "id": "cme-cat-drilling-rigs",
+      "parentId": null,
+      "slug": "drilling-rigs",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Bohrgeräte", "en": "Drilling rigs", "tr": "Sondaj makinaları", "fr": "Foreuses" },
+      "synonyms": ["Drill rig"],
+      "attributes": ["maxDepthM"]
+    },
+    {
+      "id": "cme-cat-foundation",
+      "parentId": null,
+      "slug": "foundation-piling",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Gründung und Pfahlgründung", "en": "Foundation and piling equipment", "tr": "Temel ve kazık ekipmanı", "fr": "Fondations et pieux" },
+      "synonyms": ["Piling"],
+      "attributes": ["maxPileDiameterMm"]
+    },
+    {
+      "id": "cme-cat-tunnel",
+      "parentId": null,
+      "slug": "tunnel-construction",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Tunnelbaumaschinen", "en": "Tunnel construction equipment", "tr": "Tünel ekipmanı", "fr": "Équipement de tunnel" },
+      "synonyms": ["TBM"],
+      "attributes": ["boreDiameterM"]
+    },
+    {
+      "id": "cme-cat-compaction",
+      "parentId": null,
+      "slug": "compaction",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Verdichtungstechnik", "en": "Compaction equipment", "tr": "Kompaktörler", "fr": "Compactage" },
+      "synonyms": ["Rüttelplatte"],
+      "attributes": ["centrifugalForceKn"]
+    },
+    {
+      "id": "cme-cat-demolition",
+      "parentId": null,
+      "slug": "demolition",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Abbruchtechnik", "en": "Demolition equipment", "tr": "Yıkım ekipmanı", "fr": "Démolition" },
+      "synonyms": ["Abbruchhammer"],
+      "attributes": ["toolClass"]
+    },
+    {
+      "id": "cme-cat-material-handling",
+      "parentId": null,
+      "slug": "material-handling",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Materialumschlag", "en": "Material handling machinery", "tr": "Malzeme elleçleme", "fr": "Manutention" },
+      "synonyms": ["Umschlagbagger"],
+      "attributes": ["reachM"]
+    },
+    {
+      "id": "cme-cat-specialized",
+      "parentId": null,
+      "slug": "specialized",
+      "shopCategoryId": "cat-55",
+      "names": { "de": "Herstellerspezifische Maschinen", "en": "Specialized and manufacturer-specific machinery", "tr": "Özel makineler", "fr": "Machines spécialisées" },
+      "synonyms": ["Sonderbau"],
+      "attributes": ["customConfig"]
+    }
+  ]
+}

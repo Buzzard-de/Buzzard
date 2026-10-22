@@ -201,7 +201,7 @@ export const categoryLabelsAr: Record<string, string> = {
   "cat-04-06-02": "Premium",
   "cat-04-06-03": "Setler",
   "cat-04-06-04": "Aksesuarlar",
-  "cat-05": "السيارات",
+  "cat-05": "السيارات والمركبات الآلية",
   "cat-05-01": "Motor Yağları & Sıvılar",
   "cat-05-01-01": "Motor Yağı",
   "cat-05-01-02": "Şanzıman Yağı",

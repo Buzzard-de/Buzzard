@@ -10,6 +10,7 @@ const { createImportJobs } = require("./catalog/importJobs");
 const { search } = require("./search");
 const { rankOffers } = require("./sourcing");
 const { inspectVin } = require("./vin");
+const { validateSearchYear, invalidYearSearchResult, invalidYearCompatibility } = require("./searchYear");
 
 function createVehiclePartsEngine(options = {}) {
   const taxonomy = options.taxonomy || createTaxonomy();
@@ -58,8 +59,10 @@ function createVehiclePartsEngine(options = {}) {
         aiSoleAuthority: false,
       };
     }
+    const yearCheck = validateSearchYear(query.year ?? query.productionYear);
+    if (!yearCheck.ok) return invalidYearCompatibility(yearCheck);
     observability.record("compatibility.evaluate", { domain: DOMAIN });
-    return evaluateCompatibility(store, query);
+    return evaluateCompatibility(store, { ...query, year: yearCheck.present ? yearCheck.year : query.year });
   }
 
   function searchParts(query = {}) {
@@ -71,8 +74,10 @@ function createVehiclePartsEngine(options = {}) {
     if (query.categoryId && !scope.ok) {
       return { items: [], total: 0, rejectedDomain: scope.domain, isolation: scope };
     }
+    const yearCheck = validateSearchYear(query.year ?? query.productionYear);
+    if (!yearCheck.ok) return invalidYearSearchResult(yearCheck);
     observability.record("search.request", { domain: DOMAIN });
-    return search(store, query, taxonomy);
+    return search(store, { ...query, year: yearCheck.present ? yearCheck.year : query.year }, taxonomy);
   }
 
   return {

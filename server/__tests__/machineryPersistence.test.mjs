@@ -264,6 +264,54 @@ describe("P1-STORE engine persistence", () => {
   });
 });
 
+describe("persistence data safety", () => {
+  it("disables persistence when BUZZARD_MACHINERY_PERSIST=0", () => {
+    const persist = require("../lib/machineryDomainKit/persistence");
+    const previous = process.env.BUZZARD_MACHINERY_PERSIST;
+    process.env.BUZZARD_MACHINERY_PERSIST = "0";
+    expect(persist.shouldPersistSingleton()).toBe(false);
+    if (previous == null) delete process.env.BUZZARD_MACHINERY_PERSIST;
+    else process.env.BUZZARD_MACHINERY_PERSIST = previous;
+  });
+
+  it("reverts memory when a persist write throws and skips unreadable rows", () => {
+    const { createStore } = require("../lib/machineryDomainKit");
+    const persist = require("../lib/machineryDomainKit/persistence");
+    const store = createStore();
+    persist.attachPersistence(store, {
+      domain: "automotive",
+      upsertHost: () => {
+        throw new Error("sqlite unavailable");
+      },
+      upsertPart: () => ({ ok: false, error: "rejected" }),
+      upsertEvidence: () => ({ ok: true }),
+      upsertOffer: () => ({ ok: true }),
+    });
+    store.machines.set("vpe-throw-1", { id: "vpe-throw-1", domain: "automotive" });
+    expect(store.machines.has("vpe-throw-1")).toBe(false);
+    store.parts.set("vpe-reject-1", { id: "vpe-reject-1", domain: "automotive" });
+    expect(store.parts.has("vpe-reject-1")).toBe(false);
+
+    const { db, dbPath } = openFresh();
+    persist.ensureMachineryTables(db);
+    db.prepare(
+      `INSERT INTO vpe_parts (id, domain, catalog_source, provider_id, source_record_id, category_id, oem_normalized, payload_json, updated_at)
+       VALUES (?, 'automotive', 'manual', 't', 'bad', null, null, ?, ?)`
+    ).run("vpe-bad-json", "{not-json", new Date().toISOString());
+    db.prepare(
+      `INSERT INTO vpe_parts (id, domain, catalog_source, provider_id, source_record_id, category_id, oem_normalized, payload_json, updated_at)
+       VALUES (?, 'automotive', 'manual', 't', 'ok', null, null, ?, ?)`
+    ).run("vpe-ok-json", JSON.stringify({ id: "vpe-ok-json", domain: "automotive" }), new Date().toISOString());
+    const repo = persist.createMachineryRepository({ domain: "automotive", db });
+    const loaded = repo.listParts();
+    expect(loaded.some((row) => row?.id === "vpe-ok-json")).toBe(true);
+    expect(loaded.some((row) => row?.id === "vpe-bad-json")).toBe(false);
+    expect(db.prepare("SELECT COUNT(*) n FROM vpe_parts").get().n).toBe(2);
+    db.close();
+    expect(dbPath).toBeTruthy();
+  });
+});
+
 describe("safety locks remain intact", () => {
   it("keeps the EUR 0.50 floor, no 0.10 undercut, sales disabled, and no full VIN in sqlite", () => {
     const tiny = previewSalePrice({ supplierPrice: 1, markupPercent: 0, minimumMarginPercent: 0 });

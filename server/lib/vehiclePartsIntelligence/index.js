@@ -4,6 +4,7 @@ const { createTaxonomy, validateTaxonomy } = require("./taxonomy");
 const { createMockConnector } = require("./catalog/mockConnector");
 const { inspectVin } = require("./vin");
 const isolation = require("../machineryDomainKit/isolation");
+const searchYear = require("./searchYear");
 
 let singleton = null;
 
@@ -26,6 +27,7 @@ module.exports = {
   createMockConnector,
   inspectVin,
   isolation,
+  ...searchYear,
   getEngine,
   resetEngineForTests,
 };

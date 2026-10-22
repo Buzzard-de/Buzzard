@@ -7,5 +7,8 @@ export const vehicleBrands: Record<string, string[]> = {
   Ford: ["Focus", "Fiesta", "Kuga", "Mondeo"],
 };
 
-export const vehicleYears = ["2024", "2023", "2022", "2021", "2020", "2019", "2018", "2015", "2010"];
+import { buildVehicleSearchYears } from "./yearRange";
+
+/** Selectable search years from 1960 through next model year. Not catalog coverage. */
+export const vehicleYears = buildVehicleSearchYears();
 export const vehicleEngines = ["1.0 Benzin", "1.5 Benzin", "2.0 Diesel", "2.0 Benzin", "3.0 Diesel"];

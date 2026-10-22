@@ -57,7 +57,7 @@ module.exports = {
           generation: req.query.generation,
           engineCode: req.query.engineCode,
           gearboxCode: req.query.gearboxCode,
-          year: req.query.year ? Number(req.query.year) : undefined,
+          year: req.query.year,
           vehicleId: req.query.vehicleId,
           categoryId: req.query.categoryId,
           assemblyId: req.query.assemblyId,
@@ -131,7 +131,7 @@ module.exports = {
           model: req.query.model,
           generation: req.query.generation,
           engineCode: req.query.engineCode,
-          year: req.query.year ? Number(req.query.year) : undefined,
+          year: req.query.year,
           categoryId: req.query.categoryId || "cat-05",
         }),
       });

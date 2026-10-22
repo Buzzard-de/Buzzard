@@ -6,6 +6,11 @@ import {
   isVehiclePartsApiConfigured,
   searchVehicleParts,
 } from "@/lib/vehiclePartsIntelligence/client";
+import {
+  MIN_VEHICLE_SEARCH_YEAR,
+  isAcceptedVehicleSearchYear,
+  maxVehicleSearchYear,
+} from "@/lib/vehicles/yearRange";
 
 export default function VehiclePartsSearchPanel() {
   const [q, setQ] = useState("");
@@ -25,6 +30,14 @@ export default function VehiclePartsSearchPanel() {
     setError("");
     if (!apiReady) {
       setError("API ist nicht konfiguriert. Keine Live-Lieferantenabfrage.");
+      return;
+    }
+    if (year && !isAcceptedVehicleSearchYear(year)) {
+      setError(
+        `Baujahr muss zwischen ${MIN_VEHICLE_SEARCH_YEAR} und ${maxVehicleSearchYear()} liegen. Ein gültiges Jahr bedeutet keine Katalogabdeckung.`
+      );
+      setItems([]);
+      setDecision(null);
       return;
     }
     const result = await searchVehicleParts({
@@ -82,7 +95,14 @@ export default function VehiclePartsSearchPanel() {
         </label>
         <label>
           Baujahr
-          <input value={year} onChange={(event) => setYear(event.target.value)} name="year" inputMode="numeric" />
+          <input
+            value={year}
+            onChange={(event) => setYear(event.target.value)}
+            name="year"
+            inputMode="numeric"
+            min={MIN_VEHICLE_SEARCH_YEAR}
+            max={maxVehicleSearchYear()}
+          />
         </label>
         <label>
           VIN (optional, nicht gespeichert)

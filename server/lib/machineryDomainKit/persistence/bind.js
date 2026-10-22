@@ -71,8 +71,13 @@ function wrapMap(map, persistWrite) {
     const had = map.has(key);
     const previous = had ? map.get(key) : undefined;
     originalSet(key, value);
-    const result = persistWrite(value);
-    if (result && result.ok === false) {
+    try {
+      const result = persistWrite(value);
+      if (result && result.ok === false) {
+        if (had) originalSet(key, previous);
+        else originalDelete(key);
+      }
+    } catch {
       if (had) originalSet(key, previous);
       else originalDelete(key);
     }

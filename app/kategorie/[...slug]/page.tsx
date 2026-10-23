@@ -5,6 +5,8 @@ import ProductList from "@/components/ProductList";
 import KfzPartsBrowse from "@/components/KfzPartsBrowse";
 import CategoryCatalogView from "@/components/category/CategoryCatalogView";
 import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
+import CategoryHubMachinerySearch from "@/components/category/CategoryHubMachinerySearch";
+import PageHeroMachineryFrame from "@/components/category/PageHeroMachineryFrame";
 import CategoryJsonLd from "@/components/category/CategoryJsonLd";
 import CategoryNotFound from "@/components/category/CategoryNotFound";
 import MobileCategoryPage from "@/components/mobile/MobileCategoryPage";
@@ -69,34 +71,37 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
     const shopHref = getShopL2Href(main);
     const activeCompetitors = main.active_competitors ?? [];
     return (
-      <section className="page-hero">
+      <section className="page-hero page-hero--with-machinery-search">
         <div className="page-hero-inner">
-          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Startseite</Link>
-            <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
-            <span><span>/</span><Link href="/kategorie/automotive/kfz/">KFZ-Teilebaum</Link></span>
-            <span><span>/</span><span>{main.name_de}</span></span>
-          </nav>
-          <h1>
-            <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
-          </h1>
-          <p>
-            <KfzSubcategoryCount count={main.subcategory_count} />
-            {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
-          </p>
-          {shopHref && (
+          <div className="page-hero-copy">
+            <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
+              <Link href="/">Startseite</Link>
+              <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
+              <span><span>/</span><Link href="/kategorie/automotive/kfz/">KFZ-Teilebaum</Link></span>
+              <span><span>/</span><span>{main.name_de}</span></span>
+            </nav>
+            <h1>
+              <span className="kfz-parts-id">{main.kfz_id}</span> {main.name_de}
+            </h1>
             <p>
-              Shop-Bereich: <Link href={shopHref}>{main.shop_l2_name}</Link>
+              <KfzSubcategoryCount count={main.subcategory_count} />
+              {main.l3_count ? ` · ${main.l3_count} Produktgruppen (L3)` : ""} · {main.kfz_name}
             </p>
-          )}
-          {activeCompetitors.length > 0 && (
-            <p className="kfz-competitor-strip">
-              Wettbewerber-Abdeckung:{" "}
-              {activeCompetitors.map((id) => (
-                <span key={id} className="kfz-competitor-badge">{getCompetitorLabel(id)}</span>
-              ))}
-            </p>
-          )}
+            {shopHref && (
+              <p>
+                Shop-Bereich: <Link href={shopHref}>{main.shop_l2_name}</Link>
+              </p>
+            )}
+            {activeCompetitors.length > 0 && (
+              <p className="kfz-competitor-strip">
+                Wettbewerber-Abdeckung:{" "}
+                {activeCompetitors.map((id) => (
+                  <span key={id} className="kfz-competitor-badge">{getCompetitorLabel(id)}</span>
+                ))}
+              </p>
+            )}
+          </div>
+          <CategoryHubMachinerySearch domain="automotive" categoryId="cat-05" />
         </div>
         <section className="subpage-content kfz-l3-section">
           {main.subcategories.map((sub) => (
@@ -133,23 +138,21 @@ function KfzBrowsePage({ slug }: { slug: string[] }) {
 
   return (
     <>
-      <section className="page-hero">
-        <div className="page-hero-inner">
-          <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Startseite</Link>
-            <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
-            <span><span>/</span><span>KFZ-Teilebaum</span></span>
-          </nav>
-          <h1>KFZ-Teilebaum</h1>
-          <p>
-            {getKfzMains().length} technische Hauptsysteme — verknüpft mit dem Shop unter Automotive.
-            {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Marken im Sortiment`}
-          </p>
-          <Link href="/kategorie/automotive/" className="shop-btn-secondary">
-            Zum Automotive-Shop
-          </Link>
-        </div>
-      </section>
+      <PageHeroMachineryFrame categoryId="cat-05">
+        <nav className="page-hero-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Startseite</Link>
+          <span><span>/</span><Link href="/kategorie/automotive/">Automotive</Link></span>
+          <span><span>/</span><span>KFZ-Teilebaum</span></span>
+        </nav>
+        <h1>KFZ-Teilebaum</h1>
+        <p>
+          {getKfzMains().length} technische Hauptsysteme — verknüpft mit dem Shop unter Automotive.
+          {getKfzCompetitors().length > 0 && ` · ${getKfzCompetitors().length} Marken im Sortiment`}
+        </p>
+        <Link href="/kategorie/automotive/" className="shop-btn-secondary">
+          Zum Automotive-Shop
+        </Link>
+      </PageHeroMachineryFrame>
       <KfzPartsBrowse />
     </>
   );

@@ -8,6 +8,7 @@ export default defineConfig({
       "server/__tests__/**/*.test.mjs",
       "lib/backgrounds/**/*.test.ts",
       "lib/vehicles/yearRange.test.ts",
+      "lib/machinery/hubDomain.test.ts",
       "lib/market/languageIndependence.test.ts",
       "lib/market/resolveInitialCountry.test.ts",
       "lib/i18n/catalog.test.ts",

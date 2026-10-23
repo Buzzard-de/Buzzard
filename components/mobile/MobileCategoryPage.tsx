@@ -11,6 +11,8 @@ import type { BuzzardCategory } from "@/lib/categories/types";
 import { getCategoryCoverImage, getMobileCoverStyle } from "@/lib/mobile/visuals";
 import { getAllProducts } from "@/lib/products";
 import { useLocale } from "@/lib/i18n/context";
+import CategoryHubMachinerySearch from "@/components/category/CategoryHubMachinerySearch";
+import { resolveMachineryHubDomain } from "@/lib/machinery/hubDomain";
 import MobileBreadcrumb from "./MobileBreadcrumb";
 import MobileCategoryList from "./MobileCategoryList";
 
@@ -19,6 +21,7 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
   const crumbs = getCategoryBreadcrumb(category.id);
   const name = getCategoryLabel(category, locale);
   const children = category.children ?? [];
+  const machineryDomain = resolveMachineryHubDomain(category.id);
   const productCount = getAllProducts().filter((product) =>
     isCategoryInScope(product.categoryId, category.id)
   ).length;
@@ -42,6 +45,9 @@ export default function MobileCategoryPage({ category }: { category: BuzzardCate
               <CategoryIcon name={getCategoryRowIcon(category.id)} size={28} />
             </span>
           </section>
+          {machineryDomain ? (
+            <CategoryHubMachinerySearch domain={machineryDomain} categoryId={category.id} />
+          ) : null}
           {children.length > 0 ? <MobileCategoryList categories={children} /> : null}
         </div>
       </div>

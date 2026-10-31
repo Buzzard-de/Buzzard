@@ -3,6 +3,12 @@ const { requirePermission } = require("../lib/rbac");
 const { getEngine } = require("../lib/vehiclePartsIntelligence");
 const isolation = require("../lib/machineryDomainKit/isolation");
 const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
+const { createTtlCache, cacheKey } = require("../lib/requestCache");
+
+const searchCache = createTtlCache({
+  ttlMs: Number(process.env.BUZZARD_SEARCH_CACHE_MS || 60_000),
+  maxEntries: 400,
+});
 
 function publicError(res, status, code, message) {
   return res.status(status).json({ ok: false, error: code, message });
@@ -45,27 +51,42 @@ module.exports = {
         domain: "automotive",
       });
       if (!scope.ok) return res.status(400).json({ ok: false, isolation: scope });
-      return res.json({
-        ok: true,
-        ...engine.search({
-          q: req.query.q,
-          oem: req.query.oem,
-          partNumber: req.query.partNumber,
-          manufacturer: req.query.manufacturer,
-          model: req.query.model,
-          modelName: req.query.model,
-          generation: req.query.generation,
-          engineCode: req.query.engineCode,
-          gearboxCode: req.query.gearboxCode,
-          year: req.query.year ? Number(req.query.year) : undefined,
-          vehicleId: req.query.vehicleId,
-          categoryId: req.query.categoryId,
-          assemblyId: req.query.assemblyId,
-          thread: req.query.thread,
-          page: req.query.page,
-          pageSize: req.query.pageSize,
-        }),
+      const key = cacheKey([
+        "vpe",
+        req.query.q,
+        req.query.oem,
+        req.query.partNumber,
+        req.query.manufacturer,
+        req.query.model,
+        req.query.generation,
+        req.query.engineCode,
+        req.query.year,
+        req.query.categoryId,
+        req.query.page,
+        req.query.pageSize,
+      ]);
+      const cached = searchCache.get(key);
+      if (cached) return res.json({ ok: true, cached: true, ...cached });
+      const payload = engine.search({
+        q: req.query.q,
+        oem: req.query.oem,
+        partNumber: req.query.partNumber,
+        manufacturer: req.query.manufacturer,
+        model: req.query.model,
+        modelName: req.query.model,
+        generation: req.query.generation,
+        engineCode: req.query.engineCode,
+        gearboxCode: req.query.gearboxCode,
+        year: req.query.year ? Number(req.query.year) : undefined,
+        vehicleId: req.query.vehicleId,
+        categoryId: req.query.categoryId,
+        assemblyId: req.query.assemblyId,
+        thread: req.query.thread,
+        page: req.query.page,
+        pageSize: req.query.pageSize,
       });
+      searchCache.set(key, payload);
+      return res.json({ ok: true, cached: false, ...payload });
     });
 
     app.get("/api/vehicle-parts/vehicles", (req, res) => {

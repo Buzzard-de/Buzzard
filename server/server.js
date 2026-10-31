@@ -11,7 +11,12 @@ const port = process.env.PORT || 3001;
 const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
-const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const apiRateMax = Number(process.env.BUZZARD_API_RATE_MAX || 360);
+const apiRateLimit = createRateLimiter({
+  windowMs: 60 * 1000,
+  max: Number.isFinite(apiRateMax) && apiRateMax > 0 ? apiRateMax : 360,
+  keyPrefix: 'api:',
+});
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);

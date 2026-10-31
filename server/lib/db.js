@@ -1,10 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
-const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
+const { resolveDbPath, ensureDbDirectory, getPersistenceInfo, assertDurableOpenAllowed } = require("./dbPaths");
+
+assertDurableOpenAllowed();
 
 const dataDir = path.join(__dirname, "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
+if (process.env.NODE_ENV !== "production") {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
 const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);
@@ -3860,6 +3864,16 @@ function migrateCoreFoundationPart17() {
   }
 }
 
+function migrateCoreFoundationPusat() {
+  const { migratePusatSchema } = require("./pusat/schema");
+  migratePusatSchema(db);
+}
+
+function migrateSoftwareCompletion() {
+  const { migrateSoftwareSchema } = require("./software/schema");
+  migrateSoftwareSchema(db);
+}
+
 migrateCoreFoundationPart2();
 migrateCoreFoundationPart5();
 migrateCoreFoundationPart6();
@@ -3867,6 +3881,8 @@ migrateCoreFoundationPart8();
 migrateCoreFoundationPart10();
 migrateCoreFoundationPart16();
 migrateCoreFoundationPart17();
+migrateCoreFoundationPusat();
+migrateSoftwareCompletion();
 
 
 function seed() {

@@ -2,6 +2,12 @@ import { test, expect } from "@playwright/test";
 
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
+async function firstPublicCatalogItem(request: import("@playwright/test").APIRequestContext) {
+  const catalog = await request.get(`${API}/api/catalog/products?page=1&limit=5`);
+  const items = (await catalog.json()).items || [];
+  return items.find((item: { id?: string; price?: number }) => item?.id && Number(item.price) > 0) || null;
+}
+
 test.describe("Part 10 — Commerce safety E2E", () => {
   test("COMMERCIAL checkout blocked with SALES=0", async ({ request }) => {
     const res = await request.post(`${API}/api/commerce/checkout/attempt`, {
@@ -16,8 +22,8 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   });
 
   test("price tampering rejected", async ({ request }) => {
-    const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
-    const productId = (await catalog.json()).items?.[0]?.id;
+    const product = await firstPublicCatalogItem(request);
+    const productId = product?.id;
     const cart = await request.post(`${API}/api/commerce/cart`, {
       data: { sessionId: `e2e-tamper-${Date.now()}` },
     });
@@ -31,14 +37,15 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   });
 
   test("coupon tampering rejected", async ({ request }) => {
-    const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
-    const productId = (await catalog.json()).items?.[0]?.id;
+    const product = await firstPublicCatalogItem(request);
+    const productId = product?.id;
+    const quantity = Math.max(2, Math.ceil(30 / Math.max(Number(product?.price) || 1, 1)));
     const cart = await request.post(`${API}/api/commerce/cart`, {
       data: { sessionId: `e2e-coupon-${Date.now()}` },
     });
     const cartId = (await cart.json()).cart.id;
     await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity: 2 },
+      data: { productId, quantity },
     });
 
     const tamper = await request.post(`${API}/api/commerce/cart/${cartId}/coupon`, {
@@ -54,10 +61,11 @@ test.describe("Part 10 — Commerce safety E2E", () => {
       data: { sessionId: `e2e-coupon-valid-${Date.now()}` },
     });
     const cartId = (await cart.json()).cart.id;
-    const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
-    const productId = (await catalog.json()).items?.[0]?.id;
+    const product = await firstPublicCatalogItem(request);
+    const productId = product?.id;
+    const quantity = Math.max(2, Math.ceil(30 / Math.max(Number(product?.price) || 1, 1)));
     await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
-      data: { productId, quantity: 2 },
+      data: { productId, quantity },
     });
 
     const apply = await request.post(`${API}/api/commerce/cart/${cartId}/coupon`, {
@@ -85,8 +93,8 @@ test.describe("Part 10 — Commerce safety E2E", () => {
   });
 
   test("duplicate checkout submit uses idempotency", async ({ request }) => {
-    const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
-    const productId = (await catalog.json()).items?.[0]?.id;
+    const product = await firstPublicCatalogItem(request);
+    const productId = product?.id;
     const cart = await request.post(`${API}/api/commerce/cart`, {
       data: { sessionId: `e2e-idem-${Date.now()}` },
     });

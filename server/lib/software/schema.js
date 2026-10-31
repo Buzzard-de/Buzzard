@@ -1,0 +1,142 @@
+/**
+ * Software-completion persistence — same SQLite as Buzzard. Never /tmp.
+ */
+
+function migrateSoftwareSchema(db) {
+  if (!db) throw new Error("database required for software schema migration");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS software_inventory_sources (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      source TEXT NOT NULL,
+      quantity REAL,
+      last_supplier_update TEXT,
+      stock_updated_at TEXT,
+      reliable INTEGER NOT NULL DEFAULT 0,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_inv_sku ON software_inventory_sources(sku);
+
+    CREATE TABLE IF NOT EXISTS software_reservations (
+      id TEXT PRIMARY KEY,
+      sku TEXT NOT NULL,
+      quantity REAL NOT NULL,
+      order_id TEXT,
+      customer_id TEXT,
+      status TEXT NOT NULL DEFAULT 'ACTIVE',
+      source TEXT,
+      idempotency_key TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      released_at TEXT
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_res_idem
+      ON software_reservations(idempotency_key) WHERE idempotency_key IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_sw_res_sku ON software_reservations(sku);
+    CREATE INDEX IF NOT EXISTS idx_sw_res_order ON software_reservations(order_id);
+
+    CREATE TABLE IF NOT EXISTS software_reservation_events (
+      id TEXT PRIMARY KEY,
+      reservation_id TEXT NOT NULL,
+      event_type TEXT NOT NULL,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(reservation_id) REFERENCES software_reservations(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS software_shipments (
+      id TEXT PRIMARY KEY,
+      order_id TEXT NOT NULL,
+      customer_id TEXT NOT NULL,
+      tracking_number TEXT NOT NULL,
+      carrier TEXT,
+      status TEXT NOT NULL DEFAULT 'CREATED',
+      estimated_delivery TEXT,
+      last_update TEXT,
+      location_type TEXT NOT NULL DEFAULT 'not_available',
+      gps_invented INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_ship_track ON software_shipments(tracking_number);
+    CREATE INDEX IF NOT EXISTS idx_sw_ship_order ON software_shipments(order_id);
+    CREATE INDEX IF NOT EXISTS idx_sw_ship_customer ON software_shipments(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_shipment_events (
+      id TEXT PRIMARY KEY,
+      shipment_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      description TEXT,
+      occurred_at TEXT,
+      location_type TEXT NOT NULL DEFAULT 'carrier_event',
+      gps_invented INTEGER NOT NULL DEFAULT 0,
+      raw_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(shipment_id) REFERENCES software_shipments(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ship_evt ON software_shipment_events(shipment_id);
+
+    CREATE TABLE IF NOT EXISTS software_audit (
+      id TEXT PRIMARY KEY,
+      kind TEXT NOT NULL,
+      subject TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_audit_kind ON software_audit(kind);
+
+    CREATE TABLE IF NOT EXISTS software_return_ledger (
+      id TEXT PRIMARY KEY,
+      rma_id TEXT,
+      order_number TEXT,
+      customer_id TEXT,
+      customer_refund_status TEXT NOT NULL DEFAULT 'NOT_REQUESTED',
+      supplier_credit_status TEXT NOT NULL DEFAULT 'NOT_REQUESTED',
+      customer_refund_executed INTEGER NOT NULL DEFAULT 0,
+      supplier_credit_received INTEGER NOT NULL DEFAULT 0,
+      assumed_supplier_will_reimburse INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_sw_ret_order ON software_return_ledger(order_number);
+    CREATE INDEX IF NOT EXISTS idx_sw_ret_customer ON software_return_ledger(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_message_drafts (
+      id TEXT PRIMARY KEY,
+      channel TEXT NOT NULL DEFAULT 'email',
+      locale TEXT,
+      customer_id TEXT,
+      order_id TEXT,
+      status TEXT NOT NULL DEFAULT 'DRAFT',
+      input_hash TEXT NOT NULL,
+      body TEXT NOT NULL,
+      classification TEXT,
+      sent INTEGER NOT NULL DEFAULT 0,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_msg_hash ON software_message_drafts(input_hash);
+    CREATE INDEX IF NOT EXISTS idx_sw_msg_customer ON software_message_drafts(customer_id);
+
+    CREATE TABLE IF NOT EXISTS software_marketplace_drafts (
+      id TEXT PRIMARY KEY,
+      channel TEXT NOT NULL,
+      sku TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'DRAFT',
+      input_hash TEXT NOT NULL,
+      published INTEGER NOT NULL DEFAULT 0,
+      listing_id TEXT,
+      details_json TEXT DEFAULT '{}',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_sw_mp_hash ON software_marketplace_drafts(input_hash);
+    CREATE INDEX IF NOT EXISTS idx_sw_mp_channel ON software_marketplace_drafts(channel);
+  `);
+}
+
+module.exports = { migrateSoftwareSchema };

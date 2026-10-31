@@ -1,0 +1,11 @@
+Buzzard Desktop Bridge
+
+1. ZIP'i cikar.
+2. START.cmd = pencere + tarayici.
+3. WATCH.cmd = 7/24 dosya bekcisi (laptop acik kalmali).
+4. CHATGPT-YAPISTIR.txt icini ChatGPT'ye bir kez yapistir.
+
+ChatGPT oturumuna baglanmaz. Cursor'u kendi kendine calistirmaz.
+Ikizler 7/24 konusmaz. Dosya birakilir, kopru okur.
+
+Node.js 20+ gerekir. Satis kilidi acilmaz.

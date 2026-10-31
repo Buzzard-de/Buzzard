@@ -70,9 +70,9 @@ function validateConfiguration() {
 
   const dbPath = process.env.BUZZARD_DB_PATH;
   if (process.env.NODE_ENV === "production" && !dbPath) {
-    warnings.push({
+    errors.push({
       code: "production_no_db_path",
-      message: "BUZZARD_DB_PATH not set in production — ephemeral risk",
+      message: "BUZZARD_DB_PATH not set in production — silent local fallback is prevented",
     });
   }
 

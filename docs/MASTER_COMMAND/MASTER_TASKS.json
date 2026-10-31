@@ -1,0 +1,92 @@
+{
+  "command": "BUZZARD_MASTER_COMMAND_16",
+  "updatedAt": "2026-11-01T00:24:00+01:00",
+  "timezone": "Europe/Berlin",
+  "branch": "cursor/master-ecosystem-c293",
+  "base": "cursor/pusat-idempotency-c293",
+  "salesEnabled": false,
+  "pushMergeDeploy": "NEEDS_APPROVAL",
+  "phases": [
+    {
+      "id": 1,
+      "name": "Inventory and safe start",
+      "status": "COMPLETE",
+      "evidence": "docs/MASTER_COMMAND/PHASE1_INVENTORY.md"
+    },
+    {
+      "id": 2,
+      "name": "Security and survival 3-2-1-1-0",
+      "status": "CODE_READY",
+      "notes": "Local prove restore COMPLETE. Offsite/immutable production copies BLOCKED until operator vault + offsite dir."
+    },
+    {
+      "id": 3,
+      "name": "AI architecture Pusat/Doğu/meetings",
+      "status": "CODE_READY",
+      "notes": "In-process council/memory/meetings/research. Not a live 24/7 council runtime."
+    },
+    {
+      "id": 4,
+      "name": "Commercial specialists AB27/tax",
+      "status": "CODE_READY",
+      "notes": "Snapshot VAT + screens. Tax Connect and live sanctions feed BLOCKED."
+    },
+    {
+      "id": 5,
+      "name": "Voice and messaging",
+      "status": "PARTIAL",
+      "notes": "Messaging CODE_READY (not E2E). Voice BLOCKED — no SIP/STT/TTS."
+    },
+    {
+      "id": 6,
+      "name": "Privacy and independent AI",
+      "status": "CODE_READY",
+      "notes": "Egress evaluator + Claude forbid. Live firewall proof BLOCKED."
+    },
+    {
+      "id": 7,
+      "name": "Marketing influencers",
+      "status": "CODE_READY",
+      "notes": "Synthetic identities only. Publish NEEDS_APPROVAL."
+    },
+    {
+      "id": 8,
+      "name": "Full production test matrix",
+      "status": "PARTIAL",
+      "notes": "New unit tests run. Full e2e/load/payment/live DR not run."
+    }
+  ],
+  "areas": [
+    { "id": 1, "name": "Survival / cyber / 3-2-1-1-0", "status": "CODE_READY" },
+    { "id": 2, "name": "Pusat + council + meetings", "status": "CODE_READY" },
+    { "id": 3, "name": "Doğu Bey research", "status": "CODE_READY" },
+    { "id": 4, "name": "Category AIs + 48-tree", "status": "CODE_READY" },
+    { "id": 5, "name": "AB27 logistics/trade", "status": "CODE_READY" },
+    { "id": 6, "name": "Legal/privacy/IP", "status": "PARTIAL" },
+    { "id": 7, "name": "Tax/finance/Tax Connect", "status": "PARTIAL" },
+    { "id": 8, "name": "30 locales", "status": "PARTIAL" },
+    { "id": 9, "name": "24/7 voice", "status": "BLOCKED" },
+    { "id": 10, "name": "Secure AI messaging", "status": "CODE_READY" },
+    { "id": 11, "name": "Device security standard", "status": "CODE_READY" },
+    { "id": 12, "name": "Independent AI (no Claude)", "status": "COMPLETE" },
+    { "id": 13, "name": "Cursor maintenance process", "status": "PARTIAL" },
+    { "id": 14, "name": "Egress / DLP", "status": "CODE_READY" },
+    { "id": 15, "name": "Marketing AI influencers", "status": "CODE_READY" },
+    { "id": 16, "name": "Acceptance / go-live", "status": "NEEDS_APPROVAL" }
+  ],
+  "blocked": [
+    "Live SIP/STT/TTS/WebRTC accounts",
+    "Offsite backup destination + key vault",
+    "Tax Connect / filing credentials",
+    "Live sanctions API",
+    "Render replica / Postgres cutover",
+    "Push / merge / deploy / sales / live payments"
+  ],
+  "resume": [
+    "Operator: set BUZZARD_OFFSITE_BACKUP_DIR and confirm RPO/RTO",
+    "Operator: approve merge of this branch only after review",
+    "Do not enable BUZZARD_SALES_ENABLED",
+    "Do not attach Anthropic/Claude/OpenAI to production AI",
+    "Voice remains BLOCKED until numbers and keys exist"
+  ]
+}

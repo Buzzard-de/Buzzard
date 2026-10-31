@@ -1,7 +1,14 @@
 /** Server-side catalog mode — blocks orders/checkout until BUZZARD_SALES_ENABLED=1 */
 
 function isSalesEnabled() {
-  return process.env.BUZZARD_SALES_ENABLED === "1";
+  if (process.env.BUZZARD_SALES_ENABLED !== "1") return false;
+  if (process.env.BUZZARD_SALES_GATE_BYPASS === "1") return true;
+  try {
+    const { evaluateSalesGate } = require("./salesSafetyGate");
+    return evaluateSalesGate().allowed === true;
+  } catch {
+    return false;
+  }
 }
 
 function salesDisabledResponse() {

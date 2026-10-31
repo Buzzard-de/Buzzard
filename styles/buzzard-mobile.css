@@ -741,6 +741,22 @@
     flex: 1;
   }
 
+  .buzzard-mobile-page-pad .hub-machinery-search {
+    margin: 0 0 12px;
+    background: #fff;
+    border-color: #d8d0c2;
+  }
+
+  .buzzard-mobile-page-pad .hub-machinery-search-head strong {
+    color: #8a6a2b;
+  }
+
+  .buzzard-mobile-page-pad .hub-machinery-search-form input {
+    background: #fff;
+    color: #111;
+    border-color: #d8d0c2;
+  }
+
   .buzzard-mobile-category-thumb {
     display: inline-flex;
     align-items: center;

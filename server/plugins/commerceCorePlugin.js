@@ -220,7 +220,19 @@ module.exports = {
       if (!rateLimit(req, res, readinessRateLimit)) return;
       const body = parseBody(req);
       const demo = commerce.cartService.getDemoProductForCart();
-      if (!demo) return res.status(503).json({ success: false, errorKey: "demo_product_unavailable" });
+      const salesEnabled = commerce.getSalesSafetyStatus().salesEnabled;
+      if (!demo) {
+        return res.json({
+          success: true,
+          blocked: true,
+          phase: "start",
+          code: "demo_product_unavailable",
+          commercialOrders: commerce.orderService.getCommercialOrderCount(),
+          realPayment: false,
+          supplierOrders: 0,
+          salesEnabled,
+        });
+      }
 
       const cart = commerce.cartService.createCart({ sessionId: body.sessionId || "readiness-test" });
       commerce.cartService.addItem(cart.cart.id, {

@@ -241,6 +241,10 @@ function resolveRoutePermission(method, pathname) {
     }
   }
 
+  if (pathname.startsWith("/api/product-catalog-pim/") && WRITE_METHODS.has(upper)) {
+    return { permission: "products.write" };
+  }
+
   if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/security/admin")) {
     for (const entry of PREFIX) {
       if (pathname.startsWith(entry.prefix)) {

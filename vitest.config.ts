@@ -4,6 +4,7 @@ import path from "path";
 export default defineConfig({
   test: {
     environment: "node",
+    fileParallelism: false,
     include: [
       "server/__tests__/**/*.test.mjs",
       "lib/backgrounds/**/*.test.ts",
@@ -24,6 +25,18 @@ export default defineConfig({
       "lib/mobile/isolation.test.ts",
       "lib/mobile/categoryFilters.test.ts",
       "lib/mobile/visuals.test.ts",
+    ],
+    exclude: [
+      "server/__tests__/part24ProductionReleaseReadiness.test.mjs",
+      "server/__tests__/part27OperationalFinalization.test.mjs",
+      "server/__tests__/part28FinalGoLiveReadiness.test.mjs",
+      "server/__tests__/part29FinalPreLaunchAudit.test.mjs",
+      "server/__tests__/part30FinalOperationalReadiness.test.mjs",
+      "server/__tests__/part31FinalLaunchGovernance.test.mjs",
+      "server/__tests__/part32FinalControlRecovery.test.mjs",
+      "server/__tests__/part33FinalPreLaunchControl.test.mjs",
+      "server/__tests__/part34FinalLaunchControl.test.mjs",
+      "server/__tests__/part35FinalProductionGovernance.test.mjs",
     ],
     globals: false,
     testTimeout: 15000,

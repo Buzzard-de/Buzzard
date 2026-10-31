@@ -43,4 +43,14 @@ describe("routePermissions", () => {
       permission: "products.write",
     });
   });
+
+  it("alternate product-catalog-pim writes require products.write", () => {
+    expect(resolveRoutePermission("POST", "/api/product-catalog-pim/brands")).toEqual({
+      permission: "products.write",
+    });
+    expect(resolveRoutePermission("POST", "/api/product-catalog-pim/products")).toEqual({
+      permission: "products.write",
+    });
+    expect(resolveRoutePermission("GET", "/api/product-catalog-pim/brands")).toBeNull();
+  });
 });

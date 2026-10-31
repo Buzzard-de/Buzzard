@@ -47,12 +47,29 @@ async function runPipeline(raw, { dryRun = true, supplierId = "mock", importJobI
     });
 
     if (stagingResult.blocked || dryRun || stagingResult.lifecycleStatus !== "VALIDATED") {
+      const validation = productValidation.validateProduct({
+        sku: raw.sku || raw.supplierSku,
+        title: raw.title || raw.name,
+        ean: raw.ean,
+        gtin: raw.gtin || raw.ean,
+        description: raw.description,
+        category: raw.category,
+        price: raw.price,
+        stock: raw.stock,
+        id: "pending",
+        images: raw.images || [],
+        supplier: supplierId,
+      });
+      logStage(importId, stagingResult.stagingId || null, "validation", validation.overall, validation);
+      stages.push({ stage: "validation", status: validation.overall, dryRun: true });
       return {
         importJobId: importId,
         dryRun,
+        written: false,
         stages,
         validation: {
-          overall: stagingResult.blocked ? "FAIL" : "WARNING",
+          ...validation,
+          overall: stagingResult.blocked ? "FAIL" : validation.overall,
           blockingReasons: stagingResult.blockingReasons,
         },
         staging: stagingResult,

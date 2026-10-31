@@ -21,3 +21,35 @@ jobs:
       - run: npm run build
       - run: npm run render:preflight
       - run: npm run security:check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r intelligence/requirements.txt
+      - run: cd intelligence/buzzard_ai_complete && pytest tests/ -q
+
+  ai-core-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: buzzard_test
+          POSTGRES_PASSWORD: buzzard_test_secret
+          POSTGRES_DB: buzzard_ai_core_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U buzzard_test -d buzzard_ai_core_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg2://buzzard_test:buzzard_test_secret@localhost:5432/buzzard_ai_core_test
+      BUZZARD_API_TOKEN: test-token-phase1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r intelligence/requirements.txt
+      - run: cd intelligence/buzzard_ai_complete && pytest tests/test_ai_core_postgres.py tests/test_ai_core_p0_e2e.py -q

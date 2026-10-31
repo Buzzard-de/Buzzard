@@ -14,6 +14,8 @@ services:
     name: buzzard-api
     runtime: node
     plan: starter
+    # Starter allows 1 instance. Extra replicas need a larger plan in the Render dashboard.
+    numInstances: 1
     region: frankfurt
     repo: https://github.com/Buzzard-de/Buzzard
     branch: main
@@ -116,6 +118,10 @@ services:
         value: "24"
       - key: BUZZARD_SALES_ENABLED
         value: "0"
+      - key: BUZZARD_SEARCH_CACHE_MS
+        value: "60000"
+      - key: BUZZARD_API_RATE_MAX
+        value: "360"
       - key: BUZZARD_DB_PATH
         value: /var/data/buzzard.db
       - key: BUZZARD_BACKUP_DIR

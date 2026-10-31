@@ -3,6 +3,12 @@ const { requirePermission } = require("../lib/rbac");
 const { getEngine } = require("../lib/agriculturalMachinery");
 const isolation = require("../lib/machineryDomainKit/isolation");
 const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
+const { createTtlCache, cacheKey } = require("../lib/requestCache");
+
+const searchCache = createTtlCache({
+  ttlMs: Number(process.env.BUZZARD_SEARCH_CACHE_MS || 60_000),
+  maxEntries: 400,
+});
 
 function publicError(res, status, code, message) {
   return res.status(status).json({ ok: false, error: code, message });
@@ -44,25 +50,38 @@ module.exports = {
         domain: "agricultural",
       });
       if (!scope.ok) return res.status(400).json({ ok: false, isolation: scope });
-      return res.json({
-        ok: true,
-        ...engine.search({
-          q: req.query.q,
-          oem: req.query.oem,
-          manufacturer: req.query.manufacturer,
-          modelName: req.query.model,
-          modelCode: req.query.modelCode,
-          serialNumber: req.query.serial,
-          year: req.query.year ? Number(req.query.year) : undefined,
-          ptoSpeed: req.query.pto,
-          thread: req.query.thread,
-          hitch: req.query.hitch,
-          categoryId: req.query.categoryId,
-          machineId: req.query.machineId,
-          page: req.query.page,
-          pageSize: req.query.pageSize,
-        }),
+      const key = cacheKey([
+        "ame",
+        req.query.q,
+        req.query.oem,
+        req.query.manufacturer,
+        req.query.model,
+        req.query.modelCode,
+        req.query.serial,
+        req.query.year,
+        req.query.categoryId,
+        req.query.page,
+      ]);
+      const cached = searchCache.get(key);
+      if (cached) return res.json({ ok: true, cached: true, ...cached });
+      const payload = engine.search({
+        q: req.query.q,
+        oem: req.query.oem,
+        manufacturer: req.query.manufacturer,
+        modelName: req.query.model,
+        modelCode: req.query.modelCode,
+        serialNumber: req.query.serial,
+        year: req.query.year ? Number(req.query.year) : undefined,
+        ptoSpeed: req.query.pto,
+        thread: req.query.thread,
+        hitch: req.query.hitch,
+        categoryId: req.query.categoryId,
+        machineId: req.query.machineId,
+        page: req.query.page,
+        pageSize: req.query.pageSize,
       });
+      searchCache.set(key, payload);
+      return res.json({ ok: true, cached: false, ...payload });
     });
 
     app.get("/api/agricultural-machinery/machines", (req, res) => {

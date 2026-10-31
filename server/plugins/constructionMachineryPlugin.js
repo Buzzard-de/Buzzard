@@ -7,6 +7,12 @@ const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const { getEngine } = require("../lib/constructionMachinery");
 const { ensureEngineSeeded } = require("../lib/machineryDomainKit/seedMocks");
+const { createTtlCache, cacheKey } = require("../lib/requestCache");
+
+const searchCache = createTtlCache({
+  ttlMs: Number(process.env.BUZZARD_SEARCH_CACHE_MS || 60_000),
+  maxEntries: 400,
+});
 
 function publicError(res, status, code, message) {
   return res.status(status).json({ ok: false, error: code, message });
@@ -70,6 +76,22 @@ module.exports = {
     });
 
     app.get("/api/construction-machinery/search", (req, res) => {
+      const key = cacheKey([
+        "cme",
+        req.query.q,
+        req.query.oem,
+        req.query.partNumber,
+        req.query.manufacturer,
+        req.query.model,
+        req.query.modelCode,
+        req.query.serial,
+        req.query.year,
+        req.query.categoryId,
+        req.query.page,
+        req.query.verifiedOnly,
+      ]);
+      const cached = searchCache.get(key);
+      if (cached) return res.json({ ok: true, cached: true, ...cached });
       const result = engine.search({
         q: req.query.q,
         oem: req.query.oem,
@@ -86,7 +108,8 @@ module.exports = {
         page: req.query.page,
         pageSize: parseLimit(req.query.pageSize),
       });
-      return res.json({ ok: true, ...result });
+      searchCache.set(key, result);
+      return res.json({ ok: true, cached: false, ...result });
     });
 
     app.post("/api/construction-machinery/compatibility", (req, res) => {

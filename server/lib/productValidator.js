@@ -72,12 +72,66 @@ function validateCustoms(customs) {
       gtip: cleanString(customs.gtip, 20),
       taric: cleanString(customs.taric, 20),
       origin_country: cleanString(customs.origin_country, 2).toUpperCase(),
+      destination_country: cleanString(customs.destination_country, 2).toUpperCase(),
       duty_rate: customs.duty_rate != null ? Number(customs.duty_rate) : null,
       import_restricted: Boolean(customs.import_restricted),
       source: cleanString(customs.source, 80),
       confidence: confidence != null && !Number.isNaN(confidence) ? Math.min(1, Math.max(0, confidence)) : null,
       review_required: Boolean(customs.review_required) || (confidence != null && confidence < 0.75),
     },
+  };
+}
+
+/**
+ * Fail-closed customs decision. Missing critical inputs block the operation.
+ * Does not claim legal or tax certainty.
+ */
+function validateCustomsDecision(input = {}) {
+  const origin = cleanString(input.origin_country || input.originCountry || input.customs?.origin_country, 2).toUpperCase();
+  const destination = cleanString(
+    input.destination_country || input.destinationCountry || input.market || input.customs?.destination_country,
+    2
+  ).toUpperCase();
+  const category = cleanString(input.category_id || input.category || input.customs?.category_id, 64);
+  const gtip = cleanString(input.gtip || input.customs?.gtip, 20);
+  const restricted = Boolean(input.import_restricted || input.customs?.import_restricted);
+  const missing = [];
+  if (!origin) missing.push("origin_country");
+  if (!destination) missing.push("destination_country");
+  if (!category && !gtip) missing.push("category_or_gtip");
+
+  if (missing.length) {
+    return {
+      ok: false,
+      failClosed: true,
+      legalClaim: false,
+      review_required: true,
+      errors: missing,
+      reason: "missing_critical_customs_inputs",
+      disclaimer: "Not legal or tax advice. Blocked until authoritative inputs exist.",
+    };
+  }
+  if (restricted) {
+    return {
+      ok: false,
+      failClosed: true,
+      legalClaim: false,
+      review_required: true,
+      errors: ["import_restricted"],
+      reason: "restricted_product",
+      disclaimer: "Restricted flag set — shipment must not proceed automatically.",
+    };
+  }
+  return {
+    ok: true,
+    failClosed: false,
+    legalClaim: false,
+    review_required: true,
+    origin_country: origin,
+    destination_country: destination,
+    category_id: category || null,
+    gtip: gtip || null,
+    disclaimer: "Inputs present for review only — not a legal clearance.",
   };
 }
 
@@ -206,6 +260,8 @@ module.exports = {
   validateProduct,
   validateEan,
   validateMoney,
+  validateCustoms,
+  validateCustomsDecision,
   VALID_STATUSES,
   VALID_STOCK_STATUSES,
   VALID_LOCALES,

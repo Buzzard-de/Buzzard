@@ -29,7 +29,7 @@ function evaluateSalesGate() {
   const envWantsSales = flag("BUZZARD_SALES_ENABLED");
   const allowed = failed.length === 0 && envWantsSales;
 
-  return {
+  const gate = {
     allowed,
     locked: !allowed,
     status: allowed ? "READY" : "LOCKED",
@@ -41,6 +41,14 @@ function evaluateSalesGate() {
       ? "All sales P0 conditions true"
       : `Sales gate locked: ${failed.join(", ") || "sales env not fully set"}`,
   };
+  if (envWantsSales && !allowed) {
+    try {
+      require("./security/esatBey").watchSalesAttempt(gate);
+    } catch {
+      /* Esat is additive */
+    }
+  }
+  return gate;
 }
 
 function assertSalesGate() {

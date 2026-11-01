@@ -16,10 +16,17 @@ const CAPABILITIES = Object.freeze([
 function assertIndependentRuntime(provider) {
   const name = String(provider || "").toLowerCase();
   if (FORBIDDEN_PRODUCTION_PROVIDERS.includes(name)) {
+    let esat = null;
+    try {
+      esat = require("../security/esatBey").watchExternalAi(name);
+    } catch {
+      /* monitor is optional if the module is mid-load */
+    }
     return {
       ok: false,
       code: "EXTERNAL_AI_FORBIDDEN",
       provider: name,
+      esat,
       message: "External model accounts must not attach to Buzzard production AI.",
     };
   }

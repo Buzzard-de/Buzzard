@@ -7,6 +7,12 @@ const { guardedFetch, resetEgressAudit } = require("../lib/security/egressGuard.
 const { createMessenger } = require("../lib/security/secureMessaging.js");
 const { screenCompliance } = require("../lib/commerce/sanctionsScreen.js");
 const runtime = require("../lib/pusat/runtime.js");
+const { capture } = require("../lib/commerce/paymentSandbox.js");
+const { payTax } = require("../lib/commerce/taxPools.js");
+const { assertIndependentRuntime } = require("../lib/ai/independentCapabilities.js");
+const { evaluateSalesGate } = require("../lib/salesSafetyGate.js");
+const { proveRestore } = require("../lib/survival/proveBackupRestore.js");
+const { activate } = require("../lib/security/esatBey.js");
 
 describe("Esat Bey defensive monitor", () => {
   afterEach(() => {
@@ -77,5 +83,21 @@ describe("Esat Bey defensive monitor", () => {
     expect(ping.code).toBe("PUSAT_DISABLED");
     if (prev === undefined) delete process.env.PUSAT_RUNTIME_ENABLED;
     else process.env.PUSAT_RUNTIME_ENABLED = prev;
+  });
+
+  it("holds capture, tax pay, external AI, sales unlock, and production restore", () => {
+    expect(capture("pay_1").esat.hold).toBe(true);
+    expect(payTax({ country: "FR", amount: 10 }).esat.hold).toBe(true);
+    expect(assertIndependentRuntime("claude").esat.hold).toBe(true);
+    process.env.BUZZARD_SALES_ENABLED = "1";
+    evaluateSalesGate();
+    delete process.env.BUZZARD_SALES_ENABLED;
+    expect(esat.recent().some((e) => e.type === "SALES_UNLOCK_ATTEMPT")).toBe(true);
+    expect(() => proveRestore({ workRoot: "/var/data/esat-forbidden" })).toThrow(/REFUSE_PRODUCTION_RESTORE/);
+    expect(esat.recent().some((e) => e.type === "REFUSE_PRODUCTION_RESTORE")).toBe(true);
+    const boot = activate();
+    expect(boot.activated).toBe(true);
+    expect(boot.hooks).toContain("egress");
+    expect(boot.completeClaim).toBe(false);
   });
 });

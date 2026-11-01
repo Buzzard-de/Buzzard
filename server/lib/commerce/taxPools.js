@@ -54,11 +54,14 @@ function listPools() {
 }
 
 function payTax({ country, amount } = {}) {
+  const { watchTaxPay } = require("../security/esatBey");
+  const esat = watchTaxPay({ country: countryKey(country), amount: Number(amount) || 0 });
   return {
     ok: false,
     code: "PAYMENT_AUTHORITY_DENIED",
     country: countryKey(country),
     amount: Number(amount) || 0,
+    esat,
     note: "Buzzard has no tax-payment instrument for the 26 non-DE pools.",
   };
 }

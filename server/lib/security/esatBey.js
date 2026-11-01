@@ -37,6 +37,8 @@ const ISOLATE_TYPES = Object.freeze([
   "EXTERNAL_AI_FORBIDDEN",
   "SECURITY_ALERT",
   "PERMISSION_DENIED",
+  "COUNTRY_CROSS_SHARE",
+  "PHISHING_AUTHORITY",
 ]);
 
 const HOOKS = Object.freeze([
@@ -49,6 +51,9 @@ const HOOKS = Object.freeze([
   "external_ai",
   "restore",
   "exception_bus",
+  "country_vault",
+  "authority_gate",
+  "backup_lock",
 ]);
 
 let activated = false;

@@ -1,8 +1,8 @@
 {
   "command": "BUZZARD_SPECIAL_16",
-  "updatedAt": "2026-11-01T15:35:00+01:00",
+  "updatedAt": "2026-11-01T21:25:00+01:00",
   "timezone": "Europe/Berlin",
-  "branch": "cursor/special-16-phase4-c293",
+  "branch": "cursor/special-16-command-c293",
   "base": "cursor/special-16-inventory-c293",
   "pr492": { "number": 492, "status": "NEEDS_APPROVAL" },
   "salesEnabled": false,

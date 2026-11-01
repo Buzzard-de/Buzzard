@@ -36,6 +36,15 @@ const MEMBERS = Object.freeze([
     soleDefense: false,
   },
   {
+    id: "nesrin_hanim",
+    name: "Nesrin Hanım",
+    role: "meeting_assistant",
+    permissions: ["meeting.minutes", "meeting.remind", "meeting.summarize", "shared.read"],
+    share: [CLASSIFICATION.PUBLIC, CLASSIFICATION.SHARED],
+    cannotChair: true,
+    assistantOnly: true,
+  },
+  {
     id: "textile_ai",
     name: "Tekstil AI",
     role: "category_expert",
@@ -164,6 +173,8 @@ function roster() {
     soleDefense: m.soleDefense === true,
     cannotFinalizeLegal: Boolean(m.cannotFinalizeLegal),
     cannotExecutePayments: Boolean(m.cannotExecutePayments),
+    cannotChair: Boolean(m.cannotChair),
+    assistantOnly: Boolean(m.assistantOnly),
   }));
 }
 

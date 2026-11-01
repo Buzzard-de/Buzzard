@@ -107,5 +107,6 @@ describe("Pusat council and research", () => {
     const held = approvals.submit({ action: "LIVE_PAYMENT", requestedBy: "finance_ai", risk: RISK.CRITICAL });
     expect(held.item.status).toBe("WAITING_APPROVAL");
     expect(roster().find((m) => m.id === "esat_bey").soleDefense).toBe(false);
+    expect(roster().find((m) => m.id === "nesrin_hanim").cannotChair).toBe(true);
   });
 });

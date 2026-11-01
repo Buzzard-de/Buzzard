@@ -15,6 +15,15 @@ const FORBIDDEN_AI_HOSTS = Object.freeze([
   "api.claude.ai",
 ]);
 
+const FORBIDDEN_AI_SUFFIXES = Object.freeze([
+  ".anthropic.com",
+  ".openai.com",
+  ".claude.ai",
+  ".googleapis.com",
+]);
+
+const PAYMENT_HOST_SUFFIXES = Object.freeze([".stripe.com", ".paypal.com", "stripe.com", "paypal.com"]);
+
 const CLASSIFIED = Object.freeze(["customer", "order", "payment", "source_code", "finance", "ai_memory"]);
 
 function classify(payload = {}) {
@@ -35,17 +44,34 @@ function hostOf(url) {
   }
 }
 
+function isIpLiteral(host) {
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(":");
+}
+
+function isForbiddenAiHost(host) {
+  const h = String(host || "").toLowerCase();
+  if (!h) return false;
+  if (FORBIDDEN_AI_HOSTS.includes(h)) return true;
+  return FORBIDDEN_AI_SUFFIXES.some((suffix) => h === suffix.slice(1) || h.endsWith(suffix));
+}
+
+function isPaymentHost(host) {
+  const h = String(host || "").toLowerCase();
+  return PAYMENT_HOST_SUFFIXES.some((suffix) => h === suffix.replace(/^\./, "") || h.endsWith(suffix.startsWith(".") ? suffix : `.${suffix}`));
+}
+
 function extraHosts() {
   return String(process.env.BUZZARD_EGRESS_EXTRA_HOSTS || "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((h) => !isForbiddenAiHost(h) && !isPaymentHost(h) && !isIpLiteral(h));
 }
 
 function evaluateEgress({ destinationUrl, payload = {} } = {}) {
   const host = hostOf(destinationUrl);
   const classification = classify(payload);
-  if (FORBIDDEN_AI_HOSTS.includes(host)) {
+  if (isForbiddenAiHost(host)) {
     return {
       ok: false,
       allowed: false,
@@ -53,6 +79,16 @@ function evaluateEgress({ destinationUrl, payload = {} } = {}) {
       host,
       classification,
       note: "Claude/OpenAI/Google AI hosts are never allowlisted.",
+    };
+  }
+  if (isPaymentHost(host) && classification === "payment") {
+    return {
+      ok: false,
+      allowed: false,
+      code: "PAYMENT_EGRESS_LOCKED",
+      host,
+      classification,
+      note: "Stripe/PayPal stay closed until Süleyman Bey approves live payments.",
     };
   }
   const allowlisted = ALLOWLIST.includes(host) || extraHosts().includes(host.toLowerCase());
@@ -95,5 +131,8 @@ module.exports = {
   CLASSIFIED,
   classify,
   evaluateEgress,
+  extraHosts,
+  isForbiddenAiHost,
+  isPaymentHost,
   inventoryDependencies,
 };

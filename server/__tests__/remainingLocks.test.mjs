@@ -6,6 +6,7 @@ const { put, get, resetVaults, countries } = require("../lib/privacy/countryVaul
 const { reviewRequest } = require("../lib/privacy/authorityGate.js");
 const { assessBackupLock } = require("../lib/survival/backupLock.js");
 const { resetEsat, recent } = require("../lib/security/esatBey.js");
+const { evaluateEgress, extraHosts } = require("../lib/security/egressPolicy.js");
 
 describe("remaining software locks", () => {
   afterEach(() => {
@@ -35,6 +36,16 @@ describe("remaining software locks", () => {
     expect(order.obstructLawfulProcess).toBe(false);
     expect(order.humanReview).toBe(true);
     expect(order.code).toBe("BINDING_ORDER_REVIEW");
+  });
+
+  it("does not let EXTRA_HOSTS unlock Claude, OpenAI, or Stripe", () => {
+    process.env.BUZZARD_EGRESS_EXTRA_HOSTS = "api.openai.com,api.anthropic.com,api.stripe.com,helper.example";
+    expect(extraHosts()).toEqual(["helper.example"]);
+    expect(evaluateEgress({ destinationUrl: "https://chat.openai.com/v1", payload: {} }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://api.stripe.com/v1", payload: { paymentMethod: "card" } }).allowed).toBe(
+      false
+    );
+    delete process.env.BUZZARD_EGRESS_EXTRA_HOSTS;
   });
 
   it("refuses to call local backup a finished 3-2-1-1-0", () => {

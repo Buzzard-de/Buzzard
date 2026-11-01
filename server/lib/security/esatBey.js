@@ -148,7 +148,7 @@ function watchEgress(decision, { url } = {}) {
   const type =
     decision.code === "EXTERNAL_AI_EGRESS_DENIED"
       ? "EXTERNAL_AI_EGRESS_DENIED"
-      : decision.classification === "payment"
+      : decision.classification === "payment" || decision.code === "PAYMENT_EGRESS_LOCKED"
         ? "PAYMENT_EGRESS"
         : decision.code || "EGRESS_DENIED";
   return inspect({

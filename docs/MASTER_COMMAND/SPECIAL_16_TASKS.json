@@ -147,8 +147,8 @@
       "tests": ["server/__tests__/special16Phase4.test.mjs", "server/__tests__/ecosystemSecurity.test.mjs"],
       "securityReview": "HMAC is integrity only. Production lock uses env secret only.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["Esat review hook; key vault"],
-      "acceptanceStatus": "PARTIAL"
+      "remainingTasks": ["Key vault; 24/7 host; live SOC"],
+      "acceptanceStatus": "CODE_READY"
     },
     {
       "id": 11,

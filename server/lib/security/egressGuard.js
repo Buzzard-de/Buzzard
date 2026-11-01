@@ -3,6 +3,7 @@
  * Denied destinations never reach the network.
  */
 const { evaluateEgress } = require("./egressPolicy");
+const { watchEgress } = require("./esatBey");
 
 const audit = [];
 
@@ -21,11 +22,13 @@ async function guardedFetch(destinationUrl, init = {}, payload = {}) {
     classification: decision.classification,
   });
   if (!decision.allowed) {
+    const esat = watchEgress(decision, { url: destinationUrl });
     return {
       ok: false,
       blocked: true,
       reachedNetwork: false,
       decision,
+      esat,
       response: null,
     };
   }

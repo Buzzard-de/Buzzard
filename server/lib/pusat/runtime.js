@@ -42,6 +42,9 @@ const ACTIONS = Object.freeze({
   RESEARCH_COMPLETE: "RESEARCH_COMPLETE",
   LIST_TRADE_HOLDS: "LIST_TRADE_HOLDS",
   SCREEN_TRADE: "SCREEN_TRADE",
+  ESAT_STATUS: "ESAT_STATUS",
+  ESAT_RECENT: "ESAT_RECENT",
+  ESAT_INSPECT: "ESAT_INSPECT",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -55,6 +58,9 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.RESEARCH_COMPLETE,
   ACTIONS.LIST_TRADE_HOLDS,
   ACTIONS.SCREEN_TRADE,
+  ACTIONS.ESAT_STATUS,
+  ACTIONS.ESAT_RECENT,
+  ACTIONS.ESAT_INSPECT,
 ]);
 
 let durable = null;
@@ -113,7 +119,24 @@ function health() {
   };
 }
 
+function executeEsat(action, payload, { actorId, correlationId }) {
+  const esat = require("../security/esatBey");
+  if (action === ACTIONS.ESAT_STATUS) {
+    return { ok: true, action, data: esat.status(), actorId, correlationId };
+  }
+  if (action === ACTIONS.ESAT_RECENT) {
+    return { ok: true, action, data: esat.recent(payload.limit), actorId, correlationId };
+  }
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return { ok: true, action, data: esat.inspect({ ...payload, actor: actorId || "pusat" }), actorId, correlationId };
+  }
+  return null;
+}
+
 function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null } = {}) {
+  const esatResult = executeEsat(action, payload, { actorId, correlationId });
+  if (esatResult) return esatResult;
+
   if (!isEnabled()) {
     return {
       ok: false,
@@ -341,6 +364,9 @@ function executeControl(action, payload, { actorId, correlationId }) {
   if (action === ACTIONS.LIST_TRADE_HOLDS) {
     return { ok: true, action, data: store.listHolds(), correlationId, ...label(MODE.DRY_RUN) };
   }
+  const esatControl = executeEsat(action, payload, { actorId, correlationId });
+  if (esatControl) return { ...esatControl, ...label(MODE.DRY_RUN) };
+
   if (action === ACTIONS.SCREEN_TRADE) {
     const { screenTrade } = require("../commerce/ab27Logistics");
     const result = screenTrade({

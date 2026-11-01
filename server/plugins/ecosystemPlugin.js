@@ -14,6 +14,7 @@ const { listPools } = require("../lib/commerce/taxPools");
 const { assessTextile } = require("../lib/storefront/textileProgram");
 const { coverage } = require("../lib/storefront/holidayProgram");
 const { evaluateDevice } = require("../lib/security/deviceStandard");
+const { status: esatStatus } = require("../lib/security/esatBey");
 const supportedLocales = require("../../lib/i18n/supported-locales.json");
 
 module.exports = {
@@ -39,6 +40,7 @@ module.exports = {
         textile: assessTextile(),
         holidays: coverage(),
         device: evaluateDevice({}),
+        esat: esatStatus(),
         scorecard: buildScorecard(),
       });
     });

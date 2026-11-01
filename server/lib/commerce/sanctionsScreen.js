@@ -3,6 +3,7 @@
  */
 const { screenTrade } = require("./ab27Logistics");
 const { createApprovalCenter, RISK } = require("../pusat/humanApproval");
+const { watchComplianceHold } = require("../security/esatBey");
 
 const DUAL_USE_HINTS = Object.freeze(["dual-use", "dual_use", "nuklear", "missile", "encryption-restricted"]);
 
@@ -20,7 +21,8 @@ function unclearMatch({ parties = [], goodsCode, dualUse, notes } = {}) {
 function screenCompliance(input = {}) {
   const lane = screenTrade(input);
   if (lane.status === "HUMAN_REVIEW") {
-    return { ...lane, sanctionsCleared: false, uncertainty: lane.code };
+    const esat = watchComplianceHold({ code: lane.code, destination: input.destination });
+    return { ...lane, sanctionsCleared: false, uncertainty: lane.code, esat };
   }
 
   const match = unclearMatch(input);
@@ -45,6 +47,7 @@ function screenCompliance(input = {}) {
         /* best-effort */
       }
     }
+    const esat = watchComplianceHold({ code: match.reason, destination: input.destination });
     return {
       ok: false,
       autoApproved: false,
@@ -52,6 +55,7 @@ function screenCompliance(input = {}) {
       code: match.reason,
       sanctionsCleared: false,
       approval: held.item,
+      esat,
       sources: lane.sources,
     };
   }

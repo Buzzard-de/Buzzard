@@ -6,6 +6,7 @@
 const crypto = require("crypto");
 const { canShare } = require("../pusat/council");
 const { seal, open } = require("./e2eBox");
+const { scanText, watchShareDenied } = require("./esatBey");
 
 const DEV_PLACEHOLDER = "dev-only-not-for-production";
 const PRODUCTION_MIN_LENGTH = 32;
@@ -52,7 +53,12 @@ function createMessenger({ secret } = {}) {
       return { ok: false, code: lockCode || "HMAC_SECRET_REQUIRED", e2e: false };
     }
     if (!canShare({ fromId, toId, classification })) {
-      return { ok: false, code: "SHARE_DENIED" };
+      const esat = watchShareDenied({ fromId, toId, classification });
+      return { ok: false, code: "SHARE_DENIED", esat };
+    }
+    const scanned = scanText(text, { actor: fromId });
+    if (!scanned.safe) {
+      return { ok: false, code: "ESAT_HOLD", e2e: false, esat: scanned };
     }
     const useE2e = Boolean(senderPrivateKey && recipientPublicKey);
     const box = useE2e ? seal(text, senderPrivateKey, recipientPublicKey) : null;

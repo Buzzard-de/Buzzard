@@ -10,15 +10,18 @@ import {
   type ReactNode,
 } from "react";
 import { translate } from "./translations";
-import { detectLocale, persistLocale, hasManualLocaleOverride } from "./detect";
+import { detectLocale, persistLocale, hasManualLocaleOverride, detectLanguage, persistLanguage } from "./detect";
 import { setRuntimeLocale } from "./runtime";
 import { formatDate, formatDateTime, formatNumber, formatPrice, formatPercent } from "./format";
 import { isRtlLocale, LOCALE_LABELS, SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
+import { isRtlLanguage, isSupportedLanguage, LANGUAGE_LABELS } from "./languages";
 import { getAccountToken } from "@/lib/account/client";
 
 interface LocaleContextValue {
   locale: BuzzardLocale;
+  language: string;
   setLocale: (locale: BuzzardLocale, manual?: boolean) => void;
+  setLanguage: (language: string) => void;
   t: (key: string) => string;
   dir: "ltr" | "rtl";
   formatPrice: (amount: number, currency?: string) => string;
@@ -42,10 +45,13 @@ async function syncAccountLanguage(locale: BuzzardLocale) {
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<BuzzardLocale>("de");
+  const [language, setLanguageState] = useState("de");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setLocaleState(detectLocale());
+    const nextLocale = detectLocale();
+    setLocaleState(nextLocale);
+    setLanguageState(detectLanguage());
     setReady(true);
   }, []);
 
@@ -67,9 +73,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     setRuntimeLocale(locale);
-    document.documentElement.lang = locale === "ar" ? "ar" : locale;
-    document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
-  }, [locale, ready]);
+    document.documentElement.lang = language === "ar" ? "ar" : language;
+    document.documentElement.dir = isRtlLanguage(language) || isRtlLocale(locale) ? "rtl" : "ltr";
+  }, [locale, language, ready]);
 
   const setLocale = useCallback((next: BuzzardLocale, manual = true) => {
     setLocaleState(next);
@@ -77,19 +83,27 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     if (manual) syncAccountLanguage(next);
   }, []);
 
+  const setLanguage = useCallback((next: string) => {
+    if (!isSupportedLanguage(next)) return;
+    setLanguageState(next);
+    persistLanguage(next);
+  }, []);
+
   const value = useMemo(
     (): LocaleContextValue => ({
       locale,
+      language,
       setLocale,
-      t: (key: string) => translate(locale, key),
-      dir: isRtlLocale(locale) ? "rtl" : "ltr",
-      formatPrice: (amount, currency = "EUR") => formatPrice(amount, locale, currency),
-      formatNumber: (value) => formatNumber(value, locale),
-      formatPercent: (value) => formatPercent(value, locale),
-      formatDate: (value) => formatDate(value, locale),
-      formatDateTime: (value) => formatDateTime(value, locale),
+      setLanguage,
+      t: (key: string) => translate(language, key),
+      dir: isRtlLanguage(language) || isRtlLocale(locale) ? "rtl" : "ltr",
+      formatPrice: (amount, currency = "EUR") => formatPrice(amount, language, currency),
+      formatNumber: (value) => formatNumber(value, language),
+      formatPercent: (value) => formatPercent(value, language),
+      formatDate: (value) => formatDate(value, language),
+      formatDateTime: (value) => formatDateTime(value, language),
     }),
-    [locale, setLocale]
+    [locale, language, setLocale, setLanguage]
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
@@ -101,4 +115,4 @@ export function useLocale() {
   return ctx;
 }
 
-export { LOCALE_LABELS, SUPPORTED_LOCALES };
+export { LOCALE_LABELS, SUPPORTED_LOCALES, LANGUAGE_LABELS };

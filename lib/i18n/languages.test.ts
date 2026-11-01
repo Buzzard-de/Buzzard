@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { LANGUAGE_CODES, isSupportedLanguage, ROUTING_LOCALES } from "./languages";
+import { LANGUAGE_CODES, isSupportedLanguage, ROUTING_LOCALES, routingLocaleFor } from "./languages";
 import { loadedLanguageCount, translate } from "./translations";
+import { languageFromSearch } from "./detect";
 
 describe("30 language catalogs", () => {
   it("loads all 30 language catalogs", () => {
@@ -15,5 +16,10 @@ describe("30 language catalogs", () => {
     expect(translate("bg", "header.login")).not.toBe("Anmelden");
     expect(isSupportedLanguage("ga")).toBe(true);
     expect(isSupportedLanguage("xx")).toBe(false);
+    expect(languageFromSearch("?lang=pl")).toBe("pl");
+    expect(languageFromSearch("?lang=xx")).toBeNull();
+    expect(routingLocaleFor("pl")).toBe("de");
+    expect(routingLocaleFor("tr")).toBe("tr");
   });
 });
+

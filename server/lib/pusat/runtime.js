@@ -41,6 +41,7 @@ const ACTIONS = Object.freeze({
   RESEARCH_REQUEST: "RESEARCH_REQUEST",
   RESEARCH_COMPLETE: "RESEARCH_COMPLETE",
   LIST_TRADE_HOLDS: "LIST_TRADE_HOLDS",
+  SCREEN_TRADE: "SCREEN_TRADE",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -53,6 +54,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.RESEARCH_REQUEST,
   ACTIONS.RESEARCH_COMPLETE,
   ACTIONS.LIST_TRADE_HOLDS,
+  ACTIONS.SCREEN_TRADE,
 ]);
 
 let durable = null;
@@ -338,6 +340,19 @@ function executeControl(action, payload, { actorId, correlationId }) {
   }
   if (action === ACTIONS.LIST_TRADE_HOLDS) {
     return { ok: true, action, data: store.listHolds(), correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SCREEN_TRADE) {
+    const { screenTrade } = require("../commerce/ab27Logistics");
+    const result = screenTrade({
+      ...payload,
+      persistHold: (item) =>
+        store.holdTrade({
+          destination: payload.destination,
+          reason: item.reason,
+          payload: item.payload,
+        }),
+    });
+    return { ok: result.ok, action, data: result, correlationId, ...label(MODE.DRY_RUN) };
   }
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId, ...label(MODE.DISABLED) };
 }

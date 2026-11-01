@@ -11,7 +11,6 @@ import {
   getMainCategoryIcon,
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
-  MAIN_CATEGORY_COUNT,
 } from "@/lib/categories";
 import { useCategoryVisibilityMap } from "@/lib/categories/visibility-client";
 import { useHomeUI } from "@/lib/home-ui";
@@ -157,7 +156,7 @@ export default function CategorySidebar({ activeId, onSelect, embedded = false }
         aria-label={t("home.mainCategories")}
       >
         <div className="home-sidebar-head">
-          <strong>{t("home.allCategoriesCount").replace("{count}", String(MAIN_CATEGORY_COUNT))}</strong>
+          <strong>{t("home.allCategoriesCount").replace("{count}", String(mainCategoryNodes.length))}</strong>
           <button
             type="button"
             className="sidebar-close-btn"

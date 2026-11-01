@@ -2,7 +2,7 @@ export { LocaleProvider, useLocale, LOCALE_LABELS, SUPPORTED_LOCALES } from "./c
 export { translate, getCatalog, FALLBACK_LOCALE, loadedLanguageCount } from "./translations";
 export { LANGUAGE_CODES, ROUTING_LOCALES, isSupportedLanguage } from "./languages";
 export { formatPrice, formatNumber, formatDate, formatDateTime, formatPercent } from "./format";
-export { detectLocale, persistLocale, detectBrowserLocale, STORAGE_KEY } from "./detect";
+export { detectLocale, persistLocale, detectBrowserLocale, STORAGE_KEY, detectLanguage, languageFromSearch } from "./detect";
 export { localizePath, localeLandingPath, hreflangAlternates, stripLocalePrefix, DEFAULT_LOCALE } from "./routing";
 export { siteMetadata, htmlLang } from "./seo";
 export type { BuzzardLocale } from "./types";

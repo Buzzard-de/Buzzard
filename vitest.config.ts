@@ -21,6 +21,7 @@ export default defineConfig({
       "lib/market/resolveInitialCountry.test.ts",
       "lib/i18n/catalog.test.ts",
       "lib/i18n/languages.test.ts",
+      "server/__tests__/ecosystemScorecard.test.mjs",
       "lib/categories/i18n.test.ts",
     ],
     globals: false,

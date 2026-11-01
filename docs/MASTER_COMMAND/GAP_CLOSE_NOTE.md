@@ -1,8 +1,8 @@
 # Gap close — what 100% can and cannot mean
 
-Asked: close remaining gaps in order to 100%.
+Asked: finish this software to 100%, then start the next.
 
-**Not possible as COMPLETE in this environment**
+**Not possible as COMPLETE 100% in this environment**
 
 - Offsite / WORM / key vault / live DR
 - Tax Connect filings and live sanctions feed
@@ -10,11 +10,12 @@ Asked: close remaining gaps in order to 100%.
 - SIP/STT/TTS live calls
 - Merge, deploy, sales, payments
 
-**Raised this increment (CODE_READY, tested)**
+**Raised this increment (tested)**
 
-- Pusat control actions + sqlite durable memory/meetings/research
-- Multi-area local snapshot helper
-- Persistent trade-hold hook
+- Pusat `SCREEN_TRADE` persists holds; durable memory/meetings/research
+- Scheduler can take multi-area local snapshots
 - HMAC secret required
-- cat-54…56 additive mapping (48 + 53 slugs kept)
-- 30 language catalogs loaded; URL prefixes remain de/en/tr/ar
+- Additive `cat-54`–`56` in navigation helpers (48 + cat-01–53 kept)
+- 30 catalogs + `?lang=` / `setLanguage` (URL prefixes remain de/en/tr/ar)
+- Tax Connect adapter stays BLOCKED without credentials
+- Scorecard refuses `completeClaim` while blockers remain

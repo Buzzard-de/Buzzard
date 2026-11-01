@@ -94,6 +94,10 @@ describe("Pusat council and research", () => {
     });
     const done = pusat.executeReadOnly("RESEARCH_COMPLETE", { requestId: req.data.id, findings: "n" });
     expect(done.data.verification).toBe("UNVERIFIED");
+    const trade = pusat.executeReadOnly("SCREEN_TRADE", { destination: "US", value: 50 });
+    expect(trade.data.status).toBe("HUMAN_REVIEW");
+    const holds = pusat.executeReadOnly("LIST_TRADE_HOLDS", {});
+    expect(holds.data.length).toBeGreaterThan(0);
     expect(pusat.executeReadOnly("CREATE_ORDER", {}).code).toBe("PERMISSION_DENIED");
     expect(mem.data.key).toBe("x");
   });

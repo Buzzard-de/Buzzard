@@ -112,9 +112,22 @@ function runBackup({ applyRetentionPolicy = true } = {}) {
     retention = applyRetention(backupDir);
   }
 
+  let areaSnapshot = null;
+  try {
+    const { snapshotLocalAreas } = require("./survival/copies32110");
+    const workRoot = path.join(backupDir, "areas-32110");
+    areaSnapshot = snapshotLocalAreas({
+      repoRoot: path.join(__dirname, "..", ".."),
+      workRoot,
+    });
+  } catch (err) {
+    areaSnapshot = { ok: false, error: err.message };
+  }
+
   return {
     ok: result.ok === true,
     backup: result,
+    areaSnapshot,
     retention,
     path: backupDir,
   };
@@ -132,7 +145,9 @@ function getBackupReadiness() {
     retentionDays: RETENTION_DAYS,
     minKeep: RETENTION_MIN_COUNT,
     schedulerEnv: process.env.BUZZARD_BACKUP_CRON || null,
-    recommendation: "Schedule `node scripts/db-backup.mjs` via Render cron or BUZZARD_BACKUP_CRON when persistent disk is active.",
+    offsiteConfigured: Boolean(process.env.BUZZARD_OFFSITE_BACKUP_DIR),
+    scheme: "3-2-1-1-0-local",
+    recommendation: "Schedule `node scripts/db-backup.mjs` via Render cron. Offsite stays BLOCKED until BUZZARD_OFFSITE_BACKUP_DIR is a separate host.",
   };
 }
 

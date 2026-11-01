@@ -12,8 +12,14 @@ function loadMasterTree() {
   return json.categories || [];
 }
 
+function loadHubExtensions() {
+  const file = path.join(__dirname, "..", "..", "..", "data", "taxonomy", "shop_hub_l1_extensions.json");
+  return JSON.parse(fs.readFileSync(file, "utf8")).hubs || [];
+}
+
 function createCategoryExperts() {
   const tree = loadMasterTree();
+  const hubs = loadHubExtensions();
   const memory = createMemoryStore();
   const experts = MEMBERS.filter((m) => m.role === "category_expert");
 
@@ -30,6 +36,8 @@ function createCategoryExperts() {
   return {
     treeCount: tree.length,
     treePreserved: tree.length === 48,
+    hubs,
+    hubCount: hubs.length,
     experts,
     expertForCode,
     remember,

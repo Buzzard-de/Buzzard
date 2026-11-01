@@ -25,6 +25,13 @@ describe("ecosystem security, privacy, voice, marketing", () => {
     expect(allowed.allowed).toBe(true);
   });
 
+  it("refuses messaging without an HMAC secret", () => {
+    const bare = createMessenger({});
+    expect(bare.send({ fromId: "pusat", toId: "dogu_bey", text: "x", classification: "shared" }).code).toBe(
+      "HMAC_SECRET_REQUIRED"
+    );
+  });
+
   it("signs internal messages and refuses personal cross-share", () => {
     const bus = createMessenger({ secret: "test-secret" });
     const ok = bus.send({ fromId: "pusat", toId: "dogu_bey", text: "brief", classification: "shared" });

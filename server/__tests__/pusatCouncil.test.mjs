@@ -70,8 +70,32 @@ describe("Pusat council and research", () => {
   it("preserves the 48-category master tree", () => {
     const experts = createCategoryExperts();
     expect(experts.treePreserved).toBe(true);
+    expect(experts.hubCount).toBe(3);
+    expect(experts.hubs.map((h) => h.shop_id)).toEqual(["cat-54", "cat-55", "cat-56"]);
     expect(experts.expertForCode("bz.01").id).toBe("automotive_ai");
     expect(createTask({ fromId: "unknown", title: "x", assigneeId: "pusat" }).code).toBe("PERMISSION_DENIED");
+  });
+
+  it("wires durable council actions through Pusat without money writes", () => {
+    process.env.PUSAT_RUNTIME_ENABLED = "1";
+    const pusat = require("../lib/pusat/runtime.js");
+    const council = pusat.executeReadOnly("GET_COUNCIL", {});
+    expect(council.ok).toBe(true);
+    expect(council.data.length).toBeGreaterThan(5);
+    const meeting = pusat.executeReadOnly("OPEN_MEETING", { chairId: "pusat" });
+    expect(meeting.data.id).toMatch(/^meet_/);
+    const mem = pusat.executeReadOnly("MEMORY_PUT", { ownerId: "textile_ai", key: "x", value: "y" });
+    const denied = pusat.executeReadOnly("MEMORY_GET", { ownerId: "textile_ai", requesterId: "electronics_ai" });
+    expect(denied.data.code).toBe("PERSONAL_MEMORY_DENIED");
+    const req = pusat.executeReadOnly("RESEARCH_REQUEST", {
+      fromId: "textile_ai",
+      topic: "markets",
+      question: "denim",
+    });
+    const done = pusat.executeReadOnly("RESEARCH_COMPLETE", { requestId: req.data.id, findings: "n" });
+    expect(done.data.verification).toBe("UNVERIFIED");
+    expect(pusat.executeReadOnly("CREATE_ORDER", {}).code).toBe("PERMISSION_DENIED");
+    expect(mem.data.key).toBe("x");
   });
 
   it("holds high-risk work for humans; Esat is not sole defense", () => {

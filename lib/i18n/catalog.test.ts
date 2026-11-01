@@ -15,6 +15,10 @@ describe("i18n catalog keys", () => {
     expect(translate("en", "home.subcategories")).toBe("Subcategories");
   });
 
+  it("does not mix German login into Bulgarian", () => {
+    expect(translate("bg", "header.login")).toBe("Вход");
+  });
+
   it("maps category.jsonLdDescription from catalog", () => {
     expect(translate("de", "category.jsonLdDescription")).toContain("Unterkategorien");
     expect(translate("tr", "category.jsonLdDescription")).toContain("alt kategoriler");

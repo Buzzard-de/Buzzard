@@ -26,10 +26,24 @@ const COUNTRY_RULES = Object.freeze(
   )
 );
 
-function screenTrade({ origin = "DE", destination, goodsCode, value = 0 } = {}) {
+function screenTrade({ origin = "DE", destination, goodsCode, value = 0, persistHold = null } = {}) {
   const dest = String(destination || "").toUpperCase();
   const inUnion = AB27.includes(dest) || dest === "GR";
   const approvals = createApprovalCenter();
+  const persist = (item) => {
+    if (typeof persistHold === "function") {
+      try {
+        persistHold({
+          destination: dest,
+          reason: item.reason,
+          payload: item.payload,
+        });
+      } catch {
+        /* hold persistence is best-effort */
+      }
+    }
+    return item;
+  };
 
   if (!inUnion) {
     const held = approvals.submit({
@@ -44,7 +58,7 @@ function screenTrade({ origin = "DE", destination, goodsCode, value = 0 } = {}) 
       autoApproved: false,
       status: "HUMAN_REVIEW",
       code: "OUTSIDE_AB27",
-      approval: held.item,
+      approval: persist(held.item),
       sources: OFFICIAL_SOURCES,
     };
   }
@@ -62,7 +76,7 @@ function screenTrade({ origin = "DE", destination, goodsCode, value = 0 } = {}) 
       autoApproved: false,
       status: "HUMAN_REVIEW",
       code: "HIGH_VALUE",
-      approval: held.item,
+      approval: persist(held.item),
       sources: OFFICIAL_SOURCES,
     };
   }

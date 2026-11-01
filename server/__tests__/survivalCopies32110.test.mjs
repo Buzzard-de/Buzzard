@@ -5,7 +5,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
-const { createCopies, isKeyMaterial, statusOfScheme } = require("../lib/survival/copies32110.js");
+const { createCopies, isKeyMaterial, statusOfScheme, snapshotLocalAreas } = require("../lib/survival/copies32110.js");
 const { proveRestore, assertSafePath } = require("../lib/survival/proveBackupRestore.js");
 
 describe("3-2-1-1-0 survival copies", () => {
@@ -30,6 +30,14 @@ describe("3-2-1-1-0 survival copies", () => {
     expect(result.copies.copies.map((c) => c.slot)).toEqual(
       expect.arrayContaining(["copy1-primary", "copy2-archive", "copy3-mirror", "copy-immutable"])
     );
+  });
+
+  it("snapshots multiple local areas without touching /var/data", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "bz-areas-"));
+    const snap = snapshotLocalAreas({ repoRoot: process.cwd(), workRoot: root });
+    expect(snap.offsiteConfigured).toBe(false);
+    expect(snap.areas.find((a) => a.area === "catalog")?.ok).toBe(true);
+    expect(snap.note).toMatch(/Offsite remains unconfigured/);
   });
 
   it("copies offsite only when configured", () => {

@@ -201,6 +201,42 @@ function verifyCopies(copies, sourcePath) {
   };
 }
 
+function localSources(repoRoot) {
+  const root = path.resolve(repoRoot);
+  return {
+    databases: path.join(root, "server", "data", "buzzard.db"),
+    catalog: path.join(root, "data", "buzzard_products.json"),
+    source_code: path.join(root, "package.json"),
+    infra_config: path.join(root, "render.yaml"),
+    ai_memory: path.join(root, "docs", "MASTER_COMMAND", "MASTER_TASKS.json"),
+  };
+}
+
+function snapshotLocalAreas({ repoRoot, workRoot } = {}) {
+  const sources = localSources(repoRoot);
+  const results = [];
+  for (const [area, sourcePath] of Object.entries(sources)) {
+    if (!fs.existsSync(sourcePath)) {
+      results.push({ area, ok: false, code: "SOURCE_MISSING", sourcePath });
+      continue;
+    }
+    if (String(sourcePath).startsWith("/var/data")) {
+      results.push({ area, ok: false, code: "REFUSE_PRODUCTION_PATH", sourcePath });
+      continue;
+    }
+    results.push({
+      area,
+      ...createCopies({ sourcePath, workRoot: path.join(workRoot, area), area }),
+    });
+  }
+  return {
+    ok: results.some((r) => r.ok),
+    areas: results,
+    offsiteConfigured: Boolean(process.env.BUZZARD_OFFSITE_BACKUP_DIR),
+    note: "Local multi-area snapshot only. Offsite remains unconfigured unless BUZZARD_OFFSITE_BACKUP_DIR is set.",
+  };
+}
+
 function statusOfScheme(result) {
   if (!result?.ok) return "PARTIAL";
   if (!result.offsite?.configured) return "CODE_READY";
@@ -216,4 +252,6 @@ module.exports = {
   verifyCopies,
   sha256File,
   statusOfScheme,
+  snapshotLocalAreas,
+  localSources,
 };

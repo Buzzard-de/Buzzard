@@ -10,6 +10,9 @@ const pricing = require("../commerce/pricingIntegration");
 const { db } = require("../db");
 const { isSotActive, getStatus: getProductSotStatus } = require("../productSot");
 const { createIdempotencyService } = require("./idempotencyService");
+const { roster } = require("./council");
+const { createDurable } = require("./durable");
+const { TOPICS } = require("./doguResearch");
 
 let pusatIdempotency = null;
 
@@ -29,7 +32,34 @@ const ACTIONS = Object.freeze({
   GET_SALES_GATE: "GET_SALES_GATE",
   GET_EXCEPTIONS: "GET_EXCEPTIONS",
   PING: "PING",
+  GET_COUNCIL: "GET_COUNCIL",
+  OPEN_MEETING: "OPEN_MEETING",
+  REPORT_MEETING: "REPORT_MEETING",
+  CLOSE_MEETING: "CLOSE_MEETING",
+  MEMORY_PUT: "MEMORY_PUT",
+  MEMORY_GET: "MEMORY_GET",
+  RESEARCH_REQUEST: "RESEARCH_REQUEST",
+  RESEARCH_COMPLETE: "RESEARCH_COMPLETE",
+  LIST_TRADE_HOLDS: "LIST_TRADE_HOLDS",
 });
+
+const CONTROL_ACTIONS = Object.freeze([
+  ACTIONS.GET_COUNCIL,
+  ACTIONS.OPEN_MEETING,
+  ACTIONS.REPORT_MEETING,
+  ACTIONS.CLOSE_MEETING,
+  ACTIONS.MEMORY_PUT,
+  ACTIONS.MEMORY_GET,
+  ACTIONS.RESEARCH_REQUEST,
+  ACTIONS.RESEARCH_COMPLETE,
+  ACTIONS.LIST_TRADE_HOLDS,
+]);
+
+let durable = null;
+function getDurable() {
+  if (!durable) durable = createDurable(db);
+  return durable;
+}
 
 const WRITE_ACTIONS = Object.freeze([
   "SET_PRICE",
@@ -73,6 +103,8 @@ function health() {
     envHealthyFlag: process.env.PUSAT_RUNTIME_HEALTHY === "1",
     ...label(isEnabled() ? MODE.DRY_RUN : MODE.DISABLED),
     specialists: SPECIALISTS,
+    councilMembers: roster().length,
+    controlActions: CONTROL_ACTIONS,
     writeActions: [],
     deniedWrites: WRITE_ACTIONS,
     productSot: getProductSotStatus(),
@@ -218,7 +250,96 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
     };
   }
 
+  if (CONTROL_ACTIONS.includes(action)) {
+    return executeControl(action, payload, { actorId, correlationId: corr });
+  }
+
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };
+}
+
+function executeControl(action, payload, { actorId, correlationId }) {
+  const store = getDurable();
+  if (action === ACTIONS.GET_COUNCIL) {
+    return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.OPEN_MEETING) {
+    return { ok: true, action, data: store.openMeeting(payload), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.REPORT_MEETING) {
+    return {
+      ok: true,
+      action,
+      data: store.addMeetingEvent({
+        meetingId: payload.meetingId,
+        kind: "report",
+        speakerId: payload.speakerId || actorId,
+        payload,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.CLOSE_MEETING) {
+    return { ok: true, action, data: store.closeMeeting(payload.meetingId), correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.MEMORY_PUT) {
+    return {
+      ok: true,
+      action,
+      data: store.putMemory({
+        ownerId: payload.ownerId || actorId,
+        key: payload.key,
+        value: payload.value,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.MEMORY_GET) {
+    return {
+      ok: true,
+      action,
+      data: store.getMemory({
+        ownerId: payload.ownerId,
+        requesterId: payload.requesterId || actorId,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.RESEARCH_REQUEST) {
+    if (!TOPICS.includes(payload.topic)) {
+      return { ok: false, code: "UNKNOWN_TOPIC", action, correlationId, ...label(MODE.DRY_RUN) };
+    }
+    return {
+      ok: true,
+      action,
+      data: store.requestResearch({
+        fromId: payload.fromId || actorId,
+        topic: payload.topic,
+        question: payload.question,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.RESEARCH_COMPLETE) {
+    return {
+      ok: true,
+      action,
+      data: store.completeResearch({
+        requestId: payload.requestId,
+        findings: payload.findings,
+        sources: payload.sources,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.LIST_TRADE_HOLDS) {
+    return { ok: true, action, data: store.listHolds(), correlationId, ...label(MODE.DRY_RUN) };
+  }
+  return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId, ...label(MODE.DISABLED) };
 }
 
 /**
@@ -259,7 +380,9 @@ async function dispatch({
 module.exports = {
   ACTIONS,
   WRITE_ACTIONS,
+  CONTROL_ACTIONS,
   SPECIALISTS,
+  getDurable,
   isEnabled,
   isHealthy,
   health,

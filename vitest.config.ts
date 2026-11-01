@@ -20,6 +20,7 @@ export default defineConfig({
       "lib/market/languageIndependence.test.ts",
       "lib/market/resolveInitialCountry.test.ts",
       "lib/i18n/catalog.test.ts",
+      "lib/i18n/languages.test.ts",
       "lib/categories/i18n.test.ts",
     ],
     globals: false,

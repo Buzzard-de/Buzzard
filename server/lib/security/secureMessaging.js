@@ -4,14 +4,18 @@
 const crypto = require("crypto");
 const { canShare } = require("../pusat/council");
 
-function createMessenger({ secret = process.env.BUZZARD_MSG_HMAC || "dev-only-not-for-production" } = {}) {
+function createMessenger({ secret = process.env.BUZZARD_MSG_HMAC } = {}) {
   const archive = [];
+  const configuredSecret = secret;
 
   function sign(body) {
-    return crypto.createHmac("sha256", secret).update(body).digest("hex");
+    return crypto.createHmac("sha256", configuredSecret).update(body).digest("hex");
   }
 
   function send({ fromId, toId, text, classification = "public", attachment = null } = {}) {
+    if (!configuredSecret || configuredSecret === "dev-only-not-for-production") {
+      return { ok: false, code: "HMAC_SECRET_REQUIRED", e2e: false };
+    }
     if (!canShare({ fromId, toId, classification })) {
       return { ok: false, code: "SHARE_DENIED" };
     }

@@ -122,6 +122,9 @@ function unique(values: string[]): string[] {
 
 export function buildContentSecurityPolicy(): string {
   const apiOrigin = (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
+  const telemetryGa = Boolean(process.env.NEXT_PUBLIC_GA4_ID || process.env.NEXT_PUBLIC_GTM_ID);
+  const telemetryMeta = Boolean(process.env.NEXT_PUBLIC_META_PIXEL_ID);
+  const telemetryTiktok = Boolean(process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID);
   const connectSrc = unique([
     "'self'",
     apiOrigin,
@@ -132,28 +135,28 @@ export function buildContentSecurityPolicy(): string {
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3001",
     "http://127.0.0.1:3004",
-    "https://www.google-analytics.com",
-    "https://region1.google-analytics.com",
-    "https://www.googletagmanager.com",
-    "https://connect.facebook.net",
-    "https://analytics.tiktok.com",
+    telemetryGa ? "https://www.google-analytics.com" : "",
+    telemetryGa ? "https://region1.google-analytics.com" : "",
+    telemetryGa ? "https://www.googletagmanager.com" : "",
+    telemetryMeta ? "https://connect.facebook.net" : "",
+    telemetryTiktok ? "https://analytics.tiktok.com" : "",
   ]);
 
   const scriptSrc = unique([
     "'self'",
     "'unsafe-inline'",
-    "https://www.googletagmanager.com",
-    "https://connect.facebook.net",
-    "https://analytics.tiktok.com",
+    telemetryGa ? "https://www.googletagmanager.com" : "",
+    telemetryMeta ? "https://connect.facebook.net" : "",
+    telemetryTiktok ? "https://analytics.tiktok.com" : "",
   ]);
 
   const imgSrc = unique([
     "'self'",
     "data:",
     "blob:",
-    "https://www.google-analytics.com",
-    "https://www.googletagmanager.com",
-    "https://www.facebook.com",
+    telemetryGa ? "https://www.google-analytics.com" : "",
+    telemetryGa ? "https://www.googletagmanager.com" : "",
+    telemetryMeta ? "https://www.facebook.com" : "",
   ]);
 
   return [

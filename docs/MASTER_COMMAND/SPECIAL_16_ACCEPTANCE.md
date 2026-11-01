@@ -20,5 +20,5 @@ Her madde: birim | entegrasyon | güvenlik | canlı.
 | 12 | Kabul testleri | TEST_PASSED (bu tablo) | PARTIAL | — | NOT_STARTED | PARTIAL |
 | 13 | Bağımsız AI | TEST_PASSED (yasak) | PARTIAL | TEST_PASSED | NOT_STARTED | PARTIAL |
 | 14 | Cursor bakım | PARTIAL | PARTIAL | — | NOT_STARTED | PARTIAL |
-| 15 | Egress | TEST_PASSED (4.2+4.3) | TEST_PASSED (köprü + ödeme + tarayıcı politikası) | TEST_PASSED (sunucu/tarayıcı ayrı) | BLOCKED (canlı firewall) | CODE_READY |
+| 15 | Egress | TEST_PASSED (4.2–4.4 Node+Python) | PARTIAL (çekirdek browser + live_connectors) | TEST_PASSED (ortak politika) | BLOCKED (canlı firewall) | CODE_READY |
 | 16 | DR | TEST_PASSED (yerel) | PARTIAL | CODE_READY | BLOCKED | PARTIAL |

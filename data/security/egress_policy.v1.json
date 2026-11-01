@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "default": "DENY",
+  "allowlist": [
+    "buzzard24.de",
+    "buzzard-api.onrender.com",
+    "api.github.com"
+  ],
+  "forbiddenAiHosts": [
+    "api.anthropic.com",
+    "api.openai.com",
+    "generativelanguage.googleapis.com",
+    "api.claude.ai"
+  ],
+  "forbiddenAiSuffixes": [
+    ".anthropic.com",
+    ".openai.com",
+    ".claude.ai",
+    ".googleapis.com"
+  ],
+  "paymentHostSuffixes": [".stripe.com", ".paypal.com", "stripe.com", "paypal.com"],
+  "analyticsHosts": [
+    "www.google-analytics.com",
+    "region1.google-analytics.com",
+    "www.googletagmanager.com",
+    "connect.facebook.net",
+    "analytics.tiktok.com"
+  ],
+  "browserAllowedSuffixes": [".onrender.com", "buzzard24.de"],
+  "note": "Default DENY. EXTRA_HOSTS cannot unlock AI, payments, wildcards, or IP literals. Live connector hosts are not default-allowlisted."
+}

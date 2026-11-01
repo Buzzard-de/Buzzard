@@ -1,7 +1,7 @@
 import base64
 import os
 
-import requests
+from security.guarded_fetch import guarded_get, guarded_post
 
 
 class EbayClient:
@@ -22,7 +22,7 @@ class EbayClient:
             raise RuntimeError("NOT_CONFIGURED: EBAY_CLIENT_ID/SECRET fehlen.")
         raw = f"{self.client_id}:{self.client_secret}".encode()
         auth = base64.b64encode(raw).decode()
-        response = requests.post(
+        response = guarded_post(
             self.TOKEN_URL,
             headers={
                 "Authorization": f"Basic {auth}",
@@ -40,7 +40,7 @@ class EbayClient:
 
     def search(self, query, limit=20):
         token = self.token_for_app()
-        response = requests.get(
+        response = guarded_get(
             f"{self.API}/buy/browse/v1/item_summary/search",
             headers={
                 "Authorization": f"Bearer {token}",

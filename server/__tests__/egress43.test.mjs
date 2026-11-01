@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 const require = createRequire(import.meta.url);
 const { evaluateEgress, isRebindLookalike } = require("../lib/security/egressPolicy.js");
 const { evaluateBrowserConnect } = require("../../lib/security/browserConnect.js");
-const { guardedFetch, resetEgressAudit } = require("../lib/security/egressGuard.js");
+const { guardedFetch, resetEgressAudit, setDnsLookup } = require("../lib/security/egressGuard.js");
 
 function walkJs(dir, acc = []) {
   for (const name of readdirSync(dir)) {
@@ -22,6 +22,7 @@ function walkJs(dir, acc = []) {
 describe("egress 4.3 browser vs server", () => {
   afterEach(() => {
     resetEgressAudit();
+    setDnsLookup(null);
     delete process.env.BUZZARD_EGRESS_EXTRA_HOSTS;
     delete process.env.HTTP_PROXY;
   });
@@ -47,7 +48,7 @@ describe("egress 4.3 browser vs server", () => {
     expect(evaluateBrowserConnect("https://127.0.0.1.nip.io/steal").code).toBe("BROWSER_REBIND_DENIED");
     expect(evaluateBrowserConnect("https://buzzard-api.onrender.com/api/health").allowed).toBe(true);
     expect(evaluateBrowserConnect("/api/health").allowed).toBe(true);
-    expect(evaluateBrowserConnect("https://www.google-analytics.com/g/collect").code).toBe("THIRD_PARTY_ANALYTICS");
+    expect(evaluateBrowserConnect("https://www.google-analytics.com/g/collect").code).toBe("BROWSER_TELEMETRY_OFF");
   });
 
   it("keeps CSP connect-src free of OpenAI and Stripe", () => {
@@ -85,6 +86,7 @@ describe("egress 4.3 browser vs server", () => {
         headers: { get: (name) => (name === "location" ? "https://api.stripe.com/v1/charges" : null) },
       };
     };
+    setDnsLookup(async () => [{ address: "203.0.113.10" }]);
     try {
       const hop = await guardedFetch("https://buzzard24.de/pay-out", {}, { ping: true });
       expect(hop.blocked).toBe(true);

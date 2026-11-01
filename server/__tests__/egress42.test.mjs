@@ -7,11 +7,12 @@ const {
   extraHosts,
   isPrivateOrLocalHost,
 } = require("../lib/security/egressPolicy.js");
-const { guardedFetch, resetEgressAudit } = require("../lib/security/egressGuard.js");
+const { guardedFetch, resetEgressAudit, setDnsLookup } = require("../lib/security/egressGuard.js");
 
 describe("egress 4.2 supplier and SSRF locks", () => {
   afterEach(() => {
     resetEgressAudit();
+    setDnsLookup(null);
     delete process.env.BUZZARD_EGRESS_EXTRA_HOSTS;
     delete process.env.HTTP_PROXY;
     delete process.env.HTTPS_PROXY;
@@ -51,6 +52,7 @@ describe("egress 4.2 supplier and SSRF locks", () => {
         headers: { get: (name) => (name === "location" ? "https://api.anthropic.com/v1" : null) },
       };
     };
+    setDnsLookup(async () => [{ address: "203.0.113.10" }]);
     try {
       const hop = await guardedFetch("https://buzzard24.de/out", {}, { ping: true });
       expect(hop.blocked).toBe(true);

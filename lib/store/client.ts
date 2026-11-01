@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { isSqliteStoreEnabled, storeApiBase } from "./config";
 import type {
   StoreCart,
@@ -28,7 +29,7 @@ function authHeaders(token?: string | null): HeadersInit {
 async function storeFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const base = storeApiBase();
   if (!base) throw new Error("store.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });

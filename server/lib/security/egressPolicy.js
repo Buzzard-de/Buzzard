@@ -1,28 +1,21 @@
 /**
  * Egress allowlist — deny by default.
+ * Shared with Python via data/security/egress_policy.v1.json
  * Live Render/GitHub firewall is still operator-owned.
  */
-const ALLOWLIST = Object.freeze([
-  "buzzard24.de",
-  "buzzard-api.onrender.com",
-  "api.github.com",
-]);
+const fs = require("fs");
+const path = require("path");
 
-const FORBIDDEN_AI_HOSTS = Object.freeze([
-  "api.anthropic.com",
-  "api.openai.com",
-  "generativelanguage.googleapis.com",
-  "api.claude.ai",
-]);
+function loadSharedPolicy() {
+  const file = path.join(__dirname, "../../../data/security/egress_policy.v1.json");
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
 
-const FORBIDDEN_AI_SUFFIXES = Object.freeze([
-  ".anthropic.com",
-  ".openai.com",
-  ".claude.ai",
-  ".googleapis.com",
-]);
-
-const PAYMENT_HOST_SUFFIXES = Object.freeze([".stripe.com", ".paypal.com", "stripe.com", "paypal.com"]);
+const SHARED = loadSharedPolicy();
+const ALLOWLIST = Object.freeze(SHARED.allowlist);
+const FORBIDDEN_AI_HOSTS = Object.freeze(SHARED.forbiddenAiHosts);
+const FORBIDDEN_AI_SUFFIXES = Object.freeze(SHARED.forbiddenAiSuffixes);
+const PAYMENT_HOST_SUFFIXES = Object.freeze(SHARED.paymentHostSuffixes);
 
 const CLASSIFIED = Object.freeze(["customer", "order", "payment", "source_code", "finance", "ai_memory"]);
 
@@ -84,7 +77,9 @@ function isPrivateOrLocalHost(host) {
   const h = String(host || "").toLowerCase().replace(/^\[|\]$/g, "");
   if (isRebindLookalike(h)) return true;
   if (h === "localhost" || h === "metadata.google.internal") return true;
-  if (h === "0.0.0.0" || h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd")) return true;
+  if (h === "0.0.0.0" || h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd") || h.startsWith("ff")) {
+    return true;
+  }
   const ipv4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (!ipv4) return false;
   const a = Number(ipv4[1]);
@@ -93,7 +88,18 @@ function isPrivateOrLocalHost(host) {
   if (a === 169 && b === 254) return true;
   if (a === 192 && b === 168) return true;
   if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a >= 224) return true;
   return false;
+}
+
+function evaluateResolvedAddresses(addresses = [], host = "") {
+  for (const address of addresses) {
+    const ip = String(address || "").replace(/^\[|\]$/g, "");
+    if (isPrivateOrLocalHost(ip)) {
+      return { allowed: false, code: "RESOLVED_IP_DENIED", host, resolved: ip };
+    }
+  }
+  return { allowed: true, code: "RESOLVED_OK", host };
 }
 
 function evaluateEgress({ destinationUrl, payload = {} } = {}) {
@@ -182,5 +188,7 @@ module.exports = {
   isPaymentHost,
   isPrivateOrLocalHost,
   isRebindLookalike,
+  evaluateResolvedAddresses,
   inventoryDependencies,
+  SHARED,
 };

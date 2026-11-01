@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
-import requests
+from security.guarded_fetch import guarded_get
 
 
 class PublicFetcher:
@@ -14,11 +14,11 @@ class PublicFetcher:
         parsed = urlparse(url)
         if parsed.scheme not in ("http", "https"):
             raise ValueError("Nur http/https.")
-        response = requests.get(
+        response = guarded_get(
             url,
             headers={"User-Agent": self.ua},
             timeout=30,
-            allow_redirects=True,
+            classification="public",
         )
         response.raise_for_status()
         raw = response.content

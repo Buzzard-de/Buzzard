@@ -226,7 +226,9 @@
       "tests": [
         "server/__tests__/special16Phase4.test.mjs",
         "server/__tests__/egress42.test.mjs",
-        "server/__tests__/egress43.test.mjs"
+        "server/__tests__/egress43.test.mjs",
+        "server/__tests__/egress44.test.mjs",
+        "intelligence/security/test_egress.py"
       ],
       "securityReview": "Denied destinations never reach fetch. Live firewall still unproven.",
       "realEnvironmentVerification": "BLOCKED",

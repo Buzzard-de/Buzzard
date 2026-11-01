@@ -63,6 +63,15 @@ export function evaluateBrowserConnect(destinationUrl: string): {
     return { allowed: false, code: "BROWSER_REBIND_DENIED", host };
   }
   if (ANALYTICS_HOSTS.includes(host)) {
+    const telemetryOn = Boolean(
+      process.env.NEXT_PUBLIC_GA4_ID ||
+        process.env.NEXT_PUBLIC_GTM_ID ||
+        process.env.NEXT_PUBLIC_META_PIXEL_ID ||
+        process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID
+    );
+    if (!telemetryOn) {
+      return { allowed: false, code: "BROWSER_TELEMETRY_OFF", host };
+    }
     return { allowed: true, code: "THIRD_PARTY_ANALYTICS", host };
   }
   if (host === "localhost" || host === "127.0.0.1") {

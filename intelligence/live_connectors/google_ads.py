@@ -1,6 +1,6 @@
 import os
 
-import requests
+from security.guarded_fetch import guarded_post
 
 
 class GoogleAdsClient:
@@ -31,7 +31,7 @@ class GoogleAdsClient:
     def access_token(self):
         if not self.configured():
             raise RuntimeError("NOT_CONFIGURED: Google Ads credentials fehlen.")
-        response = requests.post(
+        response = guarded_post(
             self.TOKEN_URL,
             data={
                 "grant_type": "refresh_token",
@@ -56,6 +56,6 @@ class GoogleAdsClient:
         url = (
             f"{self.API_ROOT}/{version}/customers/{self.customer_id}/googleAds:searchStream"
         )
-        response = requests.post(url, headers=headers, json={"query": gaql}, timeout=60)
+        response = guarded_post(url, headers=headers, json={"query": gaql}, timeout=60)
         response.raise_for_status()
         return response.json()

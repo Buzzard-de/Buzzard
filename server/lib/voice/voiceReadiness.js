@@ -14,7 +14,7 @@ function assessVoice() {
   return {
     status: missing.length ? "BLOCKED" : "CODE_READY",
     missing,
-    webrtcCode: false,
+    webrtcCode: true,
     liveCalls: false,
     conferences: false,
     note: missing.length

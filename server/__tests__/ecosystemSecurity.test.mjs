@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const require = createRequire(import.meta.url);
 const { evaluateEgress } = require("../lib/security/egressPolicy.js");
 const { createMessenger } = require("../lib/security/secureMessaging.js");
+const { generateIdentity } = require("../lib/security/e2eBox.js");
 const { evaluateDevice } = require("../lib/security/deviceStandard.js");
 const { assertIndependentRuntime } = require("../lib/ai/independentCapabilities.js");
 const { executeWithProvider } = require("../lib/aiProviders.js");
@@ -40,6 +41,24 @@ describe("ecosystem security, privacy, voice, marketing", () => {
     expect(bus.verify(ok.message)).toBe(true);
     const denied = bus.send({ fromId: "textile_ai", toId: "electronics_ai", text: "secret", classification: "personal" });
     expect(denied.code).toBe("SHARE_DENIED");
+  });
+
+  it("archives E2E ciphertext only and decrypts with recipient key", () => {
+    const alice = generateIdentity();
+    const bob = generateIdentity();
+    const bus = createMessenger({ secret: "test-secret" });
+    const sent = bus.send({
+      fromId: "pusat",
+      toId: "dogu_bey",
+      text: "secret-brief",
+      classification: "shared",
+      senderPrivateKey: alice.privateKey,
+      recipientPublicKey: bob.publicKey,
+    });
+    expect(sent.e2e).toBe(true);
+    expect(sent.message.text).toBeNull();
+    expect(JSON.stringify(bus.archive()[0])).not.toContain("secret-brief");
+    expect(bus.decrypt(sent.message, bob.privateKey, alice.publicKey).text).toBe("secret-brief");
   });
 
   it("blocks Claude/external production providers", async () => {

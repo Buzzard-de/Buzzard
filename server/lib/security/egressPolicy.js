@@ -65,12 +65,46 @@ function extraHosts() {
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean)
+    .filter((h) => !h.includes("*") && !h.includes("?") && !h.startsWith("."))
     .filter((h) => !isForbiddenAiHost(h) && !isPaymentHost(h) && !isIpLiteral(h));
 }
 
+function isPrivateOrLocalHost(host) {
+  const h = String(host || "").toLowerCase().replace(/^\[|\]$/g, "");
+  if (h === "localhost" || h === "metadata.google.internal") return true;
+  if (h === "0.0.0.0" || h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd")) return true;
+  const ipv4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!ipv4) return false;
+  const a = Number(ipv4[1]);
+  const b = Number(ipv4[2]);
+  if (a === 10 || a === 127 || a === 0) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  return false;
+}
+
 function evaluateEgress({ destinationUrl, payload = {} } = {}) {
-  const host = hostOf(destinationUrl);
+  let parsed;
+  try {
+    parsed = new URL(destinationUrl);
+  } catch {
+    return { ok: false, allowed: false, code: "INVALID_URL", host: "", classification: classify(payload) };
+  }
+  const host = parsed.hostname;
   const classification = classify(payload);
+  if (parsed.username || parsed.password) {
+    return { ok: false, allowed: false, code: "URL_USERINFO_DENIED", host, classification };
+  }
+  if (parsed.protocol !== "https:") {
+    return { ok: false, allowed: false, code: "HTTPS_REQUIRED", host, classification };
+  }
+  if (parsed.port && parsed.port !== "443") {
+    return { ok: false, allowed: false, code: "PORT_DENIED", host, classification };
+  }
+  if (isPrivateOrLocalHost(host) || isIpLiteral(host)) {
+    return { ok: false, allowed: false, code: "PRIVATE_OR_IP_DENIED", host, classification };
+  }
   if (isForbiddenAiHost(host)) {
     return {
       ok: false,
@@ -81,7 +115,7 @@ function evaluateEgress({ destinationUrl, payload = {} } = {}) {
       note: "Claude/OpenAI/Google AI hosts are never allowlisted.",
     };
   }
-  if (isPaymentHost(host) && classification === "payment") {
+  if (isPaymentHost(host)) {
     return {
       ok: false,
       allowed: false,
@@ -134,5 +168,6 @@ module.exports = {
   extraHosts,
   isForbiddenAiHost,
   isPaymentHost,
+  isPrivateOrLocalHost,
   inventoryDependencies,
 };

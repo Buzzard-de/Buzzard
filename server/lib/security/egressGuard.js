@@ -33,7 +33,28 @@ async function guardedFetch(destinationUrl, init = {}, payload = {}) {
     };
   }
 
-  const response = await fetch(destinationUrl, init);
+  const response = await fetch(destinationUrl, { ...init, redirect: "manual" });
+  if ([301, 302, 303, 307, 308].includes(response.status)) {
+    const location = response.headers.get("location") || "";
+    let next = "";
+    try {
+      next = new URL(location, destinationUrl).href;
+    } catch {
+      next = location;
+    }
+    const hop = evaluateEgress({ destinationUrl: next, payload });
+    record({ url: next, host: hop.host, allowed: false, code: "REDIRECT_DENIED", classification: hop.classification });
+    const esat = watchEgress({ ...hop, allowed: false, code: hop.code || "REDIRECT_DENIED" }, { url: next });
+    return {
+      ok: false,
+      blocked: true,
+      reachedNetwork: true,
+      followedRedirect: false,
+      decision: { ...hop, allowed: false, code: "REDIRECT_DENIED" },
+      esat,
+      response: null,
+    };
+  }
   return {
     ok: response.ok,
     blocked: false,

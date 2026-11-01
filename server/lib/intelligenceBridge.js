@@ -73,10 +73,16 @@ async function fetchIntelligence(path) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const response = await fetch(`${base}${path}`, {
-        headers: { Accept: "application/json" },
-        signal: controller.signal,
-      });
+      const { guardedFetch } = require("./security/egressGuard");
+      const gated = await guardedFetch(
+        `${base}${path}`,
+        { headers: { Accept: "application/json" }, signal: controller.signal },
+        { ping: true }
+      );
+      if (gated.blocked) {
+        return { ok: false, status: "EGRESS_DENIED", error: gated.decision.code, reachedNetwork: false };
+      }
+      const response = gated.response;
       if (!response.ok) {
         return { ok: false, status: "DOWN", error: `http_${response.status}` };
       }

@@ -76,6 +76,11 @@ function emit({
     owner,
     retryable ? 1 : 0
   );
+  try {
+    require("./security/esatBey").watchException({ type, severity, source });
+  } catch {
+    /* Esat is additive */
+  }
   return get(id);
 }
 

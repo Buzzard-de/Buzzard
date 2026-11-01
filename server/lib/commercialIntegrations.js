@@ -31,15 +31,30 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
   params.append("line_items[0][quantity]", "1");
   params.append("metadata[orderId]", String(orderId));
 
-  const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${secret}`,
-      "Content-Type": "application/x-www-form-urlencoded",
+  const { guardedFetch } = require("./security/egressGuard");
+  const gated = await guardedFetch(
+    "https://api.stripe.com/v1/checkout/sessions",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${secret}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
     },
-    body: params.toString(),
-  });
-
+    { paymentMethod: "stripe", orderId }
+  );
+  if (gated.blocked) {
+    return {
+      provider: "stripe",
+      status: "EGRESS_DENIED",
+      orderId,
+      checkoutUrl: null,
+      code: gated.decision.code,
+      note: "Payment host is not on the Buzzard egress allowlist. Sales stay locked.",
+    };
+  }
+  const res = gated.response;
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.error?.message || "Stripe checkout session failed");
@@ -76,20 +91,38 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
       ? "https://api-m.paypal.com"
       : "https://api-m.sandbox.paypal.com";
 
-  const tokenRes = await fetch(`${base}/v1/oauth2/token`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
-      "Content-Type": "application/x-www-form-urlencoded",
+  const { guardedFetch } = require("./security/egressGuard");
+  const gatedToken = await guardedFetch(
+    `${base}/v1/oauth2/token`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials",
     },
-    body: "grant_type=client_credentials",
-  });
+    { paymentMethod: "paypal", orderId }
+  );
+  if (gatedToken.blocked) {
+    return {
+      provider: "paypal",
+      status: "EGRESS_DENIED",
+      orderId,
+      approvalUrl: null,
+      code: gatedToken.decision.code,
+      note: "PayPal host is not on the Buzzard egress allowlist. Sales stay locked.",
+    };
+  }
+  const tokenRes = gatedToken.response;
   const tokenData = await tokenRes.json();
   if (!tokenRes.ok) {
     throw new Error(tokenData.error_description || "PayPal auth failed");
   }
 
-  const orderRes = await fetch(`${base}/v2/checkout/orders`, {
+  const gatedOrder = await guardedFetch(
+    `${base}/v2/checkout/orders`,
+    {
     method: "POST",
     headers: {
       Authorization: `Bearer ${tokenData.access_token}`,
@@ -111,7 +144,19 @@ async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
         cancel_url: `${PUBLIC_BASE}/checkout/`,
       },
     }),
-  });
+    },
+    { paymentMethod: "paypal", orderId }
+  );
+  if (gatedOrder.blocked) {
+    return {
+      provider: "paypal",
+      status: "EGRESS_DENIED",
+      orderId,
+      approvalUrl: null,
+      code: gatedOrder.decision.code,
+    };
+  }
+  const orderRes = gatedOrder.response;
   const orderData = await orderRes.json();
   if (!orderRes.ok) {
     throw new Error(orderData.message || "PayPal order creation failed");

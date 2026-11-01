@@ -17,19 +17,31 @@ const CONTROLS = Object.freeze([
 ]);
 
 function evaluateDevice(report = {}) {
+  const normalized = {
+    ...report,
+    full_disk_encryption: report.full_disk_encryption === true || report.bitlocker === true,
+  };
   const missing = [];
   for (const control of CONTROLS) {
-    const value = report[control.id];
+    const value = normalized[control.id];
     if (control.required && value !== true) missing.push(control.id);
     if (control.requiredIfSupported && report.supports && report.supports[control.id] === true && value !== true) {
       missing.push(control.id);
     }
   }
+  const checklistOk = missing.length === 0;
+  const attested = report.attestedFromDevice === true;
   return {
-    ok: missing.length === 0,
+    ok: checklistOk,
     missing,
     biometricClaimed: Boolean(report.unsupportedBiometricClaimed),
-    note: "Do not present unsupported biometrics as available.",
+    bitlockerMapped: report.bitlocker === true,
+    attestedFromDevice: attested,
+    acceptanceStatus: attested && checklistOk ? "SECURITY_REVIEW" : "CODE_READY",
+    completeClaim: false,
+    note: attested
+      ? "Checklist plus device report received. Still not COMPLETE until operator signs the live device."
+      : "Policy checklist only. Not live device verification. Not COMPLETE.",
   };
 }
 

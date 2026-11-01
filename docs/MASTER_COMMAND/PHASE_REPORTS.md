@@ -98,3 +98,15 @@ Go-live: **NEEDS_APPROVAL**. Sales stay off.
 Approximate evidence-weighted progress of the 16-area command on **this branch**: ~35%.
 
 Do not treat the platform as a finished self-healing production ecosystem.
+
+## Special-16 Phase 1 — Inventory — COMPLETE (1 Nov 2026, 15:00 Europe/Berlin)
+
+Binding list is **not** the older 16 areas above. See `SPECIAL_16_PHASE1_INVENTORY.md` and `SPECIAL_16_TASKS.json`.
+
+No product code changed. No merge, deploy, sales, production restore, or push.
+
+Honest start: 2 COMMAND_GIVEN (textile, holidays), several PARTIAL/CODE_READY, Tax Connect + voice + live DR **BLOCKED**. Nothing COMPLETE on the new list except the Claude **forbid** gate (item 13 partial for owned skills).
+
+## Special-16 Phase 4 — Foundations — CODE_READY / PARTIAL (1 Nov 2026, 15:35 Europe/Berlin)
+
+See `SPECIAL_16_PHASE4_REPORT.md`. Egress now wraps live fetch. HMAC production lock. 26 tax pools without payment. Sanctions uncertainty → human. Device/textile/holidays not COMPLETE. No push/merge/sales.

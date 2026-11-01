@@ -10,6 +10,11 @@ const { AB27 } = require("../lib/commerce/ab27Tax");
 const { IDENTITIES } = require("../lib/marketing/influencerIdentities");
 const { assess: assessTaxConnect } = require("../lib/commerce/taxConnect");
 const { buildScorecard } = require("../lib/ecosystem/scorecard");
+const { listPools } = require("../lib/commerce/taxPools");
+const { assessTextile } = require("../lib/storefront/textileProgram");
+const { coverage } = require("../lib/storefront/holidayProgram");
+const { evaluateDevice } = require("../lib/security/deviceStandard");
+const { status: esatStatus } = require("../lib/security/esatBey");
 const supportedLocales = require("../../lib/i18n/supported-locales.json");
 
 module.exports = {
@@ -31,6 +36,11 @@ module.exports = {
         languages: supportedLocales.length,
         hubs: experts.hubCount,
         taxConnect: assessTaxConnect(),
+        taxPools: { countries: listPools().length, paymentAuthority: false },
+        textile: assessTextile(),
+        holidays: coverage(),
+        device: evaluateDevice({}),
+        esat: esatStatus(),
         scorecard: buildScorecard(),
       });
     });

@@ -19,12 +19,15 @@ function sandboxAuthorize({ amount = 0, currency = "EUR" } = {}) {
 }
 
 function capture(id) {
+  const { watchPaymentCapture } = require("../security/esatBey");
+  const esat = watchPaymentCapture(id);
   return {
     ok: false,
     id: id || null,
     code: "SALES_LOCKED",
     captured: false,
     live: false,
+    esat,
     message: "Capture refused. Sales and live payments stay off.",
   };
 }

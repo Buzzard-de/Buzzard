@@ -22,11 +22,21 @@ function loadSqlite() {
 function assertSafePath(target) {
   const resolved = path.resolve(target);
   if (resolved.startsWith("/var/data") || process.env.NODE_ENV === "production") {
+    try {
+      require("../security/esatBey").watchRestore("REFUSE_PRODUCTION_RESTORE", resolved);
+    } catch {
+      /* Esat is additive */
+    }
     const err = new Error("REFUSE_PRODUCTION_RESTORE");
     err.code = "REFUSE_PRODUCTION_RESTORE";
     throw err;
   }
   if (resolved.includes(`${path.sep}server${path.sep}data${path.sep}buzzard.db`)) {
+    try {
+      require("../security/esatBey").watchRestore("REFUSE_LIVE_DB", resolved);
+    } catch {
+      /* Esat is additive */
+    }
     const err = new Error("REFUSE_LIVE_DB");
     err.code = "REFUSE_LIVE_DB";
     throw err;

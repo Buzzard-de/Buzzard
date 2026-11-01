@@ -1,11 +1,18 @@
 /**
- * Egress allowlist — deny by default for classified data.
- * Does not prove production traffic; evaluates intended destinations only.
+ * Egress allowlist — deny by default.
+ * Live Render/GitHub firewall is still operator-owned.
  */
 const ALLOWLIST = Object.freeze([
   "buzzard24.de",
   "buzzard-api.onrender.com",
   "api.github.com",
+]);
+
+const FORBIDDEN_AI_HOSTS = Object.freeze([
+  "api.anthropic.com",
+  "api.openai.com",
+  "generativelanguage.googleapis.com",
+  "api.claude.ai",
 ]);
 
 const CLASSIFIED = Object.freeze(["customer", "order", "payment", "source_code", "finance", "ai_memory"]);
@@ -28,10 +35,27 @@ function hostOf(url) {
   }
 }
 
+function extraHosts() {
+  return String(process.env.BUZZARD_EGRESS_EXTRA_HOSTS || "")
+    .split(",")
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 function evaluateEgress({ destinationUrl, payload = {} } = {}) {
   const host = hostOf(destinationUrl);
   const classification = classify(payload);
-  const allowlisted = ALLOWLIST.includes(host);
+  if (FORBIDDEN_AI_HOSTS.includes(host)) {
+    return {
+      ok: false,
+      allowed: false,
+      code: "EXTERNAL_AI_EGRESS_DENIED",
+      host,
+      classification,
+      note: "Claude/OpenAI/Google AI hosts are never allowlisted.",
+    };
+  }
+  const allowlisted = ALLOWLIST.includes(host) || extraHosts().includes(host.toLowerCase());
   const sensitive = CLASSIFIED.includes(classification);
   if (sensitive && !allowlisted) {
     return {
@@ -67,6 +91,7 @@ function inventoryDependencies() {
 
 module.exports = {
   ALLOWLIST,
+  FORBIDDEN_AI_HOSTS,
   CLASSIFIED,
   classify,
   evaluateEgress,

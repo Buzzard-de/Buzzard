@@ -1,9 +1,9 @@
 {
   "command": "BUZZARD_SPECIAL_16",
-  "updatedAt": "2026-11-01T15:00:00+01:00",
+  "updatedAt": "2026-11-01T15:35:00+01:00",
   "timezone": "Europe/Berlin",
-  "branch": "cursor/special-16-inventory-c293",
-  "base": "cursor/master-ecosystem-c293",
+  "branch": "cursor/special-16-phase4-c293",
+  "base": "cursor/special-16-inventory-c293",
   "pr492": { "number": 492, "status": "NEEDS_APPROVAL" },
   "salesEnabled": false,
   "pushMergeDeploy": "NEEDS_APPROVAL",
@@ -17,11 +17,11 @@
       "previousCommandEvidence": "None as a product. textile_ai roster + cat-01 tree only.",
       "existingImplementation": "data/buzzard_categories.json cat-01; server/lib/pusat/council.js textile_ai; lib/navigation/home-config.ts TEXTIL campaign.",
       "missingFunctionality": "Hub page, media, measurements, try-on, privacy box.",
-      "changedFiles": [],
-      "tests": [],
+      "changedFiles": ["server/lib/storefront/textileProgram.js"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
       "securityReview": "Photos/measurements are personal data; opt-in required.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["T-TEXTILE hub skeleton after approval"],
+      "remainingTasks": ["Hub UI, slides, video, try-on"],
       "acceptanceStatus": "COMMAND_GIVEN"
     },
     {
@@ -45,11 +45,11 @@
       "previousCommandEvidence": "sanctionsCleared always false.",
       "existingImplementation": "ab27Logistics.screenTrade; pusat_trade_holds.",
       "missingFunctionality": "Live lists, dual-use engine, entity matching.",
-      "changedFiles": [],
-      "tests": ["server/__tests__/ab27Commerce.test.mjs"],
-      "securityReview": "False negative is worse than hold.",
+      "changedFiles": ["server/lib/commerce/sanctionsScreen.js"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "securityReview": "False negative is worse than hold. Uncertainty waits for a human.",
       "realEnvironmentVerification": "BLOCKED",
-      "remainingTasks": ["Static official-source matcher; no fake live feed"],
+      "remainingTasks": ["Live official lists after mandate"],
       "acceptanceStatus": "PARTIAL"
     },
     {
@@ -73,12 +73,12 @@
       "previousCommandEvidence": "AB27 VAT snapshot 27 rates; sales locked.",
       "existingImplementation": "ab27Tax.js; paymentSandbox capture refused.",
       "missingFunctionality": "Pool ledgers; 25% reserve posting; explicit non-DE payout deny.",
-      "changedFiles": [],
-      "tests": [],
-      "securityReview": "No live payouts.",
+      "changedFiles": ["server/lib/commerce/taxPools.js"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "securityReview": "No live payouts. payTax always denied.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["Ledger module without payment rails"],
-      "acceptanceStatus": "PARTIAL"
+      "remainingTasks": ["Durable sqlite ledger; advisor rates"],
+      "acceptanceStatus": "CODE_READY"
     },
     {
       "id": 6,
@@ -87,11 +87,11 @@
       "previousCommandEvidence": "None. bz.41 is a product category, not a calendar.",
       "existingImplementation": "Comment in ab27Logistics only.",
       "missingFunctionality": "Entire calendar + publish pipeline.",
-      "changedFiles": [],
-      "tests": [],
-      "securityReview": "Copyright check before publish.",
+      "changedFiles": ["server/lib/storefront/holidayProgram.js", "data/calendar/ab27_national_days.v1.json"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "securityReview": "Copyright check before publish. Publish blocked.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["T-HOLIDAY skeleton"],
+      "remainingTasks": ["Full 27-country sourced calendar"],
       "acceptanceStatus": "COMMAND_GIVEN"
     },
     {
@@ -143,11 +143,11 @@
       "previousCommandEvidence": "HMAC + e2eBox; audit F3.",
       "existingImplementation": "secureMessaging.js; e2eBox.js.",
       "missingFunctionality": "Esat gate; device identity; production secret required.",
-      "changedFiles": [],
-      "tests": ["server/__tests__/ecosystemSecurity.test.mjs"],
-      "securityReview": "HMAC is integrity only.",
+      "changedFiles": ["server/lib/security/secureMessaging.js"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs", "server/__tests__/ecosystemSecurity.test.mjs"],
+      "securityReview": "HMAC is integrity only. Production lock uses env secret only.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["T-HMAC-PROD; Esat review hook"],
+      "remainingTasks": ["Esat review hook; key vault"],
       "acceptanceStatus": "PARTIAL"
     },
     {
@@ -157,11 +157,11 @@
       "previousCommandEvidence": "deviceStandard checklist.",
       "existingImplementation": "server/lib/security/deviceStandard.js",
       "missingFunctionality": "OS attestation; BitLocker-named runbook; loss drill.",
-      "changedFiles": [],
-      "tests": [],
-      "securityReview": "Never auto-destroy recovery keys.",
+      "changedFiles": ["server/lib/security/deviceStandard.js"],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "securityReview": "Never auto-destroy recovery keys. completeClaim stays false.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["T-DEVICE-RUNBOOK"],
+      "remainingTasks": ["Live BitLocker/TPM attestation"],
       "acceptanceStatus": "CODE_READY"
     },
     {
@@ -213,11 +213,18 @@
       "previousCommandEvidence": "egress evaluator; not on fetch.",
       "existingImplementation": "egressPolicy.js",
       "missingFunctionality": "HTTP wrapper; live firewall proof.",
-      "changedFiles": [],
-      "tests": ["server/__tests__/ecosystemSecurity.test.mjs"],
-      "securityReview": "Do not claim live lock-down.",
+      "changedFiles": [
+        "server/lib/security/egressGuard.js",
+        "server/lib/security/egressPolicy.js",
+        "server/lib/intelligenceBridge.js",
+        "server/lib/guardianBridge.js",
+        "server/lib/orchestratorBridge.js",
+        "server/lib/commercialIntegrations.js"
+      ],
+      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "securityReview": "Denied destinations never reach fetch. Live firewall still unproven.",
       "realEnvironmentVerification": "BLOCKED",
-      "remainingTasks": ["T-EGRESS-WRAP"],
+      "remainingTasks": ["Operator firewall evidence"],
       "acceptanceStatus": "CODE_READY"
     },
     {

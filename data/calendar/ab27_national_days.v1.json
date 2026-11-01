@@ -1,0 +1,35 @@
+{
+  "schema": "buzzard.ab27-national-days.v1",
+  "note": "Sourced official pages. Not a complete 27-country legal calendar. Publish stays NEEDS_APPROVAL.",
+  "retrievedAt": "2026-11-01",
+  "days": [
+    {
+      "country": "DE",
+      "date": "10-03",
+      "name": "Tag der Deutschen Einheit",
+      "source": "https://www.bmi.bund.de",
+      "locale": "de"
+    },
+    {
+      "country": "FR",
+      "date": "07-14",
+      "name": "Fête nationale",
+      "source": "https://www.service-public.fr",
+      "locale": "fr"
+    },
+    {
+      "country": "IT",
+      "date": "06-02",
+      "name": "Festa della Repubblica",
+      "source": "https://www.governo.it",
+      "locale": "it"
+    },
+    {
+      "country": "PL",
+      "date": "11-11",
+      "name": "Narodowe Święto Niepodległości",
+      "source": "https://www.gov.pl",
+      "locale": "pl"
+    }
+  ]
+}

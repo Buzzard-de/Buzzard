@@ -7,9 +7,33 @@ const crypto = require("crypto");
 const { canShare } = require("../pusat/council");
 const { seal, open } = require("./e2eBox");
 
-function createMessenger({ secret = process.env.BUZZARD_MSG_HMAC } = {}) {
+const DEV_PLACEHOLDER = "dev-only-not-for-production";
+const PRODUCTION_MIN_LENGTH = 32;
+
+function isProductionLock() {
+  return process.env.NODE_ENV === "production" || process.env.BUZZARD_PRODUCTION === "1";
+}
+
+function resolveHmacSecret(passed) {
+  const envSecret = process.env.BUZZARD_MSG_HMAC;
+  if (isProductionLock()) {
+    if (!envSecret || envSecret === DEV_PLACEHOLDER || envSecret.length < PRODUCTION_MIN_LENGTH) {
+      return { ok: false, code: "HMAC_PRODUCTION_LOCK" };
+    }
+    return { ok: true, secret: envSecret };
+  }
+  const secret = passed === undefined ? envSecret : passed;
+  if (!secret || secret === DEV_PLACEHOLDER) {
+    return { ok: false, code: "HMAC_SECRET_REQUIRED" };
+  }
+  return { ok: true, secret };
+}
+
+function createMessenger({ secret } = {}) {
   const archive = [];
-  const configuredSecret = secret;
+  const resolved = resolveHmacSecret(secret);
+  const configuredSecret = resolved.ok ? resolved.secret : null;
+  const lockCode = resolved.ok ? null : resolved.code;
 
   function sign(body) {
     return crypto.createHmac("sha256", configuredSecret).update(body).digest("hex");
@@ -24,8 +48,8 @@ function createMessenger({ secret = process.env.BUZZARD_MSG_HMAC } = {}) {
     senderPrivateKey = null,
     recipientPublicKey = null,
   } = {}) {
-    if (!configuredSecret || configuredSecret === "dev-only-not-for-production") {
-      return { ok: false, code: "HMAC_SECRET_REQUIRED", e2e: false };
+    if (!configuredSecret) {
+      return { ok: false, code: lockCode || "HMAC_SECRET_REQUIRED", e2e: false };
     }
     if (!canShare({ fromId, toId, classification })) {
       return { ok: false, code: "SHARE_DENIED" };
@@ -87,4 +111,4 @@ function createMessenger({ secret = process.env.BUZZARD_MSG_HMAC } = {}) {
   };
 }
 
-module.exports = { createMessenger };
+module.exports = { createMessenger, resolveHmacSecret, PRODUCTION_MIN_LENGTH };

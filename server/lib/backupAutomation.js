@@ -147,6 +147,7 @@ function getBackupReadiness() {
     schedulerEnv: process.env.BUZZARD_BACKUP_CRON || null,
     offsiteConfigured: Boolean(process.env.BUZZARD_OFFSITE_BACKUP_DIR),
     scheme: "3-2-1-1-0-local",
+    lock: require("./survival/backupLock").assessBackupLock(),
     recommendation: "Schedule `node scripts/db-backup.mjs` via Render cron. Offsite stays BLOCKED until BUZZARD_OFFSITE_BACKUP_DIR is a separate host.",
   };
 }

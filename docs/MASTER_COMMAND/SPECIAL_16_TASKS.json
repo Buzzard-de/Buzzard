@@ -58,13 +58,13 @@
       "requirement": "27 isolated country files; verify authority; legal basis; phishing/fake-document defense; binding orders not blocked.",
       "previousCommandEvidence": "legalDisclosure helpers.",
       "existingImplementation": "server/lib/privacy/legalDisclosure.js; customerPrivacyReadiness.js.",
-      "missingFunctionality": "Per-country stores, authority verification, phishing engine.",
-      "changedFiles": [],
-      "tests": ["server/__tests__/ecosystemSecurity.test.mjs"],
-      "securityReview": "Do not hide lawful process.",
+      "missingFunctionality": "Live authority identity check; full 27-file disk isolation.",
+      "changedFiles": ["server/lib/privacy/countryVault.js", "server/lib/privacy/authorityGate.js"],
+      "tests": ["server/__tests__/remainingLocks.test.mjs"],
+      "securityReview": "Do not hide lawful process. Binding orders go to humans, not an auto-block.",
       "realEnvironmentVerification": "NOT_STARTED",
-      "remainingTasks": ["Country vault design"],
-      "acceptanceStatus": "PARTIAL"
+      "remainingTasks": ["Operator identity verification channel"],
+      "acceptanceStatus": "CODE_READY"
     },
     {
       "id": 5,

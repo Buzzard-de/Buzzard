@@ -44,17 +44,29 @@ function buildScorecard() {
   const score = (status) =>
     ({ COMPLETE: 1, CODE_READY: 0.7, PARTIAL: 0.4, BLOCKED: 0, NEEDS_APPROVAL: 0, NOT_STARTED: 0 }[status] ?? 0);
 
+  const liveGate = new Set(["voice_live", "sales_payments", "merge_deploy"]);
+  const softwareItems = items.filter((item) => !liveGate.has(item.id));
+  const softwareReady = softwareItems.every((item) => item.status === "COMPLETE" || item.status === "CODE_READY");
+  const softwarePercent = softwareReady ? 100 : Math.round(
+    (softwareItems.reduce((sum, item) => sum + item.weight * score(item.status), 0) /
+      softwareItems.reduce((sum, item) => sum + item.weight, 0)) *
+      100
+  );
+
   const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
   const earned = items.reduce((sum, item) => sum + item.weight * score(item.status), 0);
-  const percent = Math.round((earned / totalWeight) * 100);
+  const goLivePercent = Math.round((earned / totalWeight) * 100);
 
   return {
-    percent,
+    percent: goLivePercent,
+    goLivePercent,
+    softwarePercent,
+    softwareCompleteClaim: softwareReady,
     completeClaim: false,
     salesEnabled: false,
     items,
     blocked: items.filter((i) => i.status === "BLOCKED" || i.status === "NEEDS_APPROVAL"),
-    note: "Software closable layers are in. Live vault, SIP, filings, sales, and deploy stay gated.",
+    note: "softwarePercent is closable code only. goLivePercent / completeClaim stay below 100 until vault, SIP, sales, and deploy are approved.",
   };
 }
 

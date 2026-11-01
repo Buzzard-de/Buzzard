@@ -15,9 +15,12 @@ describe("ecosystem remaining-gap closure", () => {
   it("does not claim go-live 100% while sales and deploy need approval", () => {
     const card = buildScorecard();
     expect(card.completeClaim).toBe(false);
+    expect(card.softwareCompleteClaim).toBe(true);
+    expect(card.softwarePercent).toBe(100);
     expect(card.salesEnabled).toBe(false);
-    expect(card.percent).toBeGreaterThanOrEqual(60);
-    expect(card.percent).toBeLessThan(100);
+    expect(card.goLivePercent).toBeGreaterThanOrEqual(60);
+    expect(card.goLivePercent).toBeLessThan(100);
+    expect(card.percent).toBe(card.goLivePercent);
     expect(card.blocked.map((i) => i.id)).toEqual(expect.arrayContaining(["sales_payments", "merge_deploy", "voice_live"]));
     expect(card.items.find((i) => i.id === "e2e_crypto").status).toBe("COMPLETE");
   });

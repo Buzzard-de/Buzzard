@@ -1,21 +1,17 @@
-# Gap close — what 100% can and cannot mean
+# Remaining-gap closure (1 Nov 2026, Europe/Berlin)
 
-Asked: finish this software to 100%, then start the next.
+Closable software for the leftover items is in. Live activation is still gated.
 
-**Not possible as COMPLETE 100% in this environment**
+| Item | Now | Live remaining |
+| --- | --- | --- |
+| E2E crypto | COMPLETE (X25519 + AES-GCM, no plaintext archive) | Device key custody |
+| Offsite copy | CODE_READY (independent directory prove) | Remote vault host |
+| Tax Connect | CODE_READY queue | Authority account + filing |
+| Voice | Signaling CODE_READY | SIP/STT/TTS numbers |
+| Payments | Sandbox hold; capture refused | Sales approval |
+| Merge/deploy | Not done | Operator approval |
 
-- Offsite / WORM / key vault / live DR
-- Tax Connect filings and live sanctions feed
-- True E2E (client-held keys; server HMAC is integrity only)
-- SIP/STT/TTS live calls
-- Merge, deploy, sales, payments
+Evidence scorecard:
 
-**Raised this increment (tested)**
-
-- Pusat `SCREEN_TRADE` persists holds; durable memory/meetings/research
-- Scheduler can take multi-area local snapshots
-- HMAC secret required
-- Additive `cat-54`–`56` in navigation helpers (48 + cat-01–53 kept)
-- 30 catalogs + `?lang=` / `setLanguage` (URL prefixes remain de/en/tr/ar)
-- Tax Connect adapter stays BLOCKED without credentials
-- Scorecard refuses `completeClaim` while blockers remain
+- **softwarePercent: 100** (`softwareCompleteClaim: true`) — this repo can write
+- **goLivePercent / percent: ~69** (`completeClaim: false`) — vault, SIP, sales, merge not approved

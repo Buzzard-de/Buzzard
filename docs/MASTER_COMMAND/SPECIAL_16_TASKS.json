@@ -216,12 +216,18 @@
       "changedFiles": [
         "server/lib/security/egressGuard.js",
         "server/lib/security/egressPolicy.js",
+        "lib/security/browserConnect.js",
+        "lib/security/browserConnect.ts",
         "server/lib/intelligenceBridge.js",
         "server/lib/guardianBridge.js",
         "server/lib/orchestratorBridge.js",
         "server/lib/commercialIntegrations.js"
       ],
-      "tests": ["server/__tests__/special16Phase4.test.mjs"],
+      "tests": [
+        "server/__tests__/special16Phase4.test.mjs",
+        "server/__tests__/egress42.test.mjs",
+        "server/__tests__/egress43.test.mjs"
+      ],
       "securityReview": "Denied destinations never reach fetch. Live firewall still unproven.",
       "realEnvironmentVerification": "BLOCKED",
       "remainingTasks": ["Operator firewall evidence"],

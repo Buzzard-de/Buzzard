@@ -69,8 +69,20 @@ function extraHosts() {
     .filter((h) => !isForbiddenAiHost(h) && !isPaymentHost(h) && !isIpLiteral(h));
 }
 
+function isRebindLookalike(host) {
+  const h = String(host || "").toLowerCase();
+  return (
+    /\b127\.0\.0\.1\b/.test(h) ||
+    h.includes("localhost.") ||
+    h.endsWith(".nip.io") ||
+    h.endsWith(".sslip.io") ||
+    h.endsWith(".localtest.me")
+  );
+}
+
 function isPrivateOrLocalHost(host) {
   const h = String(host || "").toLowerCase().replace(/^\[|\]$/g, "");
+  if (isRebindLookalike(h)) return true;
   if (h === "localhost" || h === "metadata.google.internal") return true;
   if (h === "0.0.0.0" || h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd")) return true;
   const ipv4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
@@ -169,5 +181,6 @@ module.exports = {
   isForbiddenAiHost,
   isPaymentHost,
   isPrivateOrLocalHost,
+  isRebindLookalike,
   inventoryDependencies,
 };

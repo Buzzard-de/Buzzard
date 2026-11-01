@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatMenuLabel, getCategoryLabel, toCategoryDisplayUpperCase } from "./i18n";
+import { getHubExtensions, getMainCategories } from "./service";
 
 describe("category labels", () => {
   it("uses Turkish catalog for main categories, not English", () => {
@@ -14,6 +15,14 @@ describe("category labels", () => {
     expect(toCategoryDisplayUpperCase("Otomotiv", "tr")).toBe("OTOMOTİV");
     expect(formatMenuLabel({ id: "cat-01", menu_order: 1, name: "Textil" }, "tr")).toBe("01. TEKSTİL");
     expect(formatMenuLabel({ id: "cat-05", menu_order: 5, name: "Automotive" }, "tr")).toBe("05. OTOMOTİV");
+  });
+
+  it("adds hub L1 extensions without dropping existing mains", () => {
+    const mains = getMainCategories();
+    expect(mains.some((c) => c.id === "cat-01")).toBe(true);
+    expect(mains.some((c) => c.id === "cat-53")).toBe(true);
+    expect(getHubExtensions().map((h) => h.id)).toEqual(["cat-54", "cat-55", "cat-56"]);
+    expect(mains.length).toBeGreaterThanOrEqual(56);
   });
 
   it("keeps German and English catalogs", () => {

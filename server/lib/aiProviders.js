@@ -25,6 +25,11 @@ function isProviderConfigured(name) {
 
 async function executeWithProvider({ provider, prompt, context }) {
   const active = provider || getActiveProvider();
+  const { assertIndependentRuntime } = require("./ai/independentCapabilities");
+  const independence = assertIndependentRuntime(active);
+  if (!independence.ok) {
+    return independence;
+  }
   if (active === PROVIDERS.STUB) {
     return {
       ok: true,

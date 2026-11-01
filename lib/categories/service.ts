@@ -1,5 +1,6 @@
 import type { BuzzardCategory } from "./types";
 import { categoryCatalog } from "./source";
+import hubExtensions from "@/data/taxonomy/shop_hub_l1_extensions.json";
 
 const { categories } = categoryCatalog;
 
@@ -33,8 +34,29 @@ function indexTree(
 
 indexTree(categories);
 
+const hubCategories: BuzzardCategory[] = ((hubExtensions as { hubs?: Array<{ shop_id: string; name: string; slug: string }> })
+  .hubs || [])
+  .filter((hub) => !byId.has(hub.shop_id))
+  .map((hub, index) => {
+    const node: BuzzardCategory = {
+      id: hub.shop_id,
+      menu_order: 54 + index,
+      name: hub.name,
+      slug: hub.slug,
+      url: `${CATEGORY_PATH}/${hub.slug}`,
+      level: 1,
+      children: [],
+    };
+    register(node, [hub.slug]);
+    return node;
+  });
+
 export function getMainCategories(): BuzzardCategory[] {
-  return [...categories].sort((a, b) => a.menu_order - b.menu_order);
+  return [...categories, ...hubCategories].sort((a, b) => a.menu_order - b.menu_order);
+}
+
+export function getHubExtensions(): BuzzardCategory[] {
+  return [...hubCategories];
 }
 
 const CUSTOMER_VISIBLE: Set<string> = new Set(["ACTIVE", "COMING_SOON"]);

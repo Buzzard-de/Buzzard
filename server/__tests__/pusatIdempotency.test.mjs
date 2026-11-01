@@ -191,15 +191,16 @@ describe("pusat idempotency service", () => {
   it("wraps Pusat read-only dispatch without enabling sales or exclusive SoT", async () => {
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const pusat = await import("../lib/pusat/runtime.js");
+    const idempotencyKey = `runtime-ping-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const first = await pusat.dispatch({
       action: "PING",
       payload: {},
-      idempotencyKey: "runtime-ping-1",
+      idempotencyKey,
     });
     const second = await pusat.dispatch({
       action: "PING",
       payload: {},
-      idempotencyKey: "runtime-ping-1",
+      idempotencyKey,
     });
     expect(first.result.ok).toBe(true);
     expect(first.replayed).toBe(false);

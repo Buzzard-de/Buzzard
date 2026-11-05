@@ -10,6 +10,8 @@ const {
   evaluateResolvedAddresses,
   extraHosts,
   SHARED,
+  unwrapIpv4Mapped,
+  policyFingerprint,
 } = require("../lib/security/egressPolicy.js");
 const { guardedFetch, resetEgressAudit, setDnsLookup } = require("../lib/security/egressGuard.js");
 const { evaluateBrowserConnect } = require("../../lib/security/browserConnect.js");
@@ -38,6 +40,15 @@ describe("egress 4.4 multilayer", () => {
     expect(evaluateEgress({ destinationUrl: "https://224.0.0.1/" }).code).toBe("PRIVATE_OR_IP_DENIED");
     expect(evaluateResolvedAddresses(["169.254.169.254"], "buzzard24.de").code).toBe("RESOLVED_IP_DENIED");
     expect(evaluateResolvedAddresses(["203.0.113.8"], "buzzard24.de").allowed).toBe(true);
+  });
+
+  it("treats IPv4-mapped IPv6 as the inner IPv4 for private/metadata checks", () => {
+    expect(unwrapIpv4Mapped("::ffff:127.0.0.1")).toBe("127.0.0.1");
+    expect(evaluateEgress({ destinationUrl: "https://[::ffff:127.0.0.1]/" }).code).toBe("PRIVATE_OR_IP_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://[::ffff:169.254.169.254]/" }).code).toBe("PRIVATE_OR_IP_DENIED");
+    expect(policyFingerprint()).toMatch(/^[a-f0-9]{64}$/);
+    expect(SHARED.allowlist).not.toContain("api.ebay.com");
+    expect(SHARED.allowlist).not.toContain("api.stripe.com");
   });
 
   it("does not let proxy env or extra hosts open AI or payments", () => {

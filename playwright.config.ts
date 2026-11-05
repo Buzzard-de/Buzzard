@@ -28,7 +28,7 @@ export default defineConfig({
   projects: [
     {
       name: "api",
-      testMatch: /commerce-(storefront|security)\.spec\.ts/,
+      testMatch: /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {

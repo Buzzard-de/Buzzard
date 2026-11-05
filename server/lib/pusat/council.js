@@ -116,6 +116,61 @@ const MEMBERS = Object.freeze([
     share: [CLASSIFICATION.PUBLIC],
     mustDiscloseAiIdentity: true,
   },
+  {
+    id: "customs_ai",
+    name: "Customs AI",
+    role: "customs_trade",
+    permissions: ["customs.read", "trade.screen"],
+    share: [CLASSIFICATION.PUBLIC],
+    cannotAutoClearSanctions: true,
+    cannotFileDeclaration: true,
+  },
+  {
+    id: "phone_ai",
+    name: "Phone AI",
+    role: "voice_channel",
+    permissions: ["voice.route"],
+    share: [CLASSIFICATION.PUBLIC],
+    liveCalls: false,
+  },
+  {
+    id: "customer_ai",
+    name: "Customer Assistant",
+    role: "customer_support",
+    permissions: ["customer.read"],
+    share: [CLASSIFICATION.PUBLIC],
+  },
+  {
+    id: "price_ai",
+    name: "Price Assistant",
+    role: "pricing",
+    permissions: ["price.read"],
+    share: [CLASSIFICATION.PUBLIC],
+    cannotSetLivePrice: true,
+  },
+  {
+    id: "stock_ai",
+    name: "Stock Assistant",
+    role: "inventory_signal",
+    permissions: ["stock.read"],
+    share: [CLASSIFICATION.PUBLIC],
+    cannotBuyStock: true,
+  },
+  {
+    id: "seo_ai",
+    name: "SEO Assistant",
+    role: "seo",
+    permissions: ["seo.draft"],
+    share: [CLASSIFICATION.PUBLIC],
+  },
+  {
+    id: "sales_analysis_ai",
+    name: "Sales Analysis Assistant",
+    role: "sales_analysis",
+    permissions: ["sales.read"],
+    share: [CLASSIFICATION.PUBLIC],
+    cannotEnableSales: true,
+  },
 ]);
 
 function getMember(id) {
@@ -175,6 +230,10 @@ function roster() {
     cannotExecutePayments: Boolean(m.cannotExecutePayments),
     cannotChair: Boolean(m.cannotChair),
     assistantOnly: Boolean(m.assistantOnly),
+    cannotAutoClearSanctions: Boolean(m.cannotAutoClearSanctions),
+    cannotEnableSales: Boolean(m.cannotEnableSales),
+    cannotBuyStock: Boolean(m.cannotBuyStock),
+    liveCalls: m.liveCalls === true,
   }));
 }
 

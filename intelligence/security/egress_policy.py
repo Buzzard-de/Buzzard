@@ -86,8 +86,20 @@ def extra_hosts() -> list[str]:
     return out
 
 
-def is_private_or_local_host(host: str) -> bool:
+def unwrap_ipv4_mapped(host: str) -> str:
     h = (host or "").lower().strip("[]")
+    if h.startswith("::ffff:"):
+        tail = h[7:]
+        try:
+            ipaddress.IPv4Address(tail)
+            return tail
+        except ValueError:
+            return h
+    return h
+
+
+def is_private_or_local_host(host: str) -> bool:
+    h = unwrap_ipv4_mapped(host)
     if is_rebind_lookalike(h):
         return True
     if h in {"localhost", "metadata.google.internal", "0.0.0.0", "::1"}:

@@ -33,7 +33,9 @@ class Egress44Python(unittest.TestCase):
         self.assertTrue(is_private_or_local_host("127.0.0.1.nip.io"))
         self.assertTrue(is_private_or_local_host("224.0.0.1"))
         self.assertTrue(is_private_or_local_host("169.254.169.254"))
+        self.assertTrue(is_private_or_local_host("::ffff:127.0.0.1"))
         self.assertEqual(evaluate_egress("https://127.0.0.1.nip.io/")["code"], "PRIVATE_OR_IP_DENIED")
+        self.assertEqual(evaluate_egress("https://[::ffff:169.254.169.254]/")["code"], "PRIVATE_OR_IP_DENIED")
 
     def test_extra_hosts_cannot_unlock_ai(self):
         os.environ["BUZZARD_EGRESS_EXTRA_HOSTS"] = "*.openai.com,api.openai.com,api.ebay.com"

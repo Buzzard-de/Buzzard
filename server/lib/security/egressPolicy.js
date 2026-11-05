@@ -73,8 +73,14 @@ function isRebindLookalike(host) {
   );
 }
 
-function isPrivateOrLocalHost(host) {
+function unwrapIpv4Mapped(host) {
   const h = String(host || "").toLowerCase().replace(/^\[|\]$/g, "");
+  const mapped = h.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/);
+  return mapped ? mapped[1] : h;
+}
+
+function isPrivateOrLocalHost(host) {
+  const h = unwrapIpv4Mapped(host);
   if (isRebindLookalike(h)) return true;
   if (h === "localhost" || h === "metadata.google.internal") return true;
   if (h === "0.0.0.0" || h === "::1" || h.startsWith("fe80:") || h.startsWith("fc") || h.startsWith("fd") || h.startsWith("ff")) {
@@ -167,6 +173,11 @@ function evaluateEgress({ destinationUrl, payload = {} } = {}) {
   return { ok: true, allowed: true, host, classification };
 }
 
+function policyFingerprint() {
+  const crypto = require("crypto");
+  return crypto.createHash("sha256").update(JSON.stringify(SHARED)).digest("hex");
+}
+
 function inventoryDependencies() {
   return {
     storefront: "GitHub Pages / buzzard24.de",
@@ -191,4 +202,6 @@ module.exports = {
   evaluateResolvedAddresses,
   inventoryDependencies,
   SHARED,
+  unwrapIpv4Mapped,
+  policyFingerprint,
 };

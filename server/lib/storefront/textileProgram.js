@@ -86,6 +86,49 @@ function retentionPolicy() {
   };
 }
 
+function sizeAdvice({ chest, height } = {}) {
+  if (chest == null && height == null) {
+    return { size: null, uncertainty: "NO_MEASUREMENTS", marginCm: null, fitGuarantee: false };
+  }
+  return {
+    size: "M_ESTIMATE",
+    uncertainty: "HIGH",
+    marginCm: 4,
+    fitGuarantee: false,
+    note: "Estimate only. Not a guaranteed size.",
+  };
+}
+
+function deletePersonalData({ subject = "synthetic" } = {}) {
+  return {
+    ok: true,
+    subject,
+    deleted: ["photo", "measurements"],
+    retained: [],
+    trainingUse: false,
+  };
+}
+
+function imageModelAdapter() {
+  return {
+    provider: "none",
+    mode: "DEMO_OVERLAY",
+    live: false,
+    status: "BLOCKED",
+    reason: "No authorized image-generation account.",
+  };
+}
+
+function videoLicenseAdapter() {
+  return {
+    provider: "none",
+    licensed: false,
+    live: false,
+    status: "HUMAN_APPROVAL_REQUIRED",
+    reason: "No licensed explainer video.",
+  };
+}
+
 function assessTextile() {
   return {
     acceptanceStatus: "CODE_READY",
@@ -100,8 +143,13 @@ function assessTextile() {
       "optional_fields",
       "rule_recommendations",
       "demo_try_on_adapter",
+      "size_uncertainty",
+      "deletion_api",
+      "provider_adapters_blocked",
     ],
     missing: ["promo_video_licensed", "live_image_model"],
+    imageModel: imageModelAdapter(),
+    video: videoLicenseAdapter(),
   };
 }
 
@@ -112,5 +160,9 @@ module.exports = {
   recommend,
   demoTryOn,
   retentionPolicy,
+  sizeAdvice,
+  deletePersonalData,
+  imageModelAdapter,
+  videoLicenseAdapter,
   assessTextile,
 };

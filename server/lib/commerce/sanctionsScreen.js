@@ -87,4 +87,60 @@ function decideOutcome(input = {}) {
   return { outcome: "HUMAN_REVIEW", code: "NO_LIVE_FEED" };
 }
 
-module.exports = { screenCompliance, unclearMatch, DUAL_USE_HINTS, listFreshness, decideOutcome };
+const SOURCE_ADAPTERS = Object.freeze([
+  { id: "eu_sanctions_map", url: "https://www.sanctionsmap.eu", live: false, status: "BLOCKED" },
+  { id: "un_sanctions", url: "https://www.un.org/securitycouncil/sanctions", live: false, status: "BLOCKED" },
+  { id: "de_federal", url: "https://www.bafa.de", live: false, status: "BLOCKED" },
+  { id: "eu_dual_use", url: "https://eur-lex.europa.eu", live: false, status: "BLOCKED" },
+]);
+
+const RESCREEN_STAGES = Object.freeze([
+  "BEFORE_ORDER_ACCEPTANCE",
+  "BEFORE_SUPPLIER_SELECTION",
+  "BEFORE_PAYMENT_AUTHORIZATION",
+  "BEFORE_SHIPMENT",
+  "ON_LIST_CHANGE",
+  "ON_DESTINATION_OR_PARTY_CHANGE",
+]);
+
+function classifyGoods({ hs, cn, taric, description = "" } = {}) {
+  const incomplete = !hs && !cn && !taric && String(description).trim().length < 12;
+  return {
+    hs: hs || null,
+    cn: cn || null,
+    taric: taric || null,
+    binding: false,
+    incomplete,
+    note: incomplete
+      ? "Incomplete description — not a legally binding classification."
+      : "Local hint only. Not a binding HS/CN/TARIC ruling.",
+  };
+}
+
+function rescreen(input = {}) {
+  const stage = RESCREEN_STAGES.includes(input.stage) ? input.stage : "BEFORE_ORDER_ACCEPTANCE";
+  const decision = decideOutcome(input);
+  if (decision.outcome !== "HUMAN_REVIEW" && input.autoApprove === true) {
+    return { ok: false, stage, outcome: "HUMAN_REVIEW", code: "AUTO_APPROVE_FORBIDDEN" };
+  }
+  const screen = screenCompliance(input);
+  return {
+    ...screen,
+    stage,
+    outcome: screen.status === "HUMAN_REVIEW" ? "HUMAN_REVIEW" : decision.outcome,
+    autoApproved: false,
+    liveList: false,
+  };
+}
+
+module.exports = {
+  screenCompliance,
+  unclearMatch,
+  DUAL_USE_HINTS,
+  listFreshness,
+  decideOutcome,
+  SOURCE_ADAPTERS,
+  RESCREEN_STAGES,
+  classifyGoods,
+  rescreen,
+};

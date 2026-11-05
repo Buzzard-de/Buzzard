@@ -30,6 +30,17 @@ function publishBanner() {
   };
 }
 
+function previewPack({ country, today = "2026-11-01" } = {}) {
+  const preview = previewBanner({ country, today });
+  return {
+    ...preview,
+    banner: preview.hit ? { title: preview.hit.name, locale: preview.hit.locale || null } : null,
+    video: { licensed: false, published: false },
+    culturalReview: false,
+    productionPublish: false,
+  };
+}
+
 function coverage() {
   const covered = new Set(calendar.days.map((d) => d.country));
   return {
@@ -41,4 +52,4 @@ function coverage() {
   };
 }
 
-module.exports = { listDays, previewBanner, publishBanner, coverage };
+module.exports = { listDays, previewBanner, previewPack, publishBanner, coverage };

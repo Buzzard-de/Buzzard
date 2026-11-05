@@ -52,4 +52,14 @@ function escalateIncident({ severity, quietHours = false } = {}) {
   return { notify: true, channel: "in_app", liveCallPlaced: false };
 }
 
-module.exports = { assessVoice, authorizeOutbound, scheduleCouncilMeeting, escalateIncident };
+function providerAdapters() {
+  return [
+    { id: "sip", configured: false, status: "BLOCKED" },
+    { id: "twilio", configured: false, status: "BLOCKED" },
+    { id: "stt", configured: false, status: "CODE_READY" },
+    { id: "tts", configured: false, status: "CODE_READY" },
+    { id: "stun_turn", configured: false, status: "BLOCKED" },
+  ];
+}
+
+module.exports = { assessVoice, authorizeOutbound, scheduleCouncilMeeting, escalateIncident, providerAdapters };

@@ -87,6 +87,24 @@ function explainReserve(netIncome) {
   };
 }
 
+function periodReport({ country, period = "2026-Q4" } = {}) {
+  const row = snapshot(country);
+  if (!row) return { ok: false, code: countryKey(country) === "DE" ? "DE_SEPARATE" : "NOT_A_POOL_COUNTRY" };
+  const vatHint = estimateVat({ country: row.country, netAmount: Math.max(0, row.postedNet) });
+  return {
+    ok: true,
+    period,
+    country: row.country,
+    revenueNet: row.postedNet,
+    reserve: row.reserve,
+    spendable: row.spendable,
+    estimatedVat: vatHint.ok ? vatHint.vat : null,
+    dueDate: null,
+    liveBooks: false,
+    paymentAuthority: false,
+  };
+}
+
 function resetPools() {
   for (const code of POOL_COUNTRIES) {
     pools[code] = { postedNet: 0, reserve: 0, spendable: 0 };
@@ -102,5 +120,6 @@ module.exports = {
   payTax,
   postExpense,
   explainReserve,
+  periodReport,
   resetPools,
 };

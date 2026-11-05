@@ -87,6 +87,8 @@ function createDoguDesk({ now = () => new Date() } = {}) {
       routedBy: "pusat",
       title: developmentTask,
       status: "OPEN",
+      purchaseAuthorized: false,
+      paymentAuthorized: false,
       createdAt: now().toISOString(),
     };
     tasks.push(task);

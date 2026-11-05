@@ -152,7 +152,8 @@ function compareCarriers({ destination, weightKg = 1, preferSpeed = false } = {}
     selected,
     selectionReason: preferSpeed ? "speed_then_cost" : "cost_then_coverage",
     liveCarrier: false,
-    sandbox: true,
+    sandbox: false,
+    mock: true,
   };
 }
 

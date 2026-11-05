@@ -122,7 +122,10 @@ export default function TextileAiEntry() {
             <input type="file" name="photo" accept="image/*" />
           </label>
         ) : null}
-        <p className="textile-ai-demo-note">Try-on: DEMO — keine Passformgarantie — LIVE_VERIFIED nicht gesetzt.</p>
+        <p className="textile-ai-demo-note">
+          Try-on: DEMO-Overlay, kein Live-Bildmodell. Größenhinweis ungenau (±4 cm). Keine Passformgarantie.
+          LIVE_VERIFIED nicht gesetzt.
+        </p>
         <button type="submit">Empfehlung anfragen</button>
       </form>
       {recommendation ? (

@@ -93,4 +93,41 @@ function verifyOfficialRequest(input = {}) {
   };
 }
 
-module.exports = { reviewRequest, looksPhish, PHISH_HINTS, verifyOfficialRequest };
+function nationalProcedure({ originCountry = "DE", requestCountry = "DE" } = {}) {
+  const origin = String(originCountry || "").toUpperCase();
+  const request = String(requestCountry || "").toUpperCase();
+  if (origin === "DE" && request === "DE") {
+    return { route: "DE_NATIONAL", germanyFederalApprovalAlwaysRequired: false };
+  }
+  if (origin === "DE" && request !== "DE") {
+    return {
+      route: "CROSS_BORDER_TO_DE_RECORDS",
+      germanyFederalApprovalAlwaysRequired: false,
+      note: "Apply the competent German/EU channel for the specific instrument. Do not assume every EU request needs a federal approval stamp.",
+    };
+  }
+  return {
+    route: "FOREIGN_COMPETENT_AUTHORITY",
+    germanyFederalApprovalAlwaysRequired: false,
+    note: "Verify the requesting state's lawful channel. Do not invent a universal rule.",
+  };
+}
+
+function retentionForSignals() {
+  return {
+    ipDays: 30,
+    asnIsIdentity: false,
+    vpnIsIdentity: false,
+    torIsIdentity: false,
+    purpose: "security_risk_signal_only",
+  };
+}
+
+module.exports = {
+  reviewRequest,
+  looksPhish,
+  PHISH_HINTS,
+  verifyOfficialRequest,
+  nationalProcedure,
+  retentionForSignals,
+};

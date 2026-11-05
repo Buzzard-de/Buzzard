@@ -1,0 +1,29 @@
+# National postal operators
+
+- AT: Österreichische Post AG / Österreichische Post
+- BE: bpost / bpost
+- BG: Bulgarian Posts / Bulgarian Posts
+- HR: Croatian Post Inc. / Hrvatska pošta
+- CY: Department of Postal Services (Cyprus Post) / Cyprus Post
+- CZ: Česká pošta, s.p. / Česká pošta
+- DK: Post Danmark A/S / PostNord Danmark
+- EE: Estonian Post Ltd / Omniva
+- FI: Posti Jakelu Ltd / Posti Ltd / Posti
+- FR: La Poste / La Poste
+- DE: Deutsche Post AG / Deutsche Post / DHL
+- EL: Hellenic Post S.A. (ELTA) / ELTA
+- HU: Magyar Posta / Magyar Posta
+- IE: An Post / An Post
+- IT: Poste Italiane S.p.A. / Poste Italiane
+- LV: SJSC Latvijas Pasts / Latvijas Pasts
+- LT: AB Lietuvos paštas / Lietuvos paštas
+- LU: POST Luxembourg / POST Luxembourg
+- MT: Maltapost plc / MaltaPost
+- NL: PostNL / PostNL
+- PL: Polish Post Ltd / Poczta Polska / Poczta Polska
+- PT: CTT – Correios de Portugal S.A. / CTT
+- RO: Compania Națională Poșta Română S.A. / Poșta Română
+- SK: Slovenská pošta, a.s. / Slovenská pošta
+- SI: Pošta Slovenije d.o.o. / Pošta Slovenije
+- ES: Sociedad Estatal Correos y Telégrafos / Correos
+- SE: PostNord Group AB / PostNord

@@ -1,0 +1,29 @@
+# National postal operators (UPU 15 Feb 2025)
+
+- AT: **Österreichische Post AG** (Österreichische Post) — https://www.post.at
+- BE: **bpost** (bpost) — https://www.bpost.be
+- BG: **Bulgarian Posts** (Bulgarian Posts) — https://www.bgpost.bg
+- HR: **Croatian Post Inc.** (Hrvatska pošta) — https://www.posta.hr
+- CY: **Department of Postal Services (Cyprus Post)** (Cyprus Post) — https://www.cypruspost.post
+- CZ: **Česká pošta, s.p.** (Česká pošta) — https://www.ceskaposta.cz
+- DK: **Post Danmark A/S** (PostNord Danmark) — https://www.postnord.dk
+- EE: **Estonian Post Ltd** (Omniva) — https://www.omniva.ee
+- FI: **Posti Jakelu Ltd / Posti Ltd** (Posti) — https://www.posti.fi
+- FR: **La Poste** (La Poste) — https://www.laposte.fr
+- DE: **Deutsche Post AG** (Deutsche Post / DHL) — https://www.deutschepost.de
+- EL: **Hellenic Post S.A. (ELTA)** (ELTA) — https://www.elta.gr
+- HU: **Magyar Posta** (Magyar Posta) — https://www.posta.hu
+- IE: **An Post** (An Post) — https://www.anpost.com
+- IT: **Poste Italiane S.p.A.** (Poste Italiane) — https://www.poste.it
+- LV: **SJSC Latvijas Pasts** (Latvijas Pasts) — https://www.pasts.lv
+- LT: **AB Lietuvos paštas** (Lietuvos paštas) — https://www.post.lt
+- LU: **POST Luxembourg** (POST Luxembourg) — https://www.post.lu
+- MT: **Maltapost plc** (MaltaPost) — https://www.maltapost.com
+- NL: **PostNL** (PostNL) — https://www.postnl.nl
+- PL: **Polish Post Ltd / Poczta Polska** (Poczta Polska) — https://www.poczta-polska.pl
+- PT: **CTT – Correios de Portugal S.A.** (CTT) — https://www.ctt.pt
+- RO: **Compania Națională Poșta Română S.A.** (Poșta Română) — https://www.posta-romana.ro
+- SK: **Slovenská pošta, a.s.** (Slovenská pošta) — https://www.posta.sk
+- SI: **Pošta Slovenije d.o.o.** (Pošta Slovenije) — https://www.posta.si
+- ES: **Sociedad Estatal Correos y Telégrafos** (Correos) — https://www.correos.es
+- SE: **PostNord Group AB** (PostNord) — https://www.postnord.se

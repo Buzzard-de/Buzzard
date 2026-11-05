@@ -68,4 +68,23 @@ function screenCompliance(input = {}) {
   };
 }
 
-module.exports = { screenCompliance, unclearMatch, DUAL_USE_HINTS };
+function listFreshness({ retrievedAt, maxAgeHours = 24 } = {}) {
+  if (!retrievedAt) return { fresh: false, code: "STALE_OR_MISSING_LIST" };
+  const age = Date.now() - new Date(retrievedAt).getTime();
+  if (Number.isNaN(age) || age > maxAgeHours * 3600 * 1000) {
+    return { fresh: false, code: "STALE_LIST" };
+  }
+  return { fresh: true, code: "FRESH" };
+}
+
+function decideOutcome(input = {}) {
+  const freshness = listFreshness(input);
+  if (!freshness.fresh) return { outcome: "HUMAN_REVIEW", code: freshness.code };
+  if (input.prohibited === true) return { outcome: "PROHIBITED", code: "LISTED_PARTY" };
+  if (input.licenseRequired === true) return { outcome: "LICENSE_REQUIRED", code: "EXPORT_LICENSE" };
+  if (input.exactMatch === true) return { outcome: "MATCH_SUSPECTED", code: "NAME_MATCH" };
+  if (input.dualUse === true) return { outcome: "REVIEW_REQUIRED", code: "DUAL_USE_DECLARED" };
+  return { outcome: "HUMAN_REVIEW", code: "NO_LIVE_FEED" };
+}
+
+module.exports = { screenCompliance, unclearMatch, DUAL_USE_HINTS, listFreshness, decideOutcome };

@@ -113,9 +113,55 @@ function quoteLane({ destination, weightKg = 1 } = {}) {
   };
 }
 
+const CARRIERS = Object.freeze(["DHL", "DPD", "GLS", "HERMES", "UPS", "POSTNL", "LAPOSTE", "CORREOS", "POCZTA"]);
+
+function carrierMatrix() {
+  return AB27.map((country) => ({
+    country,
+    DHL: true,
+    DPD: country !== "CY" && country !== "MT",
+    GLS: !["CY", "MT", "IE"].includes(country),
+    HERMES: ["DE", "AT", "NL", "BE"].includes(country),
+    UPS: true,
+    nationalPost: true,
+    amazonLogistics: ["DE", "FR", "IT", "ES"].includes(country),
+    liveApi: false,
+    note: "Capability estimate for planning. Not a contracted live rate.",
+  }));
+}
+
+function compareCarriers({ destination, weightKg = 1, preferSpeed = false } = {}) {
+  const dest = String(destination || "").toUpperCase();
+  const destKey = dest === "GR" ? "EL" : dest;
+  const row = carrierMatrix().find((c) => c.country === destKey);
+  if (!row) return { ok: false, code: "UNKNOWN_DESTINATION" };
+  const options = ["DHL", "UPS", row.DPD ? "DPD" : null, row.GLS ? "GLS" : null, row.HERMES ? "HERMES" : null]
+    .filter(Boolean)
+    .map((carrier, index) => {
+      const days = preferSpeed && carrier === "DHL" ? 1 : 2 + index;
+      const cost = Math.round((6 + weightKg * (carrier === "UPS" ? 1.8 : 1.2) + index) * 100) / 100;
+      return { carrier, costEur: cost, transitDays: days, liveRate: false, insurance: "optional" };
+    });
+  const selected = preferSpeed
+    ? options.reduce((a, b) => (a.transitDays <= b.transitDays ? a : b))
+    : options.reduce((a, b) => (a.costEur <= b.costEur ? a : b));
+  return {
+    ok: true,
+    destination: destKey,
+    options,
+    selected,
+    selectionReason: preferSpeed ? "speed_then_cost" : "cost_then_coverage",
+    liveCarrier: false,
+    sandbox: true,
+  };
+}
+
 module.exports = {
   OFFICIAL_SOURCES,
   COUNTRY_RULES,
+  CARRIERS,
   screenTrade,
   quoteLane,
+  carrierMatrix,
+  compareCarriers,
 };

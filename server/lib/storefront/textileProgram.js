@@ -35,16 +35,82 @@ function recordMeasurement({ consentMeasurements, values } = {}) {
   };
 }
 
+function recommend({ audience, occasion, profession } = {}) {
+  const reasons = [];
+  let line = "daily";
+  if (occasion === "work" || profession) {
+    line = "workwear";
+    reasons.push("Beruf/Anlass Arbeit → Berufskleidung");
+  } else if (occasion === "formal") {
+    line = "formal";
+    reasons.push("Festlicher Anlass → formelle Linie");
+  } else if (occasion === "sport") {
+    line = "sport";
+    reasons.push("Sportanlass");
+  } else {
+    reasons.push("Kein Pflichtfeld gesetzt — Alltagsvorschlag");
+  }
+  if (audience === "children" || audience === "youth") {
+    reasons.push("Jugend/Kinder — kein Erwachsenen-Schnitt");
+  }
+  return {
+    ok: true,
+    line,
+    audience: audience || null,
+    reasons,
+    fitGuarantee: false,
+    liveTryOn: false,
+  };
+}
+
+function demoTryOn({ consentPhoto, angles = ["front"] } = {}) {
+  const gate = privacyGate({ consentPhoto });
+  if (!gate.storePhoto) {
+    return { ok: false, code: "CONSENT_REQUIRED", liveTryOn: false };
+  }
+  return {
+    ok: true,
+    liveTryOn: false,
+    demo: true,
+    angles,
+    note: "DEMO overlay only. Not a body-fit guarantee. No live image model.",
+  };
+}
+
+function retentionPolicy() {
+  return {
+    photoDays: 7,
+    measurementDays: 30,
+    trainingUse: false,
+    deletion: "user_request_or_ttl",
+  };
+}
+
 function assessTextile() {
   return {
-    acceptanceStatus: "COMMAND_GIVEN",
+    acceptanceStatus: "CODE_READY",
     completeClaim: false,
     liveVerified: false,
     virtualTryOn: false,
     requirements: REQUIREMENTS,
-    implemented: ["category_tree_cat-01", "textile_ai_roster", "privacy_opt_in_gate"],
-    missing: REQUIREMENTS.filter((id) => id !== "privacy_protection"),
+    implemented: [
+      "category_tree_cat-01",
+      "textile_ai_hub_ui",
+      "privacy_opt_in_gate",
+      "optional_fields",
+      "rule_recommendations",
+      "demo_try_on_adapter",
+    ],
+    missing: ["promo_video_licensed", "live_image_model"],
   };
 }
 
-module.exports = { REQUIREMENTS, privacyGate, recordMeasurement, assessTextile };
+module.exports = {
+  REQUIREMENTS,
+  privacyGate,
+  recordMeasurement,
+  recommend,
+  demoTryOn,
+  retentionPolicy,
+  assessTextile,
+};

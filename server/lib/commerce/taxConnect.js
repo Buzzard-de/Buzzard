@@ -52,4 +52,14 @@ function submitFiling(id) {
   };
 }
 
-module.exports = { REQUIRED, AB27, assess, enqueueCountryReport, listFilings, submitFiling };
+function inventory() {
+  return AB27.map((country) => ({
+    country,
+    live: false,
+    scrapeForbidden: true,
+    paymentAuthority: country === "DE" ? "SEPARATE_EXPLICIT_FRAMEWORK" : "DENIED",
+    status: "BLOCKED",
+  }));
+}
+
+module.exports = { REQUIRED, AB27, assess, enqueueCountryReport, listFilings, submitFiling, inventory };

@@ -45,4 +45,19 @@ function evaluateDevice(report = {}) {
   };
 }
 
-module.exports = { CONTROLS, evaluateDevice };
+function lostDeviceProcedure() {
+  return [
+    "incident_report",
+    "device_identification",
+    "session_revocation",
+    "credential_revocation",
+    "remote_lock",
+    "authorized_crypto_wipe",
+    "recovery_key_protection",
+    "evidence_preservation",
+    "backup_verification",
+    "replacement_enrollment",
+  ];
+}
+
+module.exports = { CONTROLS, evaluateDevice, lostDeviceProcedure };

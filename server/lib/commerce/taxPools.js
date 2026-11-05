@@ -66,6 +66,27 @@ function payTax({ country, amount } = {}) {
   };
 }
 
+function postExpense({ country, amount = 0, kind = "expense" } = {}) {
+  const key = countryKey(country);
+  if (!pools[key]) return { ok: false, code: "NOT_A_POOL_COUNTRY" };
+  const value = roundMoney(Math.max(0, Number(amount) || 0));
+  pools[key].postedNet = roundMoney(pools[key].postedNet - value);
+  pools[key].spendable = roundMoney(Math.max(0, pools[key].spendable - value));
+  return { ok: true, kind, country: key, amount: value, pool: snapshot(key) };
+}
+
+function explainReserve(netIncome) {
+  const net = roundMoney(Math.max(0, Number(netIncome) || 0));
+  const reserve = roundMoney(net * RESERVE_RATE);
+  return {
+    netIncome: net,
+    reserveRate: RESERVE_RATE,
+    reserve,
+    appliedTo: "NET_INCOME",
+    notAppliedTo: "TAX_AMOUNT",
+  };
+}
+
 function resetPools() {
   for (const code of POOL_COUNTRIES) {
     pools[code] = { postedNet: 0, reserve: 0, spendable: 0 };
@@ -79,5 +100,7 @@ module.exports = {
   listPools,
   snapshot,
   payTax,
+  postExpense,
+  explainReserve,
   resetPools,
 };

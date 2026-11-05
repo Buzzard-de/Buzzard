@@ -52,4 +52,45 @@ function reviewRequest(input = {}) {
   };
 }
 
-module.exports = { reviewRequest, looksPhish, PHISH_HINTS };
+function verifyOfficialRequest(input = {}) {
+  const base = reviewRequest(input);
+  const steps = [
+    "RECEIVED",
+    "QUARANTINE",
+    "IDENTITY_CHECK",
+    "LEGAL_REVIEW",
+    "SCOPE_MINIMIZATION",
+    "AUTHORIZATION",
+    "DISCLOSURE_OR_HOLD",
+    "AUDIT",
+    "CLOSE",
+  ];
+  const officialChannel = Boolean(input.officialChannelVerified);
+  const ipIsNotIdentity = true;
+  if (base.code === "PHISHING_SUSPECTED") {
+    return { ...base, steps, officialChannel: false, disclosed: false, ipIsNotIdentity };
+  }
+  if (!officialChannel) {
+    return {
+      ...base,
+      status: "HUMAN_REVIEW",
+      code: base.code === "BINDING_ORDER_REVIEW" ? "BINDING_ORDER_REVIEW" : "CHANNEL_UNVERIFIED",
+      steps,
+      officialChannel: false,
+      disclosed: false,
+      ipIsNotIdentity,
+      note: "Email, IP, ASN or VPN signals are not institution identity.",
+    };
+  }
+  return {
+    ok: true,
+    status: "HUMAN_REVIEW",
+    code: "VERIFIED_CHANNEL_PENDING_LEGAL",
+    steps,
+    officialChannel: true,
+    disclosed: false,
+    ipIsNotIdentity,
+  };
+}
+
+module.exports = { reviewRequest, looksPhish, PHISH_HINTS, verifyOfficialRequest };

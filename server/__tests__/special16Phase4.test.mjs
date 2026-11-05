@@ -122,6 +122,8 @@ describe("special-16 phase 4 security and foundations", () => {
     expect(assessTextile().completeClaim).toBe(false);
     expect(assessTextile().liveVerified).toBe(false);
     expect(publishBanner().code).toBe("NEEDS_APPROVAL");
+    expect(coverage().sourcedCountries).toBe(27);
+    expect(coverage().missingCountries).toEqual([]);
     expect(coverage().completeClaim).toBe(false);
     expect(previewBanner({ country: "DE", today: "2026-10-03" }).published).toBe(false);
   });

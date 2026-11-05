@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { getAdminToken } from "@/lib/admin/client";
 import type { ReturnRecoveryListResponse } from "./types";
 
@@ -17,13 +18,13 @@ export async function fetchReturnRecoveryList(filter = ""): Promise<ReturnRecove
   const url = filter
     ? `${API_BASE}/api/admin/returns?filter=${encodeURIComponent(filter)}`
     : `${API_BASE}/api/admin/returns`;
-  const res = await fetch(url, { headers: authHeaders(), cache: "no-store" });
+  const res = await browserFetch(url, { headers: authHeaders(), cache: "no-store" });
   if (!res.ok) throw new Error(`returns.listFailed:${res.status}`);
   return res.json();
 }
 
 export async function fetchReturnRecoveryCase(id: string) {
-  const res = await fetch(`${API_BASE}/api/admin/returns/${id}`, {
+  const res = await browserFetch(`${API_BASE}/api/admin/returns/${id}`, {
     headers: authHeaders(),
     cache: "no-store",
   });

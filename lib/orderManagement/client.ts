@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { OmsOrderRow, OmsOverview, OrderManagementStatus } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("orderManagement.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -33,7 +34,7 @@ export function isOrderManagementApiConfigured(): boolean {
 export async function fetchOrderManagementStatus(): Promise<OrderManagementStatus> {
   const base = apiBase();
   if (!base) throw new Error("orderManagement.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("orderManagement.requestFailed");
   const data = (await res.json()) as { orderManagement?: OrderManagementStatus };
   if (!data.orderManagement?.enabled) throw new Error("orderManagement.disabled");

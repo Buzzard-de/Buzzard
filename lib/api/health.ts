@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { apiBaseUrl, isApiConfigured } from "./config";
 
 export type ApiHealthState = "checking" | "live" | "unconfigured" | "down";
@@ -26,7 +27,7 @@ export async function fetchApiHealth(): Promise<ApiHealthSnapshot> {
   }
 
   try {
-    const response = await fetch(`${apiBaseUrl()}/api/health`, {
+    const response = await browserFetch(`${apiBaseUrl()}/api/health`, {
       headers: { Accept: "application/json" },
       cache: "no-store",
     });

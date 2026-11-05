@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   SupplierHubCompatibility,
   SupplierHubMargin,
@@ -31,7 +32,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("supplierHub.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -47,7 +48,7 @@ export function isSupplierHubApiConfigured(): boolean {
 export async function fetchSupplierHubStatus(): Promise<SupplierHubStatus> {
   const base = apiBase();
   if (!base) throw new Error("supplierHub.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("supplierHub.requestFailed");
   const data = (await res.json()) as { supplierHub?: SupplierHubStatus };
   if (!data.supplierHub?.enabled) throw new Error("supplierHub.disabled");
@@ -96,7 +97,7 @@ export async function fetchVehicles(filters?: { make?: string; model?: string })
   const url = new URL(`${base}/api/vehicles`);
   if (filters?.make) url.searchParams.set("make", filters.make);
   if (filters?.model) url.searchParams.set("model", filters.model);
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
+  const res = await browserFetch(url.toString(), { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("supplierHub.requestFailed");
   return (await res.json()) as SupplierHubVehicle[];
 }
@@ -118,7 +119,7 @@ export async function linkTecDocCompatibility(body: {
 export async function fetchTecDocCompatibility(sku: string): Promise<SupplierHubCompatibility[]> {
   const base = apiBase();
   if (!base) throw new Error("supplierHub.apiUnavailable");
-  const res = await fetch(`${base}/api/tecdoc/compatibility/${encodeURIComponent(sku)}`, {
+  const res = await browserFetch(`${base}/api/tecdoc/compatibility/${encodeURIComponent(sku)}`, {
     headers: { Accept: "application/json" },
   });
   if (!res.ok) throw new Error("supplierHub.requestFailed");
@@ -128,7 +129,7 @@ export async function fetchTecDocCompatibility(sku: string): Promise<SupplierHub
 export async function fetchCompatibleSkusForVehicle(vehicleId: number): Promise<string[]> {
   const base = apiBase();
   if (!base) throw new Error("supplierHub.apiUnavailable");
-  const res = await fetch(`${base}/api/tecdoc/compatibility/vehicle/${vehicleId}`, {
+  const res = await browserFetch(`${base}/api/tecdoc/compatibility/vehicle/${vehicleId}`, {
     headers: { Accept: "application/json" },
   });
   if (!res.ok) throw new Error("supplierHub.requestFailed");

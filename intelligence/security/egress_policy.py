@@ -12,8 +12,24 @@ from urllib.parse import urlparse
 _POLICY_PATH = Path(__file__).resolve().parents[2] / "data" / "security" / "egress_policy.v1.json"
 
 
+_FAIL_CLOSED = {
+    "default": "DENY",
+    "allowlist": [],
+    "forbiddenAiHosts": ["api.openai.com", "api.anthropic.com", "api.claude.ai"],
+    "forbiddenAiSuffixes": [".openai.com", ".anthropic.com", ".claude.ai", ".googleapis.com"],
+    "paymentHostSuffixes": [".stripe.com", ".paypal.com"],
+    "note": "POLICY_UNREADABLE_FAIL_CLOSED",
+}
+
+
 def load_policy() -> dict:
-    return json.loads(_POLICY_PATH.read_text(encoding="utf-8"))
+    try:
+        parsed = json.loads(_POLICY_PATH.read_text(encoding="utf-8"))
+        if not parsed or parsed.get("default") != "DENY" or not isinstance(parsed.get("allowlist"), list):
+            return dict(_FAIL_CLOSED)
+        return parsed
+    except Exception:
+        return dict(_FAIL_CLOSED)
 
 
 POLICY = load_policy()

@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { CommercialIntegrationStatus, FxRate, TaxQuote, TecDocCompatibility } from "./types";
 
 function apiBase(): string {
@@ -20,7 +21,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("integrations.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -54,7 +55,7 @@ export async function fetchFxRate(from = "EUR", to = "EUR"): Promise<FxRate> {
   const url = new URL(`${base}/api/fx/rate`);
   url.searchParams.set("from", from);
   url.searchParams.set("to", to);
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
+  const res = await browserFetch(url.toString(), { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("integrations.fxFailed");
   return (await res.json()) as FxRate;
 }
@@ -65,7 +66,7 @@ export async function checkTecDocCompatibility(body: {
 }): Promise<TecDocCompatibility> {
   const base = apiBase();
   if (!base) throw new Error("integrations.apiUnavailable");
-  const res = await fetch(`${base}/api/tecdoc/compatibility`, {
+  const res = await browserFetch(`${base}/api/tecdoc/compatibility`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),

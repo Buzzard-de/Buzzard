@@ -28,12 +28,12 @@ export default defineConfig({
   projects: [
     {
       name: "api",
-      testMatch: /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts/,
+      testMatch: /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "chromium-desktop",
-      testMatch: /customer-journey|admin\.spec\.ts|master-command-acceptance\.spec\.ts/,
+      testMatch: /customer-journey|admin\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {

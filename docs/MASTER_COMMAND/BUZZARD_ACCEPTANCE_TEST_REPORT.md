@@ -3,7 +3,8 @@
 **Ortam:** izole Cloud Agent, production yazma yok.  
 **Saat dilimi:** Europe/Berlin.
 
-Command 2 ayrıntısı: `docs/MASTER_COMMAND/2026-11-05/BUZZARD_ACCEPTANCE_TEST_REPORT.md`
+Command 3: `docs/MASTER_COMMAND/2026-11-05-mc3/BUZZARD_ACCEPTANCE_TEST_REPORT.md`  
+Command 2: `docs/MASTER_COMMAND/2026-11-05/BUZZARD_ACCEPTANCE_TEST_REPORT.md`
 
 | Komut | Ortam | Tarih | Sonuç | Not |
 | --- | --- | --- | --- | --- |

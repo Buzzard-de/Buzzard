@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "consistent": true,
+  "productionTouched": false,
+  "measuredRestoreMs": 11,
+  "wallMs": 11,
+  "offsite": {
+    "configured": false,
+    "status": "OFFSITE_UNCONFIGURED"
+  },
+  "immutableIsChmodOnly": true,
+  "worm": "BLOCKED",
+  "note": "Isolated temp DB fixture. Not production restore. chmod 444 is not WORM."
+}

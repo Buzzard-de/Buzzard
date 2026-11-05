@@ -1,5 +1,12 @@
 # Buzzard Master Implementation Report
 
+## Command 3 (5 Kasım 2026, ~08:35 Europe/Berlin)
+
+Tarihli raporlar: `docs/MASTER_COMMAND/2026-11-05-mc3/`.  
+Chromium E2E 8/8 yerel. Lab restore 11 ms. WORM/offsite hâlâ BLOCKED. npm force yok.
+
+---
+
 ## Command 2 (5 Kasım 2026, ~07:25 Europe/Berlin)
 
 **Dal:** `cursor/master-command-unified-c293`  

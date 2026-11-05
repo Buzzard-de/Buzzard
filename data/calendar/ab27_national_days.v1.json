@@ -1,35 +1,34 @@
 {
   "schema": "buzzard.ab27-national-days.v1",
-  "note": "Sourced official pages. Not a complete 27-country legal calendar. Publish stays NEEDS_APPROVAL.",
-  "retrievedAt": "2026-11-01",
+  "note": "One sourced national day per AB-27 country. Not a complete legal holiday calendar. Homepage publish stays NEEDS_APPROVAL.",
+  "retrievedAt": "2026-11-05",
   "days": [
-    {
-      "country": "DE",
-      "date": "10-03",
-      "name": "Tag der Deutschen Einheit",
-      "source": "https://www.bmi.bund.de",
-      "locale": "de"
-    },
-    {
-      "country": "FR",
-      "date": "07-14",
-      "name": "Fête nationale",
-      "source": "https://www.service-public.fr",
-      "locale": "fr"
-    },
-    {
-      "country": "IT",
-      "date": "06-02",
-      "name": "Festa della Repubblica",
-      "source": "https://www.governo.it",
-      "locale": "it"
-    },
-    {
-      "country": "PL",
-      "date": "11-11",
-      "name": "Narodowe Święto Niepodległości",
-      "source": "https://www.gov.pl",
-      "locale": "pl"
-    }
+    { "country": "AT", "date": "10-26", "name": "Nationalfeiertag", "source": "https://www.oesterreich.gv.at", "locale": "de" },
+    { "country": "BE", "date": "07-21", "name": "Fête nationale / Nationale feestdag", "source": "https://www.belgium.be", "locale": "fr" },
+    { "country": "BG", "date": "03-03", "name": "Ден на Освобождението", "source": "https://www.gov.bg", "locale": "bg" },
+    { "country": "HR", "date": "05-30", "name": "Dan državnosti", "source": "https://vlada.gov.hr", "locale": "hr" },
+    { "country": "CY", "date": "10-01", "name": "Independence Day", "source": "https://www.pio.gov.cy", "locale": "el" },
+    { "country": "CZ", "date": "10-28", "name": "Den vzniku samostatného československého státu", "source": "https://www.vlada.cz", "locale": "cs" },
+    { "country": "DK", "date": "06-05", "name": "Grundlovsdag", "source": "https://www.stm.dk", "locale": "da" },
+    { "country": "EE", "date": "02-24", "name": "Iseseisvuspäev", "source": "https://www.valitsus.ee", "locale": "et" },
+    { "country": "FI", "date": "12-06", "name": "Itsenäisyyspäivä", "source": "https://valtioneuvosto.fi", "locale": "fi" },
+    { "country": "FR", "date": "07-14", "name": "Fête nationale", "source": "https://www.service-public.fr", "locale": "fr" },
+    { "country": "DE", "date": "10-03", "name": "Tag der Deutschen Einheit", "source": "https://www.bmi.bund.de", "locale": "de" },
+    { "country": "EL", "date": "03-25", "name": "Επέτειος της Ελληνικής Επανάστασης", "source": "https://www.government.gov.gr", "locale": "el" },
+    { "country": "HU", "date": "08-20", "name": "Szent István ünnepe", "source": "https://kormany.hu", "locale": "hu" },
+    { "country": "IE", "date": "03-17", "name": "St Patrick's Day", "source": "https://www.gov.ie", "locale": "en" },
+    { "country": "IT", "date": "06-02", "name": "Festa della Repubblica", "source": "https://www.governo.it", "locale": "it" },
+    { "country": "LV", "date": "11-18", "name": "Latvijas Republikas proklamēšanas diena", "source": "https://www.mk.gov.lv", "locale": "lv" },
+    { "country": "LT", "date": "02-16", "name": "Lietuvos valstybės atkūrimo diena", "source": "https://lrv.lt", "locale": "lt" },
+    { "country": "LU", "date": "06-23", "name": "Lëtzebuerger Nationalfeierdag", "source": "https://gouvernement.lu", "locale": "lb" },
+    { "country": "MT", "date": "09-21", "name": "Independence Day", "source": "https://www.gov.mt", "locale": "mt" },
+    { "country": "NL", "date": "04-27", "name": "Koningsdag", "source": "https://www.rijksoverheid.nl", "locale": "nl" },
+    { "country": "PL", "date": "11-11", "name": "Narodowe Święto Niepodległości", "source": "https://www.gov.pl", "locale": "pl" },
+    { "country": "PT", "date": "06-10", "name": "Dia de Portugal", "source": "https://www.portugal.gov.pt", "locale": "pt" },
+    { "country": "RO", "date": "12-01", "name": "Ziua Națională", "source": "https://www.gov.ro", "locale": "ro" },
+    { "country": "SK", "date": "09-01", "name": "Deň Ústavy", "source": "https://www.vlada.gov.sk", "locale": "sk" },
+    { "country": "SI", "date": "06-25", "name": "Dan državnosti", "source": "https://www.gov.si", "locale": "sl" },
+    { "country": "ES", "date": "10-12", "name": "Fiesta Nacional de España", "source": "https://www.lamoncloa.gob.es", "locale": "es" },
+    { "country": "SE", "date": "06-06", "name": "Sveriges nationaldag", "source": "https://www.regeringen.se", "locale": "sv" }
   ]
 }

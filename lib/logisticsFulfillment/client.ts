@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   FulfillmentJob,
   LogisticsCarrier,
@@ -24,7 +25,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("logisticsFulfillment.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -40,7 +41,7 @@ export function isLogisticsFulfillmentApiConfigured(): boolean {
 export async function fetchLogisticsFulfillmentStatus(): Promise<LogisticsFulfillmentStatus> {
   const base = apiBase();
   if (!base) throw new Error("logisticsFulfillment.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("logisticsFulfillment.requestFailed");
   const data = (await res.json()) as { logisticsFulfillment?: LogisticsFulfillmentStatus };
   if (!data.logisticsFulfillment?.enabled) throw new Error("logisticsFulfillment.disabled");
@@ -50,7 +51,7 @@ export async function fetchLogisticsFulfillmentStatus(): Promise<LogisticsFulfil
 export async function fetchShippingOptions(country: string): Promise<ShippingOption[]> {
   const base = apiBase();
   if (!base) return [];
-  const res = await fetch(
+  const res = await browserFetch(
     `${base}/api/logistics-fulfillment/shipping/options/${encodeURIComponent(country)}`,
     { headers: { Accept: "application/json" } }
   );

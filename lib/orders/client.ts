@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   CreateOrderRequest,
   CreateOrderResponse,
@@ -21,7 +22,7 @@ export async function fetchOrderQuote(request: QuoteRequest): Promise<QuoteRespo
   }
 
   try {
-    const res = await fetch(`${base}/api/checkout/quote`, {
+    const res = await browserFetch(`${base}/api/checkout/quote`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(request),
@@ -75,7 +76,7 @@ export async function submitOrder(request: CreateOrderRequest): Promise<CreateOr
   }
 
   try {
-    const res = await fetch(`${base}/api/orders`, {
+    const res = await browserFetch(`${base}/api/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,7 +112,7 @@ export async function fetchOrder(orderNumber: string): Promise<PublicOrder | nul
   }
 
   try {
-    const res = await fetch(`${base}/api/orders/${encodeURIComponent(orderNumber)}`, {
+    const res = await browserFetch(`${base}/api/orders/${encodeURIComponent(orderNumber)}`, {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) return null;

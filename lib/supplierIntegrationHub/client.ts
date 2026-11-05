@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   SupplierIntegrationHubOverview,
   SupplierIntegrationHubRow,
@@ -21,7 +22,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("supplierIntegrationHub.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -37,7 +38,7 @@ export function isSupplierIntegrationHubApiConfigured(): boolean {
 export async function fetchSupplierIntegrationHubStatus(): Promise<SupplierIntegrationHubStatus> {
   const base = apiBase();
   if (!base) throw new Error("supplierIntegrationHub.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("supplierIntegrationHub.requestFailed");
   const data = (await res.json()) as { supplierIntegrationHub?: SupplierIntegrationHubStatus };
   if (!data.supplierIntegrationHub?.enabled) throw new Error("supplierIntegrationHub.disabled");

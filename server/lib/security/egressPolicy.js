@@ -6,9 +6,26 @@
 const fs = require("fs");
 const path = require("path");
 
+const FAIL_CLOSED = Object.freeze({
+  default: "DENY",
+  allowlist: [],
+  forbiddenAiHosts: ["api.openai.com", "api.anthropic.com", "api.claude.ai"],
+  forbiddenAiSuffixes: [".openai.com", ".anthropic.com", ".claude.ai", ".googleapis.com"],
+  paymentHostSuffixes: [".stripe.com", ".paypal.com"],
+  note: "POLICY_UNREADABLE_FAIL_CLOSED",
+});
+
 function loadSharedPolicy() {
   const file = path.join(__dirname, "../../../data/security/egress_policy.v1.json");
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (!parsed || parsed.default !== "DENY" || !Array.isArray(parsed.allowlist)) {
+      return { ...FAIL_CLOSED };
+    }
+    return parsed;
+  } catch {
+    return { ...FAIL_CLOSED };
+  }
 }
 
 const SHARED = loadSharedPolicy();
@@ -189,6 +206,7 @@ function inventoryDependencies() {
 }
 
 module.exports = {
+  FAIL_CLOSED,
   ALLOWLIST,
   FORBIDDEN_AI_HOSTS,
   CLASSIFIED,

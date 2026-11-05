@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { getAccountToken } from "@/lib/account/client";
 import type {
   AbandonedCartRecord,
@@ -29,7 +30,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("crmLoyalty.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -45,7 +46,7 @@ export function isCrmLoyaltyApiConfigured(): boolean {
 export async function fetchCrmLoyaltyStatus(): Promise<CrmLoyaltyStatus> {
   const base = apiBase();
   if (!base) throw new Error("crmLoyalty.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("crmLoyalty.requestFailed");
   const data = (await res.json()) as { crmLoyalty?: CrmLoyaltyStatus };
   if (!data.crmLoyalty?.enabled) throw new Error("crmLoyalty.disabled");

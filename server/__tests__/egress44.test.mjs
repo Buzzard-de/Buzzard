@@ -10,6 +10,7 @@ const {
   evaluateResolvedAddresses,
   extraHosts,
   SHARED,
+  FAIL_CLOSED,
   unwrapIpv4Mapped,
   policyFingerprint,
 } = require("../lib/security/egressPolicy.js");
@@ -26,6 +27,12 @@ describe("egress 4.4 multilayer", () => {
     delete process.env.NEXT_PUBLIC_GTM_ID;
     delete process.env.NEXT_PUBLIC_META_PIXEL_ID;
     delete process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+  });
+
+  it("fail-closed policy has empty allowlist and DENY default", () => {
+    expect(FAIL_CLOSED.default).toBe("DENY");
+    expect(FAIL_CLOSED.allowlist).toEqual([]);
+    expect(FAIL_CLOSED.note).toBe("POLICY_UNREADABLE_FAIL_CLOSED");
   });
 
   it("loads the shared policy used by Node and Python", () => {

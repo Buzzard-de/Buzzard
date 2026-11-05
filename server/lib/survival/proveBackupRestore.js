@@ -45,6 +45,7 @@ function assertSafePath(target) {
 }
 
 function proveRestore({ workRoot } = {}) {
+  const started = Date.now();
   const Database = loadSqlite();
   const rootDir = workRoot || fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-32110-"));
   assertSafePath(rootDir);
@@ -86,6 +87,8 @@ function proveRestore({ workRoot } = {}) {
     copies,
     workRoot: rootDir,
     productionTouched: false,
+    measuredRestoreMs: Date.now() - started,
+    measuredNote: "Lab fixture only. Not production RTO.",
   };
 }
 

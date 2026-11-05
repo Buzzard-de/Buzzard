@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { ReturnsRmaStatus, RmaOverview, RmaReturnRow } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("returnsRma.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -33,7 +34,7 @@ export function isReturnsRmaApiConfigured(): boolean {
 export async function fetchReturnsRmaStatus(): Promise<ReturnsRmaStatus> {
   const base = apiBase();
   if (!base) throw new Error("returnsRma.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("returnsRma.requestFailed");
   const data = (await res.json()) as { returnsRma?: ReturnsRmaStatus };
   if (!data.returnsRma?.enabled) throw new Error("returnsRma.disabled");

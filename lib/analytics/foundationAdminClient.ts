@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { DashboardOverview } from "./types";
 import type { BusinessKpiDashboard } from "./kpi/types";
 import type { KpiDateRangePreset } from "./kpi/types";
@@ -25,7 +26,7 @@ export async function fetchFoundationAnalyticsOverview(): Promise<DashboardOverv
   const url = `${base}${ANALYTICS_FOUNDATION_OVERVIEW_PATH}`;
 
   try {
-    const res = await fetch(url, { headers: authHeaders() });
+    const res = await browserFetch(url, { headers: authHeaders() });
     if (!res.ok) return null;
     const json = (await res.json()) as { success?: boolean; data?: DashboardOverview };
     return json.data ?? null;
@@ -57,7 +58,7 @@ export async function fetchFoundationKpis(options: {
   const url = `${base}${ANALYTICS_FOUNDATION_KPIS_PATH}${query ? `?${query}` : ""}`;
 
   try {
-    const res = await fetch(url, { headers: authHeaders() });
+    const res = await browserFetch(url, { headers: authHeaders() });
     if (!res.ok) return null;
     const json = (await res.json()) as {
       success?: boolean;

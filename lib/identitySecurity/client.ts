@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   IdentityAccount,
   IdentitySecurityAuditEvent,
@@ -23,7 +24,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("identitySecurity.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -39,7 +40,7 @@ export function isIdentitySecurityApiConfigured(): boolean {
 export async function fetchIdentitySecurityStatus(): Promise<IdentitySecurityStatus> {
   const base = apiBase();
   if (!base) throw new Error("identitySecurity.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("identitySecurity.requestFailed");
   const data = (await res.json()) as { identitySecurity?: IdentitySecurityStatus };
   if (!data.identitySecurity?.enabled) throw new Error("identitySecurity.disabled");
@@ -61,7 +62,7 @@ export async function fetchIdentitySessions(): Promise<IdentitySessionRow[]> {
 export async function fetchIdentityAccount(): Promise<IdentityAccount | null> {
   const base = apiBase();
   if (!base) return null;
-  const res = await fetch(`${base}/api/identity-security/account`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}/api/identity-security/account`, { headers: adminHeaders() });
   if (!res.ok) return null;
   return (await res.json()) as IdentityAccount;
 }

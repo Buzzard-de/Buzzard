@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { apiBaseUrl, isAdvancedSearchEnabled } from "@/lib/api/config";
 
 export interface SearchSuggestion {
@@ -16,7 +17,7 @@ export async function fetchSearchSuggestions(query: string): Promise<SearchSugge
   const q = query.trim();
   if (!q) return [];
   try {
-    const res = await fetch(
+    const res = await browserFetch(
       `${apiBaseUrl()}/api/advanced-search/suggest?q=${encodeURIComponent(q)}`,
       { headers: { Accept: "application/json" }, cache: "no-store" }
     );

@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   AnalyticsOverview,
   AnalyticsRangePreset,
@@ -32,7 +33,7 @@ function rangeQuery(range: AnalyticsRangePreset, from?: string, to?: string): st
 async function request<T>(path: string): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { headers: authHeaders() });
+  const res = await browserFetch(`${base}${path}`, { headers: authHeaders() });
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string };
   if (!res.ok) throw new Error(data.errorKey || "admin.requestFailed");
   return data;
@@ -90,7 +91,7 @@ export async function fetchFinanceAnalytics(range: AnalyticsRangePreset, from?: 
 export async function downloadAnalyticsExport(section: string, range: AnalyticsRangePreset, format: "csv" | "json" = "csv"): Promise<void> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}/api/admin/analytics/export?section=${encodeURIComponent(section)}&format=${format}&${rangeQuery(range)}`, {
+  const res = await browserFetch(`${base}/api/admin/analytics/export?section=${encodeURIComponent(section)}&format=${format}&${rangeQuery(range)}`, {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("admin.requestFailed");

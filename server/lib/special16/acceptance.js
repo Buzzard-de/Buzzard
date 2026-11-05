@@ -12,6 +12,8 @@ const { inventory: carrierInventory } = require("../commerce/carrierAdapters");
 const { SOURCE_ADAPTERS } = require("../commerce/sanctionsScreen");
 const { scan } = require("../security/claudeScan");
 const { assessMessaging } = require("../council/e2eeAssessment");
+const { inventory: sandboxInventory } = require("../integrations/sandboxReadiness");
+const { classify } = require("../security/toolchainRisk");
 
 const GATE_STATUSES = Object.freeze([
   "NOT_STARTED",
@@ -168,6 +170,8 @@ function healthPayload() {
     paymentsEnabled: false,
     statuses: GATE_STATUSES,
     requirements,
+    sandbox: sandboxInventory(),
+    toolchain: classify(),
     note: "Endpoint reports software status only. success=false until every requirement is LIVE_VERIFIED.",
   };
 }

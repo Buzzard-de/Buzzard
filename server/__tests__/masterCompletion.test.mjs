@@ -13,6 +13,9 @@ const {
 const { assessWorm, putImmutable } = require("../lib/survival/wormProvider.js");
 const { planCopy } = require("../lib/survival/offsiteAdapter.js");
 const { healthPayload } = require("../lib/special16/acceptance.js");
+const { inventory } = require("../lib/integrations/sandboxReadiness.js");
+const { classify } = require("../lib/security/toolchainRisk.js");
+const { runIsolatedDisasterDrill } = require("../lib/survival/isolatedDisasterDrill.js");
 const { quotePrice, applyPriceChange } = require("../lib/commerce/pricingIntegration.js");
 const { isSalesEnabled } = require("../lib/salesMode.js");
 const master = require("../../data/taxonomy/buzzard_master_50_main_categories.json");
@@ -79,5 +82,12 @@ describe("master completion gates", () => {
     const health = healthPayload();
     expect(health.success).toBe(false);
     expect(health.liveVerifiedCount).toBe(0);
+    expect(health.sandbox.every((row) => row.sandboxVerified === false && row.reachedNetwork === false)).toBe(true);
+    expect(classify().next16Applied).toBe(false);
+    expect(classify().vitestMajorUpgrade.applied).toBe(false);
+    const drill = runIsolatedDisasterDrill();
+    expect(drill.productionRtoMeasured).toBe(false);
+    expect(drill.rtoIsolatedMs).toBeGreaterThan(0);
+    expect(inventory().some((row) => row.status === "SANDBOX_VERIFIED")).toBe(false);
   });
 });

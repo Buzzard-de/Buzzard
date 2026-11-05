@@ -18,6 +18,15 @@ test.describe("Master Command 3 Chromium", () => {
     expect(ar?.status() ?? 200).toBeLessThan(500);
   });
 
+  test("cart, search, products and retired category stay isolated", async ({ page }) => {
+    for (const path of ["/warenkorb/", "/products/", "/konto/login/", "/admin/login/"]) {
+      const res = await page.goto(path);
+      expect(res?.status() ?? 200, path).toBeLessThan(500);
+    }
+    const html = (await page.content()).toLowerCase();
+    expect(html).not.toContain("sk_live");
+  });
+
   test("account login page is reachable without a production session", async ({ page }) => {
     const res = await page.goto("/konto/login/");
     expect(res?.status() ?? 200).toBeLessThan(500);

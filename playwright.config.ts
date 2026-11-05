@@ -28,17 +28,19 @@ export default defineConfig({
   projects: [
     {
       name: "api",
-      testMatch: /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts/,
+      testMatch:
+        /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "chromium-desktop",
-      testMatch: /customer-journey|admin\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts/,
+      testMatch:
+        /customer-journey|admin\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {
       name: "chromium-mobile",
-      testMatch: /customer-journey\.spec\.ts/,
+      testMatch: /customer-journey\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Pixel 5"], viewport: VIEWPORTS.mobile375 },
     },
     {

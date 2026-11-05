@@ -5,18 +5,23 @@ import path from "node:path";
 
 const require = createRequire(import.meta.url);
 const { proveRestore } = require("../server/lib/survival/proveBackupRestore.js");
+const { runIsolatedDisasterDrill } = require("../server/lib/survival/isolatedDisasterDrill.js");
 
 const started = Date.now();
 const result = proveRestore();
+const drill = runIsolatedDisasterDrill();
 const out = {
-  ok: result.ok,
+  ok: result.ok && drill.status === "ISOLATED_RESTORE_TESTED",
   consistent: result.consistent,
-  productionTouched: result.productionTouched,
+  productionTouched: result.productionTouched || drill.productionTouched,
+  productionDrVerified: false,
   measuredRestoreMs: result.measuredRestoreMs,
+  drillMs: drill.measuredMs,
   wallMs: Date.now() - started,
   offsite: result.copies.offsite,
   immutableIsChmodOnly: true,
   worm: "BLOCKED",
+  drill,
   note: "Isolated temp DB fixture. Not production restore. chmod 444 is not WORM.",
 };
 const dest = path.join("docs/MASTER_COMMAND/2026-11-05-mc3", "isolated-restore-lab.json");

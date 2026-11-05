@@ -6,6 +6,8 @@ import { apiBaseUrl } from "@/lib/api/config";
 import { categoryHref } from "@/lib/categories";
 import { findCategoryBySlugPath } from "@/lib/categories/service";
 import { useLocale } from "@/lib/i18n/context";
+import { browserFetch } from "@/lib/security/browserFetch";
+import { isRetiredShopId } from "@/lib/categories/master";
 
 interface SearchHit {
   main: { id: string; name: string; slug: string };
@@ -42,12 +44,19 @@ export default function MegaMenuSearch({ onNavigate }: { onNavigate?: () => void
       setLoading(true);
       try {
         const base = apiBaseUrl();
-        const res = await fetch(
+        const res = await browserFetch(
           `${base}/api/smart-menu-48/search?q=${encodeURIComponent(trimmed)}&limit=12`
         );
         if (res.ok) {
           const data = await res.json();
-          setHits(data.items ?? []);
+          setHits(
+            (data.items ?? []).filter(
+              (hit: SearchHit) =>
+                !isRetiredShopId(hit.main.id) &&
+                !isRetiredShopId(hit.sub.id) &&
+                !isRetiredShopId(hit.leaf.id)
+            )
+          );
         } else {
           setHits([]);
         }

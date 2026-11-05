@@ -1,5 +1,8 @@
 # Güvenlik ve Egress denetimi
 
+Command 2 güncellemesi: `docs/MASTER_COMMAND/2026-11-05/BUZZARD_SECURITY_AND_EGRESS_AUDIT.md`  
+Egress 4.4 korundu; allowlist genişletilmedi; WAF BLOCKED; Playwright request 2/2.
+
 **Dal:** `cursor/master-command-unified-c293`  
 **Doğrulanan 4.4:** `71c991ad` + bu tur IPv4-mapped / politika parmak izi.  
 **Push/merge/deploy yok.**

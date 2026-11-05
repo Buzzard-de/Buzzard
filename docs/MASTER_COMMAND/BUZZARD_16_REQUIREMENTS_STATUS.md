@@ -2,12 +2,13 @@
 
 **Dal:** `cursor/master-command-unified-c293`  
 **Taban:** `origin/cursor/egress-44-multilayer-c293` @ `71c991ad`  
-**Zaman:** 5 Kasım 2026, Europe/Berlin  
-**COMPLETE yok.**
+**Zaman:** 5 Kasım 2026, ~07:25 Europe/Berlin (Command 2 güncellemesi)  
+**COMPLETE yok.**  
+**Önceki yerel commit:** `97972f58`
 
 | # | Gereksinim | COMMAND_GIVEN | CODED | TESTED | LIVE_VERIFIED | Durum | Eksikler |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Textile AI | evet | iskelet + rıza | birim (mock) | hayır | COMMAND_GIVEN | Hub UI, video, slayt, sanal deneme, gerçek katalog bağ |
+| 1 | Textile AI | evet | rıza + kategori giriş alanı | birim (mock) | hayır | CODE_IN_PROGRESS | Video, slayt, canlı try-on, model |
 | 2 | AB-27 lojistik | evet | quoteLane + stub taşıyıcı | birim | hayır | PARTIAL | Canlı API, etiket, takip; `liveCarrier: false` |
 | 3 | Yaptırım | evet | HUMAN_REVIEW kuyruk | birim | hayır | PARTIAL | Resmi EU/UN/DE feed |
 | 4 | Ülke dosyası / yasal açıklama | evet | bellek vault + phishing kapısı | birim | hayır | PARTIAL | Disk izolasyonu, gerçek kurum doğrulama |
@@ -21,7 +22,7 @@
 | 12 | Kabul çerçevesi | evet | bu tablo + testler | birim | hayır | PARTIAL | Canlı 16×4 kapısı |
 | 13 | Bağımsız AI / Claude yasak | evet | assertIndependent + egress | birim | hayır | PARTIAL | Canlı WAF |
 | 14 | Cursor bakım | evet | SOP dosyası | hayır (doküman) | hayır | PARTIAL | 7/24 runtime yok |
-| 15 | Egress 4.4+ | evet | ortak JSON + kapılar | Node+Python birim | hayır | CODE_READY | WAF, canlı DNS, tam browser sargı |
+| 15 | Egress 4.4+ | evet | ortak JSON + kapılar | Node 10 + Python 6 + PW 2 | hayır | TESTED | WAF, canlı DNS, kalan raw fetch |
 | 16 | DR 3-2-1-1-0 | evet | yerel kopya + chmod 444 | yerel prove | hayır | PARTIAL | Offsite, gerçek WORM, temiz restore drill |
 
 Durum sözlüğü: NOT_STARTED / REQUIREMENTS_ONLY / CODE_IN_PROGRESS / CODE_READY / TESTED / PARTIAL / BLOCKED / NEEDS_APPROVAL / COMPLETE.  

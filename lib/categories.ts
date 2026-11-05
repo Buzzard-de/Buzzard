@@ -3,6 +3,8 @@ import type { BuzzardCategory, BuzzardLocale } from "@/lib/categories/types";
 import { categoryCatalog } from "@/lib/categories/source";
 import {
   getMainCategories,
+  getActiveShopMainCategories,
+  getNavigableMainCategories,
   getHubExtensions,
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
@@ -16,6 +18,7 @@ import {
   categoryHref,
   categoryProductsHref,
   getAllCategoryPaths,
+  getIndexableCategoryPaths,
   getAllCategoryStaticParams,
   splitSubcategoriesIntoColumns,
   getCategoryAncestors,
@@ -35,6 +38,8 @@ export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
 export {
   getMainCategories,
+  getActiveShopMainCategories,
+  getNavigableMainCategories,
   getHubExtensions,
   getVisibleMainCategories,
   isCategoryVisibleToCustomer,
@@ -48,6 +53,7 @@ export {
   categoryHref,
   categoryProductsHref,
   getAllCategoryPaths,
+  getIndexableCategoryPaths,
   getAllCategoryStaticParams,
   splitSubcategoriesIntoColumns,
   getCategoryAncestors,
@@ -62,7 +68,7 @@ export {
 };
 
 /** Linke Spalte: Hauptkategorien aus JSON (Smart-Menü: 48 Kategorien via API) */
-export const mainCategories = getMainCategories().map((cat) => ({
+export const mainCategories = getNavigableMainCategories().map((cat) => ({
   id: cat.id,
   slug: cat.slug,
   label: formatMenuLabel(cat, DEFAULT_LOCALE),
@@ -140,7 +146,7 @@ export function getDiversePopularCategories(
     "cat-07",
     "cat-10",
     "cat-14",
-    "cat-25",
+    "cat-14",
     "cat-39",
     "cat-02",
     "cat-18",

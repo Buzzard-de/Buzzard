@@ -35,7 +35,7 @@ export const LANGUAGE_LABELS: Record<string, string> = {
   ga: "Gaeilge",
 };
 
-export const ROUTING_LOCALES = ["de", "en", "tr", "ar"] as const;
+export const ROUTING_LOCALES = LANGUAGE_CODES;
 
 export function isSupportedLanguage(code: string): boolean {
   return LANGUAGE_CODES.includes(code);
@@ -45,9 +45,7 @@ export function isRtlLanguage(code: string): boolean {
   return code === "ar";
 }
 
-export function routingLocaleFor(language: string): (typeof ROUTING_LOCALES)[number] {
-  if ((ROUTING_LOCALES as readonly string[]).includes(language)) {
-    return language as (typeof ROUTING_LOCALES)[number];
-  }
+export function routingLocaleFor(language: string): string {
+  if (LANGUAGE_CODES.includes(language)) return language;
   return "de";
 }

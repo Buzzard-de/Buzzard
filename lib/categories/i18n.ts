@@ -15,7 +15,7 @@ export function getCategoryLabel(
   return category.name;
 }
 
-const UPPERCASE_LOCALE_TAG: Record<BuzzardLocale, string> = {
+const UPPERCASE_LOCALE_TAG: Record<string, string> = {
   de: "de-DE",
   en: "en-US",
   tr: "tr-TR",

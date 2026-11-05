@@ -7,6 +7,7 @@ import CategoryCatalogView from "@/components/category/CategoryCatalogView";
 import CategoryChildrenGrid from "@/components/category/CategoryChildrenGrid";
 import CategoryJsonLd from "@/components/category/CategoryJsonLd";
 import CategoryNotFound from "@/components/category/CategoryNotFound";
+import TextileAiEntry from "@/components/storefront/TextileAiEntry";
 import KfzSubcategoryCount from "@/components/category/KfzSubcategoryCount";
 import {
   findCategoryBySlugPath,
@@ -24,7 +25,8 @@ import {
   getCompetitorLabel,
   getKfzL3Href,
 } from "@/lib/categories/kfzTree";
-import { buildCategoryMetadata } from "@/lib/seo/metadata";
+import { buildCategoryMetadata, buildNoIndexMetadata } from "@/lib/seo/metadata";
+import { isRetiredShopId } from "@/lib/categories/master";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string[] }>;
@@ -46,6 +48,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const category = findCategoryBySlugPath(slug.join("/"));
   if (!category) {
     return { title: "Kategorie – Buzzard" };
+  }
+  if (isRetiredShopId(category.id)) {
+    return buildNoIndexMetadata(`${category.name} – nicht mehr im Katalog`, "Diese Kategorie ist aus dem aktiven Katalog entfernt.");
   }
   return buildCategoryMetadata(category, DEFAULT_LOCALE);
 }
@@ -167,6 +172,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     return <CategoryNotFound />;
   }
 
+  if (isRetiredShopId(category.id)) {
+    return (
+      <section className="shop-page">
+        <div className="shop-empty">
+          <h1>Kategorie nicht mehr aktiv</h1>
+          <p>
+            {category.name} wurde aus dem aktiven Master-Katalog entfernt. Bestellhistorie bleibt
+            unverändert. Produkte ohne sichere Zuordnung bleiben in CATEGORY_RETIRED_HOLD.
+          </p>
+          <Link href="/" className="shop-btn-primary">
+            Zur Startseite
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   const breadcrumb = getCategoryBreadcrumb(category.id);
   const children = category.children ?? [];
 
@@ -177,6 +199,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <CategoryChildrenGrid categories={children} />
 
       {category.id === "cat-05" && <KfzPartsBrowse compact />}
+      {category.id === "cat-01" && (
+        <section className="subpage-content">
+          <TextileAiEntry />
+        </section>
+      )}
 
       <section className="subpage-content products-page-layout">
         <Suspense fallback={<div className="products-grid" />}>

@@ -1,5 +1,17 @@
 # Buzzard Master Implementation Report
 
+## Command 2 (5 Kasım 2026, ~07:25 Europe/Berlin)
+
+**Dal:** `cursor/master-command-unified-c293`  
+**Devam noktası:** `97972f58` doğrulandı. Egress 4.4 taban `71c991ad`.  
+**Push / merge / deploy / production yazma yok.**
+
+Yerel kod: retired shop L1, master-50, 30 locale prefix, Textile AI DEMO girişi, browserFetch vitrin sargısı, egress test genişlemesi. Ayrıntı: `docs/MASTER_COMMAND/2026-11-05/`.
+
+---
+
+# Command 1 (aynı gün, önceki sürüm)
+
 **Zaman:** 5 Kasım 2026, Europe/Berlin  
 **Çalışma dalı:** `cursor/master-command-unified-c293`  
 **Başlangıç checkout:** `cursor/pim-catalog-foundation-c293` (Egress 4.4 yoktu)  

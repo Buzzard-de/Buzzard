@@ -2,7 +2,8 @@ import { SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
 import { absoluteUrl } from "@/lib/seo/config";
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
-export const LOCALE_PREFIX_PATTERN = /^\/(de|en|tr|ar)(\/|$)/;
+export const LOCALE_PREFIX_PATTERN =
+  /^\/(de|en|tr|ar|fr|nl|bg|hr|el|cs|da|et|fi|hu|it|lv|lt|lb|mt|pl|pt|ro|sk|sl|es|ca|eu|gl|sv|ga)(\/|$)/;
 
 export function stripLocalePrefix(pathname: string): { locale: BuzzardLocale | null; path: string } {
   const match = pathname.match(LOCALE_PREFIX_PATTERN);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatMenuLabel, getCategoryLabel, toCategoryDisplayUpperCase } from "./i18n";
-import { getHubExtensions, getMainCategories } from "./service";
+import { getHubExtensions, getActiveShopMainCategories, getMainCategories } from "./service";
+import { getMasterCategories, isRetiredShopId } from "./master";
 
 describe("category labels", () => {
   it("uses Turkish catalog for main categories, not English", () => {
@@ -22,7 +23,24 @@ describe("category labels", () => {
     expect(mains.some((c) => c.id === "cat-01")).toBe(true);
     expect(mains.some((c) => c.id === "cat-53")).toBe(true);
     expect(getHubExtensions().map((h) => h.id)).toEqual(["cat-54", "cat-55", "cat-56"]);
-    expect(mains.length).toBeGreaterThanOrEqual(56);
+    expect(mains.length).toBeGreaterThanOrEqual(53);
+  });
+
+  it("retires food, drinks, and jewelry from the active shop tree", () => {
+    const active = getActiveShopMainCategories();
+    expect(active).toHaveLength(50);
+    expect(active.some((c) => c.id === "cat-25" || c.slug.includes("lebensmittel"))).toBe(false);
+    expect(active.some((c) => c.id === "cat-43" || c.slug.includes("schmuck"))).toBe(false);
+    expect(active.some((c) => c.id === "cat-46")).toBe(false);
+    expect(isRetiredShopId("cat-25")).toBe(true);
+  });
+
+  it("keeps an approved master tree of 50 with bicycle 49 and renewable 50", () => {
+    const master = getMasterCategories();
+    expect(master).toHaveLength(50);
+    expect(master.find((c) => c.num === 49)?.slug).toBe("fahrrad-e-bike");
+    expect(master.find((c) => c.num === 50)?.slug).toBe("erneuerbare-energie");
+    expect(master.some((c) => /lebensmittel|schmuck|getraenke/.test(c.slug))).toBe(false);
   });
 
   it("keeps German and English catalogs", () => {

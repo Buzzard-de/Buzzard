@@ -1,0 +1,28 @@
+{
+  "schema": "buzzard.retired-shop-l1.v1",
+  "reason": "User-approved removal: food/beverage and jewelry/watches leave the active tree.",
+  "retired": [
+    {
+      "shop_id": "cat-25",
+      "slug": "lebensmittel-und-getraenke",
+      "name": "Lebensmittel & Supermarkt",
+      "master_code": "bz.25",
+      "hold": "CATEGORY_RETIRED_HOLD"
+    },
+    {
+      "shop_id": "cat-46",
+      "slug": "getraenke",
+      "name": "Getränke",
+      "master_code": "bz.26",
+      "hold": "CATEGORY_RETIRED_HOLD"
+    },
+    {
+      "shop_id": "cat-43",
+      "slug": "schmuck-uhren",
+      "name": "Schmuck & Uhren",
+      "master_code": "bz.20",
+      "hold": "CATEGORY_RETIRED_HOLD"
+    }
+  ],
+  "note": "JSON rows stay for historical URL lookup. Navigation and master tree exclude these IDs. Production DB untouched."
+}

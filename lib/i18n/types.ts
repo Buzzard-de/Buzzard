@@ -1,16 +1,13 @@
-export type BuzzardLocale = "de" | "en" | "tr" | "ar";
+import { LANGUAGE_CODES, LANGUAGE_LABELS, isRtlLanguage } from "./languages";
 
-export const SUPPORTED_LOCALES: BuzzardLocale[] = ["de", "en", "tr", "ar"];
+export type BuzzardLocale = (typeof LANGUAGE_CODES)[number];
 
-export const LOCALE_LABELS: Record<BuzzardLocale, string> = {
-  de: "Deutsch",
-  en: "English",
-  tr: "Türkçe",
-  ar: "العربية",
-};
+export const SUPPORTED_LOCALES: BuzzardLocale[] = [...LANGUAGE_CODES];
 
-export const RTL_LOCALES: BuzzardLocale[] = ["ar"];
+export const LOCALE_LABELS: Record<string, string> = { ...LANGUAGE_LABELS };
 
-export function isRtlLocale(locale: BuzzardLocale): boolean {
-  return RTL_LOCALES.includes(locale);
+export const RTL_LOCALES: BuzzardLocale[] = LANGUAGE_CODES.filter((code) => isRtlLanguage(code));
+
+export function isRtlLocale(locale: string): boolean {
+  return isRtlLanguage(locale);
 }

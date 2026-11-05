@@ -103,7 +103,7 @@ export async function storeProducts(params?: { q?: string; category?: string }):
   const url = new URL(`${storeApiBase()}/api/products`);
   if (params?.q) url.searchParams.set("q", params.q);
   if (params?.category) url.searchParams.set("category", params.category);
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
+  const res = await browserFetch(url.toString(), { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("store.productsFailed");
   return (await res.json()) as StoreProduct[];
 }

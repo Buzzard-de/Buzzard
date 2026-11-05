@@ -79,6 +79,32 @@ describe("egress 4.4 multilayer", () => {
     );
   });
 
+  it("default deny and payment/AI hosts stay locked", () => {
+    expect(evaluateEgress({ destinationUrl: "https://evil.example/" }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://api.openai.com/v1" }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://api.stripe.com/v1" }).code).toBe("PAYMENT_EGRESS_LOCKED");
+    expect(evaluateEgress({ destinationUrl: "https://api-m.paypal.com/v1" }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://10.0.0.8/" }).code).toBe("PRIVATE_OR_IP_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://[fd00::1]/" }).code).toBe("PRIVATE_OR_IP_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://[::ffff:10.1.2.3]/" }).code).toBe("PRIVATE_OR_IP_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://169.254.169.254/latest/meta-data/" }).code).toBe(
+      "PRIVATE_OR_IP_DENIED"
+    );
+  });
+
+  it("does not treat wildcard extra hosts as an allowlist bypass", () => {
+    process.env.BUZZARD_EGRESS_EXTRA_HOSTS = "*.evil.com,*.stripe.com";
+    expect(extraHosts()).toEqual([]);
+    expect(evaluateEgress({ destinationUrl: "https://a.evil.com/" }).allowed).toBe(false);
+  });
+
+  it("denies browser connect for cross-origin AI and metadata", () => {
+    expect(evaluateBrowserConnect("https://api.openai.com/v1").allowed).toBe(false);
+    expect(evaluateBrowserConnect("https://169.254.169.254/").allowed).toBe(false);
+    expect(evaluateBrowserConnect("https://127.0.0.1.nip.io/").code).toBe("BROWSER_REBIND_DENIED");
+    expect(evaluateBrowserConnect("https://buzzard24.de/api/health").allowed).toBe(true);
+  });
+
   it("denies browser telemetry and AI unless IDs are explicitly set", () => {
     expect(evaluateBrowserConnect("https://www.google-analytics.com/g/collect").code).toBe("BROWSER_TELEMETRY_OFF");
     process.env.NEXT_PUBLIC_GA4_ID = "G-TEST";

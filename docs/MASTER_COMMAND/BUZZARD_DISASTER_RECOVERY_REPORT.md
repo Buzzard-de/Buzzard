@@ -1,5 +1,8 @@
 # Felaket kurtarma (Madde 16)
 
+Command 2: offsite ve WORM hâlâ BLOCKED. chmod 444 WORM değildir. RPO/RTO ölçülmedi.  
+Ayrıntı: `docs/MASTER_COMMAND/2026-11-05/BUZZARD_DISASTER_RECOVERY_REPORT.md`
+
 **Durum:** PARTIAL. Backup dosyası ≠ kurtarma. COMPLETE yok.
 
 ## 3-2-1-1-0

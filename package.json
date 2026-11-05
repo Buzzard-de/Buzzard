@@ -108,7 +108,7 @@
     "gizli:start": "python Buzzard/app.py all"
   },
   "dependencies": {
-    "next": "^15.1.0",
+    "next": "^15.5.29",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -118,8 +118,11 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.23",
+    "eslint-config-next": "^15.5.29",
     "typescript": "^5.7.0",
     "vitest": "^3.2.7"
+  },
+  "overrides": {
+    "postcss": "8.5.32"
   }
 }

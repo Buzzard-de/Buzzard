@@ -140,6 +140,84 @@ const API_LEVELS = Object.freeze({
   7: "PRODUCTION_APPROVED",
 });
 
+const MC11_MATURITY = Object.freeze({
+  0: "NO_SOURCE_OR_DOCS",
+  1: "OFFICIAL_DOCS_FOUND",
+  2: "ADAPTER_SKELETON_READY",
+  3: "MOCK_FIXTURE_TESTS_PASSED",
+  4: "OFFICIAL_SANDBOX_E2E_PASSED",
+  5: "CONTRACT_AND_LIVE_APPROVED",
+});
+
+function documentationCatalog() {
+  const priority = priorityCatalog().map((c) => ({
+    ...c,
+    contractRequired: true,
+    mc11Maturity: 3,
+    mc11MaturityNote: "Existing apiLevel 2 kept. Shared mock adapter tests pass. No sandbox credentials.",
+  }));
+  const docsOnly = [
+    {
+      carrierId: "postnl-developer",
+      brand: "PostNL",
+      country: "NL",
+      docs: "https://developer.postnl.nl/docs/",
+      apiType: "REST",
+      contractRequired: true,
+      sandbox_status: "CONTRACT_REQUIRED",
+      sandboxVerified: false,
+      liveVerified: false,
+      apiLevel: 2,
+      mc11Maturity: 1,
+      accessConditions: "CONTRACT_AND_DEVELOPER_ACCOUNT_REQUIRED",
+    },
+    {
+      carrierId: "laposte-okapi",
+      brand: "La Poste",
+      country: "FR",
+      docs: "https://developer.laposte.fr/",
+      apiType: "REST",
+      contractRequired: true,
+      sandbox_status: "CONTRACT_REQUIRED",
+      sandboxVerified: false,
+      liveVerified: false,
+      apiLevel: 2,
+      mc11Maturity: 1,
+      accessConditions: "CONTRACT_AND_DEVELOPER_ACCOUNT_REQUIRED",
+    },
+    {
+      carrierId: "correos-developer",
+      brand: "Correos",
+      country: "ES",
+      docs: "https://www.correos.es/es/en/companies/e-commerce/reinforce-your-ecommerce-logistics/api-integration",
+      apiType: "REST",
+      contractRequired: true,
+      sandbox_status: "CONTRACT_REQUIRED",
+      sandboxVerified: false,
+      liveVerified: false,
+      apiLevel: 2,
+      mc11Maturity: 1,
+      accessConditions: "CORREOS_ID_AND_TRANSPORT_CONTRACT",
+    },
+    {
+      carrierId: "bpost-bpack-manual",
+      brand: "bpost",
+      country: "BE",
+      docs: "https://bpost.freshdesk.com/support/home",
+      apiType: "REST",
+      contractRequired: true,
+      sandbox_status: "CONTRACT_REQUIRED",
+      sandboxVerified: false,
+      liveVerified: false,
+      apiLevel: 2,
+      mc11Maturity: 1,
+      accessConditions: "CONTRACT_REQUIRED",
+      note: "Public integration manual exists; not a sandbox login.",
+    },
+  ];
+  return [...priority, ...docsOnly];
+}
+
 function priorityCatalog() {
   return [
     {
@@ -195,6 +273,8 @@ module.exports = {
   CARRIER_ERRORS,
   normalizeTracking,
   API_LEVELS,
+  MC11_MATURITY,
   priorityCatalog,
+  documentationCatalog,
   LIVE_BLOCK,
 };

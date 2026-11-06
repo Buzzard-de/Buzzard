@@ -1,33 +1,35 @@
 {
-  "schema": "buzzard.carrier-network-checkpoint.v1",
+  "schema": "buzzard.carrier-network-checkpoint.v2",
   "retrievedAt": "2026-11-06",
   "branch": "cursor/ab27-carrier-inventory-c293",
-  "startHead": "9ded6157",
-  "currentSchema": "buzzard.eu27-carrier-master.v6",
+  "startHead": "df3c7a95",
+  "currentSchema": "buzzard.eu27-carrier-master.v7",
   "completeVerifiedCountries": 0,
   "liveCarriers": 0,
   "sandboxVerified": 0,
-  "tests": { "v1_to_v6": "39/39", "runAt": "2026-11-06T08:31:00+01:00" },
+  "tests": { "v1_to_v7": "45/45", "runAt": "2026-11-06T08:51:00+01:00" },
+  "v6Frozen": {
+    "namedEntities": 1602,
+    "uniqueLegalKeys": 1465,
+    "registerLayerSum": 17453,
+    "activityVerified": 31,
+    "usp": 27,
+    "lockers": 14,
+    "pudo": 6,
+    "internationalOps": 64,
+    "note": "Unchanged: no new named legal rows were ingested in MC11."
+  },
   "next": [
     "NMHH Excel when href exists",
-    "ANACOM authenticated extract (user-approved)",
+    "ANACOM authenticated extract",
     "RRT export",
     "ANCOM TLS/alternate official dump",
     "Licensed postcode files",
-    "DHL/GLS/UPS sandbox after contract (LEVEL 4+)"
-  ],
-  "doNotRepeat": [
-    "Eurostat H53 ENT_NR EU27 2021-2024 (confirmed twice, updated 2026-09-30)",
-    "ACM 105 KVK",
-    "UKE 234",
-    "EETT 804/795",
-    "HAKOM 24/22 unique",
-    "RTR PEV 16",
-    "ELA ~60000 separate from SBS"
+    "DHL/GLS/UPS sandbox after contract"
   ],
   "blocked": [
     "HU_EXCEL",
-    "PT_LOGIN",
+    "PT_403",
     "LT_POWERBI",
     "RO_TLS",
     "PUSH",

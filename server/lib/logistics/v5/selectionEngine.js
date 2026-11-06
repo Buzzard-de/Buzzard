@@ -53,6 +53,10 @@ function selectCarrier({
       coverage: cov,
       selected: null,
       fallback: null,
+      explanation: [
+        { decision: "ELIMINATED", code: "UNSUPPORTED_DESTINATION", destination: dest },
+        { decision: "NO_AUTOSELECT", code: "COVERAGE_NOT_VERIFIED" },
+      ],
       pusatException: emitHold("UNSUPPORTED_DESTINATION", dest),
     };
     return hold;
@@ -86,9 +90,34 @@ function selectCarrier({
     reason = "NO_FALLBACK_CAPABLE_CARRIER";
   }
 
+  const explanation = [
+    {
+      decision: "NO_AUTOSELECT",
+      code: cov.delivery_available === true ? "COVERAGE_CLAIM_TRUE" : "POSTCODE_COVERAGE_UNKNOWN",
+      postalCode: postalCode || "UNKNOWN",
+    },
+    ...scored.map((c, i) => ({
+      decision: "NOT_LIVE",
+      rank: i + 1,
+      carrierId: c.carrierId,
+      reasons: [
+        "NO_CONTRACT",
+        "SANDBOX_NOT_VERIFIED",
+        "PRICE_UNKNOWN",
+        "DELIVERY_TIME_UNKNOWN",
+        "SUCCESS_RATE_UNKNOWN",
+        "LIVE_SHIPMENT_DISABLED",
+      ],
+    })),
+  ];
+  if (preferCheapest) {
+    explanation.push({ decision: "IGNORED", code: "PREFER_CHEAPEST_DISABLED" });
+  }
+
   return {
     status,
     reason,
+    explanation,
     pusatException: status === "HOLD_FOR_REVIEW" ? emitHold(reason, dest) : null,
     origin: origin || "UNKNOWN",
     destination: dest,

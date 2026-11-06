@@ -87,8 +87,37 @@ function countryCoverageMatrix() {
     iso,
     postcodeFile: "NOT_INGESTED",
     coverageVerified: false,
+    nationalCoverageVerified: false,
+    delivery_available: "UNKNOWN",
+    pickup_available: "UNKNOWN",
+    return_available: "UNKNOWN",
+    locker_available: "UNKNOWN",
+    PUDO_available: "UNKNOWN",
+    rural_delivery: "UNKNOWN",
+    estimated_delivery_days: "UNKNOWN",
     status: "UNKNOWN",
+    source: "NO_OFFICIAL_POSTCODE_FILE_INGESTED",
+    verification_date: "2026-11-06",
+    confidence_level: "UNKNOWN",
   }));
 }
 
-module.exports = { lookupCoverage, isValidPostcodeShape, countryCoverageMatrix, countryList };
+function postcodeLicenseMatrix() {
+  return countryList().map((iso) => ({
+    iso,
+    officialPostcodeListFound: "UNKNOWN",
+    fileIngested: false,
+    licenseReviewed: false,
+    license: "LICENSE_NOT_REVIEWED_FILE_NOT_INGESTED",
+    nationalCoverageVerified: false,
+    note: "Finding a national postcode list does not prove a carrier serves every code.",
+  }));
+}
+
+module.exports = {
+  lookupCoverage,
+  isValidPostcodeShape,
+  countryCoverageMatrix,
+  postcodeLicenseMatrix,
+  countryList,
+};

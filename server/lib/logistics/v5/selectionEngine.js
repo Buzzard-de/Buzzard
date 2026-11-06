@@ -6,6 +6,23 @@ const { lookupCoverage } = require("./coverageEngine");
 const { createAdapter, priorityCatalog } = require("./adapterFramework");
 const { audit } = require("./auditLog");
 
+function emitHold(reason, dest) {
+  audit("selection_hold", { reason, dest });
+  try {
+    const { emit, TYPES } = require("../../exceptionBus");
+    return emit({
+      type: TYPES.FULFILLMENT_NOT_LIVE,
+      source: "carrier_selection",
+      entity: "destination",
+      entityId: dest,
+      message: `No verified live carrier for ${dest}: ${reason}`,
+      context: { reason, live: false },
+    });
+  } catch {
+    return { type: "FULFILLMENT_NOT_LIVE", persisted: false, reason };
+  }
+}
+
 function iso(code) {
   const c = String(code || "").toUpperCase();
   return c === "GR" ? "EL" : c;
@@ -26,7 +43,7 @@ function selectCarrier({
   audit("select_carrier", { dest, postalCode: postalCode || "UNKNOWN" });
 
   if (!cov.supported) {
-    return {
+    const hold = {
       status: "HOLD_FOR_REVIEW",
       reason: "UNSUPPORTED_DESTINATION",
       cannotStartShipment: true,
@@ -36,7 +53,9 @@ function selectCarrier({
       coverage: cov,
       selected: null,
       fallback: null,
+      pusatException: emitHold("UNSUPPORTED_DESTINATION", dest),
     };
+    return hold;
   }
 
   const catalog = priorityCatalog();
@@ -70,6 +89,7 @@ function selectCarrier({
   return {
     status,
     reason,
+    pusatException: status === "HOLD_FOR_REVIEW" ? emitHold(reason, dest) : null,
     origin: origin || "UNKNOWN",
     destination: dest,
     postalCode: postalCode || "UNKNOWN",

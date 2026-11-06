@@ -19,4 +19,20 @@ function requestQuoteTask({ destination, weightKg } = {}) {
   };
 }
 
-module.exports = { requestQuoteTask };
+function requestSelectionHold({ destination, reason } = {}) {
+  const task = createTask({
+    fromId: "pusat",
+    title: `logistics-hold-${destination || "unknown"}`,
+    assigneeId: "logistics_ai",
+  });
+  return {
+    ...task,
+    status: "HOLD_FOR_REVIEW",
+    reason: reason || "NO_VERIFIED_CARRIER",
+    liveShipment: false,
+    salesEnabled: false,
+    customerDeliveryDate: "NOT_PROMISED",
+  };
+}
+
+module.exports = { requestQuoteTask, requestSelectionHold };

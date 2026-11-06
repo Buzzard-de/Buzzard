@@ -5,6 +5,9 @@ const { createAdapter, priorityCatalog, API_LEVELS } = require("./adapterFramewo
 const { selectCarrier } = require("./selectionEngine");
 const { lookupCoverage, countryCoverageMatrix } = require("./coverageEngine");
 const { audit, listAudit } = require("./auditLog");
+const { receiveWebhook } = require("./webhookReceiver");
+const { startReturn } = require("./returnsEngine");
+const { policy, credentialRegistry, healthMonitor, locateNetworks } = require("./securityPolicy");
 
 const COMPONENTS = Object.freeze([
   "Carrier Registry",
@@ -88,4 +91,10 @@ module.exports = {
   performanceModel,
   audit,
   listAudit,
+  receiveWebhook,
+  startReturn,
+  policy,
+  credentialRegistry,
+  healthMonitor,
+  locateNetworks,
 };

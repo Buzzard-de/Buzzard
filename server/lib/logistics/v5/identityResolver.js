@@ -37,6 +37,20 @@ function classifyLetterVsParcel(entity) {
   return { letter_service_verified: "UNKNOWN", parcel_service_verified: "UNKNOWN" };
 }
 
+function networkRole(entity) {
+  const cls = String(entity.class || "");
+  if (entity.activityVerified && /COURIER_PROVIDED|PRIVATE_PARCEL|PRIVATE_EXPRESS/.test(cls)) {
+    return "ACTIVE_BUSINESS_VERIFIED";
+  }
+  if (/ACM_PAKKETBEZORGDIENST/.test(cls)) return "REGISTERED";
+  if (/ACM_POSTVERVOERDIENST|LETTER_|CORRESPONDENCE/.test(cls)) return "REGISTERED";
+  if (/EETT_|UKE_POSTAL/.test(cls)) return "REGISTERED";
+  if (cls === "NATIONAL_POST_USP") return "REGISTERED";
+  if (cls === "PUDO_LOCKER") return "ACCEPTANCE_POINT_ONLY";
+  if (entity.reliability === "RESEARCH_CANDIDATE") return "UNKNOWN";
+  return "UNKNOWN";
+}
+
 function dedupe(entities) {
   const map = new Map();
   const collisions = [];
@@ -48,4 +62,4 @@ function dedupe(entities) {
   return { unique: map.size, collisions };
 }
 
-module.exports = { legalKey, isLikelyNaturalPerson, classifyLetterVsParcel, dedupe };
+module.exports = { legalKey, isLikelyNaturalPerson, classifyLetterVsParcel, networkRole, dedupe };

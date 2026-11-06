@@ -1,0 +1,36 @@
+{
+  "schema": "buzzard.carrier-network-checkpoint.v1",
+  "retrievedAt": "2026-11-06",
+  "branch": "cursor/ab27-carrier-inventory-c293",
+  "startHead": "9ded6157",
+  "currentSchema": "buzzard.eu27-carrier-master.v6",
+  "completeVerifiedCountries": 0,
+  "liveCarriers": 0,
+  "sandboxVerified": 0,
+  "tests": { "v1_to_v6": "39/39", "runAt": "2026-11-06T08:31:00+01:00" },
+  "next": [
+    "NMHH Excel when href exists",
+    "ANACOM authenticated extract (user-approved)",
+    "RRT export",
+    "ANCOM TLS/alternate official dump",
+    "Licensed postcode files",
+    "DHL/GLS/UPS sandbox after contract (LEVEL 4+)"
+  ],
+  "doNotRepeat": [
+    "Eurostat H53 ENT_NR EU27 2021-2024 (confirmed twice, updated 2026-09-30)",
+    "ACM 105 KVK",
+    "UKE 234",
+    "EETT 804/795",
+    "HAKOM 24/22 unique",
+    "RTR PEV 16",
+    "ELA ~60000 separate from SBS"
+  ],
+  "blocked": [
+    "HU_EXCEL",
+    "PT_LOGIN",
+    "LT_POWERBI",
+    "RO_TLS",
+    "PUSH",
+    "LIVE_SHIPMENT"
+  ]
+}

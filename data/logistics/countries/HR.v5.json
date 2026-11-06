@@ -1,0 +1,24 @@
+{
+  "iso": "HR",
+  "nra": "HAKOM",
+  "register": {
+    "records": 24,
+    "uniqueLegal": 22,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "hakom_public_table_2026_11_06",
+    "source": "hakom-davatelji-2026-11-06",
+    "note": "Page total 24 providers. Unique legal names extracted: 22. Address duplicates collapsed. Letter vs parcel mixed."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "HR",
+    "status": "CARRIER_NAMES_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 23,
+  "postcodeCoverage": "UNKNOWN"
+}

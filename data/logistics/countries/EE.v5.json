@@ -1,0 +1,24 @@
+{
+  "iso": "EE",
+  "nra": "Konkurentsiamet",
+  "register": {
+    "records": 51,
+    "uniqueLegal": 51,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "konkurentsiamet_postside_aruanne_2025",
+    "source": "ee-konkurentsiamet-postside-2025",
+    "note": "51 MTR postal providers. 50 courier registrations of which 19 actually provided courier in 2025. Named 19 ingested. Remaining 32 names not fully listed here."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "EE",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 20,
+  "postcodeCoverage": "UNKNOWN"
+}

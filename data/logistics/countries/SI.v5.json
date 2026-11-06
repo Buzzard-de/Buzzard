@@ -1,0 +1,24 @@
+{
+  "iso": "SI",
+  "nra": "AKOS",
+  "register": {
+    "records": 29,
+    "uniqueLegal": 29,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "akos_inscribed_2024_12_31",
+    "source": "akos-2024-annual",
+    "note": "29 inscribed. Report analysed 1 USP + 6 substitutable + 14 active without decision. Eight inscribed did not operate in 2024."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "SI",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 21,
+  "postcodeCoverage": "UNKNOWN"
+}

@@ -1,0 +1,24 @@
+{
+  "iso": "LT",
+  "nra": "RRT",
+  "register": {
+    "records": null,
+    "uniqueLegal": null,
+    "status": "DATA_INCOMPLETE",
+    "method": "rrt_powerbi_no_export",
+    "source": "rrt-powerbi-blocked",
+    "note": "Power BI embed; bulk export not obtained."
+  },
+  "verification": "DATA_INCOMPLETE",
+  "researchStatus": {
+    "iso": "LT",
+    "status": "SOURCE_FOUND",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "DATA_INCOMPLETE"
+  },
+  "completeVerified": false,
+  "namedCount": 3,
+  "postcodeCoverage": "UNKNOWN"
+}

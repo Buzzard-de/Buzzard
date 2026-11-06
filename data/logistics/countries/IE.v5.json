@@ -1,0 +1,24 @@
+{
+  "iso": "IE",
+  "nra": "ComReg",
+  "register": {
+    "records": 16,
+    "uniqueLegal": 16,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "comreg_register_search_extract",
+    "source": "comreg-authorised-postal-providers",
+    "note": "Authorised postal providers table from search extract. Direct fetch 307."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "IE",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 16,
+  "postcodeCoverage": "UNKNOWN"
+}

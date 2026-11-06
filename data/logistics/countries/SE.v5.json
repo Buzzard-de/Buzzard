@@ -1,0 +1,24 @@
+{
+  "iso": "SE",
+  "nra": "PTS",
+  "register": {
+    "records": 19,
+    "uniqueLegal": 19,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "trafikanalys_2025_permit_count",
+    "source": "pts-postoperatorer",
+    "note": "Official statistic 19 permits in 2025. PTS HTML name list is older (2024-05-14) and not used as the count."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "SE",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 19,
+  "postcodeCoverage": "UNKNOWN"
+}

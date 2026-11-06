@@ -113,11 +113,28 @@ function selectCarrier({
   if (preferCheapest) {
     explanation.push({ decision: "IGNORED", code: "PREFER_CHEAPEST_DISABLED" });
   }
+  explanation.push({ decision: "NO_AUTOSELECT", code: "INTERNATIONAL_BRAND_NOT_AUTO_PREFERRED" });
+  if (!origin) {
+    explanation.push({ decision: "HOLD", code: "ORIGIN_ADDRESS_UNKNOWN" });
+  }
+  if (weightKg == null) explanation.push({ decision: "UNKNOWN_INPUT", code: "WEIGHT_UNKNOWN" });
+  if (!dimensions || dimensions === "UNKNOWN") explanation.push({ decision: "UNKNOWN_INPUT", code: "DIMENSIONS_UNKNOWN" });
+
+  const autoselectAllowed = cov.coverageGranularity === "POSTCODE_LEVEL" && cov.delivery_available === true;
+  if (!autoselectAllowed) {
+    explanation.push({ decision: "NO_AUTOSELECT", code: "COVERAGE_GRANULARITY_NOT_POSTCODE_LEVEL" });
+  }
 
   return {
     status,
     reason,
     explanation,
+    coverageGranularity: cov.coverageGranularity || "UNKNOWN",
+    internationalBrandNotAutoPreferred: true,
+    localNotAutomaticallyOutranked: true,
+    priceInvented: false,
+    etaInvented: false,
+    autoselectAllowed: false,
     pusatException: status === "HOLD_FOR_REVIEW" ? emitHold(reason, dest) : null,
     origin: origin || "UNKNOWN",
     destination: dest,

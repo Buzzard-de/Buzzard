@@ -75,10 +75,38 @@ function lookupCoverage({ country, postalCode, carrierId } = {}) {
     estimated_delivery_days: "UNKNOWN",
     postcodeShapeValid: shapeOk,
     nationwideClaim: false,
+    coverageGranularity: "UNKNOWN",
     source: "NO_OFFICIAL_POSTCODE_FILE_INGESTED",
     verification_date: "2026-11-06",
     confidence_level: "UNKNOWN",
     license: "UNKNOWN",
+  };
+}
+
+function classifyCoverageGranularity({ countryWideEvidence = false, postcodeEvidence = false } = {}) {
+  if (postcodeEvidence) return "POSTCODE_LEVEL";
+  if (countryWideEvidence) return "COUNTRY_LEVEL";
+  return "UNKNOWN";
+}
+
+function carrierPostcodeCoverage({ country, carrierId } = {}) {
+  const iso = country === "GR" ? "EL" : String(country || "").toUpperCase();
+  return {
+    country_code: countryList().includes(iso) ? iso : "UNKNOWN",
+    carrier_id: carrierId || "UNKNOWN",
+    coverageGranularity: "UNKNOWN",
+    delivery_postcodes: "UNKNOWN",
+    pickup_postcodes: "UNKNOWN",
+    return_regions: "UNKNOWN",
+    locker_pudo: "UNKNOWN",
+    rural_restrictions: "UNKNOWN",
+    regional_limits: "UNKNOWN",
+    estimated_delivery_days: "UNKNOWN",
+    weight_size_limits: "UNKNOWN",
+    international_acceptance: "UNKNOWN",
+    nationalCoverageVerified: false,
+    source: "NO_CARRIER_POSTCODE_FILE_INGESTED",
+    verification_date: "2026-11-06",
   };
 }
 
@@ -96,6 +124,7 @@ function countryCoverageMatrix() {
     rural_delivery: "UNKNOWN",
     estimated_delivery_days: "UNKNOWN",
     status: "UNKNOWN",
+    coverageGranularity: "UNKNOWN",
     source: "NO_OFFICIAL_POSTCODE_FILE_INGESTED",
     verification_date: "2026-11-06",
     confidence_level: "UNKNOWN",
@@ -119,5 +148,7 @@ module.exports = {
   isValidPostcodeShape,
   countryCoverageMatrix,
   postcodeLicenseMatrix,
+  classifyCoverageGranularity,
+  carrierPostcodeCoverage,
   countryList,
 };

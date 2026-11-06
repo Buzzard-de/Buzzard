@@ -27,6 +27,9 @@ function roleModel() {
     },
     subcontractorsOfSupplierAreNotSupplierFleet: true,
     selectionRequiresOriginAndDestination: true,
+    relationTypes: ["SUPPLIER_USES_CARRIER", "SUPPLIER_CARRIER", "CARRIER_USES_SUBCONTRACTOR"],
+    verifiedSupplierUsesCarrier: [],
+    verifiedCarrierUsesSubcontractor: [],
     live: false,
   };
 }

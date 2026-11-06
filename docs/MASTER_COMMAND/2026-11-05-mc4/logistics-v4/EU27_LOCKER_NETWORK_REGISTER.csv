@@ -1,0 +1,15 @@
+id,operator,country,pointCount,status
+locker-lv-national-2025,"MULTI",LV,1869,SOURCE_VERIFIED
+locker-lv-latvijas-pasts,"VAS Latvijas Pasts",LV,440,SOURCE_VERIFIED
+locker-lv-omniva,"Omniva SIA",LV,,SHARE_ONLY_NOT_ABSOLUTE
+locker-lv-dpd,"SIA DPD Latvija",LV,,SHARE_ONLY_NOT_ABSOLUTE
+locker-lv-smartposti,"SmartPosti SIA",LV,,SHARE_ONLY_NOT_ABSOLUTE
+locker-lv-venipak,"SIA VENIPAK LATVIJA",LV,,SHARE_ONLY_NOT_ABSOLUTE
+locker-lv-unisend,"Unisend Latvija SIA",LV,,SHARE_ONLY_NOT_ABSOLUTE
+locker-hu-foxpost-packeta,"Foxpost-Packeta",HU,4041,SOURCE_VERIFIED
+locker-hu-gls,"GLS",HU,2861,SOURCE_VERIFIED
+locker-hu-magyar-posta-zrt,"Magyar Posta Zrt.",HU,698,SOURCE_VERIFIED
+locker-hu-sameday,"Sameday",HU,1096,SOURCE_VERIFIED
+locker-hu-express-one,"Express One",HU,905,SOURCE_VERIFIED
+locker-hu-dpd,"DPD",HU,323,SOURCE_VERIFIED
+locker-hu-dhl,"DHL",HU,29,SOURCE_VERIFIED

@@ -1,0 +1,545 @@
+[
+  {
+    "iso": "DE",
+    "name": "Germany",
+    "nra": "Bundesnetzagentur (BNetzA)",
+    "register": {
+      "records": 7183,
+      "uniqueLegal": null,
+      "status": "PARTIAL_REGISTER_FETCH",
+      "method": "unique_stammnummer_on_fetched_listing",
+      "source": "bnetza-anbieterverzeichnis",
+      "note": "Stammnummer rows, not active nationwide parcel companies. Landing count blank."
+    },
+    "previousVerifiedLegal": 8,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIAL_REGISTER_FETCH"
+  },
+  {
+    "iso": "FR",
+    "name": "France",
+    "nra": "ARCEP",
+    "register": {
+      "records": 45,
+      "uniqueLegal": 45,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "named_operators_on_arcep_page_2026_07_24",
+      "source": "arcep-operateurs-2026-07-24",
+      "note": "Correspondence authorisations. DPD/GLS/UPS parcel last-mile not this list."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 44,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "IT",
+    "name": "Italy",
+    "nra": "AGCOM",
+    "register": {
+      "records": 3722,
+      "uniqueLegal": null,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "last_sequential_number_on_mimit_sep_2026_pdf",
+      "source": "mimit-operatori-settembre-2026",
+      "note": "LIC/AUG/AEI authorisations, including sole traders. Not an active last-mile count. Deduplication not completed."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "ES",
+    "name": "Spain",
+    "nra": "CNMC",
+    "register": {
+      "records": 4734,
+      "uniqueLegal": null,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "cnmc_annual_report_2025_section_counts",
+      "source": "cnmc-sector-postal-2025",
+      "note": "Section A 4,494 + Section B 240 inscriptions at 31 Dec 2025. Not active nationwide last-mile. CEP survey sample was 26 operators."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "NL",
+    "name": "Netherlands",
+    "nra": "ACM",
+    "register": {
+      "records": 105,
+      "uniqueLegal": 105,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "acm_csv_post_and_pakket_unique_kvk",
+      "source": "acm-registraties-csv",
+      "note": "105 unique KVK after excluding telecom. 93 postvervoer + 19 pakket (overlap). Mixed CSV had 2622 rows. Pakket category ≠ activityVerified last-mile.",
+      "postvervoer": 93,
+      "pakket": 19,
+      "mixedCsvRows": 2622
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "BE",
+    "name": "Belgium",
+    "nra": "BIPT / IBPT",
+    "register": {
+      "records": 7,
+      "uniqueLegal": 7,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "bipt_individual_licence_table_2025_12_22",
+      "source": "bipt-licences-2025-12-22",
+      "note": "Correspondence USO individual licences. 1 inactive. Parcel networks not this table."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 6,
+    "nationalPost": 1,
+    "activeCarrierVerified": 5,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "AT",
+    "name": "Austria",
+    "nra": "RTR",
+    "register": {
+      "records": 16,
+      "uniqueLegal": 16,
+      "status": "DATA_INCOMPLETE",
+      "method": "rtr_pev_2026_and_2024_monitor",
+      "source": "rtr-post-monitor-2024",
+      "note": "PEV reporters: 16 in Feb 2026 list / 16 in 2024 annual (appendix lists more names historically). Claimed 138 Anzeige operators was not found in the fetched 2024 report. Full §25 list not downloaded."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 15,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "DATA_INCOMPLETE"
+  },
+  {
+    "iso": "PL",
+    "name": "Poland",
+    "nra": "UKE",
+    "register": {
+      "records": 234,
+      "uniqueLegal": 234,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "uke_bip_pages_1_12",
+      "source": "uke-rejestr-operatorow-pocztowych",
+      "note": "234 unique B-numbers B-00018–B-00841 fetched 2026-11-06. Includes sole traders and letter operators. dane.gov.pl dataset 1065 not imported (page fetch empty)."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "CZ",
+    "name": "Czechia",
+    "nra": "ČTÚ",
+    "register": {
+      "records": 3,
+      "uniqueLegal": 3,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "ctu_notification_table_2026_10_21",
+      "source": "ctu-evidence-2026-10-21",
+      "note": "Three notified postal operators. Česká distribuční interrupted 01.03.2026. PPL/Zásilkovna are outside this letter-style register."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "SK",
+    "name": "Slovakia",
+    "nra": "Regulatory Authority for Electronic and Postal Services",
+    "register": {
+      "records": 47,
+      "uniqueLegal": null,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "last_sequential_number_on_teleoff_pdf",
+      "source": "teleoff-register-postovych-podnikov",
+      "note": "Last sequential number 47 including expired/revoked rows. Unique active legal not completed."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "HU",
+    "name": "Hungary",
+    "nra": "NMHH",
+    "register": {
+      "records": null,
+      "uniqueLegal": null,
+      "status": "DATA_INCOMPLETE",
+      "method": "nmhh_excel_not_imported_locker_q1_imported",
+      "source": "nmhh-csomagautomata-2026-q1",
+      "note": "Operator Excel advertised without a fetchable href in HTML. Q1 2026 locker/PUDO counts ingested as locker/PUDO, not as carrier census."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "DATA_INCOMPLETE"
+  },
+  {
+    "iso": "RO",
+    "name": "Romania",
+    "nra": "ANCOM",
+    "register": {
+      "records": null,
+      "uniqueLegal": null,
+      "status": "DATA_INCOMPLETE",
+      "method": "ancom_searchable_first_page",
+      "source": "ancom-furnizori-autorizati",
+      "note": "Search UI exists. Total not published on first page. 10 names recorded from first page only."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 10,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "DATA_INCOMPLETE"
+  },
+  {
+    "iso": "BG",
+    "name": "Bulgaria",
+    "nra": "Communications Regulation Commission",
+    "register": {
+      "records": 218,
+      "uniqueLegal": null,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "crc_annual_2025_unique_operators",
+      "source": "crc-annual-post-2025",
+      "note": "218 licensed/registered at end 2025; 87 actually provided services. 205 NPU registrations. Named UPS table is a subset."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "EL",
+    "name": "Greece",
+    "nra": "EETT",
+    "register": {
+      "records": 804,
+      "uniqueLegal": 795,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "eett_eregistry_api_v2_all_212_pages",
+      "source": "eett-eregistry-licenses-v2",
+      "note": "804 POST_* licences / 795 unique companies. 794 general + 10 special. Active licence is not a last-mile parcel census. GR aliased as EL."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "PT",
+    "name": "Portugal",
+    "nra": "ANACOM",
+    "register": {
+      "records": null,
+      "uniqueLegal": null,
+      "status": "DATA_INCOMPLETE",
+      "method": "anacom_named_extract_http_403_on_full_list",
+      "source": "anacom-lista-alfabetica",
+      "note": "Full postal-only unique count not extracted (403 / mixed electronic+postal list). Named postal extract ingested."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "DATA_INCOMPLETE"
+  },
+  {
+    "iso": "IE",
+    "name": "Ireland",
+    "nra": "ComReg",
+    "register": {
+      "records": 16,
+      "uniqueLegal": 16,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "comreg_register_search_extract",
+      "source": "comreg-authorised-postal-providers",
+      "note": "Authorised postal providers table from search extract. Direct fetch 307."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 15,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "DK",
+    "name": "Denmark",
+    "nra": "Trafikstyrelsen",
+    "register": {
+      "records": 18,
+      "uniqueLegal": 18,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "trafikstyrelsen_tabel_3_permits",
+      "source": "trafikstyrelsen-2025-redegoerelse",
+      "note": "6 nationwide + 12 local permits. Letter vs parcel split in report text."
+    },
+    "previousVerifiedLegal": 10,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "SE",
+    "name": "Sweden",
+    "nra": "PTS",
+    "register": {
+      "records": 19,
+      "uniqueLegal": 19,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "trafikanalys_2025_permit_count",
+      "source": "pts-postoperatorer",
+      "note": "Official statistic 19 permits in 2025. PTS HTML name list is older (2024-05-14) and not used as the count."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 18,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "FI",
+    "name": "Finland",
+    "nra": "Traficom",
+    "register": {
+      "records": 14,
+      "uniqueLegal": 14,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "traficom_letter_notification_page_2026_08",
+      "source": "traficom-postitoimintarekisteri-2026-08",
+      "note": "Letter notifications only. Parcel operators such as Matkahuolto are out of scope of this register."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 13,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "EE",
+    "name": "Estonia",
+    "nra": "Konkurentsiamet",
+    "register": {
+      "records": 51,
+      "uniqueLegal": 51,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "konkurentsiamet_postside_aruanne_2025",
+      "source": "ee-konkurentsiamet-postside-2025",
+      "note": "51 MTR postal providers. 50 courier registrations of which 19 actually provided courier in 2025. Named 19 ingested. Remaining 32 names not fully listed here."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "LV",
+    "name": "Latvia",
+    "nra": "SPRK",
+    "register": {
+      "records": 61,
+      "uniqueLegal": 61,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "sprk_active_merchants_end_2025",
+      "source": "sprk-pasta-2025",
+      "note": "61 active postal merchants end 2025. Six locker/parcel operators named. Remaining names in Power BI / unpublished table. 1869 lockers."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "LT",
+    "name": "Lithuania",
+    "nra": "RRT",
+    "register": {
+      "records": null,
+      "uniqueLegal": null,
+      "status": "DATA_INCOMPLETE",
+      "method": "rrt_powerbi_embed",
+      "source": "rrt-teikejai-powerbi",
+      "note": "Public list is Power BI. Bulk unique count NOT_ENUMERATED. Named: AB Lietuvos paštas, UAB Omniva LT."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "DATA_INCOMPLETE"
+  },
+  {
+    "iso": "LU",
+    "name": "Luxembourg",
+    "nra": "ILR",
+    "register": {
+      "records": 43,
+      "uniqueLegal": 43,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "ilr_public_register_2025_12_31",
+      "source": "ilr-stat-2025",
+      "note": "43 inscribed. 41 supplied 2025 statistics. Includes subcontractors."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "MT",
+    "name": "Malta",
+    "nra": "MCA",
+    "register": {
+      "records": 37,
+      "uniqueLegal": 37,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "mca_pdf_2026_09_02",
+      "source": "mca-postal-2026-09-02",
+      "note": "Authorised undertakings PDF. USP is MaltaPost. Premiere Post and FastDrop also hold USO-scope licences."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "CY",
+    "name": "Cyprus",
+    "nra": "OCECPR",
+    "register": {
+      "records": 23,
+      "uniqueLegal": 23,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "ocecpr_named_licence_extract",
+      "source": "ocecpr-postal-records",
+      "note": "Named licence extract. Completeness of the HTML table vs unpublished rows NOT_VERIFIED."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "SI",
+    "name": "Slovenia",
+    "nra": "AKOS",
+    "register": {
+      "records": 29,
+      "uniqueLegal": 29,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "akos_inscribed_2024_12_31",
+      "source": "akos-2024-annual",
+      "note": "29 inscribed. Report analysed 1 USP + 6 substitutable + 14 active without decision. Eight inscribed did not operate in 2024."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  },
+  {
+    "iso": "HR",
+    "name": "Croatia",
+    "nra": "HAKOM",
+    "register": {
+      "records": 23,
+      "uniqueLegal": null,
+      "status": "PARTIALLY_VERIFIED",
+      "method": "hakom_end_2024_via_hina",
+      "source": "hakom-2024-hina",
+      "note": "23 licensed operators end 2024. Names not enumerated in the fetched news summary."
+    },
+    "previousVerifiedLegal": 1,
+    "newSourceVerifiedRows": 0,
+    "nationalPost": 1,
+    "activeCarrierVerified": 0,
+    "lockerPudoVerified": 0,
+    "apiDirectVerified": 0,
+    "verification": "PARTIALLY_VERIFIED"
+  }
+]

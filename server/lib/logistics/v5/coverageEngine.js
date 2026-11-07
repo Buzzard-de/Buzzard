@@ -143,11 +143,68 @@ function postcodeLicenseMatrix() {
   }));
 }
 
+/**
+ * Sourced postcode *portals* only. Not ingested. Not carrier coverage.
+ */
+function postcodePortalRegistry() {
+  const eu = {
+    iso: "EU",
+    portal: "Eurostat GISCO postal code points",
+    url: "https://ec.europa.eu/eurostat/web/gisco/geodata/administrative-units/postal-codes",
+    licenseFromPublicPage: "CC-BY-SA-4.0",
+    fileIngested: false,
+    carrierCoverageVerified: false,
+    note: "EU/EFTA points for NUTS correspondence. Incomplete vs operational codes. Share-alike not ingested this run. Not carrier service coverage.",
+    retrievedAt: "2026-11-07",
+  };
+  const byIso = {
+    AT: {
+      portal: "RTR Postleitzahlen (PMG §36)",
+      url: "https://www.rtr.at/TKP/aktuelles/veroeffentlichungen/veroeffentlichungen/Postleitzahlen.de.html",
+      licenseFromPublicPage: "OPEN_DATA_STATED_TERMS_NOT_EXTRACTED",
+      note: "USP postcodes published for other postal operators. Not proof Österreichische Post last-mile parcel at every PLZ.",
+    },
+    FR: {
+      portal: "adresse.data.gouv.fr codes postaux",
+      url: "https://www.data.gouv.fr/datasets/codes-postaux",
+      licenseFromPublicPage: "NOT_EXTRACTED_THIS_RUN",
+      note: "Official geographic/postal linkage. Not carrier delivery coverage.",
+    },
+    DE: {
+      portal: "GovData listing (OSM-derived, not Deutsche Post master)",
+      url: "https://www.govdata.de/suche/daten/deutschland-postleitzahlen",
+      licenseFromPublicPage: "ODbL_AND_DL_DE_BY_2_0_STATED_ON_LISTING",
+      note: "Not Deutsche Post Direkt commercial PLZ. OSM-derived list ≠ DHL/DP nationwide parcel coverage.",
+    },
+    NL: {
+      portal: "BAG/PDOK address-derived (Kadaster tariffs may apply for extracts)",
+      url: "https://data.overheid.nl/community/datarequest/postcode-gegevens",
+      licenseFromPublicPage: "NOT_FREE_NATIONAL_EXTRACT_AS_STATED",
+      note: "Not ingested. Not PostNL coverage.",
+    },
+  };
+  const countries = countryList().map((iso) => ({
+    iso,
+    fileIngested: false,
+    carrierCoverageVerified: false,
+    coverageGranularity: "UNKNOWN",
+    retrievedAt: "2026-11-07",
+    ...(byIso[iso] || {
+      portal: "UNKNOWN",
+      url: "UNKNOWN",
+      licenseFromPublicPage: "UNKNOWN",
+      note: "No official carrier-agnostic postcode file ingested. GISCO points exist at EU level but are not country ingest here.",
+    }),
+  }));
+  return { eu, countries };
+}
+
 module.exports = {
   lookupCoverage,
   isValidPostcodeShape,
   countryCoverageMatrix,
   postcodeLicenseMatrix,
+  postcodePortalRegistry,
   classifyCoverageGranularity,
   carrierPostcodeCoverage,
   countryList,

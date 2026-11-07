@@ -1,75 +1,118 @@
 {
-  "schema": "buzzard.carrier-network-checkpoint.v3",
-  "retrievedAt": "2026-11-06",
+  "schema": "buzzard.carrier-network-checkpoint.v4",
+  "retrievedAt": "2026-11-07",
   "branch": "cursor/ab27-carrier-inventory-c293",
-  "startHead": "7db1c4f5",
-  "currentSchema": "buzzard.eu27-carrier-master.v8",
+  "startHead": "facbf92e",
+  "currentSchema": "buzzard.eu27-carrier-master.v9",
   "completeVerifiedCountries": 0,
   "liveCarriers": 0,
   "sandboxVerified": 0,
   "tests": {
-    "v1_to_v8": "51/51",
-    "runAt": "2026-11-06T11:58:00+01:00"
+    "v1_to_v9": "55/55",
+    "runAt": "2026-11-07T11:25:00+01:00"
   },
-  "mc11Baseline": {
+  "mc12Baseline": {
     "namedEntities": 1602,
     "uniqueLegalKeys": 1465,
     "registerLayerSum": 17453,
     "activityVerified": 31,
     "parcelServiceIndependentlyVerified": 0,
     "postcodeCoverageVerifiedCountries": 0,
-    "apiDocumentationEntries": 7,
+    "apiDocumentationEntries": 12,
     "sandboxTests": 0
   },
   "previous": {
-    "schema": "buzzard.carrier-network-checkpoint.v2",
+    "schema": "buzzard.carrier-network-checkpoint.v3",
     "retrievedAt": "2026-11-06",
     "branch": "cursor/ab27-carrier-inventory-c293",
-    "startHead": "df3c7a95",
-    "currentSchema": "buzzard.eu27-carrier-master.v7",
+    "startHead": "7db1c4f5",
+    "currentSchema": "buzzard.eu27-carrier-master.v8",
     "completeVerifiedCountries": 0,
     "liveCarriers": 0,
     "sandboxVerified": 0,
     "tests": {
-      "v1_to_v7": "45/45",
-      "runAt": "2026-11-06T08:51:00+01:00"
+      "v1_to_v8": "51/51",
+      "runAt": "2026-11-06T11:58:00+01:00"
     },
-    "v6Frozen": {
+    "mc11Baseline": {
       "namedEntities": 1602,
       "uniqueLegalKeys": 1465,
       "registerLayerSum": 17453,
       "activityVerified": 31,
-      "usp": 27,
-      "lockers": 14,
-      "pudo": 6,
-      "internationalOps": 64,
-      "note": "Unchanged: no new named legal rows were ingested in MC11."
+      "parcelServiceIndependentlyVerified": 0,
+      "postcodeCoverageVerifiedCountries": 0,
+      "apiDocumentationEntries": 7,
+      "sandboxTests": 0
+    },
+    "previous": {
+      "schema": "buzzard.carrier-network-checkpoint.v2",
+      "retrievedAt": "2026-11-06",
+      "branch": "cursor/ab27-carrier-inventory-c293",
+      "startHead": "df3c7a95",
+      "currentSchema": "buzzard.eu27-carrier-master.v7",
+      "completeVerifiedCountries": 0,
+      "liveCarriers": 0,
+      "sandboxVerified": 0,
+      "tests": {
+        "v1_to_v7": "45/45",
+        "runAt": "2026-11-06T08:51:00+01:00"
+      },
+      "v6Frozen": {
+        "namedEntities": 1602,
+        "uniqueLegalKeys": 1465,
+        "registerLayerSum": 17453,
+        "activityVerified": 31,
+        "usp": 27,
+        "lockers": 14,
+        "pudo": 6,
+        "internationalOps": 64,
+        "note": "Unchanged: no new named legal rows were ingested in MC11."
+      },
+      "next": [
+        "NMHH Excel when href exists",
+        "ANACOM authenticated extract",
+        "RRT export",
+        "ANCOM TLS/alternate official dump",
+        "Licensed postcode files",
+        "DHL/GLS/UPS sandbox after contract"
+      ],
+      "blocked": [
+        "HU_EXCEL",
+        "PT_403",
+        "LT_POWERBI",
+        "RO_TLS",
+        "PUSH",
+        "LIVE_SHIPMENT"
+      ]
     },
     "next": [
       "NMHH Excel when href exists",
       "ANACOM authenticated extract",
       "RRT export",
       "ANCOM TLS/alternate official dump",
+      "RTR §25 bulk table",
       "Licensed postcode files",
-      "DHL/GLS/UPS sandbox after contract"
+      "Sandbox after contract"
     ],
     "blocked": [
       "HU_EXCEL",
       "PT_403",
       "LT_POWERBI",
       "RO_TLS",
+      "AT_SECTION25_SPA",
       "PUSH",
       "LIVE_SHIPMENT"
     ]
   },
   "next": [
-    "NMHH Excel when href exists",
-    "ANACOM authenticated extract",
+    "NMHH Excel href",
+    "ANACOM extract",
     "RRT export",
-    "ANCOM TLS/alternate official dump",
-    "RTR §25 bulk table",
-    "Licensed postcode files",
-    "Sandbox after contract"
+    "ANCOM TLS dump",
+    "RTR §25 bulk",
+    "Licence-reviewed postcode ingest (not coverage)",
+    "Sandbox after contract",
+    "Parcel/last-mile evidence on existing names only"
   ],
   "blocked": [
     "HU_EXCEL",
@@ -77,7 +120,7 @@
     "LT_POWERBI",
     "RO_TLS",
     "AT_SECTION25_SPA",
-    "PUSH",
+    "SANDBOX_CREDS",
     "LIVE_SHIPMENT"
   ]
 }

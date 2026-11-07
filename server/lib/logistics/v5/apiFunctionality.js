@@ -92,6 +92,15 @@ function functionalityFor(entry) {
       pickup: "DOCUMENTED",
       returns: "DOCUMENTED",
     }),
+    "hermes-germany-hsi": documented({
+      shipmentCreation: "DOCUMENTED",
+      labelGeneration: "DOCUMENTED",
+      tracking: "DOCUMENTED",
+      pickup: "DOCUMENTED",
+      returns: "DOCUMENTED",
+      authentication: "OAUTH2_DOCUMENTED",
+      sandbox: "SUPERVISED_INTEGRATION_NOT_OBTAINED",
+    }),
   };
   const features = byId[entry.carrierId] || documented();
   return {

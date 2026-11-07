@@ -1,15 +1,12 @@
-# Next checkpoint
+# Next checkpoint (after MC14)
 
-**Do not redo:** MC12 freeze; GISCO/RTR/FR/DE/NL portal URLs recorded; DPD/Austrian Post/FAN docs; HU still no xlsx href 2026-11-07.
+**Do not redo:** v1–v11 JSON freeze; Hermes HSI URL; MC10–MC14 reports; GISCO/RTR portal URLs; DPD Baltic hostname-as-docs-only.
 
-**Still blocked:** HU_EXCEL, PT_403, LT_POWERBI, RO_TLS, AT_SECTION25_SPA, POSTCODE_FILE_INGEST (licence/share-alike not completed), SANDBOX_CREDS, LIVE_SHIPMENT.
+**Still blocked:** HU_EXCEL, PT_403, LT_POWERBI, RO_TLS, AT_SECTION25_SPA, POSTCODE_FILE_INGEST, SANDBOX_CREDS, LIVE_SHIPMENT, INDEPENDENT_PARCEL_EVIDENCE.
 
 **Next:**
-1. NMHH Excel when a real href exists
-2. ANACOM authorised extract
-3. RRT export
-4. ANCOM valid TLS dump
-5. RTR §25 bulk table (SPA)
-6. Licence-reviewed ingest of AT PLZ / GISCO if legal review allows — still not carrier coverage
-7. Sandbox e2e after contracts (DPD Baltic URL is documentation only)
-8. Independent parcel/last-mile/own-fleet evidence for existing named firms only
+1. User-led DHL (then GLS/UPS) contract + supervised sandbox — agent does not apply.
+2. Licensed DE postcode ingest if legal review allows — still not carrier coverage until mapped.
+3. Independent parcel/last-mile/own-fleet evidence on **existing** named firms only.
+4. NMHH/ANACOM/RRT/ANCOM/RTR when sources unblock.
+5. Do not enable sales or live labels.

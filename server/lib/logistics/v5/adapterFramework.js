@@ -116,6 +116,19 @@ function createAdapter({
         estimated_delivery_days: "UNKNOWN",
         notACustomerPromise: true,
       }),
+    generateLabel: () => blocked("generateLabel", { errorCode: CARRIER_ERRORS.LABEL_FAILURE }),
+    getTracking: (id) => {
+      const g = gate("getTracking");
+      if (g) return g;
+      if (!id) return error("getTracking", CARRIER_ERRORS.INVALID_TRACKING);
+      return mockOk("getTracking", { trackingId: id, live: false, unknownShownAsUnknown: true });
+    },
+    getServicePoints: () => gate("getServicePoints") || mockOk("getServicePoints", { points: [], coverage: "UNKNOWN" }),
+    getDeliveryOptions: () => gate("getDeliveryOptions") || mockOk("getDeliveryOptions", { options: [], notAPromise: true }),
+    adapterVersion: "v5-mc14",
+    retryPolicy: { maxAttempts: 3, backoff: "CODE_READY_MOCK", live: false },
+    circuitBreaker: outage ? "OPEN" : "CLOSED_UNKNOWN_HEALTH",
+    untrustedExternalPayloads: true,
   };
 }
 
@@ -382,6 +395,30 @@ function documentationCatalog() {
         pickup: "DOCUMENTED_NOT_SANDBOX_TESTED",
       },
       note: "PDF states signed contract required. No credentials used.",
+    },
+    {
+      carrierId: "hermes-germany-hsi",
+      brand: "Hermes Germany",
+      country: "DE",
+      docs: "https://de-api.hermesworld.com/docs/",
+      apiType: "REST",
+      contractRequired: true,
+      sandbox_status: "SUPERVISED_INTEGRATION_PROJECT",
+      sandboxVerified: false,
+      liveVerified: false,
+      apiLevel: 2,
+      mc11Maturity: 1,
+      accessConditions: "BUSINESS_CUSTOMER_OR_SOFTWARE_PARTNER_APPROVAL",
+      capabilities: {
+        ...capabilityUnknown,
+        shipmentCreation: "DOCUMENTED_NOT_SANDBOX_TESTED",
+        labelGeneration: "DOCUMENTED_NOT_SANDBOX_TESTED",
+        tracking: "DOCUMENTED_NOT_SANDBOX_TESTED",
+        pickup: "DOCUMENTED_NOT_SANDBOX_TESTED",
+        returns: "DOCUMENTED_NOT_SANDBOX_TESTED",
+        authentication: "OAUTH2_DOCUMENTED",
+      },
+      note: "Public HSI docs. Test credentials only via supervised integration. No application made.",
     },
   ];
   return [...priority, ...docsOnly];

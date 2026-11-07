@@ -30,7 +30,26 @@ function roleModel() {
     relationTypes: ["SUPPLIER_USES_CARRIER", "SUPPLIER_CARRIER", "CARRIER_USES_SUBCONTRACTOR"],
     verifiedSupplierUsesCarrier: [],
     verifiedCarrierUsesSubcontractor: [],
+    cardinality: {
+      supplierToCarriers: "0..n",
+      carrierToSuppliers: "0..n",
+    },
+    edges: [],
     live: false,
+  };
+}
+
+function linkSupplierCarrier({ supplierId, carrierId, ownFleetVerified = false } = {}) {
+  if (!supplierId || !carrierId) {
+    return { ok: false, error: "MISSING_IDS", edges: [] };
+  }
+  if (supplierId === carrierId && !ownFleetVerified) {
+    return { ok: false, error: "SUPPLIER_IS_NOT_CARRIER_WITHOUT_OWN_FLEET", edges: [] };
+  }
+  return {
+    ok: true,
+    live: false,
+    edge: { type: "SUPPLIER_USES_CARRIER", supplierId, carrierId, verified: false },
   };
 }
 
@@ -46,4 +65,4 @@ function classifyParty({ ownFleetVerified = false, suppliesGoods = false, transp
   return { role: "UNKNOWN", mergeForbidden: true };
 }
 
-module.exports = { roleModel, classifyParty };
+module.exports = { roleModel, classifyParty, linkSupplierCarrier };

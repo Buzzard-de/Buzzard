@@ -152,8 +152,17 @@ function selectCarrier({
     estimateIsNotPrice: true,
     customerDeliveryDate: "NOT_PROMISED",
     coverage: cov,
-    selected: primary,
+    selected: autoselectAllowed ? primary : null,
+    candidates: scored,
     fallback: secondOk ? fallback : null,
+    missingInformation: [
+      cov.coverageGranularity === "POSTCODE_LEVEL" ? null : "POSTCODE_COVERAGE",
+      "PRICE",
+      "ETA",
+      "CONTRACT",
+      "SANDBOX",
+    ].filter(Boolean),
+    confidence: "LOW",
     adapter: createAdapter({ carrierId: primary?.carrierId, apiLevel: primary?.apiLevel || 0 }),
     salesEnabled: isSalesEnabled(),
     dropshipping: {

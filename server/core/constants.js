@@ -110,6 +110,16 @@ const DEFAULT_AI_EMPLOYEES = [
     capabilities: ["monitoring", "alerting"],
     priority: 90,
   },
+  {
+    id: "sinan_bey",
+    name: "Sinan Bey",
+    department: "Kurmay Heyeti",
+    description: "Software architect of the council. Session member; not a live 24/7 process.",
+    responsibility: "Architecture and software coordination via Pusat",
+    permissions: ["architecture.design", "software.review", "ai.execute"],
+    capabilities: ["architecture", "code_review", "council_coordination"],
+    priority: 85,
+  },
 ];
 
 module.exports = {

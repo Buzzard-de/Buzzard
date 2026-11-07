@@ -28,6 +28,31 @@ const MEMBERS = Object.freeze([
     share: [CLASSIFICATION.PUBLIC, CLASSIFICATION.SHARED],
   },
   {
+    id: "sinan_bey",
+    name: "Sinan Bey",
+    gender: "male",
+    role: "software_architect",
+    namedAfter: "Mimar Sinan",
+    avatar: "/council/sinan-bey.png",
+    permissions: [
+      "architecture.design",
+      "software.review",
+      "task.create",
+      "shared.read",
+      "research.request",
+    ],
+    share: [CLASSIFICATION.PUBLIC, CLASSIFICATION.SHARED],
+    cannotChair: true,
+    cannotEnableSales: true,
+    cannotExecutePayments: true,
+    cannotBuyStock: true,
+    commercialCommit: false,
+    liveShipment: false,
+    alwaysOnProcess: false,
+    replacesEsat: false,
+    replacesDogu: false,
+  },
+  {
     id: "esat_bey",
     name: "Esat Bey",
     role: "security_monitor",
@@ -234,6 +259,10 @@ function roster() {
     cannotEnableSales: Boolean(m.cannotEnableSales),
     cannotBuyStock: Boolean(m.cannotBuyStock),
     liveCalls: m.liveCalls === true,
+    gender: m.gender || null,
+    avatar: m.avatar || null,
+    commercialCommit: m.commercialCommit === true,
+    alwaysOnProcess: m.alwaysOnProcess === true,
   }));
 }
 

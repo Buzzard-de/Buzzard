@@ -9,7 +9,9 @@ const { payTax, postNetIncome, resetPools } = require("../lib/commerce/taxPools.
 describe("master command locks", () => {
   it("keeps approved council roles without granting sales or payment power", () => {
     const ids = roster().map((m) => m.id);
-    expect(ids).toEqual(expect.arrayContaining(["pusat", "nesrin_hanim", "esat_bey", "customs_ai", "phone_ai"]));
+    expect(ids).toEqual(
+      expect.arrayContaining(["pusat", "nesrin_hanim", "esat_bey", "customs_ai", "phone_ai", "sinan_bey"]),
+    );
     expect(roster().find((m) => m.id === "finance_ai").cannotExecutePayments).toBe(true);
     expect(roster().find((m) => m.id === "sales_analysis_ai").cannotEnableSales).toBe(true);
     expect(roster().find((m) => m.id === "phone_ai").liveCalls).toBe(false);

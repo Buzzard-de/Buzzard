@@ -8,6 +8,7 @@ const ROLES = Object.freeze([
   { id: "tax_ai", task: "country_tax_effects", canCommit: false, data: "restricted" },
   { id: "esat_bey", task: "security_monitor", canCommit: false, data: "security", soleDefense: false },
   { id: "dogu_bey", task: "carrier_research", canCommit: false, data: "public_research" },
+  { id: "sinan_bey", task: "software_architecture", canCommit: false, data: "shared_engineering" },
   { id: "pusat", task: "orchestrate", canCommit: false, data: "route_only" },
 ]);
 

@@ -227,6 +227,19 @@ function auditCommerceAction(action, actor, metadata = {}) {
   });
 }
 
+function planLogisticsDryRun(orderLike = {}) {
+  const { runDryRun } = require("../logistics/v5/operationsPlane");
+  return runDryRun({
+    destination: orderLike.destination || orderLike.country || "DE",
+    originCountry: orderLike.originCountry || "DE",
+    postalCode: orderLike.postalCode,
+    weightKg: orderLike.weightKg,
+    productClass: orderLike.productClass,
+    supplierId: orderLike.supplierId,
+    partyKnown: false,
+  });
+}
+
 module.exports = {
   createOrderFromCheckout,
   getOrder,
@@ -236,4 +249,5 @@ module.exports = {
   getCommercialOrderCount,
   auditCommerceAction,
   mapOrder,
+  planLogisticsDryRun,
 };

@@ -80,6 +80,7 @@ export default function AdminDashboard() {
         <ul className="admin-list">
           <li><Link href="/admin/orders/">Bestellungen verwalten</Link></li>
           <li><Link href="/admin/logistics/">Logistik & Sendungen</Link></li>
+          <li><Link href="/admin/eu27-logistics/">EU-27 Logistikstatus</Link></li>
           <li><Link href="/admin/products/">Produkte & Bestand</Link></li>
           <li><Link href="/admin/integrations/">Commercial Integrations</Link></li>
           <li><Link href="/admin/analytics/">Detaillierte Reports</Link></li>

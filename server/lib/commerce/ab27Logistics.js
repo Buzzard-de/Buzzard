@@ -108,7 +108,11 @@ function quoteLane({ destination, weightKg = 1 } = {}) {
     shippingEstimate: estimate,
     dryRun: true,
     liveCarrier: false,
+    priceInvented: true,
+    estimateIsNotPrice: true,
+    notForAutoselect: true,
     transitDays: COUNTRY_RULES[destKey].typicalTransitDays,
+    transitDaysInvented: true,
     returnsWindowDays: COUNTRY_RULES[destKey].returnsWindowDays,
   };
 }
@@ -154,6 +158,9 @@ function compareCarriers({ destination, weightKg = 1, preferSpeed = false } = {}
     liveCarrier: false,
     sandbox: false,
     mock: true,
+    priceInvented: true,
+    estimateIsNotPrice: true,
+    notForAutoselect: true,
   };
 }
 

@@ -45,6 +45,14 @@ const ACTIONS = Object.freeze({
   ESAT_STATUS: "ESAT_STATUS",
   ESAT_RECENT: "ESAT_RECENT",
   ESAT_INSPECT: "ESAT_INSPECT",
+  SINAN_PROFILE: "SINAN_PROFILE",
+  SINAN_ASSIGN: "SINAN_ASSIGN",
+  SINAN_ACCEPT: "SINAN_ACCEPT",
+  SINAN_REPORT: "SINAN_REPORT",
+  SINAN_ANALYZE: "SINAN_ANALYZE",
+  SINAN_RESEARCH: "SINAN_RESEARCH",
+  SINAN_GATE: "SINAN_GATE",
+  SINAN_VOICE: "SINAN_VOICE",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -61,12 +69,29 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.ESAT_STATUS,
   ACTIONS.ESAT_RECENT,
   ACTIONS.ESAT_INSPECT,
+  ACTIONS.SINAN_PROFILE,
+  ACTIONS.SINAN_ASSIGN,
+  ACTIONS.SINAN_ACCEPT,
+  ACTIONS.SINAN_REPORT,
+  ACTIONS.SINAN_ANALYZE,
+  ACTIONS.SINAN_RESEARCH,
+  ACTIONS.SINAN_GATE,
+  ACTIONS.SINAN_VOICE,
 ]);
 
 let durable = null;
 function getDurable() {
   if (!durable) durable = createDurable(db);
   return durable;
+}
+
+let sinanAgent = null;
+function getSinanAgent() {
+  if (!sinanAgent) {
+    const { createSinanBeyAgent } = require("./sinanBeyAgent");
+    sinanAgent = createSinanBeyAgent({ db });
+  }
+  return sinanAgent;
 }
 
 const WRITE_ACTIONS = Object.freeze([
@@ -93,6 +118,7 @@ const SPECIALISTS = Object.freeze([
   "returns",
   "customs",
   "security",
+  "architecture",
 ]);
 
 function isEnabled() {
@@ -367,6 +393,79 @@ function executeControl(action, payload, { actorId, correlationId }) {
   const esatControl = executeEsat(action, payload, { actorId, correlationId });
   if (esatControl) return { ...esatControl, ...label(MODE.DRY_RUN) };
 
+  if (action === ACTIONS.SINAN_PROFILE) {
+    return { ok: true, action, data: getSinanAgent().profile(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_ASSIGN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().assignFromPusat(payload.title),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ACCEPT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().acceptTask(payload.taskId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().reportToPusat(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ANALYZE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().analyze(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_RESEARCH) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().requestDoguResearch(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_GATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().requestHumanGate(payload.gate),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceAvatar(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
   if (action === ACTIONS.SCREEN_TRADE) {
     const { screenTrade } = require("../commerce/ab27Logistics");
     const result = screenTrade({
@@ -424,6 +523,7 @@ module.exports = {
   CONTROL_ACTIONS,
   SPECIALISTS,
   getDurable,
+  getSinanAgent,
   isEnabled,
   isHealthy,
   health,

@@ -1,4 +1,5 @@
 const { createEngine, notImplemented } = require("../engineContract");
+const { validateImage } = require("../vision/imageValidate");
 
 function sniff(buffer) {
   const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer || []);
@@ -18,6 +19,7 @@ function createVisionEngine() {
     executeImpl(input) {
       const op = input.op || "sniff";
       if (op === "sniff") return { op, ...sniff(input.bytes), understanding: false };
+      if (op === "validate") return { op, ...validateImage(input.bytes) };
       if (op === "understand" || op === "ocr" || op === "detect") {
         return { ...notImplemented(op), liveVision: false };
       }

@@ -85,6 +85,8 @@ const ACTIONS = Object.freeze({
   NATIVE_AI_ENGINE_TEST: "NATIVE_AI_ENGINE_TEST",
   NATIVE_AI_ENGINE_REPORT: "NATIVE_AI_ENGINE_REPORT",
   SINAN_PHASE7_REPORT: "SINAN_PHASE7_REPORT",
+  SINAN_PHASE8_REPORT: "SINAN_PHASE8_REPORT",
+  SINAN_PHASE8_THINKING: "SINAN_PHASE8_THINKING",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -141,6 +143,8 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.NATIVE_AI_ENGINE_TEST,
   ACTIONS.NATIVE_AI_ENGINE_REPORT,
   ACTIONS.SINAN_PHASE7_REPORT,
+  ACTIONS.SINAN_PHASE8_REPORT,
+  ACTIONS.SINAN_PHASE8_THINKING,
 ]);
 
 let durable = null;
@@ -748,6 +752,19 @@ function executeControl(action, payload, { actorId, correlationId }) {
   }
   if (action === ACTIONS.SINAN_PHASE7_REPORT) {
     return { ok: true, action, data: getSinanAgent().phase7Report(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE8_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase8Report(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE8_THINKING) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase8Thinking({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
   }
   if (action === ACTIONS.SCREEN_TRADE) {
     const { screenTrade } = require("../commerce/ab27Logistics");

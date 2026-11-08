@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const { createEngine, notImplemented } = require("../engineContract");
 const { encodeRecord, decodeRecord, SECTIONS } = require("../../pusat/sinanMemory");
 
@@ -19,13 +20,22 @@ function createMemoryEngine() {
         const enc = encodeRecord({ section: input.section || SECTIONS.C, key: input.key, value: input.value, source: actor });
         const prev = store.get(k);
         const version = (prev?.version || 0) + 1;
-        store.set(k, { ...enc, version, owner });
-        return { op, stored: true, version, encryption: enc.encryption, offsite: false };
+        const integrity = crypto.createHash("sha256").update(String(enc.ciphertext || "")).digest("hex");
+        store.set(k, { ...enc, version, owner, integrity });
+        return { op, stored: true, version, encryption: enc.encryption, integrity, offsite: false };
       }
       if (op === "get") {
         const row = store.get(k);
         if (!row) return { op, found: false };
-        return { op, found: true, version: row.version, encryption: row.encryption, decoded: decodeRecord(row) };
+        const integrity = crypto.createHash("sha256").update(String(row.ciphertext || "")).digest("hex");
+        const intact = integrity === row.integrity;
+        return { op, found: true, version: row.version, encryption: row.encryption, intact, decoded: intact ? decodeRecord(row) : null, offsite: false };
+      }
+      if (op === "integrity") {
+        const row = store.get(k);
+        if (!row) return { op, found: false };
+        const integrity = crypto.createHash("sha256").update(String(row.ciphertext || "")).digest("hex");
+        return { op, intact: integrity === row.integrity, offsite: false };
       }
       if (op === "backup") return { op, local: true, offsite: false, completeClaim: false };
       return notImplemented(op);

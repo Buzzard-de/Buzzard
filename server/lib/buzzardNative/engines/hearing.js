@@ -1,4 +1,5 @@
 const { createEngine, notImplemented } = require("../engineContract");
+const { validateAudio, languageHint } = require("../hearing/audioValidate");
 
 function rms(samples) {
   if (!samples.length) return 0;
@@ -32,7 +33,9 @@ function createHearingEngine() {
       if (op === "dataset") {
         return { op, speechHours: 0, license: "none", tr: 0, de: 0, note: "collect_later_with_consent", liveStt: false };
       }
-      if (op === "transcribe") return { ...notImplemented("transcribe"), liveStt: false };
+      if (op === "validate") return { op, ...validateAudio(input.pcm || input.bytes), liveStt: false };
+      if (op === "language") return { op, hint: languageHint(input.text), stt: false };
+      if (op === "transcribe") return { ...notImplemented("transcribe"), liveStt: false, vadIsNotStt: true };
       return notImplemented(op);
     },
   });

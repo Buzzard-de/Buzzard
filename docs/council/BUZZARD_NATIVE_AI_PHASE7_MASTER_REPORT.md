@@ -23,3 +23,5 @@ Next-token toy, sentetik külliyat, 1 blok d=8. Mantık denetimli değil. Parame
 A STT NOT_IMPLEMENTED, resmi TTS yok. B sniff var, understand yok. C hafıza+plan. D metin toplantı, canlı ses yok. E düşünme çökünce duyma çalışır. F yetkisiz+egress DENY.
 
 Ayrı raporlar: ENGINE_STATUS, INTEGRATION, SECURITY, HARDWARE_TCO, SINAN_BEY_PHASE7, OFFICIAL_VOICE_STATUS.
+
+Phase 8: `docs/council/BUZZARD_NATIVE_AI_PHASE8_MASTER_REPORT.md` on `cursor/buzzard-native-ai-phase8-c293`.

@@ -22,6 +22,8 @@ const { nativeAiStatus, engineHealth } = require("../buzzardNative/platform/nati
 const { matrix } = require("../buzzardNative/platform/engineStatus");
 const { runAll } = require("../buzzardNative/platform/scenarios");
 const { runTextMeeting } = require("../buzzardNative/platform/councilMeeting");
+const { runPhase8Thinking } = require("../buzzardNative/thinking/phase8Thinking");
+const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
 const { probeHardware } = require("../buzzardNative/thinking/hardwareProbe");
@@ -428,6 +430,21 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return { ok: fs.existsSync(p), path: p, production: false };
   }
 
+  function phase8Report() {
+    const p = "docs/council/BUZZARD_NATIVE_AI_PHASE8_MASTER_REPORT.md";
+    return {
+      ok: fs.existsSync(p),
+      path: p,
+      production: false,
+      data: registry(),
+      thinking: transformerDispatch(),
+    };
+  }
+
+  function phase8Thinking(opts) {
+    return runPhase8Thinking(opts);
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -475,6 +492,8 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     nativeEngineTest,
     nativeEngineReport,
     phase7Report,
+    phase8Report,
+    phase8Thinking,
     g2p,
     approvals,
     durable,

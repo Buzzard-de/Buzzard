@@ -2,6 +2,7 @@ const { createNativeRuntime } = require("../runtimeCore");
 const { thinkSpeak } = require("../speech/thinkSpeak");
 const { analyzeOfficialVoice } = require("../speech/voiceIdentity");
 const { runTextMeeting } = require("./councilMeeting");
+const { runLocalTurn } = require("./localChain");
 const { evaluateEgress } = require("../../security/egressPolicy");
 const fs = require("fs");
 
@@ -83,8 +84,28 @@ function scenarioF() {
   };
 }
 
-function runAll() {
-  return { A: scenarioA(), B: scenarioB(), C: scenarioC(), D: scenarioD(), E: scenarioE(), F: scenarioF() };
+function scenarioG() {
+  const t = runLocalTurn({ text: "status then report", actorId: "sinan_bey" });
+  return {
+    id: "G_local_chain",
+    ok: t.ok,
+    officialTts: t.officialTts,
+    stt: t.hearing.stt,
+    rulesPass: t.rules.passed === t.rules.total,
+    live: t.live,
+  };
 }
 
-module.exports = { scenarioA, scenarioB, scenarioC, scenarioD, scenarioE, scenarioF, runAll };
+function runAll() {
+  return {
+    A: scenarioA(),
+    B: scenarioB(),
+    C: scenarioC(),
+    D: scenarioD(),
+    E: scenarioE(),
+    F: scenarioF(),
+    G: scenarioG(),
+  };
+}
+
+module.exports = { scenarioA, scenarioB, scenarioC, scenarioD, scenarioE, scenarioF, scenarioG, runAll };

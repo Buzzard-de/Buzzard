@@ -108,6 +108,7 @@ function analyzeOfficialVoice({ actorId = "sinan_bey", root = process.cwd() } = 
     meanLevel: hashMatch ? side.pcmPreview.rms : null,
     peakLevel: hashMatch ? side.pcmPreview.peak : null,
     f0Hz: { min: f0.min, max: f0.max, mean: f0.mean, unit: "Hz", reliability: f0.reliability || null },
+    formantsHz: hashMatch ? side.formantsHz : null,
     pitchRangeHz: f0.min != null && f0.max != null ? [f0.min, f0.max] : null,
     analysisConfidence: hashMatch ? 0.6 : 0.2,
     permission: "SULEYMAN_DESIGNATED_REFERENCE",

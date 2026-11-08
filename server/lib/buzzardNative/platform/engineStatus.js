@@ -17,12 +17,14 @@ function matrix() {
   return {
     thinking: {
       proto: STATUS.TESTED,
+      ruleReasoner: STATUS.TESTED,
       productionTransformer: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
-      note: "5536-param next-token is not a reasoner; held-out Phase 6 was 0/11",
+      note: "5536-param next-token is not a reasoner; held-out Phase 6 was 0/11; closed-world rules are not AGI",
     },
     hearing: {
       vad: STATUS.CODE_READY,
+      frames: STATUS.CODE_READY,
       stt: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
       blocked: "no_licensed_speech_dataset",
@@ -30,6 +32,7 @@ function matrix() {
     speech: {
       protoTone: STATUS.TESTED,
       officialVoice: "REFERENCE_REGISTERED",
+      measuredF0: STATUS.TESTED,
       officialTts: STATUS.NOT_IMPLEMENTED,
       realTts: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
@@ -37,6 +40,7 @@ function matrix() {
     },
     vision: {
       sniff: STATUS.TESTED,
+      geometry: STATUS.CODE_READY,
       understand: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
     },
@@ -47,6 +51,7 @@ function matrix() {
     },
     digital_body: {
       pngAvatar: STATUS.TESTED,
+      voiceBind: STATUS.CODE_READY,
       body3d: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
     },

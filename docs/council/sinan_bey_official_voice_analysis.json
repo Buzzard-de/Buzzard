@@ -32,7 +32,15 @@
     "reliability": "mean_moderate; min_max_hit_search_bounds",
     "invented": false
   },
-  "formantsHz": null,
+  "formantsHz": {
+    "method": "256pt_dft_band_peak_40ms_hop_not_lpc",
+    "f1": 724.7,
+    "f2": 1359.6,
+    "f3": 2621.6,
+    "spectralCentroidHz": 2171.1,
+    "reliability": "coarse_band_peak",
+    "invented": false
+  },
   "jitter": null,
   "shimmer": null,
   "hnr": null,

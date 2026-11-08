@@ -1,8 +1,21 @@
 /**
  * Native TTS prototype: G2P + timed tones. Not Sinan Bey's official voice.
  */
+const fs = require("fs");
+const path = require("path");
 const { wavTone } = require("./wavTone");
 const { VOICE_ID } = require("./voiceIdentity");
+
+function measuredF0Hz() {
+  try {
+    const p = path.join(process.cwd(), "docs/council/sinan_bey_official_voice_profile.json");
+    const j = JSON.parse(fs.readFileSync(p, "utf8"));
+    if (j && j.f0Hz && typeof j.f0Hz.mean === "number") return j.f0Hz.mean;
+  } catch {
+    /* sidecar absent */
+  }
+  return 110;
+}
 
 const TR = { ç: "tʃ", ğ: "ː", ı: "ɯ", ö: "ø", ş: "ʃ", ü: "y", a: "a", e: "e", i: "i", o: "o", u: "u" };
 const DE = { ä: "ɛ", ö: "ø", ü: "y", ß: "s", a: "a", e: "e", i: "i", o: "o", u: "u" };
@@ -22,12 +35,15 @@ function g2p(text, lang = "tr") {
 function protoSynth({ text, lang = "tr" } = {}) {
   const { phonemes } = g2p(text, lang);
   const ms = Math.min(400, 40 + phonemes.length * 8);
-  const wav = wavTone({ hz: 110, ms });
+  const hz = measuredF0Hz();
+  const wav = wavTone({ hz, ms });
   return {
     ok: true,
-    kind: "PROTO_TONE_CHAIN_NOT_OFFICIAL_VOICE",
+    kind: "PROTO_TONE_AT_MEASURED_F0_NOT_OFFICIAL_VOICE_NOT_CLONE",
     voiceId: VOICE_ID,
+    hz,
     officialVoiceUsed: false,
+    clone: false,
     liveTts: false,
     naturalHumanClaim: false,
     bytes: wav.length,
@@ -42,7 +58,7 @@ function quality() {
     intelligibility: "UNKNOWN",
     character: "NOT_SINAN_OFFICIAL",
     naturalness: "NOT_MEASURED",
-    pitch: "TEST_TONE_110HZ",
+    pitch: "PROTO_TONE_AT_MEASURED_F0_NOT_CLONE",
     rate: "UNKNOWN",
     pause: "UNKNOWN",
     stress: "UNKNOWN",
@@ -64,4 +80,4 @@ function councilVoiceCopyGuard({ fromId, toId }) {
   return { ok: true };
 }
 
-module.exports = { g2p, protoSynth, quality, TEST_TEXTS, councilVoiceCopyGuard };
+module.exports = { g2p, protoSynth, quality, TEST_TEXTS, councilVoiceCopyGuard, measuredF0Hz };

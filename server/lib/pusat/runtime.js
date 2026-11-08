@@ -87,6 +87,8 @@ const ACTIONS = Object.freeze({
   SINAN_PHASE7_REPORT: "SINAN_PHASE7_REPORT",
   SINAN_PHASE8_REPORT: "SINAN_PHASE8_REPORT",
   SINAN_PHASE8_THINKING: "SINAN_PHASE8_THINKING",
+  SINAN_PHASE9_REPORT: "SINAN_PHASE9_REPORT",
+  SINAN_PHASE9_CHAIN: "SINAN_PHASE9_CHAIN",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -145,6 +147,8 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_PHASE7_REPORT,
   ACTIONS.SINAN_PHASE8_REPORT,
   ACTIONS.SINAN_PHASE8_THINKING,
+  ACTIONS.SINAN_PHASE9_REPORT,
+  ACTIONS.SINAN_PHASE9_CHAIN,
 ]);
 
 let durable = null;
@@ -761,6 +765,19 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ok: true,
       action,
       data: getSinanAgent().phase8Thinking({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_PHASE9_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase9Report({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE9_CHAIN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase9Chain({ actorId }),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

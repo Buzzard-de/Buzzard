@@ -12,5 +12,5 @@ Süleyman Bey `Yeni Kayıt 3.m4a` dosyasını Sinan Bey referansı olarak verdi.
 - Formant / jitter / shimmer / HNR: **ölçülmedi (null)**  
 - “Tok derin erkek” hedefi bu F0 ortalamasıyla **doğrulanmadı**.
 
-**TTS:** üretilmedi. 110 Hz test tonu hâlâ Sinan değil.  
+**TTS:** üretilmedi. Proto ton artık ölçülen ~170.8 Hz’de; bu klon değildir.  
 **Klon eğitimi:** `cloneAuthorized: false` — ayrı onay gerekir.

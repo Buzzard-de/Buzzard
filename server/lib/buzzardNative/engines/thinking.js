@@ -7,6 +7,7 @@ const { createLab, ARCHITECTURE_SPEC } = require("../thinking/lab");
 const { createTransformerLab } = require("../thinking/transformerLab");
 const { runReasoning, runReasoningPhase6 } = require("../thinking/reasoningEval");
 const { transformerDispatch } = require("../thinking/transformerDispatch");
+const { answer, evaluateAll } = require("../thinking/ruleReasoner");
 
 function tokenize(text) {
   return String(text || "")
@@ -46,7 +47,7 @@ function createThinkingEngine() {
   const xf = createTransformerLab();
   return createEngine({
     id: "thinking",
-    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train", "transformer_proto"],
+    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train", "transformer_proto", "rule_reason"],
     executeImpl(input) {
       const op = input.op || "plan";
       if (op === "tokenize") return { op, tokens: tokenize(input.text), model: "whitespace_rules", learned: false };
@@ -76,6 +77,8 @@ function createThinkingEngine() {
       if (op === "transformer_compare") return { op, ...xf.compareLinear(input) };
       if (op === "reasoning_probe") return { op, ...runReasoning(xf), reasoningClaim: false };
       if (op === "reasoning_probe_p6") return { op, ...runReasoningPhase6(xf), reasoningClaim: false };
+      if (op === "rule_reason") return { op, ...answer(input.text || input.q), generalIntelligence: false };
+      if (op === "rule_eval") return { op, ...evaluateAll(), generalIntelligence: false };
       if (op === "infer_llm") return notImplemented("infer_llm");
       if (op === "transformer") return transformerDispatch();
       if (op === "crash") throw new Error("isolated_fault_probe");

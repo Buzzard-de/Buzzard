@@ -31,6 +31,10 @@ function createSpeechEngine() {
       if (op === "proto_synth") return { op, ...protoSynth(input), liveTts: false };
       if (op === "quality") return { op, ...quality(), liveTts: false };
       if (op === "official_analyze") return { op, ...analyzeOfficialVoice(input) };
+      if (op === "measured_f0") {
+        const a = analyzeOfficialVoice(input);
+        return { op, hz: a.profile?.f0Hz?.mean ?? null, unit: "Hz", inventedHz: false, clone: false, ttsReady: false };
+      }
       if (op === "synthesize") {
         return { ...notImplemented("synthesize"), liveTts: false, officialVoice: false, voiceId: VOICE_ID };
       }

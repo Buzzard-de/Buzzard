@@ -23,6 +23,8 @@ const { matrix } = require("../buzzardNative/platform/engineStatus");
 const { runAll } = require("../buzzardNative/platform/scenarios");
 const { runTextMeeting } = require("../buzzardNative/platform/councilMeeting");
 const { runPhase8Thinking } = require("../buzzardNative/thinking/phase8Thinking");
+const { runPhase9 } = require("../buzzardNative/thinking/phase9Closure");
+const { runLocalTurn } = require("../buzzardNative/platform/localChain");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -445,6 +447,20 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return runPhase8Thinking(opts);
   }
 
+  function phase9Report(opts) {
+    const actor = (opts && opts.actorId) || ID;
+    const p = "docs/council/BUZZARD_NATIVE_AI_PHASE9_MASTER_REPORT.md";
+    return { ok: fs.existsSync(p), path: p, production: false, data: runPhase9({ actorId: actor }) };
+  }
+
+  function phase9Chain(opts) {
+    const actorId = (opts && opts.actorId) || ID;
+    if (!["sinan_bey", "pusat", "esat_bey"].includes(actorId)) {
+      return { ok: false, code: "UNAUTHORIZED_ACTOR" };
+    }
+    return runLocalTurn({ actorId, text: (opts && opts.text) || "status then report" });
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -494,6 +510,8 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     phase7Report,
     phase8Report,
     phase8Thinking,
+    phase9Report,
+    phase9Chain,
     g2p,
     approvals,
     durable,

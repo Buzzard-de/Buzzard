@@ -20,6 +20,7 @@ function matrix() {
       proto: STATUS.TESTED,
       ruleReasoner: STATUS.TESTED,
       structuredInference: STATUS.TESTED,
+      errorMemory: STATUS.TESTED,
       productionTransformer: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
       note: "RULE_BASED structured inference; not LLM_COMPLETED; Phase 6 tiny held-out 0/11",

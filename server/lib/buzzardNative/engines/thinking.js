@@ -13,6 +13,10 @@ const { solve } = require("../thinking/solve");
 const { createDecisionLog } = require("../thinking/decide");
 const { plan: planGraph, replan } = require("../thinking/planEngine");
 const { runPhase10ThinkingEval } = require("../thinking/phase10Eval");
+const { createErrorLearner } = require("../thinking/errorLearning");
+const { runPhase12Eval } = require("../thinking/phase12Eval");
+
+const learner = createErrorLearner();
 
 const decisions = createDecisionLog();
 
@@ -93,6 +97,9 @@ function createThinkingEngine() {
       if (op === "plan_graph") return { op, ...planGraph(input) };
       if (op === "replan") return { op, ...replan(input.current, input.failedId) };
       if (op === "phase10_eval") return { op, ...runPhase10ThinkingEval() };
+      if (op === "learn_outcome") return { op, ...learner.record(input) };
+      if (op === "learn_propose") return { op, ...learner.propose(input) };
+      if (op === "phase12_eval") return { op, ...runPhase12Eval() };
       if (op === "infer_llm") return notImplemented("infer_llm");
       if (op === "transformer") return transformerDispatch();
       if (op === "crash") throw new Error("isolated_fault_probe");

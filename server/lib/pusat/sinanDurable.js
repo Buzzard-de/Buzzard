@@ -2,6 +2,7 @@
  * Persistent Sinan Bey tables on the existing Pusat sqlite. Additive only.
  */
 const crypto = require("crypto");
+const { SECTIONS, encodeRecord } = require("./sinanMemory");
 
 const TASK_STATUS = Object.freeze([
   "NOT_STARTED",
@@ -41,6 +42,18 @@ function ensureSinanSchema(db) {
       kind TEXT NOT NULL,
       actor TEXT NOT NULL,
       payload_json TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS sinan_memory_versions (
+      id TEXT PRIMARY KEY,
+      owner_id TEXT NOT NULL,
+      section TEXT NOT NULL,
+      mem_key TEXT NOT NULL,
+      version INTEGER NOT NULL,
+      encryption TEXT NOT NULL,
+      value_json TEXT NOT NULL,
+      iv TEXT,
+      source TEXT,
       created_at TEXT NOT NULL
     );
   `);
@@ -144,6 +157,48 @@ function createSinanDurable(db) {
     return { ok: true, restored: (snapshot.records || []).length, live: false, offsite: false };
   }
 
+  function putPartitioned({ section, key, value, source } = {}) {
+    if (!SECTIONS[section] && !Object.values(SECTIONS).includes(section)) {
+      return { ok: false, code: "UNKNOWN_SECTION" };
+    }
+    const sectionName = SECTIONS[section] || section;
+    const last = db
+      .prepare(
+        `SELECT MAX(version) v FROM sinan_memory_versions WHERE owner_id = ? AND section = ? AND mem_key = ?`,
+      )
+      .get("sinan_bey", sectionName, key);
+    const version = Number(last?.v || 0) + 1;
+    const enc = encodeRecord({ section: sectionName, key, value, source });
+    const id = `smem_${crypto.randomBytes(6).toString("hex")}`;
+    const at = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO sinan_memory_versions (id, owner_id, section, mem_key, version, encryption, value_json, iv, source, created_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    ).run(
+      id,
+      "sinan_bey",
+      sectionName,
+      key,
+      version,
+      enc.encryption,
+      enc.ciphertext,
+      enc.iv,
+      source || "sinan_bey",
+      at,
+    );
+    audit("memory.partition.put", "sinan_bey", { section: sectionName, key, version, encryption: enc.encryption });
+    return { ok: true, id, section: sectionName, key, version, encryption: enc.encryption };
+  }
+
+  function listPartition(section) {
+    const sectionName = SECTIONS[section] || section;
+    return db
+      .prepare(
+        `SELECT id, section, mem_key, version, encryption, created_at FROM sinan_memory_versions WHERE owner_id = ? AND section = ? ORDER BY version`,
+      )
+      .all("sinan_bey", sectionName);
+  }
+
   function listAudit() {
     return db.prepare(`SELECT * FROM sinan_audit ORDER BY created_at DESC LIMIT 100`).all();
   }
@@ -156,9 +211,11 @@ function createSinanDurable(db) {
     listTasks,
     snapshotMemory,
     restoreMemorySnapshot,
+    putPartitioned,
+    listPartition,
     listAudit,
     audit,
   };
 }
 
-module.exports = { TASK_STATUS, ensureSinanSchema, createSinanDurable };
+module.exports = { TASK_STATUS, ensureSinanSchema, createSinanDurable, SECTIONS: require("./sinanMemory").SECTIONS };

@@ -9,6 +9,21 @@ const { getMember, canShare, CLASSIFICATION } = require("./council");
 const { createApprovalCenter, RISK } = require("./humanApproval");
 const { createSinanDurable, TASK_STATUS } = require("./sinanDurable");
 const { assessVoice, providerAdapters } = require("../voice/councilVoice");
+const { catalog } = require("../buzzardNative/motors");
+const { supervisorStatus } = require("../buzzardNative/supervisor");
+const { costModel } = require("../buzzardNative/costModel");
+const { dependencyInventory } = require("../buzzardNative/dependencyInventory");
+const { evaluateEgress } = require("../security/egressPolicy");
+
+const REPLIES = Object.freeze({
+  ACCEPTED: "ACCEPTED",
+  IN_PROGRESS: "IN_PROGRESS",
+  BLOCKED: "BLOCKED",
+  NEEDS_RESEARCH: "NEEDS_RESEARCH",
+  NEEDS_APPROVAL: "NEEDS_APPROVAL",
+  COMPLETED_WITH_EVIDENCE: "COMPLETED_WITH_EVIDENCE",
+  FAILED: "FAILED",
+});
 
 const ID = "sinan_bey";
 
@@ -101,12 +116,74 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     const report = durable
       ? durable.report({ taskId, kind: kind || "pusat_report", body })
       : { ok: true, id: "srep_memory", durable: false };
+    let reply = REPLIES.IN_PROGRESS;
+    if (status === "BLOCKED") reply = REPLIES.BLOCKED;
+    else if (status === "TESTED" || status === "CODE_READY") reply = REPLIES.COMPLETED_WITH_EVIDENCE;
+    else if (blockedReason) reply = REPLIES.BLOCKED;
     return {
       ok: true,
       report,
+      reply,
       liveVerified: false,
       testedIsNotLive: true,
     };
+  }
+
+  function review(payload) {
+    const analysis = analyze(payload);
+    return { ok: true, reply: REPLIES.COMPLETED_WITH_EVIDENCE, kind: "review", analysis, live: false };
+  }
+
+  function architecture() {
+    return {
+      ok: true,
+      reply: REPLIES.COMPLETED_WITH_EVIDENCE,
+      motors: catalog(),
+      supervisor: supervisorStatus(),
+      cost: costModel(),
+      dependencies: dependencyInventory(),
+      liveVerified: false,
+    };
+  }
+
+  function securityReview() {
+    const egress = evaluateEgress({ destinationUrl: "https://api.openai.com/v1", payload: { memory: true } });
+    return {
+      ok: true,
+      reply: REPLIES.COMPLETED_WITH_EVIDENCE,
+      egressDefaultDeny: egress.allowed === false,
+      gates: HUMAN_GATES,
+      esatSoleDefense: false,
+      liveVerified: false,
+    };
+  }
+
+  function recordTest({ taskId, result } = {}) {
+    return reportToPusat({
+      taskId,
+      kind: "test",
+      status: "TESTED",
+      testResult: result || "unknown",
+      body: { testedIsNotLive: true },
+    });
+  }
+
+  function statusBoard() {
+    return {
+      ok: true,
+      identity: profile(),
+      motors: catalog(),
+      supervisor: supervisorStatus(),
+      voice: voiceAvatar(),
+      tasks: durable ? durable.listTasks() : [],
+      liveVerified: false,
+      alwaysOn: false,
+    };
+  }
+
+  function remember({ section, key, value, source } = {}) {
+    if (!durable) return { ok: false, code: "NO_DURABLE_STORE" };
+    return durable.putPartitioned({ section, key, value, source });
   }
 
   function requestDoguResearch({ topic, question }) {
@@ -199,9 +276,16 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     voiceAvatar,
     backupPersonalMemory,
     restorePersonalMemory,
+    review,
+    architecture,
+    securityReview,
+    recordTest,
+    statusBoard,
+    remember,
     approvals,
     durable,
+    REPLIES,
   };
 }
 
-module.exports = { createSinanBeyAgent, HUMAN_GATES, DOMAIN_PATHS, ID };
+module.exports = { createSinanBeyAgent, HUMAN_GATES, DOMAIN_PATHS, ID, REPLIES };

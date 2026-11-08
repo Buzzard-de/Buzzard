@@ -53,6 +53,11 @@ const ACTIONS = Object.freeze({
   SINAN_RESEARCH: "SINAN_RESEARCH",
   SINAN_GATE: "SINAN_GATE",
   SINAN_VOICE: "SINAN_VOICE",
+  SINAN_REVIEW: "SINAN_REVIEW",
+  SINAN_ARCHITECTURE: "SINAN_ARCHITECTURE",
+  SINAN_SECURITY_REVIEW: "SINAN_SECURITY_REVIEW",
+  SINAN_TEST: "SINAN_TEST",
+  SINAN_STATUS: "SINAN_STATUS",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -77,6 +82,11 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_RESEARCH,
   ACTIONS.SINAN_GATE,
   ACTIONS.SINAN_VOICE,
+  ACTIONS.SINAN_REVIEW,
+  ACTIONS.SINAN_ARCHITECTURE,
+  ACTIONS.SINAN_SECURITY_REVIEW,
+  ACTIONS.SINAN_TEST,
+  ACTIONS.SINAN_STATUS,
 ]);
 
 let durable = null;
@@ -461,6 +471,56 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ok: true,
       action,
       data: getSinanAgent().voiceAvatar(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REVIEW) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().review(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ARCHITECTURE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().architecture(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_SECURITY_REVIEW) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().securityReview(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TEST) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().recordTest(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().statusBoard(),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

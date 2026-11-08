@@ -101,6 +101,7 @@ const ACTIONS = Object.freeze({
   SINAN_PHASE18_REPORT: "SINAN_PHASE18_REPORT",
   SINAN_HUMAN_REMAINING: "SINAN_HUMAN_REMAINING",
   SINAN_CLOSEOUT: "SINAN_CLOSEOUT",
+  MULTI_AGENT_FOUNDATION: "MULTI_AGENT_FOUNDATION",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -173,6 +174,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_PHASE18_REPORT,
   ACTIONS.SINAN_HUMAN_REMAINING,
   ACTIONS.SINAN_CLOSEOUT,
+  ACTIONS.MULTI_AGENT_FOUNDATION,
 ]);
 
 let durable = null;
@@ -808,6 +810,16 @@ function executeControl(action, payload, { actorId, correlationId }) {
   }
   if (action === ACTIONS.SINAN_CLOSEOUT) {
     return { ok: true, action, data: getSinanAgent().closeout({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.MULTI_AGENT_FOUNDATION) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().multiAgentFoundation({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
   }
   if (action.startsWith("SINAN_PHASE") && action.endsWith("_REPORT") && ACTIONS[action]) {
     const n = action.replace("SINAN_PHASE", "").replace("_REPORT", "");

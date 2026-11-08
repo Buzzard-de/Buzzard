@@ -13,8 +13,9 @@ const { createDigitalBodyEngine } = require("./engines/digitalBody");
 const { createMotionEngine } = require("./engines/motion");
 const { createRealtimeEngine } = require("./engines/realtime");
 const { evaluateEgress } = require("../security/egressPolicy");
+const { ids: registeredAgents } = require("./core/identityRegistry");
 
-const ACTORS = Object.freeze(["sinan_bey", "pusat", "esat_bey", "dogu_bey"]);
+const ACTORS = Object.freeze(["sinan_bey", "pusat", "esat_bey", "dogu_bey", ...registeredAgents().filter((id) => !["sinan_bey", "pusat", "esat_bey", "dogu_bey"].includes(id))]);
 
 function createNativeRuntime({ maxJobs = 8 } = {}) {
   const engines = new Map();

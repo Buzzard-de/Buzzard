@@ -102,6 +102,7 @@ const ACTIONS = Object.freeze({
   SINAN_HUMAN_REMAINING: "SINAN_HUMAN_REMAINING",
   SINAN_CLOSEOUT: "SINAN_CLOSEOUT",
   MULTI_AGENT_FOUNDATION: "MULTI_AGENT_FOUNDATION",
+  TEN_AGENT_COUNCIL: "TEN_AGENT_COUNCIL",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -175,6 +176,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_HUMAN_REMAINING,
   ACTIONS.SINAN_CLOSEOUT,
   ACTIONS.MULTI_AGENT_FOUNDATION,
+  ACTIONS.TEN_AGENT_COUNCIL,
 ]);
 
 let durable = null;
@@ -816,6 +818,16 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ok: true,
       action,
       data: getSinanAgent().multiAgentFoundation({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.TEN_AGENT_COUNCIL) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().tenAgentCouncil({ actorId }),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

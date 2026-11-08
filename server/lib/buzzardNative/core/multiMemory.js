@@ -10,6 +10,18 @@ const TYPES = Object.freeze([
   "project",
   "conversation",
   "shared_knowledge",
+  "tax_knowledge",
+  "tax_decision",
+  "tax_country",
+  "tax_task",
+  "tax_source",
+  "customs_knowledge",
+  "hs_cn_taric",
+  "sanctions",
+  "country_restrictions",
+  "customs_decision",
+  "customs_task",
+  "customs_source",
 ]);
 
 function createMultiMemory() {
@@ -18,9 +30,21 @@ function createMultiMemory() {
   function nsKey(owner, type, key) {
     return `${owner}/${type}/${key}`;
   }
+  const TAX_TYPES = ["tax_knowledge", "tax_decision", "tax_country", "tax_task", "tax_source"];
+  const CUSTOMS_TYPES = [
+    "customs_knowledge",
+    "hs_cn_taric",
+    "sanctions",
+    "country_restrictions",
+    "customs_decision",
+    "customs_task",
+    "customs_source",
+  ];
   function put({ actorId, ownerId, type = "personal", key, value }) {
     if (!ids().includes(actorId) || !ids().includes(ownerId)) return { ok: false, code: "UNKNOWN_AGENT" };
     if (!TYPES.includes(type)) return { ok: false, code: "BAD_MEMORY_TYPE" };
+    if (TAX_TYPES.includes(type) && actorId !== "nedim_bey") return { ok: false, code: "TAX_MEMORY_SPECIALIST_ONLY" };
+    if (CUSTOMS_TYPES.includes(type) && actorId !== "tuncay_bey") return { ok: false, code: "CUSTOMS_MEMORY_SPECIALIST_ONLY" };
     const shared = type === "shared_knowledge";
     if (!shared && actorId !== ownerId) {
       audit.push({ op: "put", denied: true, actorId, ownerId, type });
@@ -78,6 +102,8 @@ function createMultiMemory() {
       sinan_bey: "memory/sinan/",
       esat_bey: "memory/esat/",
       dogu_bey: "memory/dogu/",
+      nedim_bey: "memory/nedim/",
+      tuncay_bey: "memory/tuncay/",
     };
     return map[ownerId] || `memory/${ownerId}/`;
   }

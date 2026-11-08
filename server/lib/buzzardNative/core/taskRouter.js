@@ -20,12 +20,12 @@ function createRouter({ seed = [] } = {}) {
   const tasks = new Map();
   for (const row of seed) tasks.set(row.id, { ...row });
   const bus = createAgentBus();
-  function create({ title, fromId = "pusat" }) {
+  function create({ title, fromId = "pusat", kind = null } = {}) {
     if (!check(fromId, "ASSIGN_TASK").ok && fromId !== "pusat") {
       return { ok: false, code: "PERMISSION_DENIED" };
     }
     const id = `task_${crypto.randomBytes(3).toString("hex")}`;
-    const row = { id, title, state: "CREATED", assignees: [], reports: [], humanApproval: false };
+    const row = { id, title, kind, state: "CREATED", assignees: [], reports: [], humanApproval: false };
     tasks.set(id, row);
     return { ok: true, task: row };
   }

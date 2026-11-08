@@ -14,6 +14,8 @@ const ENGINE = Object.freeze({
   task_routing: { shared: false, live: STATUS.TESTED },
   event_coordination: { shared: false, live: STATUS.TESTED },
   permission_management: { shared: false, live: STATUS.TESTED },
+  tax_analysis: { shared: false, live: STATUS.CODE_READY, note: "snapshot_unverified_not_live_legal" },
+  customs_analysis: { shared: false, live: STATUS.CODE_READY, note: "schema_seed_not_live_taric" },
 });
 
 function cap(name, granted) {
@@ -46,6 +48,8 @@ const PROFILES = Object.freeze({
   mira: list(["thinking", "hearing", "speech", "vision", "memory", "digital_body", "motion"]),
   leon: list(["thinking", "hearing", "speech", "vision", "memory", "digital_body", "motion"]),
   pusat: list(["thinking", "hearing", "speech", "memory", "task_routing", "event_coordination", "permission_management"]),
+  nedim_bey: list(["thinking", "hearing", "speech", "vision", "memory", "tax_analysis"]),
+  tuncay_bey: list(["thinking", "hearing", "speech", "vision", "memory", "customs_analysis"]),
 });
 
 function forAgent(id) {

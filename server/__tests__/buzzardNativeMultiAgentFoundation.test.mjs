@@ -28,7 +28,20 @@ describe("Buzzard Native AI Core — Multi-Agent Foundation", () => {
   });
 
   it("A identity: eight registered agents, frozen council MEMBERS untouched", () => {
-    expect(ids()).toEqual(["pusat", "sinan_bey", "esat_bey", "dogu_bey", "amelia", "adrian", "mira", "leon"]);
+    expect(ids()).toEqual([
+      "pusat",
+      "sinan_bey",
+      "esat_bey",
+      "dogu_bey",
+      "nedim_bey",
+      "tuncay_bey",
+      "amelia",
+      "adrian",
+      "mira",
+      "leon",
+    ]);
+    expect(getAgent("nedim_bey").display_name).toBe("Nedim Bey");
+    expect(getAgent("tuncay_bey").display_name).toBe("Tuncay Bey");
     expect(getAgent("sinan_bey").role).toBe("chief_software_architect");
     expect(getAgent("esat_bey").role).toBe("cyber_security_guardian");
     expect(getAgent("dogu_bey").role).toBe("research_intelligence");
@@ -151,8 +164,8 @@ describe("Buzzard Native AI Core — Multi-Agent Foundation", () => {
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const pusat = require("../lib/pusat/runtime.js");
     const r = pusat.executeReadOnly("MULTI_AGENT_FOUNDATION", {}, { actorId: "pusat" });
-    expect(r.data.registered).toBe(8);
+    expect(r.data.registered).toBe(10);
     expect(r.data.orchestrator.completed).toBe(false);
-    expect(AGENTS).toHaveLength(8);
+    expect(AGENTS).toHaveLength(10);
   });
 });

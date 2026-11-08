@@ -1,6 +1,7 @@
 const { createEngine, notImplemented } = require("../engineContract");
 const signaling = require("../../voice/signaling");
 const { createSessionHub } = require("../realtime/nativeSession");
+const { duplexOnce } = require("../realtime/duplex");
 
 function createRealtimeEngine() {
   const hub = createSessionHub();
@@ -21,6 +22,7 @@ function createRealtimeEngine() {
       if (op === "session_close") return { op, ...hub.close(input) };
       if (op === "session_disconnect") return { op, ...hub.disconnect(input) };
       if (op === "session_reconnect") return { op, ...hub.reconnect(input) };
+      if (op === "duplex") return { op, ...duplexOnce(input) };
       if (op === "live_audio" || op === "live_video") {
         return { ...notImplemented(op), liveMedia: false, liveCommunicationPass: false };
       }

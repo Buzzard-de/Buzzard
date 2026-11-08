@@ -78,7 +78,9 @@ function matrix() {
     realtime: {
       signaling: STATUS.CODE_READY,
       inProcessPackets: STATUS.TESTED,
+      duplexLoopback: STATUS.TESTED,
       liveMedia: STATUS.NOT_IMPLEMENTED,
+      networkMedia: STATUS.BLOCKED,
       liveVerified: false,
     },
     platform: {

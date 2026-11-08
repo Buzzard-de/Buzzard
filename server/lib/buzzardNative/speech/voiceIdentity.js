@@ -139,9 +139,11 @@ function profilePath(root = process.cwd()) {
 
 function writeProfile(profile, { actorId, root = process.cwd() } = {}) {
   if (!["sinan_bey", "pusat"].includes(actorId || "")) return { ok: false, code: "UNAUTHORIZED_ACTOR" };
+  const locked = { ...profile, cloneAuthorized: false, ttsReady: false };
   const p = profilePath(root);
-  fs.writeFileSync(p, `${JSON.stringify(profile, null, 2)}\n`);
-  return { ok: true, path: p, inventedHz: false };
+  fs.mkdirSync(require("path").dirname(p), { recursive: true });
+  fs.writeFileSync(p, `${JSON.stringify(locked, null, 2)}\n`);
+  return { ok: true, path: p, inventedHz: false, cloneAuthorized: false };
 }
 
 module.exports = {

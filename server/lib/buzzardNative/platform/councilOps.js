@@ -13,6 +13,9 @@ const HUMAN_GATES = Object.freeze([
   "ENABLE_SALES_OR_PAYMENTS",
   "ENABLE_LIVE_CARRIER",
   "EXPORT_SECRETS",
+  "CLONE_OFFICIAL_VOICE",
+  "PURCHASE_ANYTHING",
+  "DOWNLOAD_OR_HOST_MODELS",
 ]);
 const { cloneAttempt } = require("../speech/officialVoiceGuard");
 

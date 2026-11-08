@@ -35,6 +35,8 @@ const { runPhase15 } = require("../buzzardNative/thinking/phase15Run");
 const { runPhase16 } = require("../buzzardNative/thinking/phase16Run");
 const { runPhase17 } = require("../buzzardNative/thinking/phase17Run");
 const { runPhase18 } = require("../buzzardNative/thinking/phase18Run");
+const { list: humanRemainingList } = require("../buzzardNative/platform/humanRemaining");
+const { board: closeoutBoard } = require("../buzzardNative/platform/closeoutBoard");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -69,6 +71,9 @@ const HUMAN_GATES = Object.freeze([
   "ENABLE_SALES_OR_PAYMENTS",
   "ENABLE_LIVE_CARRIER",
   "EXPORT_SECRETS",
+  "CLONE_OFFICIAL_VOICE",
+  "PURCHASE_ANYTHING",
+  "DOWNLOAD_OR_HOST_MODELS",
 ]);
 
 const DOMAIN_PATHS = Object.freeze({
@@ -491,6 +496,16 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   const phase17Report = phaseNReport(17, runPhase17);
   const phase18Report = phaseNReport(18, runPhase18);
 
+  function humanRemaining(opts) {
+    const actor = (opts && opts.actorId) || ID;
+    if (!["sinan_bey", "pusat", "esat_bey"].includes(actor)) return { ok: false, code: "UNAUTHORIZED_ACTOR" };
+    return humanRemainingList();
+  }
+
+  function closeout(opts) {
+    return closeoutBoard({ actorId: (opts && opts.actorId) || ID });
+  }
+
   function phase9Chain(opts) {
     const actorId = (opts && opts.actorId) || ID;
     if (!["sinan_bey", "pusat", "esat_bey"].includes(actorId)) {
@@ -560,6 +575,8 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     phase16Report,
     phase17Report,
     phase18Report,
+    humanRemaining,
+    closeout,
     g2p,
     approvals,
     durable,

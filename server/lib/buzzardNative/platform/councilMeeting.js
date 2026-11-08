@@ -8,7 +8,7 @@ function runTextMeeting({ chair = "pusat", members = ["sinan_bey", "esat_bey", "
     turns.push({
       speaker: "sinan_bey",
       role: "software_architect",
-      text: "Transformer proto CODE_READY. Üretim transformer NOT_IMPLEMENTED. Resmî ses BLOCKED.",
+      text: "Transformer proto CODE_READY. Üretim transformer NOT_IMPLEMENTED. Resmî ses REFERENCE_REGISTERED, klon yok, TTS yok.",
     });
   }
   if (members.includes("esat_bey")) {

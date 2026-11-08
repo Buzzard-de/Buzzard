@@ -94,3 +94,5 @@ Donanım, eğitim bütçesi, ses kayıt izni, offsite Buzzard ortamı, insan ona
 Küçük kural/arama prototipi (düşünme) **ağırlık indirmeden**. Ses/TTS hâlâ native spek.
 
 **Tamamlandı iddiası yok.** Kabul 1–9, 17 kısmen TESTED. 10–13, 15–16, 18 ağ, 14 offsite: **geçmedi**.
+
+Phase 3 (runtime + prototipler): `docs/council/SINAN_BEY_NATIVE_AI_PHASE3_REPORT.md`

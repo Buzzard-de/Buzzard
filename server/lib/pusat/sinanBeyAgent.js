@@ -10,6 +10,9 @@ const { createApprovalCenter, RISK } = require("./humanApproval");
 const { createSinanDurable, TASK_STATUS } = require("./sinanDurable");
 const { assessVoice, providerAdapters } = require("../voice/councilVoice");
 const { catalog } = require("../buzzardNative/motors");
+const { createNativeRuntime } = require("../buzzardNative/runtimeCore");
+const { hardwareScenarios } = require("../buzzardNative/hardwareScenarios");
+const { keyRecoveryProcedure } = require("../buzzardNative/keyRecovery");
 const { supervisorStatus } = require("../buzzardNative/supervisor");
 const { costModel } = require("../buzzardNative/costModel");
 const { dependencyInventory } = require("../buzzardNative/dependencyInventory");
@@ -135,10 +138,15 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   }
 
   function architecture() {
+    const native = createNativeRuntime();
+    native.initializeAll();
     return {
       ok: true,
       reply: REPLIES.COMPLETED_WITH_EVIDENCE,
       motors: catalog(),
+      nativeRuntime: native.health(),
+      hardware: hardwareScenarios(),
+      keyRecovery: keyRecoveryProcedure(),
       supervisor: supervisorStatus(),
       cost: costModel(),
       dependencies: dependencyInventory(),

@@ -11,6 +11,7 @@ const {
   unregisterAgent,
   assignVoice,
   SEED_IDS,
+  ORIGINAL_10_IDS,
 } = require("../lib/buzzardNative/core/identityRegistry.js");
 const { createMultiMemory } = require("../lib/buzzardNative/core/multiMemory.js");
 const { calculateVat, netIncomeReport, payTax, fileReturn } = require("../lib/buzzardNative/core/tax/vatEngine.js");
@@ -29,8 +30,10 @@ describe("Buzzard 10-agent council", () => {
   });
 
   it("A identity: ten seed agents, Nedim/Tuncay roles, dynamic register, no MEMBERS rewrite", () => {
-    expect(ids()).toHaveLength(10);
-    expect(SEED_IDS).toHaveLength(10);
+    expect(ORIGINAL_10_IDS).toHaveLength(10);
+    expect(ORIGINAL_10_IDS.every((id) => ids().includes(id))).toBe(true);
+    expect(ids()).toHaveLength(17);
+    expect(SEED_IDS).toHaveLength(17);
     expect(getAgent("nedim_bey").role).toBe("global_tax_and_finance_compliance_specialist");
     expect(getAgent("nedim_bey").display_name).toBe("Nedim Bey");
     expect(getAgent("nedim_bey").officialDuty).toBe("VERGI_AI");
@@ -43,7 +46,7 @@ describe("Buzzard 10-agent council", () => {
     expect(MEMBERS.some((m) => m.id === "customs_ai")).toBe(true);
     const add = registerAgent({ agent_id: "probe_ai", display_name: "Probe AI", role: "probe" });
     expect(add.ok).toBe(true);
-    expect(ids()).toHaveLength(11);
+    expect(ids()).toHaveLength(18);
     expect(registerAgent({ agent_id: "probe_ai", display_name: "X", role: "y" }).code).toBe("AGENT_ID_CONFLICT");
     expect(unregisterAgent("nedim_bey").code).toBe("SEED_IDENTITY_LOCKED");
     expect(unregisterAgent("probe_ai").ok).toBe(true);
@@ -148,7 +151,8 @@ describe("Buzzard 10-agent council", () => {
 
   it("G council10 runner, clone, egress, load honesty", () => {
     const r = runCouncil10({ actorId: "sinan_bey" });
-    expect(r.registered).toBe(10);
+    expect(r.registered).toBe(17);
+    expect(ORIGINAL_10_IDS.every((id) => r.identities.includes(id))).toBe(true);
     expect(r.voiceNedim).toBe("NOT_CONFIGURED");
     expect(r.voiceTuncay).toBe("NOT_CONFIGURED");
     expect(r.meeting.attendance.amelia).toBe(false);
@@ -164,6 +168,6 @@ describe("Buzzard 10-agent council", () => {
     expect(evaluateEgress({ destinationUrl: "https://api.openai.com/v1" }).allowed).toBe(false);
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const pusat = require("../lib/pusat/runtime.js");
-    expect(pusat.executeReadOnly("TEN_AGENT_COUNCIL", {}, { actorId: "pusat" }).data.registered).toBe(10);
+    expect(pusat.executeReadOnly("TEN_AGENT_COUNCIL", {}, { actorId: "pusat" }).data.registered).toBe(17);
   });
 });

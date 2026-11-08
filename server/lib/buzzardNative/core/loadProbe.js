@@ -15,7 +15,8 @@ function runLoad() {
     { name: "eight", n: 8 },
     { name: "ten", n: 10 },
     { name: "pusat_plus_three", n: 4, pick: ["pusat", "sinan_bey", "esat_bey", "dogu_bey"] },
-    { name: "all_registered", n: 10 },
+    { name: "all_registered", n: 17 },
+    { name: "seventeen", n: 17 },
   ];
   const results = [];
   for (const s of scenarios) {
@@ -43,10 +44,12 @@ function runLoad() {
     results,
     eightParallelNativeThreads: false,
     tenParallelNativeThreads: false,
-    note: "In-process sequential think calls. Not ten OS processes or ten LLMs. GPU none.",
+    seventeenParallelNativeThreads: false,
+    note: "In-process sequential think calls. Not seventeen OS processes or seventeen LLMs. GPU none.",
     sufficientForRuleRuntime: true,
     sufficientForEightLlm: false,
     sufficientForTenLlm: false,
+    sufficientForSeventeenLlm: false,
   };
 }
 

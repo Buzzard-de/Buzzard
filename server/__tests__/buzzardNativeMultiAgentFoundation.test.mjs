@@ -39,6 +39,13 @@ describe("Buzzard Native AI Core — Multi-Agent Foundation", () => {
       "adrian",
       "mira",
       "leon",
+      "stock_ai",
+      "category_ai",
+      "pricing_ai",
+      "seo_ai",
+      "banu_hanim",
+      "sales_analysis_ai",
+      "zeynep_hanim",
     ]);
     expect(getAgent("nedim_bey").display_name).toBe("Nedim Bey");
     expect(getAgent("tuncay_bey").display_name).toBe("Tuncay Bey");
@@ -164,8 +171,8 @@ describe("Buzzard Native AI Core — Multi-Agent Foundation", () => {
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const pusat = require("../lib/pusat/runtime.js");
     const r = pusat.executeReadOnly("MULTI_AGENT_FOUNDATION", {}, { actorId: "pusat" });
-    expect(r.data.registered).toBe(10);
+    expect(r.data.registered).toBe(17);
     expect(r.data.orchestrator.completed).toBe(false);
-    expect(AGENTS).toHaveLength(10);
+    expect(AGENTS).toHaveLength(17);
   });
 });

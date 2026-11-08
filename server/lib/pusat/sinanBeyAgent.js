@@ -39,6 +39,7 @@ const { list: humanRemainingList } = require("../buzzardNative/platform/humanRem
 const { board: closeoutBoard } = require("../buzzardNative/platform/closeoutBoard");
 const { runFoundation } = require("../buzzardNative/core/foundation");
 const { runCouncil10 } = require("../buzzardNative/core/council10");
+const { runCouncil17 } = require("../buzzardNative/core/council17");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -516,6 +517,10 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return runCouncil10({ actorId: (opts && opts.actorId) || ID });
   }
 
+  function seventeenAgentCouncil(opts) {
+    return runCouncil17({ actorId: (opts && opts.actorId) || ID });
+  }
+
   function phase9Chain(opts) {
     const actorId = (opts && opts.actorId) || ID;
     if (!["sinan_bey", "pusat", "esat_bey"].includes(actorId)) {
@@ -589,6 +594,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     closeout,
     multiAgentFoundation,
     tenAgentCouncil,
+    seventeenAgentCouncil,
     g2p,
     approvals,
     durable,

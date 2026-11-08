@@ -16,6 +16,13 @@ const ENGINE = Object.freeze({
   permission_management: { shared: false, live: STATUS.TESTED },
   tax_analysis: { shared: false, live: STATUS.CODE_READY, note: "snapshot_unverified_not_live_legal" },
   customs_analysis: { shared: false, live: STATUS.CODE_READY, note: "schema_seed_not_live_taric" },
+  stock_feeds: { shared: false, live: STATUS.CODE_READY, note: "dropship_feeds_not_live_supplier_api" },
+  category_tree: { shared: false, live: STATUS.TESTED, note: "local_master_50_json" },
+  pricing: { shared: false, live: STATUS.CODE_READY, note: "rule_quote_not_live_publish" },
+  seo_draft: { shared: false, live: STATUS.CODE_READY, note: "draft_not_live_site" },
+  customer_service: { shared: false, live: STATUS.CODE_READY, note: "policy_replies_not_live_mailbox" },
+  sales_read: { shared: false, live: STATUS.CODE_READY, note: "in_process_aggregates" },
+  phone_assistant: { shared: false, live: STATUS.NOT_IMPLEMENTED, note: "no_stt_tts_webrtc_carrier" },
 });
 
 function cap(name, granted) {
@@ -50,6 +57,13 @@ const PROFILES = Object.freeze({
   pusat: list(["thinking", "hearing", "speech", "memory", "task_routing", "event_coordination", "permission_management"]),
   nedim_bey: list(["thinking", "hearing", "speech", "vision", "memory", "tax_analysis"]),
   tuncay_bey: list(["thinking", "hearing", "speech", "vision", "memory", "customs_analysis"]),
+  stock_ai: list(["thinking", "memory", "stock_feeds"]),
+  category_ai: list(["thinking", "memory", "category_tree"]),
+  pricing_ai: list(["thinking", "memory", "pricing"]),
+  seo_ai: list(["thinking", "memory", "seo_draft"]),
+  banu_hanim: list(["thinking", "hearing", "speech", "memory", "customer_service"]),
+  sales_analysis_ai: list(["thinking", "memory", "sales_read"]),
+  zeynep_hanim: list(["thinking", "hearing", "speech", "memory", "phone_assistant"]),
 });
 
 function forAgent(id) {

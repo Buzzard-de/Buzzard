@@ -105,3 +105,5 @@ Toy val/heldout neredeyse train kadar yüksek — ezber ve genelleme ayrımı za
 ### 12. Production için eksik şartlar
 
 İnsan onayı, gerçek eval, güvenlik incelemesi, 7/24, offsite yedek, veri egemenliği ağ testi, genel yetenek kanıtı. **Production’a alınmadı.**
+
+Phase 6: `docs/council/SINAN_BEY_NATIVE_AI_PHASE6_REPORT.md` (`cursor/sinan-bey-phase6-voice-think-c293`). `transformer` op hâlâ NOT_IMPLEMENTED.

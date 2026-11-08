@@ -17,9 +17,25 @@ function cases() {
   ];
 }
 
-function runReasoning(lab) {
+function casesPhase6() {
+  return [
+    { id: "P6_tr_logic", cat: "tr_logic", q: "Yağmur yağıyorsa zemin ıslanır. Yağmur yağıyor. Sonuç:", expect: "ıslan", lang: "tr" },
+    { id: "P6_de_logic", cat: "de_logic", q: "Wenn es regnet, wird die Straße nass. Es regnet. Folgerung:", expect: "nass", lang: "de" },
+    { id: "P6_en_logic", cat: "en_logic", q: "All birds have wings. A sparrow is a bird. Therefore a sparrow", expect: "wings", lang: "en" },
+    { id: "P6_math", cat: "math", q: "Seven minus three equals", expect: "four", lang: "en" },
+    { id: "P6_cond", cat: "conditional", q: "If egress is DENY then openai.com is", expect: "blocked", lang: "en" },
+    { id: "P6_multi", cat: "multi_step", q: "First tokenize, then plan, then report. The last step is", expect: "report", lang: "en" },
+    { id: "P6_cmp", cat: "compare", q: "Which is larger, 9 or 4?", expect: "9", lang: "en" },
+    { id: "P6_class", cat: "classify", q: "A supplier invoice is a", expect: "finance", lang: "en" },
+    { id: "P6_contra", cat: "contradiction", q: "The door is open and the door is closed. That is a", expect: "contradiction", lang: "en" },
+    { id: "P6_code", cat: "code", q: "const x = 1 + 1; x equals", expect: "2", lang: "en" },
+    { id: "P6_unknown", cat: "uncertainty", q: "State the unpublished 2027 Buzzard profit in euros.", expect: "unknown", lang: "en" },
+  ];
+}
+
+function score(lab, list) {
   const out = [];
-  for (const c of cases()) {
+  for (const c of list) {
     const gen = lab.generate(c.q, 12);
     const answer = gen.ok ? gen.text : "";
     const pass = answer.toLowerCase().includes(String(c.expect).toLowerCase());
@@ -34,10 +50,18 @@ function runReasoning(lab) {
   return {
     passed,
     total: out.length,
-    rate: passed / out.length,
+    rate: out.length ? passed / out.length : 0,
     reasoningClaim: false,
     rows: out,
   };
 }
 
-module.exports = { cases, runReasoning };
+function runReasoning(lab) {
+  return score(lab, cases());
+}
+
+function runReasoningPhase6(lab) {
+  return { ...score(lab, casesPhase6()), heldOutFromTrain: true, phase5Reference: "1/11" };
+}
+
+module.exports = { cases, casesPhase6, runReasoning, runReasoningPhase6 };

@@ -1,4 +1,5 @@
 const { TRAIN, VAL, HELDOUT, META } = require("./phase5Corpus");
+const { TRAIN_EXTRA, VAL_EXTRA } = require("./phase6Corpus");
 const { trainByteBpe, encode, decode } = require("./tokenizer");
 const { validateDataset } = require("../trainingPipeline");
 const {
@@ -19,14 +20,17 @@ const { costHorizon } = require("./costHorizon");
 function createTransformerLab() {
   let last = null;
 
-  function trainRun({ epochs = 2, actorId = "sinan_bey", lr = 0.08 } = {}) {
+  function trainRun({ epochs = 2, actorId = "sinan_bey", lr = 0.08, nLayers = 1 } = {}) {
     if (!["sinan_bey", "pusat"].includes(actorId)) return { ok: false, code: "UNAUTHORIZED_ACTOR" };
     if (epochs > 3) return { ok: false, code: "RESOURCE_LIMIT", maxEpochs: 3 };
-    const check = validateDataset([...TRAIN, ...VAL, ...HELDOUT]);
+    if (nLayers > 1) return { ok: false, code: "NOT_IMPLEMENTED", extraLayers: true, implemented: false };
+    const trainSet = [...TRAIN, ...TRAIN_EXTRA];
+    const valSet = [...VAL, ...VAL_EXTRA];
+    const check = validateDataset([...trainSet, ...valSet, ...HELDOUT]);
     if (!check.ok) return { ok: false, code: "DATASET_BLOCKED", check };
-    const tok = trainByteBpe(TRAIN.map((r) => r.text), 24);
-    const trSeq = TRAIN.map((r) => encode(r.text, tok));
-    const vaSeq = VAL.map((r) => encode(r.text, tok));
+    const tok = trainByteBpe(trainSet.map((r) => r.text), 24);
+    const trSeq = trainSet.map((r) => encode(r.text, tok));
+    const vaSeq = valSet.map((r) => encode(r.text, tok));
     const model = createTransformer({ vocabSize: tok.vocabSize, dModel: 8, nHeads: 2, nPos: 24, dff: 16, seed: 11 });
     const before = meanLoss(model, vaSeq);
     const fit = trainTransformer(model, trSeq, { epochs, lr });
@@ -49,13 +53,13 @@ function createTransformerLab() {
       production: false,
       downloadedWeights: false,
       dataset: {
-        train: TRAIN.length,
-        val: VAL.length,
+        train: trainSet.length,
+        val: valSet.length,
         heldout: HELDOUT.length,
         license: META.license,
         source: META.source,
         classification: META.classification,
-        usedInTraining: TRAIN.map((r) => ({ lang: r.lang, bytes: Buffer.byteLength(r.text), license: r.license })),
+        usedInTraining: trainSet.map((r) => ({ lang: r.lang, bytes: Buffer.byteLength(r.text), license: r.license })),
       },
     };
     return { ok: true, ...summarize(last), liveVerified: false, generalPurpose: false };
@@ -99,8 +103,8 @@ function createTransformerLab() {
   function compareLinear({ epochs = 2 } = {}) {
     if (!last) trainRun({ epochs, actorId: "sinan_bey" });
     const tok = last.tokenizer;
-    const trSeq = TRAIN.map((r) => encode(r.text, tok));
-    const vaSeq = VAL.map((r) => encode(r.text, tok));
+    const trSeq = [...TRAIN, ...TRAIN_EXTRA].map((r) => encode(r.text, tok));
+    const vaSeq = [...VAL, ...VAL_EXTRA].map((r) => encode(r.text, tok));
     const linear = createTinyModel({ vocabSize: tok.vocabSize, dim: 8 });
     const t0 = Date.now();
     const rss0 = process.memoryUsage().rss;

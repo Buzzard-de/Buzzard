@@ -13,7 +13,12 @@ const { catalog } = require("../buzzardNative/motors");
 const { createNativeRuntime } = require("../buzzardNative/runtimeCore");
 const { createLab } = require("../buzzardNative/thinking/lab");
 const { createTransformerLab } = require("../buzzardNative/thinking/transformerLab");
-const { runReasoning } = require("../buzzardNative/thinking/reasoningEval");
+const { runReasoning, runReasoningPhase6 } = require("../buzzardNative/thinking/reasoningEval");
+const { analyzeOfficialVoice, writeProfile, VOICE_ID } = require("../buzzardNative/speech/voiceIdentity");
+const { protoSynth, quality, TEST_TEXTS, councilVoiceCopyGuard, g2p } = require("../buzzardNative/speech/nativeTts");
+const { thinkSpeak } = require("../buzzardNative/speech/thinkSpeak");
+const { transformerDispatch } = require("../buzzardNative/thinking/transformerDispatch");
+const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
 const { probeHardware } = require("../buzzardNative/thinking/hardwareProbe");
 const { hardwareScenarios } = require("../buzzardNative/hardwareScenarios");
@@ -339,6 +344,56 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     };
   }
 
+  function phase6Status() {
+    return {
+      thinking: { ...transformerDispatch(), proto: xfLab.status() },
+      voice: analyzeOfficialVoice({ actorId: "sinan_bey" }),
+      tts: { liveTts: false, officialVoice: false, voiceId: VOICE_ID },
+      liveMeeting: false,
+      production: false,
+    };
+  }
+
+  function reasoningTest() {
+    if (!xfLab.last) xfLab.trainRun({ epochs: 1, actorId: "sinan_bey" });
+    return { phase5: runReasoning(xfLab), phase6: runReasoningPhase6(xfLab), reasoningClaim: false };
+  }
+
+  function voiceAnalyze(actorId = "sinan_bey") {
+    const result = analyzeOfficialVoice({ actorId });
+    if (result.profile && ["sinan_bey", "pusat"].includes(actorId)) {
+      writeProfile(result.profile, { actorId });
+    }
+    return result;
+  }
+
+  function voiceProfile() {
+    return analyzeOfficialVoice({ actorId: "sinan_bey" }).profile;
+  }
+
+  function voiceTest() {
+    return Object.fromEntries(Object.entries(TEST_TEXTS).map(([lang, text]) => [lang, protoSynth({ text, lang })]));
+  }
+
+  function voiceGenerate({ text, lang, actorId = "sinan_bey" } = {}) {
+    if (!["sinan_bey", "pusat"].includes(actorId)) return { ok: false, code: "UNAUTHORIZED_ACTOR" };
+    return protoSynth({ text, lang });
+  }
+
+  function voiceQuality() {
+    return quality();
+  }
+
+  function voiceVersion() {
+    return { voiceId: VOICE_ID, version: 1, copy: councilVoiceCopyGuard({ fromId: "sinan_bey", toId: "pusat" }) };
+  }
+
+  function thinkThenSpeak(text) {
+    const thinking = createThinkingEngine();
+    thinking.initialize();
+    return thinkSpeak({ thinking, text, actorId: ID });
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -371,6 +426,16 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     modelCompare,
     hardwareReport,
     phase5Report,
+    phase6Status,
+    reasoningTest,
+    voiceAnalyze,
+    voiceProfile,
+    voiceTest,
+    voiceGenerate,
+    voiceQuality,
+    voiceVersion,
+    thinkThenSpeak,
+    g2p,
     approvals,
     durable,
     REPLIES,

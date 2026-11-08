@@ -5,7 +5,8 @@ const { createEngine, notImplemented } = require("../engineContract");
 const { trainByteBpe, encode, roundtrip } = require("../thinking/tokenizer");
 const { createLab, ARCHITECTURE_SPEC } = require("../thinking/lab");
 const { createTransformerLab } = require("../thinking/transformerLab");
-const { runReasoning } = require("../thinking/reasoningEval");
+const { runReasoning, runReasoningPhase6 } = require("../thinking/reasoningEval");
+const { transformerDispatch } = require("../thinking/transformerDispatch");
 
 function tokenize(text) {
   return String(text || "")
@@ -74,8 +75,9 @@ function createThinkingEngine() {
       if (op === "transformer_eval") return { op, ...xf.evaluate(), learned: true };
       if (op === "transformer_compare") return { op, ...xf.compareLinear(input) };
       if (op === "reasoning_probe") return { op, ...runReasoning(xf), reasoningClaim: false };
+      if (op === "reasoning_probe_p6") return { op, ...runReasoningPhase6(xf), reasoningClaim: false };
       if (op === "infer_llm") return notImplemented("infer_llm");
-      if (op === "transformer") return notImplemented("transformer");
+      if (op === "transformer") return transformerDispatch();
       if (op === "crash") throw new Error("isolated_fault_probe");
       return notImplemented(op);
     },

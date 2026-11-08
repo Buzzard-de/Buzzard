@@ -68,6 +68,17 @@ const ACTIONS = Object.freeze({
   SINAN_MODEL_COMPARE: "SINAN_MODEL_COMPARE",
   SINAN_HARDWARE_REPORT: "SINAN_HARDWARE_REPORT",
   SINAN_PHASE5_REPORT: "SINAN_PHASE5_REPORT",
+  SINAN_PHASE6_STATUS: "SINAN_PHASE6_STATUS",
+  SINAN_MODEL_TRAIN_PLAN: "SINAN_MODEL_TRAIN_PLAN",
+  SINAN_MODEL_TRAIN_RUN: "SINAN_MODEL_TRAIN_RUN",
+  SINAN_REASONING_TEST: "SINAN_REASONING_TEST",
+  SINAN_VOICE_STATUS: "SINAN_VOICE_STATUS",
+  SINAN_VOICE_ANALYZE: "SINAN_VOICE_ANALYZE",
+  SINAN_VOICE_PROFILE: "SINAN_VOICE_PROFILE",
+  SINAN_VOICE_TEST: "SINAN_VOICE_TEST",
+  SINAN_VOICE_GENERATE: "SINAN_VOICE_GENERATE",
+  SINAN_VOICE_QUALITY: "SINAN_VOICE_QUALITY",
+  SINAN_VOICE_VERSION: "SINAN_VOICE_VERSION",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -107,6 +118,17 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_MODEL_COMPARE,
   ACTIONS.SINAN_HARDWARE_REPORT,
   ACTIONS.SINAN_PHASE5_REPORT,
+  ACTIONS.SINAN_PHASE6_STATUS,
+  ACTIONS.SINAN_MODEL_TRAIN_PLAN,
+  ACTIONS.SINAN_MODEL_TRAIN_RUN,
+  ACTIONS.SINAN_REASONING_TEST,
+  ACTIONS.SINAN_VOICE_STATUS,
+  ACTIONS.SINAN_VOICE_ANALYZE,
+  ACTIONS.SINAN_VOICE_PROFILE,
+  ACTIONS.SINAN_VOICE_TEST,
+  ACTIONS.SINAN_VOICE_GENERATE,
+  ACTIONS.SINAN_VOICE_QUALITY,
+  ACTIONS.SINAN_VOICE_VERSION,
 ]);
 
 let durable = null;
@@ -645,6 +667,57 @@ function executeControl(action, payload, { actorId, correlationId }) {
       correlationId,
       ...label(MODE.DRY_RUN),
     };
+  }
+  if (action === ACTIONS.SINAN_PHASE6_STATUS) {
+    return { ok: true, action, data: getSinanAgent().phase6Status(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_MODEL_TRAIN_PLAN) {
+    return { ok: true, action, data: getSinanAgent().trainPlan(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_MODEL_TRAIN_RUN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainTransformerRun(payload, actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REASONING_TEST) {
+    return { ok: true, action, data: getSinanAgent().reasoningTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_STATUS || action === ACTIONS.SINAN_VOICE_ANALYZE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceAnalyze(actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE_PROFILE) {
+    return { ok: true, action, data: getSinanAgent().voiceProfile(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_TEST) {
+    return { ok: true, action, data: getSinanAgent().voiceTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_GENERATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceGenerate({ ...payload, actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE_QUALITY) {
+    return { ok: true, action, data: getSinanAgent().voiceQuality(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_VERSION) {
+    return { ok: true, action, data: getSinanAgent().voiceVersion(), actorId, correlationId, ...label(MODE.DRY_RUN) };
   }
   if (action === ACTIONS.SCREEN_TRADE) {
     const { screenTrade } = require("../commerce/ab27Logistics");

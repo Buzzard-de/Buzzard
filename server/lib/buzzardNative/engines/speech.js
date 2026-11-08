@@ -1,4 +1,7 @@
 const { createEngine, notImplemented } = require("../engineContract");
+const { g2p, protoSynth, quality } = require("../speech/nativeTts");
+const { analyzeOfficialVoice, VOICE_ID } = require("../speech/voiceIdentity");
+const { wavTone } = require("../speech/wavTone");
 
 const VOICES = Object.freeze({
   sinan_bey: { character: "serious_calm_professional_male", live: false },
@@ -6,29 +9,6 @@ const VOICES = Object.freeze({
   esat_bey: { character: "security_reserved_male", live: false },
   dogu_bey: { character: "research_measured_male", live: false },
 });
-
-function wavTone({ hz = 220, ms = 80 } = {}) {
-  const rate = 8000;
-  const n = Math.floor((rate * ms) / 1000);
-  const data = Buffer.alloc(n);
-  for (let i = 0; i < n; i += 1) {
-    data[i] = 128 + Math.floor(40 * Math.sin((2 * Math.PI * hz * i) / rate));
-  }
-  const header = Buffer.alloc(44);
-  header.write("RIFF", 0);
-  header.writeUInt32LE(36 + n, 4);
-  header.write("WAVEfmt ", 8);
-  header.writeUInt32LE(16, 16);
-  header.writeUInt16LE(1, 20);
-  header.writeUInt16LE(1, 22);
-  header.writeUInt32LE(rate, 24);
-  header.writeUInt32LE(rate, 28);
-  header.writeUInt16LE(1, 32);
-  header.writeUInt16LE(8, 34);
-  header.write("data", 36);
-  header.writeUInt32LE(n, 40);
-  return Buffer.concat([header, data]);
-}
 
 function createSpeechEngine() {
   return createEngine({
@@ -47,7 +27,13 @@ function createSpeechEngine() {
       if (op === "dataset") {
         return { op, voiceHours: 0, sinanTarget: VOICES.sinan_bey, note: "no_vendor_voice_purchase", liveTts: false };
       }
-      if (op === "synthesize") return { ...notImplemented("synthesize"), liveTts: false };
+      if (op === "g2p") return { op, ...g2p(input.text, input.lang), liveTts: false };
+      if (op === "proto_synth") return { op, ...protoSynth(input), liveTts: false };
+      if (op === "quality") return { op, ...quality(), liveTts: false };
+      if (op === "official_analyze") return { op, ...analyzeOfficialVoice(input) };
+      if (op === "synthesize") {
+        return { ...notImplemented("synthesize"), liveTts: false, officialVoice: false, voiceId: VOICE_ID };
+      }
       return notImplemented(op);
     },
   });

@@ -3,6 +3,7 @@
  * Esat Bey is a security monitor, not the only defense layer.
  */
 const crypto = require("crypto");
+const { resolveIdentity, LEGACY_ALIAS_TO_NATIVE } = require("../buzzardNative/core/councilAliasMap");
 
 const CLASSIFICATION = Object.freeze({
   PUBLIC: "public",
@@ -210,6 +211,40 @@ function getMember(id) {
   return MEMBERS.find((m) => m.id === id) || null;
 }
 
+function resolveMember(id) {
+  const requestedId = String(id || "").trim();
+  const exact = getMember(requestedId);
+  const resolved = resolveIdentity(requestedId);
+  if (exact) {
+    return {
+      ok: true,
+      member: exact,
+      requestedId,
+      nativeId: exact.aliasOfNative || (resolved.ok ? resolved.nativeId : null),
+      identitiesMerged: false,
+      kind: resolved.kind || "MEMBERS",
+    };
+  }
+  if (resolved.ok && resolved.kind === "NATIVE") {
+    const aliasId = Object.keys(LEGACY_ALIAS_TO_NATIVE).find((k) => LEGACY_ALIAS_TO_NATIVE[k] === requestedId);
+    const aliasMember = aliasId ? getMember(aliasId) : null;
+    return {
+      ok: Boolean(getMember(requestedId) || aliasMember || resolved.ok),
+      member: exact,
+      aliasMember: aliasMember || null,
+      requestedId,
+      nativeId: resolved.nativeId,
+      identitiesMerged: false,
+      kind: "NATIVE",
+      note: "native_id_is_not_a_MEMBERS_row; alias_row_kept_separate",
+    };
+  }
+  if (!resolved.ok && resolved.code === "NOT_NATIVE_SEED" && exact) {
+    return { ok: true, member: exact, requestedId, nativeId: null, identitiesMerged: false };
+  }
+  return { ok: false, code: resolved.code || "UNKNOWN_IDENTITY", requestedId, identitiesMerged: false };
+}
+
 function canShare({ fromId, toId, classification }) {
   if (!fromId || !toId || fromId === toId) return fromId === toId;
   const from = getMember(fromId);
@@ -278,6 +313,7 @@ module.exports = {
   CLASSIFICATION,
   MEMBERS,
   getMember,
+  resolveMember,
   canShare,
   hasPermission,
   createTask,

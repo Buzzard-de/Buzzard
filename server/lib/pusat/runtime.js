@@ -826,11 +826,19 @@ function executeControl(action, payload, { actorId, correlationId }) {
     };
   }
   if (action === ACTIONS.SEVENTEEN_AGENT_COUNCIL) {
+    const { resolveAgentInput } = require("../buzzardNative/core/identityRegistry");
+    const inputIdentity = resolveAgentInput(actorId || "pusat");
     return {
       ok: true,
       action,
-      data: getSinanAgent().seventeenAgentCouncil({ actorId }),
+      data: {
+        ...getSinanAgent().seventeenAgentCouncil({ actorId }),
+        inputIdentity,
+      },
       actorId,
+      requestedId: inputIdentity.requestedId,
+      nativeId: inputIdentity.ok ? inputIdentity.nativeId : null,
+      identitiesMerged: false,
       correlationId,
       ...label(MODE.DRY_RUN),
     };

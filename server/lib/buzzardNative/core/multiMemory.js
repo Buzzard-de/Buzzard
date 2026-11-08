@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { ids } = require("./identityRegistry");
+const { resolveIdentity } = require("./councilAliasMap");
 const { check } = require("./permissionEngine");
 
 const TYPES = Object.freeze([
@@ -40,14 +40,22 @@ function createMultiMemory() {
     "customs_task",
     "customs_source",
   ];
+  function identityOrReject(id) {
+    const resolved = resolveIdentity(id);
+    if (!resolved.ok) return { ok: false, code: resolved.code || "UNKNOWN_AGENT" };
+    return resolved;
+  }
   function put({ actorId, ownerId, type = "personal", key, value }) {
-    if (!ids().includes(actorId) || !ids().includes(ownerId)) return { ok: false, code: "UNKNOWN_AGENT" };
+    const actor = identityOrReject(actorId);
+    const owner = identityOrReject(ownerId);
+    if (!actor.ok) return { ok: false, code: actor.code };
+    if (!owner.ok) return { ok: false, code: owner.code };
     if (!TYPES.includes(type)) return { ok: false, code: "BAD_MEMORY_TYPE" };
-    if (TAX_TYPES.includes(type) && actorId !== "nedim_bey") return { ok: false, code: "TAX_MEMORY_SPECIALIST_ONLY" };
-    if (CUSTOMS_TYPES.includes(type) && actorId !== "tuncay_bey") return { ok: false, code: "CUSTOMS_MEMORY_SPECIALIST_ONLY" };
+    if (TAX_TYPES.includes(type) && actor.nativeId !== "nedim_bey") return { ok: false, code: "TAX_MEMORY_SPECIALIST_ONLY" };
+    if (CUSTOMS_TYPES.includes(type) && actor.nativeId !== "tuncay_bey") return { ok: false, code: "CUSTOMS_MEMORY_SPECIALIST_ONLY" };
     const shared = type === "shared_knowledge";
-    if (!shared && actorId !== ownerId) {
-      audit.push({ op: "put", denied: true, actorId, ownerId, type });
+    if (!shared && actor.memoryOwnerId !== owner.memoryOwnerId) {
+      audit.push({ op: "put", denied: true, actorId, ownerId, type, identitiesMerged: false });
       return { ok: false, code: "MEMORY_ISOLATION_DENIED" };
     }
     if (shared && !check(actorId, "ACCESS_SHARED_MEMORY").ok && actorId !== ownerId) {
@@ -66,8 +74,12 @@ function createMultiMemory() {
     return { ok: true, version, integrity, namespace: namespaceOf(ownerId) };
   }
   function get({ actorId, ownerId, type = "personal", key }) {
-    if (!sharedAllow(actorId, ownerId, type)) {
-      audit.push({ op: "get", denied: true, actorId, ownerId, type });
+    const actor = identityOrReject(actorId);
+    const owner = identityOrReject(ownerId);
+    if (!actor.ok) return { ok: false, code: actor.code };
+    if (!owner.ok) return { ok: false, code: owner.code };
+    if (!sharedAllow(actor.memoryOwnerId, owner.memoryOwnerId, type)) {
+      audit.push({ op: "get", denied: true, actorId, ownerId, type, identitiesMerged: false });
       return { ok: false, code: "MEMORY_ISOLATION_DENIED" };
     }
     const row = store.get(nsKey(ownerId, type, key));

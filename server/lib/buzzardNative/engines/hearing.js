@@ -29,6 +29,9 @@ function createHearingEngine() {
         const energy = rms(parsePcm16(input.pcm || []));
         return { op, energy, voiceLikely: energy > 0.02, stt: false, languages: ["tr", "de"], expansion: ["en"] };
       }
+      if (op === "dataset") {
+        return { op, speechHours: 0, license: "none", tr: 0, de: 0, note: "collect_later_with_consent", liveStt: false };
+      }
       if (op === "transcribe") return { ...notImplemented("transcribe"), liveStt: false };
       return notImplemented(op);
     },

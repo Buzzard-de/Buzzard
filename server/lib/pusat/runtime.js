@@ -58,6 +58,9 @@ const ACTIONS = Object.freeze({
   SINAN_SECURITY_REVIEW: "SINAN_SECURITY_REVIEW",
   SINAN_TEST: "SINAN_TEST",
   SINAN_STATUS: "SINAN_STATUS",
+  SINAN_TRAIN_PLAN: "SINAN_TRAIN_PLAN",
+  SINAN_MODEL_STATUS: "SINAN_MODEL_STATUS",
+  SINAN_TOY_TRAIN: "SINAN_TOY_TRAIN",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -87,6 +90,9 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_SECURITY_REVIEW,
   ACTIONS.SINAN_TEST,
   ACTIONS.SINAN_STATUS,
+  ACTIONS.SINAN_TRAIN_PLAN,
+  ACTIONS.SINAN_MODEL_STATUS,
+  ACTIONS.SINAN_TOY_TRAIN,
 ]);
 
 let durable = null;
@@ -521,6 +527,36 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ok: true,
       action,
       data: getSinanAgent().statusBoard(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRAIN_PLAN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainPlan(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelStatus(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TOY_TRAIN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().runToyTrain(payload),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

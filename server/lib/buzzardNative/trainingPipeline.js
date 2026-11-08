@@ -9,8 +9,13 @@ function validateDataset(records = []) {
   const kept = [];
   for (const row of records) {
     const cls = row.classification || "unspecified";
+    const license = row.license || "UNKNOWN";
     if (FORBIDDEN.has(cls)) {
       rejected.push({ reason: "CLASSIFIED_FORBIDDEN", cls });
+      continue;
+    }
+    if (license === "UNKNOWN") {
+      rejected.push({ reason: "LICENSE_UNKNOWN" });
       continue;
     }
     const sig = JSON.stringify(row.text || row);
@@ -19,7 +24,7 @@ function validateDataset(records = []) {
       continue;
     }
     seen.add(sig);
-    kept.push({ text: String(row.text || ""), classification: cls });
+    kept.push({ text: String(row.text || ""), classification: cls, license });
   }
   return { ok: rejected.length === 0, kept: kept.length, rejected, trained: false };
 }

@@ -2,6 +2,8 @@
  * Rule-based thinking prototype. Not a trained language model.
  */
 const { createEngine, notImplemented } = require("../engineContract");
+const { trainByteBpe, encode, roundtrip } = require("../thinking/tokenizer");
+const { createLab, ARCHITECTURE_SPEC } = require("../thinking/lab");
 
 function tokenize(text) {
   return String(text || "")
@@ -37,20 +39,36 @@ function detectContradiction(statements = []) {
 }
 
 function createThinkingEngine() {
+  const lab = createLab();
   return createEngine({
     id: "thinking",
-    capabilities: ["tokenize", "plan", "evaluate", "contradiction", "confidence"],
+    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train"],
     executeImpl(input) {
       const op = input.op || "plan";
-      if (op === "tokenize") return { op, tokens: tokenize(input.text), model: "whitespace_rules" };
-      if (op === "plan") return { op, ...plan(input.goal || input.text) };
+      if (op === "tokenize") return { op, tokens: tokenize(input.text), model: "whitespace_rules", learned: false };
+      if (op === "native_tokenize") {
+        const model = input.bpe || trainByteBpe([String(input.text || "")], 8);
+        const rt = roundtrip(input.text || "", model);
+        return { op, ...rt, ids: encode(input.text || "", model), learnedVocab: true, neural: false };
+      }
+      if (op === "plan") return { op, ...plan(input.goal || input.text), learned: false };
       if (op === "evaluate") return { op, ...evaluate(input) };
       if (op === "contradiction") return { op, ...detectContradiction(input.statements) };
       if (op === "confidence") {
         const ev = evaluate(input);
-        return { op, confidence: ev.holds ? 0.7 : 0.2, note: "heuristic_not_calibrated", ...ev };
+        return { op, confidence: ev.holds ? 0.7 : 0.2, note: "heuristic_not_calibrated", learned: false, ...ev };
       }
+      if (op === "architecture") return { op, spec: ARCHITECTURE_SPEC, learned: false };
+      if (op === "toy_train") {
+        lab.registerDataset();
+        const trained = lab.trainToy(input);
+        return { op, ...trained, learned: true, ruleBased: false, generalPurpose: false };
+      }
+      if (op === "toy_eval") return { op, ...lab.evaluateToy(input.modelId), learned: true, ruleBased: false };
+      if (op === "rollback") return { op, ...lab.rollback(input.version), production: false };
+      if (op === "promote") return { op, ...lab.promote(input) };
       if (op === "infer_llm") return notImplemented("infer_llm");
+      if (op === "transformer") return notImplemented("transformer");
       if (op === "crash") throw new Error("isolated_fault_probe");
       return notImplemented(op);
     },

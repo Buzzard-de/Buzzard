@@ -2,6 +2,7 @@
  * Hardware scenarios. Prices UNKNOWN until quoted. No purchase.
  */
 const UNKNOWN = "UNKNOWN";
+const { probeHardware } = require("./thinking/hardwareProbe");
 
 function scenario(name, extra) {
   return {
@@ -20,15 +21,17 @@ function scenario(name, extra) {
 }
 
 function hardwareScenarios() {
+  const probe = probeHardware();
   return {
     live: false,
     quoted: false,
+    probe,
     A_current: scenario("current_hardware", {
-      cpu: "host_cpu_unmeasured",
-      ram: "host_ram_unmeasured",
-      gpu: "none_assumed",
-      vram: "none_assumed",
-      ssd: "workspace_disk",
+      cpu: probe.cpuModel,
+      ram: probe.ramBytes,
+      gpu: probe.gpu,
+      vram: probe.vram,
+      ssd: probe.disk,
       trainingCapacity: "rule_prototypes_only",
       modelSize: "no_trained_weights",
       concurrentUsers: "in_process_dev",

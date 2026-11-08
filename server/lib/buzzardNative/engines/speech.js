@@ -44,6 +44,9 @@ function createSpeechEngine() {
         const wav = wavTone(input);
         return { op, kind: "TEST_TONE_NOT_TTS", bytes: wav.length, naturalHumanClaim: false };
       }
+      if (op === "dataset") {
+        return { op, voiceHours: 0, sinanTarget: VOICES.sinan_bey, note: "no_vendor_voice_purchase", liveTts: false };
+      }
       if (op === "synthesize") return { ...notImplemented("synthesize"), liveTts: false };
       return notImplemented(op);
     },

@@ -11,6 +11,9 @@ const { createSinanDurable, TASK_STATUS } = require("./sinanDurable");
 const { assessVoice, providerAdapters } = require("../voice/councilVoice");
 const { catalog } = require("../buzzardNative/motors");
 const { createNativeRuntime } = require("../buzzardNative/runtimeCore");
+const { createLab } = require("../buzzardNative/thinking/lab");
+const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
+const { probeHardware } = require("../buzzardNative/thinking/hardwareProbe");
 const { hardwareScenarios } = require("../buzzardNative/hardwareScenarios");
 const { keyRecoveryProcedure } = require("../buzzardNative/keyRecovery");
 const { supervisorStatus } = require("../buzzardNative/supervisor");
@@ -65,6 +68,7 @@ const DOMAIN_PATHS = Object.freeze({
 function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } = {}) {
   const durable = db ? createSinanDurable(db) : null;
   const attendance = new Map();
+  const lab = createLab();
 
   function esatWatch(type, details) {
     try {
@@ -146,6 +150,8 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
       motors: catalog(),
       nativeRuntime: native.health(),
       hardware: hardwareScenarios(),
+      hardwareProbe: probeHardware(),
+      costHorizon: costHorizon(),
       keyRecovery: keyRecoveryProcedure(),
       supervisor: supervisorStatus(),
       cost: costModel(),
@@ -268,6 +274,34 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return durable.restoreMemorySnapshot(snapshot, { ownerId: ID });
   }
 
+  function trainPlan() {
+    lab.registerDataset();
+    return {
+      ok: true,
+      reply: REPLIES.NEEDS_APPROVAL,
+      gpu: false,
+      downloadedWeights: false,
+      data: "BUZZARD_ORIGINAL synthetic public only",
+      hardware: probeHardware(),
+      costs: costHorizon(),
+      production: false,
+    };
+  }
+
+  function modelStatus() {
+    return {
+      ok: true,
+      jobs: lab.jobs,
+      models: lab.models.map((m) => ({ id: m.id, version: m.version, production: false, generalPurpose: false })),
+      promote: lab.promote(),
+    };
+  }
+
+  function runToyTrain(opts) {
+    lab.registerDataset();
+    return lab.trainToy(opts);
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -290,6 +324,9 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     recordTest,
     statusBoard,
     remember,
+    trainPlan,
+    modelStatus,
+    runToyTrain,
     approvals,
     durable,
     REPLIES,

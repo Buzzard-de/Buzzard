@@ -76,3 +76,5 @@ Eğitilmiş ağırlık, STT/TTS, lip-sync, canlı medya, 7/24, offsite, ölçül
 Kural prototipini genişletmek; eğitim kararı ve donanım teklifi Süleyman Bey onayı.
 
 **Genel amaçlı AI iddiası yok.**
+
+Phase 4 (tokenizer + toy train): `docs/council/SINAN_BEY_NATIVE_AI_PHASE4_REPORT.md` on `cursor/sinan-bey-phase4-think-c293`.

@@ -1,6 +1,8 @@
 const { createEngine, notImplemented } = require("../engineContract");
 const { validateAudio, languageHint } = require("../hearing/audioValidate");
 const { frameEnergy } = require("../hearing/frames");
+const { pipeline, evalLanguages } = require("../hearing/sttPipeline");
+const { loopback } = require("../hearing/toneCodec");
 
 function rms(samples) {
   if (!samples.length) return 0;
@@ -37,7 +39,10 @@ function createHearingEngine() {
       if (op === "validate") return { op, ...validateAudio(input.pcm || input.bytes), liveStt: false };
       if (op === "language") return { op, hint: languageHint(input.text), stt: false };
       if (op === "frames") return { op, ...frameEnergy(parsePcm16(input.pcm || []), input.sampleRate || 8000), stt: false };
-      if (op === "transcribe") return { ...notImplemented("transcribe"), liveStt: false, vadIsNotStt: true };
+      if (op === "pipeline") return { op, ...pipeline(input.pcm || input.bytes || Buffer.alloc(0), { langHint: input.text }) };
+      if (op === "tone_loopback") return { op, ...loopback({ text: input.text, lang: input.lang }), generalStt: false };
+      if (op === "stt_eval") return { op, ...evalLanguages() };
+      if (op === "transcribe") return { ...notImplemented("transcribe"), liveStt: false, vadIsNotStt: true, generalStt: false };
       return notImplemented(op);
     },
   });

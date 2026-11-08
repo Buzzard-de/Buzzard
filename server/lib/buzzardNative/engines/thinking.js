@@ -8,6 +8,13 @@ const { createTransformerLab } = require("../thinking/transformerLab");
 const { runReasoning, runReasoningPhase6 } = require("../thinking/reasoningEval");
 const { transformerDispatch } = require("../thinking/transformerDispatch");
 const { answer, evaluateAll } = require("../thinking/ruleReasoner");
+const { infer, DEFAULT_RULES } = require("../thinking/inferenceEngine");
+const { solve } = require("../thinking/solve");
+const { createDecisionLog } = require("../thinking/decide");
+const { plan: planGraph, replan } = require("../thinking/planEngine");
+const { runPhase10ThinkingEval } = require("../thinking/phase10Eval");
+
+const decisions = createDecisionLog();
 
 function tokenize(text) {
   return String(text || "")
@@ -47,7 +54,7 @@ function createThinkingEngine() {
   const xf = createTransformerLab();
   return createEngine({
     id: "thinking",
-    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train", "transformer_proto", "rule_reason"],
+    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train", "transformer_proto", "rule_reason", "infer", "solve", "decide"],
     executeImpl(input) {
       const op = input.op || "plan";
       if (op === "tokenize") return { op, tokens: tokenize(input.text), model: "whitespace_rules", learned: false };
@@ -79,6 +86,13 @@ function createThinkingEngine() {
       if (op === "reasoning_probe_p6") return { op, ...runReasoningPhase6(xf), reasoningClaim: false };
       if (op === "rule_reason") return { op, ...answer(input.text || input.q), generalIntelligence: false };
       if (op === "rule_eval") return { op, ...evaluateAll(), generalIntelligence: false };
+      if (op === "infer") return { op, ...infer({ facts: input.facts, rules: input.rules || DEFAULT_RULES }) };
+      if (op === "solve") return { op, ...solve({ problem: input.problem || input.text, facts: input.facts }) };
+      if (op === "decide") return { op, ...decisions.decide({ question: input.question || input.text, facts: input.facts, actorId: input.actorId }) };
+      if (op === "decision_history") return { op, history: decisions.history() };
+      if (op === "plan_graph") return { op, ...planGraph(input) };
+      if (op === "replan") return { op, ...replan(input.current, input.failedId) };
+      if (op === "phase10_eval") return { op, ...runPhase10ThinkingEval() };
       if (op === "infer_llm") return notImplemented("infer_llm");
       if (op === "transformer") return transformerDispatch();
       if (op === "crash") throw new Error("isolated_fault_probe");

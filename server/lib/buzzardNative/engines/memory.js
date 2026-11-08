@@ -1,14 +1,19 @@
 const crypto = require("crypto");
 const { createEngine, notImplemented } = require("../engineContract");
 const { encodeRecord, decodeRecord, SECTIONS } = require("../../pusat/sinanMemory");
+const { createCharacterStore } = require("../memory/characterStore");
 
 function createMemoryEngine() {
   const store = new Map();
+  const chars = createCharacterStore();
+  let snap = null;
   return createEngine({
     id: "memory",
     capabilities: ["put", "get", "isolation", "version"],
     executeImpl(input) {
       const op = input.op || "get";
+      if (op === "char_put") return { op, ...chars.put(input) };
+      if (op === "char_get") return { op, ...chars.get(input) };
       const owner = input.ownerId;
       const actor = input.actorId;
       if (!owner || !actor) return { ok: false, code: "IDENTITY_REQUIRED" };
@@ -38,6 +43,18 @@ function createMemoryEngine() {
         return { op, intact: integrity === row.integrity, offsite: false };
       }
       if (op === "backup") return { op, local: true, offsite: false, completeClaim: false };
+      if (op === "snapshot") {
+        snap = [...store.entries()].map(([kk, vv]) => [kk, { ...vv }]);
+        const b = chars.backupLocal();
+        return { op, local: true, keys: snap.length, characterKeys: b.keys, offsite: false };
+      }
+      if (op === "restore") {
+        if (!snap) return { ok: false, code: "NO_LOCAL_SNAPSHOT", offsite: false };
+        store.clear();
+        for (const [kk, vv] of snap) store.set(kk, vv);
+        chars.restoreLocal();
+        return { op, restored: snap.length, offsite: false };
+      }
       return notImplemented(op);
     },
   });

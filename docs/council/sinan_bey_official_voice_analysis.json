@@ -41,9 +41,22 @@
     "reliability": "coarse_band_peak",
     "invented": false
   },
-  "jitter": null,
-  "shimmer": null,
-  "hnr": null,
+  "jitter": {
+    "local": 0.3515,
+    "method": "f0_stdev_over_mean_not_praat",
+    "reliability": "relative_only"
+  },
+  "shimmer": {
+    "local": 0.4951,
+    "method": "amp_stdev_over_mean_not_praat",
+    "reliability": "relative_only"
+  },
+  "hnr": {
+    "db": 45.97,
+    "method": "voiced_vs_unvoiced_energy_not_true_hnr",
+    "reliability": "not_comparable_to_praat"
+  },
   "analyzedAt": "2026-11-08T14:12:00.000Z",
+  "phase10MetricsAt": "2026-11-08T17:08:00+01:00",
   "zone": "Europe/Berlin"
 }

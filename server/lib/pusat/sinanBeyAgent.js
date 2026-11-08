@@ -25,6 +25,8 @@ const { runTextMeeting } = require("../buzzardNative/platform/councilMeeting");
 const { runPhase8Thinking } = require("../buzzardNative/thinking/phase8Thinking");
 const { runPhase9 } = require("../buzzardNative/thinking/phase9Closure");
 const { runLocalTurn } = require("../buzzardNative/platform/localChain");
+const { runPhase10 } = require("../buzzardNative/thinking/phase10Closure");
+const { runPhase10ThinkingEval } = require("../buzzardNative/thinking/phase10Eval");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -453,6 +455,18 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return { ok: fs.existsSync(p), path: p, production: false, data: runPhase9({ actorId: actor }) };
   }
 
+  function phase10Report(opts) {
+    const actor = (opts && opts.actorId) || ID;
+    const p = "docs/council/BUZZARD_NATIVE_AI_PHASE10_MASTER_REPORT.md";
+    return { ok: fs.existsSync(p), path: p, production: false, data: runPhase10({ actorId: actor }) };
+  }
+
+  function phase10Eval(opts) {
+    const actor = (opts && opts.actorId) || ID;
+    if (!["sinan_bey", "pusat", "esat_bey"].includes(actor)) return { ok: false, code: "UNAUTHORIZED_ACTOR" };
+    return runPhase10ThinkingEval();
+  }
+
   function phase9Chain(opts) {
     const actorId = (opts && opts.actorId) || ID;
     if (!["sinan_bey", "pusat", "esat_bey"].includes(actorId)) {
@@ -512,6 +526,8 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     phase8Thinking,
     phase9Report,
     phase9Chain,
+    phase10Report,
+    phase10Eval,
     g2p,
     approvals,
     durable,

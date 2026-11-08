@@ -1,6 +1,8 @@
 const { createEngine, notImplemented } = require("../engineContract");
 const { g2p, protoSynth, quality } = require("../speech/nativeTts");
 const { analyzeOfficialVoice, VOICE_ID } = require("../speech/voiceIdentity");
+const { architecture, synthesizeSafe } = require("../speech/ttsArchitecture");
+const { measureVoice } = require("../speech/voiceMetrics");
 const { wavTone } = require("../speech/wavTone");
 
 const VOICES = Object.freeze({
@@ -35,8 +37,14 @@ function createSpeechEngine() {
         const a = analyzeOfficialVoice(input);
         return { op, hz: a.profile?.f0Hz?.mean ?? null, unit: "Hz", inventedHz: false, clone: false, ttsReady: false };
       }
+      if (op === "tts_architecture") return { op, ...architecture() };
+      if (op === "synth_safe") return { op, ...synthesizeSafe(input) };
+      if (op === "voice_metrics") {
+        if (!input.samples) return { op, ok: false, code: "PCM_REQUIRED", invented: false };
+        return { op, ...measureVoice(input.samples, input.sampleRate || 16000), clone: false };
+      }
       if (op === "synthesize") {
-        return { ...notImplemented("synthesize"), liveTts: false, officialVoice: false, voiceId: VOICE_ID };
+        return { ...notImplemented("synthesize"), liveTts: false, officialVoice: false, voiceId: VOICE_ID, cloneAuthorized: false };
       }
       return notImplemented(op);
     },

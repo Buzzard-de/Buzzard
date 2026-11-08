@@ -29,12 +29,12 @@ describe("Buzzard 17-agent council", () => {
   it("registers 17 identities, keeps original 10, blocks duplicate, allows dynamic extra", () => {
     expect(ids()).toHaveLength(17);
     expect(ORIGINAL_10_IDS.every((id) => ids().includes(id))).toBe(true);
-    expect(getAgent("stock_ai").display_name).toBe("Stok AI");
-    expect(getAgent("category_ai").display_name).toBe("Kategori AI");
-    expect(getAgent("pricing_ai").display_name).toBe("Fiyatlandırma AI");
-    expect(getAgent("seo_ai").display_name).toBe("SEO AI");
+    expect(getAgent("stock_ai").display_name).toBe("Çakır Bey");
+    expect(getAgent("category_ai").display_name).toBe("Pelin Hanım");
+    expect(getAgent("pricing_ai").display_name).toBe("Akın Bey");
+    expect(getAgent("seo_ai").display_name).toBe("Yılmaz Bey");
     expect(getAgent("banu_hanim").display_name).toBe("Banu Hanım");
-    expect(getAgent("sales_analysis_ai").display_name).toBe("Satış Analiz AI");
+    expect(getAgent("sales_analysis_ai").display_name).toBe("Sencer Bey");
     expect(getAgent("zeynep_hanim").display_name).toBe("Zeynep Hanım");
     expect(getAgent("tuncay_bey").agent_id).toBe("tuncay_bey");
     expect(MEMBERS.some((m) => m.id === "stock_ai")).toBe(true);

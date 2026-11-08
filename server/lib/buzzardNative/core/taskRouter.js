@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { ids } = require("./identityRegistry");
+const { resolveIdentity } = require("./councilAliasMap");
 const { check } = require("./permissionEngine");
 const { think } = require("./sharedThinking");
 const { createAgentBus } = require("./agentBus");
@@ -32,12 +33,24 @@ function createRouter({ seed = [] } = {}) {
   function assign({ taskId, agentId, fromId = "pusat" }) {
     const t = tasks.get(taskId);
     if (!t) return { ok: false, code: "TASK_NOT_FOUND" };
-    if (!ids().includes(agentId)) return { ok: false, code: "UNKNOWN_AGENT" };
+    const resolved = resolveIdentity(agentId);
+    if (!resolved.ok || !resolved.nativeId) {
+      return { ok: false, code: resolved.code === "NOT_NATIVE_SEED" ? "NOT_NATIVE_SEED" : "UNKNOWN_AGENT" };
+    }
+    if (!ids().includes(resolved.nativeId)) return { ok: false, code: "UNKNOWN_AGENT" };
     if (!check(fromId, "ASSIGN_TASK").ok) return { ok: false, code: "PERMISSION_DENIED" };
-    t.assignees.push(agentId);
+    t.assignees.push(resolved.nativeId);
+    t.aliasRequests = t.aliasRequests || [];
+    if (resolved.kind === "LEGACY_ALIAS") {
+      t.aliasRequests.push({
+        alias: resolved.requestedId,
+        nativeId: resolved.nativeId,
+        identitiesMerged: false,
+      });
+    }
     t.state = "ASSIGNED";
-    bus.send({ sender: fromId, receiver: agentId, type: "task_request", taskId, body: t.title });
-    return { ok: true, task: t };
+    bus.send({ sender: fromId, receiver: resolved.nativeId, type: "task_request", taskId, body: t.title });
+    return { ok: true, task: t, resolved, identitiesMerged: false };
   }
   function runAssigned(taskId) {
     const t = tasks.get(taskId);

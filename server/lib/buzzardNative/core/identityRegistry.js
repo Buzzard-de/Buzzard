@@ -3,6 +3,7 @@
  */
 const fs = require("fs");
 const path = require("path");
+const { OFFICIAL_DISPLAY_NAMES, resolveIdentity } = require("./councilAliasMap");
 
 const now = "2026-11-08T18:27:00+01:00";
 const expansionAt = "2026-11-08T19:13:00+01:00";
@@ -245,7 +246,7 @@ const AGENTS = [
   },
   {
     agent_id: "stock_ai",
-    display_name: "Stok AI",
+    display_name: OFFICIAL_DISPLAY_NAMES.stock_ai,
     role: "supplier_stock_manager",
     specialization: "SUPPLIER_STOCK_MANAGEMENT",
     personality_profile: "inventory_precise",
@@ -265,7 +266,7 @@ const AGENTS = [
   },
   {
     agent_id: "category_ai",
-    display_name: "Kategori AI",
+    display_name: OFFICIAL_DISPLAY_NAMES.category_ai,
     role: "master_category_tree",
     specialization: "CATEGORY_MANAGEMENT",
     personality_profile: "taxonomy_strict",
@@ -283,7 +284,7 @@ const AGENTS = [
   },
   {
     agent_id: "pricing_ai",
-    display_name: "Fiyatlandırma AI",
+    display_name: OFFICIAL_DISPLAY_NAMES.pricing_ai,
     role: "pricing_engine",
     specialization: "PRICING_ENGINE",
     personality_profile: "margin_guard",
@@ -302,7 +303,7 @@ const AGENTS = [
   },
   {
     agent_id: "seo_ai",
-    display_name: "SEO AI",
+    display_name: OFFICIAL_DISPLAY_NAMES.seo_ai,
     role: "search_engine_optimization",
     specialization: "SEO",
     personality_profile: "honest_copy",
@@ -339,7 +340,7 @@ const AGENTS = [
   },
   {
     agent_id: "sales_analysis_ai",
-    display_name: "Satış Analiz AI",
+    display_name: OFFICIAL_DISPLAY_NAMES.sales_analysis_ai,
     role: "sales_analysis",
     specialization: "SALES_ANALYSIS",
     personality_profile: "read_only_analyst",
@@ -453,4 +454,5 @@ module.exports = {
   assignAvatar,
   impersonate,
   verifySinanAssets,
+  resolveIdentity,
 };

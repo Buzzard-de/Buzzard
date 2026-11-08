@@ -1,3 +1,5 @@
+const { resolveIdentity } = require("./councilAliasMap");
+
 const DANGEROUS = Object.freeze([
   "GIT_PUSH",
   "GIT_MERGE",
@@ -143,13 +145,27 @@ function allowed(agentId, perm) {
 }
 
 function check(agentId, perm) {
-  const ok = allowed(agentId, perm);
+  const resolved = resolveIdentity(agentId);
+  if (!resolved.ok) {
+    return {
+      ok: false,
+      agentId,
+      perm,
+      code: resolved.code || "UNKNOWN_IDENTITY",
+      selfElevate: false,
+      identitiesMerged: false,
+    };
+  }
+  const profileId = resolved.permissionProfileId;
+  const ok = allowed(profileId, perm);
   return {
     ok,
-    agentId,
+    agentId: profileId,
+    requestedId: resolved.requestedId,
     perm,
     code: ok ? "ALLOW" : DANGEROUS.includes(perm) ? "HUMAN_GATE_REQUIRED" : "PERMISSION_DENIED",
     selfElevate: false,
+    identitiesMerged: false,
   };
 }
 

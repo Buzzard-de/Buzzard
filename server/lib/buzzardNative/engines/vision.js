@@ -3,6 +3,7 @@ const { validateImage } = require("../vision/imageValidate");
 const { stats } = require("../vision/imageStats");
 const { renderTextPng, ocrBitmap } = require("../vision/bitmapFont");
 const { detectBlobs, syntheticTwoBlobs } = require("../vision/blobDetect");
+const { compare, relations, videoFrames, ocrLanguages } = require("../vision/imageOps");
 
 function sniff(buffer) {
   const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer || []);
@@ -29,6 +30,10 @@ function createVisionEngine() {
         return { op, ...src };
       }
       if (op === "blobs") return { op, ...(input.gray ? detectBlobs(input.gray, input.width, input.height) : syntheticTwoBlobs()) };
+      if (op === "compare") return { op, ...compare(Buffer.from(input.a || []), Buffer.from(input.b || [])) };
+      if (op === "relations") return { op, ...relations(input.gray, input.width, input.height) };
+      if (op === "video_frames") return { op, ...videoFrames(input.frames || []) };
+      if (op === "ocr_langs") return { op, ...ocrLanguages() };
       if (op === "understand" || op === "ocr" || op === "detect") {
         return { ...notImplemented(op), liveVision: false, general: false };
       }

@@ -50,6 +50,8 @@ function matrix() {
       geometry: STATUS.CODE_READY,
       bitmapOcr: STATUS.TESTED,
       blobDetect: STATUS.TESTED,
+      imageCompare: STATUS.TESTED,
+      frameDiff: STATUS.TESTED,
       understand: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
     },

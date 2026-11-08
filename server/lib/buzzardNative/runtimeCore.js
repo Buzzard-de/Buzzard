@@ -73,11 +73,23 @@ function createNativeRuntime({ maxJobs = 8 } = {}) {
     };
   }
 
-  function publish({ fromId, toId, topic, body }) {
-    const msg = { fromId, toId, topic, body, at: Date.now() };
+  function publish({ fromId, toId, topic, body, taskId, classification = "public", clearance = "shared" }) {
+    const msg = {
+      fromEngine: fromId,
+      toEngine: toId,
+      fromId,
+      toId,
+      topic,
+      body,
+      taskId: taskId || `t_${crypto.randomBytes(3).toString("hex")}`,
+      at: new Date().toISOString(),
+      clearance,
+      classification,
+      result: "queued",
+    };
     bus.push(msg);
-    log("bus.publish", { fromId, toId, topic });
-    return { ok: true, queued: true, live: false };
+    log("bus.publish", { fromId, toId, topic, taskId: msg.taskId, classification });
+    return { ok: true, queued: true, live: false, message: msg };
   }
 
   function enqueue({ engineId, actorId, payload }) {

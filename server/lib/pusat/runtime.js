@@ -79,6 +79,12 @@ const ACTIONS = Object.freeze({
   SINAN_VOICE_GENERATE: "SINAN_VOICE_GENERATE",
   SINAN_VOICE_QUALITY: "SINAN_VOICE_QUALITY",
   SINAN_VOICE_VERSION: "SINAN_VOICE_VERSION",
+  NATIVE_AI_STATUS: "NATIVE_AI_STATUS",
+  NATIVE_AI_ENGINE_STATUS: "NATIVE_AI_ENGINE_STATUS",
+  NATIVE_AI_ENGINE_HEALTH: "NATIVE_AI_ENGINE_HEALTH",
+  NATIVE_AI_ENGINE_TEST: "NATIVE_AI_ENGINE_TEST",
+  NATIVE_AI_ENGINE_REPORT: "NATIVE_AI_ENGINE_REPORT",
+  SINAN_PHASE7_REPORT: "SINAN_PHASE7_REPORT",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -129,6 +135,12 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_VOICE_GENERATE,
   ACTIONS.SINAN_VOICE_QUALITY,
   ACTIONS.SINAN_VOICE_VERSION,
+  ACTIONS.NATIVE_AI_STATUS,
+  ACTIONS.NATIVE_AI_ENGINE_STATUS,
+  ACTIONS.NATIVE_AI_ENGINE_HEALTH,
+  ACTIONS.NATIVE_AI_ENGINE_TEST,
+  ACTIONS.NATIVE_AI_ENGINE_REPORT,
+  ACTIONS.SINAN_PHASE7_REPORT,
 ]);
 
 let durable = null;
@@ -718,6 +730,24 @@ function executeControl(action, payload, { actorId, correlationId }) {
   }
   if (action === ACTIONS.SINAN_VOICE_VERSION) {
     return { ok: true, action, data: getSinanAgent().voiceVersion(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_STATUS) {
+    return { ok: true, action, data: getSinanAgent().nativeStatus(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_STATUS) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineStatus(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_HEALTH) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineHealth(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_TEST) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_REPORT) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineReport(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE7_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase7Report(), actorId, correlationId, ...label(MODE.DRY_RUN) };
   }
   if (action === ACTIONS.SCREEN_TRADE) {
     const { screenTrade } = require("../commerce/ab27Logistics");

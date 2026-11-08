@@ -18,6 +18,10 @@ const { analyzeOfficialVoice, writeProfile, VOICE_ID } = require("../buzzardNati
 const { protoSynth, quality, TEST_TEXTS, councilVoiceCopyGuard, g2p } = require("../buzzardNative/speech/nativeTts");
 const { thinkSpeak } = require("../buzzardNative/speech/thinkSpeak");
 const { transformerDispatch } = require("../buzzardNative/thinking/transformerDispatch");
+const { nativeAiStatus, engineHealth } = require("../buzzardNative/platform/nativeStatus");
+const { matrix } = require("../buzzardNative/platform/engineStatus");
+const { runAll } = require("../buzzardNative/platform/scenarios");
+const { runTextMeeting } = require("../buzzardNative/platform/councilMeeting");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
 const { probeHardware } = require("../buzzardNative/thinking/hardwareProbe");
@@ -394,6 +398,36 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return thinkSpeak({ thinking, text, actorId: ID });
   }
 
+  function nativeStatus() {
+    return nativeAiStatus();
+  }
+
+  function nativeEngineStatus() {
+    return matrix();
+  }
+
+  function nativeEngineHealth() {
+    return engineHealth();
+  }
+
+  function nativeEngineTest() {
+    return runAll();
+  }
+
+  function nativeEngineReport() {
+    return {
+      engines: matrix(),
+      scenarios: runAll(),
+      meeting: runTextMeeting(),
+      liveVerified: false,
+    };
+  }
+
+  function phase7Report() {
+    const p = "docs/council/BUZZARD_NATIVE_AI_PHASE7_MASTER_REPORT.md";
+    return { ok: fs.existsSync(p), path: p, production: false };
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -435,6 +469,12 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     voiceQuality,
     voiceVersion,
     thinkThenSpeak,
+    nativeStatus,
+    nativeEngineStatus,
+    nativeEngineHealth,
+    nativeEngineTest,
+    nativeEngineReport,
+    phase7Report,
     g2p,
     approvals,
     durable,

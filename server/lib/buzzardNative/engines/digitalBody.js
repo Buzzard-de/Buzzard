@@ -1,6 +1,7 @@
 const { createEngine, notImplemented } = require("../engineContract");
 const { VOICE_ID } = require("../speech/voiceIdentity");
 const { schedule } = require("../motion/visemeSchedule");
+const { setExpression, idleTick, speechSync } = require("../motion/expression");
 
 const AVATAR = "/council/sinan-bey.png";
 const POSES = Object.freeze(["idle", "listening", "thinking", "speaking"]);
@@ -21,6 +22,9 @@ function createDigitalBodyEngine() {
         return { op, pose, avatar: AVATAR, voiceId: VOICE_ID, animation: false, lipSync: false };
       }
       if (op === "viseme") return { op, ...schedule(input.phonemes || []), avatar: AVATAR, body3d: false };
+      if (op === "expression") return { op, ...setExpression(input.expression || "neutral"), avatar: AVATAR };
+      if (op === "idle") return { op, ...idleTick(input.ms), avatar: AVATAR };
+      if (op === "speech_sync") return { op, ...speechSync(input.text || "merhaba", input.lang || "tr"), avatar: AVATAR };
       if (op === "lip_sync" || op === "animate") return { ...notImplemented(op), avatar: AVATAR, lipSyncPass: false };
       return notImplemented(op);
     },

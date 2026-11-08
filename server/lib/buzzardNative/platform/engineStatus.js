@@ -65,6 +65,7 @@ function matrix() {
       pngAvatar: STATUS.TESTED,
       voiceBind: STATUS.CODE_READY,
       visemeTimeline: STATUS.CODE_READY,
+      expressions: STATUS.TESTED,
       body3d: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
     },

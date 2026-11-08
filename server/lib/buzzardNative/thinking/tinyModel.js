@@ -93,4 +93,18 @@ function infer(model, id) {
   return { nextId: best, p: p[best], transformer: false, generalPurpose: false };
 }
 
-module.exports = { createTinyModel, trainEpoch, checkpoint, loadCheckpoint, infer };
+function sequenceLoss(model, sequences) {
+  let loss = 0;
+  let n = 0;
+  for (const seq of sequences) {
+    for (let t = 0; t < seq.length - 1; t += 1) {
+      const p = softmax(logitsFrom(model, embed(model, seq[t])));
+      const y = seq[t + 1];
+      loss += -Math.log(Math.max(p[y] || 1e-12, 1e-12));
+      n += 1;
+    }
+  }
+  return { loss: n ? loss / n : 0, perplexity: n ? Math.exp(Math.min(loss / n, 20)) : null, n };
+}
+
+module.exports = { createTinyModel, trainEpoch, checkpoint, loadCheckpoint, infer, sequenceLoss };

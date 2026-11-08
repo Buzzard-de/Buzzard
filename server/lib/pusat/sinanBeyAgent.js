@@ -12,6 +12,8 @@ const { assessVoice, providerAdapters } = require("../voice/councilVoice");
 const { catalog } = require("../buzzardNative/motors");
 const { createNativeRuntime } = require("../buzzardNative/runtimeCore");
 const { createLab } = require("../buzzardNative/thinking/lab");
+const { createTransformerLab } = require("../buzzardNative/thinking/transformerLab");
+const { runReasoning } = require("../buzzardNative/thinking/reasoningEval");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
 const { probeHardware } = require("../buzzardNative/thinking/hardwareProbe");
 const { hardwareScenarios } = require("../buzzardNative/hardwareScenarios");
@@ -69,6 +71,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   const durable = db ? createSinanDurable(db) : null;
   const attendance = new Map();
   const lab = createLab();
+  const xfLab = createTransformerLab();
 
   function esatWatch(type, details) {
     try {
@@ -302,6 +305,40 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return lab.trainToy(opts);
   }
 
+  function transformerStatus() {
+    return xfLab.status();
+  }
+
+  function modelEvaluate() {
+    return xfLab.evaluate();
+  }
+
+  function tokenizerTest() {
+    return xfLab.tokenizerTest();
+  }
+
+  function trainTransformerRun(opts = {}, actorId = "sinan_bey") {
+    return xfLab.trainRun({ ...opts, actorId });
+  }
+
+  function modelCompare(opts) {
+    return xfLab.compareLinear(opts);
+  }
+
+  function hardwareReport() {
+    return xfLab.hardwareReport();
+  }
+
+  function phase5Report() {
+    const p = "docs/council/SINAN_BEY_NATIVE_AI_PHASE5_REPORT.md";
+    return {
+      ok: fs.existsSync(p),
+      path: p,
+      production: false,
+      reasoning: xfLab.last ? runReasoning(xfLab) : { skipped: true },
+    };
+  }
+
   return {
     id: ID,
     TASK_STATUS,
@@ -327,6 +364,13 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     trainPlan,
     modelStatus,
     runToyTrain,
+    transformerStatus,
+    modelEvaluate,
+    tokenizerTest,
+    trainTransformerRun,
+    modelCompare,
+    hardwareReport,
+    phase5Report,
     approvals,
     durable,
     REPLIES,

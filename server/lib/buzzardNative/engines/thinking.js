@@ -4,6 +4,8 @@
 const { createEngine, notImplemented } = require("../engineContract");
 const { trainByteBpe, encode, roundtrip } = require("../thinking/tokenizer");
 const { createLab, ARCHITECTURE_SPEC } = require("../thinking/lab");
+const { createTransformerLab } = require("../thinking/transformerLab");
+const { runReasoning } = require("../thinking/reasoningEval");
 
 function tokenize(text) {
   return String(text || "")
@@ -40,9 +42,10 @@ function detectContradiction(statements = []) {
 
 function createThinkingEngine() {
   const lab = createLab();
+  const xf = createTransformerLab();
   return createEngine({
     id: "thinking",
-    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train"],
+    capabilities: ["tokenize", "native_tokenize", "plan", "evaluate", "contradiction", "confidence", "toy_train", "transformer_proto"],
     executeImpl(input) {
       const op = input.op || "plan";
       if (op === "tokenize") return { op, tokens: tokenize(input.text), model: "whitespace_rules", learned: false };
@@ -67,6 +70,10 @@ function createThinkingEngine() {
       if (op === "toy_eval") return { op, ...lab.evaluateToy(input.modelId), learned: true, ruleBased: false };
       if (op === "rollback") return { op, ...lab.rollback(input.version), production: false };
       if (op === "promote") return { op, ...lab.promote(input) };
+      if (op === "transformer_proto") return { op, ...xf.trainRun(input), learned: true, ruleBased: false };
+      if (op === "transformer_eval") return { op, ...xf.evaluate(), learned: true };
+      if (op === "transformer_compare") return { op, ...xf.compareLinear(input) };
+      if (op === "reasoning_probe") return { op, ...runReasoning(xf), reasoningClaim: false };
       if (op === "infer_llm") return notImplemented("infer_llm");
       if (op === "transformer") return notImplemented("transformer");
       if (op === "crash") throw new Error("isolated_fault_probe");

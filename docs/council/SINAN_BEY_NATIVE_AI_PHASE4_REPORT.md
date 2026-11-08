@@ -72,3 +72,5 @@ Tam transformer, dikkat, STT/TTS, üretim ağırlık, offsite, ağ egemenliği i
 Dikkat katmanı prototipi (hâlâ küçük, sıfırdan) veya ses veri politikası — onay sonrası.
 
 **Genel amaçlı model iddiası yok.**
+
+Phase 5 (tiny causal transformer): `docs/council/SINAN_BEY_NATIVE_AI_PHASE5_REPORT.md` on `cursor/sinan-bey-phase5-transformer-c293`.

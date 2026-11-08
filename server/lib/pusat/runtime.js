@@ -61,6 +61,13 @@ const ACTIONS = Object.freeze({
   SINAN_TRAIN_PLAN: "SINAN_TRAIN_PLAN",
   SINAN_MODEL_STATUS: "SINAN_MODEL_STATUS",
   SINAN_TOY_TRAIN: "SINAN_TOY_TRAIN",
+  SINAN_TRANSFORMER_STATUS: "SINAN_TRANSFORMER_STATUS",
+  SINAN_MODEL_EVALUATE: "SINAN_MODEL_EVALUATE",
+  SINAN_TOKENIZER_TEST: "SINAN_TOKENIZER_TEST",
+  SINAN_TRAIN_RUN: "SINAN_TRAIN_RUN",
+  SINAN_MODEL_COMPARE: "SINAN_MODEL_COMPARE",
+  SINAN_HARDWARE_REPORT: "SINAN_HARDWARE_REPORT",
+  SINAN_PHASE5_REPORT: "SINAN_PHASE5_REPORT",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -93,6 +100,13 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_TRAIN_PLAN,
   ACTIONS.SINAN_MODEL_STATUS,
   ACTIONS.SINAN_TOY_TRAIN,
+  ACTIONS.SINAN_TRANSFORMER_STATUS,
+  ACTIONS.SINAN_MODEL_EVALUATE,
+  ACTIONS.SINAN_TOKENIZER_TEST,
+  ACTIONS.SINAN_TRAIN_RUN,
+  ACTIONS.SINAN_MODEL_COMPARE,
+  ACTIONS.SINAN_HARDWARE_REPORT,
+  ACTIONS.SINAN_PHASE5_REPORT,
 ]);
 
 let durable = null;
@@ -557,6 +571,76 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ok: true,
       action,
       data: getSinanAgent().runToyTrain(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRANSFORMER_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().transformerStatus(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_EVALUATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelEvaluate(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TOKENIZER_TEST) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().tokenizerTest(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRAIN_RUN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainTransformerRun(payload, actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_COMPARE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelCompare(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_HARDWARE_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().hardwareReport(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_PHASE5_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase5Report(),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

@@ -96,9 +96,9 @@ function createLab() {
 const ARCHITECTURE_SPEC = Object.freeze({
   ruleEngine: "separate_module",
   learnedEngine: "tiny_linear_next_token",
-  transformer: { status: "NOT_IMPLEMENTED", layers: 0, heads: 0 },
+  transformer: { status: "CODE_READY", kind: "tiny_causal_1block", layers: 1, heads: 2, generalPurpose: false },
   embeddings: { dim: 8, trainedFromScratch: true },
-  attention: { status: "NOT_IMPLEMENTED" },
+  attention: { status: "CODE_READY", causal: true },
 });
 
 module.exports = { createLab, ARCHITECTURE_SPEC };

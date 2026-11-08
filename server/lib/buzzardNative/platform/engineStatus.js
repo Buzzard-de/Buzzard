@@ -58,6 +58,7 @@ function matrix() {
     memory: {
       isolation: STATUS.TESTED,
       localSnapshot: STATUS.TESTED,
+      localCopiesLab: STATUS.TESTED,
       offsiteBackup: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
     },

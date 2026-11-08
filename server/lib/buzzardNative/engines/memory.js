@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const { createEngine, notImplemented } = require("../engineContract");
 const { encodeRecord, decodeRecord, SECTIONS } = require("../../pusat/sinanMemory");
 const { createCharacterStore } = require("../memory/characterStore");
+const { lab32110 } = require("../memory/localCopies");
 
 function createMemoryEngine() {
   const store = new Map();
@@ -43,6 +44,7 @@ function createMemoryEngine() {
         return { op, intact: integrity === row.integrity, offsite: false };
       }
       if (op === "backup") return { op, local: true, offsite: false, completeClaim: false };
+      if (op === "lab_copies") return { op, ...lab32110(Buffer.from(String(input.value || "lab"))) };
       if (op === "snapshot") {
         snap = [...store.entries()].map(([kk, vv]) => [kk, { ...vv }]);
         const b = chars.backupLocal();

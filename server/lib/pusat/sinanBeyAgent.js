@@ -27,6 +27,7 @@ const { runPhase9 } = require("../buzzardNative/thinking/phase9Closure");
 const { runLocalTurn } = require("../buzzardNative/platform/localChain");
 const { runPhase10 } = require("../buzzardNative/thinking/phase10Closure");
 const { runPhase10ThinkingEval } = require("../buzzardNative/thinking/phase10Eval");
+const { runPhase11 } = require("../buzzardNative/thinking/phase11Run");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -467,6 +468,15 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     return runPhase10ThinkingEval();
   }
 
+  function phaseNReport(n, runner) {
+    return (opts) => {
+      const actor = (opts && opts.actorId) || ID;
+      const p = `docs/council/BUZZARD_NATIVE_AI_PHASE${n}_MASTER_REPORT.md`;
+      return { ok: fs.existsSync(p), path: p, production: false, data: runner ? runner({ actorId: actor }) : { pending: true } };
+    };
+  }
+  const phase11Report = phaseNReport(11, runPhase11);
+
   function phase9Chain(opts) {
     const actorId = (opts && opts.actorId) || ID;
     if (!["sinan_bey", "pusat", "esat_bey"].includes(actorId)) {
@@ -528,6 +538,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     phase9Chain,
     phase10Report,
     phase10Eval,
+    phase11Report,
     g2p,
     approvals,
     durable,

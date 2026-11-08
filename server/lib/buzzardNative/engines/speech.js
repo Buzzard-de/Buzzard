@@ -4,6 +4,8 @@ const { analyzeOfficialVoice, VOICE_ID } = require("../speech/voiceIdentity");
 const { architecture, synthesizeSafe } = require("../speech/ttsArchitecture");
 const { measureVoice } = require("../speech/voiceMetrics");
 const { wavTone } = require("../speech/wavTone");
+const { benchAll } = require("../speech/ttsBench");
+const { cloneAttempt, verifyOfficialFile } = require("../speech/officialVoiceGuard");
 
 const VOICES = Object.freeze({
   sinan_bey: { character: "serious_calm_professional_male", live: false },
@@ -43,6 +45,9 @@ function createSpeechEngine() {
         if (!input.samples) return { op, ok: false, code: "PCM_REQUIRED", invented: false };
         return { op, ...measureVoice(input.samples, input.sampleRate || 16000), clone: false };
       }
+      if (op === "tts_bench") return { op, ...benchAll() };
+      if (op === "clone_attempt") return { op, ...cloneAttempt(input) };
+      if (op === "verify_official") return { op, ...verifyOfficialFile() };
       if (op === "synthesize") {
         return { ...notImplemented("synthesize"), liveTts: false, officialVoice: false, voiceId: VOICE_ID, cloneAuthorized: false };
       }

@@ -91,6 +91,14 @@ const ACTIONS = Object.freeze({
   SINAN_PHASE9_CHAIN: "SINAN_PHASE9_CHAIN",
   SINAN_PHASE10_REPORT: "SINAN_PHASE10_REPORT",
   SINAN_PHASE10_EVAL: "SINAN_PHASE10_EVAL",
+  SINAN_PHASE11_REPORT: "SINAN_PHASE11_REPORT",
+  SINAN_PHASE12_REPORT: "SINAN_PHASE12_REPORT",
+  SINAN_PHASE13_REPORT: "SINAN_PHASE13_REPORT",
+  SINAN_PHASE14_REPORT: "SINAN_PHASE14_REPORT",
+  SINAN_PHASE15_REPORT: "SINAN_PHASE15_REPORT",
+  SINAN_PHASE16_REPORT: "SINAN_PHASE16_REPORT",
+  SINAN_PHASE17_REPORT: "SINAN_PHASE17_REPORT",
+  SINAN_PHASE18_REPORT: "SINAN_PHASE18_REPORT",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -153,6 +161,14 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SINAN_PHASE9_CHAIN,
   ACTIONS.SINAN_PHASE10_REPORT,
   ACTIONS.SINAN_PHASE10_EVAL,
+  ACTIONS.SINAN_PHASE11_REPORT,
+  ACTIONS.SINAN_PHASE12_REPORT,
+  ACTIONS.SINAN_PHASE13_REPORT,
+  ACTIONS.SINAN_PHASE14_REPORT,
+  ACTIONS.SINAN_PHASE15_REPORT,
+  ACTIONS.SINAN_PHASE16_REPORT,
+  ACTIONS.SINAN_PHASE17_REPORT,
+  ACTIONS.SINAN_PHASE18_REPORT,
 ]);
 
 let durable = null;
@@ -782,6 +798,13 @@ function executeControl(action, payload, { actorId, correlationId }) {
   }
   if (action === ACTIONS.SINAN_PHASE10_EVAL) {
     return { ok: true, action, data: getSinanAgent().phase10Eval({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action.startsWith("SINAN_PHASE") && action.endsWith("_REPORT") && ACTIONS[action]) {
+    const n = action.replace("SINAN_PHASE", "").replace("_REPORT", "");
+    const fn = `phase${n}Report`;
+    if (typeof getSinanAgent()[fn] === "function") {
+      return { ok: true, action, data: getSinanAgent()[fn]({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+    }
   }
   if (action === ACTIONS.SINAN_PHASE9_CHAIN) {
     return {

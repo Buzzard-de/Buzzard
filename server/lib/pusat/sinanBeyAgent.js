@@ -34,6 +34,7 @@ const { runPhase14 } = require("../buzzardNative/thinking/phase14Run");
 const { runPhase15 } = require("../buzzardNative/thinking/phase15Run");
 const { runPhase16 } = require("../buzzardNative/thinking/phase16Run");
 const { runPhase17 } = require("../buzzardNative/thinking/phase17Run");
+const { runPhase18 } = require("../buzzardNative/thinking/phase18Run");
 const { registry } = require("../buzzardNative/thinking/datasetRegistry");
 const { createThinkingEngine } = require("../buzzardNative/engines/thinking");
 const { costHorizon } = require("../buzzardNative/thinking/costHorizon");
@@ -488,6 +489,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   const phase15Report = phaseNReport(15, runPhase15);
   const phase16Report = phaseNReport(16, runPhase16);
   const phase17Report = phaseNReport(17, runPhase17);
+  const phase18Report = phaseNReport(18, runPhase18);
 
   function phase9Chain(opts) {
     const actorId = (opts && opts.actorId) || ID;
@@ -557,6 +559,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
     phase15Report,
     phase16Report,
     phase17Report,
+    phase18Report,
     g2p,
     approvals,
     durable,

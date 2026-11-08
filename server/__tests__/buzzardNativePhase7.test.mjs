@@ -18,7 +18,7 @@ describe("Phase 7 integrated native platform", () => {
   it("keeps honest engine statuses and avatar integrity", () => {
     const m = matrix();
     expect(m.thinking.productionTransformer).toBe("NOT_IMPLEMENTED");
-    expect(m.speech.officialVoice).toBe("BLOCKED");
+    expect(m.speech.officialTts || m.speech.realTts).toBe("NOT_IMPLEMENTED");
     expect(m.hearing.stt).toBe("NOT_IMPLEMENTED");
     expect(m.realtime.liveMedia).toBe("NOT_IMPLEMENTED");
     expect(m.platform.alwaysOnHost).toBe("NOT_IMPLEMENTED");
@@ -29,7 +29,7 @@ describe("Phase 7 integrated native platform", () => {
     const st = nativeAiStatus();
     expect(st.singlePercentComplete).toBe(null);
     expect(st.productionReady).toBe(false);
-    expect(st.voice.code).toBe("MISSING_REFERENCE_AUDIO");
+    expect(st.voice.ttsReady || false).toBe(false);
   });
 
   it("runs integration scenarios without claiming live STT/TTS/media", () => {

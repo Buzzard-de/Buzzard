@@ -29,10 +29,11 @@ function matrix() {
     },
     speech: {
       protoTone: STATUS.TESTED,
-      officialVoice: STATUS.BLOCKED,
+      officialVoice: "REFERENCE_REGISTERED",
+      officialTts: STATUS.NOT_IMPLEMENTED,
       realTts: STATUS.NOT_IMPLEMENTED,
       liveVerified: false,
-      blocked: "MISSING_REFERENCE_AUDIO",
+      blocked: "TTS_NOT_TRAINED_FROM_REFERENCE",
     },
     vision: {
       sniff: STATUS.TESTED,

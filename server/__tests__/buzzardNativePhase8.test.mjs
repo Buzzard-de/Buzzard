@@ -44,7 +44,7 @@ describe("Phase 8 thinking inference and gates", () => {
     expect(v.execute({ op: "validate", bytes: Buffer.from("xx") }).code).toBe("UNSUPPORTED_OR_CORRUPT_IMAGE");
     expect(v.execute({ op: "validate", bytes: readFileSync("public/council/sinan-bey.png") }).understanding).toBe(false);
     expect(v.execute({ op: "understand" }).code).toBe("NOT_IMPLEMENTED");
-    expect(analyzeOfficialVoice({ actorId: "sinan_bey" }).code).toBe("MISSING_REFERENCE_AUDIO");
+    expect(analyzeOfficialVoice({ actorId: "sinan_bey" }).ttsReady).toBe(false);
   });
 
   it("keeps memory integrity, Pusat phase8, and egress deny", () => {

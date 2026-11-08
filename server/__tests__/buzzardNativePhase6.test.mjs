@@ -28,13 +28,18 @@ describe("Phase 6 thinking + official voice", () => {
     expect(lab.trainRun({ nLayers: 2, actorId: "sinan_bey" }).code).toBe("NOT_IMPLEMENTED");
   });
 
-  it("does not invent Hz when the official reference audio is missing", () => {
+  it("does not invent Hz and does not treat proto tone as official TTS", () => {
     const analysis = analyzeOfficialVoice({ actorId: "sinan_bey" });
-    expect(analysis.ok).toBe(false);
-    expect(analysis.code).toBe("MISSING_REFERENCE_AUDIO");
     expect(analysis.inventedHz).toBe(false);
-    expect(analysis.profile.f0Hz.mean).toBe(null);
-    expect(analysis.profile.status).toBe("BLOCKED");
+    expect(analysis.ttsReady).toBe(false);
+    if (analysis.code === "MISSING_REFERENCE_AUDIO") {
+      expect(analysis.profile.f0Hz.mean).toBe(null);
+      expect(analysis.profile.status).toBe("BLOCKED");
+    } else {
+      expect(analysis.ok).toBe(true);
+      expect(analysis.profile.f0Hz.unit).toBe("Hz");
+      expect(analysis.profile.ttsReady).toBe(false);
+    }
     expect(analyzeOfficialVoice({ actorId: "stranger" }).code).toBe("UNAUTHORIZED_ACTOR");
     expect(councilVoiceCopyGuard({ fromId: "sinan_bey", toId: "pusat" }).code).toBe("VOICE_IDENTITY_NOT_COPYABLE");
     const speech = createSpeechEngine();
@@ -50,7 +55,7 @@ describe("Phase 6 thinking + official voice", () => {
     const pusat = require("../lib/pusat/runtime.js");
     const st = pusat.executeReadOnly("SINAN_PHASE6_STATUS", {}, { actorId: "pusat" });
     expect(st.data.liveMeeting).toBe(false);
-    expect(st.data.voice.code).toBe("MISSING_REFERENCE_AUDIO");
+    expect(st.data.voice.ttsReady || false).toBe(false);
     const denied = pusat.executeReadOnly("SINAN_VOICE_GENERATE", { text: "hi" }, { actorId: "stranger" });
     expect(denied.data.code).toBe("UNAUTHORIZED_ACTOR");
     const gen = pusat.executeReadOnly("SINAN_VOICE_GENERATE", { text: "hi", lang: "en" }, { actorId: "sinan_bey" });

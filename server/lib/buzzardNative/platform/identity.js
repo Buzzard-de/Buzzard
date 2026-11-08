@@ -16,7 +16,7 @@ function sinanIdentity() {
     title: "Baş Yazılım Mimarı",
     thinking: "tiny_causal_transformer_proto",
     hearing: "vad_only",
-    speech: { voiceId: VOICE_ID, official: false, blocked: true },
+    speech: { voiceId: VOICE_ID, official: true, referenceRegistered: true, ttsReady: false, blocked: false },
     vision: "sniff_only",
     memoryOwner: "sinan_bey",
     digitalBody: { avatar: "/council/sinan-bey.png", is3d: false, ...avatar },

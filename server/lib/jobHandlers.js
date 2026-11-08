@@ -13,6 +13,7 @@ const importPipeline = require("./pim/importPipeline");
 const productValidation = require("./pim/productValidation");
 const productCore = require("./pim/productCore");
 const supplierMapping = require("./pim/supplierMapping");
+const { assertJobPayloadEgress } = require("./jobEgressGate");
 
 async function handleProductSync(job) {
   return productSync.runPipeline(job.payload || {});
@@ -184,6 +185,14 @@ async function executeJob(job) {
   if (!handler) {
     const err = new Error(`No handler for job type: ${job.jobType}`);
     err.failureKind = FAILURE_KIND.VALIDATION;
+    throw err;
+  }
+  const egress = assertJobPayloadEgress(job.payload || {});
+  if (!egress.ok) {
+    const err = new Error(`JOB_EGRESS_DENIED:${egress.code}`);
+    err.code = "JOB_EGRESS_DENIED";
+    err.failureKind = FAILURE_KIND.NETWORK;
+    err.reachedNetwork = false;
     throw err;
   }
   appendJobLog(job.id, `Executing ${job.jobType}`, { level: "INFO" });

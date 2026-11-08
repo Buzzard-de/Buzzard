@@ -50,7 +50,7 @@ function createRouter({ seed = [] } = {}) {
     }
     t.state = "ASSIGNED";
     bus.send({ sender: fromId, receiver: resolved.nativeId, type: "task_request", taskId, body: t.title });
-    return { ok: true, task: t, resolved, identitiesMerged: false };
+    return { ok: true, task: t, resolved, requestedId: resolved.requestedId, nativeId: resolved.nativeId, identitiesMerged: false };
   }
   function runAssigned(taskId) {
     const t = tasks.get(taskId);

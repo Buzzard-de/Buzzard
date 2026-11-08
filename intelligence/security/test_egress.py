@@ -13,7 +13,7 @@ from security.egress_policy import (  # noqa: E402
     extra_hosts,
     is_private_or_local_host,
 )
-from security.guarded_fetch import guarded_get  # noqa: E402
+from security.guarded_fetch import guarded_get, guarded_urlopen  # noqa: E402
 from live_connectors.public_fetch import PublicFetcher  # noqa: E402
 from live_connectors.ebay import EbayClient  # noqa: E402
 
@@ -55,6 +55,14 @@ class Egress44Python(unittest.TestCase):
         self.assertTrue(client.configured())
         with self.assertRaises(EgressDenied):
             client.token_for_app()
+
+    def test_urllib_urlopen_uses_same_deny(self):
+        with self.assertRaises(EgressDenied) as ctx:
+            guarded_urlopen("https://api.openai.com/v1")
+        self.assertEqual(ctx.exception.code, "EXTERNAL_AI_EGRESS_DENIED")
+        with self.assertRaises(EgressDenied) as ctx2:
+            guarded_urlopen("https://example.com/")
+        self.assertEqual(ctx2.exception.code, "HOST_NOT_ALLOWLISTED")
 
     def test_redirect_not_followed(self):
         class Fake:

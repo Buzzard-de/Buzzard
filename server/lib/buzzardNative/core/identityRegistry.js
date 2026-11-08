@@ -378,7 +378,34 @@ const AGENTS = [
   },
 ];
 
+function viewOf(agent, requestedId, extra = {}) {
+  return {
+    ...agent,
+    requestedId,
+    nativeId: agent.agent_id,
+    identitiesMerged: false,
+    ...extra,
+  };
+}
+
 function getAgent(id) {
+  const requestedId = String(id || "").trim();
+  const direct = AGENTS.find((a) => a.agent_id === requestedId);
+  if (direct) return viewOf(direct, requestedId, { resolvedFromAlias: false, memoryOwnerId: requestedId });
+  const resolved = resolveIdentity(requestedId);
+  if (resolved.ok && resolved.kind === "LEGACY_ALIAS" && resolved.nativeId) {
+    const native = AGENTS.find((a) => a.agent_id === resolved.nativeId);
+    if (!native) return null;
+    return viewOf(native, requestedId, {
+      resolvedFromAlias: true,
+      memoryOwnerId: resolved.memoryOwnerId,
+      permissionProfileId: resolved.permissionProfileId,
+    });
+  }
+  return null;
+}
+
+function getAgentExact(id) {
   return AGENTS.find((a) => a.agent_id === id) || null;
 }
 
@@ -390,6 +417,8 @@ function registerAgent(profile) {
   if (!profile || !profile.agent_id || !profile.display_name) {
     return { ok: false, code: "INVALID_AGENT_PROFILE" };
   }
+  const resolved = resolveIdentity(profile.agent_id);
+  if (resolved.kind === "LEGACY_ALIAS") return { ok: false, code: "ALIAS_RESERVED", nativeId: resolved.nativeId };
   if (ids().includes(profile.agent_id)) return { ok: false, code: "AGENT_ID_CONFLICT" };
   if (AGENTS.some((a) => a.display_name === profile.display_name)) return { ok: false, code: "DISPLAY_NAME_CONFLICT" };
   if (SEED_IDS.includes(profile.agent_id)) return { ok: false, code: "SEED_IDENTITY_LOCKED" };
@@ -408,11 +437,30 @@ function registerAgent(profile) {
 }
 
 function unregisterAgent(id) {
+  const resolved = resolveIdentity(id);
+  if (resolved.kind === "LEGACY_ALIAS") return { ok: false, code: "ALIAS_RESERVED", nativeId: resolved.nativeId };
   if (SEED_IDS.includes(id)) return { ok: false, code: "SEED_IDENTITY_LOCKED" };
   const i = AGENTS.findIndex((a) => a.agent_id === id);
   if (i < 0) return { ok: false, code: "UNKNOWN_AGENT" };
   AGENTS.splice(i, 1);
   return { ok: true, removed: id };
+}
+
+function resolveAgentInput(id) {
+  const resolved = resolveIdentity(id);
+  if (!resolved.ok) return { ok: false, code: resolved.code, requestedId: id, identitiesMerged: false };
+  const agent = getAgent(id);
+  if (!agent) return { ok: false, code: "UNKNOWN_IDENTITY", requestedId: id, identitiesMerged: false };
+  return {
+    ok: true,
+    requestedId: resolved.requestedId,
+    nativeId: resolved.nativeId,
+    displayName: resolved.displayName,
+    memoryOwnerId: resolved.memoryOwnerId,
+    agent,
+    identitiesMerged: false,
+    kind: resolved.kind,
+  };
 }
 
 function assignVoice({ actorId, fromId, toId }) {
@@ -447,6 +495,8 @@ module.exports = {
   SEED_IDS,
   ORIGINAL_10_IDS,
   getAgent,
+  getAgentExact,
+  resolveAgentInput,
   ids,
   registerAgent,
   unregisterAgent,

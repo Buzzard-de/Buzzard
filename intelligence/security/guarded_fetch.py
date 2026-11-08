@@ -1,8 +1,9 @@
-"""Python network gate. Denied destinations never reach requests."""
+"""Python network gate. Denied destinations never reach requests or urllib."""
 
 from __future__ import annotations
 
 import os
+import urllib.request
 from typing import Any
 
 import requests
@@ -83,3 +84,42 @@ def guarded_get(url: str, **kwargs: Any) -> requests.Response:
 
 def guarded_post(url: str, **kwargs: Any) -> requests.Response:
     return guarded_request("POST", url, **kwargs)
+
+
+class _NoRedirect(urllib.request.HTTPErrorProcessor):
+    def http_response(self, request, response):  # noqa: ARG002
+        return response
+
+    https_response = http_response
+
+
+def guarded_urlopen(
+    url: str,
+    *,
+    timeout: int = 30,
+    headers: dict | None = None,
+    data: bytes | None = None,
+    method: str | None = None,
+):
+    """Stdlib urllib entry that still uses the shared DENY policy. Does not follow redirects."""
+    decision = evaluate_egress(url)
+    _record({"url": url, "host": decision.get("host"), "allowed": decision["allowed"], "code": decision["code"], "via": "urllib"})
+    if not decision["allowed"]:
+        raise EgressDenied(decision["code"], host=decision.get("host", ""), note="python_urllib_egress_denied")
+    resolved = resolve_and_check(decision["host"])
+    if not resolved["allowed"]:
+        _record({"url": url, "host": decision["host"], "allowed": False, "code": resolved["code"], "via": "urllib"})
+        raise EgressDenied(resolved["code"], host=decision["host"])
+
+    req = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
+    opener = urllib.request.build_opener(_NoRedirect, urllib.request.ProxyHandler({}))
+
+    def _do():
+        return opener.open(req, timeout=timeout)
+
+    response = _without_proxy_env(_do)
+    if getattr(response, "status", 200) in (301, 302, 303, 307, 308):
+        location = response.headers.get("Location") or ""
+        _record({"url": location, "allowed": False, "code": "REDIRECT_DENIED", "via": "urllib"})
+        raise EgressDenied("REDIRECT_DENIED", host="")
+    return response

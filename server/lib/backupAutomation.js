@@ -3,7 +3,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 const DEFAULT_BACKUP_DIR = process.env.BUZZARD_BACKUP_DIR || "/var/data/backups";
 const RETENTION_DAYS = Number(process.env.BUZZARD_BACKUP_RETENTION_DAYS) || 14;
@@ -98,9 +98,10 @@ function runBackup({ applyRetentionPolicy = true } = {}) {
   const script = path.join(__dirname, "..", "..", "scripts", "db-backup.mjs");
   let result;
   try {
-    const output = execSync(`node "${script}"`, {
+    const output = execFileSync(process.execPath, [script], {
       env: { ...process.env, BUZZARD_BACKUP_DIR: backupDir },
       encoding: "utf8",
+      timeout: 120000,
     });
     result = JSON.parse(output.trim().split("\n").pop());
   } catch (err) {

@@ -56,6 +56,11 @@ class Egress44Python(unittest.TestCase):
         with self.assertRaises(EgressDenied):
             client.token_for_app()
 
+    def test_gesamt_research_engine_no_raw_urlopen_import(self):
+        text = (ROOT / "buzzard_ai_gesamt" / "research" / "engine.py").read_text(encoding="utf-8")
+        self.assertNotIn("from urllib.request import Request,urlopen", text)
+        self.assertIn("guarded_urlopen", text)
+
     def test_urllib_urlopen_uses_same_deny(self):
         with self.assertRaises(EgressDenied) as ctx:
             guarded_urlopen("https://api.openai.com/v1")

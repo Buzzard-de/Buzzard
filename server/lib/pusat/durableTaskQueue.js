@@ -154,15 +154,27 @@ function createDurableTaskQueue({ dbPath }) {
   }
 
   function lease({ workerId = "worker-1" } = {}) {
-    const row = db
-      .prepare(`SELECT * FROM orch_tasks WHERE state = 'QUEUED' ORDER BY priority ASC, updated_at ASC LIMIT 1`)
-      .get();
-    if (!row) return { ok: false, code: "EMPTY" };
-    db.prepare(
-      `UPDATE orch_tasks SET state = 'RUNNING', attempts = attempts + 1, lease_owner = ?, updated_at = ? WHERE id = ?`
-    ).run(workerId, new Date().toISOString(), row.id);
-    audit(row.id, "LEASE", { workerId });
-    return { ok: true, task: get(row.id) };
+    const leasedId = db.transaction(() => {
+      const row = db
+        .prepare(
+          `SELECT id FROM orch_tasks WHERE state = 'QUEUED'
+           ORDER BY CASE priority WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 ELSE 3 END, updated_at ASC
+           LIMIT 1`
+        )
+        .get();
+      if (!row) return null;
+      const info = db
+        .prepare(
+          `UPDATE orch_tasks SET state = 'RUNNING', attempts = attempts + 1, lease_owner = ?, updated_at = ?
+           WHERE id = ? AND state = 'QUEUED'`
+        )
+        .run(workerId, new Date().toISOString(), row.id);
+      if (info.changes !== 1) return null;
+      return row.id;
+    })();
+    if (!leasedId) return { ok: false, code: "EMPTY" };
+    audit(leasedId, "LEASE", { workerId });
+    return { ok: true, task: get(leasedId) };
   }
 
   function recoverLeases() {

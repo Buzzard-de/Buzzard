@@ -6,6 +6,7 @@ export type LocaleAuditRow = {
   missingKeys: string[];
   extraKeys: string[];
   placeholderMismatches: string[];
+  mixedLanguageKeys: string[];
   rtl: boolean;
   complete: false;
   verified: false;
@@ -45,11 +46,23 @@ export function auditLocales(): {
       if (!(k in cat)) return false;
       return placeholders(de[k]).join() !== placeholders(cat[k]).join();
     });
+    const mixedLanguageKeys =
+      locale === "de"
+        ? []
+        : deKeys.filter((k) => {
+            const a = de[k];
+            const b = cat[k];
+            if (!b || a !== b) return false;
+            if (a.length < 16) return false;
+            if (/Buzzard|Trusted Shops|€/.test(a)) return false;
+            return /[äöüÄÖÜß]/.test(a);
+          });
     return {
       locale,
       missingKeys,
       extraKeys,
       placeholderMismatches,
+      mixedLanguageKeys,
       rtl: locale === "ar",
       complete: false,
       verified: false,

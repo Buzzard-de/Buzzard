@@ -106,6 +106,7 @@ const ACTIONS = Object.freeze({
   SEVENTEEN_AGENT_COUNCIL: "SEVENTEEN_AGENT_COUNCIL",
   PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
   ORCHESTRATE_STATUS: "ORCHESTRATE_STATUS",
+  INTEGRATED_PLATFORM_STATUS: "INTEGRATED_PLATFORM_STATUS",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -183,6 +184,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SEVENTEEN_AGENT_COUNCIL,
   ACTIONS.PLATFORM_CONTINUATION_STATUS,
   ACTIONS.ORCHESTRATE_STATUS,
+  ACTIONS.INTEGRATED_PLATFORM_STATUS,
 ]);
 
 let durable = null;
@@ -867,6 +869,17 @@ function executeControl(action, payload, { actorId, correlationId }) {
         live: false,
         productionReady: false,
       },
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.INTEGRATED_PLATFORM_STATUS) {
+    const { integrate } = require("../platform/completionBus");
+    return {
+      ok: true,
+      action,
+      data: integrate(),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

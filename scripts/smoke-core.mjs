@@ -7,6 +7,7 @@
  *   BUZZARD_API_URL=http://localhost:3001 node scripts/smoke-core.mjs
  */
 
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 let failed = 0;
@@ -21,11 +22,7 @@ function fail(label, detail = "") {
 }
 
 async function request(path, options = {}) {
-  if (process.env.BUZZARD_ISOLATED_HTTP === "1") {
-    const { isolatedRequest } = await import("./lib/isolatedSmokeTransport.mjs");
-    return isolatedRequest(`buzzard-isolated://smoke${path}`, options);
-  }
-  const res = await fetch(`${API}${path}`, {
+  const res = await smokeFetch(`${API}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",

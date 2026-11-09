@@ -7,6 +7,7 @@
  */
 import { createRequire } from "node:module";
 import { execSync } from "node:child_process";
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 
 const require = createRequire(import.meta.url);
 const API = (process.env.BUZZARD_API_URL || "").replace(/\/$/, "");
@@ -53,7 +54,7 @@ function markBlocked(msg) {
 }
 
 async function fetchJson(pathname, options = {}) {
-  const res = await fetch(`${API}${pathname}`, {
+  const res = await smokeFetch(`${API}${pathname}`, {
     ...options,
     headers: { Accept: "application/json", "Content-Type": "application/json", ...(options.headers || {}) },
   });
@@ -190,7 +191,7 @@ async function main() {
   });
 
   await test("15. Legacy cart deprecation header", async () => {
-    const res = await fetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
+    const res = await smokeFetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
     if (res.status === 404) skip("legacy cart absent");
     const legacy = res.headers.get("x-buzzard-legacy-commerce");
     if (!legacy) {

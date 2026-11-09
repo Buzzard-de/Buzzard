@@ -4,6 +4,7 @@
  * Usage: BUZZARD_API_URL=http://localhost:3001 node scripts/part2-smoke.mjs
  */
 
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 let passed = 0;
@@ -21,7 +22,7 @@ async function test(name, fn) {
 }
 
 async function fetchJson(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
+  const res = await smokeFetch(`${API}${path}`, {
     ...options,
     headers: {
       Accept: "application/json",

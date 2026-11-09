@@ -6,6 +6,7 @@
 import { createRequire } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 
 const require = createRequire(import.meta.url);
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
@@ -39,7 +40,7 @@ function skip(msg) {
 }
 
 async function fetchJson(pathname, options = {}) {
-  const res = await fetch(`${API}${pathname}`, {
+  const res = await smokeFetch(`${API}${pathname}`, {
     ...options,
     headers: {
       Accept: "application/json",

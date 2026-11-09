@@ -234,8 +234,15 @@ async function fetchWithRetry(url, options = {}, config) {
     const timer = setTimeout(() => controller.abort(), config.timeoutMs);
 
     try {
-      const response = await fetch(url, { ...options, signal: controller.signal });
+      const { guardedFetch } = require("../security/egressGuard");
+      const gated = await guardedFetch(url, { ...options, signal: controller.signal }, { ping: true });
       clearTimeout(timer);
+      if (gated.blocked) {
+        const err = new Error(gated.decision.code || "EGRESS_DENIED");
+        err.code = "supplier_egress_denied";
+        throw err;
+      }
+      const response = gated.response;
 
       if (response.ok) return response;
 

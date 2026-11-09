@@ -1,0 +1,24 @@
+{
+  "iso": "LU",
+  "nra": "ILR",
+  "register": {
+    "records": 43,
+    "uniqueLegal": 43,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "ilr_public_register_2025_12_31",
+    "source": "ilr-stat-2025",
+    "note": "43 inscribed. 41 supplied 2025 statistics. Includes subcontractors."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "LU",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 43,
+  "postcodeCoverage": "UNKNOWN"
+}

@@ -1,0 +1,24 @@
+{
+  "iso": "HU",
+  "nra": "NMHH",
+  "register": {
+    "records": null,
+    "uniqueLegal": null,
+    "status": "DATA_INCOMPLETE",
+    "method": "nmhh_excel_href_absent",
+    "source": "nmhh-excel-still-unfetched",
+    "note": "Excel still not imported. Locker/PUDO Q1 2026 remains in locker tables."
+  },
+  "verification": "DATA_INCOMPLETE",
+  "researchStatus": {
+    "iso": "HU",
+    "status": "SOURCE_FOUND",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "DATA_INCOMPLETE"
+  },
+  "completeVerified": false,
+  "namedCount": 1,
+  "postcodeCoverage": "UNKNOWN"
+}

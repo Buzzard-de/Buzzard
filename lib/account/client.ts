@@ -19,6 +19,7 @@ import {
   storeRegister,
   storeUpdateMe,
 } from "@/lib/store";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 const TOKEN_KEY = "buzzard_account_token";
 
@@ -38,7 +39,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("account.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
+  const res = await browserFetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
   const data = (await res.json()) as T & { errorKey?: string };
   if (!res.ok) throw new Error(data.errorKey || "account.requestFailed");
   return data;

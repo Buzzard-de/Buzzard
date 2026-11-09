@@ -1,0 +1,24 @@
+{
+  "iso": "ES",
+  "nra": "CNMC",
+  "register": {
+    "records": 4734,
+    "uniqueLegal": null,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "cnmc_annual_report_2025_section_counts",
+    "source": "cnmc-sector-postal-2025",
+    "note": "Section A 4,494 + Section B 240 inscriptions at 31 Dec 2025. Not active nationwide last-mile. CEP survey sample was 26 operators."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "ES",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 1,
+  "postcodeCoverage": "UNKNOWN"
+}

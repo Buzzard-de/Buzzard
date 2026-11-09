@@ -1,0 +1,887 @@
+# Regional
+
+- trans-o-flex Express GmbH & Co. KGaA (DE) VERIFIED_BNETZA_REGISTER_ROW
+- GO! Express & Logistics GmbH (DE) VERIFIED_BNETZA_REGISTER_ROW
+- nox Night Time Express (legal title NOT_VERIFIED) (DE) RESEARCH_CANDIDATE
+- General Overnight (legal title NOT_VERIFIED) (DE) RESEARCH_CANDIDATE
+- FRL-Post B.V. (NL) SOURCE_VERIFIED
+- EMCO-Groep (NL) SOURCE_VERIFIED
+- Logistiek Centrum Zwiggelaar (NL) SOURCE_VERIFIED
+- Altied op Tied (NL) SOURCE_VERIFIED
+- Cycloon Fietskoeriers B.V. (NL) SOURCE_VERIFIED
+- Stadspost Enter (NL) SOURCE_VERIFIED
+- Universal Mail United Kingdom Limited (NL) SOURCE_VERIFIED
+- SBPost B.V. (NL) SOURCE_VERIFIED
+- Polinder Transport (NL) SOURCE_VERIFIED
+- SMN Sneltransport Midden Nederland B.V. (NL) SOURCE_VERIFIED
+- APtrans (NL) SOURCE_VERIFIED
+- Post Service Verspreidingen B.V. (NL) SOURCE_VERIFIED
+- C. Bouwmans Post & Mail Helmond / Deurne (NL) SOURCE_VERIFIED
+- VGL-Services (NL) SOURCE_VERIFIED
+- depostBode B.V. (NL) SOURCE_VERIFIED
+- De Postontzorger B.V. (NL) SOURCE_VERIFIED
+- Diamant-groep (NL) SOURCE_VERIFIED
+- Gemeenschappelijke Regeling Werkvoorzieningsschap Regio Eindhoven (GRWRE), Ergon (NL) SOURCE_VERIFIED
+- Afvalstoffendienst 's-Hertogenbosch (NL) SOURCE_VERIFIED
+- Stadspost Oisterwijk (NL) SOURCE_VERIFIED
+- Gemeenschappelijke Regeling WVS (NL) SOURCE_VERIFIED
+- Gico Post (NL) SOURCE_VERIFIED
+- Mail Service Zeeland (NL) SOURCE_VERIFIED
+- V.o.f. Ger Lageweg (NL) SOURCE_VERIFIED
+- DZB Leiden, Le Pooleweg 6 (NL) SOURCE_VERIFIED
+- Gemeente Delft - Stadswinkel Delft (NL) SOURCE_VERIFIED
+- JBM Koeriers B.V. (NL) SOURCE_VERIFIED
+- Streekpost Leiderdorp (NL) SOURCE_VERIFIED
+- Provalu N.V. (NL) SOURCE_VERIFIED
+- Netwerk VSP B.V. (NL) SOURCE_VERIFIED
+- Falk Courier B.V. (NL) SOURCE_VERIFIED
+- De Fietskoerier Utrecht (NL) SOURCE_VERIFIED
+- Gemeenschappelijke Regeling Avres (NL) SOURCE_VERIFIED
+- DV Post Services (NL) SOURCE_VERIFIED
+- Skynet Worldwide Express B.V. (NL) SOURCE_VERIFIED
+- RM (Netherlands) 1 B.V. (NL) SOURCE_VERIFIED
+- Comprador Groep B.V. (NL) SOURCE_VERIFIED
+- Dutch Post B.V. (NL) SOURCE_VERIFIED
+- Spaarne Werkt (NL) SOURCE_VERIFIED
+- Intrapost B.V. (NL) SOURCE_VERIFIED
+- Probedrijven N.V. (NL) SOURCE_VERIFIED
+- WerkSaam Westfriesland (NL) SOURCE_VERIFIED
+- Zaffier (NL) SOURCE_VERIFIED
+- Almere Stadspost (NL) SOURCE_VERIFIED
+- Stichting Pantar Amsterdam (NL) SOURCE_VERIFIED
+- Beson Distributie B.V. (NL) SOURCE_VERIFIED
+- MV-post (NL) SOURCE_VERIFIED
+- LOVAGEM (NL) SOURCE_VERIFIED
+- Meeuwsen & van der Horst Transport (NL) SOURCE_VERIFIED
+- Cycloon Post B.V. (NL) SOURCE_VERIFIED
+- MSG Post en Koeriers B.V. (NL) SOURCE_VERIFIED
+- De Vos Diensten Enschede B.V. (NL) SOURCE_VERIFIED
+- DGM Logistiek (NL) SOURCE_VERIFIED
+- Oostzaanse Postdienst (NL) SOURCE_VERIFIED
+- iWerk (NL) SOURCE_VERIFIED
+- Stadspost Eemsmond Expres (NL) SOURCE_VERIFIED
+- Smartpost B.V. (NL) SOURCE_VERIFIED
+- M.C. Postverwerking (NL) SOURCE_VERIFIED
+- Postbode B.V. (NL) SOURCE_VERIFIED
+- Haverkamp Facilitair B.V. (NL) SOURCE_VERIFIED
+- Tour de Ville Fietskoeriers B.V. (NL) SOURCE_VERIFIED
+- NH Post Holding B.V. (NL) SOURCE_VERIFIED
+- Stroomopwaarts MVS (NL) SOURCE_VERIFIED
+- Bringme Nederland (NL) SOURCE_VERIFIED
+- PriPost B.V. (NL) SOURCE_VERIFIED
+- UW Holding B.V. (NL) SOURCE_VERIFIED
+- De Postman B.V. (NL) SOURCE_VERIFIED
+- Vinted Go B.V. (NL) SOURCE_VERIFIED
+- SMN Post Noord Holland B.V. (NL) SOURCE_VERIFIED
+- A9 transport & logistics B.V. (NL) SOURCE_VERIFIED
+- Werkom (NL) SOURCE_VERIFIED
+- gemeente Het Hogeland (NL) SOURCE_VERIFIED
+- Legal Mail Services B.V. (NL) SOURCE_VERIFIED
+- Postmedia B.V. (NL) SOURCE_VERIFIED
+- Fietskoerier Deventer B.V. (NL) SOURCE_VERIFIED
+- A&D Post B.V. (NL) SOURCE_VERIFIED
+- Bryan de Kraker Sales (NL) SOURCE_VERIFIED
+- Geen Stress Consumer Services B.V. (NL) SOURCE_VERIFIED
+- Falkpost Limburg B.V. (NL) SOURCE_VERIFIED
+- Postdiensten GroeneHart (NL) SOURCE_VERIFIED
+- Quiq Post B.V. (NL) SOURCE_VERIFIED
+- Business Post Hoogeveen B.V. (NL) SOURCE_VERIFIED
+- Breakaway Koeriers (NL) SOURCE_VERIFIED
+- Fietskoerier Haarlem (NL) SOURCE_VERIFIED
+- Nederlandse Enveloppendienst (NL) SOURCE_VERIFIED
+- OTW Transport B.V. (NL) SOURCE_VERIFIED
+- "ΜΩΡΕΑΣ" ΚΑΝΕΛΛΟΠΟΥΛΟΣ-ΚΑΝΙΣΤΡΑΣ ΕΠΕ ΜΕΤΑΦΟΡΩΝ ΚΑΙ ΠΡΑΚΤΟΡΕΥΣΕΩΝ (EL) SOURCE_VERIFIED
+- ABOUT COURIER I.K.E. (EL) SOURCE_VERIFIED
+- ACROMAC Ε Ε (EL) SOURCE_VERIFIED
+- ACS ΤΑΧΥΔΡΟΜΙΚΕΣ ΥΠΗΡΕΣΙΕΣ  ΑΝΩΝΥΜΗ ΕΜΠΟΡΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- AERO AEROS ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- AF EXPRESS ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ (EL) SOURCE_VERIFIED
+- AG EXPRESS COURIER (EL) SOURCE_VERIFIED
+- AGA LOGISTICS ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- Agnew Analog IKE (EL) SOURCE_VERIFIED
+- AGROEL    ΜΟΝ/ΠΗ ΙΚΕ. (EL) SOURCE_VERIFIED
+- ALL OVER COURIER ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ANT - ΒΛΑΧΟΓΙΩΡΓΗΣ (EL) SOURCE_VERIFIED
+- APOSTELLO ΕΕ (EL) SOURCE_VERIFIED
+- ARAMEX GREECE ΙΚΕ (EL) SOURCE_VERIFIED
+- ART IN RED - EXPRESS COURIER MON. I.K.E. (EL) SOURCE_VERIFIED
+- ASAP COURIERS ΜΟΝΟΠΡΟΣΩΠΗ Α.Ε. (EL) SOURCE_VERIFIED
+- AT-LOGISTCIS M.A.M.E (EL) SOURCE_VERIFIED
+- ATI TRANS Ε.Π.Ε (EL) SOURCE_VERIFIED
+- AUTO SPOT ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- AZCARS OE (EL) SOURCE_VERIFIED
+- B SPOT  Μ ΙΚΕ (EL) SOURCE_VERIFIED
+- BELEHAS E.E (EL) SOURCE_VERIFIED
+- BIRDLAND ΣΥΝΕΡΓΑΤΙΚΗ ΔΙΑΦΗΜΙΣΤΙΚΗ ΠΟΛΙΤΙΣΤΙΚΗ (EL) SOURCE_VERIFIED
+- BIZ COURIER & LOGISTICS ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ (EL) SOURCE_VERIFIED
+- BOKAS COURIER SERVICES E.E. (EL) SOURCE_VERIFIED
+- BOLT COURIER Ο.Ε. (EL) SOURCE_VERIFIED
+- BOX NOW Α.Ε. (EL) SOURCE_VERIFIED
+- BOX365 I.K.E. (EL) SOURCE_VERIFIED
+- BS TRADE ENTERPRISE ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- BSK LOGISTICS EE (EL) SOURCE_VERIFIED
+- CARGO GROUP LOGISTICS Ε.Π.Ε (EL) SOURCE_VERIFIED
+- CARMATES IKE (EL) SOURCE_VERIFIED
+- CC-LIT A.E. ΑΠΟΘΗΚΕΥΣΗΣ ΚΑΙ ΔΙΑΝΟΜΩΝ (EL) SOURCE_VERIFIED
+- CITIZEN GROUP ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- CLEVER SERVICES ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΑΝΑΠΤΥΞΗΣ ΔΙΚΤΥΟΥ ΔΙΑΝΟΜΗΣ (EL) SOURCE_VERIFIED
+- CLICKCLICKCUSTOM ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- COLONIS COURIER ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- COMET ΕΛΛΑΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- COMET ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ ΚΑΙ ΕΜΠΟΡΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- COURIER CENTER ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- COURIER ΜΕΤΑΦΟΡΕΣ ΣΦΑΙΡΑ ΕΤΕΡΟΡΡΥΘΜΗ ΕΤΑΙΡΙΑ (EL) SOURCE_VERIFIED
+- CPD CARGO & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- D2D COURIER SERVICES ΝΑΤΣΙΟΣ Μ. ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- DAILY SERVICES Ι Κ Ε (EL) SOURCE_VERIFIED
+- DailyCourier.gr IKE (EL) SOURCE_VERIFIED
+- DAM COURIER SERVICES ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- DEC COURIER Ε.Ε. (EL) SOURCE_VERIFIED
+- DHL EXPRESS (ΕΛΛΑΣ) ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΤΑΧΥΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- DIXONS SOUTH-EAST EUROPE ΑΝΩΝΥΜΗ ΕΜΠΟΡΙΚΗ ΚΑΙ ΒΙΟΜΗΧΑΝΙΚΗ ΕΤΑΙΡΕΙΑ ΗΛΕΚΤΡΙΚΩΝ ΠΛΗΡΟΦΟΡΙΚΗΣ, ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ ΚΑΙ ΑΣΦΑΛΙΣΤΙΚΩΝ ΔΙΑΜΕΣΟΛΑΒΗΤΩΝ (EL) SOURCE_VERIFIED
+- DKL GREECE EXPRESS ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- DM LOGISTICS ΒΕΝΤΟΥΡΗ - ΜΕΡΤΥΡΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- DOS SANTOS RODRIGUES  ANTONIO CELSO (EL) SOURCE_VERIFIED
+- DRITAN CEKA (EL) SOURCE_VERIFIED
+- E-BILL E.E. (EL) SOURCE_VERIFIED
+- E-METAFORES ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- EASY MAIL ΤΑΧΥΜΕΤΑΦΟΡΩΝ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- eftase (EL) SOURCE_VERIFIED
+- ERMIS ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΕΓΓΡΑΦΩΝ ΚΑΙ ΔΕΜΑΤΩΝ Α.Ε. (EL) SOURCE_VERIFIED
+- EUROFREIGHT HELLAS ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- EUROTRAFFIC DISTRIBUTION SERVICES AE (EL) SOURCE_VERIFIED
+- EXPRESS ΤΑΧΥΔΡΟΜΙΚΗ ΕΕ (EL) SOURCE_VERIFIED
+- FAST TRACE E.E. (EL) SOURCE_VERIFIED
+- FedEx Express Greece Μονοπρόσωπη Εταιρεία  Περιορισμένης Ευθύνης (EL) SOURCE_VERIFIED
+- FEREMU Ι Κ Ε (EL) SOURCE_VERIFIED
+- FLY EXPRESS LOGISTICS Ε Ε (EL) SOURCE_VERIFIED
+- FMOVERS Ε.Ε (EL) SOURCE_VERIFIED
+- FREEDOM LOGISTICS AND TRANSPORTATION SERVICES ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- FRONT LINE EXPRESS OE (EL) SOURCE_VERIFIED
+- G J COMPANY Ε Ε (EL) SOURCE_VERIFIED
+- GANAS OSS ΣΥΜΒΟΥΛΕΥΤΙΚΕΣ ΥΠΗΡΕΣΙΕΣ Ιδιωτική κεφαλαιουχική Εταιρεία (EL) SOURCE_VERIFIED
+- Georgiadis Konstantinos (EL) SOURCE_VERIFIED
+- GL COURIER OE (EL) SOURCE_VERIFIED
+- GM TRANSMED ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- GNDS ΙΚΕ (EL) SOURCE_VERIFIED
+- GO DELIVERY ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΥΠΗΡΕΣΙΩΝ ΔΙΑΝΟΜΗΣ (EL) SOURCE_VERIFIED
+- GOLDEN FIRST LINE ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- GOLDEN FROST ΕΕ (EL) SOURCE_VERIFIED
+- GREEN AND GO ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- Green Your Freight Μονοπρόσωπη Ιδιωτική Κεφαλαιουχική Εταιρία (EL) SOURCE_VERIFIED
+- GROUND FREIGHT SERVICES A.E (EL) SOURCE_VERIFIED
+- GT COURIER ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- GUCE ILIR ΤΟΥ MEHMET (EL) SOURCE_VERIFIED
+- GΙURΚOVA - PAPOULIA ANETA (EL) SOURCE_VERIFIED
+- HAMATAJ ERVIN (EL) SOURCE_VERIFIED
+- HAPPY COURIER SERVICES E.E (EL) SOURCE_VERIFIED
+- HELLAS TRANS - N. STASINOS (EL) SOURCE_VERIFIED
+- HELLO TRANSPORT IKE (EL) SOURCE_VERIFIED
+- HOLLAND HELLAS LOGISTICS ΔΙΑΜΕΤΑΦΟΡΙΚΗ ΑΠΟΘΗΚΕΥΤΙΚΗ Α.Ε. (EL) SOURCE_VERIFIED
+- I SPECIAL TRANSPORTATION SERVICES EE (EL) SOURCE_VERIFIED
+- ICC ΤΑΧΥΜΕΤΑΦΟΡΕΣ Ε.Ε (EL) SOURCE_VERIFIED
+- IDS ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- IM COURIER OE (EL) SOURCE_VERIFIED
+- IN ACT ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- INNOVATIVE AND OUTSOURCING SERVICES Ε.Ε. (EL) SOURCE_VERIFIED
+- INTERMOVE  ΔΙΕΘΝΗΣ ΜΕΤΑΦΟΡΙΚΗ (EL) SOURCE_VERIFIED
+- INTERSTATE ALL COURIER SERVICES IKE (EL) SOURCE_VERIFIED
+- INTRALINK LOGISTICS ΑΝΩΝΥΜΗ ΜΕΤΑΦΟΡΙΚΗ ΕΤΑΙΡΙΑ ΓΕΝΙΚΩΝ ΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- IONIAN EXPRESS CARGO Ε.Ε. (EL) SOURCE_VERIFIED
+- JET POST COURIER Ε.Ε. (EL) SOURCE_VERIFIED
+- JET POST ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- KANGA SERVICES COURIERS A.E. (EL) SOURCE_VERIFIED
+- KARAPITI FLORI (EL) SOURCE_VERIFIED
+- KING EXPRESS COURIER ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- KONOMI ARDJAN (EL) SOURCE_VERIFIED
+- KOSTANDIN ANDREA MIHALI (ΚΩΣΤΑΝΤΙΝ ΑΝΤΡΕΑ ΜΙΧΑΛΗ) (EL) SOURCE_VERIFIED
+- KOURIERS ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- KRETA LOGISTICS ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- KUEHNE-NAGEL ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ ΜΕΤΑΦΟΡΩΝ & LOGISTICS (EL) SOURCE_VERIFIED
+- LOOPSTER ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- LULI AMARILDO (EL) SOURCE_VERIFIED
+- MEDICAL WASTE ΠΕΡΙΒΑΛΛΟΝΤΙΚΗ ΔΙΑΧΕΙΡΙΣΗ Α.Ε. (EL) SOURCE_VERIFIED
+- MEDX LOGISTICS – ΑΠΟΘΗΚΕΥΣΗ – ΔΙΑΝΟΜΕΣ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- MEEST INTERNATIONAL SPOLKA Z OGRANICZONA ODPOWIEDZIALNOSCIA (EL) SOURCE_VERIFIED
+- MF VIP TRANSFER OE (EL) SOURCE_VERIFIED
+- MILKRO HELLAS PUBLISHER SERVICES LTD (EL) SOURCE_VERIFIED
+- MOVE24HELLAS Ο Ε (EL) SOURCE_VERIFIED
+- MTS COURIER ΤΑΧΥΜΕΤΑΦΟΡΕΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- MVP COURIER Ι Κ Ε (EL) SOURCE_VERIFIED
+- MYCOURIER ΝΑΤΣΙΟΣ Ι ΜΙΛΤΙΑΔΗΣ (EL) SOURCE_VERIFIED
+- NEXDAY ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- NEXT BEST Ε.Ε. (EL) SOURCE_VERIFIED
+- NIKA ROVENA (EL) SOURCE_VERIFIED
+- OCS COURIER MON. IKE (EL) SOURCE_VERIFIED
+- OLYMPUS ΕΜΠΟΡΙΑ ΙΑΤΡΙΚΩΝ ΕΙΔΩΝ ΙΚΕ (EL) SOURCE_VERIFIED
+- ON LINE TRANSPORT AE (EL) SOURCE_VERIFIED
+- ON TIME COURIER ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ONLINE DELIVERY ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡEΙΑ ΠΡΟΩΘΗΣΗΣ ΔΙΑΔΙΚΤΥΑΚΩΝ ΥΠΗΡΕΣΙΩΝ (EL) SOURCE_VERIFIED
+- OUTDOORCHANNEL COURIER E.E. (EL) SOURCE_VERIFIED
+- P DIM ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- PANAJOTI KRISTOFOR (EL) SOURCE_VERIFIED
+- PANDA COURIER O.E. (EL) SOURCE_VERIFIED
+- Parcel2Go.com ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- PC TURNAROUND AIR SERVICE CORPORATION SINGLE MEMBER PRIVATE COMPANY (EL) SOURCE_VERIFIED
+- PENGU TECHNOLOGIES ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- POST SERVICES ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- PRIME ENERGY, PROPERTY & LOGISTICS ΕΕ (EL) SOURCE_VERIFIED
+- PRINTSERVE ΑΕ (EL) SOURCE_VERIFIED
+- PRODUSEL IKE (EL) SOURCE_VERIFIED
+- PROFESSIONAL CARGO SERVICES - PROCARGO M. ΕΠΕ (EL) SOURCE_VERIFIED
+- PROTON COURIER ΤΑΧΥΜΕΤΑΦΟΡΕΣ Μ. Ε.Π.Ε. (EL) SOURCE_VERIFIED
+- QPS HELLAS E.E (EL) SOURCE_VERIFIED
+- QUICK INTERNATIONAL FREIGHT SERVICES LTD (EL) SOURCE_VERIFIED
+- RAKIPI ARMANDO (EL) SOURCE_VERIFIED
+- REX COURIER I.K.E. (EL) SOURCE_VERIFIED
+- ROGOVTSOVA INNA του PETR (EL) SOURCE_VERIFIED
+- RUN SPEED ΕΕ (EL) SOURCE_VERIFIED
+- RUZI  SAIMIR (EL) SOURCE_VERIFIED
+- SCOOT ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- SDD COURIER SERVICES ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- SDS ΜΟΝ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- SHOP & DROP Ο.Ε. (EL) SOURCE_VERIFIED
+- SIK IKE (EL) SOURCE_VERIFIED
+- SIMEONOVA MARGARITA ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- SKYCARGO EXPRESS ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- SKYWAY ΕΠΕ (EL) SOURCE_VERIFIED
+- SMART FORWARDING ΥΠΗΡΕΣΙΕΣ ΔΙΑΧΕΙΡΙΣΗΣ ΚΑΙ ΟΡΓΑΝΩΣΗΣ ΜΕΤΑΦΟΡΩΝ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- SMART SEND COURIER SERVICES ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- SMARTBOXX ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- SOUTHSTAR ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- SPEED AIR ΔΙΕΘΝΕΙΣ ΜΕΤΑΦΟΡΕΣ & LOGISTICS Α.Ε. (EL) SOURCE_VERIFIED
+- SPEED TRANSPORT AND LOGISTICS ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- SPEEDBOXCOURIER ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- SPEEDWAY TRANSPORT ΟΕ (EL) SOURCE_VERIFIED
+- SPN ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- STOJA BRANKO (EL) SOURCE_VERIFIED
+- SUPERTOURING EUROPEAN TRANSPORT ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- SVUUM ΑΕ (EL) SOURCE_VERIFIED
+- SWIFT MAIL ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΕΕ (EL) SOURCE_VERIFIED
+- TAMI GROUP Ε Ε (EL) SOURCE_VERIFIED
+- TAS COURIER Ε.Ε. (EL) SOURCE_VERIFIED
+- TCRC ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- TCS COURIER IKE (EL) SOURCE_VERIFIED
+- TEC SERVICES ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- THE KING OF VILLAS AND CARS IKE (EL) SOURCE_VERIFIED
+- THESS TAXILISI GR Ε Ε (EL) SOURCE_VERIFIED
+- TITES  ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- TOP POST Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- TOURIST SERVICE HOLDING A.E. (EL) SOURCE_VERIFIED
+- UNIT E-LOGISTICS COURIER ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- UPS OF GREECE INC. (EL) SOURCE_VERIFIED
+- VANAKI EXPRESS  ΙΚΕ (EL) SOURCE_VERIFIED
+- VFS LOGISTICS SUPPORT ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΤΑΧΥΜΕΤΑΦΟΡΩΝ ΕΜΠΟΡΕΥΜΑΤΩΝ ΚΑΙ ΕΓΓΡΑΦΩΝ (EL) SOURCE_VERIFIED
+- WAPI HAPPI CARBERT (EL) SOURCE_VERIFIED
+- WE GO ΟΜΜΟΡΥΘΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- WHITE LABEL COURIER SERVICES ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- WHITE ROCK Ε Ε (EL) SOURCE_VERIFIED
+- WOLT ΤΕΧΝΟΛΟΓΙΕΣ ΕΛΛΑΣ ΥΠΗΡΕΣΙΕΣ ΠΑΡΟΧΗΣ ΦΑΓΗΤΟΥ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- XOXI DHIMITRI (EL) SOURCE_VERIFIED
+- XOXI DHIMITRI ΚΑΙ ΣΙΑ Ε Ε (EL) SOURCE_VERIFIED
+- XP ΜΕΤΑΦΟΡΙΚΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- Α.ΜΥΤΙΛΗΝΟΥ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- Α.ΣΑΚΑΝΙΑΝ - Ε.ΣΑΚΑΝΙΑΝ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΑΓΑΘΟΥ ΕΛΕΝΗ - ΡΟΥΜΠΙΝΑ (EL) SOURCE_VERIFIED
+- ΑΓΓΕΛΙΚΗ ΠΛΕΣΣΑ ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΑΓΓΕΛΟΠΟΥΛΟΣ  ΣΤΑΘΗΣ  ΙΚΕ (EL) SOURCE_VERIFIED
+- Αγγελος Στελλας (EL) SOURCE_VERIFIED
+- ΑΓΟΥΡΖΕΝΙΔΗΣ ΣΤΑΥΡΟΣ (EL) SOURCE_VERIFIED
+- ΑΓΡΑΓΓΕΛΟΣ ΕΥΑΓΓΕΛΟΣ (EL) SOURCE_VERIFIED
+- ΑΓΡΙΝΙΟ EXPRESS ΙΚΕ (EL) SOURCE_VERIFIED
+- Αδαμοπουλος Διονυσης (EL) SOURCE_VERIFIED
+- ΑΘΑΝΑΣΑΚΟΠΟΥΛΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΑΘΑΝΑΣΙΑΔΗ  ΣΟΦΙΑ (EL) SOURCE_VERIFIED
+- ΑΘΑΝΑΣΟΠΟΥΛΟΥ ΓΕΩΡΓΙΑ (EL) SOURCE_VERIFIED
+- ΑΘΗΝΟΔΩΡΟΣ ΜΟΥΤΣΙΑΝΟΣ (EL) SOURCE_VERIFIED
+- ΑΙ ΝΤΙ ΠΙ ΕΞΠΡΕΣ ΑΕ ΔΙΕΘΝΩΝ ΤΑΧ\ΡΩΝ ΕΓΓΡΑΦΩΝ ΚΑΙ ΔΕΜΑΤΩΝ (EL) SOURCE_VERIFIED
+- ΑΛΑΜΑΝΟΥ Γ. ΜΑΡΙΑ (EL) SOURCE_VERIFIED
+- ΑΛΕΑΤΥΠΟΣ Α.Ε (EL) SOURCE_VERIFIED
+- ΑΛΕΞΑΚΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΑΛΕΞΑΚΗΣ ΣΤΕΛΙΟΣ (EL) SOURCE_VERIFIED
+- ΑΛΕΞΑΝΔΡΑ ΜΑΡΤΣΑΚΗ (EL) SOURCE_VERIFIED
+- ΑΛΕΞΑΝΔΡΗΣ  ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΑΛΕΞΑΝΔΡΟΣ ΒΕΒΟΠΟΥΛΟΣ & ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΑΛΕΞΙΑΣ ΠΑΝΤΕΛΗΣ (EL) SOURCE_VERIFIED
+- ΑΛΕΠΙΔΗΣ ΒΑΡΒΑΡΟΣ (EL) SOURCE_VERIFIED
+- ΑΛΜΑΤΡΑΝΣ INTERNATIONAL ΕΤΑΙΡΙΑ ΔΙΕΘΝΩΝ ΜΕΤΑΦΟΡΩΝ ΚΑΙ ΑΠΟΘΗΚΕΥΣΕΥΩΝ (EL) SOURCE_VERIFIED
+- ΑΛΠΑ LOGISTICS A.E. (EL) SOURCE_VERIFIED
+- ΑΛΦΑ ΔΙΑΝΟΜΕΣ ΖΑΧΑΡΩΔΗ ΠΟΤΑ ΨΙΛΙΚΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙA (EL) SOURCE_VERIFIED
+- ΑΝΑΓΝΩΣΤΟΠΟΥΛΟΣ Δ ΚΑΙ ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΑΝΑΓΝΩΣΤΟΠΟΥΛΟΥ ΕΥΑΓΓΕΛΙΑ (EL) SOURCE_VERIFIED
+- ΑΝΑΣΤΑΣΑΚΗ ΝΙΚΗ (EL) SOURCE_VERIFIED
+- ΑΝΑΣΤΑΣΙΑΔΗ ΚΥΡΙΑΚΗ (EL) SOURCE_VERIFIED
+- ΑΝΑΣΤΑΣΙΑΔΗΣ ΣΤΕΦΑΝΟΣ (EL) SOURCE_VERIFIED
+- ΑΝΑΣΤΑΣΙΟΣ ΝΙΚΟΛΑΙΔΗΣ (EL) SOURCE_VERIFIED
+- Ανδρέαδακη Κρυσταλία (EL) SOURCE_VERIFIED
+- ΑΝΔΡΕΑΣ ΠΑΝ. ΑΛΑΤΕΡΑΣ (EL) SOURCE_VERIFIED
+- ΑΝΔΡΙΟΠΟΥΛΟΥ ΜΑΡΙΑ (EL) SOURCE_VERIFIED
+- ΑΝΕΖΙΝΗΣ ΜΕΤΑΦΟΡΙΚΕΣ ΥΠΗΡΕΣΙΕΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΑΝΘΟΥΛΗΣ ΑΡΙΣΤΕΙΔ. ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- ΑΝΘΟΥΛΗΣ ΜΕΤΑΦΟΡΙΚΗ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- ΑΝΤ. ΓΕΩΡΓΟΥΛΑΣ Κ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΑΚΟΠΟΥΛΟΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΑΚΟΣ ΙΩΑ. ΘΕΟΔΩΡΟΣ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΗΣ Ν. ΜΑΝΔΗΛΑΡΑΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΗΣ ΡΕΠΟΥΣΚΟΣ ΤΑΧΥΜΕΤΑΦΟΡΕΣ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΙΟΣ ΜΠΙΚΑΚΗΣ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΝΙΟΥ ΓΡΗΓΟΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΑΝΤΩΣΙΔΟΥ ΕΛΕΝΗ (EL) SOURCE_VERIFIED
+- ΑΠ. ΧΡ. ΚΩΣΤΑΜΗΣ & ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΑΠΟΣΤΟΛΑΚΗΣ ΣΠΥΡΙΔΩΝ (EL) SOURCE_VERIFIED
+- ΑΠΟΣΤΟΛΟΣ ΚΑΤΣΕΣ (EL) SOURCE_VERIFIED
+- ΑΡΓΟΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΠΡΑΚΤΟΡΕΥΣΕΩΣ ΔΙΑΧΕΙΡΙΣΕΩΣ & ΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- ΑΡΓΥΡΗΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΑΡΓΥΡΟΠΟΥΛΟΣ  ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΑΡΙΣΤΕΙΔΗΣ ΧΡΗΣΤΟΣ ΠΕΤΡΟΥ (EL) SOURCE_VERIFIED
+- ΑΡΤΕΜΙΣ ΑΓΡΑΙΑ ΣΥΜΒΟΥΛΕΥΤΙΚΗ (EL) SOURCE_VERIFIED
+- ΑΡΩΝΗΣ Ι. ΘΕΟΦΑΝΗΣ (EL) SOURCE_VERIFIED
+- ΑΣΗΜΙΔΗΣ ΠΑΡΑΣΚΕΥΑΣ (EL) SOURCE_VERIFIED
+- ΑΣΗΜΟΜΥΤΗΣ Δ.ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΑΣΤΡΑΚΑΣ ΣΠΥΡΙΔΩΝ (EL) SOURCE_VERIFIED
+- ΑΤΜΑΤΖΙΔΗΣ ΕΥΑΓΓΕΛΟΣ ΤΟΥ ΣΑΒΒΑ (EL) SOURCE_VERIFIED
+- ΑΤΤΙΚΗ ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- ΑΦΟΙ ΔΑΣΚΑΛΗΣ Ε Ε (EL) SOURCE_VERIFIED
+- ΑΦΟΙ Ι ΑΛΙΑΓΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΑΦΟΙ ΚΟΥΚΟΥΛΕΚΙΔΗ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΑΦΟΙ ΚΟΥΤΣΟΥΠΙΑ Ο Ε (EL) SOURCE_VERIFIED
+- ΑΦΟΙ Σ. Κ Δ. ΙΩΑΝΝΙΔΗ ΟΕ (EL) SOURCE_VERIFIED
+- ΑΦΟΙ ΣΤΑΘΗ ΜΕΤΑΦΟΡΙΚΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- Β & Ν FAST SERVICES Ο.Ε. (EL) SOURCE_VERIFIED
+- Β ΒΑΣΙΛΕΙΑΔΗ Γ ΓΡΥΛΛΟΣ ΟΕ (EL) SOURCE_VERIFIED
+- Β.ΚΑΡΑΠΕΤΣΑΣ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- Βαββας Ελευθέριος (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΑΚΗ ΜΑΡΙΑ ΕΥΓΕΝΙΑ (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΑΚΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΑΚΟΠΟΥΛΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ ΚΑΙ ΣΙΑ Ε.Ε (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΑΣ Μ. ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΕΙΑΔΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΕΙΟΥ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΑΣΙΛΗΣ ΣΑΜΑΡΑΣ TRANSPORT & LOGISTICS Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- ΒΑΤΙΣΤΑΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΑΤΣΑΚΗΣ  ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΒΑΧΤΣΕΒΑΝΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΒΕΚΙΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ Α.Ε (EL) SOURCE_VERIFIED
+- ΒΕΛΟΣ ΕΤΕΡΟΡΡΥΘΜΗ ΕΤΑΙΡΙΑ (EL) SOURCE_VERIFIED
+- ΒΕΝΕΤΙΔΗΣ ΛΟΥΚΑΣ (EL) SOURCE_VERIFIED
+- ΒΕΝΙΖΕΛΟΣ   ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΙΣΑΞΗ ΕΛΕΝΗ (EL) SOURCE_VERIFIED
+- ΒΛΑΧΟΣ ΣΩΤΗΡΗΣ (EL) SOURCE_VERIFIED
+- ΒΟΛΤΗΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΟΥΛΓΑΡΗ ΕΥΑΓΓΕΛΙΑ (EL) SOURCE_VERIFIED
+- ΒΟΥΡΓΑΣ ΑΝΑΣΤΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΟΥΡΛΙΩΤΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΒΟΥΡΤΣΗ ΜΑΜΑΚΗ ΑΓΓΕΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΒΟΥΤΣΙΝΟΣ ΓΕΩΡΓΙΟΣ ΑΠΟΘΗΚΕΥΣΕΙΣ - ΜΕΤΑΦΟΡΕΣ ΜΟΝΟΠΟΡΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΒΡΥΣΑΝΑΚΗΣ ΜΙΧ. ΕΜΜΑΝΟΥΗΛ (EL) SOURCE_VERIFIED
+- Γ. ΚΩΤΑΚΗΣ ΤΡΑΝΣ Α.Ε. (EL) SOURCE_VERIFIED
+- Γ. ΥΦΑΝΤΗΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΓΑΒΑΛΑΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΓΑΒΑΛΑΣ ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- ΓΑΛΑΝΑΚΗΣ ΑΝΤΩΝΗΣ (EL) SOURCE_VERIFIED
+- ΓΑΡΓΑΝΟΥΡΑΚΗ ΠΟΛΥΜΝΙΑ (EL) SOURCE_VERIFIED
+- ΓΑΡΕΦΑΛΑΚΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΕΝΙΚΕΣ ΜΕΤΑΦΟΡΕΣ  ΑΘΗΝΑΪΚΗ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΓΕΝΙΚΗ ΤΑΧΥΔΡΟΜΙΚΗ Α.Ε.Ε. ΤΑΧΥΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- ΓΕΝΙΚΗ ΧΗΜΙΚΩΝ ΕΦΑΡΜΟΓΩΝ Ε.Π.Ε. (EL) SOURCE_VERIFIED
+- ΓΕΝΝΑΤΟΣ ΑΛΕΚΟΣ (EL) SOURCE_VERIFIED
+- Γεραντίδης Στυλιανός (EL) SOURCE_VERIFIED
+- ΓΕΡΓΟΥΛΑ ΑΙΚΑΤΕΡΙΝΗ (EL) SOURCE_VERIFIED
+- Γεωργία Λιάκου (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΑΚΗΣ Δ. ΜΕΤΑΦΟΡΙΚΗ ΕΕ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΑΔΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΑΔΗΣ ΧΡΙΣΤΟΦΟΡΟΣ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΟΣ ΛΙΒΟΣΙΝ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΟΣ ΜΑΝΟΥΣΑΚΙΔΗΣ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΟΥ  ΗΛΙΑΣ (EL) SOURCE_VERIFIED
+- ΓΕΩΡΓΙΟΥ Γ. ΗΛΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ (EL) SOURCE_VERIFIED
+- ΓΙΑΛΙΤΑΚΗΣ ΓΕΩΡΓΙΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΓΙΑΝΝΑΚΟΥΔΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΓΙΑΝΝΑΚΟΥΔΗΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- Γιαννακόπουλος Νικ.Σπυριδων (EL) SOURCE_VERIFIED
+- ΓΙΑΝΝΗΣ ΒΑΓ ΑΡΜΠΕΝ (EL) SOURCE_VERIFIED
+- ΓΙΑΤΙΛΗΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΙΔΙΑΡΗΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΑΛΗ ΚΥΡΙΑΚΗ (EL) SOURCE_VERIFIED
+- ΓΚΕΛΟΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΕΝΟΣ Χ - ΣΑΜΑΡΑ Ε. Ο.Ε (EL) SOURCE_VERIFIED
+- ΓΚΟΓΚΟΛΗΣ ΠΕΤΡΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΟΛΝΤΕΝ ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ ΕΛΛΑΣ Α.Ε. (EL) SOURCE_VERIFIED
+- ΓΚΟΟΥ ΚΟΥΡΙΕΡ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΓΚΟΡΟΥ ΧΡΥΣΟΥΛΑ (EL) SOURCE_VERIFIED
+- ΓΚΟΤΣΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΟΥΖΟΣ ΜΙΧΑΗΛ &  ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΓΚΟΥΙΤΣΟΥ ΛΑΜΠΡΙΝΗ (EL) SOURCE_VERIFIED
+- ΓΚΟΥΝΕΛΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΟΥΝΤΟΥΛΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΓΚΡΗΚ ΑΙΡ ΚΑΡΓΚΟ A.E. (EL) SOURCE_VERIFIED
+- ΓΚΡΙΜΟΤΣΗΣ Α-ΡΟΥΝΤΑΣ Χ Ο.Ε (EL) SOURCE_VERIFIED
+- ΓΟΥΔΡΑΣ ΑΝΑΣΤΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΟΥΚΟΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΓΟΥΟΡΛΝΤ ΚΟΥΡΙΕΡ (ΕΛΛΑΣ)  Ε.Π.Ε (EL) SOURCE_VERIFIED
+- ΓΡΑΜΜΕΝΟΥΔΗΣ ΑΣΤΕΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΓΡΗΓΟΡΙΑΔΗ ΜΑΡΓΑΡΙΤΑ (EL) SOURCE_VERIFIED
+- ΓΩΡΟΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- Δ.ΑΝΑΣΤΑΣΙΑΔΗΣ & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- Δ.ΚΙΖΙΡΙΔΗΣ-Σ.ΜΠΙΛΙΟΥΣΗΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΔΑΛΑΜΠΥΡΑΣ ΑΝΑΡΓΥΡΟΣ (EL) SOURCE_VERIFIED
+- ΔΑΝΙΗΛΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΔΑΡΖΕΝΤΑΣ ΜΕΤΑΦΟΡΙΚΗ ΣΑΝΤΟΡΙΝΗ ΕΕ (EL) SOURCE_VERIFIED
+- ΔΑΣΚΑΛΗΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΔΕΔΟΤΣΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΔΕΛΑΤΟΛΑΣ− ΜΕΤΑΦΟΡΩΝ ΚΑΙ ΑΠΟΘΗΚΕΥΣΕΩΝ 3PL ΥΠΗΡΕΣΙΩΝ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΔΕΛΤΑ ΠΟΣΤ ΑΝΩΝΥΜΟΣ ΕΤΑΙΡΕΙΑ ΕΜΠΟΡΙΑΣ ΓΕΝΙΚΗΣ ΔΙΑΦΗΜΙΣΗΣ ΚΑΙ ΤΑΧΥΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- ΔΕΡΜΑΤΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΔΕΣΥΛΛΑ ΜΑΡΙΑ-ΝΑΝΤΙΑ ΜΟΝ. Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- Δημήτριος Γ. Τσιτώτας (EL) SOURCE_VERIFIED
+- ΔΗΜΑΚΟΠΟΥΛΟΣ ΜΕΤΑΦΟΡΙΚΗ (EL) SOURCE_VERIFIED
+- ΔΗΜΕΛ ΑΕ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΑΚΑΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΗΣ Σ. ΜΠΑΛΩΜΕΝΟΣ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΑΔΗΣ ΜΙΧΑΗΛ ΤΟΥ ΓΕΩΡΓΙΟΥ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΣ ΓΕΡΑΝΤΩΝΗΣ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΣ ΔΑΜΙΑΝΟΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΣ ΚΑΛΛΙΒΩΚΑΣ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΣ ΚΑΣΑΓΙΑΝΝΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΣ ΚΙΟΥΣΗΣ ΚΑΙ ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΔΗΜΗΤΡΙΟΥ ΚΥΡΙΑΚΗ ΜΟΝ/ΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΔΗΜΟΥΛΑΣ ΑΠΟΣΤΟΛΟΣ ΜΑΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΔΙΑΔΙΚΤΥΑΚΗ ΜΕΤΑΦΟΡΙΚΗ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΠΡΟΊΟΝΤΩΝ ΥΨΗΛΗΣ ΤΕΧΝΟΛΟΓΙΑΣ (EL) SOURCE_VERIFIED
+- ΔΙΑΚΙΝΗΣΙΣ Α.Ε. ΑΠΟΘΗΚΕΎΣΕΙΣ - ΜΕΤΑΦΟΡΈΣ - ΣΥΣΚΕΥΑΣΊΕΣ (EL) SOURCE_VERIFIED
+- ΔΙΑΝΟΜΕΣ ΔΕΜΑΤΩΝ ΟΕ (EL) SOURCE_VERIFIED
+- ΔΙΑΥΛΟΣ ΜΕΤΑΦΟΡΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΔΙΑΦΗΜΙΣΤΙΚΗ ΤΟΥΡΙΣΤΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ - ΑΝΑΠΑΡΑΓΩΓΗ ΙΠΠΩΝ - ΞΕΝΟΔΟΧΕΙΑΚΕΣ ΕΠΙΧΕΙΡΗΣΕΙΣ - ΤΑΧΥΔΡΟΜΙΚΕΣ ΥΠΗΡΕΣΙΕΣ (EL) SOURCE_VERIFIED
+- ΔΙΖΟΣ ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- ΔΙΣΙΟΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΔΟΥΔΑΚΗ ΔΗΜΗΤΡΑ ΘΕΟΔΩΡΟΣ (EL) SOURCE_VERIFIED
+- ΔΟΥΚΑΣ ΘΕΟΔΩΡΟΣ ΚΑΙ ΔΟΥΚΑΣ ΚΩΝ. Ο.Ε. (EL) SOURCE_VERIFIED
+- Ε.ΒΟΥΤΣΙΝΑ-ΚΑΝΔΗΛΙΩΡΟΥ ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- Ε.ΤΣΕΛΕΠΙΔΗΣ ΚΑΙ ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΕΚΟΛ ΛΟΤΖΙΣΤΙΚΣ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ΕΛΛΑΣ ΠΑΠΑΔΟΠΟΥΛΟΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- ΕΛΛΗΝΙΚΑ ΤΑΧΥΔΡΟΜΕΙΑ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΕΛΛΗΝΙΚΗ ΕΤΑΙΡΙΑ ΦΟΡΤΗΓΩΝ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΕΜΜΑΝΟΥΗΛ ΒΛΑΧΑΚΗΣ (EL) SOURCE_VERIFIED
+- ΕΜΜΑΝΟΥΗΛ Π. ΓΙΑΛΙΤΑΚΗΣ (EL) SOURCE_VERIFIED
+- ΕΜΠΟΡΙΟ ΥΛΙΚΩΝ ΣΥΣΚΕΥΑΣΙΑΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ (EL) SOURCE_VERIFIED
+- ΕΝΤΙΠΠΟΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΕΝΩΣΗ ΜΑΚΕΔΟΝΙΑΣ ΑΜΕ (EL) SOURCE_VERIFIED
+- ΕΡΚΙΛΕΤΛΙΟΓΛΟΥ ΧΑΡ. ΠΕΤΡΟΣ (EL) SOURCE_VERIFIED
+- ΕΥΑΓΓΕΛΟΠΟΥΛΟΥ ΑΙΚΑΤΕΡΙΝΗ (EL) SOURCE_VERIFIED
+- ΕΥΑΓΓΕΛΟΥ ΓΡΗΓΟΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΕΥΣΤΡΑΤΙΟΥ ΑΡΓΥΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΕΥΤΥΧΙΟΣ ΚΑΣΔΑΓΛΗΣ (EL) SOURCE_VERIFIED
+- Ζ & Δ ΝΤΕΛΟΠΟΥΛΟΣ ΟΕ (EL) SOURCE_VERIFIED
+- ΖΑΜΙΟΥΔΗ ΠΑΓΩΝΑ (EL) SOURCE_VERIFIED
+- ΖΑΝΝΕΤΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΖΑΡΟΓΙΑΝΝΗΣ ΑΛΚΙΒΙΑΔΗΣ (EL) SOURCE_VERIFIED
+- ΖΑΦΕΙΡΟΠΟΥΛΟΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΖΑΧΑΡΙΑΣ ΣΑΡΡΗΣ (EL) SOURCE_VERIFIED
+- ΖΑΧΑΡΙΟΥ ΕΛΕΥΘΕΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΖΑΧΑΡΟΠΟΥΛΟΥ ΕΛΕΝΗ (EL) SOURCE_VERIFIED
+- ΖΕΡΓΙΩΤΗΣ ΔΙΟΝΥΣΙΟΣ - ΠΑΝΤΕΛΕΗΜΩΝ (EL) SOURCE_VERIFIED
+- ΖΗΤΣΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΖΗΦΚΟΥ ΚΑΙ ΣΙΑ Ε Ε (EL) SOURCE_VERIFIED
+- ΖΙΑΜΠΡΑΣ Π.- ΔΕΛΗΓΙΑΝΝΗΣ Ι. Ο.Ε (EL) SOURCE_VERIFIED
+- ΖΙΩΓΚΑΣ ΟΔΥΣΣΕΑΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΖΛΑΤΑΝΙΔΗΣ Δ. ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΖΟΥΓΑΝΕΛΗ  ΕΙΡΗΝΗ (EL) SOURCE_VERIFIED
+- ΖΩΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- Ηλια Δημο (EL) SOURCE_VERIFIED
+- ΗΛΙΑΔΗ  ΣΙΜΕΛΑ (EL) SOURCE_VERIFIED
+- Θ.ΓΡΟΣΙΑΝΗΣ- Ι.ΛΟΥΡΕΝΤΖΑΚΗΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΘΕΜΕΛΗΣ ΑΝΔΡΕΑΣ (EL) SOURCE_VERIFIED
+- ΘΕΜΕΛΗΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΘΕΟΔΩΡΟΥ ΑΠΟΣΤΟΛΟΣ (EL) SOURCE_VERIFIED
+- ΘΕΟΔΩΡΟΥ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- Ι. ΔΟΡΔΙΟΣ ΚΑΙ ΥΙΟΣ ΑΕ (EL) SOURCE_VERIFIED
+- Ι.Γ.Γ. ΤΣΙΡΙΓΩΤΗΣ ΕΕ (EL) SOURCE_VERIFIED
+- Ι.ΚΟΜΠΟΧΟΛΗΣ ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΙΑΣΜΗ ΝΙΚΟΛΑΙΔΟΥ Ε.Ε (EL) SOURCE_VERIFIED
+- ΙΑΤΡΟΥ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΙΔΙΩΤΙΚΗ ΕΠΙΧΕΙΡΗΣΗ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΑΣΦΑΛΕΙΑΣ-ΒΑΣΙΛΕΙΟΣ ΠΑΛΑΙΟΛΟΓΟΣ ΟΕ (EL) SOURCE_VERIFIED
+- ΙΜΒΡΙΩΤΗΣ ΑΛΕΞΑΝΔΡΟΣ (EL) SOURCE_VERIFIED
+- ΙΟΝΙΚΕΣ ΤΑΧΥΜΕΤΑΦΟΡΕΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΙΟΥΝΙΟΝ ΙΒΚΟΝΙ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΙΣΤΟΣ ΜΕΤΑΦΟΡΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΗΣ ΒΕΛΑΕΤΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΗΣ Θ. ΣΠΥΡΟΠΟΥΛΟΣ (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΗΣ ΧΟΛΕΡΙΔΗΣ (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΙΔΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΙΔΗΣ Χ. - ΑΝΔΡΕΑΔΑΚΗ Κ. Ε.Ε. (EL) SOURCE_VERIFIED
+- ΙΩΑΝΝΟΥ ΛΕΩΝΙΔΑΣ (EL) SOURCE_VERIFIED
+- ΙΩΣΗΦ ΑΡΜΑΚΟΛΑΣ ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- Κ.ΠΑΠΑΓΕΩΡΓΙΟΥ-Κ.ΝΙΝΗΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΑΙΜΑΚΑΜΗΣ ΙΩΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΑΚΑΡΟΥΜΠΑΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΛΑΙΤΖΙΔΗΣ ΛΕΩΝΙΔΑΣ (EL) SOURCE_VERIFIED
+- Καλογρίτσας χαράλαμπος (EL) SOURCE_VERIFIED
+- ΚΑΛΟΓΡΑΝΗΣ ΔΗΜ. ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΚΑΛΟΜΠΡΑΤΣΟΣ ΑΝΔΡΕΑΣ (EL) SOURCE_VERIFIED
+- ΚΑΛΥΤΕΡΕΣ ΛΥΣΕΙΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΚΑΝΔΥΛΗΣ ΜΕΤΑΦΟΡΙΚΗ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΚΑΝΕΛΛΟΠΟΥΛΟΥ ΕΛ. Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΑΝΚΟ ΑΕ ΤΑΧΥΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- ΚΑΠΑΚΗΣ ΑΝΔ. ΑΝΔΡΕΑΣ (EL) SOURCE_VERIFIED
+- ΚΑΠΑΣΑΚΑΛΙΔΟΥ ΓΕΩΡΓΙΑ (EL) SOURCE_VERIFIED
+- ΚΑΠΝΙΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΒΑΣΙΛΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΒΟΥΝΑΡΛΗΣ ΠΩΛ ΑΝΤΟΝΥ - ΚΟΖΙΚΟΠΟΥΛΟΣ ΚΩΝ.ΝΟΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΑΡΑΒΥΣΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΒΥΣΗΣ ΓΕΩΡΓΙΟΣ & ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΚΑΡΑΙΣΚΟΣ ΣΑΒΒΑΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΛΗΣ ΕΥΣΤΑΘΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΜΠΟΙΚΗΣ ΔΙΟΝΥΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΑΧΡΗΣΤΟΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΒΟΥΝΗΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΟΥΖΟΣ Π. - ΤΡΑΚΑΔΑΣ Π. Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΑΡΠΑΤΣΗ ΒΑΣΙΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΚΑΡΠΟΥΣΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΡΠΟΥΤΖΑΚΗΣ  ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΑΣΒΙΚΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΣΣΕΛΟΥΡΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΚΑΤΣΑΝΤΩΝΗ ΜΑΡΙΑ (EL) SOURCE_VERIFIED
+- ΚΑΦΑΛΗ ΕΥΑΓΓΕΛΙΑ (EL) SOURCE_VERIFIED
+- ΚΑΨΑΛΗΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΕΝΤΡΟ ΚΟΥΡΙΕΡ  Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΚΕΣΚΙΝΙΔΗΣ ΜΙΧΑΗΛ ΤΟΥ ΑΘΑΝΑΣΙΟΣ ΒΛΑΔΙΜΗΡΟΥ (EL) SOURCE_VERIFIED
+- Κιομηρτσόγλου Χρήστος (EL) SOURCE_VERIFIED
+- ΚΚ ΤΡΑΝΣΠΟΡΤ GREECE ΟΕ (EL) SOURCE_VERIFIED
+- ΚΛΕΑΝΘΗΣ ΜΑΝΙΑΤΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΚΟΚΟΒΙΔΗΣ ΦΡΙΓΚΟΤΡΑΝΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΟΔΙΚΩΝ MΕΤΑΦΟΡΩΝ LOGISTICS (EL) SOURCE_VERIFIED
+- ΚΟΚΟΛΑΚΗ ΚΑΛΛΙΟΠΗ (EL) SOURCE_VERIFIED
+- ΚΟΛΛΙΑΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΚΟΜΒΟΣ ΕΞΠΡΕΣ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΟΜΜΑΤΑ ΑΦΟΙ ΟΕ (EL) SOURCE_VERIFIED
+- ΚΟΝΔΥΛΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΚΟΝΤΟΓΕΩΡΓΗΣ Γ & Η Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΟΝΤΟΠΟΥΛΟΣ ΘΕΟΦΑΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΟΤΖΙΑ ΦΩΤΕΙΝΗ (EL) SOURCE_VERIFIED
+- ΚΟΤΟΠΟΥΛΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΚΟΥΑΤΡΟ Ο.Ε (EL) SOURCE_VERIFIED
+- ΚΟΥΓΙΟΥΜΤΖΟΓΛΟΥ ΑΙΚΑΤΕΡΙΝΗ ΙΟΡΔΑΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΟΥΚΟΥΤΣΑΚΗΣ ΙΩΑΝΝΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (EL) SOURCE_VERIFIED
+- ΚΟΥΛΙΕΡΑΚΗ ΕΛΕΝΗ (EL) SOURCE_VERIFIED
+- ΚΟΥΝΕΛΗ ΖΑΜΠΕΛΛΑ (EL) SOURCE_VERIFIED
+- ΚΟΥΤΡΑΚΟΣ ΠΑΝΑΓΙΩΤΗΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΚΟΥΤΡΟΥΜΑΝΗΣ ΕΠΑΜΕΙΝΩΝΔΑΣ (EL) SOURCE_VERIFIED
+- ΚΟΥΤΣΙΚΟΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΚΟΥΤΣΟΓΙΑΝΝΟΠΟΥΛΟΣ Δ. ΑΕ ΤΞΝΕ (EL) SOURCE_VERIFIED
+- ΚΟΥΦΑΛΙΤΑΚΗ ΧΑΡΑΚΙΑΝΑΚΗ ΕΥΘΑΛΙΑ (EL) SOURCE_VERIFIED
+- ΚΡΑΓΙΑΣ ΑΘΑΝΑΣΙΟΣ ΤΟΥ ΣΤΕΡΓΙΟΥ (EL) SOURCE_VERIFIED
+- ΚΡΑΓΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΚΥΠΡΑΙΟΥ ΑΝΝΑ (EL) SOURCE_VERIFIED
+- ΚΥΡΙΑΚΑΚΗ ΓΕΩΡΓΙΑ (EL) SOURCE_VERIFIED
+- ΚΥΡΙΛΛΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΥΡΚΟΣ ΠΑΣΧΑΛΗΣ (EL) SOURCE_VERIFIED
+- Κωνσταντίνος Αναγνωστόπουλος (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΑΤΟΣ ΜΕΤΑΦΟΡΙΚΗ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΙΝΟΣ ΚΑΙ ΘΩΜΑΣ ΠΕΤΡΑΚΗΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΙΝΟΣ ΚΟΡΟΜΠΟΚΗΣ (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΙΝΟΣ ΜΑΥΡΙΔΟΠΟΥΛΟΣ ΜΕΠΕ (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΙΝΟΣ ΣΟΥΪΤΣΜΕΣ (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΙΝΟΣ ΣΤΥ. ΛΑΛΑΣ (EL) SOURCE_VERIFIED
+- ΚΩΝΣΤΑΝΤΟΠΟΥΛΟΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΚΩΣΤΑΜΗΣ ΧΡ. ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΚΩΣΤΑΜΗΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΚΩΣΤΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ ΤΟΥ ΠΑΝΑΓΙΩΤΗ (EL) SOURCE_VERIFIED
+- ΛΑΓΟΥ ΜΑΡΙΑ (EL) SOURCE_VERIFIED
+- ΛΑΛΑΚΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΛΕΚΚΑΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΛΕΜΟΝΙΔΗΣ Ι.& ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΛΕΠΤΑΚΗΣ ΜΙΧΑΗΛ (EL) SOURCE_VERIFIED
+- ΛΕΦΟΓΛΟΥ ΜΠΑΣΔΑΝΗ-ΣΑΚΑΡΗΣ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΛΕΩΝΙΔΑΣ ΝΑΚΑΣ & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΛΙΑΠΗΣ (EL) SOURCE_VERIFIED
+- ΛΙΑΠΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΛΙΑΣΗΣ ΣΑΒΒΑΣ (EL) SOURCE_VERIFIED
+- ΛΙΑΧΟΥΔΗ ΒΑΣΙΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΛΙΝΑΡΔΑΚΗ ΜΙΝΑ (EL) SOURCE_VERIFIED
+- ΛΙΝΑΡΔΑΚΗΣ ΒΑΣΙΛΗΣ (EL) SOURCE_VERIFIED
+- ΛΙΩΛΗ ΑΝΝΑ (EL) SOURCE_VERIFIED
+- ΛΟΓΟΘΕΤΗΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΛΟΥΚΑΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΛΥΓΕΡΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΛΥΚΟΥΡΙΑΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΛΥΜΠΕΡΟΠΟΥΛΟΣ ΠΑΝΑΓΙΩΤΗΣ -ΣΑΡΡΗΣ ΖΑΧΑΡΙΑΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΜΑΘΙΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΘΙΟΥΔΑΚΗΣ ΓΡΗΓΟΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΚΑΡΙΓΑΚΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΛΑΒΕΤΣΗ ΜΑΡΙΕΤΑ (EL) SOURCE_VERIFIED
+- ΜΑΝΙΑΤΗΣ ΚΛΕΑΝΘΗΣ (EL) SOURCE_VERIFIED
+- ΜΑΝΤΖΑΒΕΛΑΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΝΤΖΑΝΑΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΝΤΖΙΟΣ ΕΥΑΓΓΕΛΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΡΙΑ ΧΟΝΔΡΟΥ (EL) SOURCE_VERIFIED
+- ΜΑΡΙΑ ΧΡΥΣΟΒΑΛΑΝΤΗ (EL) SOURCE_VERIFIED
+- ΜΑΡΙΝΟΠΟΥΛΟΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΡΙΝΟΣ ΜΕΤΑΦΟΡΙΚΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΜΑΡΚΟΠΟΥΛΟΣ ΕΛΕΥΘΕΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΑΡΝΕΛΑΚΗΣ Π. &  ΣΙΑ Ο.Ε (EL) SOURCE_VERIFIED
+- ΜΑΡΤΣΑΚΗΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΜΑΤΖΑΡ ΜΟΥΣΑ (EL) SOURCE_VERIFIED
+- ΜΑΥΡΙΔΗΣ ΕΜΜΑΝΟΥΗΛ (EL) SOURCE_VERIFIED
+- ΜΑΥΡΟΜΑΤΗΣ Θ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΜΑΥΡΟΜΜΑΤΗΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΕΓΑΛΟΝΗΣΟΣ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΜΕΙΜΕΤΗ ΚΩΝΣΤΑΝΤΙΝΑ (EL) SOURCE_VERIFIED
+- ΜΕΛΑΤΖΕ ΑΓΑΠΗ (EL) SOURCE_VERIFIED
+- ΜΕΣΗΜΕΡΤΣΗΣ ΚΩΝ/ΝΟΣ (EL) SOURCE_VERIFIED
+- ΜΕΣΟΓΕΙΑΚΕΣ ΤΑΧΥΜΕΤΑΦΟΡΕΣ  ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΜΕΤΑΞΑΚΗΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΕΤΑΞΑΣ Π. - ΝΙΚΟΛΑΙΔΗΣ Δ. Ο.Ε. (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΕΤΑΙΡΕΙΑ ΑΦΟΙ ΒΙΤΟΥΛΑΔΙΤΗ ΟΕ (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΚΑΪΜΑΚΑΣ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΚΕΦΑΛΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΚΕΦΑΛΛΟΝΙΑΣ ΚΟΝΤΑΡΙΝΗΣ Α.Μ.Ε. (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΛΑΚΚΙΩΤΗΣ Ι.Κ.Ε (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΝΕΟΣ ΑΤΛΑΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (EL) SOURCE_VERIFIED
+- ΜΕΤΑΦΟΡΙΚΗ ΠΕΤΡΑΚΗ ΑΕ (EL) SOURCE_VERIFIED
+- ΜΕΤΟΧΙΑΝΑΚΗΣ ΗΛΙΑΣ (EL) SOURCE_VERIFIED
+- ΜΗΤΡΙΤΖΑΚΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΜΗΤΡΟΠΟΥΛΟΣ ΘΕΜ ΙΩΑΝΝΗΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΜΙΛΗΣΗΣ ΠΑΎΛΟΣ ΤΟΥ ΛΑΖΑΡΟΥ (EL) SOURCE_VERIFIED
+- ΜΙΜΗΚΟΠΟΥΛΟΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΕΘΝΙΚΩΝ ΟΔΙΚΩΝ ΜΕΤΑΦΟΡΩΝ ΚΑΙ LOGISTICS (EL) SOURCE_VERIFIED
+- ΜΙΣΑΗΛΙΔΗΣ ΠΡΟΔΡΟΜΟΣ (EL) SOURCE_VERIFIED
+- ΜΙΤΣΑΓΓΑΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΙΧΑΗΛΙΔΟΥ ΑΝΝΑ (EL) SOURCE_VERIFIED
+- ΜΙΧΑΛΟΠΟΥΛΟΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΟΝΑΞΙΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΜΟΥΖΑΚΗ ΙΩΑΝΝΑ (EL) SOURCE_VERIFIED
+- ΜΟΥΖΑΚΗΣ ΤΑΧΥΜΕΤΑΦΟΡΕΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΜΟΥΛΝΤΗΣ COURIER SERVICES ΙΚΕ (EL) SOURCE_VERIFIED
+- ΜΟΥΛΝΤΗΣ ΝΙΚΟΛΑΟΣ & ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΜΟΥΝΤΟΥΡΛΗΣ ΓΕΩΡΓΙΟΣ ΙΚΕ ΙΔΙΩΤΙΚΗ ΕΠΙΧΕΙΡΗΣΗ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΑΣΦΑΛΕΙΑΣ (EL) SOURCE_VERIFIED
+- ΜΠΑΛΑΣΚΑΣ ΕΥΑΓΓΕΛΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΑΛΑΦΟΥΤΗΣ ΣΤΥΛΙΑΝΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΑΛΗΣ ΔΙΟΝΥΣΙΟΣ & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΜΠΑΛΤΑ ΕΥΑΓΓΕΛΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΜΠΑΣΑΚΙΔΗΣ  ΑΛΕΞΑΝΔΡΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΑΪΟΤΡΑΝΣ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΠΑΡΟΧΗΣ ΕΞΕΙΔΙΚΕΥΜΕΝΩΝ ΥΠΗΡΕΣΙΩΝ ΥΓΕΙΑΣ,ΕΡΕΥΝΑΣ ΚΑΙ ΜΕΤΑΦΟΡΑΣ (EL) SOURCE_VERIFIED
+- ΜΠΕΛΕΧΑ Γ. ΑΓΓΕΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΜΠΕΛΙΔΑΚΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΕΝΕΤΟΣ ΕΛΙΣΑΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΕΤΣΙΚΑΣ ΜΙΛΤΙΑΔΗΣ (EL) SOURCE_VERIFIED
+- ΜΠΙΚΑΚΗΣ ΚΥΡΙΑΚΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΛΑΤΣΟΥΚΑ ΒΑΣΙΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΜΠΟΙΤΣΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΟΡΜΠΑΝΤΩΝΑΚΗ ΜΑΡΙΑ ΕΛΕΝΗ ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΜΠΟΤΣΑΡΗ Γ. ΚΑΛΛΙΟΠΗ (EL) SOURCE_VERIFIED
+- Μπουρλής Παναγιώτης (EL) SOURCE_VERIFIED
+- ΜΠΟΥΡΝΑΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΜΠΡΑΤΣΟΛΗΣ ΓΡΗΓΟΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΡΑΤΣΟΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΜΠΡΕΓΚΟΒΑ ΚΛΑΙΝΤΙ (EL) SOURCE_VERIFIED
+- ΜΥΣΤΡΙΔΗΣ - ΑΠΟΣΤΟΛΙΔΗΣ & ΣΙΑ Ο.Ε (EL) SOURCE_VERIFIED
+- ΜΥΤΙΛΗΝΟΣ Ε-ΚΟΥΡΤΙΔΗΣ Λ Ο.Ε (EL) SOURCE_VERIFIED
+- Ν. ΑΤΣΑΛΗΣ - Α. ΓΚΟΓΚΟΣ Ο.Ε (EL) SOURCE_VERIFIED
+- Ν. ΠΑΠΑΔΟΠΟΥΛΟΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- Ν.ΚΟΥΦΟΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΝΑΣΣΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΝΑΤΣΙΟΥ ΑΙΚΑΤΕΡΙΝΗ (EL) SOURCE_VERIFIED
+- ΝΕΚΤΑΡΙΟΣ ΚΑΡΑΜΟΛΕΓΚΟΣ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΝΕΡΟΚΛΙΤΗΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΝΗΡΕΑΣ EASY CARGO  ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΝΙΚΑΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΝΙΚΗ ΙΩΑΝ.ΦΩΤΕΙΝΟΠΟΥΛΟΥ (EL) SOURCE_VERIFIED
+- ΝΙΚΟΛΑΟΣ ΔΙΓΕΝΑΚΗΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΝΙΚΟΛΑΟΥ ΝΙΚ. ΕΜΜΑΝΟΥΗΛ (EL) SOURCE_VERIFIED
+- ΝΙΚΟΛΑΪΔΟΥ ΙΑΣΜΗ (EL) SOURCE_VERIFIED
+- ΝΙΚΟΛΟΥΛΗΣ ΕΥΡΙΠΙΔΗΣ-ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΝΙΚΟΣ ΡΗΓΑΣ & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΝΙΚΟΥ ΚΩΝΣΤΑΝΤΙΝΟΣ ΤΟΥ ΝΙΚΟΛΑΟΥ (EL) SOURCE_VERIFIED
+- ΝΟΥΤΣΟΣ ΕΜΜ.  & ΝΤΟΥΝΤΑΣ Γ. Ο.Ε. (EL) SOURCE_VERIFIED
+- ΝΤΑΡΝΤΕΣΙ ΤΖΟΥΛΙΑΝ (EL) SOURCE_VERIFIED
+- ΝΤΑΦΟΣ ΠΑΝ. ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΝΤΑΪΝΑΜΙΚ ΠΑΡΣΕΛ ΝΤΙΣΤΡΙΜΠΟΥΣΙΟΝ -ΕΛΛΑΔΑ/ DYNAMIC PARCEL DISTRIBUTION -GREECE (EL) SOURCE_VERIFIED
+- ΝΤΙΝΙΩΤΑΚΗΣ ΕΜΜΑΝΟΥΗΛ (EL) SOURCE_VERIFIED
+- ΝΤΟΝΑΔΟΥ ΠΑΝΑΓΙΩΤΑ (EL) SOURCE_VERIFIED
+- ΝΥΦΟΥΔΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- Ξανθάκης Ιωσήφ (EL) SOURCE_VERIFIED
+- ΟΓΚΑΝΤΙΑΔΗΣ  ΑΝΑΣΤΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΟΓΚΑΝΤΙΑΔΗΣ ΝΙΚ. ΠΑΝΤΕΛΗΣ (EL) SOURCE_VERIFIED
+- ΟΙΚΟΝOΜΙΔΗ ΠΑΝΑΓΙΩΤΑ (EL) SOURCE_VERIFIED
+- ΟΙΚΟΝΟΜΟΥ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΟΡΓΑΝΙΣΜΟΣ ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ ΤΗΣ ΕΛΛΑΔΟΣ ΑΕ (EL) SOURCE_VERIFIED
+- ΟΡΜΠΙΤ ΣΤΡΙΜ ΕΚΤΕΛΩΝΙΣΜΟΙ & ΔΙΑΧΕΙΡΙΣΗ ΦΟΡΤΙΩΝ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΟΡΦΑΝΙΔΗΣ ΑΠΟΣΤΟΛΟΣ (EL) SOURCE_VERIFIED
+- ΟΡΦΑΝΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΟΥΓΙΟΥΡ ΣΕΒΚΗ (EL) SOURCE_VERIFIED
+- ΟΥΖΟΥΝΗΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΟΥΠΑΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΟΥΣΤΑΜΠΑΣΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- Π. ΜΑΝΕΑΔΗΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- Π. ΠΙΤΕΛΗΣ ΚΑΙ ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΠΑΘΗΝ KRONOS EXPRESS GREECE ΜΟΝ. Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΠΑΙΚΟΠΟΥΛΟΣ ΗΛΙΑΣ ΜΟΝΟΠΡΟΣΩΠΗ   ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΠΑΝΑΓΙΩΤΗΣ ΝΤΟΥΝΕΤΑΣ (EL) SOURCE_VERIFIED
+- ΠΑΝΑΓΙΩΤΗΣ ΤΣΙΓΚΑΡΗΣ (EL) SOURCE_VERIFIED
+- ΠΑΝΑΓΙΩΤΙΔΗΣ ΗΡΑΚΛΗΣ (EL) SOURCE_VERIFIED
+- ΠΑΝΟΥ ΑΝΔΡΕΑΣ (EL) SOURCE_VERIFIED
+- ΠΑΝΤΕΛΑΚΗΣ ΖΑΧΑΡΙΑΣ (EL) SOURCE_VERIFIED
+- ΠΑΝΤΙΩΡΑΣ ΕΥΣΤΑΘΙΟΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΠΑΝΩΡΙΟΣ Π. ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΓΙΑΝΝΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΑΤΟΥ ΑΝΤΩΝΙΑ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΗΜΗΤΡΙΟΥ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΜΙΧΕΛΑΚΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΣ ΛΕΩΝΙΔΑΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΣ ΣΑΒΒΑΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΥ ΑΘΗΝΑ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΔΟΠΟΥΛΟΥ ΣΤΥΛΙΑΝΗ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΘΕΟΔΩΡΟΥ ΕΥΑΓΓΕΛΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΚΟΥΛΑΣ NLT Ε.Ε. (EL) SOURCE_VERIFIED
+- ΠΑΠΑΝΙΔΟΥ ΝΑΤΑΛΙΑ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΡΡΗΓΟΠΟΥΛΟΣ ΑΔΑΜ (EL) SOURCE_VERIFIED
+- ΠΑΠΑΧΡΟΝΗΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΠΑΡΑΣΙΔΗΣ ΓΕΩΡΓΙΟΥ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΡΑΣΚΕΥΑΣ ΤΣΙΜΙΔΗΣ (EL) SOURCE_VERIFIED
+- Παριανος Σπυριδων (EL) SOURCE_VERIFIED
+- ΠΑΣΟΥΛΑΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΤΑΡΙΔΗΣ Χ. ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΠΑΤΗΝΙΩΤΗΣ Σ. - ΝΙΝΟΣ Π. Ο.Ε. (EL) SOURCE_VERIFIED
+- ΠΑΤΣΑΤΖΗΣ Ν.ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΠΑΦΗ ΑΙΚΑΤΕΡΙΝΗ (EL) SOURCE_VERIFIED
+- ΠΕΡΙΣΤΕΡΑΚΗΣ Σ. & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΠΕΤΡΙΔΟΥ Σοφία (EL) SOURCE_VERIFIED
+- ΠΕΤΣΑΣ ΛΕΩΝΙΔΑΣ (EL) SOURCE_VERIFIED
+- ΠΗΓΟΥΝΑΚΗΣ ΓΕΩΡΓΙΟΣ ΚΑΙ ΘΕΟΔΩΡΟΣ Ο.Ε. (EL) SOURCE_VERIFIED
+- Πολυχρονιάδης Α. Χαράλαμπος (EL) SOURCE_VERIFIED
+- ΠΟΡΤΟΚΑΛΙΔΗΣ ΗΛΙΑΣ (EL) SOURCE_VERIFIED
+- ΠΟΪΡΑΖΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΠΡΑΣΙΝΕΣ ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΊΑ (EL) SOURCE_VERIFIED
+- ΠΡΙΜΙΚΗΡΗΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΠΤΩΧΟΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΡΑΓΓΟΥ ΕΥΑΓΓΕΛΙΑ (EL) SOURCE_VERIFIED
+- ΡΑΠΤΗΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΡΗΓΑΚΗ ΓΕΩΡΓΙΑ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΡΗΓΟΠΟΥΛΟΥ ΚΩΝΣΤΑΝΤΙΝΑ (EL) SOURCE_VERIFIED
+- ΡΙΓΑΝΑΣ ΑΛΕΞΑΝΔΡΟΣ & ΣΙΑ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΡΙΜΠΑΣ ΙΩΑΝΝΗΣ ΚΑΙ ΣΙΑ Ε Ε (EL) SOURCE_VERIFIED
+- ΡΟΒΑΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΡΟΜΠΟΛΑΣ ΘΕΟΔΩΡΟΣ Τ ΝΙΚΟΛΑΟΥ (EL) SOURCE_VERIFIED
+- ΡΟΥΜΕΛΙΩΤΗΣ ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΡΟΥΣΟΝΙΚΟΛΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- Σ ΑΝΤΩΝΑΚΗΣ&ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- Σ. ΒΕΛΗΜΒΑΣΑΚΗΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΣΑΒΒΟΓΛΟΥ ΖΩΗΣ (EL) SOURCE_VERIFIED
+- ΣΑΛΒΑΝΟΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΑΛΙΒΕΡΟΣ Π. ΔΙΟΝΥΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΑΜΑΝΤΖΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΣΑΜΑΡΑΣ  ΘΩΜΑΣ (EL) SOURCE_VERIFIED
+- ΣΑΜΑΤΙΔΗΣ Τ. ΑΛΕΞΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΑΜΟΘΡΑΚΙΤΗΣ ΝΑΥΤΙΛΙΑΚΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΣΑΜΟΥΡΓΑΣΙΔΗΣ ΕΥΘΥΜΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΑΠΛΑΜΙΔΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΣΕΝΟΣ ΧΡΗΣΤΟΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΣΕΡΒΙΟΥ ΜΑΡΙΑ (EL) SOURCE_VERIFIED
+- ΣΙΑΜΟΣ ΙΩΑΝΝΗΣ ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΣΙΛΙΑΣ Κ. ΕΥΘΥΜΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΚΡΙΒΙΛΙΩΤΑΚΗ ΑΡΙΩΝΗ (EL) SOURCE_VERIFIED
+- ΣΚΡΟΥΤΖ ΥΠΗΡΕΣΙΕΣ ΔΙΑΝΟΜΗΣ ΜΟΝΟΠΡΟΣΩΠΗ A.E. (EL) SOURCE_VERIFIED
+- ΣΟΥΑΝΗΣ ΗΛΕΚΤΡΟΝ ΤΕΧΝΙΚΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΣΟΥΛΚΟ ΧΑΣΑΝ (EL) SOURCE_VERIFIED
+- ΣΟΥΛΤΑΝΗΣ ΑΓΓΕΛΟΣ (EL) SOURCE_VERIFIED
+- ΣΟΥΡΡΑΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΟΦΟΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΠ. ΛΙΟΥΜΠΑΣ & ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΣΠΑΝΟΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΣΠΗΝΤΕΞ  ΑΝΩΝΥΜH ΕΤΑΙΡΕΙΑ ΤΑΧΥΜΕΤΑΦΟΡΩΝ (EL) SOURCE_VERIFIED
+- ΣΠΙΘΟΥΡΗΣ ΠΟΛ. ΜΙΧΑΗΛ (EL) SOURCE_VERIFIED
+- ΣΠΟΥΡΓΙΤΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΠΥΡΙΑΔΗΣ ΜΙΧΑΗΛ (EL) SOURCE_VERIFIED
+- ΣΠΥΡΙΔΩΝΙΔΗΣ ΣΑΒΒΑΣ (EL) SOURCE_VERIFIED
+- ΣΠΥΡΟΣ ΕΥΓΕΝΟΠΟΥΛΟΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΣΤΑΡΕΞ ΓΚΡΟΥΠ ΜΟΝΟΠΡΟΣΩΠΗ ΕΠΕ (EL) SOURCE_VERIFIED
+- ΣΤΑΡΚΙ ΡΕΥΜΟΝΤ ΓΚΡΕΓΚΟΡΥ (EL) SOURCE_VERIFIED
+- ΣΤΑΥΡΙΔΗΣ ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- ΣΤΑΥΡΟΣ ΔΑΡΔΟΥΜΑΣ ΚΑΙ ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΣΤΑΥΡΟΥΛΑ ΜΑΡΙΟΛΗ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΣΤΕΙΛΤΟ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΣΤΕΡΓΙΟΣ ΑΣΤΕΡΙΑΔΗΣ (EL) SOURCE_VERIFIED
+- ΣΤΕΡΓΙΟΥ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΣΤΕΦΑΝΑΚΗ ΣΤΥΛΙΑΝΗ (EL) SOURCE_VERIFIED
+- ΣΤΕΦΑΝΑΚΟΣ ΚΥΡΙΑΚΟΣ (EL) SOURCE_VERIFIED
+- ΣΤΟΣΕΒΙΤΣ Κ. ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΣΤΟΦΕΡΝΩ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡEΙΑ (EL) SOURCE_VERIFIED
+- ΣΤΡΑΤΟΥΡΗΣ ΑΝΔΡΟΝΙΚΟΣ (EL) SOURCE_VERIFIED
+- ΣΥΜΕΩΝΙΔΗΣ ΘΕΟΔ.ΔΑΜΙΑΝΟΣ (EL) SOURCE_VERIFIED
+- ΣΥΜΕΩΝΙΔΗΣ ΣΥΜΕΩΝ (EL) SOURCE_VERIFIED
+- ΣΩΤΗΡΙΟΣ ΜΠΑΛΩΜΕΝΟΣ (EL) SOURCE_VERIFIED
+- ΤΑΒΛΑΡΙΔΗΣ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΤΑΟ ΓΕΝΙΚΕΣ ΜΕΤΑΦΟΡΕΣ ΑΕ (EL) SOURCE_VERIFIED
+- ΤΑΣΗΝΙΚΟΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΑΤΑΡΙΔΗΣ ΔΙΟΝΥΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΑΧΥΔΡΟΜΙΚΗ ΕΛΛΑΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΤΑΧΥΛΥΣΗ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΖΑΚΥΝΘΟΥ ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ JUST COURIER ΕΤΕΡΟΡΡΥΘΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ ΚΤΕΛ ΚΕΡΚΥΡΑΣ ΜΟΝΟΠΡΩΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΤΑΧΥΠΟΣΤ ΕΞΠΡΕΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (EL) SOURCE_VERIFIED
+- ΤΒ ΤΑΧΥΔΕΜΑ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (EL) SOURCE_VERIFIED
+- ΤΕΤΙΑΝΑ ΦΙΓΑ (EL) SOURCE_VERIFIED
+- ΤΖΑΜΑΝΤΖΑΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΖΑΧΡΗΣΤΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΤΖΕΝΗ ΑΝΤΩΝΙΑΔΟΥ (EL) SOURCE_VERIFIED
+- ΤΖΗΓΚΑΣ ΑΝΤΩΝΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΖΙΟΤΖΙΟΣ ΧΡΗΣΤΟΣ & ΣΙΑ Ο.Ε. (EL) SOURCE_VERIFIED
+- ΤΖΟΥΛΙΑΝ ΕΜΠΙΠ & ΣΙΑ ΕΕ (EL) SOURCE_VERIFIED
+- ΤΗΚΟΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΟΠΚΑΣ ΧΡΗΣΤΟΣ (EL) SOURCE_VERIFIED
+- ΤΟΠΟΥΖΑΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΟΠΟΥΖΑΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΤΟΡΒΑΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΤΡΑΒΕΛ ΣΕΡΒΙΣ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΤΡΑΪΑΝΟΣ ΚΡΟΥΣΑΡΛΗΣ Ι.Κ.Ε. (EL) SOURCE_VERIFIED
+- ΤΣΑΚΟΥΤΗ ΒΑΣΙΛΙΚΗ (EL) SOURCE_VERIFIED
+- ΤΣΑΛΗΣ-ΣΤΟΙΟΣ-ΧΑΝΤΖΙΑΡΑΣ Ο.Ε (EL) SOURCE_VERIFIED
+- ΤΣΑΝΤΑ ΤΣΙΤΣΗ ΕΛΕΝΗ (EL) SOURCE_VERIFIED
+- ΤΣΑΝΤΗΛΑ ΒΑΣΙΛΙΚΗ ΕΕ (EL) SOURCE_VERIFIED
+- ΤΣΑΠΑΤΣΑΡΗ Ι. ΑΝΑΣΤΑΣΙΑ (EL) SOURCE_VERIFIED
+- ΤΣΑΤΣΟΥΛΗ ΔΕΣΠΟΙΝΑ (EL) SOURCE_VERIFIED
+- ΤΣΙΑΔΗΡΑ ΑΓΛΑΙΑ (EL) SOURCE_VERIFIED
+- ΤΣΙΑΚΑΝΙΚΑΣ ΦΩΤΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΣΙΑΜΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΤΣΙΚΑΛΑΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΣΙΚΟΥΡΑΣ ΓΕΩΡΓΙΟΣ ΤΟΥ ΑΠΟΣΤΟΛΟΥ (EL) SOURCE_VERIFIED
+- ΤΣΙΤΩΤΑΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- ΤΥΛΙΠΑΚΗ ΙΩΑΝΝΑ (EL) SOURCE_VERIFIED
+- ΥΠΗΡΕΣΙΕΣ ΔΙΑΝΟΜΩΝ ΚΑΙ ΕΞΥΠΗΡΕΤΗΣΕΩΣ ΤΑΞΙΔΙΩΤΩΝ - AIRLINE SELECTIVE SERVICES EXPRESS ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (ΙΚΕ) (EL) SOURCE_VERIFIED
+- ΥΨΗΛΑΝΤΗΣ ΓΕΩΡΓΙΟΣ (EL) SOURCE_VERIFIED
+- Φ. ΤΣΙΑΚΑΝΙΚΑΣ Ε.Ε. (EL) SOURCE_VERIFIED
+- ΦΑΜΠΡΙΚΑΡΑΚΗΣ  ΕΛΕΥΘΕΡΙΟΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΦΑΡΑΖΟΥΜΗ ΕΛΕΝΑ (EL) SOURCE_VERIFIED
+- ΦΑΣΙΤΣΑΣ ΛΟΥΚΑΣ (EL) SOURCE_VERIFIED
+- ΦΑΤΣΙΟΣ ΡΩΜΑΝΟΣ ΤΟΥ ΑΛΚΗ (EL) SOURCE_VERIFIED
+- ΦΛΩΡΙΑΝ ΣΚΟΥΡΤΗ (EL) SOURCE_VERIFIED
+- ΦΛΩΡΟΥ ΧΡΙΣΤΙΝΑ (EL) SOURCE_VERIFIED
+- ΦΟΥΚΗ  ΑΝΤΕΛΙΝΑ (EL) SOURCE_VERIFIED
+- ΦΡΟΝΙΜΑΚΗΣ ΝΙΚΟΛΑΟΣ (EL) SOURCE_VERIFIED
+- ΦΩΤΕΙΝΟΠΟΥΛΟΥ ΜΠΡΑΤΣΙΑΚΟΥ ΚΑΛΑΜΑΤΑ ΜΕΤΑΦΟΡΕΣ ΙΚΕ (EL) SOURCE_VERIFIED
+- Χ. ΣΤΑΥΡΙΔΗΣ-K.BAKALLI ΟΕ (EL) SOURCE_VERIFIED
+- ΧΑΛΚΙΑΔΑΚΗΣ Ι. & ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΧΑΛΚΙΑΔΑΚΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΧΑΝΤΖΗΣ ΓΕΩΡΓΙΟΣ-ΘΕΟΔΩΡΟΣ (EL) SOURCE_VERIFIED
+- ΧΑΡΑΛΑΜΠΟΣ ΟΥΣΤΑΜΠΑΣΙΔΗΣ ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΧΑΡΑΤΣΗ ΕΥΑΓΓΕΛΙΑ ΦΑΝΟΥΡΙΑ (EL) SOURCE_VERIFIED
+- ΧΑΣΑΝ ΟΓΛΟΥ ΙΣΕΜ (EL) SOURCE_VERIFIED
+- ΧΑΣΑΠΗΣ Σ. ΒΑΣΙΛΕΙΟΣ (EL) SOURCE_VERIFIED
+- ΧΑΤΖΗΚΑΛΥΜΝΙΟΣ Π. - ΖΩΖΟΥΛΑΣ Ε. ΟΕ (EL) SOURCE_VERIFIED
+- ΧΑΤΖΗΝΑΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΧΑΤΖΗΠΑΥΛΗΣ ΦΩΤΙΟΣ (EL) SOURCE_VERIFIED
+- ΧΑΤΖΗΤΟΥΡΝΟΣ ΦΙΛΙΠΠΟΣ & ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΧΟΙΚΑΣ ΧΑΡΑΛΑΜΠΟΣ (EL) SOURCE_VERIFIED
+- ΧΟΥΪΑΡΙΔΗΣ ΚΩΝΣΤΑΝΤΙΝΟΣ (EL) SOURCE_VERIFIED
+- ΧΡ ΣΑΡΙΔΑΚΗΣ ΚΑΙ ΣΙΑ ΟΕ (EL) SOURCE_VERIFIED
+- ΧΡΗΣΤΟΣ & ΚΩΝΣΤΑΝΤΙΝΟΣ ΜΙΧΑΛΟΠΟΥΛΟΣ ΟΕ (EL) SOURCE_VERIFIED
+- ΧΡΗΣΤΟΣ Δ. ΚΟΥΜΟΥΣΗΣ (EL) SOURCE_VERIFIED
+- ΧΡΗΣΤΟΣ Π. ΟΥΖΟΥΝΙΔΗΣ (EL) SOURCE_VERIFIED
+- ΧΡΙΣΤΟΠΟΥΛΟΣ ΠΑΝΑΓΙΩΤΗΣ (EL) SOURCE_VERIFIED
+- ΧΡΥΣΑΦΟΠΟΥΛΟΣ ΔΗΜΗΤΡΙΟΣ (EL) SOURCE_VERIFIED
+- ΧΡΥΣΟΥΛΑΚΗ ΑΛΕΞΑΝΔΡΑ (EL) SOURCE_VERIFIED
+- Χρυσούλα Λαμτσελαρη (EL) SOURCE_VERIFIED
+- ΨΥΧΟΥΛΗΣ ΙΩΑΝΝΗΣ (EL) SOURCE_VERIFIED
+- ΨΩΜΑΣ ΑΘΑΝΑΣΙΟΣ (EL) SOURCE_VERIFIED
+- ΩΡΙΩΝ ΕΠΕ (EL) SOURCE_VERIFIED

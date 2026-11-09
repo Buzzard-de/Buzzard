@@ -1,5 +1,7 @@
 import type { BuzzardCategory } from "./types";
 import { categoryCatalog } from "./source";
+import hubExtensions from "@/data/taxonomy/shop_hub_l1_extensions.json";
+import { isRetiredShopId } from "./master";
 
 const { categories } = categoryCatalog;
 
@@ -33,8 +35,38 @@ function indexTree(
 
 indexTree(categories);
 
+const hubCategories: BuzzardCategory[] = ((hubExtensions as { hubs?: Array<{ shop_id: string; name: string; slug: string }> })
+  .hubs || [])
+  .filter((hub) => !byId.has(hub.shop_id))
+  .map((hub, index) => {
+    const node: BuzzardCategory = {
+      id: hub.shop_id,
+      menu_order: 54 + index,
+      name: hub.name,
+      slug: hub.slug,
+      url: `${CATEGORY_PATH}/${hub.slug}`,
+      level: 1,
+      children: [],
+    };
+    register(node, [hub.slug]);
+    return node;
+  });
+
 export function getMainCategories(): BuzzardCategory[] {
-  return [...categories].sort((a, b) => a.menu_order - b.menu_order);
+  return [...categories, ...hubCategories].sort((a, b) => a.menu_order - b.menu_order);
+}
+
+/** Customer/nav L1: retired food, drinks, and jewelry are excluded. Hubs stay separate. */
+export function getActiveShopMainCategories(): BuzzardCategory[] {
+  return categories.filter((c) => !isRetiredShopId(c.id)).sort((a, b) => a.menu_order - b.menu_order);
+}
+
+export function getNavigableMainCategories(): BuzzardCategory[] {
+  return [...getActiveShopMainCategories(), ...hubCategories].sort((a, b) => a.menu_order - b.menu_order);
+}
+
+export function getHubExtensions(): BuzzardCategory[] {
+  return [...hubCategories];
 }
 
 const CUSTOMER_VISIBLE: Set<string> = new Set(["ACTIVE", "COMING_SOON"]);
@@ -50,7 +82,7 @@ export function isCategoryVisibleToCustomer(
 export function getVisibleMainCategories(
   visibilityMap?: Record<string, { status?: string }>
 ): BuzzardCategory[] {
-  return getMainCategories().filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap));
+  return getNavigableMainCategories().filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap));
 }
 
 export function filterVisibleTree(
@@ -58,7 +90,7 @@ export function filterVisibleTree(
   visibilityMap?: Record<string, { status?: string }>
 ): BuzzardCategory[] {
   return nodes
-    .filter((node) => isCategoryVisibleToCustomer(node.id, visibilityMap))
+    .filter((node) => !isRetiredShopId(node.id) && isCategoryVisibleToCustomer(node.id, visibilityMap))
     .map((node) => ({
       ...node,
       children: node.children?.length ? filterVisibleTree(node.children, visibilityMap) : [],
@@ -76,7 +108,7 @@ export function getChildren(parentId: string): BuzzardCategory[] {
 }
 
 export function getDefaultMainCategoryId(): string {
-  return getMainCategories()[0]?.id ?? "cat-01";
+  return getNavigableMainCategories()[0]?.id ?? "cat-01";
 }
 
 export function getDefaultSubCategoryId(mainId: string): string {
@@ -114,6 +146,14 @@ export function categoryProductsHref(category: BuzzardCategory): string {
 
 export function getAllCategoryPaths(): string[] {
   return [...bySlugPath.keys()];
+}
+
+/** Sitemap / SEO: retired food, drinks, jewelry stay off the index. */
+export function getIndexableCategoryPaths(): string[] {
+  return getAllCategoryPaths().filter((path) => {
+    const node = bySlugPath.get(path);
+    return node ? !isRetiredShopId(node.id) : true;
+  });
 }
 
 export function getAllCategoryStaticParams(): { slug: string[] }[] {

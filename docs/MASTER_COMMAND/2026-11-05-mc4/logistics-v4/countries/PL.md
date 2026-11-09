@@ -1,0 +1,98 @@
+# Polonya (PL)
+
+**NRA:** UKE — undefined  
+**Register records:** 234  
+**Unique legal (register):** 234  
+**Verification:** PARTIALLY_VERIFIED  
+**Method:** uke_bip_pages_1_12  
+**Note:** 234 unique B-numbers B-00018–B-00841 fetched 2026-11-06. Includes sole traders and letter operators. dane.gov.pl dataset 1065 not imported (page fetch empty).  
+
+Named rows in v4 DB for this country: 235  
+activityVerified: 0  
+Postal-code coverage: UNKNOWN  
+
+## Named legal titles (first 80)
+
+- Polish Post Ltd / Poczta Polska (`usp-pl`) NATIONAL_POST_USP 
+- "NEL-DYSTRYBUCJA" Sp. z o.o. (`pl-uke-b-00018`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- MDZ Express Magdalena Majda-Dziewiątkowska (`pl-uke-b-00029`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Sprinter Sp. z o.o. (`pl-uke-b-00032`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- UPS Polska Sp. z o.o. (`pl-uke-b-00044`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- General Logistics Systems Poland Sp. z o.o. (`pl-uke-b-00046`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- RGW Express Sp. z o.o. (`pl-uke-b-00050`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Agap Sp. z o.o. (`pl-uke-b-00051`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- DPD Polska Sp. z o.o. (`pl-uke-b-00054`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Lande Sp z o.o. (`pl-uke-b-00055`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Riders Express Sp. z o.o. (`pl-uke-b-00056`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- ARROWS SERVICE s.c. Marcin Ratigowski, Tomasz Witkowski (`pl-uke-b-00057`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- DHL Express (Poland)  Sp. z o.o. (`pl-uke-b-00061`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Viktorio Witold Wrzosek (`pl-uke-b-00068`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- RAFFO Rafał Bącalski (`pl-uke-b-00073`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- World Courier (Poland) Sp. z o.o (`pl-uke-b-00076`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- FEDEX EXPRESS POLAND Sp. z o.o. (`pl-uke-b-00078`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- POLAMER Sp. z o.o. (`pl-uke-b-00087`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- DOMA SERVICES Antoni Wnękowicz (`pl-uke-b-00095`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Agencja Turystyczna "TRANS-LECH" Lech Senda (`pl-uke-b-00101`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- "POCZTA POLSKA SPÓŁKA AKCYJNA" (`pl-uke-b-00106`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- COSICO Piotr Kozłowski (`pl-uke-b-00075`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Energo-Tok Sp. z o.o. (`pl-uke-b-00092`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- PAF Operator Pocztowy Sp. z o.o. (`pl-uke-b-00119`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- QURIERS Tomasz Gać (`pl-uke-b-00127`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- GONIEC ROWEROWY Melchior Czerniak (`pl-uke-b-00146`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Polskie Centrum Doręczeniowe "PETEROX" Piotr Symonowicz (`pl-uke-b-00149`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Kancelaria Expert Obsługa Prawna i Rzeczoznawcza Artur Król (`pl-uke-b-00164`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- MEEST POLSKA Sp. z o.o. (`pl-uke-b-00183`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- "ABC-SERVICE" Sp. z o.o. (`pl-uke-b-00187`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Polfrank Energetyk Sp. z o.o. (`pl-uke-b-00188`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- I.D. MARKETING S.A. (`pl-uke-b-00190`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Usługi Transportowe "Priorytet" s.c. J.Tondera, S. Wywrocka (`pl-uke-b-00201`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- MIG Sp. z o.o. (`pl-uke-b-00206`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- TAKSIM-POL Sp. z o.o. (`pl-uke-b-00210`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- BUSINESS PACK SERVICE Arkadiusz Jarząb (`pl-uke-b-00214`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- SKOCZEK TEAM Sornat Krzysztof (`pl-uke-b-00223`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- P.W. SIKORSCY Sikorska Urszula (`pl-uke-b-00227`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- 4 PRINT Sp. z o.o. (`pl-uke-b-00242`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- SKAN TRANSPORT Sp. z o.o. (`pl-uke-b-00243`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Lubelska Spółdzielnia Socjalna "KOZIOŁEK" (`pl-uke-b-00244`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- BTL EXPRESS Wojciech Schmidt (`pl-uke-b-00256`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- ORLEN Paczka Sp. z o.o. (`pl-uke-b-00267`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Pol-Invest Sp. z o.o. (`pl-uke-b-00273`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- SEKTOR Sp. z o.o. (`pl-uke-b-00287`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Przesyłki Kurierskie Józef Dziemdziora (`pl-uke-b-00288`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- MALFOYCORP Sp. z o.o. (`pl-uke-b-00300`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- MARATON s.c. Piotr Stochmiał, Maciej Stochmiał (`pl-uke-b-00301`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- INTERCOL Sp. z o.o. (`pl-uke-b-00302`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Spółdzielnia Socjalna "Zawiercie" (`pl-uke-b-00308`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- EMD Marcin Dubowski (`pl-uke-b-00313`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- New Service Sp.  z o.o. (`pl-uke-b-00329`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Firma Handlowo-Usługowa Radosław Palpuchowski (`pl-uke-b-00344`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- GEIS PARCEL PL Sp. z o.o. (`pl-uke-b-00359`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- INTERNATIONAL COURIER SERVICE D.P. POLSKA Sp. z o.o. (`pl-uke-b-00362`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- SKY POST AND LOGISTIC Sp. z o.o. (`pl-uke-b-00364`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- OMEGA 5 Sp. z o.o. (`pl-uke-b-00381`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- AIRTRANS H. WATOŁA SPÓŁKA JAWNA (`pl-uke-b-00385`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- LASERJET SPEDITION Sp. z o.o. (`pl-uke-b-00391`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- RAF-POL Rafał Janicki (`pl-uke-b-00397`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- SPEEDMAIL Spółka z ograniczoną odpowiedzialnością (`pl-uke-b-00409`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Zakład Produkcyjno-Handlowy "WODEX" Sp. z o.o. (`pl-uke-b-00416`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Miejskie Przesyłki Doręczeniowe Krzysztof Pietrzak (`pl-uke-b-00420`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Gdańska Spółdzielnia Socjalna (`pl-uke-b-00424`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- WAWA OPERATOR Janusz Szklarczyk (`pl-uke-b-00431`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- CARGOPLAN Sp. z o.o. (`pl-uke-b-00432`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Universum - BLC Sp. z o.o. (`pl-uke-b-00436`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- PostMaster Sp. z o.o. w Likwidacji (`pl-uke-b-00446`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- CTRL system Sp. z o.o. (`pl-uke-b-00458`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- DES Dariusz Siwik (`pl-uke-b-00459`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Qrier For Business - Alicja Cichosz (`pl-uke-b-00464`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Fundacja Społecznie Bezpieczni (`pl-uke-b-00468`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- TRAFFICA - Geneja, Sierański Sp.j. (`pl-uke-b-00479`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- R. Kusiak Alfa Post Spółka Komandytowa (`pl-uke-b-00481`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- PointPack S.A. (`pl-uke-b-00488`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Global Express Sp. z o.o. (`pl-uke-b-00490`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- AVISTRANS Sp. z o.o. (`pl-uke-b-00503`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- PAKERSI Kamil Kik (`pl-uke-b-00508`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- BackOffice Outsourcing Sp. z o.o. (`pl-uke-b-00516`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+- Spółdzielnia Socjalna "LUBICZANKA" (`pl-uke-b-00517`) UKE_POSTAL_OPERATOR LEGAL_NAME_VERIFIED
+
+… +155 more in master JSON.
+

@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { AdvancedSearchStatus, SearchOverview, ZeroResultRow } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("advancedSearch.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -33,7 +34,7 @@ export function isAdvancedSearchApiConfigured(): boolean {
 export async function fetchAdvancedSearchStatus(): Promise<AdvancedSearchStatus> {
   const base = apiBase();
   if (!base) throw new Error("advancedSearch.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("advancedSearch.requestFailed");
   const data = (await res.json()) as { advancedSearch?: AdvancedSearchStatus };
   if (!data.advancedSearch?.enabled) throw new Error("advancedSearch.disabled");

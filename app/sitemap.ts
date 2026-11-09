@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllCategoryStaticParams } from "@/lib/categories/service";
+import { getIndexableCategoryPaths } from "@/lib/categories/service";
 import { getProductStaticParams } from "@/lib/products";
 import { SUPPORTED_LOCALES } from "@/lib/i18n/types";
 import { localizePath } from "@/lib/i18n/routing";
@@ -31,9 +31,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     );
   }
 
-  for (const { slug } of getAllCategoryStaticParams()) {
+  for (const path of getIndexableCategoryPaths()) {
     entries.push(
-      ...localizedEntries(`/kategorie/${slug.join("/")}/`, 0.7)
+      ...localizedEntries(`/kategorie/${path}/`, 0.7)
     );
   }
 

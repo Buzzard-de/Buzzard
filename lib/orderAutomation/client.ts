@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   AutomationJob,
   IntegrationEventRow,
@@ -25,7 +26,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("orderAutomation.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });

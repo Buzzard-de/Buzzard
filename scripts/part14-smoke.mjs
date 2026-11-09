@@ -10,6 +10,7 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 
 const API = (process.env.BUZZARD_API_URL || "https://buzzard-api.onrender.com").replace(/\/$/, "");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -72,7 +73,7 @@ function markCondition(msg) {
 }
 
 async function fetchJson(pathname, options = {}) {
-  const res = await fetch(`${API}${pathname}`, {
+  const res = await smokeFetch(`${API}${pathname}`, {
     ...options,
     headers: { Accept: "application/json", "Content-Type": "application/json", ...(options.headers || {}) },
   });
@@ -201,7 +202,7 @@ async function main() {
     const admin = await fetchJson("/api/admin/control-center/status");
     if (admin.res.status === 404) markBlocked("control center not deployed");
     if (admin.res.status !== 401 && admin.res.status !== 403) throw new Error(`admin expected 401/403 got ${admin.res.status}`);
-    const legacy = await fetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
+    const legacy = await smokeFetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
     if (legacy.status !== 404 && !legacy.headers.get("x-buzzard-legacy-commerce")) {
       markCondition("legacy cart missing deprecation header (pre Part 10 deploy)");
     }

@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   PimAttributeSchema,
   PimBrand,
@@ -30,7 +31,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
+  const res = await browserFetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
   const data = (await res.json()) as T & { success?: boolean; errorKey?: string; message?: string };
   if (!res.ok) throw new Error(data.errorKey || data.message || "admin.requestFailed");
   return data;

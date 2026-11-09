@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { apiBaseUrl, isReviewsRatingsEnabled } from "@/lib/api/config";
 
 export interface ProductReviewStats {
@@ -30,7 +31,7 @@ function base(): string {
 export async function fetchProductReviews(sku: string): Promise<ProductReviewsPayload | null> {
   if (!isReviewsRatingsEnabled() || !sku) return null;
   try {
-    const res = await fetch(`${base()}/api/reviews-ratings/products/${encodeURIComponent(sku)}/reviews`, {
+    const res = await browserFetch(`${base()}/api/reviews-ratings/products/${encodeURIComponent(sku)}/reviews`, {
       headers: { Accept: "application/json" },
       cache: "no-store",
     });
@@ -52,7 +53,7 @@ export async function submitProductReview(input: {
     return { ok: false, error: "reviews.apiUnavailable" };
   }
   try {
-    const res = await fetch(`${base()}/api/reviews-ratings/reviews`, {
+    const res = await browserFetch(`${base()}/api/reviews-ratings/reviews`, {
       method: "POST",
       headers: { Accept: "application/json", "Content-Type": "application/json" },
       body: JSON.stringify({

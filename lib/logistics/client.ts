@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { Fulfillment, ReturnRequest, Shipment, SupplierOrder } from "./types";
 import { apiBaseUrl } from "@/lib/api/config";
 
@@ -35,7 +36,7 @@ function adminHeaders(): HeadersInit {
 export async function fetchOrderShipments(orderNumber: string): Promise<Shipment[]> {
   const base = apiBase();
   if (!base) return [];
-  const res = await fetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/shipments`, {
+  const res = await browserFetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/shipments`, {
     headers: accountHeaders(),
   });
   if (!res.ok) return [];
@@ -49,7 +50,7 @@ export async function submitReturnRequest(
 ): Promise<ReturnRequest | null> {
   const base = apiBase();
   if (!base) return null;
-  const res = await fetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/returns`, {
+  const res = await browserFetch(`${base}/api/account/orders/${encodeURIComponent(orderNumber)}/returns`, {
     method: "POST",
     headers: accountHeaders(),
     body: JSON.stringify(body),
@@ -62,7 +63,7 @@ export async function submitReturnRequest(
 export async function fetchAdminFulfillments(orderNumber?: string): Promise<Fulfillment[]> {
   const base = requireApiBase();
   const qs = orderNumber ? `?orderNumber=${encodeURIComponent(orderNumber)}` : "";
-  const res = await fetch(`${base}/api/admin/logistics/fulfillments${qs}`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}/api/admin/logistics/fulfillments${qs}`, { headers: adminHeaders() });
   if (!res.ok) throw new Error("admin.requestFailed");
   const data = (await res.json()) as { fulfillments: Fulfillment[] };
   return data.fulfillments;
@@ -71,7 +72,7 @@ export async function fetchAdminFulfillments(orderNumber?: string): Promise<Fulf
 export async function fetchAdminShipments(orderNumber?: string): Promise<Shipment[]> {
   const base = requireApiBase();
   const qs = orderNumber ? `?orderNumber=${encodeURIComponent(orderNumber)}` : "";
-  const res = await fetch(`${base}/api/admin/logistics/shipments${qs}`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}/api/admin/logistics/shipments${qs}`, { headers: adminHeaders() });
   if (!res.ok) throw new Error("admin.requestFailed");
   const data = (await res.json()) as { shipments: Shipment[] };
   return data.shipments;
@@ -80,7 +81,7 @@ export async function fetchAdminShipments(orderNumber?: string): Promise<Shipmen
 export async function fetchAdminSupplierOrders(orderNumber?: string): Promise<SupplierOrder[]> {
   const base = requireApiBase();
   const qs = orderNumber ? `?orderNumber=${encodeURIComponent(orderNumber)}` : "";
-  const res = await fetch(`${base}/api/admin/logistics/supplier-orders${qs}`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}/api/admin/logistics/supplier-orders${qs}`, { headers: adminHeaders() });
   if (!res.ok) throw new Error("admin.requestFailed");
   const data = (await res.json()) as { supplierOrders: SupplierOrder[] };
   return data.supplierOrders;
@@ -88,7 +89,7 @@ export async function fetchAdminSupplierOrders(orderNumber?: string): Promise<Su
 
 export async function fetchAdminReturns(): Promise<ReturnRequest[]> {
   const base = requireApiBase();
-  const res = await fetch(`${base}/api/admin/logistics/returns`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}/api/admin/logistics/returns`, { headers: adminHeaders() });
   if (!res.ok) throw new Error("admin.requestFailed");
   const data = (await res.json()) as { returns: ReturnRequest[] };
   return data.returns;
@@ -96,7 +97,7 @@ export async function fetchAdminReturns(): Promise<ReturnRequest[]> {
 
 export async function retryAdminFulfillment(id: string): Promise<void> {
   const base = requireApiBase();
-  const res = await fetch(`${base}/api/admin/logistics/fulfillments/${encodeURIComponent(id)}/retry`, {
+  const res = await browserFetch(`${base}/api/admin/logistics/fulfillments/${encodeURIComponent(id)}/retry`, {
     method: "POST",
     headers: adminHeaders(),
     body: "{}",
@@ -109,7 +110,7 @@ export async function updateAdminShipment(
   patch: { trackingNumber?: string; carrier?: string; status?: string }
 ): Promise<Shipment> {
   const base = requireApiBase();
-  const res = await fetch(`${base}/api/admin/logistics/shipments/${encodeURIComponent(id)}`, {
+  const res = await browserFetch(`${base}/api/admin/logistics/shipments/${encodeURIComponent(id)}`, {
     method: "PATCH",
     headers: adminHeaders(),
     body: JSON.stringify(patch),
@@ -121,7 +122,7 @@ export async function updateAdminShipment(
 
 export async function updateAdminReturnStatus(id: string, status: string): Promise<ReturnRequest> {
   const base = requireApiBase();
-  const res = await fetch(`${base}/api/admin/logistics/returns/${encodeURIComponent(id)}`, {
+  const res = await browserFetch(`${base}/api/admin/logistics/returns/${encodeURIComponent(id)}`, {
     method: "PATCH",
     headers: adminHeaders(),
     body: JSON.stringify({ status }),

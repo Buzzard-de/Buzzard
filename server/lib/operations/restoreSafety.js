@@ -97,6 +97,11 @@ function assertRestoreAllowed({ sourcePath, targetPath }) {
     throw err;
   }
   if (!plan.allowed) {
+    try {
+      require("../security/esatBey").watchRestore("PRODUCTION_RESTORE", targetPath);
+    } catch {
+      /* Esat is additive */
+    }
     const err = new Error("Restore blocked — explicit production approval required");
     err.code = "restore_blocked";
     err.details = plan;

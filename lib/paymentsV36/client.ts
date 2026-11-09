@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { PaymentsV36Overview, PaymentsV36Record, PaymentsV36Status } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("paymentsV36.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -29,7 +30,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
 export async function fetchPaymentsV36Status(): Promise<PaymentsV36Status> {
   const base = apiBase();
   if (!base) throw new Error("paymentsV36.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("paymentsV36.requestFailed");
   const data = (await res.json()) as { paymentsV36?: PaymentsV36Status };
   if (!data.paymentsV36?.enabled) throw new Error("paymentsV36.disabled");

@@ -1,0 +1,24 @@
+{
+  "iso": "FR",
+  "nra": "ARCEP",
+  "register": {
+    "records": 45,
+    "uniqueLegal": 45,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "named_operators_on_arcep_page_2026_07_24",
+    "source": "arcep-operateurs-2026-07-24",
+    "note": "Correspondence authorisations. DPD/GLS/UPS parcel last-mile not this list."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "FR",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 45,
+  "postcodeCoverage": "UNKNOWN"
+}

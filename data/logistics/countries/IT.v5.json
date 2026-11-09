@@ -1,0 +1,24 @@
+{
+  "iso": "IT",
+  "nra": "AGCOM",
+  "register": {
+    "records": 3722,
+    "uniqueLegal": null,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "last_sequential_number_on_mimit_sep_2026_pdf",
+    "source": "mimit-operatori-settembre-2026",
+    "note": "LIC/AUG/AEI authorisations, including sole traders. Not an active last-mile count. Deduplication not completed."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "IT",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 1,
+  "postcodeCoverage": "UNKNOWN"
+}

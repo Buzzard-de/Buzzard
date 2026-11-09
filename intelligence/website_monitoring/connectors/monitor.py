@@ -19,8 +19,9 @@ class MonitoringEngine:
 
     def public_fetch(self,url,timeout=20):
         # This method is only for URLs that Buzzard is permitted to retrieve.
-        r=requests.get(url,headers={"User-Agent":"Buzzard-Intelligence/1.0"},
-                       timeout=timeout,allow_redirects=True)
+        from security.guarded_fetch import guarded_get
+        r=guarded_get(url,headers={"User-Agent":"Buzzard-Intelligence/1.0"},
+                       timeout=timeout)
         raw=r.content
         return {
             "url":r.url,"status_code":r.status_code,

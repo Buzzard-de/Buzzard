@@ -1,0 +1,4 @@
+# Inventory
+
+v6 entities 1602. Unique keys 1465. Unique ids 1602.
+Roles: {"REGISTERED":1238,"UNKNOWN":324,"ACCEPTANCE_POINT_ONLY":16,"ACTIVE_BUSINESS_VERIFIED":24}

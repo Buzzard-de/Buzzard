@@ -1,0 +1,14 @@
+{
+  "schema": "buzzard.ela-h53-2024.v5",
+  "sourceTitle": "ELA/EURES Report on labour shortages and surpluses 2024: Sector analysis on postal and courier activities",
+  "sourceUrl": "https://www.ela.europa.eu/sites/default/files/2025-06/Sector_analysis_on_postal_and_courier_activities.pdf",
+  "citation": "European Labour Authority (2025)",
+  "referenceYear": 2024,
+  "nace": "H53",
+  "enterprisesApproximate": 60000,
+  "employmentApproximate": 1520000,
+  "confidence": "APPROXIMATE_LABOUR_MARKET_ANALYSIS",
+  "doNotMergeWithEurostatSbs": true,
+  "notParcelCarrierCensus": true,
+  "note": "Approximately 60 000 enterprises in 2024. Methodology is labour-market sector analysis, not Eurostat SBS ENT_NR. Do not add to or reconcile against 186813/200000/206964/224523."
+}

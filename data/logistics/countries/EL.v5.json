@@ -1,0 +1,24 @@
+{
+  "iso": "EL",
+  "nra": "EETT",
+  "register": {
+    "records": 804,
+    "uniqueLegal": 795,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "eett_eregistry_api_v2_all_212_pages",
+    "source": "eett-eregistry-licenses-v2",
+    "note": "804 POST_* licences / 795 unique companies. 794 general + 10 special. Active licence is not a last-mile parcel census. GR aliased as EL."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "EL",
+    "status": "LEGAL_ENTITIES_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 796,
+  "postcodeCoverage": "UNKNOWN"
+}

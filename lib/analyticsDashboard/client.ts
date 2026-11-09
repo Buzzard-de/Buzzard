@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   AnalyticsCategoryRow,
   AnalyticsCountryRow,
@@ -26,7 +27,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("analyticsDashboard.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { headers: adminHeaders() });
+  const res = await browserFetch(`${base}${path}`, { headers: adminHeaders() });
   const data = (await res.json()) as T & { error?: string };
   if (!res.ok) throw new Error(data.error || "analyticsDashboard.requestFailed");
   return data;
@@ -39,7 +40,7 @@ export function isAnalyticsDashboardApiConfigured(): boolean {
 export async function fetchAnalyticsDashboardStatus(): Promise<AnalyticsDashboardStatus> {
   const base = apiBase();
   if (!base) throw new Error("analyticsDashboard.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("analyticsDashboard.requestFailed");
   const data = (await res.json()) as { analyticsDashboard?: AnalyticsDashboardStatus };
   if (!data.analyticsDashboard?.enabled) throw new Error("analyticsDashboard.disabled");
@@ -86,7 +87,7 @@ export async function trackAnalyticsEvent(body: {
   const base = apiBase();
   if (!base) return;
   try {
-    await fetch(`${base}/api/analytics/events`, {
+    await browserFetch(`${base}/api/analytics/events`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),

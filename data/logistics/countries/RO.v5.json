@@ -1,0 +1,24 @@
+{
+  "iso": "RO",
+  "nra": "ANCOM",
+  "register": {
+    "records": null,
+    "uniqueLegal": null,
+    "status": "DATA_INCOMPLETE",
+    "method": "ancom_tls_failed_this_environment",
+    "source": "ancom-ssl-failed",
+    "note": "Searchable register exists. Full unique authorised-provider count not extracted here."
+  },
+  "verification": "DATA_INCOMPLETE",
+  "researchStatus": {
+    "iso": "RO",
+    "status": "SOURCE_FOUND",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "DATA_INCOMPLETE"
+  },
+  "completeVerified": false,
+  "namedCount": 11,
+  "postcodeCoverage": "UNKNOWN"
+}

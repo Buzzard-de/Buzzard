@@ -1,0 +1,312 @@
+{
+  "lockers": [
+    {
+      "id": "locker-lv-national-2025",
+      "operator": "MULTI",
+      "country": "LV",
+      "networkName": "Latvia pakomāti (SPRK year-end 2025)",
+      "pointCount": 1869,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-latvijas-pasts",
+      "operator": "VAS Latvijas Pasts",
+      "country": "LV",
+      "networkName": "Latvijas Pasts pakomāti",
+      "pointCount": 440,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "shareOfNational": "24%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-omniva",
+      "operator": "Omniva SIA",
+      "country": "LV",
+      "networkName": "Omniva SIA pakomāti",
+      "pointCount": null,
+      "pointCountStatus": "SHARE_ONLY_NOT_ABSOLUTE",
+      "shareOfNational": "21%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-dpd",
+      "operator": "SIA DPD Latvija",
+      "country": "LV",
+      "networkName": "SIA DPD Latvija pakomāti",
+      "pointCount": null,
+      "pointCountStatus": "SHARE_ONLY_NOT_ABSOLUTE",
+      "shareOfNational": "21%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-smartposti",
+      "operator": "SmartPosti SIA",
+      "country": "LV",
+      "networkName": "SmartPosti SIA pakomāti",
+      "pointCount": null,
+      "pointCountStatus": "SHARE_ONLY_NOT_ABSOLUTE",
+      "shareOfNational": "13%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-venipak",
+      "operator": "SIA VENIPAK LATVIJA",
+      "country": "LV",
+      "networkName": "SIA VENIPAK LATVIJA pakomāti",
+      "pointCount": null,
+      "pointCountStatus": "SHARE_ONLY_NOT_ABSOLUTE",
+      "shareOfNational": "11%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-lv-unisend",
+      "operator": "Unisend Latvija SIA",
+      "country": "LV",
+      "networkName": "Unisend Latvija SIA pakomāti",
+      "pointCount": null,
+      "pointCountStatus": "SHARE_ONLY_NOT_ABSOLUTE",
+      "shareOfNational": "11%",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "sprk-pasta-2025"
+      ]
+    },
+    {
+      "id": "locker-hu-foxpost-packeta",
+      "operator": "Foxpost-Packeta",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "Foxpost-Packeta csomagautomata",
+      "pointCount": 4041,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-gls",
+      "operator": "GLS",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "GLS csomagautomata",
+      "pointCount": 2861,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-magyar-posta-zrt",
+      "operator": "Magyar Posta Zrt.",
+      "legalNameStatus": "LEGAL_NAME_VERIFIED",
+      "country": "HU",
+      "networkName": "Magyar Posta Zrt. csomagautomata",
+      "pointCount": 698,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-sameday",
+      "operator": "Sameday",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "Sameday csomagautomata",
+      "pointCount": 1096,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-express-one",
+      "operator": "Express One",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "Express One csomagautomata",
+      "pointCount": 905,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-dpd",
+      "operator": "DPD",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "DPD csomagautomata",
+      "pointCount": 323,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "locker-hu-dhl",
+      "operator": "DHL",
+      "legalNameStatus": "BRAND_ONLY",
+      "country": "HU",
+      "networkName": "DHL csomagautomata",
+      "pointCount": 29,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    }
+  ],
+  "pudo": [
+    {
+      "id": "pudo-hu-foxpost-packeta",
+      "operator": "Foxpost-Packeta",
+      "country": "HU",
+      "networkName": "Foxpost-Packeta alternatív csomagpont",
+      "pointCount": 1420,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "pudo-hu-gls",
+      "operator": "GLS",
+      "country": "HU",
+      "networkName": "GLS alternatív csomagpont",
+      "pointCount": 1142,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "pudo-hu-magyar-posta-zrt",
+      "operator": "Magyar Posta Zrt.",
+      "country": "HU",
+      "networkName": "Magyar Posta Zrt. alternatív csomagpont",
+      "pointCount": 1058,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "pudo-hu-sameday",
+      "operator": "Sameday",
+      "country": "HU",
+      "networkName": "Sameday alternatív csomagpont",
+      "pointCount": 469,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "pudo-hu-express-one",
+      "operator": "Express One",
+      "country": "HU",
+      "networkName": "Express One alternatív csomagpont",
+      "pointCount": 157,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    },
+    {
+      "id": "pudo-hu-dpd",
+      "operator": "DPD",
+      "country": "HU",
+      "networkName": "DPD alternatív csomagpont",
+      "pointCount": 682,
+      "pointCountStatus": "SOURCE_VERIFIED",
+      "period": "2026-Q1",
+      "postalCodeCoverage": "UNKNOWN",
+      "hours": "UNKNOWN",
+      "apiStatus": "NOT_VERIFIED",
+      "sources": [
+        "nmhh-csomagautomata-2026-q1"
+      ]
+    }
+  ]
+}

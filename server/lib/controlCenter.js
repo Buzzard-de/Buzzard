@@ -61,6 +61,23 @@ function seedDefaults() {
       );
     }
   }
+  const sinan = DEFAULT_AI_EMPLOYEES.find((e) => e.id === "sinan_bey");
+  if (sinan && !db.prepare("SELECT id FROM core_ai_employees WHERE id = ?").get("sinan_bey")) {
+    db.prepare(`
+      INSERT INTO core_ai_employees(id, name, department, description, responsibility, permissions_json, status, priority, capabilities_json)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      sinan.id,
+      sinan.name,
+      sinan.department,
+      sinan.description,
+      sinan.responsibility,
+      JSON.stringify(sinan.permissions),
+      AI_EMPLOYEE_STATUS.ACTIVE,
+      sinan.priority,
+      JSON.stringify(sinan.capabilities)
+    );
+  }
 
   const intCount = db.prepare("SELECT COUNT(*) n FROM core_integrations").get().n;
   if (intCount === 0) {

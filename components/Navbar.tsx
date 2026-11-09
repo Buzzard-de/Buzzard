@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import CategoryIcon from "./CategoryIcon";
-import { mainNavLinks } from "@/lib/categories";
 import { useShop } from "@/lib/shop";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
@@ -18,8 +17,16 @@ export default function Navbar() {
       ? `VIN: ${vin.slice(0, 8)}…`
       : t("nav.vehiclePlaceholder");
 
+  const navLinks = [
+    { href: "/", label: t("nav.home") },
+    { href: "/products/?sort=price-asc", label: t("nav.offers") },
+    { href: "/products/?sort=bestseller", label: t("nav.new") },
+    { href: "/products/?q=marken", label: t("nav.brands") },
+    { href: "/hilfe/", label: t("nav.helpContact") },
+  ];
+
   return (
-    <nav className="main-nav" role="navigation" aria-label="Hauptnavigation">
+    <nav className="main-nav" role="navigation" aria-label={t("nav.aria")}>
       <div className="main-nav-inner">
         <button type="button" className="vehicle-select-btn" onClick={openVehicleModal}>
           <CategoryIcon name="car" size={22} />
@@ -43,8 +50,8 @@ export default function Navbar() {
         </button>
 
         <ul className="main-nav-links">
-          {mainNavLinks.map((link) => (
-            <li key={link.label}>
+          {navLinks.map((link) => (
+            <li key={link.href}>
               <Link href={link.href}>{link.label}</Link>
             </li>
           ))}

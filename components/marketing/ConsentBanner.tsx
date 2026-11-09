@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { defaultConsent, readConsent, saveConsent } from "@/lib/marketing/consent";
+import { useLocale } from "@/lib/i18n/context";
 
 export default function ConsentBanner() {
+  const { t } = useLocale();
   const [visible, setVisible] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
@@ -30,34 +32,31 @@ export default function ConsentBanner() {
   }
 
   return (
-    <div className="consent-banner" role="dialog" aria-label="Cookie-Einstellungen">
+    <div className="consent-banner" role="dialog" aria-label={t("consent.aria")}>
       <div className="consent-banner-inner">
-        <p>
-          Wir verwenden notwendige Technologien für den Shop-Betrieb. Analytics- und Marketing-Tools laden wir
-          erst nach Ihrer Einwilligung.
-        </p>
+        <p>{t("consent.text")}</p>
         <div className="consent-options">
           <label>
-            <input type="checkbox" checked disabled /> Notwendig
+            <input type="checkbox" checked disabled /> {t("consent.necessary")}
           </label>
           <label>
             <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} />
-            Analytics
+            {t("consent.analytics")}
           </label>
           <label>
             <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
-            Marketing
+            {t("consent.marketing")}
           </label>
         </div>
         <div className="consent-actions">
           <button type="button" className="shop-btn-secondary" onClick={rejectOptional}>
-            Nur notwendig
+            {t("consent.onlyNecessary")}
           </button>
           <button type="button" className="shop-btn-secondary" onClick={acceptSelected}>
-            Auswahl speichern
+            {t("consent.save")}
           </button>
           <button type="button" className="shop-btn-primary" onClick={acceptAll}>
-            Alle akzeptieren
+            {t("consent.acceptAll")}
           </button>
         </div>
       </div>

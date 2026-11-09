@@ -1,0 +1,9 @@
+{
+  "schema": "buzzard.shop-hub-l1-extensions.v1",
+  "note": "Additive hubs from origin/main. 48 bz.* master and cat-01–53 slugs stay intact.",
+  "hubs": [
+    { "shop_id": "cat-54", "name": "Reifen und Felgen", "slug": "reifen-felgen", "master_code": "bz.01" },
+    { "shop_id": "cat-55", "name": "Baumaschinen und Ersatzteile", "slug": "baumaschinen-ersatzteile", "master_code": "bz.04" },
+    { "shop_id": "cat-56", "name": "Nutztierhaltung & Viehzucht", "slug": "nutztierhaltung-viehzucht", "master_code": "bz.37" }
+  ]
+}

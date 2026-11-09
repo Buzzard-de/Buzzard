@@ -1,0 +1,24 @@
+{
+  "iso": "CY",
+  "nra": "OCECPR",
+  "register": {
+    "records": 23,
+    "uniqueLegal": 23,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "ocecpr_named_licence_extract",
+    "source": "ocecpr-postal-records",
+    "note": "Named licence extract. Completeness of the HTML table vs unpublished rows NOT_VERIFIED."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "CY",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 23,
+  "postcodeCoverage": "UNKNOWN"
+}

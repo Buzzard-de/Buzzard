@@ -135,10 +135,11 @@ export function categoryCollectionSchema(
 
 export function categoryBreadcrumbItems(
   breadcrumb: BuzzardCategory[],
-  locale: BuzzardLocale
+  locale: BuzzardLocale,
+  homeLabel = "Startseite"
 ): Array<{ name: string; url?: string }> {
   return [
-    { name: "Startseite", url: "/" },
+    { name: homeLabel, url: "/" },
     ...breadcrumb.map((crumb) => ({
       name: getCategoryLabel(crumb, locale),
       url: crumb.url,

@@ -1,0 +1,24 @@
+{
+  "iso": "MT",
+  "nra": "MCA",
+  "register": {
+    "records": 37,
+    "uniqueLegal": 37,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "mca_pdf_2026_09_02",
+    "source": "mca-postal-2026-09-02",
+    "note": "Authorised undertakings PDF. USP is MaltaPost. Premiere Post and FastDrop also hold USO-scope licences."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "MT",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 37,
+  "postcodeCoverage": "UNKNOWN"
+}

@@ -1,0 +1,170 @@
+# Unique legal entity register
+
+v1 VERIFIED_* rows: 43  
+v2 SOURCE_VERIFIED + VERIFIED_* named rows: 164  
+Do not add ES 4,734 or IT 3,722 or DE 7,183 into this unique total.
+
+- `usp-at` — Österreichische Post AG / Österreichische Post / AT / VERIFIED_USP_UPU_2025
+- `usp-be` — bpost / bpost / BE / VERIFIED_USP_UPU_2025
+- `usp-bg` — Bulgarian Posts / Bulgarian Posts / BG / VERIFIED_USP_UPU_2025
+- `usp-hr` — Croatian Post Inc. / Hrvatska pošta / HR / VERIFIED_USP_UPU_2025
+- `usp-cy` — Department of Postal Services (Cyprus Post) / Cyprus Post / CY / VERIFIED_USP_UPU_2025
+- `usp-cz` — Česká pošta, s.p. / Česká pošta / CZ / VERIFIED_USP_UPU_2025
+- `usp-dk` — Post Danmark A/S / PostNord Danmark / DK / VERIFIED_USP_UPU_2025
+- `usp-ee` — Estonian Post Ltd / Omniva / EE / VERIFIED_USP_UPU_2025
+- `usp-fi` — Posti Jakelu Ltd / Posti Ltd / Posti / FI / VERIFIED_USP_UPU_2025
+- `usp-fr` — La Poste / La Poste / FR / VERIFIED_USP_UPU_2025
+- `usp-de` — Deutsche Post AG / Deutsche Post / DHL / DE / VERIFIED_USP_UPU_2025
+- `usp-el` — Hellenic Post S.A. (ELTA) / ELTA / EL / VERIFIED_USP_UPU_2025
+- `usp-hu` — Magyar Posta / Magyar Posta / HU / VERIFIED_USP_UPU_2025
+- `usp-ie` — An Post / An Post / IE / VERIFIED_USP_UPU_2025
+- `usp-it` — Poste Italiane S.p.A. / Poste Italiane / IT / VERIFIED_USP_UPU_2025
+- `usp-lv` — SJSC Latvijas Pasts / Latvijas Pasts / LV / VERIFIED_USP_UPU_2025
+- `usp-lt` — AB Lietuvos paštas / Lietuvos paštas / LT / VERIFIED_USP_UPU_2025
+- `usp-lu` — POST Luxembourg / POST Luxembourg / LU / VERIFIED_USP_UPU_2025
+- `usp-mt` — Maltapost plc / MaltaPost / MT / VERIFIED_USP_UPU_2025
+- `usp-nl` — PostNL / PostNL / NL / VERIFIED_USP_UPU_2025
+- `usp-pl` — Polish Post Ltd / Poczta Polska / Poczta Polska / PL / VERIFIED_USP_UPU_2025
+- `usp-pt` — CTT – Correios de Portugal S.A. / CTT / PT / VERIFIED_USP_UPU_2025
+- `usp-ro` — Compania Națională Poșta Română S.A. / Poșta Română / RO / VERIFIED_USP_UPU_2025
+- `usp-sk` — Slovenská pošta, a.s. / Slovenská pošta / SK / VERIFIED_USP_UPU_2025
+- `usp-si` — Pošta Slovenije d.o.o. / Pošta Slovenije / SI / VERIFIED_USP_UPU_2025
+- `usp-es` — Sociedad Estatal Correos y Telégrafos / Correos / ES / VERIFIED_USP_UPU_2025
+- `usp-se` — PostNord Group AB / PostNord / SE / VERIFIED_USP_UPU_2025
+- `de-hermes` — Hermes Germany GmbH / Hermes / Evri / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-dpd` — DPD Deutschland GmbH / DPD / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-gls` — General Logistics Systems Germany GmbH & Co. OHG / GLS / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-dhl-express` — DHL Express Germany GmbH / DHL Express / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-ups` — UPS Management LLC / UPS / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-tof` — trans-o-flex Express GmbH & Co. KGaA / trans-o-flex / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `de-go` — GO! Express & Logistics GmbH / GO! / DE / VERIFIED_BNETZA_REGISTER_ROW
+- `dk-dao` — Dansk Avis Omdeling A/S / dao / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-gls` — General Logistics Systems Denmark A/S / GLS Denmark / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-bring` — Bring E-commerce & Logistics A/S / Bring / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-fedex` — FedEx Express Danmark ApS / FedEx / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-webrinq` — WebrinQ A/S / WebrinQ / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-ups` — U.P.S Danmark A/S / UPS / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-dhl` — DHL Express (Denmark) A/S / DHL Express / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-instabox` — Instabox Denmark ApS / Instabox / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `dk-budbee` — Budbee Denmark ApS / Budbee / DK / VERIFIED_DK_NRA_LICENSE_TABLE
+- `fi-botnia-print-oy-ab` — Botnia Print Oy Ab / Botnia Print Oy Ab / FI / SOURCE_VERIFIED
+- `fi-dilicon-oy` — Dilicon Oy / Dilicon Oy / FI / SOURCE_VERIFIED
+- `fi-hilla-group-oyj` — Hilla Group Oyj / Hilla Group Oyj / FI / SOURCE_VERIFIED
+- `fi-hilla-logistiikka-oy` — Hilla Logistiikka Oy / Hilla Logistiikka Oy / FI / SOURCE_VERIFIED
+- `fi-hss-media-bolagen-ab` — HSS Media - Bolagen Ab / HSS Media - Bolagen Ab / FI / SOURCE_VERIFIED
+- `fi-jakeluyhti-suomi-oy` — Jakeluyhtiö Suomi Oy / Jakeluyhtiö Suomi Oy / FI / SOURCE_VERIFIED
+- `fi-kaakon-viestint-oy` — Kaakon Viestintä Oy / Kaakon Viestintä Oy / FI / SOURCE_VERIFIED
+- `fi-lounais-suomen-tietojakelu-oy` — Lounais-Suomen Tietojakelu Oy / Lounais-Suomen Tietojakelu Oy / FI / SOURCE_VERIFIED
+- `fi-pisa-jakelu-oy` — PISA Jakelu Oy / PISA Jakelu Oy / FI / SOURCE_VERIFIED
+- `fi-pks-jakelu-oy` — PKS Jakelu Oy / PKS Jakelu Oy / FI / SOURCE_VERIFIED
+- `fi-ppp-finland-oy` — PPP Finland Oy / PPP Finland Oy / FI / SOURCE_VERIFIED
+- `fi-rauman-suorajakelu-oy` — Rauman Suorajakelu Oy / Rauman Suorajakelu Oy / FI / SOURCE_VERIFIED
+- `fi-varsinais-suomen-tietojakelu-oy` — Varsinais-Suomen Tietojakelu Oy / Varsinais-Suomen Tietojakelu Oy / FI / SOURCE_VERIFIED
+- `fr-althus` — Althus / Althus / FR / SOURCE_VERIFIED
+- `fr-bpost` — bpost / bpost / FR / SOURCE_VERIFIED
+- `fr-g3-worldwide-spring` — G3 Worldwide (Spring) / G3 Worldwide (Spring) / FR / SOURCE_VERIFIED
+- `fr-deutsche-post-global-mail-france` — Deutsche Post Global Mail (France) / Deutsche Post Global Mail (France) / FR / SOURCE_VERIFIED
+- `fr-courrier-plus` — Courrier Plus / Courrier Plus / FR / SOURCE_VERIFIED
+- `fr-3l-distriplis` — 3L (Distriplis) / 3L (Distriplis) / FR / SOURCE_VERIFIED
+- `fr-step-step-post` — STEP / STEP-POST / STEP / STEP-POST / FR / SOURCE_VERIFIED
+- `fr-optimail-solutions` — Optimail Solutions / Optimail Solutions / FR / SOURCE_VERIFIED
+- `fr-mediapost` — Mediapost / Mediapost / FR / SOURCE_VERIFIED
+- `fr-colis-priv` — Colis Privé / Colis Privé / FR / SOURCE_VERIFIED
+- `fr-novea` — NOVEA / NOVEA / FR / SOURCE_VERIFIED
+- `fr-xpert-france-nord` — XPERT FRANCE NORD / XPERT FRANCE NORD / FR / SOURCE_VERIFIED
+- `fr-solgeco-25` — SOLGECO 25 / SOLGECO 25 / FR / SOURCE_VERIFIED
+- `fr-pro-medical-services` — PRO MEDICAL SERVICES / PRO MEDICAL SERVICES / FR / SOURCE_VERIFIED
+- `fr-not-courrier-service` — NOT COURRIER SERVICE / NOT COURRIER SERVICE / FR / SOURCE_VERIFIED
+- `fr-trans-exams` — TRANS EXAMS / TRANS EXAMS / FR / SOURCE_VERIFIED
+- `fr-tcs` — TCS / TCS / FR / SOURCE_VERIFIED
+- `fr-courriers-xpress` — COURRIERS XPRESS / COURRIERS XPRESS / FR / SOURCE_VERIFIED
+- `fr-postal-stock-exchange` — POSTAL STOCK EXCHANGE / POSTAL STOCK EXCHANGE / FR / SOURCE_VERIFIED
+- `fr-not-courrier-france` — NOT COURRIER FRANCE / NOT COURRIER FRANCE / FR / SOURCE_VERIFIED
+- `fr-l-atelier-du-courrier` — L'ATELIER DU COURRIER / L'ATELIER DU COURRIER / FR / SOURCE_VERIFIED
+- `fr-trans-medical-49` — TRANS MEDICAL 49 / TRANS MEDICAL 49 / FR / SOURCE_VERIFIED
+- `fr-courrier-pro-03` — COURRIER PRO 03 / COURRIER PRO 03 / FR / SOURCE_VERIFIED
+- `fr-route-express` — ROUTE EXPRESS / ROUTE EXPRESS / FR / SOURCE_VERIFIED
+- `fr-tale-france` — TALE FRANCE / TALE FRANCE / FR / SOURCE_VERIFIED
+- `fr-xpost` — XPOST / XPOST / FR / SOURCE_VERIFIED
+- `fr-bike-in-the-city` — BIKE IN THE CITY / BIKE IN THE CITY / FR / SOURCE_VERIFIED
+- `fr-christin-pascal-chris-express` — CHRISTIN Pascal (Chris Express) / CHRISTIN Pascal (Chris Express) / FR / SOURCE_VERIFIED
+- `fr-facily-post` — FACILY POST / FACILY POST / FR / SOURCE_VERIFIED
+- `fr-servitrans` — SERVITRANS / SERVITRANS / FR / SOURCE_VERIFIED
+- `fr-portage-postal` — PORTAGE POSTAL / PORTAGE POSTAL / FR / SOURCE_VERIFIED
+- `fr-rca-presta-ecopost` — RCA PRESTA (ECOPOST) / RCA PRESTA (ECOPOST) / FR / SOURCE_VERIFIED
+- `fr-sall-bruno-azur-courrier-83` — SALLÉ Bruno (Azur Courrier 83) / SALLÉ Bruno (Azur Courrier 83) / FR / SOURCE_VERIFIED
+- `fr-clevia` — CLEVIA / CLEVIA / FR / SOURCE_VERIFIED
+- `fr-postalia-france-easypost` — POSTALIA FRANCE (EasyPost) / POSTALIA FRANCE (EasyPost) / FR / SOURCE_VERIFIED
+- `fr-messageries-le-dissez` — MESSAGERIES LE DISSEZ / MESSAGERIES LE DISSEZ / FR / SOURCE_VERIFIED
+- `fr-liaison-sant` — LIAISON SANTÉ / LIAISON SANTÉ / FR / SOURCE_VERIFIED
+- `fr-transport-inter-regional` — TRANSPORT INTER-REGIONAL / TRANSPORT INTER-REGIONAL / FR / SOURCE_VERIFIED
+- `fr-proximy` — PROXIMY / PROXIMY / FR / SOURCE_VERIFIED
+- `fr-lebon-transporteur` — LEBON TRANSPORTEUR / LEBON TRANSPORTEUR / FR / SOURCE_VERIFIED
+- `fr-dansmabal` — DANSMABAL / DANSMABAL / FR / SOURCE_VERIFIED
+- `fr-amtm-elite-courrier` — AMTM (ELITE COURRIER) / AMTM (ELITE COURRIER) / FR / SOURCE_VERIFIED
+- `fr-eole-sant` — Eole Santé / Eole Santé / FR / SOURCE_VERIFIED
+- `fr-landmark-global-france` — Landmark Global France / Landmark Global France / FR / SOURCE_VERIFIED
+- `be-glejor-bv` — Glejor BV / Glejor / BE / SOURCE_VERIFIED
+- `be-span-diffusion` — SPAN Diffusion / SPAN Diffusion / BE / SOURCE_VERIFIED
+- `be-srl-net-express` — SRL Net Express / TBC-Post / BE / SOURCE_VERIFIED
+- `be-srl-postalia-belgium-logistics` — SRL Postalia Belgium Logistics / EasyPost / BE / SOURCE_VERIFIED
+- `be-srl-weeldy` — SRL WEELDY / URBIPOST / BE / SOURCE_VERIFIED
+- `be-viavelo-s-comm` — ViaVelo S Comm / ViaVelo / BE / SOURCE_VERIFIED
+- `ie-budget-parcel` — Budget Parcel / Budget Parcel / IE / SOURCE_VERIFIED
+- `ie-corrigan-business-services` — Corrigan Business Services / Corrigan Business Services / IE / SOURCE_VERIFIED
+- `ie-dck-dc-kavanagh` — DCK / DC Kavanagh / DCK / DC Kavanagh / IE / SOURCE_VERIFIED
+- `ie-dx-ireland` — DX Ireland / DX Ireland / IE / SOURCE_VERIFIED
+- `ie-general-logistics-systems-ireland` — General Logistics Systems Ireland / General Logistics Systems Ireland / IE / SOURCE_VERIFIED
+- `ie-lettershop-postal` — Lettershop Postal / Lettershop Postal / IE / SOURCE_VERIFIED
+- `ie-mail-metrics` — Mail Metrics / Mail Metrics / IE / SOURCE_VERIFIED
+- `ie-paragon-customer-communications-ireland-` — Paragon Customer Communications Ireland Ltd. / Paragon Customer Communications Ireland Ltd. / IE / SOURCE_VERIFIED
+- `ie-printpost-ltd` — PrintPost Ltd / PrintPost Ltd / IE / SOURCE_VERIFIED
+- `ie-shanahan-direct-marketing-ltd` — Shanahan Direct Marketing Ltd. / Shanahan Direct Marketing Ltd. / IE / SOURCE_VERIFIED
+- `ie-sooner-than-later-solutions-ltd` — Sooner Than Later Solutions Ltd. / Sooner Than Later Solutions Ltd. / IE / SOURCE_VERIFIED
+- `ie-tico-mail-works` — Tico Mail Works / Tico Mail Works / IE / SOURCE_VERIFIED
+- `ie-rw-pierce-ireland-limited` — RW Pierce (Ireland) Limited / RW Pierce (Ireland) Limited / IE / SOURCE_VERIFIED
+- `ie-leaflet-broker-ltd` — Leaflet Broker Ltd / Leaflet Broker Ltd / IE / SOURCE_VERIFIED
+- `ie-azure-communications-ltd` — Azure Communications Ltd / Azure Communications Ltd / IE / SOURCE_VERIFIED
+- `se-b-j-distribution-ab` — B J Distribution AB / B J Distribution AB / SE / SOURCE_VERIFIED
+- `se-bonway-ab` — Bonway AB / Bonway AB / SE / SOURCE_VERIFIED
+- `se-citymail-sweden-ab` — Citymail Sweden AB / Citymail Sweden AB / SE / SOURCE_VERIFIED
+- `se-erna-logistik-ab` — Erna Logistik AB / Erna Logistik AB / SE / SOURCE_VERIFIED
+- `se-georgsson-mail-ab` — Georgsson Mail AB / Georgsson Mail AB / SE / SOURCE_VERIFIED
+- `se-lysekils-lokalpost` — Lysekils Lokalpost / Lysekils Lokalpost / SE / SOURCE_VERIFIED
+- `se-mail-company-sweden-ab` — Mail Company Sweden AB / Mail Company Sweden AB / SE / SOURCE_VERIFIED
+- `se-mailworld-office-ab` — Mailworld Office AB / Mailworld Office AB / SE / SOURCE_VERIFIED
+- `se-mariestads-brev-och-paketservice` — Mariestads Brev och Paketservice / Mariestads Brev och Paketservice / SE / SOURCE_VERIFIED
+- `se-mediakonsult-i-g-teborg-ab` — Mediakonsult i Göteborg AB / Mediakonsult i Göteborg AB / SE / SOURCE_VERIFIED
+- `se-point-logistik-gota-media-ab` — Point Logistik Gota Media AB / Point Logistik Gota Media AB / SE / SOURCE_VERIFIED
+- `se-postm-staren-i-h-lsingland-ab` — Postmästaren i Hälsingland AB / Postmästaren i Hälsingland AB / SE / SOURCE_VERIFIED
+- `se-pressens-morgontj-nst-kb` — Pressens Morgontjänst KB / Pressens Morgontjänst KB / SE / SOURCE_VERIFIED
+- `se-sdr-svensk-direktreklam-ab` — SDR Svensk Direktreklam AB / SDR Svensk Direktreklam AB / SE / SOURCE_VERIFIED
+- `se-sundsvalls-citypost-ab` — Sundsvalls Citypost AB / Sundsvalls Citypost AB / SE / SOURCE_VERIFIED
+- `se-svensk-hemleverans-hb` — Svensk Hemleverans HB / Svensk Hemleverans HB / SE / SOURCE_VERIFIED
+- `se-svensk-hemleverans-norr-kb` — Svensk Hemleverans Norr KB / Svensk Hemleverans Norr KB / SE / SOURCE_VERIFIED
+- `se-v-stsvensk-tidningsdistribution-ab` — Västsvensk Tidningsdistribution AB / Västsvensk Tidningsdistribution AB / SE / SOURCE_VERIFIED
+- `at-albatros-fb-express-gmbh` — Albatros FB Express GmbH / Albatros FB Express GmbH / AT / SOURCE_VERIFIED
+- `at-amazon-transport-austria-gmbh` — Amazon Transport Austria GmbH / Amazon Transport Austria GmbH / AT / SOURCE_VERIFIED
+- `at-bss-logistik-gmbh` — Bss-Logistik GmbH / Bss-Logistik GmbH / AT / SOURCE_VERIFIED
+- `at-deligee-parcel-gmbh` — DeliGee Parcel GmbH / DeliGee Parcel GmbH / AT / SOURCE_VERIFIED
+- `at-dhl-express-austria-gmbh` — DHL Express (Austria) GmbH / DHL Express (Austria) GmbH / AT / SOURCE_VERIFIED
+- `at-dpd-direct-parcel-distribution-austria-g` — DPD Direct Parcel Distribution Austria GmbH / DPD Direct Parcel Distribution Austria GmbH / AT / SOURCE_VERIFIED
+- `at-fedex-express-austria-gmbh` — FedEx Express Austria GmbH / FedEx Express Austria GmbH / AT / SOURCE_VERIFIED
+- `at-feibra-gmbh` — feibra GmbH / feibra GmbH / AT / SOURCE_VERIFIED
+- `at-general-logistics-systems-austria-gmbh` — General Logistics Systems Austria GmbH / General Logistics Systems Austria GmbH / AT / SOURCE_VERIFIED
+- `at-kep-logistic-gmbh` — KEP Logistic GmbH / KEP Logistic GmbH / AT / SOURCE_VERIFIED
+- `at-munja-trans-gmbh` — MUNJA Trans GmbH / MUNJA Trans GmbH / AT / SOURCE_VERIFIED
+- `at-rain-transport-gmbh` — Rain Transport GmbH / Rain Transport GmbH / AT / SOURCE_VERIFIED
+- `at-redmail-logistik-zustellservice-gmbh` — redmail Logistik & Zustellservice GmbH / redmail Logistik & Zustellservice GmbH / AT / SOURCE_VERIFIED
+- `at-spartrans-gmbh` — SparTrans GmbH / SparTrans GmbH / AT / SOURCE_VERIFIED
+- `at-united-parcel-service-speditionsgesellsc` — United Parcel Service Speditionsgesellschaft m.b.H. / United Parcel Service Speditionsgesellschaft m.b.H. / AT / SOURCE_VERIFIED
+- `ro-fan-courier-express-s-r-l` — FAN COURIER EXPRESS S.R.L. / FAN COURIER EXPRESS S.R.L. / RO / SOURCE_VERIFIED
+- `ro-euro-curier-mario-s-r-l` — EURO CURIER MARIO S.R.L. / EURO CURIER MARIO S.R.L. / RO / SOURCE_VERIFIED
+- `ro-gls-general-logistics-systems-romania-s-` — GLS GENERAL LOGISTICS SYSTEMS ROMANIA S.R.L. / GLS GENERAL LOGISTICS SYSTEMS ROMANIA S.R.L. / RO / SOURCE_VERIFIED
+- `ro-global-express-mail-s-r-l` — GLOBAL EXPRESS MAIL S.R.L. / GLOBAL EXPRESS MAIL S.R.L. / RO / SOURCE_VERIFIED
+- `ro-dynamic-parcel-distribution-s-a` — DYNAMIC PARCEL DISTRIBUTION S.A. / DYNAMIC PARCEL DISTRIBUTION S.A. / RO / SOURCE_VERIFIED
+- `ro-pam-international-transport-s-r-l` — PAM INTERNATIONAL TRANSPORT S.R.L. / PAM INTERNATIONAL TRANSPORT S.R.L. / RO / SOURCE_VERIFIED
+- `ro-dhl-international-rom-nia-s-r-l` — DHL INTERNATIONAL ROMÂNIA S.R.L. / DHL INTERNATIONAL ROMÂNIA S.R.L. / RO / SOURCE_VERIFIED
+- `ro-ambian-a-trans-s-r-l` — AMBIANȚA TRANS S.R.L. / AMBIANȚA TRANS S.R.L. / RO / SOURCE_VERIFIED
+- `ro-sempre-dritto-tour-s-r-l` — SEMPRE DRITTO TOUR S.R.L. / SEMPRE DRITTO TOUR S.R.L. / RO / SOURCE_VERIFIED
+- `ro-maty-express-s-r-l` — MATY EXPRESS S.R.L. / MATY EXPRESS S.R.L. / RO / SOURCE_VERIFIED

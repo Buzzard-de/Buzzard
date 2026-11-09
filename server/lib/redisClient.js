@@ -23,15 +23,24 @@ async function redisCommand(command) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const { guardedFetch } = require("./security/egressGuard");
+    const gated = await guardedFetch(
+      url,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(command),
+        signal: controller.signal,
       },
-      body: JSON.stringify(command),
-      signal: controller.signal,
-    });
+      { ping: true }
+    );
+    if (gated.blocked) {
+      throw new Error(gated.decision.code || "EGRESS_DENIED");
+    }
+    const res = gated.response;
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
       throw new Error(body.error || `Redis HTTP ${res.status}`);

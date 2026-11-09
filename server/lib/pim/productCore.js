@@ -146,6 +146,22 @@ function createProduct(input, { source = "ADMIN", actorId } = {}) {
   );
 
   const product = getProduct(id);
+  try {
+    const productSot = require("../productSot");
+    productSot.upsertIdentityMap({
+      sourceSystem: "D",
+      sourceId: id,
+      sourceSku: sku,
+      targetProductId: id,
+      targetSku: sku,
+      mappingStatus: "MAPPED",
+      collisionStatus: "NONE",
+      confidence: 1,
+      evidence: "productCore.createProduct",
+    });
+  } catch {
+    /* identity map table may be missing in ancient fixtures */
+  }
   qualityScore.updateScore(id);
   productAudit.logChange({
     productId: id,

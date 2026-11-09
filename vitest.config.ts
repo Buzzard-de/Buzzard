@@ -22,6 +22,7 @@ export default defineConfig({
       "lib/i18n/catalog.test.ts",
       "lib/i18n/languages.test.ts",
       "lib/i18n/routing.test.ts",
+      "lib/i18n/localeAudit.test.ts",
       "server/__tests__/ecosystemScorecard.test.mjs",
       "lib/categories/i18n.test.ts",
     ],

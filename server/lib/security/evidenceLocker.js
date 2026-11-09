@@ -72,11 +72,19 @@ function createLocker({ root = fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-ev
     return { ok: sha256 === rec.sha256, sha256, expected: rec.sha256, class: rec.class };
   }
 
+  const accessLog = [];
+  function access(evidenceId, { actor = "esat_bey", action = "READ_META" } = {}) {
+    accessLog.push({ evidence_id: evidenceId, actor, action, at: new Date().toISOString() });
+    appendCustody({ event: "ACCESS", evidence_id: evidenceId, actor, action });
+    return { ok: true, logged: true };
+  }
+
   function exportPack(evidenceId) {
     const rec = index.get(evidenceId);
     if (!rec) return { ok: false, code: "NOT_FOUND" };
+    access(evidenceId, { actor: "human", action: "EXPORT_ATTEMPT" });
     if (!rec.export_allowed) return { ok: false, code: "HUMAN_EXPORT_APPROVED_REQUIRED", sent: false };
-    return { ok: false, code: "EXPORT_NOT_SENT", sent: false };
+    return { ok: false, code: "EXPORT_NOT_SENT", sent: false, customerData: false };
   }
 
   function macNote() {
@@ -88,6 +96,8 @@ function createLocker({ root = fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-ev
     workingCopy,
     verify,
     exportPack,
+    access,
+    accessLog: () => [...accessLog],
     macNote,
     get: (id) => index.get(id) || null,
     root,

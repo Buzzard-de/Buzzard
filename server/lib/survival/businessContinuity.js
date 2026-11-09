@@ -37,4 +37,25 @@ function restoreProduction() {
   return { ok: false, code: "HUMAN_RESTORE_APPROVED_REQUIRED", productionTouched: false };
 }
 
-module.exports = { TARGETS, inventory, reconcileSynthetic, restoreProduction };
+function backupManifest({ copies = [] } = {}) {
+  return {
+    copies: copies.map((c) => ({
+      slot: c.slot || c.name || "unknown",
+      sha256: c.sha256 || null,
+      encrypted: Boolean(c.encrypted),
+      offsite: false,
+      worm: false,
+    })),
+    encryptionArchitecture: "AES-256-GCM-DESIGN-ONLY",
+    encryptionLive: false,
+    cleanRoom: "PROCEDURE_ONLY",
+    productionDrVerified: false,
+  };
+}
+
+function verifyBackup({ sha256, expected } = {}) {
+  if (!sha256 || !expected) return { ok: false, code: "MISSING_HASH" };
+  return { ok: sha256 === expected, productionTouched: false };
+}
+
+module.exports = { TARGETS, inventory, reconcileSynthetic, restoreProduction, backupManifest, verifyBackup };

@@ -1,0 +1,17 @@
+import { describe, expect, it } from "vitest";
+import { auditLocales } from "./localeAudit";
+import { LANGUAGE_CODES } from "./languages";
+
+describe("locale audit", () => {
+  it("covers 30 locales and never marks translations complete", () => {
+    const audit = auditLocales();
+    expect(LANGUAGE_CODES).toHaveLength(30);
+    expect(audit.listed).toBe(30);
+    expect(audit.complete).toBe(false);
+    expect(audit.machineTranslationAccepted).toBe(false);
+    expect(audit.fallback).toBe("de");
+    const ar = audit.rows.find((r) => r.locale === "ar");
+    expect(ar?.rtl).toBe(true);
+    expect(audit.rows.every((r) => r.verified === false)).toBe(true);
+  });
+});

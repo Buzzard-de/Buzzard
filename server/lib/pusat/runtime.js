@@ -105,6 +105,7 @@ const ACTIONS = Object.freeze({
   TEN_AGENT_COUNCIL: "TEN_AGENT_COUNCIL",
   SEVENTEEN_AGENT_COUNCIL: "SEVENTEEN_AGENT_COUNCIL",
   PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
+  ORCHESTRATE_STATUS: "ORCHESTRATE_STATUS",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -181,6 +182,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.TEN_AGENT_COUNCIL,
   ACTIONS.SEVENTEEN_AGENT_COUNCIL,
   ACTIONS.PLATFORM_CONTINUATION_STATUS,
+  ACTIONS.ORCHESTRATE_STATUS,
 ]);
 
 let durable = null;
@@ -865,6 +867,18 @@ function executeControl(action, payload, { actorId, correlationId }) {
         live: false,
         productionReady: false,
       },
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_STATUS) {
+    const { createTaskQueue } = require("./taskQueue");
+    const q = createTaskQueue();
+    return {
+      ok: true,
+      action,
+      data: { ...q.snapshot(), live: false, hostedFactory: false },
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),

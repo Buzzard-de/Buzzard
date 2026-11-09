@@ -141,6 +141,25 @@ function createCears({ now = () => new Date().toISOString() } = {}) {
   function snapshot(row) {
     return JSON.parse(JSON.stringify(row));
   }
+  function escalate(id, { by = "esat_bey" } = {}) {
+    const row = incidents.get(id);
+    if (!row) return { ok: false, code: "NOT_FOUND" };
+    row.status = "HUMAN_REVIEW";
+    row.timeline.push({ at: now(), actor: by, event: "ESCALATED", to: "human" });
+    return { ok: true, incident: snapshot(row), notified: false };
+  }
+  function recover(id, { by = "human" } = {}) {
+    const row = incidents.get(id);
+    if (!row) return { ok: false, code: "NOT_FOUND" };
+    if (by !== "human") return { ok: false, code: "HUMAN_GATE_REQUIRED" };
+    row.timeline.push({ at: now(), actor: by, event: "RECOVERY_COORDINATED" });
+    return { ok: true, incident: snapshot(row), productionChanged: false };
+  }
+  function accessAudit() {
+    return incidents.size
+      ? [...incidents.values()].flatMap((row) => row.timeline.map((e) => ({ incident_id: row.incident_id, ...e })))
+      : [];
+  }
   return {
     open,
     classify,
@@ -150,6 +169,9 @@ function createCears({ now = () => new Date().toISOString() } = {}) {
     notify,
     attachEvidence,
     close,
+    escalate,
+    recover,
+    accessAudit,
     get: (id) => (incidents.get(id) ? snapshot(incidents.get(id)) : null),
     list: () => [...incidents.values()].map(snapshot),
     SEVERITY,

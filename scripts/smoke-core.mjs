@@ -21,6 +21,10 @@ function fail(label, detail = "") {
 }
 
 async function request(path, options = {}) {
+  if (process.env.BUZZARD_ISOLATED_HTTP === "1") {
+    const { isolatedRequest } = await import("./lib/isolatedSmokeTransport.mjs");
+    return isolatedRequest(`buzzard-isolated://smoke${path}`, options);
+  }
   const res = await fetch(`${API}${path}`, {
     ...options,
     headers: {

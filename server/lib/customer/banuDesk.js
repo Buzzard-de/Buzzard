@@ -24,6 +24,17 @@ function classify(text = "") {
   return "faq";
 }
 
+function draftEmail({ locale = "de", intent = "faq", facts = {} } = {}) {
+  const handled = handle({ text: intent, locale, facts });
+  return {
+    ...handled,
+    channel: "email_draft",
+    sent: false,
+    autoSendAuthorized: false,
+    body: handled.text || handled.code || "draft_only",
+  };
+}
+
 function handle({ text, locale = "de", facts = {} } = {}) {
   const intent = classify(text);
   if (intent === "complaint") {
@@ -56,4 +67,4 @@ function handle({ text, locale = "de", facts = {} } = {}) {
   });
 }
 
-module.exports = { classify, handle, INTENTS };
+module.exports = { classify, handle, draftEmail, INTENTS };

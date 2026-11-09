@@ -3,8 +3,12 @@
  */
 const { inventory } = require("../buzzardNative/core/specialistInventory");
 const { snapshot: engines, buyStock } = require("../commerce/engineRegistry");
-const { runConnected } = require("../commerce/connectedWorkflow");
-const { handle } = require("../customer/banuDesk");
+const { runConnected, runAll } = require("../commerce/connectedWorkflow");
+const { handle, draftEmail } = require("../customer/banuDesk");
+const { paymentStatus, fraudScreen } = require("../finance/bankingAdapter");
+const { simulateTrack } = require("../logistics/carrierAdapter");
+const { verify: verifyPaymentWebhook } = require("../finance/paymentWebhook");
+const { probe: probe16 } = require("../workstreams/special16Runtime");
 const { snapshot: streams } = require("../workstreams/special16");
 const { coverage, publishBanner } = require("../storefront/holidayProgram");
 const { SHARED } = require("../security/egressPolicy");
@@ -38,8 +42,14 @@ function integrate({ root = process.cwd() } = {}) {
     payment: runConnected("failed_payment"),
     refund: runConnected("partial_refund"),
     buy: buyStock(),
+    all: runAll(),
+    paymentMachine: paymentStatus({ from: "CREATED", event: "authorize" }),
+    fraud: fraudScreen({ amount: 20, country: "DE" }),
+    track: simulateTrack({ status: "IN_TRANSIT" }),
+    webhook: verifyPaymentWebhook({ payload: "evt", header: null, secret: "s".repeat(32) }),
   };
   const desk = handle({ text: "Wo ist meine Bestellung?", locale: "de", facts: { orderId: "SYN-1" } });
+  const emailDraft = draftEmail({ locale: "de", intent: "faq", facts: { orderId: "SYN-1" } });
   const holidays = coverage();
   const tax = {
     fr: split({ netProfit: 100, taxEstimate: 20, country: "FR" }),
@@ -52,7 +62,8 @@ function integrate({ root = process.cwd() } = {}) {
     specialists,
     engines: engines(),
     commerce,
-    desk: { sent: desk.sent, intent: desk.intent || null },
+    desk: { sent: desk.sent, intent: desk.intent || null, draftSent: emailDraft.sent, autoSend: emailDraft.autoSendAuthorized },
+    workstreamProbes: probe16(),
     whatsapp: { sent: send().sent, migrate: migrateNumber().code },
     voice: assessVoice(),
     holidays: { ...holidays, publish: publishBanner() },

@@ -17,7 +17,7 @@ function ledger() {
   function consistent() {
     const refunds = rows.filter((r) => r.kind === "CUSTOMER_REFUND").reduce((s, r) => s + r.amount, 0);
     const credits = rows.filter((r) => r.kind === "SUPPLIER_CREDIT").reduce((s, r) => s + r.amount, 0);
-    return { refunds, credits, mixed: false, ok: credits === 0 || credits <= refunds };
+    return { refunds, credits, mixed: credits > 0, ok: credits === 0 };
   }
   return { post, consistent, rows };
 }
@@ -118,6 +118,24 @@ function runConnected(scenario = "happy") {
     return { ...base, scenario, events, live: false };
   }
 
+  if (scenario === "timeout") {
+    events.push({ step: "timeout", code: "ISOLATED_TIMEOUT", reachedNetwork: false });
+    return { ...base, scenario, events, live: false };
+  }
+  if (scenario === "partial_delivery") {
+    events.push({ step: "delivery", qtyOrdered: 2, qtyDelivered: 1, live: false });
+    return { ...base, scenario, events, live: false };
+  }
+  if (scenario === "cargo_loss") {
+    events.push({ step: "carrier", status: "LOST", liveShipment: false, claim: "HUMAN_GATE_REQUIRED" });
+    return { ...base, scenario, events, live: false };
+  }
+  if (scenario === "financial_mismatch") {
+    book.post("CUSTOMER_REFUND", 5, "refund");
+    book.post("SUPPLIER_CREDIT", 5, "should_not_assume");
+    return { ...base, scenario, events: book.rows, live: false, consistent: book.consistent().ok };
+  }
+
   const happy = order("SYN-HAPPY");
   const hold = screen({ origin: "DE", destination: "FR", product: "pad", endUser: "retail" });
   const tax = split({ netProfit: 10, taxEstimate: 2, country: "FR" });
@@ -125,4 +143,26 @@ function runConnected(scenario = "happy") {
   return { ...base, scenario: "happy", events, live: false, engines: 11, consistent: true };
 }
 
-module.exports = { runConnected };
+const SCENARIOS = Object.freeze([
+  "happy",
+  "duplicate_order",
+  "failed_payment",
+  "partial_refund",
+  "supplier_unavailable",
+  "stock_change",
+  "insufficient_profit",
+  "shipment_delay",
+  "customer_cancel",
+  "supplier_refuses_reimbursement",
+  "price_change",
+  "timeout",
+  "partial_delivery",
+  "cargo_loss",
+  "financial_mismatch",
+]);
+
+function runAll() {
+  return Object.fromEntries(SCENARIOS.map((name) => [name, runConnected(name)]));
+}
+
+module.exports = { runConnected, runAll, SCENARIOS };

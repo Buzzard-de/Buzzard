@@ -106,6 +106,7 @@ const ACTIONS = Object.freeze({
   SEVENTEEN_AGENT_COUNCIL: "SEVENTEEN_AGENT_COUNCIL",
   PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
   ORCHESTRATE_STATUS: "ORCHESTRATE_STATUS",
+  ORCHESTRATE_TICK: "ORCHESTRATE_TICK",
   INTEGRATED_PLATFORM_STATUS: "INTEGRATED_PLATFORM_STATUS",
 });
 
@@ -184,6 +185,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.SEVENTEEN_AGENT_COUNCIL,
   ACTIONS.PLATFORM_CONTINUATION_STATUS,
   ACTIONS.ORCHESTRATE_STATUS,
+  ACTIONS.ORCHESTRATE_TICK,
   ACTIONS.INTEGRATED_PLATFORM_STATUS,
 ]);
 
@@ -891,11 +893,39 @@ function executeControl(action, payload, { actorId, correlationId }) {
     return {
       ok: true,
       action,
-      data: { ...q.snapshot(), live: false, hostedFactory: false },
+      data: {
+        ...q.snapshot(),
+        live: false,
+        hostedFactory: false,
+        executor: "specialistDispatch",
+        llmCouncil: false,
+        durableIsolatedSqlite: true,
+      },
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),
     };
+  }
+  if (action === ACTIONS.ORCHESTRATE_TICK) {
+    const os = require("os");
+    const path = require("path");
+    const { createOrchestrator } = require("./orchestrator");
+    const dbPath = payload.dbPath || process.env.PUSAT_ORCH_DB || path.join(os.tmpdir(), "buzzard-pusat-orch.sqlite");
+    const orch = createOrchestrator({ dbPath });
+    try {
+      if (payload.schedule) orch.schedule(payload.schedule);
+      const ran = payload.coordinate ? orch.coordinateCouncil({ kind: payload.kind || "THINK" }) : orch.tick({ limit: payload.limit || 8 });
+      return {
+        ok: true,
+        action,
+        data: { ...ran, live: false, hostedFactory: false, dbPath },
+        actorId,
+        correlationId,
+        ...label(MODE.DRY_RUN),
+      };
+    } finally {
+      orch.close();
+    }
   }
   if (action === ACTIONS.TEN_AGENT_COUNCIL) {
     return {

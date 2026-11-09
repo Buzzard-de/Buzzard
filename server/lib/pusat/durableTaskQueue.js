@@ -101,6 +101,7 @@ function createDurableTaskQueue({ dbPath }) {
       leaseOwner: row.lease_owner,
       identitiesMerged: false,
       live: false,
+      payload: JSON.parse(row.payload_json || "{}"),
     };
   }
 
@@ -114,6 +115,8 @@ function createDurableTaskQueue({ dbPath }) {
     timeoutMs = 30_000,
     maxAttempts = 3,
     needsApproval = false,
+    kind = "THINK",
+    input = {},
   } = {}) {
     if (!check(ownerId, "ASSIGN_TASK").ok && ownerId !== "pusat") {
       return { ok: false, code: "PERMISSION_DENIED" };
@@ -143,7 +146,7 @@ function createDurableTaskQueue({ dbPath }) {
       idempotencyKey,
       needsApproval ? 1 : 0,
       new Date().toISOString(),
-      "{}"
+      JSON.stringify({ kind, input })
     );
     audit(id, "ENQUEUE", { ownerId });
     return { ok: true, task: get(id) };
@@ -153,28 +156,50 @@ function createDurableTaskQueue({ dbPath }) {
     return rowToTask(db.prepare(`SELECT * FROM orch_tasks WHERE id = ?`).get(id));
   }
 
+  function depsReady(dependsOn) {
+    return (dependsOn || []).every((depId) => {
+      const t = get(depId);
+      return Boolean(t && t.state === "COMPLETED");
+    });
+  }
+
   function lease({ workerId = "worker-1" } = {}) {
     const leasedId = db.transaction(() => {
-      const row = db
+      const rows = db
         .prepare(
-          `SELECT id FROM orch_tasks WHERE state = 'QUEUED'
-           ORDER BY CASE priority WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 ELSE 3 END, updated_at ASC
-           LIMIT 1`
+          `SELECT id, depends_json FROM orch_tasks WHERE state = 'QUEUED'
+           ORDER BY CASE priority WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 ELSE 3 END, updated_at ASC`
         )
-        .get();
-      if (!row) return null;
-      const info = db
-        .prepare(
-          `UPDATE orch_tasks SET state = 'RUNNING', attempts = attempts + 1, lease_owner = ?, updated_at = ?
-           WHERE id = ? AND state = 'QUEUED'`
-        )
-        .run(workerId, new Date().toISOString(), row.id);
-      if (info.changes !== 1) return null;
-      return row.id;
+        .all();
+      for (const row of rows) {
+        const deps = JSON.parse(row.depends_json || "[]");
+        if (!depsReady(deps)) continue;
+        const info = db
+          .prepare(
+            `UPDATE orch_tasks SET state = 'RUNNING', attempts = attempts + 1, lease_owner = ?, updated_at = ?
+             WHERE id = ? AND state = 'QUEUED'`
+          )
+          .run(workerId, new Date().toISOString(), row.id);
+        if (info.changes === 1) return row.id;
+      }
+      return null;
     })();
     if (!leasedId) return { ok: false, code: "EMPTY" };
     audit(leasedId, "LEASE", { workerId });
     return { ok: true, task: get(leasedId) };
+  }
+
+  function recoverStale({ now = Date.now() } = {}) {
+    const rows = db.prepare(`SELECT id, timeout_ms, updated_at FROM orch_tasks WHERE state = 'RUNNING'`).all();
+    let recovered = 0;
+    for (const row of rows) {
+      const age = now - Date.parse(row.updated_at);
+      if (Number.isFinite(age) && age > row.timeout_ms) {
+        fail(row.id, { reason: "TIMEOUT" });
+        recovered += 1;
+      }
+    }
+    return { ok: true, recovered, production: false };
   }
 
   function recoverLeases() {
@@ -216,6 +241,14 @@ function createDurableTaskQueue({ dbPath }) {
     return { ok: true, task: get(id) };
   }
 
+  function block(id, { reason = "HUMAN_GATE_REQUIRED" } = {}) {
+    db.prepare(
+      `UPDATE orch_tasks SET state = 'BLOCKED_APPROVAL', lease_owner = NULL, updated_at = ? WHERE id = ?`
+    ).run(new Date().toISOString(), id);
+    audit(id, "BLOCKED_APPROVAL", { reason });
+    return { ok: true, task: get(id) };
+  }
+
   function fail(id, { reason = "FAILED" } = {}) {
     const task = get(id);
     if (!task) return { ok: false, code: "NOT_FOUND" };
@@ -240,6 +273,27 @@ function createDurableTaskQueue({ dbPath }) {
     return { ok: true, task: get(id) };
   }
 
+  function setPayload(id, payload) {
+    db.prepare(`UPDATE orch_tasks SET payload_json = ?, updated_at = ? WHERE id = ?`).run(
+      JSON.stringify(payload || {}),
+      new Date().toISOString(),
+      id
+    );
+    return { ok: true, task: get(id) };
+  }
+
+  function health() {
+    const rows = db.prepare(`SELECT state, COUNT(*) AS n FROM orch_tasks GROUP BY state`).all();
+    const byState = Object.fromEntries(rows.map((r) => [r.state, r.n]));
+    return {
+      ok: true,
+      byState,
+      deadLetters: db.prepare(`SELECT COUNT(*) AS n FROM orch_dead`).get().n,
+      live: false,
+      hostedFactory: false,
+    };
+  }
+
   function close() {
     db.close();
   }
@@ -249,9 +303,13 @@ function createDurableTaskQueue({ dbPath }) {
     get,
     lease,
     recoverLeases,
+    recoverStale,
     markTests,
     complete,
     fail,
+    block,
+    setPayload,
+    health,
     close,
     dbPath,
     live: false,

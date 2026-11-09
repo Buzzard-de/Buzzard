@@ -1,131 +1,136 @@
 # Buzzard final completion report — 9 Nov 2026 (Europe/Berlin)
 
-This is **local CODE + TEST + isolated INTEGRATION**. It is **not** live commerce, not production go-live, and not a hosted 24/7 factory.
+Local **CODE + TEST + isolated INTEGRATION** only. Not live commerce, not production go-live, not a hosted 24/7 factory, not 17 LLMs.
+
+Status values are independent. **LIVE_VERIFIED** and **PRODUCTION_READY** stay **no** unless a live system was actually used (it was not).
 
 ## HEAD
 
-- Start (verified): `a496b29bb96cd118cd5907dd3f08d43bcf2eab69` on `cursor/buzzard-autonomous-continuation-c293`
-- End: branch tip after `feat(platform): wire completion bus, CAS leases, CEARS locker bind` (`git log -1 --oneline` on `cursor/buzzard-autonomous-continuation-c293`)
-- Guardian SQLite: untracked, untouched
-- Push / merge / deploy: **not done**
-- PR #492: **not merged** (Taxonomy Auto Sync FAILURE remains)
-
-Prior v2–v4 modules were verified in source (CEARS, locker, DENY egress, smokeFetch, durable queue, 50-master, 17 SEED_IDS) and **not rewritten**. This pass **wired them together**, fixed **double-lease** on the durable queue, and added an isolated completion bus.
+- Start (verified): `2745aba64c77ae470f27192597f236cf9c993894` on `cursor/buzzard-autonomous-continuation-c293`
+- End: branch tip after this pass (`git log -1 --oneline` on the same branch)
+- Guardian SQLite (`buzzard_guardian.sqlite3` + shm/wal): untracked, unused, untouched
+- Push / merge / deploy / live sales: **not done** (no authority)
+- PR #492: **not merged**
+- 17 taxonomy REVIEW_REQUIRED rows: **not auto-approved**
 
 ## Changed files (this pass)
 
-- `server/lib/pusat/durableTaskQueue.js` — transactional lease (`RUNNING` only if still `QUEUED`)
-- `server/lib/security/cearsLocker.js` — CEARS + evidence locker pipeline
-- `server/lib/platform/completionBus.js` — one snapshot across council, engines, Banu, holidays, tax, memory, taxonomy, egress
-- `server/lib/pusat/runtime.js` — `INTEGRATED_PLATFORM_STATUS`
-- `lib/i18n/localeAudit.ts` — mixed-language detection (does not mark translations complete)
-- `server/__tests__/finalCompletion.test.mjs`
+- `server/lib/buzzardNative/core/specialistDispatch.js` — rule-based specialist executor
+- `server/lib/pusat/orchestrator.js` — lease → dispatch → complete/gate/fail
+- `server/lib/pusat/durableTaskQueue.js` — payload on tasks, `block`, dependency wait, `recoverStale`, `health`
+- `server/lib/pusat/runtime.js` — `ORCHESTRATE_TICK` on isolated SQLite; status names executor
+- `server/lib/platform/completionBus.js` — full commerce matrix, payment machine, webhook, 16 probes, Banu draft
+- `server/lib/commerce/connectedWorkflow.js` — timeout, partial delivery, cargo loss, financial mismatch; `runAll`
+- `server/lib/commerce/engineRegistry.js` — fulfillment/shipping/financial coverage map (still `live: false`)
+- `server/lib/finance/bankingAdapter.js` — PayPal candidate, payment state machine, synthetic fraud screen
+- `server/lib/finance/paymentWebhook.js` — HMAC verify + replay; HMAC ≠ signature
+- `server/lib/logistics/carrierAdapter.js` — isolated `simulateTrack` (not live tracking)
+- `server/lib/customer/banuDesk.js` — email draft, auto-send off
+- `server/lib/workstreams/special16Runtime.js` — in-repo probes for 16 streams
+- `server/__tests__/pusatOrchestrator.test.mjs`
 - this report
 
-## 1. Pusat orchestrator
+## Ladder (per area)
 
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| Isolated SQLite queue + in-memory queue + Pusat dry-run actions | Crash recover + unique 17-agent lease + CAS lease | Wired into `INTEGRATED_PLATFORM_STATUS` | **no** | **no** | Guardian path forbidden | Hosted workers |
+| Area | CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | EXTERNAL_ACCESS_REQUIRED | HUMAN_APPROVAL_REQUIRED | LIVE_VERIFIED | PRODUCTION_READY |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Pusat durable queue + orchestrator + dispatch | yes (isolated SQLite, not Guardian) | yes (vitest orchestrator + finalCompletion) | yes (Pusat `ORCHESTRATE_TICK` / completion bus) | hosted workers, production DB | stock/money/deploy gates | no | no |
+| 17 AI council (SEED_IDS preserved) | yes (identities, permissions, memory namespaces) | yes (17-agent, alias, coordinateCouncil) | yes (Pusat tick THINK × 17, rule engines) | STT/TTS/SIP, official voice, external LLM (intentionally off) | council size ops; clone/SIP | no | no |
+| 11 commerce engines + failure matrix | yes (isolated scenarios) | yes | yes (bus `runAll`) | supplier APIs, live orders | Çakır stock buy; sales flag | no | no |
+| Finance / pricing / tax pools | yes (min net €0.50, 11%/7%, DE vs EU-26, 25% of **net**) | yes | yes (bus FR/DE split) | Deutsche Bank, PayPal, EBICS, ELSTER | transfers, tax filing | no | no |
+| Esat / egress / CEARS | yes (DENY policy, CEARS+locker, HMAC≠sig, dir≠WORM) | yes (Node egress + Python 9) | yes (bus incident) | host firewall, WAF, DNS, offsite WORM | allowlist, production restore | no | no |
+| Backup / isolated DR | yes (synthetic restore + checksum PRAGMA) | yes (`ISOLATED_RESTORE_TESTED`) | isolated only | production disk, offsite | production restore | no | no |
+| Taxonomy / PIM | yes (50 master; lossless map; no silent id rewrite) | validator in bus | shop map exists, not applied live | marketplace feeds | 17 REVIEW_REQUIRED; PR #492 | no | no |
+| AB-27 / 30 locales | catalogs + audit exist; **complete: false** | locale tests in other suites | holidays 27 sourced | professional translation QA | holiday homepage publish | no | no |
+| Bank / payment adapters | interface + state machine + webhook HMAC | yes | isolated | real credentials/contracts | any money movement | no | no |
+| Logistics / carriers | adapter + simulateTrack | yes | isolated | DHL/DPD/GLS/Hermes/UPS/Amazon/posts APIs | live labels/shipments | no | no |
+| Banu / Zeynep / WhatsApp | desk + draft + voice session stub | yes | bus | mailbox, SIP, WhatsApp number | live send/dial/migrate | no | no |
+| 16 workstreams | registry + `special16Runtime.probe` | yes | in-repo probes only | models, SIP, ELSTER, carriers | each stream’s blockers | no | no |
+| Storefront UX | existing storefront code; **not browser-verified this pass** | not this pass | n/a | licensed media | sales enable | no | no |
 
-## 2. 17 AI council
+## Pusat — real isolated execution
 
-SEED_IDS = 17. Official names present. Unique `memory/*` namespaces (short paths like `memory/sinan/` are **not** merged with aliases). Shared `shared_knowledge` vs personal isolation tested. Rule engines, **not** 17 LLMs. Voice/SIP remain not live.
+Pusat now **leases** durable tasks, **dispatches** the matching specialist, **writes the result payload**, then **completes**, **blocks for human gate**, or **retries / dead-letters**.
 
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| yes (identities + permissions) | 17-agent + alias + inventory | Pusat dispatch ping tasks | **no** | **no** | clone/voice gated | council size 5/7/17; paid SIP; official voice clone |
+- Scheduler: `tick` + stale-lease timeout
+- Priority: P0–P3 SQL order
+- Dependencies: child not leased until parent `COMPLETED`
+- Idempotency: unique `idempotency_key`
+- Ownership: `owner_id` / `assignee_id` / `lease_owner`
+- Audit: `orch_audit`
+- Crash recovery: reopen + `recoverLeases`
+- Concurrent lease: CAS `UPDATE … WHERE state='QUEUED'`
+- AI coordination: `coordinateCouncil` schedules THINK for all 17 SEED_IDS
+- Human Approval Center: STOCK_BUY / refunds / transfers submitted as `WAITING_APPROVAL`
+- Not a hosted factory. `llmCompleted: false`.
 
-## 3. 11 commerce engines
+## 17 AI (SEED_IDS unchanged)
 
-`completionBus` runs happy + duplicate order + failed payment + partial refund + `buyStock` deny. Dropshipping: Çakır cannot buy without a human gate.
+Native ids: Pusat, Sinan Bey, Esat Bey, Doğu Bey, Nedim Bey, Tuncay Bey, Amelia, Adrian, Mira, Leon, plus specialists stock_ai (Çakır Bey), category_ai (Pelin Hanım), pricing_ai (Akın Bey), seo_ai (Yılmaz Bey), banu_hanim, sales_analysis_ai (Sencer Bey), zeynep_hanim.
 
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| adapters + connected fixtures | finalCompletion + connectedWorkflow | local bus only | **no** | **no** | sales/payment fail-closed | live orders/payments |
+Each has permission profile, capability profile, private `memory/` namespace, Pusat assignee mapping, and gated writes. Shared memory is `shared_knowledge` only. Aliases do not merge identities.
 
-## 4. Finance and pricing
+Dispatch kinds: THINK/REPORT, PRICE_CALCULATE, STOCK_READ/BUY, CATEGORY_READ, CUSTOMER_*, PHONE_*, SALES_REPORT, SEO_DRAFT, ANALYZE_CODE, SANCTIONS_SCREEN, TAX_SPLIT, BANK_TRANSFER. Unknown kinds fall back to rule-based THINK, not an LLM.
 
-Min net €0.50, auto 11% / other 7%, estimated vs actual, refund ≠ supplier credit, DE tax pool separate, 25% emergency reserve on **net profit**.
+## Commerce scenarios implemented (isolated)
 
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| quote + taxReserves + banking adapter | pricing + bus tax FR/DE | bus snapshot | **no** | **no** | no transfers | ELSTER, bank rails |
+Happy path, duplicate order, failed payment, partial refund, supplier unavailable, stock change (buy gated), insufficient profit, shipment delay, customer cancel, supplier reimbursement refused (credit not assumed), price change, timeout (no network), partial delivery, cargo loss, financial mismatch (`consistent: false` when supplier credit is assumed).
 
-## 5. Security / Esat
+Dropshipping: `buyStock` / `STOCK_BUY` → `HUMAN_GATE_REQUIRED`.
 
-Egress **DENY**. Smoke scripts use `smokeFetch` (isolated; live smoke denied in production). Spawn guard. Archive not executable from production entry. CEARS+locker bound; notify does not network; HMAC ≠ signature; directory ≠ WORM. Isolated DR + backup fault hashes.
+## Tests (do not double-count overlapping suites)
 
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| policy + guards + CEARS pipeline | Node 4.2–4.5, Python 9, spawn, smokeFetch | bus incident snapshot | **no** | **no** | **policy+unit verified; host WAF/DNS/firewall not verified** | production restore, notify channels, allowlist changes |
-
-## 6. Taxonomy
-
-50 master preserved. Retired `bz.20/25/26` not deleted. 17 REVIEW_REQUIRED **not auto-approved** (`docs/council/TAXONOMY_REVIEW_REQUIRED_2026-11-09.md`). Validator does not merge #492.
-
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| lossless map + validate | validate in bus | shop 53 ↔ 50 map exists | **no** | **no** | n/a | human REVIEW_REQUIRED; PR 492 |
-
-## 7. 30 locales / AB-27
-
-30 locale codes audited; `complete: false`. Mixed-language keys **detected**, not auto-filled (would fake verified translations). Holiday calendar: 27 countries sourced, homepage publish `NEEDS_APPROVAL`. Category labels: active shop L1 = 50 (food/jewelry retired).
-
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| catalogs + audit + holidays | localeAudit, catalog, languages, routing, categories/i18n | holidays in bus | **no** | **no** | n/a | translation completeness; holiday publish |
-
-Mobile/desktop visual layout was **not** browser-verified in this environment.
-
-## 8. Customer / comms
-
-Banu desk on bus. Refunds/cancels gated. WhatsApp send/migrate denied. Voice `liveCalls: false`.
-
-| CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | LIVE_VERIFIED | PRODUCTION_READY | SECURITY_VERIFIED | BLOCKED_APPROVAL |
-| --- | --- | --- | --- | --- | --- | --- |
-| desk + sandbox | bus + Banu | order_status fixture | **no** | **no** | no live send | WhatsApp number, SIP, STT/TTS accounts |
-
-## 9. Sixteen workstreams
-
-Registry still 16 owners + acceptance + blockers. None LIVE. Independent AI = no external LLM (correct). Textile try-on, paid SIP, ELSTER, carrier credentials remain BLOCKED_APPROVAL.
-
-## Tests (do not sum overlapping suites)
-
-**Command A** (unique continuation + final; 8 files):
+**Command A** (this pass + continuation, unique files):
 
 ```
-npx vitest run server/__tests__/finalCompletion.test.mjs \
+npx vitest run \
+  server/__tests__/pusatOrchestrator.test.mjs \
+  server/__tests__/finalCompletion.test.mjs \
   server/__tests__/autonomousContinuation.test.mjs \
   server/__tests__/autonomousContinuationV3.test.mjs \
   server/__tests__/autonomousContinuationV4.test.mjs \
   server/__tests__/buzzardNative17AgentCouncil.test.mjs \
   server/__tests__/buzzardNativeCouncilAlias.test.mjs \
   server/__tests__/egress44.test.mjs \
-  server/__tests__/egressHardening45.test.mjs
+  server/__tests__/egressHardening45.test.mjs \
+  server/__tests__/isolatedDisasterDrill.test.mjs \
+  server/__tests__/special16Phase4.test.mjs
 ```
 
-Result: **67 passed, 0 failed, 0 skipped.**
-
-**Command B** `npm run test:master-ecosystem`: **82 passed, 0 failed.** Overlaps A on `egress44` (11 tests) and shares i18n/category files with other locale tests.
+Result: **83 passed, 0 failed** (35 on first batch of 4 files + 48 on the second batch of 7 files).
 
 **Command C** `python3 -m unittest intelligence.security.test_egress`: **9 passed.**
 
-Failed tests this pass: **none after lease CAS + completion bus.** (Earlier specialist inventory false-ok was fixed in v4 by namespace uniqueness, not agent_id substring.)
+Failed tests this pass: **none** after orchestrator rewrite.
 
-Load: 17 sequential unique leases on SQLite (serialized). Not a distributed load test.
+Not a distributed load test. 17-agent coordinate + unique CAS leases are concurrency checks on one SQLite file.
 
-## Still not done (honest)
+## Real integrations (isolated)
 
-- Host firewall / WAF / production DNS
+- Specialist engines ↔ Pusat queue
+- Completion bus ↔ commerce matrix, Banu, holidays, tax, CEARS, memory, taxonomy validator, 16 probes
+- Payment webhook HMAC replay protection (not a signature, not a live PSP)
+- Carrier status normalizer (not a live track API)
+
+## Still software-incomplete or external
+
+- 30-locale **complete: false**; mixed-language keys detected, not auto-filled as “verified translations”
+- Storefront visual/mobile/desktop not browser-verified here
+- No live TecDoc, supplier, PSP, carrier, WhatsApp, or SIP
+- Host WAF/firewall/DNS not in this VM
 - Production DR / offsite WORM
-- Live payments, carriers, WhatsApp, SIP
-- Human taxonomy REVIEW_REQUIRED
-- Full translation verification
-- Browser mobile/desktop UX
-- External LLM / model downloads (intentionally off)
-- Cursor is not a 24/7 service
+- Textile virtual try-on model
+- Independent AI weights (download forbidden)
+- Cursor session ≠ 24/7 factory
+
+## External access waiting
+
+Deutsche Bank AG / PayPal / EBICS credentials, carrier accounts, WhatsApp number ops, SIP/STT/TTS providers, ELSTER, customs filings, licensed media, translation sign-off.
+
+## Human approval waiting
+
+17 taxonomy REVIEW_REQUIRED, PR #492, sales enable, any money movement, stock purchase, live shipment, live comms, production restore, egress allowlist change, official Sinan voice clone.
 
 ## Production still required (after approval)
 
-Deploy, secrets, real DB, payment/carrier contracts, tax authority, allowlist ops, sales flag — all **BLOCKED_APPROVAL**.
+Deploy, secrets, real DB, contracts — all **BLOCKED_APPROVAL**. This report does not authorize them.

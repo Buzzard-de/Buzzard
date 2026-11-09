@@ -144,4 +144,31 @@ function runIsolatedDisasterDrill() {
   };
 }
 
-module.exports = { runIsolatedDisasterDrill };
+function runCorruptBackupDrill() {
+  const Database = loadSqlite();
+  const workRoot = fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-dr-corrupt-"));
+  assertSafePath(workRoot);
+  const corruptDb = path.join(workRoot, "corrupt.db");
+  fs.writeFileSync(corruptDb, Buffer.from("not-a-sqlite-database"));
+  let integrity = "unreadable";
+  let opened = false;
+  try {
+    const db = new Database(corruptDb);
+    opened = true;
+    integrity = db.prepare("PRAGMA integrity_check").get()?.integrity_check || "failed";
+    db.close();
+  } catch (error) {
+    integrity = error.message || "open_failed";
+  }
+  return {
+    status: integrity === "ok" ? "ISOLATED_CORRUPTION_MISSED" : "ISOLATED_CORRUPTION_DETECTED",
+    productionDrVerified: false,
+    productionTouched: false,
+    opened,
+    integrity,
+    restoreClaimed: false,
+    workRoot,
+  };
+}
+
+module.exports = { runIsolatedDisasterDrill, runCorruptBackupDrill };

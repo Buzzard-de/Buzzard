@@ -107,6 +107,7 @@ const ACTIONS = Object.freeze({
   PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
   ORCHESTRATE_STATUS: "ORCHESTRATE_STATUS",
   ORCHESTRATE_TICK: "ORCHESTRATE_TICK",
+  ORCHESTRATE_APPROVE: "ORCHESTRATE_APPROVE",
   INTEGRATED_PLATFORM_STATUS: "INTEGRATED_PLATFORM_STATUS",
 });
 
@@ -186,6 +187,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.PLATFORM_CONTINUATION_STATUS,
   ACTIONS.ORCHESTRATE_STATUS,
   ACTIONS.ORCHESTRATE_TICK,
+  ACTIONS.ORCHESTRATE_APPROVE,
   ACTIONS.INTEGRATED_PLATFORM_STATUS,
 ]);
 
@@ -888,44 +890,49 @@ function executeControl(action, payload, { actorId, correlationId }) {
     };
   }
   if (action === ACTIONS.ORCHESTRATE_STATUS) {
-    const { createTaskQueue } = require("./taskQueue");
-    const q = createTaskQueue();
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
     return {
       ok: true,
       action,
-      data: {
-        ...q.snapshot(),
-        live: false,
-        hostedFactory: false,
-        executor: "specialistDispatch",
-        llmCouncil: false,
-        durableIsolatedSqlite: true,
-      },
+      data: orch.status(),
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),
     };
   }
   if (action === ACTIONS.ORCHESTRATE_TICK) {
-    const os = require("os");
-    const path = require("path");
-    const { createOrchestrator } = require("./orchestrator");
-    const dbPath = payload.dbPath || process.env.PUSAT_ORCH_DB || path.join(os.tmpdir(), "buzzard-pusat-orch.sqlite");
-    const orch = createOrchestrator({ dbPath });
-    try {
-      if (payload.schedule) orch.schedule(payload.schedule);
-      const ran = payload.coordinate ? orch.coordinateCouncil({ kind: payload.kind || "THINK" }) : orch.tick({ limit: payload.limit || 8 });
-      return {
-        ok: true,
-        action,
-        data: { ...ran, live: false, hostedFactory: false, dbPath },
-        actorId,
-        correlationId,
-        ...label(MODE.DRY_RUN),
-      };
-    } finally {
-      orch.close();
-    }
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
+    if (payload.schedule) orch.schedule(payload.schedule);
+    const ran = payload.coordinate
+      ? orch.coordinateCouncil({ kind: payload.kind || "THINK" })
+      : orch.tick({ limit: payload.limit || 8 });
+    return {
+      ok: true,
+      action,
+      data: { ...ran, status: orch.status(), live: false, hostedFactory: false, dbPath: orch.queue.dbPath },
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
+    const decided = orch.approvals.decide({
+      id: payload.approvalId,
+      approved: payload.approved !== false,
+      actorId: payload.deciderId || actorId,
+    });
+    return {
+      ok: decided.ok,
+      action,
+      data: decided,
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
   }
   if (action === ACTIONS.TEN_AGENT_COUNCIL) {
     return {

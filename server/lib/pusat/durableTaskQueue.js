@@ -63,6 +63,20 @@ function openDb(dbPath) {
       reason TEXT NOT NULL,
       at TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS orch_approvals (
+      id TEXT PRIMARY KEY,
+      task_id TEXT NOT NULL,
+      action TEXT NOT NULL,
+      requested_by TEXT NOT NULL,
+      decided_by TEXT,
+      status TEXT NOT NULL,
+      risk TEXT NOT NULL,
+      reason TEXT,
+      expires_at TEXT NOT NULL,
+      payload_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      decided_at TEXT
+    );
   `);
   return db;
 }
@@ -285,13 +299,119 @@ function createDurableTaskQueue({ dbPath }) {
   function health() {
     const rows = db.prepare(`SELECT state, COUNT(*) AS n FROM orch_tasks GROUP BY state`).all();
     const byState = Object.fromEntries(rows.map((r) => [r.state, r.n]));
+    const stale = db.prepare(`SELECT COUNT(*) AS n FROM orch_tasks WHERE state = 'RUNNING'`).get().n;
+    const workers = db
+      .prepare(`SELECT lease_owner AS workerId, COUNT(*) AS n FROM orch_tasks WHERE lease_owner IS NOT NULL GROUP BY lease_owner`)
+      .all();
     return {
       ok: true,
-      byState,
+      queued: byState.QUEUED || 0,
+      running: byState.RUNNING || 0,
+      completed: byState.COMPLETED || 0,
+      failed: byState.FAILED || 0,
+      blockedApproval: byState.BLOCKED_APPROVAL || 0,
+      rejected: byState.REJECTED || 0,
+      deadLetter: byState.DEAD_LETTER || 0,
+      staleLeases: stale,
       deadLetters: db.prepare(`SELECT COUNT(*) AS n FROM orch_dead`).get().n,
+      pendingApprovals: db.prepare(`SELECT COUNT(*) AS n FROM orch_approvals WHERE status = 'WAITING_APPROVAL'`).get().n,
+      workers: { healthy: true, live: false, leases: workers },
+      byState,
       live: false,
       hostedFactory: false,
+      inMemory: false,
     };
+  }
+
+  function submitApproval({ taskId, action, requestedBy, reason, risk = "HIGH", ttlMs = 86_400_000, payload = {} } = {}) {
+    const existing = db
+      .prepare(`SELECT * FROM orch_approvals WHERE task_id = ? AND status = 'WAITING_APPROVAL'`)
+      .get(taskId);
+    if (existing) return { ok: true, duplicate: true, item: existing };
+    const id = `apr_${crypto.randomBytes(6).toString("hex")}`;
+    const now = new Date();
+    db.prepare(
+      `INSERT INTO orch_approvals (id,task_id,action,requested_by,decided_by,status,risk,reason,expires_at,payload_json,created_at,decided_at)
+       VALUES (?,?,?,?,NULL,'WAITING_APPROVAL',?,?,?,?,?,NULL)`
+    ).run(
+      id,
+      taskId,
+      action,
+      requestedBy,
+      risk,
+      reason || null,
+      new Date(now.getTime() + ttlMs).toISOString(),
+      JSON.stringify(payload),
+      now.toISOString()
+    );
+    audit(taskId, "APPROVAL_SUBMIT", { id, risk });
+    return { ok: true, item: getApproval(id) };
+  }
+
+  function getApproval(id) {
+    const row = db.prepare(`SELECT * FROM orch_approvals WHERE id = ?`).get(id);
+    if (!row) return null;
+    return { ...row, payload: JSON.parse(row.payload_json || "{}"), hmacIsSignature: false };
+  }
+
+  function listApprovals({ status } = {}) {
+    const rows = status
+      ? db.prepare(`SELECT * FROM orch_approvals WHERE status = ?`).all(status)
+      : db.prepare(`SELECT * FROM orch_approvals`).all();
+    return rows.map((r) => ({ ...r, payload: JSON.parse(r.payload_json || "{}") }));
+  }
+
+  function releaseToQueued(taskId) {
+    db.prepare(
+      `UPDATE orch_tasks SET state = 'QUEUED', lease_owner = NULL, updated_at = ? WHERE id = ? AND state = 'BLOCKED_APPROVAL'`
+    ).run(new Date().toISOString(), taskId);
+    audit(taskId, "RELEASE_AFTER_APPROVAL", {});
+    return { ok: true, task: get(taskId) };
+  }
+
+  function rejectTerminal(taskId, reason) {
+    db.prepare(`UPDATE orch_tasks SET state = 'REJECTED', lease_owner = NULL, updated_at = ? WHERE id = ?`).run(
+      new Date().toISOString(),
+      taskId
+    );
+    db.prepare(`INSERT OR REPLACE INTO orch_dead (task_id, reason, at) VALUES (?,?,?)`).run(
+      taskId,
+      reason || "REJECTED",
+      new Date().toISOString()
+    );
+    audit(taskId, "REJECTED", { reason });
+    return { ok: true, task: get(taskId) };
+  }
+
+  function decideApproval({ id, approved, actorId }) {
+    const DECIDERS = new Set(["human", "operator"]);
+    if (!DECIDERS.has(actorId)) return { ok: false, code: "PERMISSION_DENIED" };
+    const item = getApproval(id);
+    if (!item) return { ok: false, code: "NOT_FOUND" };
+    if (item.status !== "WAITING_APPROVAL") return { ok: false, code: "ALREADY_DECIDED" };
+    if (Date.parse(item.expires_at) < Date.now()) {
+      db.prepare(`UPDATE orch_approvals SET status = 'EXPIRED', decided_at = ? WHERE id = ?`).run(
+        new Date().toISOString(),
+        id
+      );
+      return { ok: false, code: "EXPIRED" };
+    }
+    const status = approved ? "APPROVED" : "REJECTED";
+    db.prepare(`UPDATE orch_approvals SET status = ?, decided_by = ?, decided_at = ? WHERE id = ?`).run(
+      status,
+      actorId,
+      new Date().toISOString(),
+      id
+    );
+    audit(item.task_id, "APPROVAL_DECIDE", { id, approved, actorId });
+    if (approved) {
+      const payload = get(item.task_id)?.payload || {};
+      setPayload(item.task_id, { ...payload, humanApproved: true, approvalId: id });
+      releaseToQueued(item.task_id);
+    } else {
+      rejectTerminal(item.task_id, "APPROVAL_REJECTED");
+    }
+    return { ok: true, item: getApproval(id), task: get(item.task_id) };
   }
 
   function close() {
@@ -310,6 +430,12 @@ function createDurableTaskQueue({ dbPath }) {
     block,
     setPayload,
     health,
+    submitApproval,
+    getApproval,
+    listApprovals,
+    decideApproval,
+    releaseToQueued,
+    rejectTerminal,
     close,
     dbPath,
     live: false,

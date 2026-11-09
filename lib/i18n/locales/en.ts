@@ -59,6 +59,8 @@ export const catalog: TranslationTree = {
     highlights: "Popular categories",
     trust: "Why Buzzard?",
     reviews: "Customer reviews",
+    catalogNotice:
+      "Buzzard24 is in catalog mode. You can browse products and categories — sales and checkout follow at sales launch.",
     newsletter: "Newsletter",
     newsletterText: "Exclusive offers and new arrivals in your inbox.",
     newsletterPlaceholder: "Your email address",
@@ -428,6 +430,11 @@ export const catalog: TranslationTree = {
     imprint: "Legal notice",
     privacy: "Privacy",
     contact: "Contact",
+    help: "Help",
+    faq: "FAQ",
+    terms: "Terms",
+    shipping: "Shipping",
+    withdrawal: "Withdrawal",
     copyright: "© 2026 Buzzard. All rights reserved.",
   },
   language: {
@@ -550,6 +557,11 @@ export const catalog: TranslationTree = {
     inquiryCta: "Send inquiry",
     cartNotice:
       "Catalog mode — no online checkout. Add items to your cart and send us an inquiry.",
+    productInfo: "Catalog mode — price and order follow at sales launch.",
+    trustBrowse: "Wide category range",
+    trustInfo: "Transparent product information",
+    trustContact: "Support available",
+    trustSoon: "Personal advice",
   },
   contactForm: {
     nameLabel: "Your name",

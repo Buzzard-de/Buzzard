@@ -7,6 +7,10 @@ export type LocaleAuditRow = {
   extraKeys: string[];
   placeholderMismatches: string[];
   mixedLanguageKeys: string[];
+  emptyKeys: string[];
+  keyComplete: boolean;
+  machineGeneratedKeys: string[];
+  humanReviewed: false;
   rtl: boolean;
   complete: false;
   verified: false;
@@ -32,6 +36,7 @@ export function auditLocales(): {
   listed: number;
   fallback: string;
   rows: LocaleAuditRow[];
+  keyCompleteAll: boolean;
   complete: false;
   machineTranslationAccepted: false;
 } {
@@ -46,6 +51,7 @@ export function auditLocales(): {
       if (!(k in cat)) return false;
       return placeholders(de[k]).join() !== placeholders(cat[k]).join();
     });
+    const emptyKeys = deKeys.filter((k) => k in cat && String(cat[k]).trim() === "");
     const mixedLanguageKeys =
       locale === "de"
         ? []
@@ -57,12 +63,17 @@ export function auditLocales(): {
             if (/Buzzard|Trusted Shops|€/.test(a)) return false;
             return /[äöüÄÖÜß]/.test(a);
           });
+    const keyComplete = missingKeys.length === 0 && emptyKeys.length === 0 && placeholderMismatches.length === 0;
     return {
       locale,
       missingKeys,
       extraKeys,
       placeholderMismatches,
       mixedLanguageKeys,
+      emptyKeys,
+      keyComplete,
+      machineGeneratedKeys: [],
+      humanReviewed: false,
       rtl: locale === "ar",
       complete: false,
       verified: false,
@@ -72,6 +83,7 @@ export function auditLocales(): {
     listed: LANGUAGE_CODES.length,
     fallback: FALLBACK_LOCALE,
     rows,
+    keyCompleteAll: rows.every((r) => r.keyComplete),
     complete: false,
     machineTranslationAccepted: false,
   };

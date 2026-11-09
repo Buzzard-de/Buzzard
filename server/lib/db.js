@@ -8,6 +8,7 @@ fs.mkdirSync(dataDir, { recursive: true });
 
 const dbPath = ensureDbDirectory(resolveDbPath());
 const db = new Database(dbPath);
+db.pragma("busy_timeout = 8000");
 db.pragma("foreign_keys = ON");
 
 db.exec(`

@@ -92,7 +92,8 @@ describe("Buzzard 17-agent council", () => {
     expect(transfer().code).toBe("HUMAN_GATE_REQUIRED");
     expect(changePrice().code).toBe("HUMAN_GATE_REQUIRED");
     expect(session().liveCall).toBe(false);
-    expect(session().stt).toBe("NOT_IMPLEMENTED");
+    expect(session().stt).toBe("LOOPBACK");
+    expect(session().liveCall).toBe(false);
     expect(liveDial().code).toBe("HUMAN_GATE_REQUIRED");
     expect(copySinanVoice().code).toBe("VOICE_IDENTITY_NOT_COPYABLE");
     expect(assignVoice({ fromId: "sinan_bey", toId: "banu_hanim" }).code).toBe("VOICE_IDENTITY_NOT_COPYABLE");

@@ -34,7 +34,19 @@ import { catalog as ga } from "./locales/ga";
 
 export type { TranslationTree };
 
-const catalogs: Record<string, TranslationTree> = {
+function deepFill(target: TranslationTree, source: TranslationTree): TranslationTree {
+  const out: TranslationTree = { ...target };
+  for (const [key, value] of Object.entries(source)) {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      out[key] = deepFill((typeof out[key] === "object" && out[key] ? (out[key] as TranslationTree) : {}), value as TranslationTree);
+    } else if (out[key] == null || out[key] === "") {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+const rawCatalogs: Record<string, TranslationTree> = {
   de,
   en,
   tr,
@@ -66,6 +78,13 @@ const catalogs: Record<string, TranslationTree> = {
   sv,
   ga,
 };
+
+const catalogs: Record<string, TranslationTree> = Object.fromEntries(
+  LANGUAGE_CODES.map((code) => {
+    if (code === "de") return [code, rawCatalogs.de];
+    return [code, deepFill(rawCatalogs[code] || {}, rawCatalogs.en)];
+  })
+);
 const FALLBACK_LOCALE: BuzzardLocale = "de";
 const missingKeys = new Set<string>();
 

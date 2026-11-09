@@ -4,133 +4,112 @@ Local **CODE + TEST + isolated INTEGRATION** only. Not live commerce, not produc
 
 Status values are independent. **LIVE_VERIFIED** and **PRODUCTION_READY** stay **no** unless a live system was actually used (it was not).
 
+Work is **uncommitted** on this pass (explicit instruction: do not commit, push, merge, or deploy).
+
 ## HEAD
 
-- Start (verified): `2745aba64c77ae470f27192597f236cf9c993894` on `cursor/buzzard-autonomous-continuation-c293`
-- End: branch tip after this pass (`git log -1 --oneline` on the same branch)
+- Start (verified): `e092005ef49ea33b76d86074c0738817cd68139e` on `cursor/buzzard-autonomous-continuation-c293`
+- End HEAD (git object, unchanged): `e092005ef49ea33b76d86074c0738817cd68139e`
+- End tree: dirty working tree + untracked software files listed below; **not** a new commit
 - Guardian SQLite (`buzzard_guardian.sqlite3` + shm/wal): untracked, unused, untouched
-- Push / merge / deploy / live sales: **not done** (no authority)
+- Push / merge / deploy / live sales: **not done**
 - PR #492: **not merged**
 - 17 taxonomy REVIEW_REQUIRED rows: **not auto-approved**
 
-## Changed files (this pass)
+## Changed / added implementations (this pass)
 
-- `server/lib/buzzardNative/core/specialistDispatch.js` — rule-based specialist executor
-- `server/lib/pusat/orchestrator.js` — lease → dispatch → complete/gate/fail
-- `server/lib/pusat/durableTaskQueue.js` — payload on tasks, `block`, dependency wait, `recoverStale`, `health`
-- `server/lib/pusat/runtime.js` — `ORCHESTRATE_TICK` on isolated SQLite; status names executor
-- `server/lib/platform/completionBus.js` — full commerce matrix, payment machine, webhook, 16 probes, Banu draft
-- `server/lib/commerce/connectedWorkflow.js` — timeout, partial delivery, cargo loss, financial mismatch; `runAll`
-- `server/lib/commerce/engineRegistry.js` — fulfillment/shipping/financial coverage map (still `live: false`)
-- `server/lib/finance/bankingAdapter.js` — PayPal candidate, payment state machine, synthetic fraud screen
-- `server/lib/finance/paymentWebhook.js` — HMAC verify + replay; HMAC ≠ signature
-- `server/lib/logistics/carrierAdapter.js` — isolated `simulateTrack` (not live tracking)
-- `server/lib/customer/banuDesk.js` — email draft, auto-send off
-- `server/lib/workstreams/special16Runtime.js` — in-repo probes for 16 streams
-- `server/__tests__/pusatOrchestrator.test.mjs`
-- this report
+Pusat queue and approval:
 
-## Ladder (per area)
+- `server/lib/pusat/orchRuntime.js` — singleton orchestrator per `dbPath`
+- `server/lib/pusat/runtime.js` — `ORCHESTRATE_STATUS` / `TICK` / `APPROVE` share that instance
+- `server/lib/pusat/durableTaskQueue.js` — `orch_approvals`, health (queued/running/completed/failed/blockedApproval/rejected/deadLetter/staleLeases/workers)
+- `server/lib/pusat/humanApproval.js` — persistent approve/reject; HIGH never auto-approved
+- `server/lib/pusat/orchestrator.js` — lease → dispatch → independent `verifyDispatch`; no fabricated `markTests(true)`
+- `server/lib/pusat/dispatchVerify.js` — missing evidence = `NOT_VERIFIED`
+
+Dispatch, commerce, carriers, finance, voice, WhatsApp, locales, streams:
+
+- `server/lib/buzzardNative/core/specialistDispatch.js` + `brandDraft.js`
+- `server/lib/commerce/isolatedOrder.js` + `connectedWorkflow.js` re-export
+- `server/lib/logistics/carrierContract.js` + `carrierAdapter.js` facade
+- `server/lib/finance/bankingAdapter.js`, `paymentWebhook.js`, `fxFixture.js`
+- `server/lib/buzzardNative/core/specialists/zeynepEngine.js` — LOOPBACK STT/TTS
+- `server/lib/comms/whatsappSandbox.js` — inbound verify, send still denied
+- `lib/i18n/translations.ts` deepFill from `en`; locale key catalogue vs `de`
+- `server/lib/workstreams/special16.js` + `special16Runtime.js` execute-all
+- `server/lib/survival/isolatedDisasterDrill.js` corrupt-backup detection
+- `server/lib/commerce/cartService.js` — first visible catalog item for dry-run cart
+- `server/lib/db.js` — `busy_timeout = 8000`
+- tests: `server/__tests__/masterSoftwareCompletion.test.mjs` and related suite fixes
+- e2e: `e2e/commerce-storefront.spec.ts`, `e2e/customer-journey.spec.ts`
+
+## Ladder
 
 | Area | CODE_COMPLETE | TEST_PASSED | INTEGRATION_COMPLETE | EXTERNAL_ACCESS_REQUIRED | HUMAN_APPROVAL_REQUIRED | LIVE_VERIFIED | PRODUCTION_READY |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Pusat durable queue + orchestrator + dispatch | yes (isolated SQLite, not Guardian) | yes (vitest orchestrator + finalCompletion) | yes (Pusat `ORCHESTRATE_TICK` / completion bus) | hosted workers, production DB | stock/money/deploy gates | no | no |
-| 17 AI council (SEED_IDS preserved) | yes (identities, permissions, memory namespaces) | yes (17-agent, alias, coordinateCouncil) | yes (Pusat tick THINK × 17, rule engines) | STT/TTS/SIP, official voice, external LLM (intentionally off) | council size ops; clone/SIP | no | no |
-| 11 commerce engines + failure matrix | yes (isolated scenarios) | yes | yes (bus `runAll`) | supplier APIs, live orders | Çakır stock buy; sales flag | no | no |
-| Finance / pricing / tax pools | yes (min net €0.50, 11%/7%, DE vs EU-26, 25% of **net**) | yes | yes (bus FR/DE split) | Deutsche Bank, PayPal, EBICS, ELSTER | transfers, tax filing | no | no |
-| Esat / egress / CEARS | yes (DENY policy, CEARS+locker, HMAC≠sig, dir≠WORM) | yes (Node egress + Python 9) | yes (bus incident) | host firewall, WAF, DNS, offsite WORM | allowlist, production restore | no | no |
-| Backup / isolated DR | yes (synthetic restore + checksum PRAGMA) | yes (`ISOLATED_RESTORE_TESTED`) | isolated only | production disk, offsite | production restore | no | no |
-| Taxonomy / PIM | yes (50 master; lossless map; no silent id rewrite) | validator in bus | shop map exists, not applied live | marketplace feeds | 17 REVIEW_REQUIRED; PR #492 | no | no |
-| AB-27 / 30 locales | catalogs + audit exist; **complete: false** | locale tests in other suites | holidays 27 sourced | professional translation QA | holiday homepage publish | no | no |
-| Bank / payment adapters | interface + state machine + webhook HMAC | yes | isolated | real credentials/contracts | any money movement | no | no |
-| Logistics / carriers | adapter + simulateTrack | yes | isolated | DHL/DPD/GLS/Hermes/UPS/Amazon/posts APIs | live labels/shipments | no | no |
-| Banu / Zeynep / WhatsApp | desk + draft + voice session stub | yes | bus | mailbox, SIP, WhatsApp number | live send/dial/migrate | no | no |
-| 16 workstreams | registry + `special16Runtime.probe` | yes | in-repo probes only | models, SIP, ELSTER, carriers | each stream’s blockers | no | no |
-| Storefront UX | existing storefront code; **not browser-verified this pass** | not this pass | n/a | licensed media | sales enable | no | no |
+| Pusat STATUS/TICK same durable queue | yes (isolated SQLite, not Guardian) | yes (`pusatOrchestrator`, `masterSoftwareCompletion`) | yes (same `dbPath` singleton) | hosted workers, production DB | stock/money/deploy | no | no |
+| Persistent human approval + resume | yes | yes (restart + STOCK_BUY dry-run) | yes | operator identities in prod | HIGH ops, stock buy | no | no |
+| Independent test verification | yes (`dispatchVerify`) | yes | yes | live CI farm | none for local | no | no |
+| 17-agent dispatch matrix | yes (SEED_IDS preserved) | yes | yes | STT/TTS/SIP, LLM (off) | clone/SIP | no | no |
+| Isolated commerce order lifecycle | yes (one `orderId` through engines) | yes | yes (synthetic store) | supplier APIs, live orders | Çakır buy; sales flag | no | no |
+| Carrier contract (DHL/DPD/GLS/Hermes/UPS/Amazon/posts/local) | yes (mock adapters, `liveShipment: false`) | yes | isolated | carrier accounts | live labels | no | no |
+| Bank / PayPal dry-run docs | yes (pain.001, Instant model, camt, EBICS envelope, NVP fixture) | yes | isolated | bank/PayPal credentials | any transfer | no | no |
+| 30 locales key catalogue | yes (`keyCompleteAll: true`) | yes (`localeAudit`) | catalogues filled from English where missing | professional translators | linguistic sign-off | no | no |
+| Voice loopback | yes | yes | in-process | SIP/STT/TTS | live dial | no | no |
+| WhatsApp inbound | yes (HMAC, timestamp, replay) | yes | sandbox | Cloud API number | send/migrate | no | no |
+| 16 workstreams | yes (local execute evidence) | yes | local only | models, ELSTER, carriers, SIP | each stream blocker | no | no |
+| Storefront browser | catalog mode | yes (Playwright 37 passed / 6 skipped) | local Next + API | licensed media | sales enable | no | no |
+| Lint / typecheck / unit | n/a | yes | n/a | n/a | n/a | no | no |
+| Taxonomy 50 + REVIEW_REQUIRED | preserved | validator exists | not applied live | marketplace feeds | 17 rows; PR #492 | no | no |
+| Backup / isolated DR | yes + corruption detect | yes | isolated | production disk, offsite WORM | production restore | no | no |
+| Egress DENY | yes | prior egress suites + unit | policy file | host WAF/DNS | allowlist | no | no |
 
-## Pusat — real isolated execution
+Locale honesty: **key-complete is not human-reviewed**. `complete: false`, `verified: false`, `humanReviewed: false`. English fill of missing keys is machine-assisted, not professional translation.
 
-Pusat now **leases** durable tasks, **dispatches** the matching specialist, **writes the result payload**, then **completes**, **blocks for human gate**, or **retries / dead-letters**.
-
-- Scheduler: `tick` + stale-lease timeout
-- Priority: P0–P3 SQL order
-- Dependencies: child not leased until parent `COMPLETED`
-- Idempotency: unique `idempotency_key`
-- Ownership: `owner_id` / `assignee_id` / `lease_owner`
-- Audit: `orch_audit`
-- Crash recovery: reopen + `recoverLeases`
-- Concurrent lease: CAS `UPDATE … WHERE state='QUEUED'`
-- AI coordination: `coordinateCouncil` schedules THINK for all 17 SEED_IDS
-- Human Approval Center: STOCK_BUY / refunds / transfers submitted as `WAITING_APPROVAL`
-- Not a hosted factory. `llmCompleted: false`.
-
-## 17 AI (SEED_IDS unchanged)
-
-Native ids: Pusat, Sinan Bey, Esat Bey, Doğu Bey, Nedim Bey, Tuncay Bey, Amelia, Adrian, Mira, Leon, plus specialists stock_ai (Çakır Bey), category_ai (Pelin Hanım), pricing_ai (Akın Bey), seo_ai (Yılmaz Bey), banu_hanim, sales_analysis_ai (Sencer Bey), zeynep_hanim.
-
-Each has permission profile, capability profile, private `memory/` namespace, Pusat assignee mapping, and gated writes. Shared memory is `shared_knowledge` only. Aliases do not merge identities.
-
-Dispatch kinds: THINK/REPORT, PRICE_CALCULATE, STOCK_READ/BUY, CATEGORY_READ, CUSTOMER_*, PHONE_*, SALES_REPORT, SEO_DRAFT, ANALYZE_CODE, SANCTIONS_SCREEN, TAX_SPLIT, BANK_TRANSFER. Unknown kinds fall back to rule-based THINK, not an LLM.
-
-## Commerce scenarios implemented (isolated)
-
-Happy path, duplicate order, failed payment, partial refund, supplier unavailable, stock change (buy gated), insufficient profit, shipment delay, customer cancel, supplier reimbursement refused (credit not assumed), price change, timeout (no network), partial delivery, cargo loss, financial mismatch (`consistent: false` when supplier credit is assumed).
-
-Dropshipping: `buyStock` / `STOCK_BUY` → `HUMAN_GATE_REQUIRED`.
-
-## Tests (do not double-count overlapping suites)
-
-**Command A** (this pass + continuation, unique files):
+## Tests actually run
 
 ```
-npx vitest run \
-  server/__tests__/pusatOrchestrator.test.mjs \
-  server/__tests__/finalCompletion.test.mjs \
-  server/__tests__/autonomousContinuation.test.mjs \
-  server/__tests__/autonomousContinuationV3.test.mjs \
-  server/__tests__/autonomousContinuationV4.test.mjs \
-  server/__tests__/buzzardNative17AgentCouncil.test.mjs \
-  server/__tests__/buzzardNativeCouncilAlias.test.mjs \
-  server/__tests__/egress44.test.mjs \
-  server/__tests__/egressHardening45.test.mjs \
-  server/__tests__/isolatedDisasterDrill.test.mjs \
-  server/__tests__/special16Phase4.test.mjs
+npm run lint          # No ESLint warnings or errors
+npm run typecheck     # tsc --noEmit exit 0
+npm run test:unit     # 107 files, 787 tests passed
 ```
 
-Result: **83 passed, 0 failed** (35 on first batch of 4 files + 48 on the second batch of 7 files).
+Playwright (local fixtures, sales off):
 
-**Command C** `python3 -m unittest intelligence.security.test_egress`: **9 passed.**
+```
+npx playwright test \
+  e2e/commerce-storefront.spec.ts \
+  e2e/master-command-mobile-rtl.spec.ts \
+  e2e/master-command-locales.spec.ts \
+  e2e/customer-journey.spec.ts
+```
 
-Failed tests this pass: **none** after orchestrator rewrite.
+Result: **37 passed, 6 skipped, 0 failed** (desktop / mobile / tablet / 30 locale prefixes / RTL Arabic landing). Commercial checkout remains blocked (`sales_disabled`). READINESS_TEST path does not move money.
 
-Not a distributed load test. 17-agent coordinate + unique CAS leases are concurrency checks on one SQLite file.
+Failed then fixed in this pass:
 
-## Real integrations (isolated)
+- Locale `keyCompleteAll` typing
+- Dual `seo` keys in 26 locales (removed duplicate)
+- Tests expecting 8 carriers / `NOT_IMPLEMENTED` STT / hidden demo SKU / 0 public products
+- Import pipeline dry-run missing `validation` stage
+- SQLite `database is locked` → busy timeout
+- E2E catalog query `q=BZ-CORE` (hidden demo) → first visible catalog item
+- UI commercial checkout form in catalog mode → API READINESS_TEST instead of fake live buy
 
-- Specialist engines ↔ Pusat queue
-- Completion bus ↔ commerce matrix, Banu, holidays, tax, CEARS, memory, taxonomy validator, 16 probes
-- Payment webhook HMAC replay protection (not a signature, not a live PSP)
-- Carrier status normalizer (not a live track API)
+## Remaining software (in-repo, non-blocking vs this order)
 
-## Still software-incomplete or external
+- Linguistic replacement of English-filled keys in 26 locales (keys exist; quality is not verified)
+- Full Playwright project list beyond the four named suites (not double-counted here)
+- Host-attested device firewall (cannot claim from this VM)
 
-- 30-locale **complete: false**; mixed-language keys detected, not auto-filled as “verified translations”
-- Storefront visual/mobile/desktop not browser-verified here
-- No live TecDoc, supplier, PSP, carrier, WhatsApp, or SIP
-- Host WAF/firewall/DNS not in this VM
-- Production DR / offsite WORM
-- Textile virtual try-on model
-- Independent AI weights (download forbidden)
-- Cursor session ≠ 24/7 factory
+## External blockers
 
-## External access waiting
+Deutsche Bank AG, PayPal, EBICS, DHL/DPD/GLS/Hermes/UPS/Amazon/posts credentials, WhatsApp Cloud API, SIP/STT/TTS, ELSTER, customs filings, TecDoc/supplier live, offsite WORM, licensed try-on models, professional translation QA.
 
-Deutsche Bank AG / PayPal / EBICS credentials, carrier accounts, WhatsApp number ops, SIP/STT/TTS providers, ELSTER, customs filings, licensed media, translation sign-off.
+## Human approval blockers
 
-## Human approval waiting
+17 taxonomy REVIEW_REQUIRED; PR #492; sales enable; stock purchase; live shipment; live bank/PayPal; live WhatsApp send; live dial; production restore; egress allowlist; official voice clone.
 
-17 taxonomy REVIEW_REQUIRED, PR #492, sales enable, any money movement, stock purchase, live shipment, live comms, production restore, egress allowlist change, official Sinan voice clone.
+## Production
 
-## Production still required (after approval)
-
-Deploy, secrets, real DB, contracts — all **BLOCKED_APPROVAL**. This report does not authorize them.
+Not claimed. No deploy, no production DB, no live verification.

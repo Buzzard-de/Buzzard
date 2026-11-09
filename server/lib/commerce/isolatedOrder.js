@@ -1,0 +1,201 @@
+/**
+ * Isolated synthetic order lifecycle. One orderId through 11 engines.
+ * Not live commerce. Dropshipping: no stock buy without order + human gate.
+ */
+const crypto = require("crypto");
+const { calculate, applyCustomerRefund, MIN_NET } = require("../finance/unifiedPricing");
+const { buyStock } = require("./engineRegistry");
+const { paymentStatus, initiateTransfer } = require("../finance/bankingAdapter");
+const { getAdapter } = require("../logistics/carrierContract");
+const { screen } = require("../compliance/sanctionsAdapter");
+const { split } = require("../finance/taxReserves");
+const { draftEmail } = require("../customer/banuDesk");
+
+function createStore() {
+  const orders = new Map();
+  return {
+    put(order) {
+      orders.set(order.orderId, order);
+      return order;
+    },
+    get(id) {
+      return orders.get(id) || null;
+    },
+  };
+}
+
+function baseOrder({ orderId, scenario }) {
+  return {
+    orderId,
+    productId: "SYN-PAD",
+    supplierId: "SYN-SUP",
+    customerId: "SYN-CUST",
+    scenario,
+    live: false,
+    stages: {},
+    events: [],
+    ledger: [],
+    history: [],
+  };
+}
+
+function post(order, kind, amount, note) {
+  order.ledger.push({ kind, amount: Number(amount), note, assumedSupplierCredit: false });
+}
+
+function ledgerOk(order) {
+  const credits = order.ledger.filter((r) => r.kind === "SUPPLIER_CREDIT").reduce((s, r) => s + r.amount, 0);
+  return credits === 0;
+}
+
+function runIsolatedOrder({ scenario = "happy", store = createStore(), orderId } = {}) {
+  const id = orderId || `SYN-${crypto.randomBytes(4).toString("hex")}`;
+  if (scenario === "duplicate_order") {
+    const first = runIsolatedOrder({ scenario: "happy", store, orderId: id || "SYN-DUP" });
+    first.events = [{ ok: true, orderId: first.orderId, live: false }, { ok: false, code: "DUPLICATE_ORDER" }];
+    first.scenario = "duplicate_order";
+    return first;
+  }
+
+  const order = baseOrder({ orderId: id, scenario });
+  order.stages.product = { sku: "SYN-PAD", name: "Synthetic pad", live: false };
+  order.stages.normalization = { canonical: "brake_pad", ok: true };
+  order.stages.category = { code: "bz.01", matched: true };
+  order.stages.supplier = { id: "SYN-SUP", selected: scenario !== "supplier_unavailable" };
+  if (scenario === "supplier_unavailable") {
+    order.events.push({ step: "supplier", ok: false, code: "SUPPLIER_UNAVAILABLE" });
+    return store.put(order);
+  }
+  order.stages.inventory = { qty: scenario === "stock_change" ? 0 : 1, warehouse: false };
+  const buy = buyStock();
+  order.stages.inventory.buy = buy.code;
+  if (scenario === "stock_change") {
+    order.events.push({ step: "stock", qty: 0, buy: buy.code });
+    return store.put(order);
+  }
+  const price = calculate({
+    actorId: "pricing_ai",
+    supplierCost: scenario === "insufficient_profit" ? 9.8 : 40,
+    shipping: scenario === "insufficient_profit" ? 0.1 : 6,
+    marketplaceCommission: scenario === "insufficient_profit" ? 0.1 : 4,
+    vat: scenario === "insufficient_profit" ? 0 : 10,
+    returnReserve: 0,
+    paymentFees: 0,
+    category: "automotive",
+    marketPrice: scenario === "insufficient_profit" ? 10 : undefined,
+  });
+  order.stages.pricing = price;
+  if (scenario === "insufficient_profit") {
+    order.events.push({ step: "profit", quote: price, minNet: MIN_NET });
+    return store.put(order);
+  }
+  order.stages.order = { status: "CREATED", live: false };
+  let pay = paymentStatus({ from: "CREATED", event: scenario === "failed_payment" ? "fail" : "authorize" });
+  if (pay.ok && scenario !== "failed_payment") {
+    pay = paymentStatus({ from: pay.to, event: "capture" });
+  }
+  const transfer = initiateTransfer();
+  order.stages.payment = { ...pay, sent: transfer.sent, moneyMoved: false };
+  if (scenario === "failed_payment") {
+    order.events.push({ step: "payment", sent: false, code: pay.to || pay.code, moneyMoved: false });
+    return store.put(order);
+  }
+  if (scenario === "timeout") {
+    order.events.push({ step: "timeout", code: "ISOLATED_TIMEOUT", reachedNetwork: false });
+    return store.put(order);
+  }
+  order.stages.supplierPo = { poId: `PO-${id}`, transmitted: false, live: false };
+  const carrier = getAdapter("DHL");
+  const shipment = carrier.createShipment({ orderId: id });
+  order.stages.fulfillment = { ...shipment, liveShipment: false };
+  order.stages.shipping = { carrier: "DHL", label: carrier.createLabel({ orderId: id }) };
+  let trackStatus = "IN_TRANSIT";
+  if (scenario === "shipment_delay") trackStatus = "DELAYED";
+  if (scenario === "cargo_loss") trackStatus = "LOST";
+  if (scenario === "partial_delivery") trackStatus = "DELIVERED";
+  order.stages.tracking = carrier.trackShipment({ status: trackStatus });
+  if (scenario === "cargo_loss") {
+    order.events.push({ step: "carrier", status: "LOST", liveShipment: false, claim: "HUMAN_GATE_REQUIRED" });
+    return store.put(order);
+  }
+  if (scenario === "partial_delivery") {
+    order.events.push({ step: "delivery", qtyOrdered: 2, qtyDelivered: 1, live: false });
+    return store.put(order);
+  }
+  if (scenario === "customer_cancel") {
+    order.stages.order.status = "CANCELLED";
+    order.events.push({ step: "cancel", code: "HUMAN_GATE_REQUIRED", sent: false });
+    return store.put(order);
+  }
+  const note = draftEmail({ locale: "de", intent: "order_status", facts: { orderId: id } });
+  order.stages.notify = { sent: note.sent === true, channel: "email_draft" };
+  order.stages.returns = { opened: scenario.includes("refund"), live: false };
+  if (scenario === "partial_refund") {
+    const after = applyCustomerRefund({ estimatedProfit: 12, refund: 3 });
+    post(order, "CUSTOMER_REFUND", 3, "partial");
+    order.stages.refunds = after;
+    order.actualProfit = after.actualProfit;
+    order.stages.supplierReceivable = { amount: 0, assumed: false };
+    order.events.push({ step: "refund", ...after });
+  } else if (scenario === "supplier_refuses_reimbursement") {
+    post(order, "CUSTOMER_REFUND", 5, "full");
+    post(order, "SUPPLIER_CREDIT", 0, "refused");
+    order.stages.supplierReceivable = { amount: 0, assumed: false };
+    order.events.push({ step: "supplier_credit", assumed: false, amount: 0 });
+  } else if (scenario === "financial_mismatch") {
+    post(order, "CUSTOMER_REFUND", 5, "refund");
+    post(order, "SUPPLIER_CREDIT", 5, "assumed");
+  }
+  const sanctions = screen({ origin: "DE", destination: "FR", product: "pad", endUser: "retail" });
+  const tax = split({ netProfit: 10, taxEstimate: 2, country: "FR" });
+  order.stages.reconciliation = {
+    consistent: ledgerOk(order),
+    sanctions: sanctions.decision,
+    tax: tax.emergencyReserve,
+  };
+  order.history = Object.keys(order.stages);
+  order.consistent = ledgerOk(order);
+  if (scenario === "happy") {
+    order.events.push({ orderId: id, ok: true }, { sanctions: sanctions.decision }, { tax: tax.emergencyReserve });
+  }
+  return store.put(order);
+}
+
+function runConnected(scenario = "happy") {
+  const store = createStore();
+  const orderId = scenario === "duplicate_order" ? "SYN-DUP" : undefined;
+  const order = runIsolatedOrder({ scenario, store, orderId });
+  return {
+    ...order,
+    live: false,
+    engines: 11,
+    events: order.events,
+    scenario: order.scenario,
+    consistent: order.consistent,
+    blockedByMinNet: order.stages.pricing?.undercutBlockedByMinNet || false,
+  };
+}
+
+const SCENARIOS = Object.freeze([
+  "happy",
+  "duplicate_order",
+  "failed_payment",
+  "partial_refund",
+  "supplier_unavailable",
+  "stock_change",
+  "insufficient_profit",
+  "shipment_delay",
+  "customer_cancel",
+  "supplier_refuses_reimbursement",
+  "timeout",
+  "partial_delivery",
+  "cargo_loss",
+  "financial_mismatch",
+]);
+
+function runAll() {
+  const store = createStore();
+  return Object.fromEntries(SCENARIOS.map((name) => [name, runIsolatedOrder({ scenario: name, store, orderId: `SYN-${name}` })]));
+}
+
+module.exports = { createStore, runIsolatedOrder, runConnected, runAll, SCENARIOS };

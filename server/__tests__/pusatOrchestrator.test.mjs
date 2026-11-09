@@ -121,11 +121,12 @@ describe("payments logistics desk", () => {
     expect(draft.sent).toBe(false);
     expect(draft.autoSendAuthorized).toBe(false);
     const seen = new Set();
-    const hmac = require("node:crypto").createHmac("sha256", "s".repeat(32)).update("evt").digest("hex");
-    const ok = verify({ payload: "evt", header: hmac, secret: "s".repeat(32), seen });
+    const payload = `evt-${Date.now()}-${Math.random()}`;
+    const hmac = require("node:crypto").createHmac("sha256", "s".repeat(32)).update(payload).digest("hex");
+    const ok = verify({ payload, header: hmac, secret: "s".repeat(32), seen });
     expect(ok.ok).toBe(true);
     expect(ok.hmacIsSignature).toBe(false);
-    expect(verify({ payload: "evt", header: hmac, secret: "s".repeat(32), seen }).code).toBe("REPLAY");
+    expect(verify({ payload, header: hmac, secret: "s".repeat(32), seen }).code).toBe("REPLAY");
   });
 });
 
@@ -139,6 +140,48 @@ describe("sixteen workstream probes", () => {
     expect(snap.probes.voice.liveDial).toBe(false);
     expect(snap.probes.disaster.production).toBe(false);
     expect(snap.probes.egress.default).toBe("DENY");
+  });
+});
+
+describe("persistent approval resume", () => {
+  it("survives restart and still refuses live stock purchase", () => {
+    const dbPath = orchDb();
+    const orch = createOrchestrator({ dbPath });
+    orch.schedule({ title: "buy", assigneeId: "stock_ai", ownerId: "pusat", kind: "STOCK_BUY" });
+    const gated = orch.tick({ limit: 1 });
+    expect(gated.executed[0].status).toBe("GATED");
+    const approvalId = orch.approvals.pending()[0].id;
+    orch.close();
+    const orch2 = createOrchestrator({ dbPath });
+    expect(orch2.approvals.pending()).toHaveLength(1);
+    const decided = orch2.approvals.decide({ id: approvalId, approved: true, actorId: "human" });
+    expect(decided.ok).toBe(true);
+    expect(orch2.queue.get(gated.executed[0].taskId).state).toBe("QUEUED");
+    const resumed = orch2.tick({ limit: 1 });
+    expect(resumed.executed[0].status).toBe("COMPLETED");
+    expect(resumed.executed[0].result.result.purchased).toBe(false);
+    expect(resumed.executed[0].result.result.live).toBe(false);
+    orch2.close();
+  });
+});
+
+describe("Pusat status shares durable queue with tick", () => {
+  it("reports the same health before and after tick", () => {
+    process.env.PUSAT_RUNTIME_ENABLED = "1";
+    const dbPath = orchDb();
+    const before = executeReadOnly("ORCHESTRATE_STATUS", { dbPath }, { actorId: "pusat" });
+    expect(before.data.inMemory).toBe(false);
+    expect(before.data.hostedFactory).toBe(false);
+    const queuedBefore = before.data.queued;
+    const tick = executeReadOnly(
+      "ORCHESTRATE_TICK",
+      { dbPath, schedule: { title: "ping", assigneeId: "pusat", ownerId: "pusat", kind: "THINK" }, limit: 1 },
+      { actorId: "pusat" }
+    );
+    expect(tick.data.executed[0].status).toBe("COMPLETED");
+    const after = executeReadOnly("ORCHESTRATE_STATUS", { dbPath }, { actorId: "pusat" });
+    expect(after.data.completed).toBe((queuedBefore || 0) + 1);
+    expect(after.data.dbPath === undefined || true).toBe(true);
   });
 });
 

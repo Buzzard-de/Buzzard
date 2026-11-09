@@ -290,7 +290,7 @@ function validateStockForCheckout(cartId) {
 }
 
 function getDemoProductForCart() {
-  const result = catalogReadService.listProducts({ q: "BZ-CORE", limit: 1 });
+  const result = catalogReadService.listProducts({ limit: 1 });
   const item = result.items?.[0];
   if (!item) return null;
   return { productId: item.id, sku: item.sku, price: item.price };

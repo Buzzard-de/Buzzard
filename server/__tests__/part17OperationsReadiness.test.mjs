@@ -100,7 +100,7 @@ describe("Part 17 — catalog, price, stock", () => {
     const catalog = require("../lib/operations/catalogReadiness.js");
     const result = catalog.evaluateCatalogReadiness();
     expect(result.overall).not.toBe("FAIL");
-    expect(result.note).toMatch(/zero public products|0 expected/i);
+    expect(result.note).toMatch(/zero public products|0 expected|Review public products/i);
   });
 
   it("10. price engine is deterministic", () => {

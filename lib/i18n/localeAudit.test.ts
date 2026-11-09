@@ -14,7 +14,10 @@ describe("locale audit", () => {
     const ar = audit.rows.find((r) => r.locale === "ar");
     expect(ar?.rtl).toBe(true);
     expect(audit.rows.every((r) => r.verified === false)).toBe(true);
+    expect(audit.rows.every((r) => r.complete === false)).toBe(true);
     expect(audit.rows.every((r) => Array.isArray(r.mixedLanguageKeys))).toBe(true);
+    expect(audit.rows.every((r) => r.missingKeys.length === 0)).toBe(true);
+    expect(audit.keyCompleteAll).toBe(true);
   });
 
   it("formats EUR and dates per locale without claiming catalog completeness", () => {

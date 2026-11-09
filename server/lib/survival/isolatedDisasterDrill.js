@@ -9,6 +9,7 @@ const { createRequire } = require("module");
 const { createCopies } = require("./copies32110");
 const { assertSafePath } = require("./proveBackupRestore");
 const { postNetIncome, payTax, resetPools, RESERVE_RATE } = require("../commerce/taxPools");
+const { reconcileSynthetic, restoreProduction, inventory } = require("./businessContinuity");
 
 const root = path.join(__dirname, "..", "..", "..");
 const serverRequire = createRequire(path.join(root, "server", "package.json"));
@@ -132,6 +133,14 @@ function runIsolatedDisasterDrill() {
     integrityAfter: integrityAfter?.integrity_check,
     flows,
     workRoot,
+    recon: reconcileSynthetic({
+      orders: 1,
+      paid: 0,
+      returns: 1,
+      inventoryQty: flows.stockQty,
+    }),
+    backupInventory: inventory({ backups: copies.copies || [] }),
+    restoreProduction: restoreProduction(),
   };
 }
 

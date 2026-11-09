@@ -81,6 +81,17 @@ class Egress44Python(unittest.TestCase):
                     guarded_get("https://buzzard24.de/out")
         self.assertEqual(ctx.exception.code, "REDIRECT_DENIED")
 
+    def test_archive_check_url_does_not_open_network(self):
+        import importlib.util
+
+        archive = ROOT.parent / "intelligence" / "archive" / "buzzard_production_bridge_max_single.py"
+        spec = importlib.util.spec_from_file_location("archive_bridge", archive)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        ok, reason = mod.check_url("https://example.com/")
+        self.assertFalse(ok)
+        self.assertEqual(reason, "ARCHIVE_NOT_EXECUTABLE")
+
 
 if __name__ == "__main__":
     unittest.main()

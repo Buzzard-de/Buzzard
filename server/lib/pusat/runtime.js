@@ -104,6 +104,7 @@ const ACTIONS = Object.freeze({
   MULTI_AGENT_FOUNDATION: "MULTI_AGENT_FOUNDATION",
   TEN_AGENT_COUNCIL: "TEN_AGENT_COUNCIL",
   SEVENTEEN_AGENT_COUNCIL: "SEVENTEEN_AGENT_COUNCIL",
+  PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
 });
 
 const CONTROL_ACTIONS = Object.freeze([
@@ -179,6 +180,7 @@ const CONTROL_ACTIONS = Object.freeze([
   ACTIONS.MULTI_AGENT_FOUNDATION,
   ACTIONS.TEN_AGENT_COUNCIL,
   ACTIONS.SEVENTEEN_AGENT_COUNCIL,
+  ACTIONS.PLATFORM_CONTINUATION_STATUS,
 ]);
 
 let durable = null;
@@ -839,6 +841,31 @@ function executeControl(action, payload, { actorId, correlationId }) {
       requestedId: inputIdentity.requestedId,
       nativeId: inputIdentity.ok ? inputIdentity.nativeId : null,
       identitiesMerged: false,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.PLATFORM_CONTINUATION_STATUS) {
+    const { snapshot: engines } = require("../commerce/engineRegistry");
+    const { snapshot: banks } = require("../finance/bankingAdapter");
+    const { snapshot: streams } = require("../workstreams/special16");
+    const { executiveSize } = require("../buzzardNative/core/councilConfig");
+    const { inventory: locales } = require("../i18n/localeInventory");
+    const { SHARED } = require("../security/egressPolicy");
+    return {
+      ok: true,
+      action,
+      data: {
+        engines: engines(),
+        banks: banks(),
+        streams: streams(),
+        council: executiveSize(),
+        locales: locales(),
+        egressDefault: SHARED.default,
+        live: false,
+        productionReady: false,
+      },
+      actorId,
       correlationId,
       ...label(MODE.DRY_RUN),
     };

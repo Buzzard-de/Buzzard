@@ -94,15 +94,7 @@ def check_env():
     return results
 
 def check_url(url, timeout=8):
-    if not present(url):
-        return False, "URL missing"
-    try:
-        req = urllib.request.Request(url, method="GET",
-                                     headers={"User-Agent":"Buzzard-Production-Preflight/1.0"})
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return 200 <= r.status < 500, f"HTTP {r.status}"
-    except Exception as e:
-        return False, str(e)
+    return False, "ARCHIVE_NOT_EXECUTABLE"
 
 def check_legal_routes():
     base = os.getenv("APP_BASE_URL","").rstrip("/")

@@ -5,7 +5,7 @@ This is **local CODE + TEST + isolated INTEGRATION**. It is **not** live commerc
 ## HEAD
 
 - Start (verified): `a496b29bb96cd118cd5907dd3f08d43bcf2eab69` on `cursor/buzzard-autonomous-continuation-c293`
-- End: `b4aefab2f24b53f10bab97719cf2c72c0a93b755`
+- End: branch tip after `feat(platform): wire completion bus, CAS leases, CEARS locker bind` (`git log -1 --oneline` on `cursor/buzzard-autonomous-continuation-c293`)
 - Guardian SQLite: untracked, untouched
 - Push / merge / deploy: **not done**
 - PR #492: **not merged** (Taxonomy Auto Sync FAILURE remains)

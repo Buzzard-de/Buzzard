@@ -141,9 +141,12 @@ function runIsolatedOrder({ scenario = "happy", store = createStore(), orderId }
   const id = orderId || `SYN-${crypto.randomBytes(4).toString("hex")}`;
   if (scenario === "duplicate_order") {
     const first = runIsolatedOrder({ scenario: "happy", store, orderId: id || "SYN-DUP" });
-    first.events = [{ ok: true, orderId: first.orderId, live: false }, { ok: false, code: "DUPLICATE_ORDER" }];
-    first.scenario = "duplicate_order";
-    return first;
+    const stored = store.get(first.orderId) || first;
+    stored.events = [{ ok: true, orderId: first.orderId, live: false }, { ok: false, code: "DUPLICATE_ORDER", moneyMoved: false }];
+    stored.scenario = "duplicate_order";
+    stored.duplicate = true;
+    stored.live = false;
+    return store.put(stored);
   }
 
   const order = baseOrder({ orderId: id, scenario });

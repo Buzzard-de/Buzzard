@@ -1,0 +1,75 @@
+{
+  "schema": "buzzard.storefront-catalog.v1",
+  "recordedAt": "2026-11-10T20:36:06.608Z",
+  "liveVerified": false,
+  "productionPerformance": false,
+  "salesEnabled": false,
+  "orderCreated": false,
+  "localSearch": {
+    "calls": 50,
+    "elapsedMs": 12.08,
+    "heapDeltaBytes": 688224
+  },
+  "tasks": [
+    {
+      "id": "CATEGORY_NAV",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "RETIRED_CATEGORY",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SEARCH_FILTER_SORT",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "PAGINATION",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "MISSING_FACTS",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "MISSING_TRANSLATION",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "PRICE_GATES",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SALES_CLOSED",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "XSS_SQL_PATH",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "ISOLATION",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "RTL_LAYOUT",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "LOCAL_LATENCY",
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    }
+  ]
+}

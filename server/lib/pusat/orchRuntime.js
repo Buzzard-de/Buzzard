@@ -35,4 +35,8 @@ function forget(dbPath) {
   }
 }
 
-module.exports = { getOrchestrator, resolveDbPath, forget };
+function workerHealth({ dbPath } = {}) {
+  return getOrchestrator({ dbPath }).queue.health().workers;
+}
+
+module.exports = { getOrchestrator, resolveDbPath, forget, workerHealth };

@@ -1,4 +1,5 @@
 import type { BuzzardLocale } from "./types";
+import { resolveLanguageFromLocaleTag } from "./types";
 import type { TranslationTree } from "./types-catalog";
 import { LANGUAGE_CODES } from "./languages";
 import { catalog as de } from "./locales/de";
@@ -31,6 +32,8 @@ import { catalog as eu } from "./locales/eu";
 import { catalog as gl } from "./locales/gl";
 import { catalog as sv } from "./locales/sv";
 import { catalog as ga } from "./locales/ga";
+import { machineCatalogs } from "./locales/machineFill";
+import gapFills from "@/data/i18n/ui-gap-fills.json";
 
 export type { TranslationTree };
 
@@ -79,10 +82,35 @@ const rawCatalogs: Record<string, TranslationTree> = {
   ga,
 };
 
+/** Authored catalogues only. Missing keys are not copied from English. */
+export const authoredCatalogs: Record<string, TranslationTree> = rawCatalogs;
+
+function gapTree(flat: Record<string, string> | undefined): TranslationTree {
+  const root: TranslationTree = {};
+  if (!flat) return root;
+  for (const [key, value] of Object.entries(flat)) {
+    const parts = key.split(".");
+    let node: TranslationTree = root;
+    for (let i = 0; i < parts.length - 1; i += 1) {
+      const part = parts[i];
+      const next = node[part];
+      if (!next || typeof next === "string") node[part] = {};
+      node = node[part] as TranslationTree;
+    }
+    const leaf = parts[parts.length - 1];
+    if (node[leaf] == null || node[leaf] === "") node[leaf] = value;
+  }
+  return root;
+}
+
+const gapFillTrees = gapFills as Record<string, Record<string, string>>;
+
+/** Authored strings win. Machine catalogs fill holes, then the storefront gap file. */
 const catalogs: Record<string, TranslationTree> = Object.fromEntries(
   LANGUAGE_CODES.map((code) => {
     if (code === "de") return [code, rawCatalogs.de];
-    return [code, deepFill(rawCatalogs[code] || {}, rawCatalogs.en)];
+    const withMachine = deepFill(rawCatalogs[code] || {}, machineCatalogs[code] || {});
+    return [code, deepFill(withMachine, gapTree(gapFillTrees[code]))];
   })
 );
 const FALLBACK_LOCALE: BuzzardLocale = "de";
@@ -117,4 +145,36 @@ export function loadedLanguageCount(): number {
   return LANGUAGE_CODES.filter((code) => Boolean(catalogs[code])).length;
 }
 
-export { catalogs, FALLBACK_LOCALE };
+/** Selected catalog, then German. English is not a silent substitute. */
+export function fallbackChain(language: string): BuzzardLocale[] {
+  if (language === FALLBACK_LOCALE) return [FALLBACK_LOCALE];
+  return [language as BuzzardLocale, FALLBACK_LOCALE];
+}
+
+export function flattenCatalog(tree: TranslationTree, prefix = ""): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(tree)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === "string") out[path] = value;
+    else if (value && typeof value === "object") Object.assign(out, flattenCatalog(value as TranslationTree, path));
+  }
+  return out;
+}
+
+export function listMissingKeys(language: string, baseline: BuzzardLocale = FALLBACK_LOCALE): string[] {
+  const base = flattenCatalog(getCatalog(baseline));
+  const current = flattenCatalog(getCatalog(language));
+  return Object.keys(base).filter((key) => !(key in current));
+}
+
+export async function loadCatalog(language: string): Promise<TranslationTree> {
+  return getCatalog(language);
+}
+
+export async function loadLocale(localeTag: string): Promise<TranslationTree> {
+  return getCatalog(resolveLanguageFromLocaleTag(localeTag));
+}
+
+const TECHNICAL_FALLBACK: BuzzardLocale[] = [FALLBACK_LOCALE];
+
+export { catalogs, FALLBACK_LOCALE, TECHNICAL_FALLBACK };

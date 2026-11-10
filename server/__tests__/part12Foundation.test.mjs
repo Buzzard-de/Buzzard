@@ -21,14 +21,15 @@ describe("Part 12 P1 production hardening", () => {
   it("dbPaths centralizes database path", async () => {
     const dbPaths = await import("../lib/dbPaths.js");
     expect(dbPaths.resolveDbPath()).toMatch(/\.db$/);
+    expect(dbPaths.resolveDbPath()).not.toBe(dbPaths.defaultDbPath);
     expect(dbPaths.getPersistenceInfo().mode).toBeTruthy();
   });
 
-  it("53-category taxonomy validates", async () => {
+  it("56-category shop taxonomy validates", async () => {
     const taxonomy = await import("../lib/taxonomyCanonical.js");
     const validation = taxonomy.validateCanonicalTaxonomy();
     expect(validation.ok).toBe(true);
-    expect(validation.count).toBe(53);
+    expect(validation.count).toBe(56);
   });
 
   it("Part 12 scripts wired in package.json", () => {

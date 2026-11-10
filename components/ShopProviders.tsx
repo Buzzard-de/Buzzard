@@ -17,11 +17,13 @@ import PageViewTracker from "./marketing/PageViewTracker";
 import AiChatWidget from "./ai/AiChatWidget";
 import StorefrontApiBanner from "./StorefrontApiBanner";
 import LanguageBackground from "./storefront/LanguageBackground";
+import LocaleMarketBridge from "./LocaleMarketBridge";
 
 export default function ShopProviders({ children }: { children: React.ReactNode }) {
   return (
     <LocaleProvider>
       <MarketProvider>
+      <LocaleMarketBridge>
       <AccountProvider>
         <CartProvider>
           <WishlistProvider>
@@ -43,6 +45,7 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
           </WishlistProvider>
         </CartProvider>
       </AccountProvider>
+      </LocaleMarketBridge>
       </MarketProvider>
     </LocaleProvider>
   );

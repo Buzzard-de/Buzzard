@@ -1,4 +1,4 @@
-import { getCategoryById, getMainCategories } from "@/lib/categories";
+import { getCategoryById, getVisibleMainCategories } from "@/lib/categories";
 
 /** Map storefront cat-XX main IDs to smart-menu bz.XX IDs by menu order position. */
 const SHOP_TO_BZ_MAIN: Record<string, string> = {
@@ -95,5 +95,5 @@ export function getSmartMenuMainCount(): number {
 }
 
 export function getStorefrontMainCount(): number {
-  return getMainCategories().length;
+  return getVisibleMainCategories().length;
 }

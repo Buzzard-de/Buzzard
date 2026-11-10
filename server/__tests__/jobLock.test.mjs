@@ -10,6 +10,8 @@ describe("jobQueue lock", () => {
     process.env.BUZZARD_JOB_LOCK_TTL_MS = "60000";
     delete require.cache[require.resolve("../lib/jobQueue.js")];
     jobQueue = require("../lib/jobQueue.js");
+    const { db } = require("../lib/db.js");
+    db.prepare("DELETE FROM core_background_jobs").run();
   });
 
   it("claimNextJob sets RUNNING with lock", () => {

@@ -29,6 +29,13 @@ describe("language and country independence", () => {
     expect(source).not.toContain("country");
   });
 
+  it("LocaleMarketBridge does not treat market boot hydration as a user country change", () => {
+    const source = readFileSync(resolve("components/LocaleMarketBridge.tsx"), "utf8");
+    expect(source).toContain("if (!ready) return");
+    expect(source).toContain("previousCountry.current === null");
+    expect(source).toContain("resolveLocaleAfterMarketChange");
+  });
+
   it("language and country use separate storage keys", () => {
     const localeDetect = readFileSync(resolve("lib/i18n/detect.ts"), "utf8");
     const countryStorage = readFileSync(resolve("lib/market/storage.ts"), "utf8");

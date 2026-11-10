@@ -77,7 +77,17 @@ function openDb(dbPath) {
       created_at TEXT NOT NULL,
       decided_at TEXT
     );
+    CREATE TABLE IF NOT EXISTS orch_workers (
+      worker_id TEXT PRIMARY KEY,
+      identity TEXT NOT NULL,
+      registered_at TEXT NOT NULL,
+      last_heartbeat TEXT NOT NULL,
+      status TEXT NOT NULL,
+      heartbeat_count INTEGER NOT NULL,
+      owned_task TEXT
+    );
   `);
+  db.pragma("busy_timeout = 8000");
   return db;
 }
 
@@ -199,8 +209,88 @@ function createDurableTaskQueue({ dbPath }) {
       return null;
     })();
     if (!leasedId) return { ok: false, code: "EMPTY" };
+    db.prepare(`UPDATE orch_workers SET owned_task = ? WHERE worker_id = ?`).run(leasedId, workerId);
     audit(leasedId, "LEASE", { workerId });
     return { ok: true, task: get(leasedId) };
+  }
+
+  const HEARTBEAT_TTL_MS = 15_000;
+
+  function registerWorker({ workerId = "worker-1", identity = workerId } = {}) {
+    const now = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO orch_workers (worker_id, identity, registered_at, last_heartbeat, status, heartbeat_count, owned_task)
+       VALUES (?,?,?,?, 'ONLINE', 1, NULL)
+       ON CONFLICT(worker_id) DO UPDATE SET identity = excluded.identity, status = 'ONLINE', last_heartbeat = excluded.last_heartbeat`
+    ).run(workerId, identity, now, now);
+    audit(workerId, "WORKER_REGISTER", { identity });
+    return { ok: true, worker: getWorker(workerId) };
+  }
+
+  function getWorker(workerId) {
+    return db.prepare(`SELECT * FROM orch_workers WHERE worker_id = ?`).get(workerId) || null;
+  }
+
+  function heartbeat({ workerId, now = Date.now() } = {}) {
+    const worker = getWorker(workerId);
+    if (!worker) return { ok: false, code: "WORKER_UNKNOWN" };
+    db.prepare(
+      `UPDATE orch_workers SET last_heartbeat = ?, status = 'ONLINE', heartbeat_count = heartbeat_count + 1 WHERE worker_id = ?`
+    ).run(new Date(now).toISOString(), workerId);
+    return { ok: true, worker: getWorker(workerId) };
+  }
+
+  function listWorkers({ now = Date.now(), ttlMs = HEARTBEAT_TTL_MS } = {}) {
+    return db.prepare(`SELECT * FROM orch_workers`).all().map((row) => {
+      const age = now - Date.parse(row.last_heartbeat);
+      const expired = !Number.isFinite(age) || age > ttlMs || row.status === "CRASHED";
+      return { ...row, ageMs: Number.isFinite(age) ? age : null, expired, live: false };
+    });
+  }
+
+  function expireHeartbeats({ now = Date.now(), ttlMs = HEARTBEAT_TTL_MS } = {}) {
+    const rows = listWorkers({ now, ttlMs });
+    let stale = 0;
+    for (const row of rows) {
+      if (row.expired && row.status !== "CRASHED") {
+        db.prepare(`UPDATE orch_workers SET status = 'STALE' WHERE worker_id = ?`).run(row.worker_id);
+        stale += 1;
+      }
+    }
+    return { ok: true, stale, production: false };
+  }
+
+  function recoverCrashed({ now = Date.now(), ttlMs = HEARTBEAT_TTL_MS } = {}) {
+    expireHeartbeats({ now, ttlMs });
+    const dead = db.prepare(`SELECT worker_id FROM orch_workers WHERE status IN ('STALE', 'CRASHED')`).all();
+    let recovered = 0;
+    const tx = db.transaction(() => {
+      for (const row of dead) {
+        const tasks = db
+          .prepare(`SELECT id FROM orch_tasks WHERE state = 'RUNNING' AND lease_owner = ?`)
+          .all(row.worker_id);
+        for (const task of tasks) {
+          db.prepare(
+            `UPDATE orch_tasks SET state = 'QUEUED', lease_owner = NULL, updated_at = ? WHERE id = ?`
+          ).run(new Date(now).toISOString(), task.id);
+          audit(task.id, "LEASE_RECOVERED", { workerId: row.worker_id });
+          recovered += 1;
+        }
+        db.prepare(`UPDATE orch_workers SET status = 'CRASHED', owned_task = NULL WHERE worker_id = ?`).run(row.worker_id);
+      }
+    });
+    tx();
+    return { ok: true, recovered, workers: dead.length, production: false };
+  }
+
+  function markCrashed(workerId) {
+    const worker = getWorker(workerId);
+    if (!worker) return { ok: false, code: "WORKER_UNKNOWN" };
+    db.prepare(`UPDATE orch_workers SET status = 'CRASHED', last_heartbeat = ? WHERE worker_id = ?`).run(
+      new Date(0).toISOString(),
+      workerId
+    );
+    return recoverCrashed({ now: Date.now(), ttlMs: HEARTBEAT_TTL_MS });
   }
 
   function recoverStale({ now = Date.now() } = {}) {
@@ -300,9 +390,12 @@ function createDurableTaskQueue({ dbPath }) {
     const rows = db.prepare(`SELECT state, COUNT(*) AS n FROM orch_tasks GROUP BY state`).all();
     const byState = Object.fromEntries(rows.map((r) => [r.state, r.n]));
     const stale = db.prepare(`SELECT COUNT(*) AS n FROM orch_tasks WHERE state = 'RUNNING'`).get().n;
-    const workers = db
+    const leases = db
       .prepare(`SELECT lease_owner AS workerId, COUNT(*) AS n FROM orch_tasks WHERE lease_owner IS NOT NULL GROUP BY lease_owner`)
       .all();
+    const roster = listWorkers();
+    const online = roster.filter((row) => row.status === "ONLINE" && row.expired === false);
+    const staleWorkers = roster.filter((row) => row.expired || row.status === "STALE" || row.status === "CRASHED");
     return {
       ok: true,
       queued: byState.QUEUED || 0,
@@ -315,7 +408,16 @@ function createDurableTaskQueue({ dbPath }) {
       staleLeases: stale,
       deadLetters: db.prepare(`SELECT COUNT(*) AS n FROM orch_dead`).get().n,
       pendingApprovals: db.prepare(`SELECT COUNT(*) AS n FROM orch_approvals WHERE status = 'WAITING_APPROVAL'`).get().n,
-      workers: { healthy: true, live: false, leases: workers },
+      workers: {
+        healthy: online.length > 0 && staleWorkers.length === 0,
+        live: false,
+        registered: roster.length,
+        online: online.length,
+        stale: staleWorkers.length,
+        identities: roster.map((row) => row.identity),
+        heartbeats: roster.reduce((sum, row) => sum + Number(row.heartbeat_count || 0), 0),
+        leases,
+      },
       byState,
       live: false,
       hostedFactory: false,
@@ -422,6 +524,12 @@ function createDurableTaskQueue({ dbPath }) {
     enqueue,
     get,
     lease,
+    registerWorker,
+    heartbeat,
+    listWorkers,
+    expireHeartbeats,
+    recoverCrashed,
+    markCrashed,
     recoverLeases,
     recoverStale,
     markTests,

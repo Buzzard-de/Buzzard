@@ -51,6 +51,15 @@ export default function HilfePage() {
           Wir antworten in der Regel innerhalb von 1–2 Werktagen.
         </p>
 
+        <h3>Gibt es eine Teilesuche nach Fahrzeug oder Maschine?</h3>
+        <p>
+          Ja, im Katalogmodus und getrennt nach Domäne:{" "}
+          <Link href="/fahrzeugteile-suche/">Fahrzeugteile</Link>,{" "}
+          <Link href="/landmaschinen-suche/">Landmaschinen</Link>,{" "}
+          <Link href="/baumaschinen-suche/">Baumaschinen</Link>. Kompatibilität gilt nur mit Beleg. Verkauf
+          und Bestellung bleiben aus.
+        </p>
+
         <h3>Wann startet der Online-Verkauf?</h3>
         <p>
           Sobald Sortiment, Zahlungsanbieter und Versandprozesse abgeschlossen sind. Bis dahin informieren wir

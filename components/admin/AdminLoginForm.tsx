@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { adminLogin } from "@/lib/admin/client";
+import { useAdminAuth } from "@/lib/admin/context";
 import { isProductionBuild } from "@/lib/api/config";
 
 export default function AdminLoginForm() {
   const router = useRouter();
+  const { login } = useAdminAuth();
   const [email, setEmail] = useState("admin@buzzard24.de");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -19,7 +20,7 @@ export default function AdminLoginForm() {
     setError("");
     setLoading(true);
     try {
-      const result = await adminLogin(
+      const result = await login(
         email,
         password,
         challengeToken ? totpCode : undefined,

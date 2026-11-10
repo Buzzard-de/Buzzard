@@ -4,12 +4,17 @@
  * Reuses an already-running API when healthy.
  */
 import { spawn } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const API_URL = "http://localhost:3001";
 const WEB_URL = "http://localhost:3000";
+const e2eDbDir = path.join(os.tmpdir(), "buzzard-e2e-sqlite");
+fs.mkdirSync(e2eDbDir, { recursive: true });
+const E2E_DB_PATH = path.join(e2eDbDir, "buzzard-e2e.db");
 
 const env = {
   ...process.env,
@@ -19,6 +24,8 @@ const env = {
   NEXT_PUBLIC_BUZZARD_API_URL: API_URL,
   BUZZARD_COMMERCE_CORE: "1",
   BUZZARD_TEST_MODE: "1",
+  BUZZARD_E2E_DB: "1",
+  BUZZARD_DB_PATH: E2E_DB_PATH,
   FORCE_COLOR: "1",
 };
 
@@ -36,6 +43,69 @@ function run(name, command, args, cwd) {
     }
   });
   return child;
+}
+
+function listenerEnv(port) {
+  const inodes = new Set();
+  for (const file of ["/proc/net/tcp", "/proc/net/tcp6"]) {
+    let text = "";
+    try {
+      text = fs.readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    for (const line of text.trim().split("\n").slice(1)) {
+      const parts = line.trim().split(/\s+/);
+      const localPort = parseInt(parts[1].split(":")[1], 16);
+      if (localPort === port && parts[3] === "0A") inodes.add(parts[9]);
+    }
+  }
+  if (!inodes.size) return null;
+  for (const pid of fs.readdirSync("/proc")) {
+    if (!/^\d+$/.test(pid)) continue;
+    let fds = [];
+    try {
+      fds = fs.readdirSync(`/proc/${pid}/fd`);
+    } catch {
+      continue;
+    }
+    const holds = fds.some((fd) => {
+      try {
+        const target = fs.readlinkSync(`/proc/${pid}/fd/${fd}`);
+        return target.startsWith("socket:[") && inodes.has(target.slice(8, -1));
+      } catch {
+        return false;
+      }
+    });
+    if (!holds) continue;
+    try {
+      const env = fs.readFileSync(`/proc/${pid}/environ`);
+      return Object.fromEntries(
+        env
+          .toString("utf8")
+          .split("\0")
+          .filter(Boolean)
+          .map((entry) => {
+            const index = entry.indexOf("=");
+            return [entry.slice(0, index), entry.slice(index + 1)];
+          })
+      );
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+function canReuse(port) {
+  const env = listenerEnv(port);
+  if (!env) return false;
+  return (
+    env.NEXT_PUBLIC_BUZZARD_API_URL === API_URL &&
+    env.BUZZARD_TEST_MODE === "1" &&
+    env.BUZZARD_E2E_DB === "1" &&
+    env.BUZZARD_DB_PATH === E2E_DB_PATH
+  );
 }
 
 async function isHealthy(url) {
@@ -79,8 +149,10 @@ async function waitForWeb(url, maxMs = 120_000) {
 console.log("[e2e] Starting Buzzard stack for Playwright…");
 
 let api = null;
-if (await isHealthy(API_URL)) {
+if ((await isHealthy(API_URL)) && canReuse(3001)) {
   console.log("[e2e] Reusing existing API on :3001");
+} else if (listenerEnv(3001)) {
+  throw new Error("[e2e] Port 3001 is already used by a process without the Playwright test environment");
 } else {
   console.log(`[e2e] Starting API → ${API_URL}`);
   api = run("api", "npm", ["run", "dev:api"], root);
@@ -90,12 +162,15 @@ if (await isHealthy(API_URL)) {
 let web = null;
 try {
   const probe = await fetch(WEB_URL, { redirect: "manual" });
-  if (probe.status < 500) {
+  if (probe.status < 500 && canReuse(3000)) {
     console.log("[e2e] Reusing existing storefront on :3000");
+  } else if (listenerEnv(3000)) {
+    throw new Error("[e2e] Port 3000 is already used by a process without the Playwright test environment");
   } else {
-    throw new Error("storefront unhealthy");
+    throw new Error("storefront not running");
   }
-} catch {
+} catch (error) {
+  if (String(error?.message || error).includes("already used")) throw error;
   console.log(`[e2e] Starting storefront → ${WEB_URL}`);
   web = run("web", "npm", ["run", "dev"], root);
   await waitForWeb(WEB_URL);

@@ -1,11 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 
+const createdProductIds = [];
+
 function uniqueSku(prefix = "P3") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 }
 
 function sellableProduct(productService, extras = {}) {
-  return productService.createProduct({
+  const product = productService.createProduct({
     sku: uniqueSku("P3S"),
     title: "Phase 3 sellable product",
     description: "Canonical commerce path test product.",
@@ -14,6 +16,8 @@ function sellableProduct(productService, extras = {}) {
     visibility: "PUBLIC",
     status: "READY",
   });
+  createdProductIds.push(product.id);
+  return product;
 }
 
 const address = {
@@ -24,7 +28,16 @@ const address = {
 };
 
 describe("master integration phase 3", () => {
-  afterEach(() => {
+  afterEach(async () => {
+    const productService = await import("../lib/productService.js");
+    while (createdProductIds.length) {
+      const id = createdProductIds.pop();
+      try {
+        productService.archiveProduct(id);
+      } catch {
+        /* keep the row, but never leave it public */
+      }
+    }
     delete process.env.BUZZARD_SALES_ENABLED;
     delete process.env.BUZZARD_PAYMENT_LIVE;
     delete process.env.BUZZARD_FULFILLMENT_LIVE;

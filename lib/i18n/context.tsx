@@ -5,12 +5,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { translate } from "./translations";
-import { detectLocale, persistLocale, hasManualLocaleOverride, detectLanguage, persistLanguage } from "./detect";
+import { detectLocale, persistLocale, hasManualLocaleOverride, persistLanguage } from "./detect";
 import { setRuntimeLocale } from "./runtime";
 import { formatDate, formatDateTime, formatNumber, formatPrice, formatPercent } from "./format";
 import { isRtlLocale, LOCALE_LABELS, SUPPORTED_LOCALES, type BuzzardLocale } from "./types";
@@ -32,6 +33,7 @@ interface LocaleContextValue {
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 async function syncAccountLanguage(locale: BuzzardLocale) {
   if (!getAccountToken()) return;
@@ -48,10 +50,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState("de");
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     const nextLocale = detectLocale();
     setLocaleState(nextLocale);
-    setLanguageState(detectLanguage());
+    setLanguageState(nextLocale);
     setReady(true);
   }, []);
 
@@ -70,16 +72,22 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     });
   }, [ready]);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!ready) return;
     setRuntimeLocale(locale);
-    document.documentElement.lang = language === "ar" ? "ar" : language;
-    document.documentElement.dir = isRtlLanguage(language) || isRtlLocale(locale) ? "rtl" : "ltr";
+    const rtl = isRtlLanguage(language) || isRtlLocale(locale);
+    document.documentElement.lang = locale;
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+    document.documentElement.setAttribute("data-buzzard-locale", locale);
+    document.documentElement.classList.toggle("rtl", rtl);
+    document.documentElement.classList.toggle("ltr", !rtl);
   }, [locale, language, ready]);
 
   const setLocale = useCallback((next: BuzzardLocale, manual = true) => {
     setLocaleState(next);
+    setLanguageState(next);
     persistLocale(next, manual);
+    persistLanguage(next);
     if (manual) syncAccountLanguage(next);
   }, []);
 

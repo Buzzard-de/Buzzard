@@ -76,18 +76,18 @@ function validateCouponRequest(body = {}, subtotal, ctx = {}) {
   }
 
   const resolved = resolveCouponDiscount(requestedCode, subtotal);
-  if (!resolved.ok) return resolved;
-
-  const tamper = rejectClientCouponFields(body, resolved.discount);
+  const serverDiscount = resolved.ok ? resolved.discount : 0;
+  const tamper = rejectClientCouponFields(body, serverDiscount);
   if (!tamper.ok) {
     logCouponTampering(ctx.req, {
       reason: tamper.code,
       fields: tamper.fields,
-      serverDiscount: resolved.discount,
+      serverDiscount,
       clientDiscount: body.discount ?? body.clientDiscount ?? body.couponDiscount,
     });
     return { ok: false, error: tamper.code, status: 400, message: tamper.message };
   }
+  if (!resolved.ok) return resolved;
 
   return resolved;
 }

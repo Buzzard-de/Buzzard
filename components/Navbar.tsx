@@ -1,21 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import CategoryIcon from "./CategoryIcon";
-import { useShop } from "@/lib/shop";
 import { useHomeUI } from "@/lib/home-ui";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function Navbar() {
-  const { openVehicleModal, vehicle, vin } = useShop();
   const homeUI = useHomeUI();
   const { t } = useLocale();
-
-  const vehicleLabel = vehicle
-    ? `${vehicle.brand} ${vehicle.model}`
-    : vin
-      ? `VIN: ${vin.slice(0, 8)}…`
-      : t("nav.vehiclePlaceholder");
 
   const navLinks = [
     { href: "/", label: t("nav.home") },
@@ -28,14 +19,6 @@ export default function Navbar() {
   return (
     <nav className="main-nav" role="navigation" aria-label={t("nav.aria")}>
       <div className="main-nav-inner">
-        <button type="button" className="vehicle-select-btn" onClick={openVehicleModal}>
-          <CategoryIcon name="car" size={22} />
-          <span>
-            <strong>{t("nav.vehicleSelect")}</strong>
-            <small>{vehicleLabel}</small>
-          </span>
-        </button>
-
         <button
           type="button"
           className="all-categories-btn"

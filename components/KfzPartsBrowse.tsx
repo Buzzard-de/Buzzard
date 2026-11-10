@@ -38,6 +38,9 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
         <Link href="/kategorie/automotive/" className="shop-btn-secondary">
           Zum Automotive-Shop
         </Link>
+        <Link href="/fahrzeugteile-suche/" className="shop-btn-secondary">
+          OEM- und Kompatibilitätssuche
+        </Link>
       </div>
       <div className="kfz-parts-grid">
         {mains.slice(0, compact ? 12 : mains.length).map((main) => (

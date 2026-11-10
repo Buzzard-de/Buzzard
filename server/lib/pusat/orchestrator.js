@@ -50,6 +50,9 @@ function createOrchestrator({ dbPath } = {}) {
   }
 
   function tick({ workerId = "pusat-worker", limit = 8 } = {}) {
+    queue.registerWorker({ workerId, identity: workerId });
+    queue.heartbeat({ workerId });
+    queue.recoverCrashed();
     queue.recoverStale();
     const executed = [];
     for (let i = 0; i < limit; i += 1) {

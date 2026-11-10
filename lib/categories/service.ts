@@ -71,6 +71,9 @@ export function getHubExtensions(): BuzzardCategory[] {
 
 const CUSTOMER_VISIBLE: Set<string> = new Set(["ACTIVE", "COMING_SOON"]);
 
+/** Duplicate or subset L1 records. They stay in the shop file and stay off the menu. */
+const DUPLICATE_MENU_IDS = new Set(["cat-30", "cat-37", "cat-39"]);
+
 export function isCategoryVisibleToCustomer(
   categoryId: string,
   visibilityMap?: Record<string, { status?: string }>
@@ -82,7 +85,9 @@ export function isCategoryVisibleToCustomer(
 export function getVisibleMainCategories(
   visibilityMap?: Record<string, { status?: string }>
 ): BuzzardCategory[] {
-  return getNavigableMainCategories().filter((cat) => isCategoryVisibleToCustomer(cat.id, visibilityMap));
+  return getNavigableMainCategories().filter(
+    (cat) => !DUPLICATE_MENU_IDS.has(cat.id) && isCategoryVisibleToCustomer(cat.id, visibilityMap)
+  );
 }
 
 export function filterVisibleTree(
@@ -90,7 +95,12 @@ export function filterVisibleTree(
   visibilityMap?: Record<string, { status?: string }>
 ): BuzzardCategory[] {
   return nodes
-    .filter((node) => !isRetiredShopId(node.id) && isCategoryVisibleToCustomer(node.id, visibilityMap))
+    .filter(
+      (node) =>
+        !isRetiredShopId(node.id) &&
+        !DUPLICATE_MENU_IDS.has(node.id) &&
+        isCategoryVisibleToCustomer(node.id, visibilityMap)
+    )
     .map((node) => ({
       ...node,
       children: node.children?.length ? filterVisibleTree(node.children, visibilityMap) : [],
@@ -115,9 +125,44 @@ export function getDefaultSubCategoryId(mainId: string): string {
   return getChildren(mainId)[0]?.id ?? "";
 }
 
+const AUTOMOTIVE_HUB_SLUGS = new Set([
+  "pkw",
+  "transporter",
+  "lkw",
+  "bus",
+  "motorrad",
+  "traktor",
+  "baumaschinen",
+  "kfz",
+]);
+
+const TIRE_LEAF_KIND: Record<string, "reifen" | "felgen"> = {
+  "yaz-lastigi": "reifen",
+  "k-s-lastigi": "reifen",
+  "doert-mevsim-reifen": "reifen",
+  "reifen-aksesuarlar": "reifen",
+  "celik-jant": "felgen",
+  "alueminyum-jant": "felgen",
+};
+
 export function findCategoryBySlugPath(slugPath: string): BuzzardCategory | undefined {
   const normalized = slugPath.replace(/^\/+|\/+$/g, "");
-  return bySlugPath.get(normalized) ?? byLegacySlugPath.get(normalized);
+  const direct = bySlugPath.get(normalized) ?? byLegacySlugPath.get(normalized);
+  if (direct) return direct;
+
+  const parts = normalized.split("/").filter(Boolean);
+  if (parts[0] === "automotive" && parts[1] && !AUTOMOTIVE_HUB_SLUGS.has(parts[1])) {
+    if (parts[1] === "reifen-und-felgen") {
+      const leaf = parts[2];
+      const kind = leaf ? TIRE_LEAF_KIND[leaf] : undefined;
+      const tirePath = kind && leaf
+        ? `reifen-und-felgen/pkw/${kind}/${leaf}`
+        : "reifen-und-felgen/pkw";
+      return bySlugPath.get(tirePath);
+    }
+    return bySlugPath.get(["automotive", "pkw", ...parts.slice(1)].join("/"));
+  }
+  return undefined;
 }
 
 export function findCategoryByUrl(url: string): BuzzardCategory | undefined {

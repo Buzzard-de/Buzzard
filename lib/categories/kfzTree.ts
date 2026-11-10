@@ -116,7 +116,10 @@ export function getKfzStaticParams(): Array<{ slug: string[] }> {
 
 export function getShopL2Href(main: KfzMainCategory): string | null {
   if (!main.shop_l2_slug) return null;
-  return `/kategorie/automotive/${main.shop_l2_slug}/`;
+  if (main.shop_l2_slug === "reifen-und-felgen") {
+    return "/kategorie/reifen-und-felgen/pkw/";
+  }
+  return `/kategorie/automotive/pkw/${main.shop_l2_slug}/`;
 }
 
 export function getKfzL3Href(main: KfzMainCategory, child: KfzL3Node): string {

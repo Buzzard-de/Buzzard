@@ -1,8 +1,10 @@
 /** Product validation for catalog/PIM (P1-05). No sales activation. */
 
+const { SUPPORTED_LOCALES } = require("./canonicalLocales");
+
 const VALID_STATUSES = new Set(["draft", "active", "paused", "archived"]);
 const VALID_STOCK_STATUSES = new Set(["in_stock", "low_stock", "out_of_stock", "preorder"]);
-const VALID_LOCALES = new Set(["de", "en", "tr", "ar"]);
+const VALID_LOCALES = new Set(SUPPORTED_LOCALES);
 const EAN_LENGTHS = new Set([8, 12, 13, 14]);
 
 function cleanString(value, max = 500) {

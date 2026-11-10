@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const productStore = require("./productStore");
 
-const LOCALES = ["de", "en", "tr", "ar"];
+const { SUPPORTED_LOCALES } = require("./canonicalLocales");
+const LOCALES = [...SUPPORTED_LOCALES];
 const translationsFile = path.join(__dirname, "..", "..", "data", "buzzard_product_translations.json");
 
 function readTranslations() {

@@ -13,6 +13,7 @@ import {
   getChildren,
   getDefaultMainCategoryId,
   getDefaultSubCategoryId,
+  getParentCategory,
   findCategoryBySlugPath,
   findCategoryByUrl,
   categoryHref,
@@ -30,9 +31,16 @@ import {
 } from "@/lib/categories/service";
 
 export const MAIN_CATEGORY_COUNT = categoryCatalog.main_category_count;
+import { APPROVED_CUSTOMER_FACING_L1_COUNT, INTERNAL_SHOP_L1_COUNT } from "@/lib/categories/customerFacing";
 import { getCategoryLabel, formatMenuLabel, toCategoryDisplayUpperCase } from "@/lib/categories/i18n";
-import { getMainCategoryIcon } from "@/lib/categories/icons";
+import { orderCustomerFacingCategories } from "@/lib/categories/affinityOrder";
+import { getMainCategoryIcon, getCategoryRowIcon } from "@/lib/categories/icons";
+import { getCategoryVisual, getMainCategoryVisual, hasHubSubcategoryVisual } from "@/lib/categories/visuals";
 import { getProductsForCategory } from "@/lib/products";
+
+/** Approved customer-facing count from the storefront list. Menu membership still follows the retired-category filter. */
+export const INTERNAL_L1_COUNT = INTERNAL_SHOP_L1_COUNT;
+export { APPROVED_CUSTOMER_FACING_L1_COUNT };
 
 export const DEFAULT_LOCALE: BuzzardLocale = "de";
 
@@ -48,6 +56,7 @@ export {
   getChildren,
   getDefaultMainCategoryId,
   getDefaultSubCategoryId,
+  getParentCategory,
   findCategoryBySlugPath,
   findCategoryByUrl,
   categoryHref,
@@ -65,10 +74,14 @@ export {
   getCategoryLabel,
   formatMenuLabel,
   getMainCategoryIcon,
+  getCategoryRowIcon,
+  getMainCategoryVisual,
+  getCategoryVisual,
+  hasHubSubcategoryVisual,
 };
 
 /** Linke Spalte: Hauptkategorien aus JSON (Smart-Menü: 48 Kategorien via API) */
-export const mainCategories = getNavigableMainCategories().map((cat) => ({
+export const mainCategories = orderCustomerFacingCategories(getNavigableMainCategories()).map((cat) => ({
   id: cat.id,
   slug: cat.slug,
   label: formatMenuLabel(cat, DEFAULT_LOCALE),
@@ -146,16 +159,17 @@ export function getDiversePopularCategories(
     "cat-07",
     "cat-10",
     "cat-14",
-    "cat-14",
     "cat-39",
     "cat-02",
     "cat-18",
   ];
   const cards: Array<CategoryCard & { icon: string }> = [];
+  const seen = new Set<string>();
 
   for (const mainId of featuredMainIds) {
     const child = getChildren(mainId)[0];
-    if (!child) continue;
+    if (!child || seen.has(child.id)) continue;
+    seen.add(child.id);
     cards.push({
       ...homeCard(child, locale),
       icon: getMainCategoryIcon(mainId),

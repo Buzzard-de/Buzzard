@@ -1,0 +1,1236 @@
+{
+  "count": 45449,
+  "byLocale": {
+    "ar": 580,
+    "bg": 1812,
+    "ca": 1814,
+    "cs": 1812,
+    "da": 1812,
+    "el": 1812,
+    "en": 573,
+    "es": 1320,
+    "et": 1814,
+    "eu": 1814,
+    "fi": 1812,
+    "fr": 621,
+    "ga": 1814,
+    "gl": 1814,
+    "hr": 1812,
+    "hu": 1812,
+    "it": 1320,
+    "lb": 1814,
+    "lt": 1814,
+    "lv": 1814,
+    "mt": 1814,
+    "nl": 1320,
+    "pl": 1320,
+    "pt": 1557,
+    "ro": 1812,
+    "sk": 1812,
+    "sl": 1812,
+    "sv": 1812,
+    "tr": 580
+  },
+  "examples": [
+    {
+      "id": "cat-01-01",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Damenbekleidung"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-01",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Kleid"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-02",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Bluse"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-03",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Hemd"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "en",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "tr",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "ar",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "fr",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "nl",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "it",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "pl",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "pt",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "es",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-04",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "T Shirt"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "pt",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-05",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Pullover & Strick"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "pt",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-06",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Strickjacke"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "fr",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "nl",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "it",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "pl",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "pt",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "es",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-07",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Sweatshirt"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-08",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Hose"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "da",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "et",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "fi",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "hu",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "lv",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "lt",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "lb",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "mt",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "pt",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "ro",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "sk",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "sl",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "ca",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "eu",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "gl",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "sv",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-09",
+      "locale": "ga",
+      "reason": "english-fallback",
+      "source": "Jean"
+    },
+    {
+      "id": "cat-01-01-10",
+      "locale": "bg",
+      "reason": "english-fallback",
+      "source": "Rock"
+    },
+    {
+      "id": "cat-01-01-10",
+      "locale": "hr",
+      "reason": "english-fallback",
+      "source": "Rock"
+    },
+    {
+      "id": "cat-01-01-10",
+      "locale": "el",
+      "reason": "english-fallback",
+      "source": "Rock"
+    },
+    {
+      "id": "cat-01-01-10",
+      "locale": "cs",
+      "reason": "english-fallback",
+      "source": "Rock"
+    }
+  ]
+}

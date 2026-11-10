@@ -14,6 +14,9 @@ export default function Footer() {
           <span>BUZZARD24</span>
         </div>
         <div className="footer-links">
+          <Link href="/fahrzeugteile-suche/">Fahrzeugteile</Link>
+          <Link href="/landmaschinen-suche/">Landmaschinen</Link>
+          <Link href="/baumaschinen-suche/">Baumaschinen</Link>
           <Link href="/hilfe/">{t("footer.help")}</Link>
           <Link href="/hilfe/#faq">{t("footer.faq")}</Link>
           <Link href="/agb/">{t("footer.terms")}</Link>

@@ -98,7 +98,11 @@ async function main() {
 
   console.log("");
   console.log("Remote API probe:");
-  const probe = await probeApi();
+  let probe = await probeApi();
+  for (let attempt = 1; attempt < 4 && (probe.status === 502 || probe.status === 503); attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 1500 * attempt));
+    probe = await probeApi();
+  }
   if (probe.ok && probe.body?.success) {
     pass(`/api/health returns 200`);
     const db = probe.body?.database;

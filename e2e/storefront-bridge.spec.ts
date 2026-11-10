@@ -7,8 +7,8 @@ async function adminLogin(page: import("@playwright/test").Page) {
   await page.goto("/admin/login/");
   await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
   await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL(/\/admin/, { timeout: 15_000 });
+  await page.locator("form.admin-login-card button[type=submit]").click();
+  await page.waitForURL(/\/admin\/?$/, { timeout: 15_000 });
 }
 
 test.describe("Storefront Bridge E2E (Part 7)", () => {

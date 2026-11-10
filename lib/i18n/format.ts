@@ -1,3 +1,5 @@
+import { LOCALE_TAG_MAP } from "./types";
+
 const LOCALE_MAP: Record<string, string> = {
   de: "de-DE",
   en: "en-GB",
@@ -31,12 +33,16 @@ const LOCALE_MAP: Record<string, string> = {
   ga: "ga-IE",
 };
 
-export function getIntlLocale(locale: string): string {
+export function getIntlLocale(locale: string, localeTag?: string): string {
+  if (localeTag) {
+    const tag = localeTag.replace("_", "-");
+    if (LOCALE_TAG_MAP[tag] === locale) return tag;
+  }
   return LOCALE_MAP[locale] ?? LOCALE_MAP.de;
 }
 
-export function formatPrice(amount: number, locale: string = "de", currency = "EUR"): string {
-  return new Intl.NumberFormat(getIntlLocale(locale), {
+export function formatPrice(amount: number, locale: string = "de", currency = "EUR", localeTag?: string): string {
+  return new Intl.NumberFormat(getIntlLocale(locale, localeTag), {
     style: "currency",
     currency,
     minimumFractionDigits: 2,
@@ -44,12 +50,12 @@ export function formatPrice(amount: number, locale: string = "de", currency = "E
   }).format(amount);
 }
 
-export function formatNumber(value: number, locale: string = "de"): string {
-  return new Intl.NumberFormat(getIntlLocale(locale)).format(value);
+export function formatNumber(value: number, locale: string = "de", localeTag?: string): string {
+  return new Intl.NumberFormat(getIntlLocale(locale, localeTag)).format(value);
 }
 
-export function formatPercent(value: number, locale: string = "de"): string {
-  return new Intl.NumberFormat(getIntlLocale(locale), {
+export function formatPercent(value: number, locale: string = "de", localeTag?: string): string {
+  return new Intl.NumberFormat(getIntlLocale(locale, localeTag), {
     style: "percent",
     maximumFractionDigits: 0,
   }).format(value / 100);
@@ -58,13 +64,14 @@ export function formatPercent(value: number, locale: string = "de"): string {
 export function formatDate(
   value: Date | string | number,
   locale: string = "de",
-  options: Intl.DateTimeFormatOptions = { dateStyle: "medium" }
+  options: Intl.DateTimeFormatOptions = { dateStyle: "medium" },
+  localeTag?: string
 ): string {
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat(getIntlLocale(locale), options).format(date);
+  return new Intl.DateTimeFormat(getIntlLocale(locale, localeTag), options).format(date);
 }
 
-export function formatDateTime(value: Date | string | number, locale: string = "de"): string {
-  return formatDate(value, locale, { dateStyle: "medium", timeStyle: "short" });
+export function formatDateTime(value: Date | string | number, locale: string = "de", localeTag?: string): string {
+  return formatDate(value, locale, { dateStyle: "medium", timeStyle: "short" }, localeTag);
 }

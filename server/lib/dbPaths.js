@@ -2,17 +2,41 @@
  * Part 12 — Central SQLite path configuration
  */
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
 const serverDataDir = path.join(__dirname, "..", "data");
 const defaultDbPath = path.join(serverDataDir, "buzzard.db");
 const defaultBackupDir = path.join(serverDataDir, "backups");
 
-function resolveDbPath() {
-  if (process.env.BUZZARD_DB_PATH) {
-    return path.resolve(process.env.BUZZARD_DB_PATH);
+function assertNotGuardianDb(dbPath) {
+  if (path.basename(String(dbPath || "")).startsWith("buzzard_guardian")) {
+    throw new Error("GUARDIAN_SQLITE_FORBIDDEN");
   }
-  return defaultDbPath;
+  return dbPath;
+}
+
+function isAutomatedTestProcess() {
+  if (process.env.VITEST === "true") return true;
+  const args = [...process.execArgv, ...process.argv];
+  if (args.includes("--test")) return true;
+  return process.argv.some((arg) => /(?:^|[\\/])__tests__[\\/].+\.test\.mjs$/.test(arg));
+}
+
+function isolatedTestDbPath() {
+  const worker = process.env.VITEST_POOL_ID || process.env.VITEST_WORKER_ID || String(process.pid);
+  const dir = path.join(os.tmpdir(), "buzzard-test-sqlite");
+  fs.mkdirSync(dir, { recursive: true });
+  return path.join(dir, `buzzard-test-${worker}.db`);
+}
+
+function resolveDbPath() {
+  const selected = process.env.BUZZARD_DB_PATH
+    ? path.resolve(process.env.BUZZARD_DB_PATH)
+    : isAutomatedTestProcess()
+      ? isolatedTestDbPath()
+      : defaultDbPath;
+  return assertNotGuardianDb(selected);
 }
 
 function resolveBackupDir() {

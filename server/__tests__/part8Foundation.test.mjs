@@ -57,12 +57,32 @@ describe("commerceValidation", () => {
   });
 });
 
+function ensureVisibleProduct() {
+  const productService = require("../lib/productService.js");
+  const catalogReadService = require("../lib/storefront/catalogReadService.js");
+  const catalogCache = require("../lib/storefront/catalogCache.js");
+  catalogCache.invalidate();
+  const existing = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
+  if (existing) return existing;
+  productService.createProduct({
+    sku: `P8S-${crypto.randomBytes(3).toString("hex")}`,
+    title: "Phase 8 shelf item",
+    description: "Canonical commerce path test product.",
+    price: 21.5,
+    stock: 10,
+    visibility: "PUBLIC",
+    status: "READY",
+  });
+  catalogCache.invalidate();
+  const created = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
+  if (!created) throw new Error("isolated catalog product was not visible");
+  return created;
+}
+
 describe("cartService", () => {
   it("creates cart and resolves authoritative price", () => {
     const cartService = require("../lib/commerce/cartService.js");
-    const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const listed = catalogReadService.listProducts({ page: 1, limit: 10 });
-    const product = listed.items[0];
+    const product = ensureVisibleProduct();
     expect(product).toBeTruthy();
 
     const cart = cartService.createCart({
@@ -87,8 +107,7 @@ describe("checkoutService state machine", () => {
   it("blocks illegal transitions", () => {
     const checkoutService = require("../lib/commerce/checkoutService.js");
     const cartService = require("../lib/commerce/cartService.js");
-    const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const product = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
+    const product = ensureVisibleProduct();
     const cart = cartService.createCart({ sessionId: "state-test", customerId: "cust_vitest_chk" });
     cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_chk" });
 

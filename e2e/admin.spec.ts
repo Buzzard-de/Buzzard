@@ -15,8 +15,8 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await page.goto("/admin/login/");
     await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
     await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\/admin\/?/, { timeout: 15_000 });
+    await page.locator("form.admin-login-card button[type=submit]").click();
+    await page.waitForURL(/\/admin\/?$/, { timeout: 15_000 });
     await expect(page.locator("body")).toContainText(/BUZZARD|Admin|Dashboard/i);
   });
 
@@ -24,8 +24,8 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await page.goto("/admin/login/");
     await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
     await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\/admin/, { timeout: 15_000 });
+    await page.locator("form.admin-login-card button[type=submit]").click();
+    await page.waitForURL(/\/admin\/?$/, { timeout: 15_000 });
     await page.goto("/admin/control-center/");
     await expect(page.locator("body")).toContainText(/Control Center/i);
   });
@@ -34,8 +34,8 @@ test.describe("Admin E2E (Part 5 foundation)", () => {
     await page.goto("/admin/login/");
     await page.fill('input[type="email"], input[name="email"], #email', ADMIN_EMAIL);
     await page.fill('input[type="password"], input[name="password"], #password', ADMIN_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\/admin/, { timeout: 15_000 });
+    await page.locator("form.admin-login-card button[type=submit]").click();
+    await page.waitForURL(/\/admin\/?$/, { timeout: 15_000 });
     await page.goto("/admin/sessions/");
     await expect(page.locator("body")).toContainText(/Session/i);
   });

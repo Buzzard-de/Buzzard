@@ -1,0 +1,89 @@
+{
+  "schema": "buzzard.blocked-shells.v1",
+  "recordedAt": "2026-11-10T19:37:59.563Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "softwareCompleted": 11,
+  "softwareTasks": 11,
+  "autonomousSoftwareCompletion": 1,
+  "projectCompletionIncludingGates": 0.5,
+  "tasks": [
+    {
+      "id": "OFFICIAL_TTS",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "HUMAN_APPROVAL_REQUIRED",
+      "evidence": "PROVIDER_ABSENT",
+      "liveVerified": false
+    },
+    {
+      "id": "ALWAYS_ON_HOST",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "HUMAN_APPROVAL_REQUIRED",
+      "evidence": "IN_PROCESS_SUPERVISOR",
+      "liveVerified": false
+    },
+    {
+      "id": "OFFSITE_BACKUP",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "HUMAN_APPROVAL_REQUIRED",
+      "evidence": "LOCAL_ROUNDTRIP",
+      "liveVerified": false
+    },
+    {
+      "id": "LIVE_BANK_CONNECTORS",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "HUMAN_APPROVAL_REQUIRED",
+      "evidence": "HUMAN_GATE_REQUIRED",
+      "liveVerified": false
+    },
+    {
+      "id": "HUMAN_STT",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "PROVIDER_ABSENT",
+      "liveVerified": false
+    },
+    {
+      "id": "PRODUCTION_TRANSFORMER",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "MODEL_ABSENT",
+      "liveVerified": false
+    },
+    {
+      "id": "SCENE_UNDERSTAND",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "NOT_IMPLEMENTED",
+      "liveVerified": false
+    },
+    {
+      "id": "LIPSYNC_AUDIO",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "LOCAL_SCENE",
+      "liveVerified": false
+    },
+    {
+      "id": "BODY_3D",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "LOCAL_RIG_ABSENT",
+      "liveVerified": false
+    },
+    {
+      "id": "LIVE_CARRIER_TRACK",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "SYNTHETIC_TRACK",
+      "liveVerified": false
+    },
+    {
+      "id": "EU27_REGISTRY_IMPORT",
+      "softwareStatus": "TEST_COMPLETE",
+      "externalStatus": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "evidence": "QUOTED_IMPORT",
+      "liveVerified": false
+    }
+  ]
+}

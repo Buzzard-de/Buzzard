@@ -95,8 +95,8 @@ module.exports = {
         const info = db
           .prepare("INSERT INTO users(email, password_hash, name) VALUES(?,?,?)")
           .run(normalizedEmail, hashPassword(password), normalizedName);
-        const user = db.prepare("SELECT id, email, name, role FROM users WHERE id = ?").get(info.lastInsertRowid);
-        return res.status(201).json({ user, token: signUser(user) });
+        const user = db.prepare("SELECT id, name, role FROM users WHERE id = ?").get(info.lastInsertRowid);
+        return res.status(201).json({ user: { ...user, email: null }, token: signUser(user) });
       } catch {
         logAuthFailure(req, { type: "auth_register_rejected", email: normalizedEmail, path: "/api/auth/register" });
         return res.status(409).json({ error: "Email already exists" });
@@ -144,15 +144,15 @@ module.exports = {
       }
       clearFailures("auth", normalizedEmail);
       delete user.password_hash;
-      return res.json({ user, token: signUser(user) });
+      return res.json({ user: { id: user.id, name: user.name, role: user.role, email: null }, token: signUser(user) });
     });
 
     app.get("/api/me", (req, res) => {
       if (!requireAuth(req, res)) return;
       const user = db
-        .prepare("SELECT id, email, name, role, created_at FROM users WHERE id = ?")
+        .prepare("SELECT id, name, role, created_at FROM users WHERE id = ?")
         .get(req.user.sub);
-      return res.json(user);
+      return res.json({ ...user, email: null, phone: null });
     });
 
     app.patch("/api/me", (req, res) => {
@@ -162,9 +162,9 @@ module.exports = {
         db.prepare("UPDATE users SET name = ? WHERE id = ?").run(String(name).trim(), req.user.sub);
       }
       const user = db
-        .prepare("SELECT id, email, name, role, created_at FROM users WHERE id = ?")
+        .prepare("SELECT id, name, role, created_at FROM users WHERE id = ?")
         .get(req.user.sub);
-      return res.json(user);
+      return res.json({ ...user, email: null, phone: null });
     });
 
     app.get("/api/categories", (_req, res) => {
@@ -254,15 +254,15 @@ module.exports = {
       }
 
       const product = db.prepare("SELECT * FROM products WHERE id = ? AND active = 1").get(productId);
-      if (!product || quantity > product.stock) {
+      if (!product) {
         return res.status(400).json({ error: "Invalid product or quantity" });
       }
-
-      db.prepare(`
-        INSERT INTO cart_items(cart_id, product_id, quantity) VALUES(?,?,?)
-        ON CONFLICT(cart_id, product_id) DO UPDATE SET quantity = excluded.quantity
-      `).run(cart.id, productId, quantity);
-      return res.json({ ok: true });
+      return res.status(409).json({
+        error: "STOCK_UNVERIFIED",
+        code: "STOCK_UNVERIFIED",
+        stored: false,
+        purchased: false,
+      });
     });
 
     app.put("/api/cart/sync", (req, res) => {
@@ -283,19 +283,16 @@ module.exports = {
 
         const product = findProductBySku(sku);
         if (!product) continue;
-        if (quantity > product.stock) {
-          return res.status(409).json({ error: `Insufficient stock: ${sku}` });
-        }
+        resolved.push({ productId: product.id, quantity });
+      }
 
-        const existing = resolved.find((row) => row.productId === product.id);
-        if (existing) {
-          existing.quantity += quantity;
-          if (existing.quantity > product.stock) {
-            return res.status(409).json({ error: `Insufficient stock: ${sku}` });
-          }
-        } else {
-          resolved.push({ productId: product.id, quantity });
-        }
+      if (resolved.length) {
+        return res.status(409).json({
+          error: "STOCK_UNVERIFIED",
+          code: "STOCK_UNVERIFIED",
+          stored: false,
+          purchased: false,
+        });
       }
 
       db.transaction(() => {
@@ -425,14 +422,12 @@ module.exports = {
         .prepare("SELECT * FROM orders WHERE order_number = ?")
         .get(req.params.orderNumber);
       if (!order) return res.status(404).json({ error: "Order not found" });
-      db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(status, order.id);
-      return res.json(
-        db.prepare(`
-          SELECT id, order_number, country_code, currency, subtotal, shipping, tax, total,
-                 status, shipping_status, payment_status, created_at
-          FROM orders WHERE id = ?
-        `).get(order.id)
-      );
+      return res.status(409).json({
+        ok: false,
+        code: "ORDER_UNVERIFIED",
+        updated: false,
+        status: order.status,
+      });
     });
 
     app.post("/api/db/admin/shipments", async (req, res) => {
@@ -444,11 +439,16 @@ module.exports = {
         const shipment = await createShipment({
           orderNumber: order.order_number,
           countryCode: order.country_code,
-          weightKg: 0,
+          weightKg: null,
           address: JSON.parse(order.shipping_address || "{}"),
         });
-        db.prepare("UPDATE orders SET shipping_status = ? WHERE id = ?").run(shipment.status, order.id);
-        return res.json(shipment);
+        return res.status(409).json({
+          ok: false,
+          code: shipment.code || "SHIPPING_RATE_UNVERIFIED",
+          updated: false,
+          shipmentCreated: false,
+          live: false,
+        });
       } catch (error) {
         console.error("SQLite shipment error:", error);
         return res.status(500).json({ error: "Internal server error" });

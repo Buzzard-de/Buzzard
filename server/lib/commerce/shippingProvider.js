@@ -1,51 +1,67 @@
 /**
- * Part 8 — Shipping provider abstraction (no real shipment creation in Part 8)
+ * Shipping quotes stay unverified until a carrier tariff is supplied
+ * with country, zone, weight, dimensions, and service. This module does
+ * not invent a euro amount and does not call a carrier API.
  */
-const { roundMoney } = require("./commerceValidation");
+const { assessShipping, carrierRateStatus, selectTransportCost } = require("./pricingPolicy");
 
-const METHODS = Object.freeze({
-  STANDARD: { id: "standard", name: "Standard Shipping", baseDays: 3, basePrice: 4.99 },
-  EXPRESS: { id: "express", name: "Express Shipping", baseDays: 1, basePrice: 9.99 },
-  PICKUP: { id: "pickup", name: "Pickup", baseDays: 0, basePrice: 0 },
-});
+const METHODS = Object.freeze([
+  { id: "standard", name: "Standard Shipping" },
+  { id: "express", name: "Express Shipping" },
+  { id: "pickup", name: "Pickup" },
+]);
 
 function listMethods() {
-  return Object.values(METHODS);
+  return METHODS.map((method) => ({
+    ...method,
+    price: null,
+    currency: null,
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    live: false,
+  }));
 }
 
-function calculateShipping({ methodId = "standard", country = "DE", subtotal = 0, itemCount = 0 } = {}) {
-  const method = METHODS[methodId.toUpperCase()] || METHODS.STANDARD;
-  let price = method.basePrice;
-
-  if (country && country.toUpperCase() !== "DE") {
-    price += 5;
+function calculateShipping(input = {}) {
+  if (input.rates || input.shippingIncluded === true || input.supplierOfferIncludesShipping === true) {
+    const selected = selectTransportCost(input);
+    return {
+      ...selected,
+      price: selected.ok ? selected.shippingCost : null,
+      methodId: selected.selected?.service || null,
+      currency: selected.ok ? input.currency || "EUR" : null,
+      dryRun: true,
+      itemCount: input.itemCount ?? null,
+    };
   }
-  if (subtotal >= 100) {
-    price = roundMoney(Math.max(0, price - 2));
-  }
-
-  const estimatedDelivery = new Date();
-  estimatedDelivery.setDate(estimatedDelivery.getDate() + method.baseDays + (country?.toUpperCase() !== "DE" ? 2 : 0));
-
+  const assessment = assessShipping({
+    country: input.country,
+    zone: input.zone || input.deliveryZone,
+    weightKg: input.weightKg ?? input.weight,
+    dimensions: input.dimensions,
+    service: input.service || input.serviceType || input.methodId,
+    carrier: input.carrier,
+    shippingCost: input.rate ?? input.shippingCost ?? input.amount,
+    verified: input.verified === true || input.rateVerified === true,
+  });
   return {
-    methodId: method.id,
-    methodName: method.name,
-    price: roundMoney(price),
-    currency: "EUR",
-    estimatedDelivery: estimatedDelivery.toISOString().slice(0, 10),
+    ...assessment,
+    price: assessment.ok ? assessment.shippingCost : null,
+    methodId: input.methodId || input.service || input.serviceType || null,
+    currency: assessment.ok ? input.currency || "EUR" : null,
     dryRun: true,
-    shipmentCreated: false,
-    itemCount,
+    itemCount: input.itemCount ?? null,
   };
 }
 
 function getProviderHealth() {
   return {
     provider: "foundation",
-    status: "READY",
+    status: "UNVERIFIED",
     realShipmentEnabled: false,
-    adapters: ["DHL", "DPD", "Hermes"],
-    note: "Adapter stubs only — no live shipment creation",
+    official: false,
+    adapters: carrierRateStatus(),
+    note: "Carrier rate APIs are not connected. No fixed euro amount is a shipping price.",
   };
 }
 

@@ -16,11 +16,6 @@ function blocked(op, extra = {}) {
   return { ...LIVE_BLOCK, operation: op, salesEnabled: isSalesEnabled(), ...extra };
 }
 
-function mockOk(op, data) {
-  audit("mock_op", { op });
-  return { ok: true, live: false, mock: true, sandboxVerified: false, operation: op, data };
-}
-
 const CARRIER_ERRORS = Object.freeze({
   AUTHENTICATION: "AUTHENTICATION_ERROR",
   RATE_LIMIT: "RATE_LIMIT",
@@ -35,9 +30,150 @@ const CARRIER_ERRORS = Object.freeze({
   RETURN_FAILURE: "RETURN_FAILURE",
 });
 
-function error(op, code, extra = {}) {
-  audit("adapter_error", { op, code });
-  return { ok: false, live: false, mock: true, operation: op, error: { code, ...extra } };
+const KNOWN_CARRIERS = new Set([
+  "dhl",
+  "dhl-parcel-de",
+  "dpd",
+  "dpd-esolutions",
+  "dpd-baltic-rest",
+  "gls",
+  "gls-shipit",
+  "hermes",
+  "hermes-germany-hsi",
+  "ups",
+  "ups-developer",
+]);
+
+function trackingResult(op, extra = {}) {
+  audit("blocked_live_op", { op, ...extra });
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    blocked: true,
+    status: "BLOCKED_EXTERNAL",
+    trackingNumber: null,
+    events: [],
+    delivered: false,
+    shipmentCreated: false,
+    operation: op,
+    salesEnabled: isSalesEnabled(),
+    ...extra,
+  };
+}
+
+function trackingRequest(id) {
+  if (id && typeof id === "object") {
+    const response = id.carrierResponse && typeof id.carrierResponse === "object" ? id.carrierResponse : null;
+    const events = Array.isArray(id.events) ? id.events : Array.isArray(response?.events) ? response.events : [];
+    return {
+      trackingNumber: id.trackingNumber || id.id || response?.trackingNumber || null,
+      events,
+      mock: id.mock === true || id.source === "mock" || String(id.trackingNumber || id.id || "").toUpperCase() === "MOCK",
+      delivered: id.delivered === true || id.status === "DELIVERED" || events.some((event) => String(event.code || event.status || "").toUpperCase() === "DELIVERED"),
+      timeout: id.timeout === true,
+      networkError: id.networkError === true,
+      contract: response,
+    };
+  }
+  const text = id == null ? "" : String(id).trim();
+  return {
+    trackingNumber: text || null,
+    events: [],
+    mock: text.toUpperCase() === "MOCK",
+    delivered: false,
+    timeout: false,
+    networkError: false,
+    contract: null,
+  };
+}
+
+function duplicateEvents(events) {
+  const seen = new Set();
+  for (const event of events) {
+    const key = `${event.code || event.status || ""}|${event.at || ""}|${event.description || ""}`;
+    if (seen.has(key)) return true;
+    seen.add(key);
+  }
+  return false;
+}
+
+function resolveTracking(op, carrierId, id, flags = {}) {
+  if (flags.forceTimeout) return trackingResult(op, { code: "TIMEOUT" });
+  if (flags.networkError || flags.outage) return trackingResult(op, { code: flags.networkError ? "NETWORK_ERROR" : "CARRIER_OUTAGE" });
+  const known = KNOWN_CARRIERS.has(String(carrierId || "").toLowerCase());
+  if (!known) return trackingResult(op, { code: "CARRIER_UNKNOWN", carrierId: carrierId || null });
+  const request = trackingRequest(id);
+  if (request.timeout) return trackingResult(op, { code: "TIMEOUT" });
+  if (request.networkError) return trackingResult(op, { code: "NETWORK_ERROR" });
+  if (request.mock) return trackingResult(op, { code: "MOCK_REJECTED" });
+  if (!request.trackingNumber) return trackingResult(op, { code: "MISSING_TRACKING_NUMBER" });
+  if (!/^[A-Za-z0-9][A-Za-z0-9-]{5,}$/.test(String(request.trackingNumber))) {
+    return trackingResult(op, { code: "INVALID_TRACKING_NUMBER" });
+  }
+  if (duplicateEvents(request.events)) return trackingResult(op, { code: "DUPLICATE_TRACKING_EVENT" });
+  if (request.delivered) return trackingResult(op, { code: "DELIVERY_UNCONFIRMED" });
+  const response = request.contract;
+  const shape = Boolean(response && response.trackingNumber && response.carrier && response.receivedAt && Array.isArray(response.events) && response.events.length);
+  return trackingResult(op, {
+    code: shape ? "LIVE_CONNECTION_REQUIRED" : "LIVE_CONNECTION_ABSENT",
+    contract: shape ? "VALID_SHAPE" : "NO_LIVE_CONNECTION",
+  });
+}
+
+function quoteBlocked(op, code, extra = {}) {
+  audit("blocked_live_op", { op, code });
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    blocked: true,
+    status: "BLOCKED_EXTERNAL",
+    rates: [],
+    validatedAddress: null,
+    commercialEligibility: "BLOCKED",
+    shippingCost: null,
+    operation: op,
+    code,
+    error: { code },
+    salesEnabled: isSalesEnabled(),
+    ...extra,
+  };
+}
+
+function resolveQuote(op, carrierId, req = {}, flags = {}) {
+  if (flags.forceTimeout || req.timeout === true) return quoteBlocked(op, "TIMEOUT");
+  if (flags.networkError || req.networkError === true) return quoteBlocked(op, "NETWORK_ERROR");
+  if (flags.outage) return quoteBlocked(op, CARRIER_ERRORS.CARRIER_OUTAGE);
+  if (!KNOWN_CARRIERS.has(String(carrierId || "").toLowerCase())) {
+    return quoteBlocked(op, "CARRIER_UNKNOWN", { carrierId: carrierId || null });
+  }
+  if (req.mock === true || req.source === "mock" || Array.isArray(req.rates)) return quoteBlocked(op, "MOCK_REJECTED");
+  if (req.weightKg != null && Number(req.weightKg) > 1000) {
+    return quoteBlocked(op, CARRIER_ERRORS.UNSUPPORTED_PARCEL_SIZE);
+  }
+  const shaped = Boolean(req.origin && req.country && Number(req.weightKg) > 0 && req.dimensions);
+  return quoteBlocked(op, shaped ? "LIVE_CONNECTION_REQUIRED" : "LIVE_CONNECTION_ABSENT", {
+    contract: shaped ? "VALID_SHAPE" : "NO_LIVE_CONNECTION",
+  });
+}
+
+function resolveAddress(carrierId, addr, flags = {}) {
+  if (flags.forceTimeout || addr?.timeout === true) return quoteBlocked("validateAddress", "TIMEOUT");
+  if (flags.networkError || addr?.networkError === true) return quoteBlocked("validateAddress", "NETWORK_ERROR");
+  if (flags.outage) return quoteBlocked("validateAddress", CARRIER_ERRORS.CARRIER_OUTAGE);
+  if (!KNOWN_CARRIERS.has(String(carrierId || "").toLowerCase())) {
+    return quoteBlocked("validateAddress", "CARRIER_UNKNOWN", { carrierId: carrierId || null });
+  }
+  if (addr?.mock === true || addr?.source === "mock") return quoteBlocked("validateAddress", "MOCK_REJECTED");
+  const country = String(addr?.country || "").trim().toUpperCase();
+  const postal = String(addr?.postalCode || addr?.postcode || "").trim();
+  if (!country || !postal) return quoteBlocked("validateAddress", "MISSING_ADDRESS");
+  const { countryList, isValidPostcodeShape } = require("./coverageEngine");
+  const iso = country === "GR" ? "EL" : country;
+  if (!countryList().includes(iso)) return quoteBlocked("validateAddress", "COUNTRY_UNKNOWN");
+  if (!isValidPostcodeShape(iso, postal)) return quoteBlocked("validateAddress", CARRIER_ERRORS.INVALID_ADDRESS);
+  return quoteBlocked("validateAddress", "LIVE_CONNECTION_REQUIRED", { contract: "VALID_SHAPE" });
 }
 
 function createAdapter({
@@ -46,85 +182,45 @@ function createAdapter({
   apiType = "NOT_VERIFIED",
   outage = false,
   forceTimeout = false,
+  networkError = false,
 } = {}) {
   const ctx = { carrierId, apiLevel, apiType, contract_status: "NONE", sandbox_status: "NOT_AVAILABLE" };
-  const gate = (op) => {
-    if (outage) return error(op, CARRIER_ERRORS.CARRIER_OUTAGE);
-    if (forceTimeout) return error(op, CARRIER_ERRORS.TIMEOUT);
-    return null;
-  };
   return {
     ...ctx,
-    getRates: (req = {}) => {
-      const g = gate("getRates");
-      if (g) return g;
-      if (req.weightKg != null && Number(req.weightKg) > 1000) {
-        return error("getRates", CARRIER_ERRORS.UNSUPPORTED_PARCEL_SIZE, { weightKg: req.weightKg });
-      }
-      return mockOk("getRates", { rates: [], estimateIsNotPrice: true, liveRate: false });
-    },
-    validateAddress: (addr) => {
-      const g = gate("validateAddress");
-      if (g) return g;
-      const valid = Boolean(addr && addr.country && addr.postalCode);
-      if (!valid) return error("validateAddress", CARRIER_ERRORS.INVALID_ADDRESS);
-      return mockOk("validateAddress", { valid: true, postalCode: addr.postalCode });
-    },
-    getServiceOptions: () => gate("getServiceOptions") || mockOk("getServiceOptions", { options: [] }),
+    getRates: (req = {}) => resolveQuote("getRates", carrierId, req, { forceTimeout, networkError, outage }),
+    validateAddress: (addr) => resolveAddress(carrierId, addr, { forceTimeout, networkError, outage }),
+    getServiceOptions: () => resolveQuote("getServiceOptions", carrierId, {}, { forceTimeout, networkError, outage }),
     createShipment: (req) => blocked("createShipment", { reason: "Real labels and shipments are disabled.", requestIgnored: Boolean(req) }),
     cancelShipment: () => blocked("cancelShipment"),
     createLabel: () => blocked("createLabel", { errorCode: CARRIER_ERRORS.LABEL_FAILURE }),
-    trackShipment: (id) => {
-      const g = gate("trackShipment");
-      if (g) return g;
-      if (!id) return error("trackShipment", CARRIER_ERRORS.INVALID_TRACKING);
-      return mockOk("trackShipment", {
-        trackingId: id,
-        events: normalizeTracking([{ code: "INFO", description: "Mock only. Not a live scan." }]),
-      });
-    },
-    getTrackingEvents: (id) => gate("getTrackingEvents") || mockOk("getTrackingEvents", { trackingId: id || "MOCK", events: [] }),
+    trackShipment: (id) => resolveTracking("trackShipment", carrierId, id, { forceTimeout, networkError, outage }),
+    getTrackingEvents: (id) => resolveTracking("getTrackingEvents", carrierId, id, { forceTimeout, networkError, outage }),
     createPickup: () => blocked("createPickup"),
     cancelPickup: () => blocked("cancelPickup"),
-    createReturn: () =>
-      gate("createReturn") || mockOk("createReturn", { status: "MOCK_RETURN_NOT_LIVE", label: false }),
+    createReturn: () => blocked("createReturn", { label: false, commercialEffect: false }),
     getReturnLabel: () => blocked("getReturnLabel", { errorCode: CARRIER_ERRORS.RETURN_FAILURE }),
-    getPickupPoints: () => gate("getPickupPoints") || mockOk("getPickupPoints", { points: [], coverage: "UNKNOWN" }),
-    getLockers: () => gate("getLockers") || mockOk("getLockers", { lockers: [], coverage: "UNKNOWN" }),
+    getPickupPoints: () => resolveQuote("getPickupPoints", carrierId, {}, { forceTimeout, networkError, outage }),
+    getLockers: () => resolveQuote("getLockers", carrierId, {}, { forceTimeout, networkError, outage }),
     getCoverage: (postalCode, country) => {
-      const g = gate("getCoverage");
-      if (g) return g;
+      if (forceTimeout) return quoteBlocked("getCoverage", "TIMEOUT");
+      if (networkError) return quoteBlocked("getCoverage", "NETWORK_ERROR");
+      if (outage) return quoteBlocked("getCoverage", CARRIER_ERRORS.CARRIER_OUTAGE);
+      if (!KNOWN_CARRIERS.has(String(carrierId || "").toLowerCase())) {
+        return quoteBlocked("getCoverage", "CARRIER_UNKNOWN", { carrierId: carrierId || null });
+      }
       if (country && postalCode && postalCode !== "UNKNOWN") {
         const { isValidPostcodeShape } = require("./coverageEngine");
         if (!isValidPostcodeShape(country === "GR" ? "EL" : country, postalCode)) {
-          return error("getCoverage", CARRIER_ERRORS.UNSUPPORTED_POSTCODE, { postalCode, country });
+          return quoteBlocked("getCoverage", CARRIER_ERRORS.UNSUPPORTED_POSTCODE);
         }
       }
-      return mockOk("getCoverage", {
-        postalCode: postalCode || "UNKNOWN",
-        delivery_available: "UNKNOWN",
-        pickup_available: "UNKNOWN",
-        returns_available: "UNKNOWN",
-        locker_available: "UNKNOWN",
-        PUDO_available: "UNKNOWN",
-        rural_delivery: "UNKNOWN",
-        confidence_level: "UNKNOWN",
-      });
+      return quoteBlocked("getCoverage", "LIVE_CONNECTION_ABSENT", { contract: "NO_LIVE_CONNECTION" });
     },
-    getDeliveryEstimate: () =>
-      mockOk("getDeliveryEstimate", {
-        estimated_delivery_days: "UNKNOWN",
-        notACustomerPromise: true,
-      }),
+    getDeliveryEstimate: () => resolveQuote("getDeliveryEstimate", carrierId, {}, { forceTimeout, networkError, outage }),
     generateLabel: () => blocked("generateLabel", { errorCode: CARRIER_ERRORS.LABEL_FAILURE }),
-    getTracking: (id) => {
-      const g = gate("getTracking");
-      if (g) return g;
-      if (!id) return error("getTracking", CARRIER_ERRORS.INVALID_TRACKING);
-      return mockOk("getTracking", { trackingId: id, live: false, unknownShownAsUnknown: true });
-    },
-    getServicePoints: () => gate("getServicePoints") || mockOk("getServicePoints", { points: [], coverage: "UNKNOWN" }),
-    getDeliveryOptions: () => gate("getDeliveryOptions") || mockOk("getDeliveryOptions", { options: [], notAPromise: true }),
+    getTracking: (id) => resolveTracking("getTracking", carrierId, id, { forceTimeout, networkError, outage }),
+    getServicePoints: () => resolveQuote("getServicePoints", carrierId, {}, { forceTimeout, networkError, outage }),
+    getDeliveryOptions: () => resolveQuote("getDeliveryOptions", carrierId, {}, { forceTimeout, networkError, outage }),
     adapterVersion: "v5-mc14",
     retryPolicy: { maxAttempts: 3, backoff: "CODE_READY_MOCK", live: false },
     circuitBreaker: outage ? "OPEN" : "CLOSED_UNKNOWN_HEALTH",
@@ -474,8 +570,6 @@ function priorityCatalog() {
 module.exports = {
   createAdapter,
   blocked,
-  mockOk,
-  error,
   CARRIER_ERRORS,
   normalizeTracking,
   API_LEVELS,

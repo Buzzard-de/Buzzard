@@ -45,7 +45,10 @@ function seedUsers() {
 }
 
 function persistSessions() {
-  const entries = [...sessions.entries()].map(([token, session]) => ({ token, session }));
+  const entries = [...sessions.entries()].map(([token, session]) => ({
+    token,
+    session: { ...session, email: null, ip: null, userAgent: null },
+  }));
   writeJson(sessionsFile, entries);
 }
 
@@ -85,13 +88,13 @@ function createSession(user, meta = {}) {
   const session = {
     sessionId,
     userId: user.id,
-    email: user.email,
+    email: null,
     name: user.name,
     role: user.role,
     expiresAt: Date.now() + SESSION_TTL_MS,
     createdAt: new Date().toISOString(),
-    ip: meta.ip || null,
-    userAgent: meta.userAgent || null,
+    ip: null,
+    userAgent: null,
   };
   sessions.set(token, session);
   persistSessions();
@@ -102,13 +105,13 @@ function login(email, password, req) {
   const ip = req ? getClientIp(req) : "unknown";
   const normalizedEmail = String(email || "").trim().toLowerCase();
 
-  const lockout = getLockoutInfo("admin", normalizedEmail);
+  const identityKey = crypto.createHash("sha256").update(normalizedEmail).digest("hex");
+  const lockout = getLockoutInfo("admin", identityKey);
   if (lockout.locked) {
     logSecurityEvent({
       type: "admin_login_locked",
       success: false,
       ip,
-      email: normalizedEmail,
       path: "/api/admin/login",
       detail: { retryAfterSec: lockout.retryAfterSec },
     });
@@ -119,12 +122,11 @@ function login(email, password, req) {
     };
   }
 
-  if (loginRateLimit(req || { headers: {}, socket: { remoteAddress: ip } }, { key: `${ip}:${normalizedEmail}` })) {
+  if (loginRateLimit(req || { headers: {}, socket: { remoteAddress: ip } }, { key: `${ip}:${identityKey}` })) {
     logSecurityEvent({
       type: "admin_login_rate_limited",
       success: false,
       ip,
-      email: normalizedEmail,
       path: "/api/admin/login",
     });
     return { success: false, errorKey: "admin.auth.rateLimited" };
@@ -133,16 +135,14 @@ function login(email, password, req) {
   const users = loadUsers();
   const user = users.find((entry) => entry.email.toLowerCase() === normalizedEmail);
   if (!user || !verifyPassword(password, user.password_hash)) {
-    const failure = recordFailure("admin", normalizedEmail, {
+    const failure = recordFailure("admin", identityKey, {
       ip,
-      email: normalizedEmail,
       path: "/api/admin/login",
     });
     logSecurityEvent({
       type: "admin_login_failed",
       success: false,
       ip,
-      email: normalizedEmail,
       path: "/api/admin/login",
       detail: { remainingAttempts: failure.remainingAttempts },
     });
@@ -157,16 +157,15 @@ function login(email, password, req) {
   }
 
   upgradePasswordHash(user, password);
-  clearFailures("admin", normalizedEmail);
+  clearFailures("admin", identityKey);
 
-  if (adminTwoFactor.isEnabled(normalizedEmail)) {
+  if (adminTwoFactor.isEnabled(user.id)) {
     const challengeToken = adminTwoFactor.createChallenge(user);
     logSecurityEvent({
       type: "admin_login_2fa_required",
       success: true,
       ip,
       userId: user.id,
-      email: user.email,
       role: user.role,
       path: "/api/admin/login",
     });
@@ -174,7 +173,7 @@ function login(email, password, req) {
       success: true,
       requires2FA: true,
       challengeToken,
-      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      user: { id: user.id, email: null, name: user.name, role: user.role },
     };
   }
 
@@ -188,7 +187,6 @@ function login(email, password, req) {
     success: true,
     ip,
     userId: user.id,
-    email: user.email,
     role: user.role,
     path: "/api/admin/login",
   });
@@ -196,38 +194,30 @@ function login(email, password, req) {
   return {
     success: true,
     token,
-    user: { id: user.id, email: user.email, name: user.name, role: user.role },
+    user: { id: user.id, email: null, name: user.name, role: user.role },
   };
 }
 
 function verifyTwoFactor(challengeToken, code, req) {
   const ip = req ? getClientIp(req) : "unknown";
-  const challenge = adminTwoFactor.consumeChallenge(challengeToken);
-  if (!challenge) {
+  const challenge = adminTwoFactor.acceptChallenge(challengeToken, code);
+  if (!challenge.ok) {
     logSecurityEvent({
       type: "admin_login_2fa_failed",
       success: false,
       ip,
       path: "/api/admin/login/2fa",
-      detail: { reason: "invalid_challenge" },
+      detail: { reason: challenge.reason === "code" ? "invalid_code" : "invalid_challenge" },
     });
-    return { success: false, errorKey: "admin.2fa.challengeExpired" };
-  }
-
-  if (!adminTwoFactor.verifyLoginCode(challenge.email, code)) {
-    logSecurityEvent({
-      type: "admin_login_2fa_failed",
+    return {
       success: false,
-      ip,
-      email: challenge.email,
-      path: "/api/admin/login/2fa",
-    });
-    return { success: false, errorKey: "admin.2fa.invalidCode" };
+      errorKey: challenge.reason === "code" ? "admin.2fa.invalidCode" : "admin.2fa.challengeExpired",
+    };
   }
 
   const user = {
     id: challenge.userId,
-    email: challenge.email,
+    email: null,
     name: challenge.name,
     role: challenge.role,
   };
@@ -241,7 +231,6 @@ function verifyTwoFactor(challengeToken, code, req) {
     success: true,
     ip,
     userId: user.id,
-    email: user.email,
     role: user.role,
     path: "/api/admin/login/2fa",
     detail: { via2FA: true },
@@ -250,7 +239,7 @@ function verifyTwoFactor(challengeToken, code, req) {
   return {
     success: true,
     token,
-    user: { id: user.id, email: user.email, name: user.name, role: user.role },
+    user: { id: user.id, email: null, name: user.name, role: user.role },
   };
 }
 
@@ -301,8 +290,8 @@ function requireAuth(req, res) {
       if (user.role === "admin" || user.role === "administrator") {
         req.adminUser = {
           userId: user.sub,
-          email: user.email,
-          name: user.name || user.email,
+          email: null,
+          name: user.name || null,
           role: user.role === "admin" ? "administrator" : user.role,
         };
         req.user = user;
@@ -331,15 +320,14 @@ function listActiveSessions(userId) {
     if (session.expiresAt <= now) continue;
     if (userId && session.userId !== userId) continue;
     rows.push({
-      sessionId: session.sessionId || token.slice(0, 16),
-      tokenPreview: `${token.slice(0, 8)}…`,
+      sessionId: session.sessionId || null,
+      tokenPreview: null,
       userId: session.userId,
-      email: session.email,
+      email: null,
       role: session.role,
       createdAt: session.createdAt,
       expiresAt: new Date(session.expiresAt).toISOString(),
-      ip: session.ip,
-      userAgent: session.userAgent,
+      ip: null,
     });
   }
   return rows.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
@@ -354,8 +342,7 @@ function revokeSession(sessionId, { revokedBy } = {}) {
         type: "session_revoked",
         success: true,
         userId: session.userId,
-        email: session.email,
-        detail: { sessionId, revokedBy },
+        detail: { sessionId },
       });
       return true;
     }

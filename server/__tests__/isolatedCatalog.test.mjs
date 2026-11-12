@@ -92,11 +92,24 @@ test("pricing gates, sales, injection, and isolation reject unsafe input", () =>
   assert.equal(catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: null }).code, "MISSING_SHIPPING");
   assert.equal(catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: 1, country: "ZZ" }).code, "VAT_UNKNOWN");
   assert.equal(catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: 1, fx: null }).code, "FX_UNKNOWN");
-  assert.equal(catalog.quote({ offerPrice: 10, supplierCost: 9.8, shippingCost: 0 }).code, "MIN_NET_PROFIT");
+  assert.equal(
+    catalog.quote({
+      offerPrice: 10,
+      supplierCost: 9.8,
+      shippingCost: 0,
+      marketplaceFee: 0,
+      paymentFee: 0,
+      returnReserve: 0,
+    }).code,
+    "MIN_NET_PROFIT",
+  );
   assert.equal(catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: 1, currency: "BTC" }).code, "REJECTED_CRYPTO_POLICY");
   const read = catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: 1, country: "DE" });
-  assert.equal(read.ok, true);
+  assert.equal(read.ok, false);
+  assert.equal(read.code, "MISSING_COST");
   assert.equal(read.vatRate, 19);
+  assert.equal(read.vatOfficial, false);
+  assert.equal(read.vatDefinitive, false);
   assert.equal(read.livePrice, false);
   assert.equal(read.orderCreated, false);
   assert.equal(Object.hasOwn(read, "supplierCost"), false);

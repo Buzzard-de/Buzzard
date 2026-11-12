@@ -123,7 +123,7 @@ function requiresMarketingConsent(eventType) {
 }
 
 function canSend(payload, eventType) {
-  if (requiresMarketingConsent(eventType) && payload.marketingConsent === false) {
+  if (requiresMarketingConsent(eventType)) {
     return { ok: false, reason: "marketing_consent_required" };
   }
   if (payload.unsubscribed) {
@@ -142,59 +142,49 @@ function queueNotification(entry) {
   return entry;
 }
 
-function dispatchEmail(entry) {
-  const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
-  if (!smtpConfigured) {
-    return { channel: "email", status: "queued_demo", demo: true };
-  }
-  return { channel: "email", status: "queued", smtp: true };
+function topicForEvent(type) {
+  if (type === "order_shipped" || type === "order_delivered") return "shipment";
+  if (type === "return_request") return "return";
+  if (type === "refund") return "refund";
+  if (type === "payment_confirmed" || type === "new_order") return "order_status";
+  return "general";
 }
 
-function handleAutomationEvent(event) {
-  const { type, payload = {} } = event;
-  const consentCheck = canSend(payload, type);
-  if (!consentCheck.ok) {
-    return { sent: false, reason: consentCheck.reason };
+function handleAutomationEvent(event = {}) {
+  const type = event.type;
+  const payload = event.payload || {};
+  const consent = canSend({ ...payload, email: payload.email ? "present" : "" }, type);
+  if (!consent.ok && consent.reason !== "no_recipient") {
+    return {
+      sent: false,
+      queued: false,
+      customerNotified: false,
+      reason: consent.reason,
+      status: "BLOCKED_EXTERNAL",
+      code: "NOTIFICATION_NOT_PERMITTED",
+      to: null,
+      live: false,
+    };
   }
-
-  const locale = resolveLocale(payload.language || payload.locale || "de");
-  const rendered = renderTemplate(type, locale, payload);
-
-  const entry = {
-    id: event.id,
-    eventType: type,
+  const hub = require("./notificationHub").deliverNotification({
     channel: payload.channel || "email",
-    to: payload.email,
-    locale,
-    subject: rendered.subject,
-    body: rendered.body,
-    orderNumber: payload.orderNumber || null,
+    kind: topicForEvent(type),
+    idempotencyKey: event.idempotencyKey || event.id || null,
+    mock: payload.mock === true || payload.demo === true,
+    timeout: payload.timeout === true,
+    networkError: payload.networkError === true,
+  });
+  return {
+    sent: false,
+    queued: false,
+    customerNotified: false,
+    status: hub.status,
+    code: hub.code,
+    duplicate: hub.duplicate === true,
+    template: null,
+    to: null,
+    live: false,
   };
-
-  queueNotification(entry);
-  const dispatch = dispatchEmail(entry);
-
-  if (type === "order_delivered" && payload.orderNumber && !payload.skipReview) {
-    setTimeout(() => {
-      try {
-        const automationEngine = require("./automationEngine");
-        automationEngine.emit(
-          "review_request",
-          {
-            email: payload.email,
-            orderNumber: payload.orderNumber,
-            language: locale,
-            marketingConsent: payload.marketingConsent,
-          },
-          { idempotencyKey: `review:${payload.orderNumber}` }
-        );
-      } catch {
-        /* ignore circular init during tests */
-      }
-    }, 0);
-  }
-
-  return { sent: true, ...dispatch, template: rendered.subject };
 }
 
 function listNotifications(limit = 100) {

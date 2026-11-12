@@ -82,7 +82,7 @@ function carrierChange() {
   const first = adapter.trackShipment({ status: "transit" });
   const second = adapter.trackShipment({ status: "DELAYED" });
   return {
-    ok: first.live === false && second.live === false && first.status !== second.status,
+    ok: first.ok === false && second.ok === false && first.live === false && second.live === false && first.events.length === 0 && first.status !== second.status,
     from: first.status,
     to: second.status,
     live: false,

@@ -25,6 +25,12 @@ function analyze({ actorId = "sinan_bey", root = process.cwd() } = {}) {
     liveVerified: false,
     llmCompleted: false,
     cloneVoice: false,
+    shippingCostPolicy: {
+      fixedDefault: false,
+      authority: "pricingPolicy.selectTransportCost",
+      unknownBlocksCommerce: true,
+      liveCarrierQuery: false,
+    },
   };
 }
 

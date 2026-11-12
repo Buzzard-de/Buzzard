@@ -33,10 +33,20 @@ function parseJson(val, fallback = {}) {
 
 function recordSystemEvent({ eventType, actorType, actorId, resourceType, resourceId, summary, metadata }) {
   const id = newId("evt");
+  const { redact } = require("./privacyRedact");
   db.prepare(`
     INSERT INTO core_system_events(id, event_type, actor_type, actor_id, resource_type, resource_id, summary, metadata_json)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(id, eventType, actorType || null, actorId || null, resourceType || null, resourceId || null, summary || "", JSON.stringify(metadata || {}));
+  `).run(
+    id,
+    eventType,
+    actorType || null,
+    actorId || null,
+    resourceType || null,
+    resourceId || null,
+    redact(summary || ""),
+    JSON.stringify(redact(metadata || {}))
+  );
   return id;
 }
 
@@ -493,13 +503,17 @@ function listEscalations(status) {
   return db.prepare(sql).all(...params).map((row) => getEscalation(row.id));
 }
 
-function createNotification({ eventType, priority, recipient, channel, payload }) {
-  const id = newId("ntf");
-  db.prepare(`
-    INSERT INTO core_notifications(id, event_type, priority, recipient, channel, status, payload_json)
-    VALUES (?, ?, ?, ?, ?, 'PENDING', ?)
-  `).run(id, eventType, priority || "NORMAL", recipient || "admin", channel || "internal", JSON.stringify(payload || {}));
-  return { id, eventType, priority, recipient, channel, status: "PENDING", createdAt: new Date().toISOString() };
+function createNotification() {
+  return {
+    ok: false,
+    id: null,
+    status: "BLOCKED_EXTERNAL",
+    code: "PROVIDER_NOT_LIVE",
+    sent: false,
+    queued: false,
+    customerNotified: false,
+    live: false,
+  };
 }
 
 function listNotifications(limit = 50) {

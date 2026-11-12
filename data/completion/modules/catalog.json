@@ -1,0 +1,12 @@
+{
+  "id": "catalog",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "pimLive": "PIM_LIVE_DATA_BLOCKED",
+  "taxonomy": "TAXONOMY_DATA_REQUIRED",
+  "price": "UNKNOWN",
+  "traversal": true,
+  "liveVerified": false,
+  "productionReady": false
+}

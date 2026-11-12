@@ -2,10 +2,10 @@
   "version": 1,
   "default": "DENY",
   "allowlist": [
-    "buzzard24.de",
     "buzzard-api.onrender.com",
     "api.github.com"
   ],
+  "deniedHosts": ["buzzard24.de"],
   "forbiddenAiHosts": [
     "api.anthropic.com",
     "api.openai.com",
@@ -26,6 +26,6 @@
     "connect.facebook.net",
     "analytics.tiktok.com"
   ],
-  "browserAllowedSuffixes": [".onrender.com", "buzzard24.de"],
+  "browserAllowedSuffixes": [".onrender.com"],
   "note": "Default DENY. EXTRA_HOSTS cannot unlock AI, payments, wildcards, or IP literals. Live connector hosts are not default-allowlisted."
 }

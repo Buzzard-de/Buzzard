@@ -4,15 +4,38 @@
  */
 const EMERGENCY_RATE_ON_NET_PROFIT = 0.25;
 
-function split({ netProfit = 0, taxEstimate = 0, country = "FR" } = {}) {
-  const net = Math.max(0, Number(netProfit) || 0);
-  const tax = Math.max(0, Number(taxEstimate) || 0);
+function readProfit(value) {
+  if (value == null || value === "") return { present: false, value: null };
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return { invalid: true, value: null };
+  if (!/^\d+(\.\d{1,2})?$/.test(String(value))) return { invalid: true, value: null };
+  return { present: true, value };
+}
+
+function split({ netProfit, taxEstimate, country = "FR" } = {}) {
+  const net = readProfit(netProfit);
+  const tax = readProfit(taxEstimate);
   const de = String(country).toUpperCase() === "DE";
+  const countryCode = String(country).toUpperCase();
+  if (net.invalid || tax.invalid) {
+    return {
+      ok: false,
+      code: "INVALID_AMOUNT",
+      country: countryCode,
+      germanySeparate: de,
+      emergencyReserve: null,
+      taxReserve: null,
+      mixed: false,
+      paymentAuthority: false,
+      elsterLive: false,
+    };
+  }
   return {
-    country: String(country).toUpperCase(),
+    ok: net.present,
+    code: net.present ? "RESERVE_COMPUTED" : "PROFIT_UNKNOWN",
+    country: countryCode,
     germanySeparate: de,
-    emergencyReserve: de ? 0 : Number((net * EMERGENCY_RATE_ON_NET_PROFIT).toFixed(2)),
-    taxReserve: tax,
+    emergencyReserve: net.present ? (de ? 0 : Number((net.value * EMERGENCY_RATE_ON_NET_PROFIT).toFixed(2))) : null,
+    taxReserve: tax.present ? tax.value : null,
     mixed: false,
     paymentAuthority: false,
     elsterLive: false,

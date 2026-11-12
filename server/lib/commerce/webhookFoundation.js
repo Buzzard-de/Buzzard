@@ -52,17 +52,32 @@ function handleWebhook({ provider, eventId, eventType, rawBody, signature, secre
   }
 
   if (isDuplicateWebhook(eventId)) {
-    return { accepted: true, duplicate: true, status: 200 };
+    return {
+      accepted: false,
+      duplicate: true,
+      signatureVerified: false,
+      orderCreated: false,
+      paymentCreated: false,
+      status: "BLOCKED_EXTERNAL",
+    };
   }
 
   const verified = verifySignature(rawBody, signature, secret);
   if (!verified) {
     logSecurityEvent({ type: "payment_attempt_blocked", success: false, detail: { provider, reason: "bad_signature" } });
-    return { accepted: false, code: "invalid_signature", status: 401 };
+    return { accepted: false, signatureVerified: false, orderCreated: false, paymentCreated: false, code: "invalid_signature", status: 401 };
   }
 
-  recordWebhookEvent({ provider, eventId, eventType, payload: JSON.parse(rawBody || "{}"), verified });
-  return { accepted: true, verified: true, status: 200, processed: false, note: "Foundation only" };
+  return {
+    accepted: false,
+    signatureVerified: true,
+    verified: true,
+    orderCreated: false,
+    paymentCreated: false,
+    processed: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "PROVIDER_NOT_LIVE",
+  };
 }
 
 module.exports = {

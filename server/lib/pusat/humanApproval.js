@@ -1,8 +1,11 @@
 /**
  * Human Approval Center — persists through the durable queue when a dbPath is given.
- * High-risk actions never auto-approve.
+ * Automatic approval exists only for an explicit allowlist. Caller-supplied risk
+ * does not reclassify an action.
  */
 const { createDurableTaskQueue } = require("./durableTaskQueue");
+const { authorizeDelegated } = require("../buzzardNative/core/permissionEngine");
+const { classifyAction } = require("./actionPolicy");
 const os = require("os");
 const path = require("path");
 
@@ -12,27 +15,6 @@ const RISK = Object.freeze({
   HIGH: "HIGH",
   CRITICAL: "CRITICAL",
 });
-
-const NEVER_AUTO = new Set([
-  "GIT_PUSH",
-  "GIT_MERGE",
-  "DEPLOY",
-  "PRODUCTION_WRITE",
-  "PAYMENT_ACTIVATE",
-  "SALES_ACTIVATE",
-  "DATA_EXPORT",
-  "DATA_DELETE",
-  "SECURITY_POLICY_CHANGE",
-  "BANK_TRANSFER",
-  "LIVE_PAYMENT",
-  "STOCK_BUY",
-  "SUPPLIER_PAY",
-  "CUSTOMER_REFUND",
-  "PHONE_LIVE_CALL",
-  "FIAT_POLICY_CHANGE",
-  "LIVE_CONNECTOR",
-  "CARD_STORE",
-]);
 
 function containsCardNumber(value) {
   const stack = [value];
@@ -44,34 +26,94 @@ function containsCardNumber(value) {
   return false;
 }
 
+function normalizeCallerRisk(risk) {
+  const name = String(risk || "").trim().toUpperCase();
+  if (name === RISK.LOW || name === RISK.MEDIUM || name === RISK.HIGH || name === RISK.CRITICAL) return name;
+  return RISK.HIGH;
+}
+
 function createApprovalCenter({ dbPath } = {}) {
   const resolved = dbPath || path.join(os.tmpdir(), "buzzard-approvals.sqlite");
   const queue = createDurableTaskQueue({ dbPath: resolved });
 
-  function submit({ action, requestedBy, reason, risk = RISK.HIGH, payload = {}, taskId = "standalone" } = {}) {
+  function submit({
+    action,
+    requestedBy,
+    reason,
+    risk = RISK.HIGH,
+    payload = {},
+    taskId = "standalone",
+    originRequesterId = null,
+    delegationChain = [],
+  } = {}) {
     if (containsCardNumber(payload) || containsCardNumber(reason)) {
-      return { ok: false, code: "CARD_DATA_REJECTED", stored: false };
+      return { ok: false, code: "CARD_DATA_REJECTED", stored: false, auto: false };
     }
-    const irreversible = NEVER_AUTO.has(String(action || "").toUpperCase());
-    if (!irreversible && risk === RISK.LOW) {
+    const policy = classifyAction(action);
+    const callerRisk = normalizeCallerRisk(risk);
+    const permission = authorizeDelegated({
+      actorId: requestedBy,
+      originRequesterId,
+      chain: delegationChain,
+      perm: policy.action,
+    });
+    if (policy.classification === "AUTO_LOW" && callerRisk === RISK.LOW) {
+      if (!permission.ok || permission.permissionIncreased) {
+        return {
+          ok: false,
+          code: permission.code,
+          permission,
+          classification: policy.classification,
+          risk: policy.risk,
+          callerRisk,
+          stored: false,
+          auto: false,
+          permissionIncreased: false,
+        };
+      }
       return {
         ok: true,
+        permission,
+        classification: policy.classification,
+        risk: policy.risk,
+        callerRisk,
+        auto: true,
+        permissionIncreased: false,
         item: {
           status: "APPROVED",
-          risk,
-          decidedBy: "policy:low-risk",
+          risk: policy.risk,
+          decidedBy: "policy:explicit-allow",
           auto: true,
         },
       };
     }
-    return queue.submitApproval({
+    const storedRisk = policy.classification === "AUTO_LOW" ? callerRisk : policy.risk;
+    const queued = queue.submitApproval({
       taskId: payload.taskId || taskId,
-      action,
+      action: policy.action,
       requestedBy,
       reason,
-      risk: irreversible ? RISK.CRITICAL : risk,
-      payload,
+      risk: storedRisk,
+      payload: {
+        ...payload,
+        policy: {
+          classification: policy.classification,
+          risk: policy.risk,
+          callerRisk,
+          registered: policy.registered,
+        },
+      },
     });
+    return {
+      ...queued,
+      permission,
+      auto: false,
+      classification: policy.classification,
+      risk: storedRisk,
+      callerRisk,
+      permissionIncreased: false,
+      ...(policy.registered ? {} : { code: "UNREGISTERED_ACTION" }),
+    };
   }
 
   function decide({ id, approved, actorId }) {
@@ -92,4 +134,4 @@ function createApprovalCenter({ dbPath } = {}) {
   };
 }
 
-module.exports = { createApprovalCenter, RISK };
+module.exports = { createApprovalCenter, RISK, classifyAction };

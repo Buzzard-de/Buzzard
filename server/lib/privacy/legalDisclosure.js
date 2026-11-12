@@ -20,17 +20,21 @@ function reviewAutomatedDecision({ decisionType, impact = "low" } = {}) {
   };
 }
 
-function cookieConsentRecord({ necessary = true, analytics = false, marketing = false, actorId } = {}) {
+function cookieConsentRecord({ necessary = true, analytics = false } = {}) {
   return {
     necessary: Boolean(necessary),
     analytics: Boolean(analytics),
-    marketing: Boolean(marketing),
-    actorId: actorId || null,
-    recordedAt: new Date().toISOString(),
+    marketing: false,
+    marketingPermission: "BLOCKED",
+    consentVerified: false,
+    consentSource: "UNKNOWN",
+    actorId: null,
+    recordedAt: null,
+    callerFlagIgnored: true,
     lawfulBasis: {
       necessary: "legitimate_interest_or_contract",
       analytics: analytics ? "consent" : "not_granted",
-      marketing: marketing ? "consent" : "not_granted",
+      marketing: "not_granted",
     },
   };
 }

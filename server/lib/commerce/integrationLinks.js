@@ -14,6 +14,7 @@ const { dispatch, AGENT_KINDS } = require("../buzzardNative/core/specialistDispa
 const { assessVoice } = require("../voice/voiceReadiness");
 const { cloneAttempt } = require("../buzzardNative/speech/officialVoiceGuard");
 const { assertNotGuardian } = require("../pusat/durableTaskQueue");
+const { isSalesEnabled } = require("../salesMode");
 
 function loadSqlite() {
   const root = path.join(__dirname, "..", "..", "..");
@@ -39,12 +40,16 @@ function routeShipment({ sku = "brake_pad", origin = "DE", destination = "FR" } 
     return { ok: false, code: "SHIPMENT_HELD", laneAttached: false, liveCarrier: false, autoClear: false };
   }
   const lane = quoteLane({ destination, weightKg: 1 });
-  if (!lane.ok) return { ok: false, code: lane.code, laneAttached: false, liveCarrier: false };
+  if (lane.code === "UNKNOWN_DESTINATION") {
+    return { ok: false, code: lane.code, laneAttached: false, liveCarrier: false, shippingCost: null };
+  }
   return {
-    ok: true,
-    code: "ESTIMATE_NOT_PRICE",
+    ok: false,
+    code: "SHIPPING_RATE_UNVERIFIED",
     shippingPrice: "UNKNOWN",
-    inventedPriceDiscarded: lane.priceInvented === true,
+    shippingCost: null,
+    commercialEligibility: "BLOCKED",
+    inventedPriceDiscarded: lane.inventedPriceDiscarded === true,
     notForAutoselect: lane.notForAutoselect === true,
     laneAttached: false,
     liveCarrier: false,
@@ -123,7 +128,8 @@ function openHolds(dbPath) {
       idempotency_key TEXT PRIMARY KEY,
       sku TEXT NOT NULL,
       qty INTEGER NOT NULL,
-      status TEXT NOT NULL
+      status TEXT NOT NULL,
+      order_ref TEXT
     );
     CREATE TABLE IF NOT EXISTS hold_audit (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -131,41 +137,108 @@ function openHolds(dbPath) {
       body TEXT NOT NULL
     );
   `);
+  try {
+    db.exec("ALTER TABLE holds ADD COLUMN order_ref TEXT");
+  } catch {
+    /* isolated files created with the column already have it */
+  }
   const calls = new Map();
 
   function audit(event, body) {
     db.prepare("INSERT INTO hold_audit (event, body) VALUES (?, ?)").run(event, JSON.stringify(body));
   }
 
-  function reserve({ key, sku = "SYN-PAD", qty = 1, actor = "stock_ai" } = {}) {
+  function counterReasons(input = {}) {
+    const reasons = [];
+    if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+    reasons.push("ORDER_UNVERIFIED");
+    reasons.push("STOCK_UNVERIFIED");
+    reasons.push("SUPPLIER_COST_UNVERIFIED");
+    const observed = input.observedAt || input.stockObservedAt;
+    if (!observed || Number.isNaN(Date.parse(String(observed)))) reasons.push("STALE_STOCK");
+    if (input.mock === true || input.demo === true || input.synthetic === true || input.source === "mock" || input.source === "DEMO") {
+      reasons.push("MOCK_STOCK");
+    }
+    return reasons;
+  }
+
+  function counterResult(fixtureCode, input, extra = {}) {
+    const reasons = counterReasons(input);
+    if (extra.duplicate) reasons.unshift("DUPLICATE_RESERVATION");
+    return {
+      ok: false,
+      code: extra.duplicate ? "DUPLICATE_RESERVATION" : reasons[0] || "STOCK_UNVERIFIED",
+      fixtureCode,
+      fixtureOnly: true,
+      purpose: "ISOLATED_TEST_COUNTER",
+      commercialReservation: false,
+      reservationCreated: false,
+      supplierConfirmed: false,
+      purchased: false,
+      commercial: false,
+      stockChanged: false,
+      stockVerified: false,
+      quantityAdopted: false,
+      live: false,
+      callerFlagIgnored: true,
+      reasons,
+      ...extra,
+    };
+  }
+
+  function reserve(input = {}) {
+    const { key, sku = "SYN-PAD", qty = 1, actor = "stock_ai", orderId = null } = input;
     const seen = calls.get(actor) || 0;
-    if (seen >= 5) return { ok: false, code: "RATE_LIMITED", held: reservedQty(), live: false };
+    if (seen >= 5) {
+      return { ok: false, code: "RATE_LIMITED", fixtureOnly: true, commercialReservation: false, held: reservedQty(), live: false, stockChanged: false };
+    }
     calls.set(actor, seen + 1);
     const secret = rejectSecret({ key, sku });
     if (!secret.ok) {
       audit("SECRET_REJECTED", { stored: false });
-      return { ...secret, held: reservedQty() };
+      return { ...secret, held: reservedQty(), fixtureOnly: true, commercialReservation: false, stockChanged: false };
     }
-    const existing = db.prepare("SELECT qty, status FROM holds WHERE idempotency_key = ?").get(key);
-    if (existing && existing.status === "RESERVED") {
-      audit("RESERVE_DUPLICATE", { key });
-      return { ok: true, code: "DUPLICATE_HOLD", qty: existing.qty, held: reservedQty(), live: false };
+    const orderRef = orderId || null;
+    const existing = db.prepare(
+      "SELECT qty, status FROM holds WHERE status = 'TEST_FIXTURE' AND (idempotency_key = ? OR (order_ref IS NOT NULL AND order_ref = ?))"
+    ).get(key, orderRef);
+    if (existing) {
+      audit("RESERVE_DUPLICATE", { key, fixtureOnly: true });
+      return counterResult("DUPLICATE_HOLD", input, { qty: existing.qty, held: reservedQty(), duplicate: true });
     }
-    db.prepare("INSERT INTO holds (idempotency_key, sku, qty, status) VALUES (?, ?, ?, 'RESERVED')").run(key, sku, Number(qty));
-    audit("RESERVE", { key, qty: Number(qty) });
-    return { ok: true, code: "RESERVED", qty: Number(qty), held: reservedQty(), live: false };
+    const fixtureQty = Number.isInteger(Number(qty)) && Number(qty) > 0 ? Number(qty) : 0;
+    db.prepare(
+      "INSERT INTO holds (idempotency_key, sku, qty, status, order_ref) VALUES (?, ?, ?, 'TEST_FIXTURE', ?)"
+    ).run(key, sku, fixtureQty, orderRef);
+    audit("RESERVE", { key, qty: fixtureQty, fixtureOnly: true });
+    return counterResult("RESERVED", input, { qty: fixtureQty, held: reservedQty() });
   }
 
   function release(key) {
     const row = db.prepare("SELECT status FROM holds WHERE idempotency_key = ?").get(key);
-    if (!row || row.status !== "RESERVED") return { ok: false, code: "HOLD_NOT_FOUND", held: reservedQty(), live: false };
+    if (!row || row.status !== "TEST_FIXTURE") {
+      return { ok: false, code: "HOLD_NOT_FOUND", fixtureOnly: true, commercialReservation: false, held: reservedQty(), live: false, stockChanged: false };
+    }
     db.prepare("UPDATE holds SET status = 'RELEASED' WHERE idempotency_key = ?").run(key);
-    audit("RELEASE", { key });
-    return { ok: true, code: "RELEASED", held: reservedQty(), live: false };
+    audit("RELEASE", { key, fixtureOnly: true });
+    return {
+      ok: false,
+      code: "RELEASED",
+      fixtureCode: "RELEASED",
+      fixtureOnly: true,
+      purpose: "ISOLATED_TEST_COUNTER",
+      commercialReservation: false,
+      supplierConfirmed: false,
+      purchased: false,
+      commercial: false,
+      stockChanged: false,
+      held: reservedQty(),
+      live: false,
+    };
   }
 
   function reservedQty() {
-    return db.prepare("SELECT COALESCE(SUM(qty), 0) n FROM holds WHERE status = 'RESERVED'").get().n;
+    return db.prepare("SELECT COALESCE(SUM(qty), 0) n FROM holds WHERE status = 'TEST_FIXTURE'").get().n;
   }
 
   function auditCount() {
@@ -207,7 +280,7 @@ function runLinks({ holdPath, checkpointPath = null, order } = {}) {
     { id: "CUSTOMS_BLOCKS_DUAL_USE", dependencies: [], ok: routeShipment({ sku: "encryption_module", destination: "FR" }).code === "SHIPMENT_HELD" },
     { id: "CUSTOMS_BLOCKS_SANCTION", dependencies: [], ok: routeShipment({ sku: "brake_pad", destination: "KP" }).code === "SHIPMENT_HELD" },
     { id: "SHIPPING_DISCARDS_INVENTED_PRICE", dependencies: ["CUSTOMS_BLOCKS_DUAL_USE"], ok: routeShipment({ destination: "FR" }).shippingPrice === "UNKNOWN" && routeShipment({ destination: "FR" }).inventedPriceDiscarded === true },
-    { id: "RESERVE_AND_RELEASE", dependencies: [], ok: reserved.code === "RESERVED" && again.code === "DUPLICATE_HOLD" && again.qty === 2 && released.code === "RELEASED" && heldAfterRelease === 0 },
+    { id: "RESERVE_AND_RELEASE", dependencies: [], ok: reserved.fixtureCode === "RESERVED" && reserved.code === "SALES_CLOSED" && reserved.commercialReservation === false && again.code === "DUPLICATE_RESERVATION" && again.fixtureCode === "DUPLICATE_HOLD" && again.qty === 2 && released.code === "RELEASED" && heldAfterRelease === 0 },
     { id: "RATE_LIMIT", dependencies: ["RESERVE_AND_RELEASE"], ok: limited.code === "RATE_LIMITED" },
     { id: "SECRET_NOT_STORED", dependencies: [], ok: secret.code === "SECRET_REJECTED" && secret.stored === false && holds.auditCount() === secretAuditBefore + 1 },
     { id: "PUSAT_17", dependencies: [], ok: councilThink().ok === true },

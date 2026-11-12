@@ -655,6 +655,7 @@ test.describe("homepage viewports", () => {
     await expect(languageSelect.locator("option")).toHaveCount(30);
     await expect(marketSelect.locator("option")).toHaveCount(35);
     const marketBefore = await marketSelect.inputValue();
+    await expect(page.locator("html")).toHaveClass(/has-language-background/);
     await languageSelect.selectOption("tr");
     await expect(page.locator("html")).toHaveAttribute("data-buzzard-locale", "tr");
     await expect(marketSelect).toHaveValue(marketBefore);

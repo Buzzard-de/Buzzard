@@ -5,22 +5,43 @@
 const { roundMoney } = require("./commerceValidation");
 const { estimateVat } = require("./ab27Tax");
 
+function component(value) {
+  if (value == null || value === "" || !Number.isFinite(Number(value)) || Number(value) < 0) return null;
+  return roundMoney(value);
+}
+
 function stackCosts({
-  supplierCost = 0,
-  shippingCost = 0,
-  marketplaceFee = 0,
-  returnReserve = 0,
-  otherCost = 0,
+  supplierCost,
+  shippingCost,
+  marketplaceFee,
+  returnReserve,
+  otherCost,
   country = "DE",
 } = {}) {
   const parts = {
-    supplierCost: roundMoney(supplierCost),
-    shippingCost: roundMoney(shippingCost),
-    marketplaceFee: roundMoney(marketplaceFee),
-    returnReserve: roundMoney(returnReserve),
-    otherCost: roundMoney(otherCost),
+    supplierCost: component(supplierCost),
+    shippingCost: component(shippingCost),
+    marketplaceFee: component(marketplaceFee),
+    returnReserve: component(returnReserve),
+    otherCost: otherCost == null ? null : component(otherCost),
   };
-  const netBeforeVat = roundMoney(Object.values(parts).reduce((a, b) => a + b, 0));
+  if (["supplierCost", "shippingCost", "marketplaceFee", "returnReserve"].some((key) => parts[key] == null)) {
+    return {
+      ok: false,
+      status: "BLOCKED",
+      code: "MISSING_COST",
+      parts,
+      netBeforeVat: null,
+      vat: null,
+      suggestedSellGross: null,
+      invented: false,
+      taxConnect: {
+        status: "NOT_CONNECTED",
+        note: "Tax Connect is an interface stub. No filings are submitted.",
+      },
+    };
+  }
+  const netBeforeVat = roundMoney(Object.values(parts).reduce((sum, value) => (value == null ? sum : sum + value), 0));
   const vat = estimateVat({ country, netAmount: netBeforeVat });
   return {
     ok: vat.ok,

@@ -5,8 +5,7 @@
  */
 
 const pricing = require("../pricing");
-
-const MIN_NET_PROFIT_EUR = 0.5;
+const { CATEGORY_MARGINS, MIN_NET_PROFIT_EUR } = require("../commerce/pricingPolicy");
 
 function previewSalePrice({ supplierPrice, markupPercent, minimumMarginPercent, currency = "EUR" } = {}) {
   const purchase = Number(supplierPrice) || 0;
@@ -34,7 +33,7 @@ function previewSalePrice({ supplierPrice, markupPercent, minimumMarginPercent, 
     marginOk: pricing.meetsMinimumMargin({
       salePrice: amount,
       purchasePrice: purchase,
-      minimumMarginPercent: minimumMarginPercent ?? 12,
+      minimumMarginPercent: minimumMarginPercent ?? CATEGORY_MARGINS.other * 100,
     }),
   };
 }

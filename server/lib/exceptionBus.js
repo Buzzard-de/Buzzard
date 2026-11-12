@@ -3,6 +3,7 @@
  */
 const crypto = require("crypto");
 const { db } = require("./db");
+const { redact } = require("./privacyRedact");
 
 const TYPES = Object.freeze({
   PAYMENT_FAILED: "PAYMENT_FAILED",
@@ -71,7 +72,7 @@ function emit({
     entityId,
     correlationId,
     message || type,
-    JSON.stringify(context),
+    JSON.stringify(redact(context)),
     retryPolicy,
     owner,
     retryable ? 1 : 0

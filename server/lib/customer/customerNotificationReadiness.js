@@ -21,35 +21,30 @@ function getNotificationReadiness() {
     notificationEngine: hasEngine,
     templateEvents,
     smtpConfigured,
-    deliveryMode: smtpConfigured ? "smtp_ready" : "queued_demo",
-    wiredToCheckout: true,
-    wiredToReturns: true,
+    deliveryMode: "BLOCKED_EXTERNAL",
+    wiredToCheckout: false,
+    wiredToReturns: false,
     realEmailSendWhileSalesOff: false,
     autoInventTemplates: false,
   };
 }
 
 function emitCheckoutNotification(order, ctx = {}) {
-  if (!order?.id) return { ok: false, reason: "missing_order" };
-  try {
-    const automationEngine = require("../automationEngine");
-    automationEngine.emit(
-      "order_confirmation",
-      {
-        orderId: order.id,
-        customerId: order.customerId,
-        orderType: order.orderType,
-        dryRun: order.metadata?.dryRun !== false,
-        testOnly: order.orderType !== "COMMERCIAL",
-        total: order.total,
-        language: ctx.language || "de",
-      },
-      { idempotencyKey: `order_notify_${order.id}` }
-    );
-    return { ok: true, queued: true };
-  } catch (err) {
-    return { ok: false, reason: err.message };
-  }
+  if (!order?.id) return { ok: false, reason: "missing_order", sent: false, queued: false };
+  const automationEngine = require("../automationEngine");
+  const result = automationEngine.emit(
+    "new_order",
+    { orderNumber: order.orderNumber || String(order.id), language: ctx.language || "de" },
+    { idempotencyKey: `order_notify_${order.id}` }
+  );
+  return {
+    ok: false,
+    queued: false,
+    sent: false,
+    customerNotified: false,
+    code: result.event?.notification?.code || "NOTIFICATION_NOT_LIVE",
+    live: false,
+  };
 }
 
 module.exports = {

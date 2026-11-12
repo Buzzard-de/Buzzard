@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const { createRequire } = require("module");
 const { resolveIdentity } = require("../buzzardNative/core/councilAliasMap");
-const { check } = require("../buzzardNative/core/permissionEngine");
+const { authorizeDelegated } = require("../buzzardNative/core/permissionEngine");
 
 function loadSqlite() {
   const root = path.join(__dirname, "..", "..", "..");
@@ -141,13 +141,21 @@ function createDurableTaskQueue({ dbPath }) {
     needsApproval = false,
     kind = "THINK",
     input = {},
+    originRequesterId = null,
+    delegationChain = [],
   } = {}) {
-    if (!check(ownerId, "ASSIGN_TASK").ok && ownerId !== "pusat") {
-      return { ok: false, code: "PERMISSION_DENIED" };
+    const permission = authorizeDelegated({
+      actorId: ownerId,
+      originRequesterId,
+      chain: delegationChain,
+      perm: "ASSIGN_TASK",
+    });
+    if (!permission.ok) {
+      return { ok: false, code: permission.code, permission, assigned: false, permissionIncreased: false };
     }
     if (idempotencyKey) {
       const existing = db.prepare(`SELECT * FROM orch_tasks WHERE idempotency_key = ?`).get(idempotencyKey);
-      if (existing) return { ok: true, duplicate: true, task: rowToTask(existing) };
+      if (existing) return { ok: true, duplicate: true, task: rowToTask(existing), permission };
     }
     const resolved = resolveIdentity(assigneeId);
     const nativeId = resolved.ok ? resolved.nativeId : assigneeId;
@@ -172,8 +180,8 @@ function createDurableTaskQueue({ dbPath }) {
       new Date().toISOString(),
       JSON.stringify({ kind, input })
     );
-    audit(id, "ENQUEUE", { ownerId });
-    return { ok: true, task: get(id) };
+    audit(id, "ENQUEUE", { ownerId, permission: permission.code });
+    return { ok: true, task: get(id), permission };
   }
 
   function get(id) {

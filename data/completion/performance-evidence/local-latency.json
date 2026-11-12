@@ -1,0 +1,15 @@
+{
+  "schema": "buzzard.local-latency.v1",
+  "recordedAt": "2026-11-11T17:05:00+01:00",
+  "productionClaim": false,
+  "http": false,
+  "samples": 20,
+  "search": { "elapsedMs": 25.678, "perCallMs": 1.284, "function": "pimReadOnlyAdapter.list" },
+  "category": { "elapsedMs": 1.205, "perCallMs": 0.06, "function": "categoryHierarchy.validateHierarchy" },
+  "pricing": { "elapsedMs": 0.17, "perCallMs": 0.009, "function": "pricingPolicy.evaluateOffer" },
+  "detail": { "elapsedMs": 0.017, "perCallMs": 0.001, "function": "marketEngineRegistry.getMarket" },
+  "queueLatency": "NOT_MEASURED_IN_THIS_SAMPLE",
+  "memoryUsage": "NOT_MEASURED_IN_THIS_SAMPLE",
+  "concurrentRequests": "NOT_MEASURED_IN_THIS_SAMPLE",
+  "note": "In-process synthetic calls on this machine. These numbers are not production capacity."
+}

@@ -37,13 +37,33 @@ function guardPath(dbPath) {
   return resolved;
 }
 
-function offerGate({ offerPrice, supplierCost, market = 20 } = {}) {
+function offerGate({
+  offerPrice,
+  supplierCost,
+  shippingCost,
+  marketplaceFee,
+  paymentFee,
+  returnReserve,
+  otherCost,
+  market,
+  category,
+  vatAmount,
+  vatVerified,
+  currency,
+} = {}) {
   const offer = evaluateOffer({
     offerPrice,
     supplierCost,
-    shippingCost: 0,
+    shippingCost,
+    marketplaceFee,
+    paymentFee,
+    returnReserve,
+    otherCost,
     comparableMarketPrice: market,
-    categoryMargin: 0.05,
+    category,
+    vatAmount,
+    vatVerified,
+    currency,
   });
   return {
     accepted: offer.ok === true && offer.salesEnabled === false,
@@ -55,17 +75,47 @@ function offerGate({ offerPrice, supplierCost, market = 20 } = {}) {
 }
 
 function supplierSnapshot({ previousQty = 4, payload = {}, timedOut = false } = {}) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("STOCK_UNVERIFIED");
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  reasons.push("ORDER_UNVERIFIED");
+  const observed = payload.observedAt || payload.stockObservedAt || payload.updatedAt;
+  if (!observed || Number.isNaN(Date.parse(String(observed)))) reasons.push("STALE_STOCK");
+  if (
+    payload.mock === true ||
+    payload.demo === true ||
+    payload.synthetic === true ||
+    payload.source === "mock" ||
+    payload.source === "DEMO"
+  ) {
+    reasons.push("MOCK_STOCK");
+  }
+  const closed = {
+    ok: false,
+    previousQty,
+    bought: false,
+    invented: false,
+    stockVerified: false,
+    quantityAdopted: false,
+    reserved: false,
+    decremented: false,
+    purchased: false,
+    live: false,
+    callerFlagIgnored: true,
+    reasons,
+  };
   if (timedOut) {
-    return { ok: false, code: "SUPPLIER_TIMEOUT", qty: previousQty, bought: false, invented: false };
+    return { ...closed, code: "SUPPLIER_TIMEOUT", qty: previousQty, reasons: reasons.concat("SUPPLIER_TIMEOUT") };
   }
   if (payload.qty == null || payload.qty === "") {
-    return { ok: true, code: "QTY_UNKNOWN", qty: "UNKNOWN", previousQty, bought: false, invented: false };
+    return { ...closed, code: "QTY_UNKNOWN", qty: "UNKNOWN", reasons: ["QTY_UNKNOWN"].concat(reasons) };
   }
   const qty = Number(payload.qty);
   if (!Number.isInteger(qty) || qty < 0) {
-    return { ok: false, code: "QTY_INVALID", qty: previousQty, bought: false, invented: false };
+    return { ...closed, code: "QTY_INVALID", qty: previousQty, reasons: ["QTY_INVALID"].concat(reasons) };
   }
-  return { ok: true, code: "QTY_UPDATED", qty, previousQty, bought: false, invented: false };
+  return { ...closed, code: reasons[0] || "STOCK_UNVERIFIED", qty: "UNKNOWN" };
 }
 
 function foldTracking(events = []) {
@@ -79,11 +129,7 @@ function foldTracking(events = []) {
       ignored += 1;
       continue;
     }
-    if (code === "DELIVERED" && !seenMovement) {
-      ignored += 1;
-      continue;
-    }
-    if (status === "DELIVERED") {
+    if (code === "DELIVERED") {
       ignored += 1;
       continue;
     }
@@ -94,7 +140,8 @@ function foldTracking(events = []) {
     status,
     ignored,
     live: false,
-    customerVisible: status === "NONE" ? "NO_VERIFIED_TRACKING" : status,
+    customerVisible: "NO_VERIFIED_TRACKING",
+    delivered: false,
   };
 }
 
@@ -116,7 +163,7 @@ function openPayOnce(dbPath) {
       .run(key, status);
     const row = db.prepare(`SELECT status, money_moved FROM pay_once WHERE idempotency_key = ?`).get(key);
     return {
-      ok: true,
+      ok: false,
       code: response == null ? "PROVIDER_SILENT" : "NO_MONEY",
       inserted: info.changes === 1,
       status: row.status,
@@ -330,10 +377,14 @@ function cancelToJournal({ holdPath } = {}) {
   holds.close();
   return {
     ok:
-      reserved.code === "RESERVED" &&
+      reserved.fixtureCode === "RESERVED" &&
+      reserved.code === "SALES_CLOSED" &&
+      reserved.commercialReservation === false &&
       released.code === "RELEASED" &&
       released.held === 0 &&
-      journal.supplierReimbursement === 0 &&
+      journal.supplierReimbursement === null &&
+      journal.customerRefund === null &&
+      journal.refunded === false &&
       journal.supplierReimbursementAssumed === false &&
       quote.livePublish === false,
     journal,
@@ -360,7 +411,17 @@ function localQuotes(n = 200) {
   const started = process.hrtime.bigint();
   let accepted = 0;
   for (let i = 0; i < n; i += 1) {
-    const row = offerGate({ offerPrice: 30, supplierCost: 10, market: 40 });
+    const row = offerGate({
+      offerPrice: 30,
+      supplierCost: 10,
+      shippingCost: 0,
+      marketplaceFee: 0,
+      paymentFee: 0,
+      returnReserve: 0,
+      vatAmount: 0,
+      vatVerified: true,
+      market: 40,
+    });
     if (row.salesEnabled === false) accepted += 1;
   }
   const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
@@ -370,7 +431,17 @@ function localQuotes(n = 200) {
 function runChain({ dir, checkpointPath = null } = {}) {
   const root = guardPath(path.join(dir, "chain.sqlite"));
   fs.mkdirSync(path.dirname(root), { recursive: true });
-  const low = offerGate({ offerPrice: 10, supplierCost: 9.8, market: 20 });
+  const low = offerGate({
+    offerPrice: 10,
+    supplierCost: 9.8,
+    shippingCost: 0,
+    marketplaceFee: 0,
+    paymentFee: 0,
+    returnReserve: 0,
+    vatAmount: 0,
+    vatVerified: true,
+    market: 20,
+  });
   const bad = offerGate({ offerPrice: 0, supplierCost: 4, market: 12 });
   const timeout = supplierSnapshot({ previousQty: 4, timedOut: true });
   const missing = supplierSnapshot({ previousQty: 4, payload: {} });

@@ -53,10 +53,14 @@ function assertOrderReadiness(payload = {}, context = {}) {
   }
 
   return {
-    ok: true,
-    status: SUPPLIER_READINESS_STATUS.PASS,
+    ok: false,
+    live: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "PURCHASE_BLOCKED",
     dryRun: true,
     createOrderBlocked: true,
+    purchased: false,
+    commercialEligibility: "BLOCKED",
     message: "Order readiness validated — submission blocked by safety gate",
   };
 }

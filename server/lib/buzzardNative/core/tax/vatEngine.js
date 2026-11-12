@@ -64,19 +64,21 @@ function germanyPolicy() {
   };
 }
 
-function netIncomeReport({ actorId = "nedim_bey", incomeCountry, gross, vat, refund = 0, commission = 0, logistics = 0, supplierCost = 0 } = {}) {
+function netIncomeReport({ actorId = "nedim_bey", incomeCountry, gross, vat, refund, commission, logistics, supplierCost } = {}) {
   if (!check(actorId, "TAX_REPORT").ok) return { ok: false, code: "PERMISSION_DENIED" };
+  const country = getCountry(incomeCountry);
   const inputs = { gross, vat, refund, commission, logistics, supplierCost };
-  if (Object.values(inputs).some((v) => v == null || Number.isNaN(Number(v)))) {
-    return { ok: false, code: "MISSING_AMOUNT", status: "UNKNOWN", definitive: false };
+  if (!country || Object.values(inputs).some((v) => v == null || Number.isNaN(Number(v)))) {
+    return { ok: false, code: country ? "MISSING_AMOUNT" : "COUNTRY_UNKNOWN", status: "UNKNOWN", definitive: false, invented: false };
   }
   const net = Number(gross) - Number(vat) - Number(commission) - Number(logistics) - Number(supplierCost) + Number(refund);
-  const eu26 = incomeCountry && incomeCountry !== "DE";
-  const reserveRate = eu26 ? NET_INCOME_RESERVE_RATE : 0;
+  const germany = country.iso === "DE";
+  const reserveRate = germany ? 0 : NET_INCOME_RESERVE_RATE;
   const reserve = net > 0 ? net * reserveRate : 0;
   return {
     ok: true,
     incomeCountry,
+    separateFromEu26Reserve: germany,
     gross: Number(gross),
     vat: Number(vat),
     refund: Number(refund),

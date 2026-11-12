@@ -25,10 +25,12 @@ function retryDecision({ attempt = 0, maxAttempts = 3, retryable = true } = {}) 
 
 function enqueueDeadLetter(event = {}) {
   return {
-    queued: true,
+    queued: false,
+    stored: false,
     live: false,
     replay: false,
-    event: { ...event, untrustedExternal: true },
+    recovered: false,
+    event: { type: event.type || null, untrustedExternal: true },
   };
 }
 

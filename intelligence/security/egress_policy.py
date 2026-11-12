@@ -34,6 +34,7 @@ def load_policy() -> dict:
 
 POLICY = load_policy()
 ALLOWLIST = tuple(POLICY["allowlist"])
+DENIED_HOSTS = tuple(POLICY.get("deniedHosts") or ("buzzard24.de",))
 FORBIDDEN_AI_HOSTS = tuple(POLICY["forbiddenAiHosts"])
 FORBIDDEN_AI_SUFFIXES = tuple(POLICY["forbiddenAiSuffixes"])
 PAYMENT_SUFFIXES = tuple(POLICY["paymentHostSuffixes"])
@@ -84,6 +85,11 @@ def is_forbidden_ai_host(host: str) -> bool:
     return any(h == s[1:] or h.endswith(s) for s in FORBIDDEN_AI_SUFFIXES)
 
 
+def is_denied_host(host: str) -> bool:
+    h = (host or "").lower()
+    return any(name and (h == name or h.endswith(f".{name}")) for name in (item.lower() for item in DENIED_HOSTS))
+
+
 def is_payment_host(host: str) -> bool:
     h = (host or "").lower()
     return any(h == s.lstrip(".") or h.endswith(s if s.startswith(".") else f".{s}") for s in PAYMENT_SUFFIXES)
@@ -96,7 +102,7 @@ def extra_hosts() -> list[str]:
         h = part.strip().lower()
         if not h or "*" in h or "?" in h or h.startswith("."):
             continue
-        if is_forbidden_ai_host(h) or is_payment_host(h) or is_ip_literal(h):
+        if is_forbidden_ai_host(h) or is_payment_host(h) or is_denied_host(h) or is_ip_literal(h):
             continue
         out.append(h)
     return out
@@ -154,6 +160,8 @@ def evaluate_egress(destination_url: str, classification: str = "public") -> dic
         return {"allowed": False, "code": "EXTERNAL_AI_EGRESS_DENIED", "host": host, "classification": classification}
     if is_payment_host(host):
         return {"allowed": False, "code": "PAYMENT_EGRESS_LOCKED", "host": host, "classification": classification}
+    if is_denied_host(host):
+        return {"allowed": False, "code": "EGRESS_DENIED", "host": host, "classification": classification}
     allowlisted = host in ALLOWLIST or host in extra_hosts()
     if not allowlisted:
         return {"allowed": False, "code": "HOST_NOT_ALLOWLISTED", "host": host, "classification": classification}

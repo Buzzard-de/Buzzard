@@ -11,16 +11,37 @@ const {
 
 const CARRIERS = CARRIER_IDS;
 
-function createShipment(req) {
-  return getAdapter("DHL").createShipment(req);
+function createShipment(req = {}) {
+  const id = req.carrier || req.carrierId;
+  const adapter = id ? getAdapter(id) : null;
+  if (!adapter) {
+    return { ok: false, code: "CARRIER_UNKNOWN", liveShipment: false, label: false, carrier: id || null };
+  }
+  return adapter.createShipment(req);
 }
 
-function createLabel(req) {
-  return getAdapter("DHL").createLabel(req);
+function createLabel(req = {}) {
+  const id = req.carrier || req.carrierId;
+  const adapter = id ? getAdapter(id) : null;
+  if (!adapter) {
+    return { ok: false, code: "CARRIER_UNKNOWN", liveShipment: false, label: false, carrier: id || null };
+  }
+  return adapter.createLabel(req);
 }
 
-function simulateTrack({ status = "IN_TRANSIT", carrier = "DHL" } = {}) {
-  const adapter = getAdapter(carrier) || getAdapter("DHL");
+function simulateTrack({ status = "IN_TRANSIT", carrier } = {}) {
+  const adapter = carrier ? getAdapter(carrier) : null;
+  if (!adapter) {
+    return {
+      ok: false,
+      live: false,
+      liveShipment: false,
+      carrier: null,
+      status: normalizeStatus(status),
+      providerStatus: String(status),
+      simulated: true,
+    };
+  }
   return adapter.trackShipment({ status });
 }
 

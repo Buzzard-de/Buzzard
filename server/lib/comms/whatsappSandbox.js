@@ -186,21 +186,28 @@ function createWhatsappSandbox({ dbPath } = {}) {
   return { status, send, migrateNumber, verifyInbound, events, audits, close, dbPath: resolved };
 }
 
-const defaultBox = createWhatsappSandbox({
-  dbPath: path.join(os.tmpdir(), `buzzard-wa-default-${process.pid}.sqlite`),
-});
+let defaultBox = null;
+
+function box() {
+  if (!defaultBox) {
+    defaultBox = createWhatsappSandbox({
+      dbPath: path.join(os.tmpdir(), `buzzard-wa-default-${process.pid}.sqlite`),
+    });
+  }
+  return defaultBox;
+}
 
 function status() {
-  return defaultBox.status();
+  return box().status();
 }
 function send() {
-  return defaultBox.send();
+  return box().send();
 }
 function migrateNumber() {
-  return defaultBox.migrateNumber();
+  return box().migrateNumber();
 }
 function verifyInbound(input) {
-  return defaultBox.verifyInbound(input);
+  return box().verifyInbound(input);
 }
 
 module.exports = { status, send, migrateNumber, verifyInbound, createWhatsappSandbox };

@@ -57,7 +57,11 @@ describe("EU27 carrier master v11 (MC14)", () => {
     const a = createAdapter({ carrierId: "dhl-parcel-de", apiLevel: 2 });
     expect(a.createShipment().live).toBe(false);
     expect(a.generateLabel().live).toBe(false);
-    expect(a.getTracking("X").mock).toBe(true);
+    const tracking = a.getTracking("X");
+    expect(tracking.ok).toBe(false);
+    expect(tracking.mock).toBe(false);
+    expect(tracking.live).toBe(false);
+    expect(tracking.status).toBe("BLOCKED_EXTERNAL");
     expect(a.circuitBreaker).toBe("CLOSED_UNKNOWN_HEALTH");
     const down = createAdapter({ outage: true });
     expect(down.circuitBreaker).toBe("OPEN");

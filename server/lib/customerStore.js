@@ -103,7 +103,7 @@ function updateProfile(customerId, patch) {
   const customers = readCustomers();
   const idx = customers.findIndex((c) => c.id === customerId);
   if (idx < 0) return null;
-  const allowed = ["firstName", "lastName", "phone", "country"];
+  const allowed = ["firstName", "lastName", "country"];
   for (const key of allowed) {
     if (patch[key] !== undefined) customers[idx][key] = patch[key];
   }
@@ -124,18 +124,20 @@ function updatePasswordHash(customerId, newPassword) {
   return updatePassword(customerId, newPassword);
 }
 
-function exportCustomerData(customerId) {
-  const customer = findById(customerId);
-  if (!customer) return null;
-  const { password_hash, ...safe } = customer;
-  return {
-    exportedAt: new Date().toISOString(),
-    customer: safe,
-  };
+function exportCustomerData() {
+  return { ok: false, exported: false, code: "EXPORT_BLOCKED", customer: null, email: null, phone: null, addresses: [] };
 }
 
 function listAddresses(customerId) {
-  return findById(customerId)?.addresses || [];
+  return (findById(customerId)?.addresses || []).map((address) => ({
+    id: address.id,
+    city: address.city || null,
+    countryCode: address.countryCode || address.country || null,
+    phone: null,
+    line1: null,
+    shippingVerified: false,
+    delivered: false,
+  }));
 }
 
 function upsertAddress(customerId, address) {
@@ -175,7 +177,7 @@ function upsertAddress(customerId, address) {
 
   customers[idx].addresses = addresses;
   writeCustomers(customers);
-  return next;
+  return { id: next.id, phone: null, line1: null, shippingVerified: false, delivered: false, customerNotified: false };
 }
 
 function deleteAddress(customerId, addressId) {
@@ -208,13 +210,71 @@ function toggleWishlist(customerId, productId) {
   return setWishlist(customerId, next);
 }
 
+function explicitFalse(value) {
+  return value === false || value === 0 || value === "0" || value === "false";
+}
+
+function applyPreferencePatch(current = {}, body = {}) {
+  const next = { ...current };
+  const marketingKeys = new Set([
+    "marketing",
+    "marketingConsent",
+    "consent",
+    "approved",
+    "verified",
+    "emailOptIn",
+    "email_opt_in",
+    "smsOptIn",
+    "sms_opt_in",
+    "pushOptIn",
+    "push_opt_in",
+    "whatsappOptIn",
+    "whatsapp",
+  ]);
+  let stored = false;
+  let withdrawn = false;
+  for (const [key, value] of Object.entries(body || {})) {
+    if (key === "email" || key === "phone" || key === "password" || key === "name") continue;
+    if (marketingKeys.has(key)) {
+      if (explicitFalse(value)) {
+        next[key] = false;
+        stored = true;
+        withdrawn = true;
+      }
+      continue;
+    }
+    next[key] = value;
+    stored = true;
+  }
+  if (body.withdraw === true || body.unsubscribe === true || body.revoked === true) {
+    for (const key of marketingKeys) next[key] = false;
+    stored = true;
+    withdrawn = true;
+  }
+  next.marketingPermission = withdrawn ? "WITHDRAWN" : "BLOCKED";
+  next.consentVerified = false;
+  next.consentSource = "UNKNOWN";
+  next.granted = false;
+  return {
+    preferences: next,
+    stored,
+    withdrawn,
+    granted: false,
+    marketingPermission: next.marketingPermission,
+    consentVerified: false,
+    notificationSent: false,
+    customerNotified: false,
+  };
+}
+
 function updatePreferences(customerId, preferences) {
   const customers = readCustomers();
   const idx = customers.findIndex((c) => c.id === customerId);
   if (idx < 0) return null;
-  customers[idx].preferences = { ...customers[idx].preferences, ...preferences };
-  writeCustomers(customers);
-  return customers[idx].preferences;
+  const patch = applyPreferencePatch(customers[idx].preferences || {}, preferences || {});
+  customers[idx].preferences = patch.preferences;
+  if (patch.stored) writeCustomers(customers);
+  return patch;
 }
 
 function requestDeletion(customerId) {
@@ -242,6 +302,7 @@ module.exports = {
   getWishlist,
   setWishlist,
   toggleWishlist,
+  applyPreferencePatch,
   updatePreferences,
   requestDeletion,
 };

@@ -42,7 +42,7 @@ function ipHash(req) {
 }
 
 function accessToken(user) {
-  return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, {
+  return jwt.sign({ sub: user.id, role: user.role }, secret, {
     expiresIn: `${accessMinutes}m`,
   });
 }
@@ -71,7 +71,7 @@ function registerUser(body = {}, req) {
       .run(
         email,
         hashPassword(password),
-        [body.firstName, body.lastName].filter(Boolean).join(" ").trim() || email,
+        [body.firstName, body.lastName].filter(Boolean).join(" ").trim(),
         body.firstName || "",
         body.lastName || "",
         "customer",
@@ -79,14 +79,8 @@ function registerUser(body = {}, req) {
         "active"
       );
 
-    const raw = crypto.randomBytes(32).toString("hex");
-    db.prepare(`
-      INSERT INTO identity_verification_tokens(user_id, token_hash, token_type, expires_at)
-      VALUES(?,?,?,datetime('now','+24 hours'))
-    `).run(result.lastInsertRowid, sha256(raw), "email_verification");
-
     audit(result.lastInsertRowid, "register", req);
-    return { userId: result.lastInsertRowid, verificationTokenForDevelopment: raw };
+    return { userId: result.lastInsertRowid, verificationToken: null, email: null, customerNotified: false };
   } catch {
     return { error: "Email already registered", status: 409 };
   }
@@ -101,10 +95,8 @@ function verifyEmail(body = {}, req) {
     .get(sha256(body.token || ""));
   if (!row) return { error: "Invalid or expired verification token", status: 400 };
 
-  db.prepare("UPDATE users SET email_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(row.user_id);
   db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(row.id);
-  audit(row.user_id, "email_verified", req);
-  return { ok: true };
+  return { ok: false, code: "TOKEN_UNVERIFIED", status: 403, emailVerified: false, email: null, customerNotified: false };
 }
 
 function loginUser(body = {}, req) {
@@ -115,7 +107,7 @@ function loginUser(body = {}, req) {
   const ok = user && (user.status || "active") === "active" && verifyPassword(user.password_hash, body.password);
 
   db.prepare("INSERT INTO identity_login_attempts(email, success, ip_hash) VALUES(?,?,?)").run(
-    email,
+    "",
     ok ? 1 : 0,
     ipHash(req)
   );
@@ -129,7 +121,7 @@ function loginUser(body = {}, req) {
   `).run(
     user.id,
     sha256(refreshRaw),
-    req.headers["user-agent"] || "",
+    "",
     ipHash(req),
     `+${refreshDays} days`
   );
@@ -158,7 +150,7 @@ function refreshAccessToken(body = {}) {
 
   return {
     accessToken: jwt.sign(
-      { sub: session.user_id, email: session.email, role: session.role },
+      { sub: session.user_id, role: session.role },
       secret,
       { expiresIn: `${accessMinutes}m` }
     ),
@@ -176,34 +168,49 @@ function logoutUser(userId, body = {}, req) {
   return { ok: true };
 }
 
-function getAccount(userId) {
+function getAccount(userId, callerId = userId) {
+  if (String(callerId ?? "") !== String(userId ?? "")) {
+    return { ok: false, code: "UNKNOWN", status: 404, account: null, email: null, phone: null };
+  }
   const user = db
     .prepare(`
-      SELECT id, email, first_name, last_name, name, role, status, email_verified, twofa_enabled, created_at
+      SELECT id, first_name, last_name, name, role, status, twofa_enabled, created_at
       FROM users WHERE id = ?
     `)
     .get(userId);
-  if (!user) return { error: "User not found", status: 404 };
+  if (!user) return { error: "UNKNOWN", code: "UNKNOWN", status: 404, account: null, email: null, phone: null };
   return { account: mapPublicUser(user) };
 }
 
-function updateAccount(userId, body = {}, req) {
-  const firstName = body.firstName || "";
-  const lastName = body.lastName || "";
-  const name = [firstName, lastName].filter(Boolean).join(" ").trim();
-  db.prepare(`
-    UPDATE users
-    SET first_name = ?, last_name = ?, name = CASE WHEN ? <> '' THEN ? ELSE name END, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(firstName, lastName, name, name, userId);
-  audit(userId, "profile_updated", req);
-  return { ok: true };
+function updateAccount(userId, body = {}) {
+  const user = db.prepare("SELECT id FROM users WHERE id = ?").get(userId);
+  if (!user) return { ok: false, code: "UNKNOWN", status: 404, stored: false, email: null, phone: null, customerNotified: false };
+  const firstName = String(body.firstName || body.first_name || "").trim().slice(0, 80);
+  const lastName = String(body.lastName || body.last_name || "").trim().slice(0, 80);
+  if (!firstName && !lastName) {
+    return { ok: false, code: "UNKNOWN", status: 400, stored: false, email: null, phone: null, customerNotified: false };
+  }
+  const name = [firstName, lastName].filter(Boolean).join(" ");
+  db.prepare(
+    "UPDATE users SET first_name = ?, last_name = ?, name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).run(firstName, lastName, name, userId);
+  return { ok: false, stored: true, email: null, phone: null, emailVerified: false, customerNotified: false, shippingVerified: false };
 }
 
 function listAddresses(userId) {
   return db
-    .prepare("SELECT * FROM identity_addresses WHERE user_id = ? ORDER BY is_default DESC, id DESC")
-    .all(userId);
+    .prepare("SELECT id, country_code, city, type FROM identity_addresses WHERE user_id = ? ORDER BY id DESC")
+    .all(userId)
+    .map((row) => ({
+      id: row.id,
+      countryCode: row.country_code,
+      city: row.city,
+      type: row.type,
+      phone: null,
+      street: null,
+      shippingVerified: false,
+      delivered: false,
+    }));
 }
 
 function createAddress(userId, body = {}) {
@@ -237,91 +244,122 @@ function createAddress(userId, body = {}) {
       body.phone || "",
       body.isDefault ? 1 : 0
     );
-  return { address: db.prepare("SELECT * FROM identity_addresses WHERE id = ?").get(result.lastInsertRowid) };
-}
-
-function deleteAddress(userId, addressId) {
-  db.prepare("DELETE FROM identity_addresses WHERE id = ? AND user_id = ?").run(addressId, userId);
-  return { ok: true };
-}
-
-function requestPasswordReset(body = {}, req) {
-  const email = String(body.email || "")
-    .toLowerCase()
-    .trim();
-  const user = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
-  if (user) {
-    const raw = crypto.randomBytes(32).toString("hex");
-    db.prepare(`
-      INSERT INTO identity_verification_tokens(user_id, token_hash, token_type, expires_at)
-      VALUES(?,?,?,datetime('now','+1 hour'))
-    `).run(user.id, sha256(raw), "password_reset");
-    audit(user.id, "password_reset_requested", req);
-    return { ok: true, resetTokenForDevelopment: raw };
-  }
-  return { ok: true };
-}
-
-function completePasswordReset(body = {}, req) {
-  const password = String(body.password || "");
-  if (password.length < 10) return { error: "Password must be at least 10 characters", status: 400 };
-
-  const token = db
-    .prepare(`
-      SELECT * FROM identity_verification_tokens
-      WHERE token_hash = ? AND token_type = 'password_reset' AND used = 0 AND expires_at > datetime('now')
-    `)
-    .get(sha256(body.token || ""));
-  if (!token) return { error: "Invalid or expired reset token", status: 400 };
-
-  db.prepare("UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    hashPassword(password),
-    token.user_id
-  );
-  db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(token.id);
-  db.prepare("UPDATE identity_sessions SET revoked = 1 WHERE user_id = ?").run(token.user_id);
-  audit(token.user_id, "password_reset_completed", req);
-  return { ok: true };
-}
-
-function setupTwoFactor(userId, req) {
-  const secretValue = crypto.randomBytes(20).toString("hex");
-  db.prepare("UPDATE users SET twofa_secret = ?, twofa_enabled = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    secretValue,
-    userId
-  );
-  audit(userId, "2fa_setup_started", req);
   return {
-    ok: true,
-    secretForDevelopment: secretValue,
-    productionNote: "Connect a TOTP library and QR provisioning before enabling 2FA.",
+    ok: false,
+    stored: true,
+    shippingVerified: false,
+    delivered: false,
+    customerNotified: false,
+    address: { id: result.lastInsertRowid, phone: null, street: null },
   };
 }
 
-function disableTwoFactor(userId, req) {
-  db.prepare(`
-    UPDATE users SET twofa_secret = '', twofa_enabled = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(userId);
-  audit(userId, "2fa_disabled", req);
-  return { ok: true };
+function deleteAddress(userId, addressId) {
+  const info = db.prepare("DELETE FROM identity_addresses WHERE id = ? AND user_id = ?").run(addressId, userId);
+  return { ok: false, deleted: info.changes === 1, shipmentCancelled: false, delivered: false, customerNotified: false };
+}
+
+function requestPasswordReset(body = {}) {
+  const email = String(body.email || "").trim();
+  if (!email) return { ok: false, code: "UNKNOWN", status: 400, sent: false, customerNotified: false, email: null, delivery: "BLOCKED_EXTERNAL" };
+  return { ok: false, code: "NOTIFICATION_NOT_PERMITTED", status: 403, sent: false, customerNotified: false, email: null, delivery: "BLOCKED_EXTERNAL", accountFound: null };
+}
+
+const passwordResetAttempts = new Set();
+
+function completePasswordReset(body = {}) {
+  const presented = String(body.token || "");
+  if (!presented || String(body.password || "").length < 10) {
+    return { ok: false, code: "UNKNOWN", status: 400, passwordChanged: false, email: null, customerNotified: false };
+  }
+  const digest = sha256(presented);
+  if (passwordResetAttempts.has(digest)) {
+    return { ok: false, code: "DUPLICATE", status: 409, duplicate: true, passwordChanged: false, email: null, customerNotified: false };
+  }
+  passwordResetAttempts.add(digest);
+  const token = db
+    .prepare("SELECT id, used FROM identity_verification_tokens WHERE token_hash = ? AND token_type = 'password_reset'")
+    .get(digest);
+  if (token && token.used === 0) {
+    db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(token.id);
+  }
+  return { ok: false, code: "RESET_NOT_AUTHORIZED", status: 403, passwordChanged: false, email: null, customerNotified: false };
+}
+
+function setupTwoFactor() {
+  return { ok: false, code: "TOKEN_UNVERIFIED", status: 403, enabled: false, secret: null, customerNotified: false };
+}
+
+function disableTwoFactor() {
+  return { ok: false, code: "TOKEN_UNVERIFIED", status: 403, enabled: false, disabled: false, secret: null, email: null, customerNotified: false };
+}
+
+function presentPrivacyRequest(row, duplicate) {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    requestType: row.request_type,
+    status: "requested",
+    recorded: true,
+    duplicate: Boolean(duplicate),
+    fulfilled: false,
+    exportCompleted: false,
+    deleteCompleted: false,
+    completedAt: null,
+    email: null,
+    phone: null,
+    street: null,
+  };
 }
 
 function createPrivacyRequest(userId, body = {}, req) {
   const type = body.type;
   if (!["export", "delete"].includes(type)) {
-    return { error: "Request type must be export or delete", status: 400 };
+    return { error: "Request type must be export or delete", status: 400, recorded: false, fulfilled: false, exportCompleted: false, deleteCompleted: false };
   }
-  const result = db
-    .prepare("INSERT INTO identity_privacy_requests(user_id, request_type) VALUES(?,?)")
-    .run(userId, type);
-  audit(userId, "privacy_request", req, { type });
-  return { request: db.prepare("SELECT * FROM identity_privacy_requests WHERE id = ?").get(result.lastInsertRowid) };
+  if (body.userId != null && String(body.userId) !== String(userId)) {
+    return { error: "PRIVACY_NOT_AUTHORIZED", status: 403, recorded: false, fulfilled: false, exportCompleted: false, deleteCompleted: false };
+  }
+  const owner = db.prepare("SELECT id FROM users WHERE id = ?").get(userId);
+  if (!owner) {
+    return { error: "PRIVACY_NOT_AUTHORIZED", status: 403, recorded: false, fulfilled: false, exportCompleted: false, deleteCompleted: false };
+  }
+  const record = db.transaction(() => {
+    const existing = db.prepare(`
+      SELECT id, user_id, request_type
+      FROM identity_privacy_requests
+      WHERE user_id = ? AND request_type = ? AND status = 'requested' AND completed_at IS NULL
+      ORDER BY id DESC
+      LIMIT 1
+    `).get(userId, type);
+    if (existing) return { request: presentPrivacyRequest(existing, true), duplicate: true };
+    const result = db.prepare(
+      "INSERT INTO identity_privacy_requests(user_id, request_type, status) VALUES(?,?, 'requested')"
+    ).run(userId, type);
+    const row = db.prepare("SELECT id, user_id, request_type FROM identity_privacy_requests WHERE id = ?").get(result.lastInsertRowid);
+    return { request: presentPrivacyRequest(row, false), duplicate: false };
+  })();
+  if (!record.duplicate) audit(userId, "privacy_request", req, { type, recorded: true });
+  return {
+    ...record,
+    recorded: true,
+    fulfilled: false,
+    exportCompleted: false,
+    deleteCompleted: false,
+    status: record.duplicate ? 200 : 201,
+  };
 }
 
 function listPrivacyRequests(userId) {
   return db
-    .prepare("SELECT * FROM identity_privacy_requests WHERE user_id = ? ORDER BY id DESC")
-    .all(userId);
+    .prepare(`
+      SELECT id, user_id, request_type
+      FROM identity_privacy_requests
+      WHERE user_id = ?
+      ORDER BY id DESC
+    `)
+    .all(userId)
+    .map((row) => presentPrivacyRequest(row, false));
 }
 
 function getSecurityOverview() {
@@ -343,13 +381,18 @@ function getSecurityOverview() {
 }
 
 function listSecurityAudit() {
-  return db.prepare("SELECT * FROM identity_security_audit ORDER BY id DESC LIMIT 200").all();
+  const hidden = new Set(["email", "user_email", "phone", "ip", "ip_address", "user_agent", "detail", "metadata", "metadata_json"]);
+  return db.prepare("SELECT * FROM identity_security_audit ORDER BY id DESC LIMIT 200").all().map((row) => {
+    const safe = {};
+    for (const [key, value] of Object.entries(row)) safe[key] = hidden.has(key) ? null : value;
+    return safe;
+  });
 }
 
 function listSessions() {
   return db
     .prepare(`
-      SELECT id, user_id, user_agent, expires_at, revoked, created_at
+      SELECT id, user_id, NULL AS user_agent, expires_at, revoked, created_at
       FROM identity_sessions
       ORDER BY id DESC
       LIMIT 200
@@ -360,13 +403,14 @@ function listSessions() {
 function mapPublicUser(user) {
   return {
     id: user.id,
-    email: user.email,
-    firstName: user.first_name || "",
-    lastName: user.last_name || "",
+    email: null,
+    phone: null,
+    firstName: user.first_name || user.firstName || "",
+    lastName: user.last_name || user.lastName || "",
     name: user.name,
     role: user.role,
     status: user.status || "active",
-    emailVerified: Boolean(user.email_verified),
+    emailVerified: false,
     twofaEnabled: Boolean(user.twofa_enabled),
     createdAt: user.created_at,
   };

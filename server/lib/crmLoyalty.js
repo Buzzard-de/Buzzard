@@ -17,33 +17,12 @@ function cartKey(userId) {
   return crypto.createHash("sha1").update(`${String(userId)}|buzzard`).digest("hex");
 }
 
-function addPoints(userId, points, reason, reference = "") {
-  const delta = Number(points);
-  db.prepare("INSERT INTO loyalty_ledger(user_id, points, reason, reference) VALUES(?,?,?,?)").run(
-    userId,
-    delta,
-    reason || "",
-    reference || ""
-  );
-
-  const current =
-    db.prepare("SELECT points, lifetime_points FROM loyalty_accounts WHERE user_id = ?").get(userId) ||
-    {};
-  const nextPoints = Number(current.points || 0) + delta;
-  const nextLifetime = Number(current.lifetime_points || 0) + Math.max(0, delta);
-  const tier = loyaltyTier(nextLifetime);
-
-  db.prepare(
-    `INSERT INTO loyalty_accounts(user_id, points, lifetime_points, tier)
-     VALUES(?,?,?,?)
-     ON CONFLICT(user_id) DO UPDATE SET
-       points = excluded.points,
-       lifetime_points = excluded.lifetime_points,
-       tier = excluded.tier,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(userId, nextPoints, nextLifetime, tier);
-
-  return db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId);
+function addPoints() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
 }
 
 function getCrmProfile(userId) {
@@ -55,28 +34,51 @@ function getCrmProfile(userId) {
 }
 
 function upsertCrmProfile(userId, body = {}) {
-  db.prepare(
-    `INSERT INTO crm_profiles(
-       user_id, phone, country_code, language, marketing_email, marketing_sms, marketing_whatsapp
-     ) VALUES(?,?,?,?,?,?,?)
-     ON CONFLICT(user_id) DO UPDATE SET
-       phone = excluded.phone,
-       country_code = excluded.country_code,
-       language = excluded.language,
-       marketing_email = excluded.marketing_email,
-       marketing_sms = excluded.marketing_sms,
-       marketing_whatsapp = excluded.marketing_whatsapp,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(
-    userId,
-    body.phone || "",
-    (body.countryCode || "DE").toUpperCase(),
-    body.language || "de-DE",
-    body.marketingEmail ? 1 : 0,
-    body.marketingSms ? 1 : 0,
-    body.marketingWhatsapp ? 1 : 0
-  );
-  return { ok: true };
+  const id = String(userId ?? "").trim();
+  if (!/^[1-9]\d{0,17}$/.test(id)) {
+    return { ok: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, granted: false, consentVerified: false, notificationSent: false };
+  }
+  const grant = body.marketingEmail === true || body.marketingSms === true || body.marketingWhatsapp === true || body.consent === true || body.approved === true || body.verified === true;
+  const withdrawn = body.marketingEmail === false || body.marketingSms === false || body.marketingWhatsapp === false || body.withdraw === true || body.unsubscribe === true;
+  try {
+    db.prepare(
+      `INSERT INTO crm_profiles(
+         user_id, phone, country_code, language, marketing_email, marketing_sms, marketing_whatsapp
+       ) VALUES(?,?,?,?,?,?,?)
+       ON CONFLICT(user_id) DO UPDATE SET
+         country_code = excluded.country_code,
+         language = excluded.language,
+         marketing_email = 0,
+         marketing_sms = 0,
+         marketing_whatsapp = 0,
+         updated_at = CURRENT_TIMESTAMP`
+    ).run(id, "", (body.countryCode || "DE").toUpperCase(), body.language || "de-DE", 0, 0, 0);
+  } catch {
+    return {
+      ok: false,
+      code: "UNKNOWN",
+      marketingPermission: "BLOCKED",
+      stored: false,
+      granted: false,
+      withdrawn: false,
+      consentVerified: false,
+      notificationSent: false,
+      customerNotified: false,
+    };
+  }
+  return {
+    ok: false,
+    code: grant && !withdrawn ? "CONSENT_UNVERIFIED" : withdrawn ? "WITHDRAWN" : "CONSENT_UNVERIFIED",
+    marketingPermission: withdrawn ? "WITHDRAWN" : "BLOCKED",
+    stored: true,
+    granted: false,
+    withdrawn,
+    consentVerified: false,
+    consentSource: "UNKNOWN",
+    notificationSent: false,
+    customerNotified: false,
+    callerFlagIgnored: true,
+  };
 }
 
 function getLoyaltyDashboard(userId) {
@@ -90,58 +92,74 @@ function getLoyaltyDashboard(userId) {
   return { account, ledger, rewards };
 }
 
-function earnPoints(userId, body = {}) {
-  const points = Math.max(0, Math.floor(Number(body.points || 0)));
-  if (!points) return { error: "Positive points required", status: 400 };
-  const account = addPoints(userId, points, body.reason || "manual", body.reference || "");
-  return account;
-}
-
-function redeemReward(userId, rewardId) {
-  const reward = db.prepare("SELECT * FROM rewards WHERE id = ? AND active = 1").get(rewardId);
-  const account =
-    db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) || { points: 0 };
-  if (!reward) return { error: "Reward not found", status: 404 };
-  if (Number(account.points || 0) < reward.points_cost) {
-    return { error: "Not enough points", status: 400 };
+function earnPoints() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
   }
-
-  addPoints(userId, -reward.points_cost, "reward redemption", reward.code);
-  const code = `BZ-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
-  db.prepare(
-    "INSERT INTO offers(user_id, title, code, discount_type, discount_value) VALUES(?,?,?,?,?)"
-  ).run(userId, reward.title, code, reward.discount_type, reward.discount_value);
-
-  return { ok: true, code, reward };
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
 }
 
-function trackAbandonedCart(userId, body = {}) {
-  const key = cartKey(userId);
-  db.prepare(
-    `INSERT INTO abandoned_carts(user_id, cart_key, subtotal, currency, item_count, last_seen_at)
-     VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)
-     ON CONFLICT(cart_key) DO UPDATE SET
-       subtotal = excluded.subtotal,
-       currency = excluded.currency,
-       item_count = excluded.item_count,
-       last_seen_at = CURRENT_TIMESTAMP,
-       status = 'open'`
-  ).run(
-    userId,
-    key,
-    Number(body.subtotal || 0),
-    body.currency || "EUR",
-    Number(body.itemCount || 0)
-  );
-  return { ok: true, cartKey: key };
+function redeemReward() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, redeemed: false, couponIssued: false, balanceChanged: false, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, redeemed: false, couponIssued: false, balanceChanged: false, callerFlagIgnored: true };
 }
 
-function markCartRecovered(userId) {
-  const key = cartKey(userId);
-  db.prepare(
-    "UPDATE abandoned_carts SET status = 'recovered', recovered_at = CURRENT_TIMESTAMP WHERE cart_key = ?"
-  ).run(key);
-  return { ok: true };
+function trackAbandonedCart() {
+  return { ok: false, code: "CONSENT_UNVERIFIED", marketingPermission: "BLOCKED", stored: false, cartStored: false, notified: false, customerNotified: false };
+}
+
+const recoveryAttempts = new Set();
+
+function markCartRecovered(userId, body = {}) {
+  const id = String(userId ?? "").trim();
+  const duplicate = id ? recoveryAttempts.has(id) : false;
+  if (id) recoveryAttempts.add(id);
+  const { isSalesEnabled } = require("./salesMode");
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("ORDER_UNVERIFIED");
+  reasons.push("PAYMENT_UNVERIFIED");
+  if (!/^[1-9]\d{0,17}$/.test(id)) reasons.push("UNKNOWN");
+  let marketingPermission = "UNKNOWN";
+  if (/^[1-9]\d{0,17}$/.test(id)) {
+    const profile = db.prepare("SELECT marketing_email, marketing_sms, marketing_whatsapp FROM crm_profiles WHERE user_id = ?").get(id);
+    if (!profile) marketingPermission = "BLOCKED";
+    else if (Number(profile.marketing_email) === 0 && Number(profile.marketing_sms) === 0 && Number(profile.marketing_whatsapp) === 0) marketingPermission = "WITHDRAWN";
+    else marketingPermission = "BLOCKED";
+  }
+  return {
+    ok: false,
+    error: reasons[0] || "SALES_CLOSED",
+    code: reasons[0] || "SALES_CLOSED",
+    status: reasons[0] === "SALES_CLOSED" ? 403 : 409,
+    recovered: false,
+    converted: false,
+    purchased: false,
+    paid: false,
+    completed: false,
+    sale: false,
+    saleRecorded: false,
+    orderCreated: false,
+    paymentCreated: false,
+    revenue: null,
+    couponIssued: false,
+    pointsApplied: false,
+    balanceChanged: false,
+    campaignCreated: false,
+    notificationSent: false,
+    customerNotified: false,
+    marketingPermission,
+    consentVerified: false,
+    callerFlagIgnored: true,
+    idempotent: true,
+    duplicate,
+    reasons,
+    ignored: body ? true : true,
+  };
 }
 
 function listUserOffers(userId) {
@@ -150,20 +168,8 @@ function listUserOffers(userId) {
     .all(userId);
 }
 
-function queueRecoveryCampaigns(channel = "email") {
-  const carts = db
-    .prepare(
-      "SELECT * FROM abandoned_carts WHERE status = 'open' AND datetime(last_seen_at) < datetime('now', '-24 hours')"
-    )
-    .all();
-  const insert = db.prepare(
-    "INSERT INTO recovery_campaigns(abandoned_cart_id, channel, scheduled_at) VALUES(?,?,datetime('now'))"
-  );
-  const tx = db.transaction(() => {
-    for (const cart of carts) insert.run(cart.id, channel);
-  });
-  tx();
-  return { queued: carts.length };
+function queueRecoveryCampaigns() {
+  return { ok: false, queued: 0, stored: false, customerNotified: false, notificationSent: false, code: "CONSENT_UNVERIFIED", marketingPermission: "BLOCKED" };
 }
 
 function listSegmentsAdmin() {
@@ -172,8 +178,18 @@ function listSegmentsAdmin() {
 
 function listAbandonedCartsAdmin() {
   return db
-    .prepare("SELECT * FROM abandoned_carts ORDER BY last_seen_at DESC LIMIT 200")
-    .all();
+    .prepare("SELECT id, user_id, status, item_count, last_seen_at FROM abandoned_carts ORDER BY last_seen_at DESC LIMIT 200")
+    .all()
+    .map((row) => ({
+      id: row.id,
+      status: row.status,
+      itemCount: row.item_count,
+      sale: false,
+      converted: false,
+      revenue: null,
+      orderCreated: false,
+      recoveredIsSale: false,
+    }));
 }
 
 function listOffersAdmin() {
@@ -197,7 +213,12 @@ function getCrmLoyaltyStatus() {
       segments: db.prepare("SELECT COUNT(*) n FROM customer_segments").get().n,
       offers: db.prepare("SELECT COUNT(*) n FROM offers WHERE status = 'active'").get().n,
       abandonedCarts: db.prepare("SELECT COUNT(*) n FROM abandoned_carts WHERE status = 'open'").get().n,
+      recoveredCarts: db.prepare("SELECT COUNT(*) n FROM abandoned_carts WHERE status = 'recovered'").get().n,
       recoveryCampaigns: db.prepare("SELECT COUNT(*) n FROM recovery_campaigns").get().n,
+      salesFromRecovered: null,
+      revenue: null,
+      conversionCount: null,
+      recoveredIsSale: false,
     },
   };
 }

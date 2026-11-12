@@ -1,14 +1,14 @@
 {
   "schema": "buzzard.storefront-catalog.v1",
-  "recordedAt": "2026-11-10T20:36:06.608Z",
+  "recordedAt": "2026-11-11T19:54:20.496Z",
   "liveVerified": false,
   "productionPerformance": false,
   "salesEnabled": false,
   "orderCreated": false,
   "localSearch": {
     "calls": 50,
-    "elapsedMs": 12.08,
-    "heapDeltaBytes": 688224
+    "elapsedMs": 7.39,
+    "heapDeltaBytes": 687688
   },
   "tasks": [
     {

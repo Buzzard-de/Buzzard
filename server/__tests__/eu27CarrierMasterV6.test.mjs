@@ -38,11 +38,17 @@ describe("EU27 carrier master v6", () => {
 
   it("adapter contract: invalid address, size, postcode, outage, timeout, live block", () => {
     const a = createAdapter({ carrierId: "dhl-parcel-de", apiLevel: 2 });
-    expect(a.validateAddress({}).error.code).toBe(CARRIER_ERRORS.INVALID_ADDRESS);
+    expect(a.validateAddress({}).ok).toBe(false);
+    expect(a.validateAddress({}).mock).toBe(false);
+    expect(a.validateAddress({}).error.code).toBe("MISSING_ADDRESS");
+    expect(a.validateAddress({}).validatedAddress).toBeNull();
     expect(a.getRates({ weightKg: 5000 }).error.code).toBe(CARRIER_ERRORS.UNSUPPORTED_PARCEL_SIZE);
     expect(a.getCoverage("ABC", "DE").error.code).toBe(CARRIER_ERRORS.UNSUPPORTED_POSTCODE);
     expect(a.createShipment({}).blocked).toBe(true);
-    expect(a.trackShipment("").error.code).toBe(CARRIER_ERRORS.INVALID_TRACKING);
+    expect(a.trackShipment("").ok).toBe(false);
+    expect(a.trackShipment("").code).toBe("MISSING_TRACKING_NUMBER");
+    expect(a.trackShipment("").mock).toBe(false);
+    expect(a.trackShipment("").trackingNumber).toBeNull();
     const down = createAdapter({ outage: true });
     expect(down.getRates().error.code).toBe(CARRIER_ERRORS.CARRIER_OUTAGE);
     const slow = createAdapter({ forceTimeout: true });
@@ -54,11 +60,29 @@ describe("EU27 carrier master v6", () => {
     resetIdempotency();
     const secret = "test-only-not-a-production-secret";
     const ts = Date.now();
-    const body = JSON.stringify({ mock: true });
+    const body = JSON.stringify({ mock: true, accepted: true, delivered: true, shipped: true, trackingNumber: "FAKE1" });
     const sig = signPayload(secret, String(ts), body);
     const ok = receiveWebhook({ secret, timestamp: ts, signature: sig, rawBody: body, eventId: "e1" });
-    expect(ok.accepted).toBe(true);
-    expect(receiveWebhook({ secret, timestamp: ts, signature: sig, rawBody: body, eventId: "e1" }).reason).toBe("REPLAY");
+    expect(ok.signatureVerified).toBe(true);
+    expect(ok.accepted).toBe(false);
+    expect(ok.shipped).toBe(false);
+    expect(ok.delivered).toBe(false);
+    expect(ok.ok).toBe(false);
+    expect(ok.mock).toBe(false);
+    expect(ok.status).toBe("BLOCKED_EXTERNAL");
+    expect(ok.shipmentCreated).toBe(false);
+    expect(ok.supplierOrderCreated).toBe(false);
+    expect(ok.trackingNumber).toBeNull();
+    expect(ok.supplierOrderNumber).toBeNull();
+    expect(ok.shipmentId).toBeNull();
+    const [replayed, repeated] = [
+      receiveWebhook({ secret, timestamp: ts, signature: sig, rawBody: body, eventId: "e1" }),
+      receiveWebhook({ secret, timestamp: ts, signature: sig, rawBody: body, eventId: "e1" }),
+    ];
+    expect(replayed.reason).toBe("REPLAY");
+    expect(repeated.reason).toBe("REPLAY");
+    expect(replayed.accepted).toBe(false);
+    expect(repeated.shipmentCreated).toBe(false);
     expect(receiveWebhook({ secret, timestamp: ts, signature: "deadbeef", rawBody: body, eventId: "e2" }).reason).toBe("INVALID_SIGNATURE");
     const first = withIdempotency("k1", "h", () => ({ ok: true, n: 1 }));
     const replay = withIdempotency("k1", "h", () => ({ ok: true, n: 2 }));

@@ -13,7 +13,7 @@ function attachAdmin(req, res) {
   req.adminUser = {
     userId: session.userId,
     id: session.userId,
-    email: session.email,
+    email: null,
     name: session.name,
     role: session.role,
   };

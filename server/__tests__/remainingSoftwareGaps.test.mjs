@@ -50,11 +50,11 @@ describe("dispatch verification policies", () => {
     expect(price.audit.evidence).toContain("net");
     const gated = verifyDispatch({ kind: "PHONE_LIVE_CALL", result: dispatch({ agentId: "zeynep_hanim", kind: "PHONE_LIVE_CALL" }) });
     expect(gated.code).toBe("HUMAN_GATE_REQUIRED");
-    const buy = verifyDispatch({
-      kind: "STOCK_BUY",
-      result: dispatch({ agentId: "stock_ai", kind: "STOCK_BUY", input: { humanApproved: true } }),
-    });
-    expect(buy.code).toBe("INDEPENDENT_OK");
+    const attempt = dispatch({ agentId: "stock_ai", kind: "STOCK_BUY", input: { humanApproved: true } });
+    expect(attempt.ok).toBe(false);
+    expect(attempt.result.purchased).toBe(false);
+    const buy = verifyDispatch({ kind: "STOCK_BUY", result: attempt });
+    expect(buy.code).toBe("PURCHASE_BLOCKED");
     expect(dispatch({ agentId: "stock_ai", kind: "STOCK_BUY" }).code).toBe("HUMAN_GATE_REQUIRED");
   });
 });
@@ -66,7 +66,20 @@ describe("provider carrier contracts", () => {
     const post = getAdapter("POST_DE");
     const local = getAdapter("LocalCourier");
     expect(dhl.protocol).not.toBe(ups.protocol);
-    expect(dhl.trackShipment({ status: "transit" }).status).toBe("IN_TRANSIT");
+    const tracked = dhl.trackShipment({ status: "transit" });
+    expect(tracked.status).toBe("IN_TRANSIT");
+    expect(tracked.ok).toBe(false);
+    expect(tracked.live).toBe(false);
+    expect(tracked.events).toEqual([]);
+    expect(tracked.trackingNumber).toBeNull();
+    expect(tracked.resultStatus).toBe("BLOCKED_EXTERNAL");
+    expect(dhl.validateRequest().ok).toBe(false);
+    expect(dhl.validateRequest().code).toBe("MISSING_ADDRESS");
+    const shaped = dhl.validateRequest({ address: { postalCode: "10115" } });
+    expect(shaped.ok).toBe(false);
+    expect(shaped.code).toBe("LIVE_CONNECTION_REQUIRED");
+    expect(shaped.validatedAddress).toBeNull();
+    expect(dhl.createShipment({ orderId: "x", address: { postalCode: "10115" } }).code).toBe("HUMAN_GATE_REQUIRED");
     expect(ups.trackShipment({ status: "I" }).status).toBe("IN_TRANSIT");
     expect(ups.trackShipment({ status: "M" }).status).not.toBe(dhl.trackShipment({ status: "failure" }).status);
     expect(dhl.trackShipment({ status: "LOST" }).status).toBe("LOST");

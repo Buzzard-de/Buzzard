@@ -8,8 +8,9 @@ export function formatPrice(price: number, currency = "EUR", locale?: BuzzardLoc
   return formatPriceIntl(price, locale ?? getRuntimeLocale(), currency);
 }
 
-export function formatVatInfo(price: number, vatRate: number, locale?: BuzzardLocale): string {
+export function formatVatInfo(price: number, vatRate: number | null, locale?: BuzzardLocale): string {
   const activeLocale = locale ?? getRuntimeLocale();
+  if (vatRate == null) return `${translate(activeLocale, "cart.vat")} UNKNOWN`;
   const net = price / (1 + vatRate / 100);
   const vatLabel = translate(activeLocale, "cart.vat");
   return `${vatLabel} (${formatPrice(price - net, "EUR", activeLocale)})`;
@@ -22,6 +23,6 @@ export function stockStatusLabel(status: StockStatus, locale?: BuzzardLocale): s
 
 export const FREE_SHIPPING_THRESHOLD = 79;
 
-export function getShippingCost(subtotal: number): number {
-  return subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : 5.99;
+export function getShippingCost(_subtotal: number): number | null {
+  return null;
 }

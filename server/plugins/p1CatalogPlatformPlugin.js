@@ -131,7 +131,7 @@ module.exports = {
         note: req.body?.note || "",
       });
       if (!updated) return res.status(404).json({ success: false, errorKey: "admin.ai.reviewNotFound" });
-      return res.json({ success: true, review: updated });
+      return res.status(status === "approved" ? 409 : 200).json({ success: false, published: false, verifiedPurchase: false, review: updated });
     });
 
     app.post("/api/admin/p1/ai/product-enrich", async (req, res) => {

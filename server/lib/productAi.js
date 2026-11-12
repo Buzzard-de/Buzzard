@@ -48,13 +48,21 @@ function listReviews(status, limit = 50) {
   return queue.slice(0, limit);
 }
 
-function updateReview(id, patch) {
+function updateReview(id, patch = {}) {
   const queue = readQueue();
   const idx = queue.findIndex((r) => r.id === id);
   if (idx < 0) return null;
-  queue[idx] = { ...queue[idx], ...patch, updated_at: new Date().toISOString() };
+  const requested = String(patch.status || "");
+  const nextStatus = requested === "rejected" ? "rejected" : queue[idx].status;
+  queue[idx] = {
+    id: queue[idx].id,
+    status: nextStatus,
+    updated_at: new Date().toISOString(),
+    published: false,
+    verifiedPurchase: false,
+  };
   writeQueue(queue);
-  return queue[idx];
+  return { ...queue[idx], published: false, verifiedPurchase: false, customerNotified: false, callerFlagIgnored: requested === "approved" };
 }
 
 async function enrichProduct(input, options = {}) {

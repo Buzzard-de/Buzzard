@@ -1,0 +1,12 @@
+{
+  "id": "core",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "security": "SECURITY_VERIFIED",
+  "performance": "PERFORMANCE_TESTED",
+  "engines": 11,
+  "anyLive": false,
+  "liveVerified": false,
+  "productionReady": false
+}

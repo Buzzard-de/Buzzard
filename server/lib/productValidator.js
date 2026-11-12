@@ -147,8 +147,8 @@ function validateProduct(input, options = {}) {
     if (!supplierPriceResult.ok) errors.push(supplierPriceResult.error);
   }
 
-  const vatRate = input.vat_rate != null ? Number(input.vat_rate) : 19;
-  if (Number.isNaN(vatRate) || vatRate < 0 || vatRate > 100) {
+  const vatRate = input.vat_rate != null && input.vat_rate !== "" ? Number(input.vat_rate) : null;
+  if (vatRate != null && (Number.isNaN(vatRate) || vatRate < 0 || vatRate > 100)) {
     errors.push("invalid_vat_rate");
   }
 
@@ -183,12 +183,14 @@ function validateProduct(input, options = {}) {
     price: priceResult.value,
     compare_at_price: input.compare_at_price ? validateMoney(input.compare_at_price, "compare_at_price").value : null,
     vat_rate: vatRate,
-    stock,
-    stock_status: input.stock_status || (stock <= 0 ? "out_of_stock" : "in_stock"),
+    stock: null,
+    reported_stock: Number.isFinite(stock) ? stock : null,
+    stock_status: "UNKNOWN",
+    stock_verified: false,
     supplier_id: supplierId,
     supplier_sku: supplierSku,
     supplier_price: supplierPriceResult.value,
-    shipping: input.shipping || { weight_kg: 1, length_cm: 20, width_cm: 20, height_cm: 10, class: "standard" },
+    shipping: input.shipping || { weight_kg: null, length_cm: null, width_cm: null, height_cm: null, class: null, status: "UNKNOWN" },
     seo: input.seo || { slug: "", title: name, description: cleanString(input.short_description, 320) },
     status: input.status || "draft",
     buy_now_enabled: input.buy_now_enabled ?? false,

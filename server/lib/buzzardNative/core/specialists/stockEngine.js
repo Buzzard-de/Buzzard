@@ -1,6 +1,6 @@
 const { check } = require("../permissionEngine");
 
-function inspectFeeds({ actorId = "stock_ai", feeds = [] } = {}) {
+function inspectFeeds({ actorId = "stock_ai", feeds = [], customerOrderVerified = false } = {}) {
   if (!check(actorId, "STOCK_READ").ok) return { ok: false, code: "PERMISSION_DENIED" };
   const now = Date.now();
   const rows = feeds.map((f) => {
@@ -14,18 +14,22 @@ function inspectFeeds({ actorId = "stock_ai", feeds = [] } = {}) {
       format: f.format || "unknown",
     };
   });
-  const available = rows.filter((r) => r.qty > 0 && !r.stale);
-  const chosen = available.sort((a, b) => b.qty - a.qty)[0] || null;
-  const sellable = Boolean(chosen);
   return {
-    ok: true,
+    ok: false,
+    live: false,
+    mock: feeds.some((f) => f && f.mock === true),
+    status: "BLOCKED_EXTERNAL",
+    code: customerOrderVerified === true ? "LIVE_CONNECTION_ABSENT" : "ORDER_UNVERIFIED",
     dropshipOnly: true,
     buzzardWarehouse: false,
-    sellable,
-    chosen,
-    stale: rows.filter((r) => r.stale),
+    sellable: false,
+    chosen: null,
+    purchased: false,
+    stale: rows.filter((r) => r.stale || r.qty == null),
     zero: rows.filter((r) => r.qty === 0),
+    missing: rows.filter((r) => r.qty == null),
     liveSupplierApi: false,
+    commercialEligibility: "BLOCKED",
   };
 }
 

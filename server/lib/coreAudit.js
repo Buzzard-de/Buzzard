@@ -1,15 +1,21 @@
 const fs = require("fs");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "..", "data");
-const auditFile = path.join(dataDir, "audit-log.json");
+function auditPaths() {
+  const dataDir = process.env.BUZZARD_AUDIT_DIR
+    ? path.resolve(process.env.BUZZARD_AUDIT_DIR)
+    : path.join(__dirname, "..", "data");
+  return { dataDir, auditFile: path.join(dataDir, "audit-log.json") };
+}
 
 function ensureDataDir() {
+  const { dataDir } = auditPaths();
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 }
 
 function readLog() {
   ensureDataDir();
+  const { auditFile } = auditPaths();
   if (!fs.existsSync(auditFile)) return [];
   try {
     return JSON.parse(fs.readFileSync(auditFile, "utf8") || "[]");
@@ -20,6 +26,7 @@ function readLog() {
 
 function writeLog(entries) {
   ensureDataDir();
+  const { auditFile } = auditPaths();
   fs.writeFileSync(auditFile, JSON.stringify(entries.slice(-5000), null, 2), "utf8");
 }
 
@@ -32,7 +39,7 @@ function logAudit({
   field,
   oldValue,
   newValue,
-  result = "success",
+  result = "UNKNOWN",
   ip,
   userAgent,
   metadata,
@@ -41,7 +48,7 @@ function logAudit({
   entries.push({
     id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     userId: userId || null,
-    userEmail: userEmail || null,
+    userEmail: null,
     action,
     entityType,
     entityId: entityId || null,
@@ -49,8 +56,8 @@ function logAudit({
     oldValue: oldValue ?? null,
     newValue: newValue ?? null,
     result,
-    ip: ip || null,
-    userAgent: userAgent || null,
+    ip: null,
+    userAgent: null,
     metadata: metadata || null,
     timestamp: new Date().toISOString(),
   });
@@ -58,15 +65,13 @@ function logAudit({
 }
 
 function logAuditFromRequest(req, payload) {
-  const ip = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || null;
-  const userAgent = req.headers["user-agent"] || null;
   const user = req.adminUser || {};
   logAudit({
     userId: user.userId || user.id,
-    userEmail: user.email,
-    ip,
-    userAgent,
     ...payload,
+    userEmail: null,
+    ip: null,
+    userAgent: null,
   });
 }
 
@@ -74,7 +79,7 @@ function listAudit(limit = 100, filters = {}) {
   let rows = readLog().slice().reverse();
   if (filters.action) rows = rows.filter((r) => r.action === filters.action);
   if (filters.entityType) rows = rows.filter((r) => r.entityType === filters.entityType);
-  return rows.slice(0, limit);
+  return rows.slice(0, limit).map((row) => ({ ...row, userEmail: null, ip: null, userAgent: null }));
 }
 
 module.exports = { logAudit, logAuditFromRequest, listAudit };

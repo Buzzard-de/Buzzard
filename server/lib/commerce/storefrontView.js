@@ -6,6 +6,7 @@ const fs = require("fs");
 const http = require("http");
 const path = require("path");
 const { openCatalog } = require("./isolatedCatalog");
+const { chrome: localeChrome } = require("./storefrontChrome");
 
 const CHROME = {
   de: { sales: "Verkauf geschlossen", search: "Suche", categories: "Kategorien", empty: "Keine Treffer", error: "Nicht verfügbar", price: "Preis", shipping: "Versand", stock: "Verfügbarkeit" },
@@ -24,16 +25,20 @@ function escapeHtml(value) {
 }
 
 function chrome(locale) {
-  if (CHROME[locale]) return { strings: CHROME[locale], untranslated: [] };
-  return { strings: CHROME.de, untranslated: Object.keys(CHROME.de), sourceLocale: "de" };
+  const row = localeChrome(locale);
+  if (!row.ok && row.code === "LOCALE_REJECTED") {
+    return { strings: row.strings, untranslated: [], sourceLocale: "de", dir: "ltr", locale: "de" };
+  }
+  return { strings: row.strings, untranslated: row.missing, sourceLocale: row.provenance === "SOURCE_DE" ? null : "de", dir: row.dir, locale: row.locale };
 }
 
 function page({ locale = "de", title, body, untranslated = [] }) {
   const ui = chrome(locale);
-  const dir = locale === "ar" ? "rtl" : "ltr";
+  const dir = ui.dir || "ltr";
+  const safeLocale = ui.locale || "de";
   const missing = [...ui.untranslated, ...untranslated];
   return `<!DOCTYPE html>
-<html lang="${escapeHtml(locale)}" dir="${dir}">
+<html lang="${escapeHtml(safeLocale)}" dir="${dir}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,6 +63,7 @@ form { display:flex; gap:8px; }
 input, button, select { background:#111; color:var(--ink); border:1px solid var(--line); padding:8px 10px; font:inherit; }
 button { color:var(--gold); }
 @media (max-width:1024px) { .grid { grid-template-columns:repeat(2,1fr); } }
+@media (min-width:641px) and (max-width:1024px) { .grid { grid-template-columns:repeat(2,1fr); } button, input { min-height:44px; } }
 @media (max-width:640px) { header, form { display:block; } .grid { grid-template-columns:1fr; } .logo { height:36px; } }
 </style>
 </head>

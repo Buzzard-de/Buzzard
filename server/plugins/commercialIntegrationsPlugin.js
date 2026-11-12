@@ -112,7 +112,7 @@ module.exports = {
 
     app.post("/api/tax/quote", async (req, res) => {
       if (!requireAnyAuth(req, res)) return;
-      const { countryCode = "DE", netAmount = 0, shipping = 0 } = req.body || {};
+      const { countryCode = null, netAmount = 0, shipping = 0 } = req.body || {};
       try {
         return res.json(await calculateTax({ countryCode, netAmount, shipping }));
       } catch (error) {

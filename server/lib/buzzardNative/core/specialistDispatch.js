@@ -72,10 +72,19 @@ function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
     if (kind === "PRICE_CALCULATE") return wrap(kind, quote({ actorId: "pricing_ai", ...input }));
     if (kind === "STOCK_READ") return wrap(kind, inspectFeeds({ actorId: "stock_ai", feeds: input.feeds || [] }));
     if (kind === "STOCK_BUY") {
+      const blocked = {
+        ...buyStock(),
+        ok: false,
+        purchased: false,
+        live: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        dryRun: false,
+      };
       if (input.humanApproved) {
-        return wrap(kind, { ...buyStock(), ok: true, purchased: false, live: false, dryRun: true }, { ok: true, code: "APPROVED_DRY_RUN" });
+        return wrap(kind, { ...blocked, code: "PURCHASE_BLOCKED" }, { ok: false, code: "PURCHASE_BLOCKED" });
       }
-      return wrap(kind, buyStock(), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+      return wrap(kind, blocked, { ok: false, code: "HUMAN_GATE_REQUIRED" });
     }
     if (kind === "CATEGORY_READ") return wrap(kind, inspectTree({ actorId: "category_ai", ...input }));
     if (kind === "CUSTOMER_REPLY" || kind === "CUSTOMER_READ") {

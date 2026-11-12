@@ -1,0 +1,57 @@
+{
+  "schema": "buzzard.final-program.test-evidence.v1",
+  "recordedAt": "2026-11-11T20:57:05+01:00",
+  "thisSession": {
+    "vitest": {
+      "command": "npx vitest run",
+      "startedUtc": "2026-11-11T19:57:05Z",
+      "startedBerlin": "2026-11-11T20:57:05+01:00",
+      "files": 131,
+      "passed": 1087,
+      "failed": 0,
+      "skipped": 0,
+      "kind": "synthetic"
+    },
+    "nodeFinM8": {
+      "command": "node --test eu27FiatEngine repositoryGaps blockedShells integrationPass workflowChain isolatedCatalog storefrontNext globalProgram",
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "kind": "synthetic"
+    },
+    "nodeP0": {
+      "command": "node --test server/__tests__/p0Remediation.test.mjs",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "kind": "synthetic"
+    },
+    "pythonEgress": {
+      "command": "python3 -m unittest intelligence/security/test_egress.py",
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "kind": "synthetic"
+    },
+    "typescript": {
+      "command": "npx tsc --noEmit",
+      "exit": 0,
+      "kind": "static"
+    },
+    "nextBuild": {
+      "command": "npm run build",
+      "exit": 0,
+      "compiled": "Compiled successfully in 10.1s",
+      "kind": "build"
+    },
+    "playwright": {
+      "command": "npx playwright test e2e/egress-security.spec.ts --project=api",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "duration": "8.1s",
+      "kind": "browser",
+      "notRun": "customer journey, mobile, tablet, and the other Playwright projects"
+    }
+  }
+}

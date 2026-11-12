@@ -3,7 +3,7 @@
  * Complete is blocked until acceptance+tests pass and approvals clear.
  */
 const crypto = require("crypto");
-const { check } = require("../buzzardNative/core/permissionEngine");
+const { authorizeDelegated } = require("../buzzardNative/core/permissionEngine");
 const { resolveIdentity } = require("../buzzardNative/core/councilAliasMap");
 
 const PRIORITY = Object.freeze(["P0", "P1", "P2", "P3"]);
@@ -77,9 +77,17 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     maxAttempts = 3,
     needsApproval = false,
     acceptance = [],
+    originRequesterId = null,
+    delegationChain = [],
   } = {}) {
-    if (!check(ownerId, "ASSIGN_TASK").ok && ownerId !== "pusat") {
-      return { ok: false, code: "PERMISSION_DENIED" };
+    const permission = authorizeDelegated({
+      actorId: ownerId,
+      originRequesterId,
+      chain: delegationChain,
+      perm: "ASSIGN_TASK",
+    });
+    if (!permission.ok) {
+      return { ok: false, code: permission.code, permission, assigned: false, permissionIncreased: false };
     }
     if (idempotencyKey && idempotency.has(idempotencyKey)) {
       return { ok: true, duplicate: true, task: tasks.get(idempotency.get(idempotencyKey)) };
@@ -108,8 +116,8 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     };
     tasks.set(id, row);
     if (idempotencyKey) idempotency.set(idempotencyKey, id);
-    auditPush({ event: "ENQUEUE", id, ownerId });
-    return { ok: true, task: { ...row } };
+    auditPush({ event: "ENQUEUE", id, ownerId, permission: permission.code });
+    return { ok: true, task: { ...row }, permission, permissionIncreased: false };
   }
 
   function depsMet(row) {

@@ -104,8 +104,8 @@ module.exports = {
           body.price ||
           pricing.calculateSalePrice({
             supplierPrice: supplierPrice.amount,
-            markupPercent: supplier.default_markup_percent,
-            minimumMarginPercent: supplier.minimum_margin_percent,
+            category: body.category || supplier.category,
+            currency: supplierPrice.currency,
           }),
         supplier_price: supplierPrice,
         buy_now_enabled: body.buy_now_enabled ?? false,

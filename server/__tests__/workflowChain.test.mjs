@@ -9,7 +9,17 @@ const require = createRequire(import.meta.url);
 const chain = require("../lib/commerce/workflowChain");
 
 test("a low net and a bad price do not create an order", () => {
-  const low = chain.offerGate({ offerPrice: 10, supplierCost: 9.8, market: 20 });
+  const low = chain.offerGate({
+    offerPrice: 10,
+    supplierCost: 9.8,
+    shippingCost: 0,
+    marketplaceFee: 0,
+    paymentFee: 0,
+    returnReserve: 0,
+    vatAmount: 0,
+    vatVerified: true,
+    market: 20,
+  });
   const bad = chain.offerGate({ offerPrice: 0, supplierCost: 4, market: 12 });
   assert.equal(low.reasons.includes("MIN_NET_PROFIT"), true);
   assert.equal(low.orderCreated, false);
@@ -24,11 +34,27 @@ test("supplier silence keeps stock unknown and a delivered scan cannot jump the 
   const tracking = chain.foldTracking([{ code: "delivered" }, { code: "pickup" }]);
   const rewind = chain.foldTracking([{ code: "pickup" }, { code: "delivered" }, { code: "pickup" }]);
   assert.equal(timeout.qty, 4);
+  assert.equal(timeout.ok, false);
   assert.equal(timeout.bought, false);
+  assert.equal(missing.ok, false);
+  assert.equal(missing.code, "QTY_UNKNOWN");
   assert.equal(missing.qty, "UNKNOWN");
+  assert.equal(missing.stockVerified, false);
+  const flagged = chain.supplierSnapshot({
+    previousQty: 4,
+    payload: { qty: 9, mock: true, live: true, verified: true, available: true, approved: true },
+  });
+  assert.equal(flagged.ok, false);
+  assert.equal(flagged.code, "SALES_CLOSED");
+  assert.equal(flagged.qty, "UNKNOWN");
+  assert.equal(flagged.quantityAdopted, false);
+  assert.equal(flagged.reasons.includes("MOCK_STOCK"), true);
+  assert.equal(flagged.reasons.includes("STALE_STOCK"), true);
+  assert.equal(flagged.callerFlagIgnored, true);
   assert.equal(tracking.status, "PICKED_UP");
   assert.equal(tracking.ignored, 1);
-  assert.equal(rewind.status, "DELIVERED");
+  assert.equal(rewind.status, "PICKED_UP");
+  assert.equal(rewind.delivered, false);
   assert.equal(rewind.ignored, 1);
   assert.equal(tracking.live, false);
 });
@@ -72,7 +98,9 @@ test("memory, locale, deny, cancel, and backup stay inside the synthetic tree", 
   assert.equal(security.policyUnchanged, true);
   assert.equal(security.salesEnabled, false);
   assert.equal(security.seed, "SEED_IDENTITY_LOCKED");
-  assert.equal(cancel.journal.supplierReimbursement, 0);
+  assert.equal(cancel.journal.supplierReimbursement, null);
+  assert.equal(cancel.journal.customerRefund, null);
+  assert.equal(cancel.journal.refunded, false);
   assert.equal(cancel.moneyMoved, false);
   assert.equal(backup.ok, true);
   assert.equal(report.priorChecksPreserved, 23);

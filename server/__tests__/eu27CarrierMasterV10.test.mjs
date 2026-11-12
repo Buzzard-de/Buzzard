@@ -70,7 +70,12 @@ describe("EU27 carrier master v10 (MC13)", () => {
 
   it("supplier-carrier many-to-many without merging unverified fleet", () => {
     expect(classifyParty({ suppliesGoods: true }).role).toBe("SUPPLIER");
-    expect(linkSupplierCarrier({ supplierId: "sup-1", carrierId: "car-1" }).edge.type).toBe("SUPPLIER_USES_CARRIER");
+    const link = linkSupplierCarrier({ supplierId: "sup-1", carrierId: "car-1" });
+    expect(link.edge.type).toBe("SUPPLIER_USES_CARRIER");
+    expect(link.ok).toBe(false);
+    expect(link.live).toBe(false);
+    expect(link.status).toBe("BLOCKED_EXTERNAL");
+    expect(link.edge.verified).toBe(false);
     expect(linkSupplierCarrier({ supplierId: "same", carrierId: "same" }).error).toBe("SUPPLIER_IS_NOT_CARRIER_WITHOUT_OWN_FLEET");
     expect(loadV10().supplierCarrier.cardinality.supplierToCarriers).toBe("0..n");
     expect(loadV10().supplierCarrier.edges).toEqual([]);

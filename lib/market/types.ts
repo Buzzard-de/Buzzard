@@ -9,7 +9,7 @@ export interface MarketCountry {
   currency: string;
   locale: string;
   taxModel: string;
-  taxRate: number;
+  taxRate: number | null;
   deliveryDays: string;
   rtl: boolean;
 }

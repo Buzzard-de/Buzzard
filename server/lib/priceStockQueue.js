@@ -1,5 +1,3 @@
-const { calculateSalePrice, applySafetyStock } = require("./pricing");
-
 /** Price/stock queue + audit (P1-07). Catalog mode — no sales activation. */
 
 const fs = require("fs");
@@ -9,41 +7,6 @@ const queueFile = path.join(__dirname, "..", "data", "price-stock-queue.json");
 const auditFile = path.join(__dirname, "..", "data", "price-stock-audit.json");
 
 const LARGE_CHANGE_PERCENT = Number(process.env.BUZZARD_PRICE_ALERT_PERCENT || 25);
-
-let guardianBridge;
-function getGuardianBridge() {
-  if (!guardianBridge) {
-    try {
-      guardianBridge = require("./guardianBridge");
-    } catch {
-      guardianBridge = null;
-    }
-  }
-  return guardianBridge;
-}
-
-async function notifyGuardianPriceAnomaly(productId, oldPrice, newPrice) {
-  const bridge = getGuardianBridge();
-  if (!bridge?.isGuardianConfigured?.()) return;
-  const qs = new URLSearchParams({
-    product_id: String(productId),
-    old_price: String(Number(oldPrice) || 0),
-    new_price: String(Number(newPrice) || 0),
-    threshold_pct: String(LARGE_CHANGE_PERCENT),
-  });
-  await bridge.fetchGuardian(`/anomalies/price?${qs}`, { method: "POST" });
-}
-
-async function notifyGuardianStockAnomaly(productId, oldStock, newStock) {
-  const bridge = getGuardianBridge();
-  if (!bridge?.isGuardianConfigured?.()) return;
-  const qs = new URLSearchParams({
-    product_id: String(productId),
-    old_stock: String(Number(oldStock) || 0),
-    new_stock: String(Number(newStock) || 0),
-  });
-  await bridge.fetchGuardian(`/anomalies/stock?${qs}`, { method: "POST" });
-}
 
 function ensureDataFile(filePath, fallback) {
   const dir = path.dirname(filePath);
@@ -156,66 +119,16 @@ function processNextJob(processor) {
   return { processed: true, job };
 }
 
-function applyPriceStockUpdate({ productId, supplierPrice, stock, supplier, previous = {} }) {
-  const priceCheck = validateIncomingPrice(supplierPrice);
-  if (!priceCheck.ok) {
-    recordAudit({ type: "price_rejected", product_id: productId, error: priceCheck.error });
-    return { ok: false, error: priceCheck.error };
-  }
-
-  const salePrice = calculateSalePrice({
-    supplierPrice: priceCheck.value.amount,
-    markupPercent: supplier?.default_markup_percent ?? 38,
-    minimumMarginPercent: supplier?.minimum_margin_percent ?? 12,
-    currency: priceCheck.value.currency,
-  });
-
-  const anomaly = detectPriceAnomaly(previous.supplier_price?.amount, priceCheck.value.amount);
-  const stockInfo = applySafetyStock(stock, supplier?.safety_stock ?? 0);
-
-  const update = {
-    supplier_price: priceCheck.value,
-    price: salePrice,
-    stock: stockInfo.stock,
-    stock_status: stockInfo.stock_status,
+function applyPriceStockUpdate() {
+  return {
+    ok: false,
+    code: "STOCK_UNVERIFIED",
+    applied: false,
+    purchased: false,
+    stock: null,
+    live: false,
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED"],
   };
-
-  if (anomaly.requiresApproval) {
-    const job = enqueueJob({
-      job_type: "price_change_large",
-      product_id: productId,
-      payload: update,
-      change_percent: anomaly.changePercent,
-      status: "waiting_approval",
-    });
-    recordAudit({
-      type: "price_change_alert",
-      product_id: productId,
-      old_amount: previous.supplier_price?.amount,
-      new_amount: priceCheck.value.amount,
-      change_percent: anomaly.changePercent,
-      job_id: job.id,
-    });
-    notifyGuardianPriceAnomaly(productId, previous.supplier_price?.amount, priceCheck.value.amount).catch(
-      () => {}
-    );
-    return { ok: true, update, requiresApproval: true, job, anomaly };
-  }
-
-  if (previous.stock != null && stockInfo.stock !== previous.stock) {
-    notifyGuardianStockAnomaly(productId, previous.stock, stockInfo.stock).catch(() => {});
-  }
-
-  recordAudit({
-    type: "price_stock_applied",
-    product_id: productId,
-    supplier_price: priceCheck.value.amount,
-    sale_price: salePrice.amount,
-    stock: stockInfo.stock,
-    stock_status: stockInfo.stock_status,
-  });
-
-  return { ok: true, update, requiresApproval: false, anomaly, warnings: priceCheck.warning ? [priceCheck.warning] : [] };
 }
 
 module.exports = {

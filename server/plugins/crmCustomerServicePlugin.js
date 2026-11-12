@@ -35,24 +35,28 @@ module.exports = {
     }
 
     app.post("/api/crm-customer-service/customers", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.createCustomer(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.customer);
+      return res.status(200).json({ id: result.customer?.id, marketing_email: 0, marketing_sms: 0, stored: true });
     });
 
     app.get("/api/crm-customer-service/customers/:id", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.getCustomer(req.params.id);
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result);
+      return res.json({ id: result.customer?.id, email: null, tickets: result.tickets?.length || 0 });
     });
 
     app.post("/api/crm-customer-service/tickets", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.createTicket(req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.ticket);
+      return res.status(200).json({ ...result, ok: false, sent: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
 
     app.get("/api/crm-customer-service/tickets/:number", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.getTicket(req.params.number);
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result);
@@ -78,8 +82,7 @@ module.exports = {
     app.post("/api/admin/crm-customer-service/customers/:id/tags", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.addCustomerTag(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 200).json({ ...result, ok: false, commercial: false, consentVerified: false, customerNotified: false, externalWrite: false });
     });
 
     app.get("/api/admin/crm-customer-service/tickets", (req, res) => {
@@ -90,20 +93,19 @@ module.exports = {
     app.patch("/api/admin/crm-customer-service/tickets/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.updateTicket(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result.ticket);
+      return res.status(result.status || 409).json({ ...result, ok: false, stored: false, customerNotified: false });
     });
 
     app.post("/api/admin/crm-customer-service/tickets/:id/messages", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = crmCustomerService.addTicketMessage(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 200).json({ ...result, ok: false, sent: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
 
     app.post("/api/admin/crm-customer-service/tickets/:id/notes", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(crmCustomerService.addTicketNote(req.params.id, req.body || {}));
+      const result = crmCustomerService.addTicketNote(req.params.id, req.body || {});
+      return res.status(200).json({ ...result, ok: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
   },
 };

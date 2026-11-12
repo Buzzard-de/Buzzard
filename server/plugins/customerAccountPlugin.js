@@ -6,8 +6,6 @@ const {
   requireCustomer,
   extractToken,
   createSession,
-  createResetToken,
-  consumeResetToken,
 } = require("../lib/customerAuth");
 const customerStore = require("../lib/customerStore");
 const fulfillmentStore = require("../lib/fulfillmentStore");
@@ -51,7 +49,7 @@ module.exports = {
       const session = createSession(result.customer);
       logAudit({
         userId: result.customer.id,
-        userEmail: result.customer.email,
+        userEmail: null,
         action: "register",
         entityType: "customer",
         entityId: result.customer.id,
@@ -72,7 +70,6 @@ module.exports = {
         automationEngine.emit(
           "new_customer",
           {
-            email: result.customer.email,
             customerId: result.customer.id,
             language: req.body.language || "de",
             marketingConsent: Boolean(req.body.marketing),
@@ -121,13 +118,13 @@ module.exports = {
       if (!session) return;
       const updated = customerStore.updateProfile(session.customerId, req.body || {});
       if (!updated) return res.status(404).json({ success: false, errorKey: "account.notFound" });
-      return res.json({ success: true, user: customerStore.publicUser(updated) });
+      return res.json({ success: false, stored: true, shippingVerified: false, user: { id: updated.id, email: null, phone: null, emailVerified: false } });
     });
 
     app.get("/api/account/addresses", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;
-      return res.json({ success: true, addresses: customerStore.listAddresses(session.customerId) });
+      return res.json({ success: false, shippingVerified: false, delivered: false, addresses: customerStore.listAddresses(session.customerId) });
     });
 
     app.post("/api/account/addresses", (req, res) => {
@@ -135,7 +132,7 @@ module.exports = {
       if (!session) return;
       const address = customerStore.upsertAddress(session.customerId, req.body || {});
       if (!address) return res.status(400).json({ success: false, errorKey: "account.address.invalid" });
-      return res.status(201).json({ success: true, address });
+      return res.status(200).json({ success: false, shippingVerified: false, delivered: false, address });
     });
 
     app.put("/api/account/addresses/:id", (req, res) => {
@@ -226,79 +223,44 @@ module.exports = {
       const session = requireCustomer(req, res);
       if (!session) return;
       const customer = customerStore.findById(session.customerId);
-      return res.json({ success: true, preferences: customer?.preferences || {} });
+      const preferences = { ...(customer?.preferences || {}) };
+      const marketingPermission = preferences.marketing === false ? "WITHDRAWN" : preferences.marketingPermission || "UNKNOWN";
+      for (const key of ["marketing", "marketingConsent", "emailOptIn", "smsOptIn", "pushOptIn", "whatsappOptIn", "consent"]) {
+        if (preferences[key] === true) delete preferences[key];
+      }
+      preferences.granted = false;
+      preferences.consentVerified = false;
+      return res.json({ success: true, granted: false, consentVerified: false, marketingPermission, notificationSent: false, preferences });
     });
 
     app.put("/api/account/preferences", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;
-      const preferences = customerStore.updatePreferences(session.customerId, req.body || {});
-      return res.json({ success: true, preferences });
+      const result = customerStore.updatePreferences(session.customerId, req.body || {});
+      if (!result) return res.status(404).json({ success: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", granted: false });
+      return res.status(result.stored ? 200 : 403).json({
+        success: false,
+        granted: false,
+        consentVerified: false,
+        marketingPermission: result.marketingPermission,
+        notificationSent: false,
+        customerNotified: false,
+        preferences: result.preferences,
+      });
     });
 
     app.get("/api/account/export", (req, res) => {
       const session = requireCustomer(req, res);
       if (!session) return;
-      const exportData = customerStore.exportCustomerData(session.customerId);
-      if (!exportData) return res.status(404).json({ success: false, errorKey: "account.notFound" });
-      logAudit({
-        userId: session.customerId,
-        userEmail: session.email,
-        action: "export",
-        entityType: "customer",
-        entityId: session.customerId,
-        field: null,
-        oldValue: null,
-        newValue: "data_export",
-      });
-      recordCustomerAction(req, {
-        action: CUSTOMER_AUDIT_ACTIONS.CUSTOMER_PRIVACY_EXPORT,
-        resource: "customer",
-        resourceId: session.customerId,
-        result: "success",
-      });
-      return res.json({ success: true, export: exportData });
+      return res.status(403).json({ success: false, exported: false, code: "EXPORT_BLOCKED", customer: null, email: null, phone: null });
     });
 
-    app.post("/api/account/password-reset/request", (req, res) => {
-      const email = String(req.body?.email || "").trim().toLowerCase();
-      const customer = customerStore.findByEmail(email);
-      if (customer) {
-        const reset = createResetToken(customer.id, req);
-        if (reset.limited) {
-          return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
-        }
-        logAudit({
-          userId: customer.id,
-          userEmail: customer.email,
-          action: "password_reset_request",
-          entityType: "customer",
-          entityId: customer.id,
-          field: null,
-          oldValue: null,
-          newValue: "requested",
-        });
-        return res.json({
-          success: true,
-          message: "If the email exists, a reset link was generated.",
-          resetToken: reset.token,
-        });
-      }
-      return res.json({ success: true, message: "If the email exists, a reset link was generated." });
+    app.post("/api/account/password-reset/request", (_req, res) => {
+      return res.status(403).json({ success: false, sent: false, resetToken: null, email: null, customerNotified: false, code: "NOTIFICATION_NOT_PERMITTED" });
     });
 
-    app.post("/api/account/password-reset/confirm", (req, res) => {
-      const { token, password, passwordConfirm } = req.body || {};
-      if (!password || password.length < 8) {
-        return res.status(400).json({ success: false, errorKey: "account.register.weakPassword" });
-      }
-      if (password !== passwordConfirm) {
-        return res.status(400).json({ success: false, errorKey: "account.register.passwordMismatch" });
-      }
-      const customerId = consumeResetToken(token);
-      if (!customerId) return res.status(400).json({ success: false, errorKey: "account.passwordReset.invalidToken" });
-      customerStore.updatePassword(customerId, password);
-      return res.json({ success: true });
+    app.post("/api/account/password-reset/confirm", (_req, res) => {
+      return res.status(403).json({ success: false, passwordChanged: false, code: "RESET_NOT_AUTHORIZED", email: null });
     });
 
     app.post("/api/account/deletion-request", (req, res) => {

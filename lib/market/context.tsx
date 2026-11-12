@@ -25,7 +25,7 @@ interface MarketContextValue {
   country: MarketCountry;
   currency: string;
   deliveryDays: string;
-  taxRate: number;
+  taxRate: number | null;
   ready: boolean;
   setCountryCode: (code: string, manual?: boolean) => void;
 }

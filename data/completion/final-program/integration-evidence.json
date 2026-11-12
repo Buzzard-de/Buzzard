@@ -1,0 +1,48 @@
+{
+  "schema": "buzzard.final-program.integration.v1",
+  "recordedAt": "2026-11-11T20:42:05+01:00",
+  "shipping": {
+    "authority": "server/lib/commerce/pricingPolicy.js#selectTransportCost",
+    "missingRate": "SHIPPING_RATE_UNVERIFIED",
+    "commercialEligibility": "BLOCKED",
+    "fixedPricesRemovedFromCalculation": [
+      "4.99",
+      "5.99",
+      "9.99"
+    ],
+    "examplesNotTariffs": [
+      0.8,
+      1.2,
+      8.5
+    ],
+    "includedShippingRequiresEvidence": true,
+    "carriers": [
+      "DHL",
+      "DPD",
+      "GLS",
+      "HERMES",
+      "UPS"
+    ],
+    "carrierIntegration": "BLOCKED",
+    "liveCarrierQuery": false,
+    "calculatedPriceWithoutShipping": "PAYMENT_BLOCKED"
+  },
+  "checkout": {
+    "storedPriceUsedAsSupplierCost": false,
+    "blockedPolicyAccepted": false,
+    "code": "PRICE_POLICY_BLOCKED",
+    "orderCreated": false,
+    "paymentCaptured": false
+  },
+  "salePrice": {
+    "legacyMarkupPercent": null,
+    "categoryMargin": 0.07,
+    "amountForSupplierCost100": 107.53
+  },
+  "tax": {
+    "checkoutProvider": "VAT_UNVERIFIED",
+    "rate": null,
+    "official": false
+  },
+  "journeyReRunAfterCheckoutChange": true
+}

@@ -4,9 +4,9 @@ const { requirePermission } = require("../lib/rbac");
 const adminTwoFactor = require("../lib/adminTwoFactor");
 const { verifyPassword } = require("../lib/password");
 
-function findAdminUser(email) {
+function findAdminUser(userId) {
   const users = require("../lib/auth").loadUsers();
-  return users.find((entry) => entry.email.toLowerCase() === String(email || "").trim().toLowerCase());
+  return users.find((entry) => String(entry.id) === String(userId));
 }
 
 module.exports = {
@@ -40,18 +40,18 @@ module.exports = {
         success: true,
         user: {
           id: session.userId,
-          email: session.email,
+          email: null,
           name: session.name,
           role: session.role,
         },
-        twoFactor: adminTwoFactor.getStatus(session.email),
+        twoFactor: adminTwoFactor.getStatus(session.userId),
       });
     });
 
     app.get("/api/admin/security/2fa/status", (req, res) => {
       const session = requireAuth(req, res);
       if (!session) return;
-      return res.json({ success: true, ...adminTwoFactor.getStatus(session.email) });
+      return res.json({ success: true, ...adminTwoFactor.getStatus(session.userId) });
     });
 
     app.post("/api/admin/security/2fa/setup", (req, res) => {
@@ -60,8 +60,8 @@ module.exports = {
       if (session.role !== "administrator") {
         return res.status(403).json({ success: false, errorKey: "admin.auth.forbidden" });
       }
-      const setup = adminTwoFactor.beginSetup(session.email);
-      return res.json({ success: true, ...setup });
+      const setup = adminTwoFactor.beginSetup();
+      return res.status(403).json({ success: false, ...setup, secret: null, otpauthUri: null, email: null });
     });
 
     app.post("/api/admin/security/2fa/enable", (req, res) => {
@@ -81,14 +81,19 @@ module.exports = {
       if (session.role !== "administrator") {
         return res.status(403).json({ success: false, errorKey: "admin.auth.forbidden" });
       }
-      const user = findAdminUser(session.email);
+      const user = findAdminUser(session.userId);
       const password = req.body?.password;
       if (!user || !password || !verifyPassword(password, user.password_hash)) {
         return res.status(401).json({ success: false, errorKey: "admin.auth.invalid" });
       }
-      const result = adminTwoFactor.disable(session.email, req.body?.code);
-      if (!result.ok) return res.status(400).json({ success: false, errorKey: result.errorKey });
-      return res.json({ success: true, enabled: false });
+      const result = adminTwoFactor.disable(session.userId, req.body?.code);
+      return res.status(result.cleared ? 200 : 400).json({
+        success: false,
+        enabled: false,
+        email: null,
+        secret: null,
+        code: result.code,
+      });
     });
 
     app.get("/api/admin/audit", (req, res) => {

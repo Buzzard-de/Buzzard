@@ -1,0 +1,22 @@
+{
+  "schema": "buzzard.final-program.progress.v1",
+  "recordedAt": "2026-11-12T22:24:00+01:00",
+  "paused": true,
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "committed": true,
+  "currentTask": "FIN-M1-ENGINE-BUS",
+  "completedThisSession": [
+    "FIN-M6-CHECKOUT-VAT",
+    "FIN-M6-EU27-MODEL",
+    "FIN-M10-CARRIER-STATUS",
+    "FIN-M8-SECURITY"
+  ],
+  "counts": {
+    "IMPLEMENTED": 5,
+    "VERIFIED_COMPLETE": 12,
+    "BLOCKED_EXTERNAL": 3,
+    "VERIFIED_PARTIAL": 29
+  },
+  "note": "Paused on 12 Nov 2026 at 22:24 Europe/Berlin. FIN-M1-ENGINE-BUS stays VERIFIED_PARTIAL and BLOCKED_EXTERNAL. The twelve-engine bus is local only. Live bank, marketplace, supplier, carrier, and message accounts are not connected. The single next target is a human-approved payment provider account. It was not started. productionReady stays false. This is not a go-live approval."
+}

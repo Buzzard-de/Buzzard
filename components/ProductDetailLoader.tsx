@@ -7,6 +7,8 @@ import JsonLd from "@/components/seo/JsonLd";
 import { fetchProductJsonLd } from "@/lib/catalogSeo/client";
 import { isLiveCatalogEnabled, loadLiveCatalogProductBySlug } from "@/lib/catalogSeo/runtime";
 import { isPimStorefrontEnabled, loadPimStorefrontProductBySlug } from "@/lib/storefront/runtime";
+import { getIsolatedSnapshot, isolatedCatalogActive } from "@/lib/storefront/isolatedSnapshot";
+import IsolatedCatalogBrowser from "@/components/storefront/IsolatedCatalogBrowser";
 import { useLocale } from "@/lib/i18n/context";
 import { useMarket } from "@/lib/market/context";
 import { isLiveLocalizationEnabled, loadLocalizedProductBySlug } from "@/lib/localizationFeeds/runtime";
@@ -28,6 +30,11 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
+    if (isolatedCatalogActive()) {
+      setLoading(false);
+      if (!staticProduct && !getIsolatedSnapshot().detailByLocale[slug]) setMissing(true);
+      return;
+    }
     if (staticProduct) {
       setProduct(staticProduct);
       setLoading(false);
@@ -88,6 +95,23 @@ export default function ProductDetailLoader({ slug, staticProduct }: ProductDeta
       cancelled = true;
     };
   }, [slug, staticProduct, locale, countryCode]);
+
+  if (isolatedCatalogActive()) {
+    const detail = getIsolatedSnapshot().detailByLocale[slug];
+    if (detail) {
+      const snapshot = getIsolatedSnapshot();
+      return (
+        <IsolatedCatalogBrowser
+          mode="detail"
+          selected="ISOLATED"
+          sales="SALES_CLOSED"
+          locales={snapshot.locales}
+          itemsByLocale={{}}
+          detailByLocale={detail}
+        />
+      );
+    }
+  }
 
   if (loading) {
     return (

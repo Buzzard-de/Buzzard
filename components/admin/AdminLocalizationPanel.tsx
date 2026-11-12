@@ -8,7 +8,6 @@ import {
   googleMerchantFeedUrl,
   savePriceOverride,
   saveProductTranslation,
-  saveShippingRate,
 } from "@/lib/localizationFeeds/client";
 import type { LocalizationFeedsStatus, LocalizationLocale } from "@/lib/localizationFeeds/types";
 
@@ -25,7 +24,6 @@ export default function AdminLocalizationPanel() {
   const [translationDescription, setTranslationDescription] = useState("");
   const [priceValue, setPriceValue] = useState("");
   const [shippingCountry, setShippingCountry] = useState("DE");
-  const [shippingPrice, setShippingPrice] = useState("4.99");
 
   const reload = useCallback(async () => {
     setError("");
@@ -90,24 +88,10 @@ export default function AdminLocalizationPanel() {
     }
   }
 
-  async function handleSaveShipping(e: FormEvent) {
+  function handleSaveShipping(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setMessage("");
-    setError("");
-    try {
-      await saveShippingRate({
-        countryCode: shippingCountry,
-        price: Number(shippingPrice),
-        freeFrom: 49,
-      });
-      setMessage("Versandtarif gespeichert");
-      await reload();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "localizationFeeds.requestFailed");
-    } finally {
-      setBusy(false);
-    }
+    setError(`SHIPPING_RATE_UNVERIFIED (${shippingCountry || "UNKNOWN"})`);
   }
 
   if (loading) return <p>Localization wird geladen…</p>;
@@ -218,15 +202,9 @@ export default function AdminLocalizationPanel() {
             maxLength={2}
             placeholder="Land"
           />
-          <input
-            type="number"
-            step="0.01"
-            value={shippingPrice}
-            onChange={(e) => setShippingPrice(e.target.value)}
-            placeholder="Preis"
-          />
+          <p className="admin-note">SHIPPING_RATE_UNVERIFIED. Ein eingegebener Betrag wird nicht als Tarif gespeichert.</p>
           <button type="submit" className="shop-btn-secondary" disabled={busy}>
-            Versand speichern
+            Tarifstatus prüfen
           </button>
         </form>
       </section>

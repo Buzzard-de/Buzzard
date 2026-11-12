@@ -4,43 +4,50 @@ function isEnabled() {
   return process.env.BUZZARD_ANALYTICS_DASHBOARD !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
 }
 
+const COMMERCIAL_EVENTS = new Set(["purchase", "purchased", "converted", "recovered", "paid", "sale", "order", "checkout_complete"]);
+
 function recordEvent(body = {}) {
-  if (!body.eventType) return { error: "eventType required", status: 400 };
-  db.prepare(
-    `INSERT INTO analytics_events(user_id, session_id, event_type, page, product_sku, source, country_code)
-     VALUES(?,?,?,?,?,?,?)`
-  ).run(
-    body.userId || null,
-    body.sessionId || "",
-    body.eventType,
-    body.page || "",
-    body.productSku || "",
-    body.source || "direct",
-    (body.countryCode || "").toUpperCase()
-  );
-  return { ok: true };
+  const type = String(body.eventType || "").trim().toLowerCase();
+  if (!type) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, stored: false, sale: false, revenue: null };
+  const commercial = COMMERCIAL_EVENTS.has(type) || body.recovered === true || body.converted === true || body.paid === true || body.purchased === true;
+  if (commercial || !require("./salesMode").isSalesEnabled()) {
+    return {
+      ok: false,
+      error: commercial ? "SALES_CLOSED" : "SALES_CLOSED",
+      code: "SALES_CLOSED",
+      status: 403,
+      stored: false,
+      sale: false,
+      revenue: null,
+      recoveredIsSale: false,
+      callerFlagIgnored: true,
+    };
+  }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, sale: false, revenue: null };
 }
 
 function getSummary() {
-  const revenue = db
-    .prepare("SELECT COALESCE(SUM(revenue), 0) v FROM analytics_orders WHERE status = 'paid'")
-    .get().v;
-  const cost = db
-    .prepare("SELECT COALESCE(SUM(cost), 0) v FROM analytics_orders WHERE status = 'paid'")
-    .get().v;
-  const orders = db
-    .prepare("SELECT COUNT(*) v FROM analytics_orders WHERE status = 'paid'")
-    .get().v;
-  const countries = db
-    .prepare("SELECT COUNT(DISTINCT country_code) v FROM analytics_orders WHERE status = 'paid'")
-    .get().v;
-  const sessions = db
-    .prepare("SELECT COUNT(DISTINCT session_id) v FROM analytics_events")
-    .get().v;
-  const purchases = db
-    .prepare("SELECT COUNT(*) v FROM analytics_events WHERE event_type = 'purchase'")
-    .get().v;
-
+  const sessions = db.prepare("SELECT COUNT(DISTINCT session_id) v FROM analytics_events").get().v;
+  if (!require("./salesMode").isSalesEnabled()) {
+    return {
+      revenue: null,
+      estimatedGrossProfit: null,
+      orders: null,
+      aov: null,
+      countries: null,
+      sessions,
+      purchases: null,
+      conversionRate: null,
+      recoveredIsSale: false,
+      salesStatus: "BLOCKED",
+      code: "SALES_CLOSED",
+    };
+  }
+  const revenue = db.prepare("SELECT COALESCE(SUM(revenue), 0) v FROM analytics_orders WHERE status = 'paid'").get().v;
+  const cost = db.prepare("SELECT COALESCE(SUM(cost), 0) v FROM analytics_orders WHERE status = 'paid'").get().v;
+  const orders = db.prepare("SELECT COUNT(*) v FROM analytics_orders WHERE status = 'paid'").get().v;
+  const countries = db.prepare("SELECT COUNT(DISTINCT country_code) v FROM analytics_orders WHERE status = 'paid'").get().v;
+  const purchases = db.prepare("SELECT COUNT(*) v FROM analytics_events WHERE event_type = 'purchase'").get().v;
   return {
     revenue,
     estimatedGrossProfit: revenue - cost,
@@ -50,10 +57,12 @@ function getSummary() {
     sessions,
     purchases,
     conversionRate: sessions ? Number(((purchases / sessions) * 100).toFixed(2)) : 0,
+    recoveredIsSale: false,
   };
 }
 
 function getDailySeries() {
+  if (!require("./salesMode").isSalesEnabled()) return [];
   return db
     .prepare(`
       SELECT date(created_at) day, SUM(revenue) revenue, COUNT(*) orders, SUM(revenue - cost) gross_profit
@@ -66,6 +75,7 @@ function getDailySeries() {
 }
 
 function getCountryBreakdown() {
+  if (!require("./salesMode").isSalesEnabled()) return [];
   return db
     .prepare(`
       SELECT country_code country, COUNT(*) orders, SUM(revenue) revenue, SUM(revenue - cost) gross_profit
@@ -78,6 +88,7 @@ function getCountryBreakdown() {
 }
 
 function getCategoryBreakdown() {
+  if (!require("./salesMode").isSalesEnabled()) return [];
   return db
     .prepare(`
       SELECT category, COUNT(*) orders, SUM(revenue) revenue, SUM(revenue - cost) gross_profit
@@ -90,6 +101,7 @@ function getCategoryBreakdown() {
 }
 
 function getProductBreakdown() {
+  if (!require("./salesMode").isSalesEnabled()) return [];
   return db
     .prepare(`
       SELECT product_sku sku, product_name name, COUNT(*) orders, SUM(revenue) revenue, SUM(revenue - cost) gross_profit
@@ -103,6 +115,7 @@ function getProductBreakdown() {
 }
 
 function getSourceBreakdown() {
+  if (!require("./salesMode").isSalesEnabled()) return [];
   return db
     .prepare(`
       SELECT source, COUNT(*) purchases, SUM(revenue) revenue, SUM(revenue - cost) gross_profit
@@ -123,7 +136,7 @@ function getFunnel() {
   const productViews = get("product_view");
   const addToCart = get("add_to_cart");
   const checkoutStarts = get("checkout_start");
-  const purchases = get("purchase");
+  const purchases = require("./salesMode").isSalesEnabled() ? get("purchase") : null;
 
   return {
     pageViews,
@@ -134,7 +147,8 @@ function getFunnel() {
     productRate: pageViews ? Number(((productViews / pageViews) * 100).toFixed(2)) : 0,
     cartRate: productViews ? Number(((addToCart / productViews) * 100).toFixed(2)) : 0,
     checkoutRate: addToCart ? Number(((checkoutStarts / addToCart) * 100).toFixed(2)) : 0,
-    purchaseRate: checkoutStarts ? Number(((purchases / checkoutStarts) * 100).toFixed(2)) : 0,
+    purchaseRate: purchases == null || !checkoutStarts ? null : Number(((purchases / checkoutStarts) * 100).toFixed(2)),
+    recoveredIsSale: false,
   };
 }
 

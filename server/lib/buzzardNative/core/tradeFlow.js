@@ -39,15 +39,19 @@ function runImportToEuCustomer({ sku = "cotton_tshirt", origin = "TR", destinati
     goodsNet: net,
     kind: "B2C",
   });
-  const finance = netIncomeReport({
-    actorId: "nedim_bey",
-    incomeCountry: destination,
-    gross: net + (tax.vat || 0),
-    vat: tax.vat || 0,
-    commission: 0,
-    logistics: 0,
-    supplierCost: 40,
-  });
+  const finance =
+    tax.ok === true && tax.definitive === true
+      ? netIncomeReport({
+          actorId: "nedim_bey",
+          incomeCountry: destination,
+          gross: net + tax.vat,
+          vat: tax.vat,
+          refund: 0,
+          commission: 0,
+          logistics: 0,
+          supplierCost: 40,
+        })
+      : { ok: false, status: "UNKNOWN", code: "VAT_UNVERIFIED", invented: false, liveLegal: false, filed: false };
   const tuncayThink = think({ agentId: "tuncay_bey", facts: { ask_expertise: true } });
   const nedimThink = think({ agentId: "nedim_bey", facts: { ask_expertise: true } });
   const conflict =

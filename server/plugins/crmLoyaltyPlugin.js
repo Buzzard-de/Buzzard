@@ -73,12 +73,21 @@ module.exports = {
 
     app.post("/api/customer/cart/abandoned", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(crmLoyalty.trackAbandonedCart(req.user.sub, req.body || {}));
+      return res.status(403).json(crmLoyalty.trackAbandonedCart());
     });
 
     app.post("/api/customer/cart/recovered", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(crmLoyalty.markCartRecovered(req.user.sub));
+      const result = crmLoyalty.markCartRecovered(req.user.sub, req.body || {});
+      return res.status(result.status || 403).json({
+        ...result,
+        ok: false,
+        recovered: false,
+        converted: false,
+        sale: false,
+        revenue: null,
+        customerNotified: false,
+      });
     });
 
     app.get("/api/customer/offers", (req, res) => {

@@ -1,0 +1,10 @@
+{
+  "id": "ecommerce",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "sales": "CLOSED",
+  "orderCreated": false,
+  "liveVerified": false,
+  "productionReady": false
+}

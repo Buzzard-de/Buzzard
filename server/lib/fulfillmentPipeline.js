@@ -1,15 +1,16 @@
-const crypto = require("crypto");
-const supplierStore = require("./supplierStore");
 const fulfillmentStore = require("./fulfillmentStore");
-const { getTrackingUrl } = require("./carriers");
-const { logAudit } = require("./audit");
 const salesGuard = require("./commerce/salesGuard");
+const { isSalesEnabled } = require("./salesMode");
+const { selectTransportCost } = require("./commerce/pricingPolicy");
+
+const seenSupplierRequests = new Set();
+const fulfillmentInFlight = new Set();
 
 function groupLinesBySupplier(lines, productsById) {
   const groups = new Map();
-  for (const line of lines) {
+  for (const line of lines || []) {
     const product = productsById.get(line.productId);
-    const supplierId = product?.supplier_id || "SUP-INTERNAL-001";
+    const supplierId = product?.supplier_id || null;
     const bucket = groups.get(supplierId) || [];
     bucket.push({ ...line, supplierId, supplierSku: product?.supplier_sku || line.sku });
     groups.set(supplierId, bucket);
@@ -17,243 +18,137 @@ function groupLinesBySupplier(lines, productsById) {
   return groups;
 }
 
-function supplierModel(supplierId) {
-  const supplier = supplierStore.getSupplier(supplierId);
-  if (!supplier) return "warehouse";
-  return supplier.dropshipping ? "dropshipping" : "warehouse";
+function moneyPresent(value) {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 
-function submitSupplierOrder(supplierOrder, supplier, req = null) {
-  const block = salesGuard.assertSupplierOrderAllowed({ req });
-  if (block) {
-    return salesGuard.blockSupplierOrderResult(block);
+function commercialReasons(order = {}) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  if (order.mock === true || order.demo === true || order.source === "mock" || order.source === "DEMO") {
+    reasons.push("MOCK_NOT_COMMERCIAL");
   }
+  reasons.push("ORDER_UNVERIFIED");
+  reasons.push("PAYMENT_UNVERIFIED");
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  reasons.push("STOCK_UNVERIFIED");
+  const transport = selectTransportCost(order.transport || {});
+  if (transport.ok !== true || transport.live === true) reasons.push("SHIPPING_RATE_UNVERIFIED");
+  if (!moneyPresent(order.marketplaceFee)) reasons.push("MARKETPLACE_FEE_UNVERIFIED");
+  if (!moneyPresent(order.paymentFee)) reasons.push("PAYMENT_FEE_UNVERIFIED");
+  return reasons;
+}
 
-  if (!supplier?.active) {
-    return { ok: false, error: "Supplier inactive" };
-  }
-
-  if (!process.env.SUPPLIER_API_SECRET && supplier?.auth_type !== "none") {
-    const trackingNumber = `DEMO${Date.now().toString().slice(-10)}`;
-    return {
-      ok: true,
-      demo: true,
-      supplierResponse: { accepted: true, reference: `SUP-REF-${supplierOrder.id.slice(-8)}` },
-      trackingNumber,
-      trackingCarrier: supplier.dropshipping ? "DHL" : "DPD",
-      status: "confirmed",
-    };
-  }
-
-  if (supplier?.auth_type === "none" || supplier?.feed_type === "manual") {
-    const trackingNumber = `DEMO${Date.now().toString().slice(-10)}`;
-    return {
-      ok: true,
-      demo: true,
-      supplierResponse: { accepted: true, reference: `WH-${supplierOrder.id.slice(-8)}` },
-      trackingNumber,
-      trackingCarrier: "DPD",
-      status: "confirmed",
-    };
-  }
-
+function blockedFulfillment(code, reasons, extra = {}) {
   return {
-    ok: true,
-    supplierResponse: { accepted: true, reference: supplierOrder.id },
-    status: "confirmed",
+    ok: false,
+    blocked: true,
+    error: code,
+    code,
+    status: 403,
+    reasons,
+    submissionStatus: "BLOCKED_EXTERNAL",
+    fulfillmentCreated: false,
+    supplierOrderCreated: false,
+    shipmentCreated: false,
+    submitted: false,
+    sent: false,
+    accepted: false,
+    purchased: false,
+    delivered: false,
+    trackingNumber: null,
+    supplierOrderNumber: null,
+    live: false,
+    mock: false,
+    ...extra,
   };
 }
 
-function createFulfillmentsForOrder(order, productsById, req = null) {
+function classifySubmission(supplierOrder = {}, supplier = {}) {
+  if (supplierOrder.timeout === true || supplier?.timeout === true || supplierOrder.forceTimeout === true) {
+    return { code: "TIMEOUT", submissionStatus: "SUBMISSION_FAILED" };
+  }
+  if (supplierOrder.networkError === true || supplier?.networkError === true) {
+    return { code: "NETWORK_ERROR", submissionStatus: "SUBMISSION_FAILED" };
+  }
+  const tracking = String(supplierOrder.trackingNumber || "");
+  if (
+    supplierOrder.mock === true ||
+    supplier?.mock === true ||
+    supplierOrder.demo === true ||
+    tracking.startsWith("DEMO")
+  ) {
+    return { code: "MOCK_NOT_COMMERCIAL", submissionStatus: "BLOCKED_EXTERNAL" };
+  }
+  if (!isSalesEnabled()) return { code: "SALES_CLOSED", submissionStatus: "BLOCKED_EXTERNAL" };
+  if (!supplier?.active) return { code: "SUPPLIER_UNKNOWN", submissionStatus: "UNKNOWN" };
+  return { code: "SUPPLIER_NOT_LIVE", submissionStatus: "BLOCKED_EXTERNAL" };
+}
+
+function submitSupplierOrder(supplierOrder = {}, supplier = null, req = null) {
   const block = salesGuard.assertSupplierOrderAllowed({ req });
-  if (block) {
-    return [{ error: block.code, blocked: true, status: block.status || 403 }];
-  }
-
-  const groups = groupLinesBySupplier(order.lines, productsById);
-  const results = [];
-
-  for (const [supplierId, lines] of groups.entries()) {
-    const idempotencyKey = `${order.orderNumber}:${supplierId}`;
-    let fulfillment = fulfillmentStore.findFulfillmentByIdempotency(idempotencyKey);
-    if (!fulfillment) {
-      fulfillment = fulfillmentStore.createFulfillment({
-        orderNumber: order.orderNumber,
-        supplierId,
-        model: supplierModel(supplierId),
-        lines,
-      });
-    }
-
-    let supplierOrder = fulfillmentStore.readSupplierOrders().find((o) => o.idempotencyKey === idempotencyKey);
-    if (!supplierOrder) {
-      supplierOrder = fulfillmentStore.createSupplierOrder({
-        orderNumber: order.orderNumber,
-        supplierId,
-        lines,
-        shippingAddress: order.shippingAddress,
-        idempotencyKey,
-      });
-      fulfillmentStore.updateFulfillment(fulfillment.id, {
-        supplierOrderId: supplierOrder.id,
-        status: "submitted",
-      });
-    }
-
-    const supplier = supplierStore.getSupplier(supplierId);
-    const submission = submitSupplierOrder(supplierOrder, supplier, req);
-
-    if (!submission.ok) {
-      fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
-        status: "failed",
-        error: submission.error,
-        retryCount: (supplierOrder.retryCount || 0) + 1,
-      });
-      fulfillmentStore.updateFulfillment(fulfillment.id, {
-        status: "failed",
-        error: submission.error,
-        retryCount: (fulfillment.retryCount || 0) + 1,
-      });
-      try {
-        const automationEngine = require("./automationEngine");
-        automationEngine.emit(
-          "supplier_import_failure",
-          {
-            supplierId,
-            orderNumber: order.orderNumber,
-            error: submission.error || "Supplier submission failed",
-          },
-          { idempotencyKey: `${order.orderNumber}:${supplierId}:fail` }
-        );
-      } catch {
-        /* non-blocking */
-      }
-      results.push({ fulfillment, supplierOrder, shipment: null, error: submission.error });
-      continue;
-    }
-
-    fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
-      status: submission.status || "confirmed",
-      supplierResponse: submission.supplierResponse,
-      trackingNumber: submission.trackingNumber || null,
-      trackingCarrier: submission.trackingCarrier || null,
+  const requestId = supplierOrder.requestId || supplierOrder.idempotencyKey || null;
+  if (requestId && seenSupplierRequests.has(requestId)) {
+    return blockedFulfillment("DUPLICATE_SUPPLIER_SUBMISSION", ["DUPLICATE_SUPPLIER_SUBMISSION"], {
+      duplicate: true,
+      errorKey: "DUPLICATE_SUPPLIER_SUBMISSION",
+      status: 409,
     });
-
-    fulfillmentStore.updateFulfillment(fulfillment.id, { status: "confirmed" });
-
-    let shipment = fulfillmentStore.readShipments().find((s) => s.fulfillmentId === fulfillment.id);
-    if (!submission.trackingNumber) {
-      shipment = shipment || fulfillmentStore.createShipment({
-        orderNumber: order.orderNumber,
-        fulfillmentId: fulfillment.id,
-        supplierId,
-        lines,
-        carrier: submission.trackingCarrier || "DHL",
-      });
-      fulfillmentStore.updateShipment(shipment.id, { status: "preparing" });
-    } else {
-      shipment = shipment || fulfillmentStore.createShipment({
-        orderNumber: order.orderNumber,
-        fulfillmentId: fulfillment.id,
-        supplierId,
-        lines,
-        carrier: submission.trackingCarrier || "DHL",
-      });
-      fulfillmentStore.updateShipment(shipment.id, {
-        trackingNumber: submission.trackingNumber,
-        trackingUrl: getTrackingUrl(submission.trackingCarrier, submission.trackingNumber),
-        status: "handed_to_carrier",
-      });
-      try {
-        const automationEngine = require("./automationEngine");
-        automationEngine.emit(
-          "order_shipped",
-          {
-            orderNumber: order.orderNumber,
-            email: order.customer?.email,
-            shipmentId: shipment.id,
-            trackingNumber: submission.trackingNumber,
-            language: "de",
-          },
-          { idempotencyKey: `ship:${shipment.id}` }
-        );
-      } catch {
-        /* non-blocking */
-      }
-    }
-
-    results.push({ fulfillment, supplierOrder, shipment });
   }
+  if (requestId) seenSupplierRequests.add(requestId);
+  const classified = classifySubmission(supplierOrder, supplier);
+  return {
+    ...blockedFulfillment(classified.code, [classified.code], {
+      error: block?.code || classified.code,
+      errorKey: block?.code || classified.code,
+      status: block?.status || 409,
+      message: block?.message || "Supplier submission is not live",
+    }),
+    submissionStatus: classified.submissionStatus,
+    supplierResponse: null,
+  };
+}
 
-  return results;
+function createFulfillmentsForOrder(order = {}, productsById = new Map(), req = null) {
+  salesGuard.assertSupplierOrderAllowed({ req });
+  const reasons = commercialReasons(order);
+  if (order.customerId != null && order.ownerId != null && String(order.customerId) !== String(order.ownerId)) {
+    reasons.push("OWNERSHIP_UNVERIFIED");
+  }
+  const orderNumber = order.orderNumber ? String(order.orderNumber) : "";
+  if (!orderNumber) {
+    return [blockedFulfillment("ORDER_UNVERIFIED", reasons.concat("ORDER_UNVERIFIED"))];
+  }
+  if (fulfillmentInFlight.has(orderNumber)) {
+    return [blockedFulfillment("DUPLICATE_FULFILLMENT", reasons.concat("DUPLICATE_FULFILLMENT"), {
+      duplicate: true,
+      status: 409,
+    })];
+  }
+  fulfillmentInFlight.add(orderNumber);
+  try {
+    const existing = fulfillmentStore.readFulfillments().filter((row) => row.orderNumber === orderNumber);
+    if (existing.length) {
+      return [blockedFulfillment("DUPLICATE_FULFILLMENT", reasons.concat("DUPLICATE_FULFILLMENT"), {
+        duplicate: true,
+        status: 409,
+      })];
+    }
+    groupLinesBySupplier(order.lines, productsById);
+    return [blockedFulfillment(reasons[0] || "BLOCKED_EXTERNAL", reasons)];
+  } finally {
+    fulfillmentInFlight.delete(orderNumber);
+  }
 }
 
 function retryFulfillment(fulfillmentId, actor, req = null) {
-  const block = salesGuard.assertSupplierOrderAllowed({ req });
-  if (block) {
-    return { ok: false, errorKey: block.code || "supplier_order_blocked", blocked: true };
-  }
-
-  const fulfillment = fulfillmentStore.readFulfillments().find((f) => f.id === fulfillmentId);
-  if (!fulfillment) return null;
-
-  const supplierOrder = fulfillmentStore.readSupplierOrders().find((o) => o.id === fulfillment.supplierOrderId);
-  if (!supplierOrder) return null;
-
-  if (supplierOrder.status === "confirmed") {
-    return { ok: false, errorKey: "logistics.fulfillment.alreadyConfirmed" };
-  }
-
-  const supplier = supplierStore.getSupplier(fulfillment.supplierId);
-  const submission = submitSupplierOrder(supplierOrder, supplier, req);
-  if (!submission.ok) {
-    fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
-      status: "failed",
-      error: submission.error,
-      retryCount: (supplierOrder.retryCount || 0) + 1,
-    });
-    fulfillmentStore.updateFulfillment(fulfillment.id, {
-      status: "failed",
-      error: submission.error,
-      retryCount: (fulfillment.retryCount || 0) + 1,
-    });
-    return { ok: false, errorKey: "logistics.fulfillment.retryFailed" };
-  }
-
-  fulfillmentStore.updateSupplierOrder(supplierOrder.id, {
-    status: submission.status || "confirmed",
-    supplierResponse: submission.supplierResponse,
-    trackingNumber: submission.trackingNumber || supplierOrder.trackingNumber,
-    trackingCarrier: submission.trackingCarrier || supplierOrder.trackingCarrier,
-    error: null,
-    retryCount: (supplierOrder.retryCount || 0) + 1,
+  salesGuard.assertSupplierOrderAllowed({ req });
+  const fulfillment = fulfillmentStore.readFulfillments().find((row) => row.id === fulfillmentId) || null;
+  return blockedFulfillment(fulfillment ? "SUPPLIER_NOT_LIVE" : "UNKNOWN", [fulfillment ? "SUPPLIER_NOT_LIVE" : "UNKNOWN"], {
+    fulfillmentId: fulfillmentId || null,
+    actorRecorded: Boolean(actor),
+    supplierCancelled: false,
   });
-  fulfillmentStore.updateFulfillment(fulfillment.id, { status: "confirmed", error: null });
-
-  if (submission.trackingNumber) {
-    const shipment = fulfillmentStore.readShipments().find((s) => s.fulfillmentId === fulfillment.id);
-    if (shipment) {
-      fulfillmentStore.updateShipment(shipment.id, {
-        trackingNumber: submission.trackingNumber,
-        status: "handed_to_carrier",
-      });
-    }
-  }
-
-  if (actor) {
-    logAudit({
-      userId: actor.userId,
-      userEmail: actor.email,
-      action: "fulfillment_retry",
-      entityType: "fulfillment",
-      entityId: fulfillment.id,
-      field: "status",
-      oldValue: "failed",
-      newValue: "confirmed",
-    });
-  }
-
-  return { ok: true, fulfillment: fulfillmentStore.readFulfillments().find((f) => f.id === fulfillmentId) };
 }
 
 module.exports = {

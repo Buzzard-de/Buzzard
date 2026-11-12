@@ -31,8 +31,33 @@ test("holds release, rate-limit, and refuse secrets in an isolated file", () => 
   let limited = null;
   for (let i = 0; i < 6; i += 1) limited = holds.reserve({ key: `b${i}`, actor: "burst" });
   const secret = holds.reserve({ key: "s", sku: "sk_live_example" });
-  assert.equal(first.code, "RESERVED");
-  assert.equal(second.code, "DUPLICATE_HOLD");
+  assert.equal(first.fixtureCode, "RESERVED");
+  assert.equal(first.code, "SALES_CLOSED");
+  assert.equal(first.fixtureOnly, true);
+  assert.equal(first.commercialReservation, false);
+  assert.equal(first.purchased, false);
+  assert.equal(first.stockChanged, false);
+  assert.equal(first.callerFlagIgnored, true);
+  assert.equal(first.reasons.includes("STOCK_UNVERIFIED"), true);
+  const flagged = holds.reserve({
+    key: "flagged",
+    qty: 7,
+    orderId: "order-flag",
+    live: true,
+    verified: true,
+    approved: true,
+    available: true,
+    mock: true,
+  });
+  assert.equal(flagged.code, "SALES_CLOSED");
+  assert.equal(flagged.quantityAdopted, false);
+  assert.equal(flagged.reasons.includes("MOCK_STOCK"), true);
+  const sameOrder = holds.reserve({ key: "other-key", qty: 3, orderId: "order-flag" });
+  assert.equal(sameOrder.code, "DUPLICATE_RESERVATION");
+  assert.equal(sameOrder.fixtureCode, "DUPLICATE_HOLD");
+  assert.equal(sameOrder.qty, 7);
+  assert.equal(second.code, "DUPLICATE_RESERVATION");
+  assert.equal(second.fixtureCode, "DUPLICATE_HOLD");
   assert.equal(second.qty, 2);
   assert.equal(released.held, 0);
   assert.equal(limited.code, "RATE_LIMITED");

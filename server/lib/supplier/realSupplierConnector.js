@@ -222,7 +222,10 @@ function canAttemptLiveFetch(config) {
   if (isTestOnlySupplier({ supplierId: config.supplierCode, apiUrl: config.apiUrl })) {
     return { ok: false, reason: "test_only_supplier" };
   }
-  return { ok: true };
+  if (!require("../salesMode").isSalesEnabled()) {
+    return { ok: false, reason: "sales_closed", code: "SALES_CLOSED", live: false };
+  }
+  return { ok: false, reason: "SUPPLIER_NOT_LIVE", code: "STOCK_UNVERIFIED", live: false };
 }
 
 async function fetchWithRetry(url, options = {}, config) {
@@ -287,11 +290,12 @@ function normalizeSupplierProduct(raw, supplierCode) {
     purchasePrice: raw.supplier_price?.amount ?? raw.cost ?? raw.purchase_price ?? null,
     currency: raw.supplier_price?.currency || raw.currency || "EUR",
     retailPrice: raw.retail_price?.amount ?? raw.rrp ?? null,
-    stock: Number(raw.stock ?? raw.quantity ?? 0),
+    stock: null,
+    stockVerified: false,
     images,
     vehicleFitment: raw.vehicle_fitment || raw.compatibility || [],
     tecdocArticle: raw.tecdoc_article || raw.tecdocArticle || null,
-    availability: raw.availability || (Number(raw.stock) > 0 ? "in_stock" : "out_of_stock"),
+    availability: "UNKNOWN",
     raw,
   };
 }
@@ -373,13 +377,21 @@ class RealSupplierConnector {
     const liveCheck = canAttemptLiveFetch(this.config);
     if (!liveCheck.ok) {
       return {
-        ok: true,
+        ok: false,
         dryRun: true,
         live: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        code: liveCheck.reason || "LIVE_CONNECTION_ABSENT",
+        purchased: false,
+        price: null,
+        stock: null,
+        supplierCost: null,
+        commercialEligibility: "BLOCKED",
         message: `Dry-run mode — live fetch blocked (${liveCheck.reason})`,
         records: [],
         total: 0,
-        fetchedAt: new Date().toISOString(),
+        fetchedAt: null,
         status,
       };
     }
@@ -401,9 +413,11 @@ class RealSupplierConnector {
     const records = rawRecords.slice(0, limit).map((row) => normalizeSupplierProduct(row, this.config.supplierCode));
 
     return {
-      ok: true,
+      ok: false,
       dryRun: false,
-      live: true,
+      live: false,
+      purchased: false,
+      code: "BLOCKED_EXTERNAL",
       records,
       total: rawRecords.length,
       fetchedAt: new Date().toISOString(),

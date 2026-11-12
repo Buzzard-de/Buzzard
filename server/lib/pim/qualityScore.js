@@ -17,7 +17,7 @@ function computeScore(product) {
     content: scoreDimension("content", product.title && product.description ? 100 : product.title ? 50 : 0),
     media: scoreDimension("media", media.valid ? 100 : media.images ? 50 : 0),
     pricing: scoreDimension("pricing", product.price > 0 ? 100 : 0),
-    stock: scoreDimension("stock", product.stock > 0 ? 100 : 0),
+    stock: scoreDimension("stock", 0),
     category: scoreDimension("category", product.category ? 100 : 0),
     seo: scoreDimension("seo", product.seo?.slug && product.seo?.metaTitle ? 100 : 0),
     supplier: scoreDimension("supplier", product.supplier ? 100 : 0),

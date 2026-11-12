@@ -72,7 +72,14 @@ function getSupplierByCode(code) {
       .all(supplier.id),
     shipping: db
       .prepare("SELECT * FROM supih_shipping_methods WHERE supplier_id = ?")
-      .all(supplier.id),
+      .all(supplier.id)
+      .map((row) => ({
+        ...row,
+        price: null,
+        status: "SHIPPING_RATE_UNVERIFIED",
+        commercialEligibility: "BLOCKED",
+        storedPriceUsed: false,
+      })),
   };
 }
 
@@ -110,34 +117,20 @@ function upsertMapping(code, body = {}) {
   return { ok: true };
 }
 
-function queueSync(code, body = {}) {
+function queueSync(code) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
   if (!supplier) return { error: "Supplier not found", status: 404 };
-
-  const result = db
-    .prepare(`
-      INSERT INTO supih_sync_jobs(supplier_id, job_type, status, started_at)
-      VALUES(?,?,?,CURRENT_TIMESTAMP)
-    `)
-    .run(supplier.id, body.jobType || body.job_type || "full", "running");
-
-  db.prepare(`
-    INSERT INTO supih_sync_logs(supplier_id, job_id, level, message)
-    VALUES(?,?,?,?)
-  `).run(
-    supplier.id,
-    result.lastInsertRowid,
-    "info",
-    "Sync job queued for real connector execution"
-  );
-
-  db.prepare("UPDATE supih_sync_jobs SET status = 'queued' WHERE id = ?").run(result.lastInsertRowid);
-
   return {
-    jobId: result.lastInsertRowid,
-    status: "queued",
-    next: "worker executes supplier API/XML connector",
-    accepted: true,
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    accepted: false,
+    queued: false,
+    stored: false,
+    purchased: false,
+    supplierConfirmed: false,
+    live: false,
   };
 }
 
@@ -153,27 +146,20 @@ function listSyncJobs() {
     .all();
 }
 
-function addSnapshot(code, body = {}) {
+function addSnapshot(code) {
   const supplier = db.prepare("SELECT id FROM supih_suppliers WHERE code = ?").get(code);
   if (!supplier) return { error: "Supplier not found", status: 404 };
-
-  db.prepare(`
-    INSERT INTO supih_product_snapshots(
-      supplier_id, supplier_sku, buzzard_sku, supplier_price, currency, stock_qty, lead_time_days, raw_ref
-    )
-    VALUES(?,?,?,?,?,?,?,?)
-  `).run(
-    supplier.id,
-    body.supplierSku || body.supplier_sku || "",
-    body.buzzardSku || body.buzzard_sku || "",
-    Number(body.price ?? body.supplier_price ?? 0),
-    body.currency || "EUR",
-    Number(body.stock ?? body.stock_qty ?? 0),
-    Number(body.leadTimeDays ?? body.lead_time_days ?? 0),
-    body.rawRef || body.raw_ref || ""
-  );
-
-  return { ok: true };
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    stored: false,
+    purchased: false,
+    supplierConfirmed: false,
+    live: false,
+    reasons: ["STOCK_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED", "STALE_STOCK"],
+  };
 }
 
 function addShippingMethod(code, body = {}) {
@@ -208,41 +194,15 @@ function createSupplierOrder(body = {}, req = null) {
   const salesGuard = require("./commerce/salesGuard");
   const block = salesGuard.assertSupplierOrderAllowed({ req });
   if (block) return salesGuard.blockHttpResult(block);
-
-  const supplierCode = body.supplierCode || body.supplier_code;
-  const buzzardOrderNumber = body.buzzardOrderNumber || body.buzzard_order_number;
-  if (!supplierCode || !buzzardOrderNumber) {
-    return { error: "Supplier code and Buzzard order required", status: 400 };
-  }
-
-  const supplier = db.prepare("SELECT * FROM supih_suppliers WHERE code = ?").get(supplierCode);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
-  if (!supplier.supports_dropshipping) {
-    return { error: "Supplier does not support dropshipping", status: 400 };
-  }
-
-  const result = db
-    .prepare(`
-      INSERT INTO supih_orders(
-        supplier_id, buzzard_order_number, status, dropship, blind_shipping, white_label, payload_json
-      )
-      VALUES(?,?,?,?,?,?,?)
-    `)
-    .run(
-      supplier.id,
-      buzzardOrderNumber,
-      "queued",
-      1,
-      body.blindShipping || body.blind_shipping ? 1 : 0,
-      body.whiteLabel || body.white_label ? 1 : 0,
-      JSON.stringify(body.payload || {})
-    );
-
   return {
-    supplierOrderId: result.lastInsertRowid,
-    status: "queued",
-    next: "route through supplier connector",
-    accepted: true,
+    ok: false,
+    blocked: true,
+    code: "SUPPLIER_NOT_LIVE",
+    status: 409,
+    supplierOrderCreated: false,
+    purchased: false,
+    live: false,
+    submissionStatus: "BLOCKED_EXTERNAL",
   };
 }
 

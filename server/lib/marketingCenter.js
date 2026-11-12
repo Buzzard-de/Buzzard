@@ -11,6 +11,17 @@ function roas(revenue, spend) {
 }
 
 function mapCampaignRow(campaign) {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return {
+      ...campaign,
+      spend: null,
+      revenue: null,
+      orders: null,
+      roas: null,
+      profit_before_ad_spend: null,
+      recoveredIsSale: false,
+    };
+  }
   const spend = db
     .prepare("SELECT COALESCE(SUM(spend), 0) v FROM marketing_campaign_spend WHERE campaign_id = ?")
     .get(campaign.id).v;
@@ -34,46 +45,55 @@ function listProviders() {
   return db.prepare("SELECT * FROM marketing_provider_connections ORDER BY provider").all();
 }
 
-function updateProvider(provider, body = {}) {
-  if (!PROVIDERS.includes(provider)) return { error: "Unsupported provider", status: 404 };
-  db.prepare(
-    "UPDATE marketing_provider_connections SET enabled = ?, account_label = ?, updated_at = CURRENT_TIMESTAMP WHERE provider = ?"
-  ).run(body.enabled ? 1 : 0, body.accountLabel || "", provider);
-  return { provider: db.prepare("SELECT * FROM marketing_provider_connections WHERE provider = ?").get(provider) };
+const campaignAttempts = new Set();
+
+function campaignRefusal(extra = {}) {
+  const { isSalesEnabled } = require("./salesMode");
+  const closed = !isSalesEnabled();
+  return {
+    ok: false,
+    error: closed ? "SALES_CLOSED" : "COUPON_UNVERIFIED",
+    code: closed ? "SALES_CLOSED" : "COUPON_UNVERIFIED",
+    status: closed ? 403 : 409,
+    created: false,
+    updated: false,
+    deleted: false,
+    stored: false,
+    published: false,
+    live: false,
+    enabled: false,
+    budget: null,
+    spend: null,
+    couponIssued: false,
+    discountApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    customerNotified: false,
+    consentVerified: false,
+    callerFlagIgnored: true,
+    landingUrl: null,
+    ...extra,
+  };
+}
+
+function updateProvider(provider) {
+  if (!PROVIDERS.includes(provider)) return { ok: false, error: "Unsupported provider", code: "UNKNOWN", status: 404, stored: false, live: false };
+  return campaignRefusal();
 }
 
 function createCampaign(body = {}) {
-  if (!body.name || !body.channel) return { error: "name and channel required", status: 400 };
-  const utmSource = body.utmSource || body.channel;
-  const utmMedium = body.utmMedium || "paid";
-  const utmCampaign =
-    body.utmCampaign || String(body.name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  try {
-    const result = db
-      .prepare(`
-        INSERT INTO marketing_campaigns(name, channel, objective, status, budget, start_date, end_date, utm_source, utm_medium, utm_campaign, coupon_code)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
-      `)
-      .run(
-        body.name,
-        body.channel,
-        body.objective || "sales",
-        body.status || "draft",
-        Number(body.budget || 0),
-        body.startDate || null,
-        body.endDate || null,
-        utmSource,
-        utmMedium,
-        utmCampaign,
-        body.couponCode || ""
-      );
-    return {
-      status: 201,
-      campaign: db.prepare("SELECT * FROM marketing_campaigns WHERE id = ?").get(result.lastInsertRowid),
-    };
-  } catch {
-    return { error: "Campaign name already exists", status: 409 };
-  }
+  const name = String(body.name || "").trim().toLowerCase();
+  const duplicate = name ? campaignAttempts.has(name) : false;
+  if (name) campaignAttempts.add(name);
+  return campaignRefusal({ duplicate, idempotent: true });
+}
+
+function updateCampaign() {
+  return campaignRefusal();
+}
+
+function deleteCampaign() {
+  return campaignRefusal();
 }
 
 function listCampaigns() {
@@ -83,51 +103,43 @@ function listCampaigns() {
     .map(mapCampaignRow);
 }
 
-function addCampaignSpend(campaignId, body = {}) {
-  const campaign = db.prepare("SELECT id FROM marketing_campaigns WHERE id = ?").get(campaignId);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
-  db.prepare(
-    "INSERT INTO marketing_campaign_spend(campaign_id, spend, currency, spend_date) VALUES(?,?,?,?)"
-  ).run(campaignId, Number(body.spend || 0), body.currency || "EUR", body.date || new Date().toISOString());
-  return { ok: true };
+function addCampaignSpend() {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, spend: null, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "PAYMENT_UNVERIFIED", code: "PAYMENT_UNVERIFIED", status: 409, stored: false, spend: null, callerFlagIgnored: true };
 }
 
 function recordConversion(body = {}) {
   if (!body.campaignId || !body.orderNumber) {
-    return { error: "campaignId and orderNumber required", status: 400 };
+    return { error: "campaignId and orderNumber required", status: 400, stored: false };
   }
-  try {
-    db.prepare(`
-      INSERT INTO marketing_campaign_conversions(campaign_id, order_number, revenue, currency, source)
-      VALUES(?,?,?,?,?)
-    `).run(
-      body.campaignId,
-      body.orderNumber,
-      Number(body.revenue || 0),
-      body.currency || "EUR",
-      body.source || "unknown"
-    );
-    return { ok: true, status: 202 };
-  } catch {
-    return { ok: true, idempotent: true, status: 202 };
-  }
+  return {
+    ok: false,
+    error: "PAYMENT_UNVERIFIED",
+    code: "PAYMENT_UNVERIFIED",
+    status: 409,
+    stored: false,
+    revenue: null,
+    reconciled: false,
+    live: false,
+  };
 }
 
 function recordEvent(body = {}) {
-  if (!body.eventType) return { error: "eventType required", status: 400 };
-  db.prepare(`
-    INSERT INTO marketing_center_events(session_id, event_type, campaign, source, medium, country_code, product_sku)
-    VALUES(?,?,?,?,?,?,?)
-  `).run(
-    body.sessionId || "",
-    body.eventType,
-    body.campaign || "",
-    body.source || "",
-    body.medium || "",
-    (body.countryCode || "").toUpperCase(),
-    body.productSku || ""
-  );
-  return { ok: true, status: 202 };
+  const type = String(body.eventType || "").trim().toLowerCase();
+  if (!type) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, stored: false, sale: false, revenue: null };
+  return {
+    ok: false,
+    error: "SALES_CLOSED",
+    code: "SALES_CLOSED",
+    status: 403,
+    stored: false,
+    sale: false,
+    revenue: null,
+    recoveredIsSale: false,
+    callerFlagIgnored: true,
+  };
 }
 
 function getSummary() {
@@ -137,6 +149,17 @@ function getSummary() {
     .get().v;
   const orders = db.prepare("SELECT COUNT(*) v FROM marketing_campaign_conversions").get().v;
   const campaigns = db.prepare("SELECT COUNT(*) v FROM marketing_campaigns").get().v;
+  if (!require("./salesMode").isSalesEnabled()) {
+    return {
+      spend: null,
+      revenue: null,
+      orders: null,
+      campaigns,
+      recoveredIsSale: false,
+      salesStatus: "BLOCKED",
+      code: "SALES_CLOSED",
+    };
+  }
   return {
     spend,
     revenue,
@@ -161,7 +184,11 @@ function getChannelBreakdown() {
       ORDER BY revenue DESC
     `)
     .all()
-    .map((row) => ({ ...row, roas: roas(row.revenue, row.spend) }));
+    .map((row) => (
+      require("./salesMode").isSalesEnabled()
+        ? { ...row, roas: roas(row.revenue, row.spend) }
+        : { channel: row.channel, spend: null, revenue: null, orders: null, roas: null, recoveredIsSale: false, salesStatus: "BLOCKED" }
+    ));
 }
 
 function getUtmBreakdown() {
@@ -177,13 +204,9 @@ function getUtmBreakdown() {
 }
 
 function getCampaignBySlug(slug) {
-  const campaign = db.prepare("SELECT * FROM marketing_campaigns WHERE utm_campaign = ?").get(slug);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
-  const base = process.env.PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://buzzard24.de";
-  return {
-    campaign,
-    landingUrl: `${base.replace(/\/$/, "")}/?utm_source=${encodeURIComponent(campaign.utm_source)}&utm_medium=${encodeURIComponent(campaign.utm_medium)}&utm_campaign=${encodeURIComponent(campaign.utm_campaign)}`,
-  };
+  const campaign = db.prepare("SELECT id, name, status FROM marketing_campaigns WHERE utm_campaign = ?").get(slug);
+  if (!campaign) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 404, published: false, landingUrl: null };
+  return campaignRefusal({ campaignStatus: "BLOCKED" });
 }
 
 function getMarketingCenterStatus() {
@@ -205,6 +228,8 @@ module.exports = {
   listProviders,
   updateProvider,
   createCampaign,
+  updateCampaign,
+  deleteCampaign,
   listCampaigns,
   addCampaignSpend,
   recordConversion,

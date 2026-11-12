@@ -4,43 +4,52 @@ function isEnabled() {
   return process.env.BUZZARD_LOGISTICS_FULFILLMENT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
 }
 
-function rmaNumber() {
-  return `RMA-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-}
-
 function listShippingOptions(country) {
-  const code = String(country || "DE").toUpperCase();
+  const code = String(country || "").toUpperCase();
+  if (!code) return [];
   return db
     .prepare(`
-      SELECT s.*, c.code AS carrier, c.name AS carrier_name
+      SELECT s.id, s.code, s.name, s.max_weight_kg, s.countries, c.code AS carrier, c.name AS carrier_name
       FROM logistics_shipping_services s
       JOIN logistics_carriers c ON c.id = s.carrier_id
       WHERE s.active = 1
         AND c.enabled = 1
         AND (',' || s.countries || ',') LIKE '%,' || ? || ',%'
-      ORDER BY s.base_price
+      ORDER BY c.code, s.code
     `)
-    .all(code);
+    .all(code)
+    .map((row) => ({
+      ...row,
+      price: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+      live: false,
+    }));
 }
 
 function quoteShipment(body = {}) {
-  const country = String(body.country || "DE").toUpperCase();
-  const weight = Number(body.weightKg || 1);
-  const rows = db
-    .prepare(`
-      SELECT s.*, c.code AS carrier
-      FROM logistics_shipping_services s
-      JOIN logistics_carriers c ON c.id = s.carrier_id
-      WHERE s.active = 1
-        AND c.enabled = 1
-        AND (',' || s.countries || ',') LIKE '%,' || ? || ',%'
-        AND s.max_weight_kg >= ?
-      ORDER BY s.base_price
-    `)
-    .all(country, weight);
-  const best = rows[0];
-  if (!best) return { error: "No shipping service available", status: 404 };
-  return { quote: { ...best, estimatedCost: best.base_price } };
+  const { selectTransportCost } = require("./commerce/pricingPolicy");
+  const transport = selectTransportCost({
+    origin: body.origin || body.supplierOrigin,
+    country: body.country,
+    zone: body.zone || body.deliveryZone,
+    weightKg: body.weightKg ?? body.weight,
+    dimensions: body.dimensions,
+    rates: body.rates,
+    shippingIncluded: body.shippingIncluded === true,
+    supplierOfferIncludesShipping: body.supplierOfferIncludesShipping === true,
+    inclusionEvidence: body.inclusionEvidence,
+  });
+  return {
+    ok: transport.ok,
+    error: transport.ok ? undefined : transport.code,
+    status: transport.ok ? 200 : 409,
+    quote: transport,
+    estimatedCost: transport.ok ? transport.shippingCost : null,
+    live: false,
+    integration: "BLOCKED",
+    tablePriceUsed: false,
+  };
 }
 
 function createShipment(body = {}) {
@@ -59,44 +68,33 @@ function createShipment(body = {}) {
         .get(body.serviceId)
     : null;
   if (!service) return { error: "Shipping service not found", status: 404 };
-
-  try {
-    const result = db
-      .prepare(`
-        INSERT INTO logistics_shipments(order_number, carrier_id, service_id, shipping_cost, destination_country)
-        VALUES(?,?,?,?,?)
-      `)
-      .run(orderNumber, service.carrier_id, service.id, service.base_price, country.toUpperCase());
-    db.prepare("INSERT INTO logistics_fulfillment_jobs(order_number, job_type) VALUES(?,?)").run(
-      orderNumber,
-      "create_label"
-    );
-    const shipment = db.prepare("SELECT * FROM logistics_shipments WHERE id = ?").get(result.lastInsertRowid);
-    return { shipment };
-  } catch {
-    return { error: "Shipment already exists for order", status: 409 };
-  }
+  return {
+    ok: false,
+    error: "SHIPPING_RATE_UNVERIFIED",
+    code: "SHIPMENT_NOT_CREATED",
+    status: 409,
+    shipment: null,
+    shipmentCreated: false,
+    live: false,
+    orderNumber,
+    destination: country.toUpperCase(),
+  };
 }
 
-function updateLabelResult(id, body = {}) {
-  const shipment = db.prepare("SELECT * FROM logistics_shipments WHERE id = ?").get(id);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
-
-  const status = body.status || "label_created";
-  db.prepare(`
-    UPDATE logistics_shipments
-    SET tracking_number = ?, label_url = ?, status = ?,
-        shipped_at = CASE WHEN ? = 'shipped' THEN CURRENT_TIMESTAMP ELSE shipped_at END
-    WHERE id = ?
-  `).run(body.trackingNumber || "", body.labelUrl || "", status, status, id);
-
-  const updated = db.prepare("SELECT * FROM logistics_shipments WHERE id = ?").get(id);
-  if (updated?.tracking_number) {
-    db.prepare(
-      "INSERT INTO logistics_tracking_events(shipment_id, status, message) VALUES(?,?,?)"
-    ).run(updated.id, "label_created", "Shipping label created");
-  }
-  return { shipment: updated };
+function updateLabelResult(id) {
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    blocked: true,
+    status: "BLOCKED_EXTERNAL",
+    code: "LABEL_NOT_CREATED",
+    trackingNumber: null,
+    events: [],
+    delivered: false,
+    shipmentCreated: false,
+    id,
+  };
 }
 
 function listShipments() {
@@ -127,46 +125,46 @@ function getShipmentTracking(orderNumber) {
       "SELECT * FROM logistics_tracking_events WHERE shipment_id = ? ORDER BY event_time DESC, id DESC"
     )
     .all(shipment.id);
-  return { tracking: { ...shipment, events } };
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    verified: false,
+    trackingNumber: null,
+    events: [],
+    delivered: false,
+    tracking: { ...shipment, events, live: false, verified: false },
+  };
 }
 
-function handleCarrierWebhook(body = {}) {
-  const orderNumber = String(body.orderNumber || "").trim();
-  const status = String(body.status || "").trim();
-  if (!orderNumber || !status) return { error: "orderNumber and status required", status: 400 };
-
-  const shipment = db
-    .prepare("SELECT id FROM logistics_shipments WHERE order_number = ?")
-    .get(orderNumber);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
-
-  db.prepare("UPDATE logistics_shipments SET status = ? WHERE id = ?").run(status, shipment.id);
-  db.prepare(
-    "INSERT INTO logistics_tracking_events(shipment_id, status, location, message, event_time) VALUES(?,?,?,?,?)"
-  ).run(
-    shipment.id,
-    status,
-    body.location || "",
-    body.message || "",
-    body.eventTime || new Date().toISOString()
-  );
-  return { ok: true, status: 202 };
+function handleCarrierWebhook() {
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    blocked: true,
+    accepted: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "CARRIER_WEBHOOK_UNVERIFIED",
+    trackingNumber: null,
+    events: [],
+    delivered: false,
+  };
 }
 
-function createReturn(body = {}, customerId) {
-  const orderNumber = String(body.orderNumber || "").trim();
-  const reason = String(body.reason || "").trim();
-  if (!orderNumber || !reason) return { error: "orderNumber and reason required", status: 400 };
-
-  const number = rmaNumber();
-  const result = db
-    .prepare(`
-      INSERT INTO logistics_returns(rma_number, order_number, customer_id, reason, carrier_code)
-      VALUES(?,?,?,?,?)
-    `)
-    .run(number, orderNumber, customerId, reason, body.carrierCode || "DHL");
-  const row = db.prepare("SELECT * FROM logistics_returns WHERE id = ?").get(result.lastInsertRowid);
-  return { returnRequest: row };
+function createReturn() {
+  return {
+    ok: false,
+    error: "RETURN_UNVERIFIED",
+    code: "RETURN_UNVERIFIED",
+    status: 409,
+    created: false,
+    stored: false,
+    refunded: false,
+    live: false,
+    callerFlagIgnored: true,
+  };
 }
 
 function listCustomerReturns(customerId) {
@@ -182,14 +180,18 @@ function listAdminReturns() {
 function updateReturn(id, body = {}) {
   const row = db.prepare("SELECT id FROM logistics_returns WHERE id = ?").get(id);
   if (!row) return { error: "Return not found", status: 404 };
-  db.prepare(`
-    UPDATE logistics_returns
-    SET status = COALESCE(?, status),
-        return_tracking = COALESCE(?, return_tracking),
-        refund_status = COALESCE(?, refund_status)
-    WHERE id = ?
-  `).run(body.status || null, body.returnTracking || null, body.refundStatus || null, id);
-  return { returnRequest: db.prepare("SELECT * FROM logistics_returns WHERE id = ?").get(id) };
+  if (body.refundStatus || body.returnTracking || body.status) {
+    return {
+      ok: false,
+      error: "RETURN_STATUS_UNVERIFIED",
+      code: "RETURN_STATUS_UNVERIFIED",
+      status: 409,
+      refunded: false,
+      trackingNumber: null,
+      live: false,
+    };
+  }
+  return { ok: false, code: "RETURN_STATUS_UNVERIFIED", status: 409, live: false };
 }
 
 function listFulfillmentJobs() {

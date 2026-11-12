@@ -16,7 +16,8 @@ const { session, liveDial, copySinanVoice } = require("../lib/buzzardNative/core
 const { runCouncil17 } = require("../lib/buzzardNative/core/council17.js");
 const { check, selfElevate } = require("../lib/buzzardNative/core/permissionEngine.js");
 const { createRouter } = require("../lib/buzzardNative/core/taskRouter.js");
-const { MEMBERS } = require("../lib/pusat/council.js");
+const { MEMBERS, roster, holdSeedMeeting, delegateWithinMeeting } = require("../lib/pusat/council.js");
+const { SEED_IDS } = require("../lib/buzzardNative/core/identityRegistry.js");
 const { EXPECTED_SHA } = require("../lib/buzzardNative/speech/officialVoiceGuard.js");
 const { evaluateEgress } = require("../lib/security/egressPolicy.js");
 
@@ -130,5 +131,68 @@ describe("Buzzard 17-agent council", () => {
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const pusat = require("../lib/pusat/runtime.js");
     expect(pusat.executeReadOnly("SEVENTEEN_AGENT_COUNCIL", {}, { actorId: "pusat" }).data.registered).toBe(17);
+  });
+
+  it("seats all 17 seed identities once in one synthetic meeting", () => {
+    const meeting = holdSeedMeeting();
+    const seated = meeting.participants.map((participant) => participant.id);
+    expect(meeting.ok).toBe(true);
+    expect(meeting.synthetic).toBe(true);
+    expect(meeting.productionReady).toBe(false);
+    expect(meeting.productionClaim).toBe(false);
+    expect(meeting.salesEnabled).toBe(false);
+    expect(meeting.chairId).toBe("pusat");
+    expect(meeting.count).toBe(17);
+    expect(meeting.uniqueCount).toBe(17);
+    expect(seated).toEqual([...SEED_IDS]);
+    expect(new Set(seated).size).toBe(17);
+    expect(meeting.orderCreated).toBe(false);
+    expect(meeting.paymentCreated).toBe(false);
+    expect(meeting.purchased).toBe(false);
+    expect(meeting.shipmentCreated).toBe(false);
+    expect(meeting.refunded).toBe(false);
+    expect(meeting.exported).toBe(false);
+    expect(meeting.deployed).toBe(false);
+    expect(meeting.decisions).toHaveLength(1);
+    expect(meeting.decisions[0].executed).toBe(false);
+    for (const participant of meeting.participants) {
+      const agent = getAgent(participant.id);
+      expect(participant.name).toBe(agent.display_name);
+      expect(participant.role).toBe(agent.role);
+      expect(participant.present).toBe(true);
+      expect(participant.canBuyStock).toBe(false);
+      expect(participant.canExecutePayments).toBe(false);
+      expect(participant.canEnableSales).toBe(false);
+      expect(participant.canExportCustomerData).toBe(false);
+      expect(participant.canDeploy).toBe(false);
+      expect(participant.canDistribute).toBe(false);
+      expect(participant.permissions.includes("STOCK_BUY")).toBe(false);
+      expect(participant.permissions.includes("SALES_ACTIVATE")).toBe(false);
+      expect(participant.permissions.includes("DATA_EXPORT")).toBe(false);
+      expect(participant.permissions.includes("DEPLOY")).toBe(false);
+      expect(participant.permissions.includes("LIVE_PAYMENT")).toBe(false);
+      expect(participant.permissions.includes("CUSTOMER_REFUND")).toBe(false);
+      expect(participant.permissions.includes("SHIPMENT_CREATE")).toBe(false);
+    }
+    const before = roster("seed-meeting").find((participant) => participant.id === "stock_ai").permissions;
+    const widened = delegateWithinMeeting({ fromId: "pusat", toId: "stock_ai", permission: "STOCK_BUY" });
+    const after = roster("seed-meeting").find((participant) => participant.id === "stock_ai").permissions;
+    expect(widened.ok).toBe(false);
+    expect(widened.granted).toBe(false);
+    expect(widened.permissionIncreased).toBe(false);
+    expect(widened.executed).toBe(false);
+    expect(widened.purchased).toBe(false);
+    expect(after).toEqual(before);
+    const shared = delegateWithinMeeting({ fromId: "amelia", toId: "adrian", permission: "CREATE_REPORTS" });
+    expect(shared.ok).toBe(true);
+    expect(shared.granted).toBe(false);
+    expect(shared.permissionIncreased).toBe(false);
+    expect(shared.executed).toBe(false);
+    const outside = delegateWithinMeeting({ fromId: "stock_ai", toId: "pricing_ai", permission: "PRICE_PUBLISH_LIVE" });
+    expect(outside.ok).toBe(false);
+    expect(outside.permissionIncreased).toBe(false);
+    expect(MEMBERS.some((member) => member.id === "phone_ai")).toBe(true);
+    expect(MEMBERS.some((member) => member.id === "zeynep_hanim")).toBe(false);
+    expect(roster().some((member) => member.id === "nesrin_hanim")).toBe(true);
   });
 });

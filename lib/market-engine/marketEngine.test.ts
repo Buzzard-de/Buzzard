@@ -247,7 +247,8 @@ describe("International Market Engine — price engine", () => {
       { amount: 19.99, currency: "EUR", priceIncludesVat: true },
       { countryCode: "DE", customerType: "B2C" }
     );
-    expect(result.netPrice + result.vatAmount).toBeCloseTo(19.99, 2);
+    expect(result.vatAmount).not.toBeNull();
+    expect(result.netPrice + (result.vatAmount ?? 0)).toBeCloseTo(19.99, 2);
     expect(result.grossPrice).toBe(19.99);
   });
 

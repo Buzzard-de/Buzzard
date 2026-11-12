@@ -11,6 +11,7 @@ const { inspectTree, suggestPlacement, restoreRetired } = require("../buzzardNat
 const { evaluateOffer } = require("./pricingPolicy");
 const { calculateVat } = require("../buzzardNative/core/tax/vatEngine");
 const { decideAsset } = require("../banking/eu27/fiatPolicy");
+const { quoteRate } = require("../banking/eu27/fx");
 const { isSalesEnabled } = require("../salesMode");
 const { check } = require("../buzzardNative/core/permissionEngine");
 const { getMarket } = require("../../core/marketEngineRegistry");
@@ -392,11 +393,36 @@ function openCatalog(dbPath) {
     };
   }
 
-  function quote({ offerPrice, supplierCost, shippingCost, country = "DE", currency = "EUR", fx = 1, assetType = "fiat" } = {}) {
+  function quote({
+    offerPrice,
+    supplierCost,
+    shippingCost,
+    country = "DE",
+    currency = "EUR",
+    fx,
+    assetType = "fiat",
+    marketplaceFee,
+    paymentFee,
+    returnReserve,
+    otherCost,
+    category,
+    vatAmount,
+    vatVerified,
+    comparableMarketPrice,
+  } = {}) {
     const asset = decideAsset({ currency, assetType });
-    if (!asset.ok) return { ok: false, code: asset.code, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false };
-    if (fx == null || Number.isNaN(Number(fx))) {
-      return { ok: false, code: "FX_UNKNOWN", publicPrice: "UNKNOWN", livePrice: false, orderCreated: false };
+    if (!asset.ok) return { ok: false, code: asset.code, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, salesEnabled: isSalesEnabled() };
+    const fxRejected =
+      fx === null ||
+      (fx != null && (!Number.isFinite(Number(fx)) || Number(fx) <= 0 || !(Number(fx) === 1 && asset.currency === "EUR")));
+    if (fxRejected) {
+      return { ok: false, code: "FX_UNKNOWN", publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, invented: false, salesEnabled: isSalesEnabled() };
+    }
+    if (fx == null) {
+      const quoted = quoteRate({ base: asset.currency, quote: "EUR" });
+      if (!quoted.ok) {
+        return { ok: false, code: "FX_UNKNOWN", publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, invented: false, salesEnabled: isSalesEnabled() };
+      }
     }
     const price = Number(offerPrice);
     if (!Number.isFinite(price) || price <= 0) {
@@ -416,25 +442,50 @@ function openCatalog(dbPath) {
       goodsNet: price,
       kind: "B2C",
     });
-    if (!vat.ok) return { ok: false, code: vat.code || "VAT_UNKNOWN", publicPrice: "UNKNOWN", livePrice: false, orderCreated: false };
-    const offer = evaluateOffer({
+    if (!vat.ok) return { ok: false, code: vat.code || "VAT_UNKNOWN", vatOfficial: false, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, salesEnabled: isSalesEnabled() };
+    const offerInput = {
       offerPrice: price,
       supplierCost: Number(supplierCost),
       shippingCost: Number(shippingCost),
-      comparableMarketPrice: price + 5,
-      categoryMargin: 0.05,
-    });
+      category,
+      currency,
+    };
+    if (marketplaceFee !== undefined) offerInput.marketplaceFee = marketplaceFee;
+    if (paymentFee !== undefined) offerInput.paymentFee = paymentFee;
+    if (returnReserve !== undefined) offerInput.returnReserve = returnReserve;
+    if (otherCost !== undefined) offerInput.otherCost = otherCost;
+    if (comparableMarketPrice !== undefined) offerInput.comparableMarketPrice = comparableMarketPrice;
+    if (vatVerified === true) {
+      offerInput.vatVerified = true;
+      offerInput.vatAmount = vatAmount;
+    }
+    const offer = evaluateOffer(offerInput);
+    const snapshot = {
+      vatRate: vat.rate,
+      vatOfficial: false,
+      vatDefinitive: vat.definitive === true,
+      net: vat.net,
+      vat: vat.vat,
+      gross: vat.gross,
+    };
     if (!offer.ok) {
-      return { ok: false, code: offer.reasons[0] || "PRICE_REJECTED", reasons: offer.reasons, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, salesEnabled: false };
+      return {
+        ok: false,
+        code: offer.reasons[0] || "PRICE_REJECTED",
+        reasons: offer.reasons,
+        ...snapshot,
+        publicPrice: "UNKNOWN",
+        livePrice: false,
+        orderCreated: false,
+        salesEnabled: isSalesEnabled(),
+        policyStatus: offer.status,
+      };
     }
     return {
       ok: true,
       code: "QUOTE_READ_ONLY",
       currency,
-      net: vat.net,
-      vat: vat.vat,
-      gross: vat.gross,
-      vatRate: vat.rate,
+      ...snapshot,
       shipping: Number(shippingCost),
       shippingVerified: false,
       discount: null,

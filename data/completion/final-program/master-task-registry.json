@@ -1,0 +1,426 @@
+{
+  "schema": "buzzard.final-program.task-registry.v1",
+  "recordedAt": "2026-11-11T20:57:05+01:00",
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "projectStatus": {
+    "SOFTWARE_COMPLETE": false,
+    "INTEGRATION_READY": false,
+    "EXTERNAL_DEPENDENCY_BLOCKED": true,
+    "OWNER_ACTION_REQUIRED": true,
+    "PRODUCTION_READY": false
+  },
+  "tasks": [
+    {
+      "id": "FIN-P0-AUTH",
+      "module": "security",
+      "description": "Explicit default-deny authorization, delegation intersection, and human approval that does not execute payment or shipment.",
+      "dependencies": [],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/pusat/actionPolicy.js",
+        "server/lib/pusat/humanApproval.js",
+        "server/lib/buzzardNative/core/permissionEngine.js"
+      ],
+      "implementationEvidence": "Default-deny allow list and authorizeDelegated intersection are in the working tree.",
+      "testEvidence": "node --test server/__tests__/p0Remediation.test.mjs: 6 passed, 0 failed, 0 skipped. Run together with the journey file at about 20:41 Europe/Berlin.",
+      "remainingWork": "The authorization checks passed in this session. This is not a production authorization sign-off.",
+      "blocker": null,
+      "nextAction": "FIN-M8-SECURITY"
+    },
+    {
+      "id": "FIN-M6-POLICY",
+      "module": "pricing",
+      "description": "One commercial policy: automotive 11%, other 7%, beverage crate 15%, minimum net 0.50 EUR, undercut 0.10 EUR.",
+      "dependencies": [],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/pricingPolicy.js"
+      ],
+      "implementationEvidence": "evaluateOffer and recommendPrice resolve the category inside the policy and ignore a caller margin.",
+      "testEvidence": "server/__tests__/pricingFinance.test.mjs inside the vitest run of 129 files / 1073 passed.",
+      "remainingWork": "Official VAT and cross-currency FX remain outside this task.",
+      "blocker": null,
+      "nextAction": "Keep new commercial prices on this function."
+    },
+    {
+      "id": "FIN-M6-LEGACY-38",
+      "module": "pricing",
+      "description": "Remove the legacy 38% markup from commercial sale prices.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/pricing.js",
+        "server/lib/priceStockQueue.js",
+        "server/lib/importPipeline.js",
+        "server/lib/constructionMachinery/sourcing.js",
+        "server/lib/agriculturalMachinery/sourcing.js"
+      ],
+      "implementationEvidence": "calculateSalePrice uses price = cost / (1 - category margin). A supplied 38% markup is ignored.",
+      "testEvidence": "A supplier cost of 100 now prices at 107.53, and markupPercent 38 sets marginOverrideIgnored.",
+      "remainingWork": "Machinery offer ranking still treats a missing shipping amount as zero when it builds a landed cost for scoring.",
+      "blocker": null,
+      "nextAction": "FIN-M7-LANDED-ZERO"
+    },
+    {
+      "id": "FIN-M2-CHECKOUT-BLOCK",
+      "module": "ecommerce",
+      "description": "Checkout and order preparation reject a price whose policy status is BLOCKED or UNKNOWN.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/coreEngineChain.js",
+        "server/lib/commerce/canonicalCommercePath.js",
+        "server/lib/commerce/checkoutService.js"
+      ],
+      "implementationEvidence": "priceAcceptedForCheckout requires policyStatus CALCULATED and commerciallyEligible. The shelf price is not copied into supplier cost.",
+      "testEvidence": "Phase 2 prepareOrder and phase 3 validateCheckout return PRICE_POLICY_BLOCKED and create no order.",
+      "remainingWork": "A cart can still show the stored catalog price. That display is not a checkout acceptance.",
+      "blocker": null,
+      "nextAction": "FIN-M7-SHIPPING-UNVERIFIED"
+    },
+    {
+      "id": "FIN-M6-VAT",
+      "module": "pricing",
+      "description": "Do not calculate checkout tax from an unverified country table.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/commerce/taxProvider.js",
+        "server/lib/customerCheckout.js"
+      ],
+      "implementationEvidence": "calculateTax returns VAT_UNVERIFIED with a null rate. A missing tax_rates row no longer becomes 0.19. A missing shipping method no longer becomes 9.99.",
+      "testEvidence": "Covered indirectly by the vitest suite. No separate numeric VAT filing test was added.",
+      "remainingWork": "Official VAT rates and filings.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "Wait for a verified VAT source before any tax amount is eligible."
+    },
+    {
+      "id": "FIN-M6-FX",
+      "module": "pricing",
+      "description": "Convert verified fiat currencies only when a sourced rate exists.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "sourceFiles": [
+        "server/lib/banking/eu27/fx.js"
+      ],
+      "implementationEvidence": "Same-currency identity is the only rate. Cross-currency returns FX_RATE_UNKNOWN.",
+      "testEvidence": "pricingFinance PLN to EUR expects a null rate and a null profit.",
+      "remainingWork": "A sourced FX provider.",
+      "blocker": "No FX feed is connected.",
+      "nextAction": "Owner supplies an approved rate source."
+    },
+    {
+      "id": "FIN-M7-SHIPPING-UNVERIFIED",
+      "module": "logistics",
+      "description": "A shipping amount is UNKNOWN unless country, zone, weight, dimensions, service, carrier, and a verified rate are all present.",
+      "dependencies": [
+        "FIN-M2-CHECKOUT-BLOCK",
+        "FIN-M6-POLICY"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/pricingPolicy.js",
+        "server/lib/commerce/shippingProvider.js",
+        "server/lib/shippingEngine.js",
+        "server/lib/dbShipping.js",
+        "server/lib/commerce/checkoutService.js",
+        "server/lib/commerce/ab27Logistics.js",
+        "server/lib/commerce/carrierAdapters.js"
+      ],
+      "implementationEvidence": "assessShipping is the authority. Fixed 4.99 and 9.99 prices are not returned. DHL, DPD, GLS, Hermes, and UPS stay integration BLOCKED.",
+      "testEvidence": "server/__tests__/shippingAuthority.test.mjs inside vitest, 130 files, 1081 passed, 0 failed, 0 skipped. Started 2026-11-11T20:30:45+01:00.",
+      "remainingWork": "New empty databases no longer receive shipping price seeds. A database that already has rows can still store a historical amount. Readers do not return it as a price.",
+      "blocker": null,
+      "nextAction": "Keep every calculator on selectTransportCost."
+    },
+    {
+      "id": "FIN-M7-LANDED-ZERO",
+      "module": "logistics",
+      "description": "A missing or zero offer shipping cost is not added as zero.",
+      "dependencies": [
+        "FIN-M7-SHIPPING-UNVERIFIED"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/pricingPolicy.js",
+        "server/lib/agriculturalMachinery/sourcing.js",
+        "server/lib/constructionMachinery/sourcing.js",
+        "server/lib/vehiclePartsIntelligence/sourcing.js"
+      ],
+      "implementationEvidence": "readSuppliedShipping returns null for missing, empty, and zero values.",
+      "testEvidence": "shippingAuthority asserts undefined, null, and 0 all return a null amount and BLOCKED.",
+      "remainingWork": "A supplied positive fixture amount stays visible for ranking and is still commercially BLOCKED.",
+      "blocker": null,
+      "nextAction": "Keep readSuppliedShipping on the sourcing paths."
+    },
+    {
+      "id": "FIN-M6-COST-COMPONENTS",
+      "module": "pricing",
+      "description": "Marketplace fee, payment fee, and return reserve stay missing until supplied. They are not defaulted to zero.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/pricingPolicy.js",
+        "server/lib/commerce/marginEngine.js"
+      ],
+      "implementationEvidence": "sumLanded requires the three components. marginEngine no longer defaults them to zero.",
+      "testEvidence": "shippingAuthority expects MISSING_COST to list shippingCost, marketplaceFee, paymentFee, and returnReserve.",
+      "remainingWork": "An explicit numeric zero remains a supplied component. A live fee schedule is not connected.",
+      "blocker": null,
+      "nextAction": "FIN-M6-FX"
+    },
+    {
+      "id": "FIN-M6-VAT-PLACEHOLDER",
+      "module": "pricing",
+      "description": "Remove the placeholder country VAT table from calculateTaxSync.",
+      "dependencies": [
+        "FIN-M6-VAT"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commercialIntegrations.js",
+        "server/lib/dbOrders.js"
+      ],
+      "implementationEvidence": "calculateTaxSync returns a null rate and null tax. An order is not inserted when VAT is unofficial.",
+      "testEvidence": "shippingAuthority expects calculateTaxSync('DE') rate and tax to be null and official false.",
+      "remainingWork": "A verified VAT source is still absent.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "Wait for a verified VAT source."
+    },
+    {
+      "id": "FIN-M7-DYNAMIC-SHIPPING",
+      "module": "logistics",
+      "description": "Choose the lowest verified suitable transport cost. A supplier offer that includes shipping adds no second shipping amount.",
+      "dependencies": [
+        "FIN-M7-SHIPPING-UNVERIFIED",
+        "FIN-M6-POLICY"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/commerce/pricingPolicy.js",
+        "server/lib/commerce/shippingProvider.js",
+        "server/lib/commerce/pricingIntegration.js",
+        "server/lib/buzzardNative/sinan/repoAnalysis.js"
+      ],
+      "implementationEvidence": "selectTransportCost ignores unsuitable and unverified rates. Included shipping stays 0 only with evidence. Sinan records that there is no fixed default and no live carrier query.",
+      "testEvidence": "npx vitest run of shippingAuthority, pricingFinance, masterIntegrationPhase2, and autonomousContinuation: 4 files, 45 passed, 0 failed. Started 2026-11-11T20:33:48+01:00.",
+      "remainingWork": "Live carrier tariffs are still absent. The selector is now used by the engine, country table, logistics quote, and legacy order writer.",
+      "blocker": "No carrier API credential.",
+      "nextAction": "Owner supplies a verified carrier tariff."
+    },
+    {
+      "id": "FIN-M7-SEED-RATES",
+      "module": "logistics",
+      "description": "Stop new database seeds from storing 4.99 and 9.99 as shipping method prices.",
+      "dependencies": [
+        "FIN-M7-SHIPPING-UNVERIFIED"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/db.js",
+        "server/lib/cartCheckout.js",
+        "server/lib/localizationFeeds.js",
+        "server/lib/logisticsFulfillment.js",
+        "server/lib/orderManagement.js",
+        "server/lib/commerce/orderService.js"
+      ],
+      "implementationEvidence": "Empty-table seeds no longer insert shipping prices or the paid demo order. Readers return price null. Legacy order writers refuse a missing shipping amount instead of storing 0 or 4.99. A fresh isolated database had zero rows in shipping_rates, shipping_methods, cc_shipping_rates, logistics_shipping_services, supih_shipping_methods, and oms_orders.",
+      "testEvidence": "npx vitest run started 2026-11-11T20:40:49+01:00: 130 files, 1084 passed, 0 failed, 0 skipped. shippingAuthority covers 0.80, 1.20, and 8.50 selection, included-shipping evidence, and the legacy order block.",
+      "remainingWork": "Rows already stored in an existing database are not deleted. The protected database was not opened.",
+      "blocker": null,
+      "nextAction": "FIN-M8-SECURITY"
+    },
+    {
+      "id": "FIN-M1-CORE",
+      "module": "core",
+      "description": "Core engines are connected locally and sales remain closed.",
+      "dependencies": [
+        "FIN-P0-AUTH"
+      ],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/commerce/engineRegistry.js"
+      ],
+      "implementationEvidence": "Eleven local engines are callable. Live flags are false.",
+      "testEvidence": "Prior globalProgram node test. Not re-run this session.",
+      "remainingWork": "Recovery, health, and performance evidence are incomplete.",
+      "blocker": null,
+      "nextAction": "FIN-M1-ENGINE-BUS"
+    },
+    {
+      "id": "FIN-M3-COUNCIL",
+      "module": "council",
+      "description": "Seventeen identities keep their permissions and cannot buy, pay, export, or deploy.",
+      "dependencies": [
+        "FIN-P0-AUTH"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "server/lib/buzzardNative/core/identityRegistry.js",
+        "server/lib/pusat/council.js"
+      ],
+      "implementationEvidence": "roster('seed-meeting') reads the existing 17 SEED_IDS and seats each identity once with its existing name, role, and permission set. Legacy MEMBERS rows, including phone_ai and the category experts, stay unchanged. holdSeedMeeting records one synthetic meeting chaired by pusat. The decision does not create an order, payment, purchase, shipment, refund, export, or deployment. delegateWithinMeeting refuses STOCK_BUY, DATA_EXPORT, and any permission the source does not already hold, and it does not mutate the target set. Pusat cannot widen another AI. salesEnabled, productionReady, and productionClaim stay false. identityRegistry.js and FIN-P0-AUTH were not edited.",
+      "testEvidence": "2026-11-12T20:54+01:00 Europe/Berlin. npx vitest run server/__tests__/buzzardNative17AgentCouncil.test.mjs server/__tests__/pusatCouncil.test.mjs: 2 files, 11 passed, 0 failed. The new case seats pusat, sinan_bey, esat_bey, dogu_bey, nedim_bey, tuncay_bey, amelia, adrian, mira, leon, stock_ai, category_ai, pricing_ai, seo_ai, banu_hanim, sales_analysis_ai, zeynep_hanim exactly once. node --test server/__tests__/globalProgram.test.mjs: 4 passed, 0 failed. The same 17-person meeting is asserted inside the synthetic council test, in addition to the existing five-person meeting. Synthetic only. This is not a production approval.",
+      "remainingWork": "None for this local meeting check. productionReady remains false. This evidence is not a go-live or production authorization.",
+      "blocker": null,
+      "nextAction": "No further task was started."
+    },
+    {
+      "id": "FIN-M4-CATALOG",
+      "module": "catalog",
+      "description": "Storefront catalog, languages, and the 50-category framework.",
+      "dependencies": [
+        "FIN-M6-POLICY"
+      ],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/commerce/isolatedCatalog.js"
+      ],
+      "implementationEvidence": "Isolated catalog quote uses the pricing policy and marks the VAT snapshot unofficial.",
+      "testEvidence": "Prior isolatedCatalog node test. Not re-run this session.",
+      "remainingWork": "Official subcategories, reviewed translations, and live PIM.",
+      "blocker": "Live PIM and human translation review.",
+      "nextAction": "Keep machine translations marked UNREVIEWED."
+    },
+    {
+      "id": "FIN-M5-EU27",
+      "module": "eu27",
+      "description": "EU27 country software with Germany separated from the EU26 25% reserve.",
+      "dependencies": [
+        "FIN-M6-VAT"
+      ],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/buzzardNative/core/tax/vatEngine.js",
+        "server/lib/banking/eu27/inventory.js"
+      ],
+      "implementationEvidence": "Germany reserve is 0. Other registry countries use 25% of positive net income. The institution register is incomplete.",
+      "testEvidence": "pricingFinance country calculation and prior eu27 node tests.",
+      "remainingWork": "Official institution records and VAT verification.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "Do not certify the register."
+    },
+    {
+      "id": "FIN-M8-SECURITY",
+      "module": "security",
+      "description": "Egress stays deny and local security regressions stay in place.",
+      "dependencies": [
+        "FIN-P0-AUTH"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "data/security/egress_policy.v1.json",
+        "server/lib/security/egressPolicy.js",
+        "intelligence/security/egress_policy.py"
+      ],
+      "implementationEvidence": "The egress policy default stays DENY. The file sha256 is now b63cdadbd8e58e2e57e6b5d7c9a0c2f92c3bb6cf3904e6aa3a77cd0d02bff442. The previous sha256 afbef26e52e18015645566058a5f2a596fc1438bcc322f9540cca53aeb334edb is no longer the file hash. buzzard24.de was removed from the allowlist and placed in deniedHosts. evaluateEgress returns EGRESS_DENIED for that exact host, www, and shop, including a synthetic customer email or customerId. HTTP stays HTTPS_REQUIRED and port 8443 stays PORT_DENIED. An unknown host stays HOST_NOT_ALLOWLISTED. guardedFetch returns before DNS and fetch when the decision is denied. clearRevocations behavior is unchanged. isSalesEnabled stays false. productionReady stays false.",
+      "testEvidence": "2026-11-12T21:05 Europe/Berlin. Full configured matrix, 154 tests: 102 passed, 25 failed, 27 skipped. 2026-11-12T21:11 Europe/Berlin. Rerun of e2e/egress-security.spec.ts, e2e/customer-journey.spec.ts, e2e/commerce-storefront.spec.ts, and e2e/commerce-security.spec.ts on api, chromium-desktop, chromium-mobile, and chromium-tablet: 88 passed, 12 skipped, 0 failed. The 12 skips are viewport guards; the phone drill runs on chromium-mobile and the desktop overflow checks run on chromium-desktop. Egress health passed on all four projects. 2026-11-12T21:20 Europe/Berlin. After the deny change, Vitest egress42, egress43, egress44, and autonomousContinuationV3: 4 files, 33 passed, 0 failed. Python unittest intelligence/security/test_egress.py: 10 passed, 0 failed. No live socket. Synthetic customer@example.test and customer-test only. Policy sha256 b63cdadbd8e58e2e57e6b5d7c9a0c2f92c3bb6cf3904e6aa3a77cd0d02bff442. After the hydration wait, homepage-viewports desktop 1440x900: 1 passed. 2026-11-12T21:39 Europe/Berlin. chromium-desktop admin.spec.ts, admin-pim-core.spec.ts, and storefront-bridge.spec.ts: 15 passed, 0 failed, 0 skipped. Local API http://localhost:3001 and isolated database /tmp/buzzard-e2e-sqlite/buzzard-e2e.db. p0Remediation: AI clear denied, human clear succeeded. productionReady remains false. This is not a production approval.",
+      "remainingWork": "None for this local security matrix. productionReady remains false. This evidence is not a go-live approval.",
+      "blocker": null,
+      "nextAction": "No further task was started."
+    },
+    {
+      "id": "FIN-M9-VOICE",
+      "module": "voice",
+      "description": "Local voice adapters stay inactive.",
+      "dependencies": [
+        "FIN-P0-AUTH"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "sourceFiles": [
+        "server/lib/voice"
+      ],
+      "implementationEvidence": "Prior assessment returned BLOCKED and liveCalls false.",
+      "testEvidence": "Not re-run this session.",
+      "remainingWork": "STT, TTS, SIP, and WebRTC media require approved providers and voice consent.",
+      "blocker": "No voice provider or consent asset is present.",
+      "nextAction": "Owner supplies consent and provider approval."
+    },
+    {
+      "id": "FIN-M10-LIVE",
+      "module": "live_operations",
+      "description": "Marketplace, bank, and carrier adapters stay inactive.",
+      "dependencies": [
+        "FIN-M2-CHECKOUT-BLOCK",
+        "FIN-M7-SHIPPING-UNVERIFIED"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "sourceFiles": [
+        "server/lib/commerce/carrierAdapters.js"
+      ],
+      "implementationEvidence": "Live connectors remain closed. No account was activated.",
+      "testEvidence": "Not re-run this session.",
+      "remainingWork": "Contract tests for every marketplace simulator are not all present.",
+      "blocker": "Owner account authorization.",
+      "nextAction": "Add local contract tests only. Do not publish listings."
+    },
+    {
+      "id": "FIN-X-JOURNEY",
+      "module": "integration",
+      "description": "Synthetic journey from search through finance without a real order.",
+      "dependencies": [
+        "FIN-M2-CHECKOUT-BLOCK",
+        "FIN-M6-POLICY"
+      ],
+      "status": "IMPLEMENTED",
+      "sourceFiles": [
+        "server/lib/platform/tenModuleProgram.js"
+      ],
+      "implementationEvidence": "The journey calls local engines. Checkout of an incomplete price is now blocked.",
+      "testEvidence": "node --test server/__tests__/tenModuleProgram.test.mjs: 2 passed, 0 failed. The protected database mtime did not change. placeOrder stayed SALES_CLOSED and orderCreated false.",
+      "remainingWork": "The journey still passes an explicit fixture shippingCost of 2 into evaluateOffer. It does not query a carrier and it does not create an order.",
+      "blocker": null,
+      "nextAction": "Leave the fixture labeled as a synthetic cost stack."
+    },
+    {
+      "id": "FIN-M1-ENGINE-BUS",
+      "module": "core",
+      "description": "Call the twelve commerce engines through one local function and keep live actions closed.",
+      "dependencies": [
+        "FIN-M8-SECURITY",
+        "FIN-M6-POLICY",
+        "FIN-M7-DYNAMIC-SHIPPING"
+      ],
+      "status": "VERIFIED_PARTIAL",
+      "sourceFiles": [
+        "server/lib/commerce/coreEngines.js"
+      ],
+      "implementationEvidence": "Local verification only. callEngine and runChain reach product, order, inventory, customer, market, supplier, pricing, payment, shipping, returns, notification, and reporting. The 3/3 file shows executed true, with commercialReady, orderCreated, paymentCaptured, shipmentCreated, salesEnabled, and chain live false. The order code is SALES_CLOSED. The payment code is FIAT_ACCEPTED with captured false; that is a local fiat policy result, not a bank charge. An unknown actor returns UNKNOWN_IDENTITY. A sensitive inventory buy returns HUMAN_GATE_REQUIRED with performed false. The same idempotency key returns that stored result with replay true. A past deadline returns TIMEOUT with live false. BTC returns REJECTED_CRYPTO_POLICY with captured false. No live bank, marketplace, supplier, or carrier connection was opened.",
+      "testEvidence": "2026-11-12T21:53 Europe/Berlin. npx vitest run server/__tests__/coreEngines.test.mjs: 1 file, 3 passed, 0 failed, 0 skipped. Two tests cover the local bus: the twelve-engine chain, plus idempotency, TIMEOUT, and HUMAN_GATE_REQUIRED. The third test is a local transport-cost fixture and is not a carrier connection. The protected database was not opened. This local result is not live integration evidence and is not a go-live approval. productionReady remains false. SALES remains closed. The integration inventory below is a read of the call path. No service was called.",
+      "remainingWork": "Integration inventory from server/lib/commerce/coreEngines.js. No live provider is connected. Local modules and stubs are not connections. product: categoryHierarchy.js reads a local taxonomy file. No PIM provider, no account. Missing a reviewed product source. Human approval required before a live catalog. order: storefrontCatalogAdapter.js placeOrder returns SALES_CLOSED. No order API. Missing sales approval. Human approval required. inventory: operations/stockEngine.js and specialists/stockEngine.js. inspectFeeds is BLOCKED_EXTERNAL and liveSupplierApi false. No supplier feed API. Missing a supplier account. Human approval required for STOCK_BUY. customer: banuEngine.js. liveMailbox false. No mailbox or CRM provider. Missing a customer-message account. Human approval required for export and refund. market: marketEngineRegistry.js reads local JSON. vatOfficial false. No marketplace API is called. Missing a seller account. Human approval required. supplier: no provider. Result SUPPLIER_DATA_UNKNOWN. pay is not a transfer. Missing a supplier account. Human approval required for SUPPLIER_PAY. pricing: pricingPolicy.js evaluateOffer. livePriceWrite false. No price or FX API. Missing official VAT and FX sources. Human approval required before a live price. payment: fiatPolicy.js decideAsset. FIAT_ACCEPTED is not a charge. captured false. No bank, card acquirer, Stripe, or PayPal client. Missing a payment-provider account. Human approval required for LIVE_PAYMENT. shipping: pricingPolicy.js selectTransportCost. apiConnected false and shipmentCreated false. No carrier API. Missing a carrier account and a verified tariff. Human approval required for SHIPMENT_CREATE. returns: logistics/v5/returnsEngine.js stays blocked. No label or refund provider. Missing a carrier return account. Human approval required. notification: logistics/v5/notifyStub.js. sent false. No email or SMS provider. Missing a message-provider account. Human approval required before a customer send. reporting: inline SYNTHETIC_REPORT. liveMetrics null. No analytics provider. Missing a live metrics source. Human approval required before production metrics. Priority: payment provider account, then carrier account and tariff, then supplier account and feed, then marketplace seller account, then customer message provider, then official VAT and FX, then reporting metrics, then a reviewed product source. None of these accounts is connected.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "No further task was started. The single next target is a human-approved payment provider account. Do not treat this inventory as a bank, marketplace, supplier, carrier, or message connection."
+    },
+    {
+      "id": "FIN-M6-VAT-SNAPSHOT",
+      "module": "pricing",
+      "description": "Do not invent a 20 percent VAT rate when a market overlay has no rate.",
+      "dependencies": [
+        "FIN-M6-VAT"
+      ],
+      "status": "VERIFIED_PARTIAL",
+      "sourceFiles": [
+        "server/core/marketEngineRegistry.js",
+        "lib/market-engine/registry.ts",
+        "lib/market-engine/price.ts",
+        "lib/market-engine/admin.ts"
+      ],
+      "implementationEvidence": "A missing overlay rate is null and the source is UNKNOWN. Stored overlay rates stay unofficial snapshots. Admin labels them UNVERIFIED. A missing display rate does not become zero VAT.",
+      "testEvidence": "npx tsc --noEmit exited 0. lib/market-engine/marketEngine.test.ts passed inside the 1087-test Vitest run.",
+      "remainingWork": "lib/checkout/countries.ts still falls back to 19 when a checkout country has no entry. That file was not changed in this pass.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "Remove the checkout country 19 fallback without treating a missing rate as zero."
+    }
+  ]
+}

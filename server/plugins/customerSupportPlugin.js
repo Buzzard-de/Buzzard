@@ -52,8 +52,7 @@ module.exports = {
     app.post("/api/customer/support/tickets", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerSupport.createTicket(req.user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result);
+      return res.status(result.status || 200).json({ ...result, ok: false, sent: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
 
     app.get("/api/customer/support/tickets", (req, res) => {
@@ -75,13 +74,13 @@ module.exports = {
         req.params.id,
         req.body?.message
       );
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 200).json({ ...result, ok: false, sent: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
 
     app.get("/api/customer/orders/:orderNumber/tracking", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(customerSupport.listOrderTracking(req.params.orderNumber));
+      const result = customerSupport.listOrderTracking(req.params.orderNumber, req.user.sub);
+      return res.status(result.status || 404).json({ ...result, events: [], delivered: false, customerNotified: false });
     });
 
     app.get("/api/admin/customer-support/status", (req, res) => {
@@ -105,13 +104,13 @@ module.exports = {
       if (!requireAnyAdmin(req, res)) return;
       const adminId = req.user?.sub || 0;
       const result = customerSupport.replyTicketAdmin(adminId, req.params.id, req.body?.message);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 403).json({ ...result, ok: false, customerNotified: false, sent: false });
     });
 
     app.patch("/api/admin/customer-support/tickets/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(customerSupport.updateTicketAdmin(req.params.id, req.body || {}));
+      const result = customerSupport.updateTicketAdmin(req.params.id, req.body || {});
+      return res.status(result.status || 409).json({ ...result, ok: false, stored: false, customerNotified: false });
     });
 
     app.post("/api/admin/customer-support/tracking-event", (req, res) => {
@@ -124,15 +123,13 @@ module.exports = {
     app.post("/api/admin/customer-support/notifications/email", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.queueEmailNotification(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(202).json(result);
+      return res.status(result.status || 409).json({ ...result, ok: false, sent: false, queued: false, customerNotified: false });
     });
 
     app.post("/api/admin/customer-support/notifications/whatsapp", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = customerSupport.queueWhatsAppNotification(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(202).json(result);
+      return res.status(result.status || 409).json({ ...result, ok: false, sent: false, queued: false, customerNotified: false });
     });
 
     app.get("/api/admin/customer-support/templates", (req, res) => {

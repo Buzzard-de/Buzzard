@@ -1,0 +1,12 @@
+{
+  "id": "voice",
+  "phase": 9,
+  "status": "BLOCKED_EXTERNAL",
+  "classification": "blocked_by_external_dependency",
+  "identitiesPreserved": ["sinan_bey", "mira", "leon", "amelia", "adrian", "zeynep_hanim"],
+  "cloneAuthorized": false,
+  "liveCalls": false,
+  "assessVoice": "BLOCKED",
+  "evidence": "voiceReadiness.assessVoice and identity voice profiles",
+  "liveVerified": false
+}

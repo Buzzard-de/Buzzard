@@ -29,18 +29,20 @@ function rankOffers(store, query = {}) {
     const inventory = inventoryStatus(offer);
     const priced = kit.pricingContract.previewSalePrice({
       supplierPrice: offer.supplierPrice,
-      markupPercent: query.markupPercent ?? 38,
-      minimumMarginPercent: query.minimumMarginPercent ?? 12,
+      category: query.category,
       currency: offer.currency || "EUR",
     });
-    const shipping = Number(offer.shippingCost || 0);
+    const suppliedShipping = require("../commerce/pricingPolicy").readSuppliedShipping(offer.shippingCost);
+    const shipping = suppliedShipping.amount;
     const factors = {
       compatibilityState: compatibility?.state || "NOT_EVALUATED",
       inventoryTrust: inventory.trust,
       verifiedStock: inventory.verifiedStock,
       acquisitionCost: offer.supplierPrice ?? null,
       shippingCost: shipping,
-      landedCost: Number(offer.supplierPrice || 0) + shipping,
+      shippingStatus: suppliedShipping.status,
+      commercialEligibility: suppliedShipping.commercialEligibility,
+      landedCost: shipping == null || !Number.isFinite(Number(offer.supplierPrice)) ? null : Math.round((Number(offer.supplierPrice) + shipping) * 100) / 100,
       leadTimeDays: offer.leadTimeDays ?? null,
       salePreview: priced,
       minNetProfitEur: priced.minNetProfitEur,
@@ -61,7 +63,7 @@ function rankOffers(store, query = {}) {
     if (inventory.trust === INVENTORY_TRUST.SUPPLIER_REPORTED) score += 20;
     if (inventory.trust === INVENTORY_TRUST.STALE) score -= 40;
     if (priced.marginOk) score += 15;
-    score += Math.max(0, 30 - factors.landedCost / 10);
+    if (Number.isFinite(factors.landedCost)) score += Math.max(0, 30 - factors.landedCost / 10);
     return {
       offerId: offer.id,
       partId: offer.partId,

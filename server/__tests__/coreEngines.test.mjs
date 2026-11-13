@@ -46,6 +46,11 @@ describe("twelve local commerce engines", () => {
     expect(replay.code).toBe("HUMAN_GATE_REQUIRED");
     const late = engines.callEngine("payment", { actorId: "nedim_bey", action: "capture" }, { deadlineMs: Date.now() - 1 });
     expect(late.code).toBe("TIMEOUT");
+    expect(late.captured).toBe(false);
+    expect(late.paymentCaptured).toBe(false);
+    expect(late.moneyMoved).toBe(false);
+    expect(late.sandboxConnected).toBe(false);
+    expect(late.performed).toBe(false);
     expect(late.live).toBe(false);
     const crypto = engines.callEngine("payment", { actorId: "nedim_bey", currency: "BTC", assetType: "crypto" });
     expect(crypto.code).toBe("REJECTED_CRYPTO_POLICY");
@@ -57,7 +62,7 @@ describe("twelve local commerce engines", () => {
       { engine: "order", action: "create", permission: "SALES_WRITE", domain: "pusat", proof: { orderCreated: false, paymentAuthorized: false } },
       { engine: "inventory", action: "buy", permission: "STOCK_BUY", domain: "stock_ai", proof: { purchased: false, stockChanged: false } },
       { engine: "supplier", action: "pay", permission: "SUPPLIER_PAY", domain: "stock_ai", proof: { purchased: false } },
-      { engine: "payment", action: "capture", permission: "LIVE_PAYMENT", domain: "nedim_bey", proof: { captured: false, cardStored: false } },
+      { engine: "payment", action: "capture", permission: "LIVE_PAYMENT", domain: "nedim_bey", proof: { captured: false, paymentCaptured: false, moneyMoved: false, sandboxConnected: false, cardStored: false } },
       { engine: "shipping", action: "create", permission: "SHIPMENT_CREATE", domain: "pusat", proof: { shipmentCreated: false } },
       { engine: "returns", action: "refund", permission: "CUSTOMER_REFUND", domain: "banu_hanim", proof: { customerRefund: null, supplierCredit: null, labelIssued: false } },
       { engine: "customer", action: "export", permission: "DATA_EXPORT", domain: "banu_hanim", proof: { exported: false } },
@@ -466,7 +471,35 @@ describe("ALLOW cannot start the seven sensitive actions", () => {
   });
 
   it("does not capture a payment after ALLOW", () => {
-    expectAllowClosed("payment", "capture", "LIVE_PAYMENT", { captured: false, cardStored: false });
+    expectAllowClosed("payment", "capture", "LIVE_PAYMENT", {
+      captured: false,
+      paymentCaptured: false,
+      moneyMoved: false,
+      sandboxConnected: false,
+      cardStored: false,
+    });
+    expect(counts.decideAsset).toBe(0);
+  });
+
+  it("does not pay after ALLOW", () => {
+    expectAllowClosed("payment", "pay", "LIVE_PAYMENT", {
+      captured: false,
+      paymentCaptured: false,
+      moneyMoved: false,
+      sandboxConnected: false,
+      cardStored: false,
+    });
+    expect(counts.decideAsset).toBe(0);
+  });
+
+  it("does not charge after ALLOW", () => {
+    expectAllowClosed("payment", "charge", "LIVE_PAYMENT", {
+      captured: false,
+      paymentCaptured: false,
+      moneyMoved: false,
+      sandboxConnected: false,
+      cardStored: false,
+    });
     expect(counts.decideAsset).toBe(0);
   });
 
@@ -490,5 +523,213 @@ describe("ALLOW cannot start the seven sensitive actions", () => {
     expectAllowClosed("customer", "export", "DATA_EXPORT", { exported: false });
     expect(counts.reply).toBe(0);
     expect(counts.refund).toBe(0);
+  });
+});
+
+describe("EU-27 payment catalogue stays unverified", () => {
+  const currencies = {
+    AT: "EUR", BE: "EUR", BG: "EUR", HR: "EUR", CY: "EUR", CZ: "CZK", DK: "DKK",
+    EE: "EUR", FI: "EUR", FR: "EUR", DE: "EUR", GR: "EUR", HU: "HUF", IE: "EUR",
+    IT: "EUR", LV: "EUR", LT: "EUR", LU: "EUR", MT: "EUR", NL: "EUR", PL: "PLN",
+    PT: "EUR", RO: "RON", SK: "EUR", SI: "EUR", ES: "EUR", SE: "SEK",
+  };
+
+  function closed(result) {
+    expect(result.live).toBe(false);
+    expect(result.captured).toBe(false);
+    expect(result.paymentCaptured).toBe(false);
+    expect(result.cardStored).toBe(false);
+    expect(result.moneyMoved).toBe(false);
+    expect(result.provider).toBeNull();
+    expect(result.sandboxConnected).toBe(false);
+    expect(result.salesEnabled).toBe(false);
+  }
+
+  it("lists every member and keeps its currency", () => {
+    expect(Object.keys(currencies)).toHaveLength(27);
+    for (const [country, currency] of Object.entries(currencies)) {
+      const listed = engines.callEngine("payment", { actorId: "nedim_bey", action: "methods", country });
+      expect(listed.code).toBe("METHOD_CATALOGUE");
+      expect(listed.country).toBe(country);
+      expect(listed.currency).toBe(currency);
+      expect(listed.methods.length).toBeGreaterThan(0);
+      expect(listed.methods.every((method) => method.verificationStatus === "UNVERIFIED" && method.live === false && method.licenseVerified === false)).toBe(true);
+      expect(listed.methods.find((method) => method.methodId === "licensed_local_provider").localSchemeName).toBeNull();
+      closed(listed);
+    }
+  });
+
+  it("matches a country only with its own currency", () => {
+    const matched = engines.callEngine("payment", {
+      actorId: "nedim_bey",
+      action: "route",
+      country: "PL",
+      currency: "PLN",
+      methodId: "sepa_credit_transfer",
+    });
+    expect(matched.currency).toBe("PLN");
+    expect(matched.expectedCurrency).toBe("PLN");
+    const mismatched = [
+      ["DE", "PLN", "EUR"],
+      ["PL", "EUR", "PLN"],
+      ["SE", "EUR", "SEK"],
+      ["HU", "EUR", "HUF"],
+      ["CZ", "EUR", "CZK"],
+      ["DK", "EUR", "DKK"],
+      ["RO", "EUR", "RON"],
+    ];
+    for (const [country, currency, expected] of mismatched) {
+      const result = engines.callEngine("payment", {
+        actorId: "nedim_bey",
+        action: "route",
+        country,
+        currency,
+        methodId: "sepa_credit_transfer",
+      });
+      expect(result.code).toBe("CURRENCY_COUNTRY_MISMATCH");
+      expect(result.expectedCurrency).toBe(expected);
+      expect(result.assetDecision).toBe("FIAT_ACCEPTED");
+      closed(result);
+    }
+  });
+
+  it("rejects unverified methods and finds no provider", () => {
+    for (const [country, currency] of Object.entries(currencies)) {
+      const result = engines.callEngine("payment", {
+        actorId: "nedim_bey",
+        action: "route",
+        country,
+        currency,
+        methodId: "sepa_credit_transfer",
+        candidates: [{
+          id: "injected-fixture",
+          fixture: true,
+          live: false,
+          licenseStatus: "LICENSE_VERIFIED",
+          contractStatus: "CONTRACT_VERIFIED",
+          connectorStatus: "SANDBOX_VERIFIED",
+          countryCode: country,
+          currencies: [currency],
+          methods: ["sepa_credit_transfer"],
+          screening: "CLEAR_FIXTURE",
+        }],
+      });
+      expect(result.code).toBe("METHOD_NOT_VERIFIED");
+      expect(result.methodCode).toBe("METHOD_NOT_VERIFIED");
+      expect(result.verificationStatus).toBe("UNVERIFIED");
+      expect(result.assetDecision).toBe("FIAT_ACCEPTED");
+      expect(result.code).not.toBe("SANDBOX_ROUTE");
+      closed(result);
+    }
+  });
+
+  it("rejects pay and charge before any capture", () => {
+    for (const action of ["pay", "charge"]) {
+      const denied = engines.callEngine("payment", { actorId: "nedim_bey", action, currency: "EUR", country: "DE" });
+      expect(denied.code).toBe("HUMAN_GATE_REQUIRED");
+      expect(denied.action).toBe("LIVE_PAYMENT");
+      expect(denied.code).not.toBe("FIAT_ACCEPTED");
+      expect(denied.captured).toBe(false);
+      expect(denied.paymentCaptured).toBe(false);
+      expect(denied.moneyMoved).toBe(false);
+      expect(denied.sandboxConnected).toBe(false);
+      expect(denied.performed).toBe(false);
+      expect(denied.live).toBe(false);
+      expect(denied.salesEnabled).toBe(false);
+      const unknown = engines.callEngine("payment", { actorId: "not_an_agent", action, currency: "EUR", country: "DE" });
+      expect(unknown.code).toBe("UNKNOWN_IDENTITY");
+      expect(unknown.action).toBe("LIVE_PAYMENT");
+      expect(unknown.captured).toBe(false);
+      expect(unknown.paymentCaptured).toBe(false);
+      expect(unknown.moneyMoved).toBe(false);
+      expect(unknown.sandboxConnected).toBe(false);
+      expect(unknown.performed).toBe(false);
+      expect(unknown.live).toBe(false);
+    }
+  });
+
+  it("keeps every capture response field false", () => {
+    const denied = engines.callEngine("payment", {
+      actorId: "nedim_bey",
+      action: "capture",
+      currency: "EUR",
+      country: "DE",
+      idempotencyKey: "capture-fields",
+    });
+    const replay = engines.callEngine("payment", {
+      actorId: "nedim_bey",
+      action: "capture",
+      currency: "EUR",
+      country: "DE",
+      idempotencyKey: "capture-fields",
+    });
+    const late = engines.callEngine("payment", { actorId: "nedim_bey", action: "capture" }, { deadlineMs: Date.now() - 1 });
+    const unknown = engines.callEngine("payment", { actorId: "not_an_agent", action: "capture", currency: "EUR" });
+    for (const result of [denied, replay, late, unknown]) {
+      expect(result.captured).toBe(false);
+      expect(result.paymentCaptured).toBe(false);
+      expect(result.moneyMoved).toBe(false);
+      expect(result.sandboxConnected).toBe(false);
+      expect(result.performed).toBe(false);
+      expect(result.live).toBe(false);
+      expect(result.ok).toBe(false);
+    }
+    expect(denied.code).toBe("HUMAN_GATE_REQUIRED");
+    expect(replay.code).toBe("HUMAN_GATE_REQUIRED");
+    expect(replay.replay).toBe(true);
+    expect(late.code).toBe("TIMEOUT");
+    expect(unknown.code).toBe("UNKNOWN_IDENTITY");
+  });
+
+  it("returns NO_ELIGIBLE_PROVIDER when a verified method still has no real provider", () => {
+    const payments = require("../lib/banking/eu27/payments.js");
+    const routingPath = require.resolve("../lib/banking/eu27/routing.js");
+    const enginePath = require.resolve("../lib/commerce/coreEngines.js");
+    const original = payments.isVerifiedMethod;
+    payments.isVerifiedMethod = () => ({ ok: true, method: { verificationStatus: "VERIFIED", live: false, licenseVerified: true } });
+    delete require.cache[routingPath];
+    delete require.cache[enginePath];
+    try {
+      const fresh = require("../lib/commerce/coreEngines.js");
+      const result = fresh.callEngine("payment", {
+        actorId: "nedim_bey",
+        action: "route",
+        country: "DE",
+        currency: "EUR",
+        methodId: "sepa_credit_transfer",
+        candidates: [{
+          id: "sandbox-fixture",
+          fixture: true,
+          live: false,
+          licenseStatus: "LICENSE_VERIFIED",
+          contractStatus: "CONTRACT_VERIFIED",
+          connectorStatus: "SANDBOX_VERIFIED",
+          countryCode: "DE",
+          currencies: ["EUR"],
+          methods: ["sepa_credit_transfer"],
+          screening: "CLEAR_FIXTURE",
+        }],
+      });
+      expect(result.code).toBe("NO_ELIGIBLE_PROVIDER");
+      expect(result.provider).toBeNull();
+      expect(result.sandboxConnected).toBe(false);
+      expect(result.captured).toBe(false);
+      expect(result.paymentCaptured).toBe(false);
+      expect(result.moneyMoved).toBe(false);
+      expect(result.live).toBe(false);
+      expect(result.code).not.toBe("SANDBOX_ROUTE");
+    } finally {
+      payments.isVerifiedMethod = original;
+      delete require.cache[routingPath];
+      delete require.cache[enginePath];
+    }
+  });
+
+  it("does not treat FIAT_ACCEPTED as a capture", () => {
+    const decision = engines.callEngine("payment", { actorId: "nedim_bey", currency: "EUR", assetType: "fiat" });
+    expect(decision.code).toBe("FIAT_ACCEPTED");
+    expect(decision.assetDecision).toBe("FIAT_ACCEPTED");
+    expect(decision.code).not.toBe("NO_ELIGIBLE_PROVIDER");
+    closed(decision);
   });
 });

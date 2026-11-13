@@ -3,7 +3,7 @@
  * Esat Bey is a security monitor, not the only defense layer.
  */
 const crypto = require("crypto");
-const { resolveIdentity, LEGACY_ALIAS_TO_NATIVE } = require("../buzzardNative/core/councilAliasMap");
+const { resolveIdentity, LEGACY_ALIAS_TO_NATIVE, MEMBERS_ONLY_IDS } = require("../buzzardNative/core/councilAliasMap");
 const { SEED_IDS, getAgent } = require("../buzzardNative/core/identityRegistry");
 const { explicitPermissions } = require("../buzzardNative/core/permissionEngine");
 
@@ -347,6 +347,8 @@ function seedParticipant(seedId) {
     councilPermissions: member ? [...member.permissions] : [],
     present: Boolean(agent),
     chair: seedId === "pusat",
+    liveCalls: agent?.liveCalls === true,
+    soleDefense: false,
     canBuyStock: false,
     canExecutePayments: false,
     canEnableSales: false,
@@ -361,32 +363,26 @@ function seedParticipant(seedId) {
   };
 }
 
-function roster(scope) {
-  if (scope === "seed-meeting") {
-    const seen = new Set();
-    const participants = [];
-    for (const id of SEED_IDS) {
-      if (seen.has(id)) continue;
-      seen.add(id);
-      participants.push(seedParticipant(id));
-    }
-    return participants;
+function officialRoster() {
+  const seen = new Set();
+  const participants = [];
+  for (const id of SEED_IDS) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    participants.push(seedParticipant(id));
   }
-  return MEMBERS.map(projectMember);
+  return participants;
 }
 
-function holdSeedMeeting() {
-  const participants = roster("seed-meeting");
-  const ids = participants.map((participant) => participant.id);
-  const unique = new Set(ids);
-  const complete =
-    ids.length === SEED_IDS.length &&
-    unique.size === SEED_IDS.length &&
-    SEED_IDS.every((id) => unique.has(id)) &&
-    participants.every((participant) => participant.present && participant.name && participant.role);
-  const decision = {
-    text: "Synthetic local minutes. No commercial execution.",
-    recordedBy: "pusat",
+function roster(scope) {
+  if (scope === "legacy") return MEMBERS.map(projectMember);
+  return officialRoster();
+}
+
+const seedMeetingLedger = new Map();
+
+function closedMeetingFlags() {
+  return {
     executed: false,
     orderCreated: false,
     paymentCreated: false,
@@ -396,18 +392,62 @@ function holdSeedMeeting() {
     exported: false,
     deployed: false,
     salesEnabled: false,
+    productionReady: false,
+    liveNetwork: false,
   };
-  return {
+}
+
+function holdSeedMeeting() {
+  const agendaKey = "seed-council-17";
+  const existing = seedMeetingLedger.get(agendaKey);
+  if (existing) {
+    return { ...existing, ok: false, code: "DUPLICATE_MEETING", duplicate: true };
+  }
+  const participants = roster("seed-meeting").filter(
+    (participant) => SEED_IDS.includes(participant.id) && !MEMBERS_ONLY_IDS.includes(participant.id),
+  );
+  const ids = participants.map((participant) => participant.id);
+  const unique = new Set(ids);
+  const openedAt = new Date().toISOString();
+  const meetingId = `seedmeet_${crypto.randomBytes(4).toString("hex")}`;
+  const complete =
+    ids.length === SEED_IDS.length &&
+    unique.size === SEED_IDS.length &&
+    SEED_IDS.every((id) => unique.has(id)) &&
+    participants.every((participant) => participant.present && participant.name && participant.role) &&
+    participants.filter((participant) => participant.chair).map((participant) => participant.id).join() === "pusat";
+  const decision = {
+    id: `dec_${meetingId}`,
+    text: "Synthetic local minutes. No commercial execution.",
+    recordedBy: "pusat",
+    at: openedAt,
+    ...closedMeetingFlags(),
+  };
+  const opinions = participants.map((participant) => ({
+    speakerId: participant.id,
+    text: "Local opinion only. No execution.",
+    at: openedAt,
+    executed: false,
+  }));
+  const meeting = {
     ok: complete,
     synthetic: true,
     productionReady: false,
     productionClaim: false,
     salesEnabled: false,
+    liveNetwork: false,
+    agendaKey,
+    meetingId,
+    openedAt,
     chairId: "pusat",
     participants,
     count: participants.length,
     uniqueCount: unique.size,
+    opinions,
     decisions: [decision],
+    decisionHistory: [decision],
+    tasks: [],
+    duplicate: false,
     orderCreated: false,
     paymentCreated: false,
     purchased: false,
@@ -416,6 +456,67 @@ function holdSeedMeeting() {
     exported: false,
     deployed: false,
   };
+  seedMeetingLedger.set(agendaKey, meeting);
+  return meeting;
+}
+
+function seedMeetingRecord(meetingId) {
+  for (const meeting of seedMeetingLedger.values()) {
+    if (meeting.meetingId === meetingId) return meeting;
+  }
+  return null;
+}
+
+function recordSeedDecision({ meetingId, text, recordedBy = "pusat" } = {}) {
+  const meeting = seedMeetingRecord(meetingId);
+  if (!meeting) return { ok: false, code: "MEETING_NOT_FOUND", ...closedMeetingFlags(), recorded: false };
+  if (recordedBy !== "pusat") return { ok: false, code: "CHAIR_REQUIRED", ...closedMeetingFlags(), recorded: false };
+  if (meeting.decisions.some((decision) => decision.text === text)) {
+    return { ok: false, code: "DUPLICATE_DECISION", ...closedMeetingFlags(), recorded: false };
+  }
+  const entry = {
+    id: `dec_${crypto.randomBytes(4).toString("hex")}`,
+    text,
+    recordedBy,
+    at: new Date().toISOString(),
+    ...closedMeetingFlags(),
+  };
+  meeting.decisions.push(entry);
+  meeting.decisionHistory.push(entry);
+  return { ok: true, decision: entry, recorded: true, ...closedMeetingFlags() };
+}
+
+function assignFromSeedMeeting({ meetingId, fromId, assigneeId, title } = {}) {
+  const meeting = seedMeetingRecord(meetingId);
+  if (!meeting) return { ok: false, code: "MEETING_NOT_FOUND", assigned: false, ...closedMeetingFlags() };
+  if (fromId !== "pusat") return { ok: false, code: "PERMISSION_DENIED", assigned: false, created: false, ...closedMeetingFlags() };
+  const taskTitle = String(title || "seed meeting task");
+  if (meeting.tasks.some((task) => task.receiver === assigneeId && task.title === taskTitle)) {
+    return { ok: false, code: "DUPLICATE_ASSIGNMENT", assigned: false, created: false, ...closedMeetingFlags() };
+  }
+  const { createRouter } = require("../buzzardNative/core/taskRouter");
+  const routed = createRouter().assignNew({ fromId, assigneeId, title: taskTitle });
+  if (!routed.ok) return { ...routed, ...closedMeetingFlags(), executed: false };
+  const record = {
+    taskId: routed.taskId,
+    sender: routed.sender,
+    receiver: routed.receiver,
+    permission_scope: routed.permission_scope,
+    title: taskTitle,
+    at: new Date().toISOString(),
+    executed: false,
+  };
+  meeting.tasks.push(record);
+  meeting.decisionHistory.push({
+    id: `hist_${record.taskId}`,
+    kind: "assignment",
+    taskId: record.taskId,
+    sender: record.sender,
+    receiver: record.receiver,
+    at: record.at,
+    executed: false,
+  });
+  return { ok: true, assignment: record, permissionIncreased: false, ...closedMeetingFlags() };
 }
 
 function delegateWithinMeeting({ fromId, toId, permission } = {}) {
@@ -478,5 +579,7 @@ module.exports = {
   createTask,
   roster,
   holdSeedMeeting,
+  recordSeedDecision,
+  assignFromSeedMeeting,
   delegateWithinMeeting,
 };

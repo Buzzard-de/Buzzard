@@ -262,18 +262,20 @@ try {
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
-if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
-  const jobWorker = require("./lib/jobWorker");
-  const jobScheduler = require("./lib/jobScheduler");
-  jobWorker.setupGracefulShutdown();
-  jobWorker.startWorker({ pollIntervalMs: Number(process.env.BUZZARD_WORKER_POLL_MS) || 3000 });
-  setInterval(() => {
-    try {
-      jobScheduler.tickScheduler();
-    } catch (err) {
-      console.error("[scheduler] tick error:", err.message);
-    }
-  }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
+function resolveBackgroundStartup(env = process.env) {
+  const requested = env && Object.prototype.hasOwnProperty.call(env, "BUZZARD_WORKER_ENABLED")
+    ? env.BUZZARD_WORKER_ENABLED
+    : undefined;
+  return {
+    startWorker: false,
+    startScheduler: false,
+    requested,
+  };
+}
+
+const backgroundStartup = resolveBackgroundStartup();
+if (backgroundStartup.startWorker || backgroundStartup.startScheduler) {
+  throw new Error("background startup is closed");
 }
 
 const server = http.createServer(async (req, res) => {

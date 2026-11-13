@@ -142,19 +142,27 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     return { ok: true, started };
   }
 
-  function fail(id, { retry = true } = {}) {
+  function fail(id, { retry = true, reason = "FAILED" } = {}) {
     const row = tasks.get(id);
-    if (!row) return { ok: false, code: "NOT_FOUND" };
-    workers.inFlight = Math.max(0, workers.inFlight - 1);
+    if (!row) return { ok: false, code: "NOT_FOUND", completed: false, failed: false };
+    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false, failed: false, task: { ...row } };
+    if (row.state !== "RUNNING" && row.state !== "QUEUED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, failed: false, task: { ...row } };
+    }
+    if (row.state === "RUNNING") workers.inFlight = Math.max(0, workers.inFlight - 1);
+    const entry = { at: new Date(now()).toISOString(), reason: String(reason || "FAILED"), attempt: row.attempts, priorState: row.state };
+    row.failureHistory = [...(row.failureHistory || []), entry];
+    row.lastError = entry.reason;
+    row.completed = false;
     if (retry && row.attempts < row.maxAttempts) {
       row.state = "QUEUED";
-      auditPush({ event: "RETRY", id });
-      return { ok: true, task: { ...row } };
+      auditPush({ event: "RETRY", id, reason: entry.reason });
+      return { ok: true, failed: true, completed: false, retried: true, task: { ...row } };
     }
     row.state = "DEAD_LETTER";
-    deadLetters.push({ id, reason: "FAILED" });
-    auditPush({ event: "DEAD_LETTER", id });
-    return { ok: true, task: { ...row } };
+    deadLetters.push({ id, reason: entry.reason, at: entry.at });
+    auditPush({ event: "DEAD_LETTER", id, reason: entry.reason });
+    return { ok: true, failed: true, completed: false, deadLetter: true, task: { ...row } };
   }
 
   function timeout(id) {
@@ -166,8 +174,9 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     if (!row) return { ok: false, code: "NOT_FOUND" };
     if (row.state !== "DEAD_LETTER") return { ok: false, code: "NOT_DEAD_LETTER" };
     row.state = "QUEUED";
+    row.completed = false;
     auditPush({ event: "RECOVER", id });
-    return { ok: true, task: { ...row } };
+    return { ok: true, executed: false, task: { ...row } };
   }
 
   function markTests({ id, testsPassed, acceptancePassed }) {
@@ -181,7 +190,10 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
   function complete(id) {
     const row = tasks.get(id);
     if (!row) return { ok: false, code: "NOT_FOUND" };
-    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL" };
+    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false };
+    if (row.state === "DEAD_LETTER" || row.state === "REJECTED" || row.state === "COMPLETED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, task: { ...row } };
+    }
     if (!row.testsPassed || !row.acceptancePassed) {
       return { ok: false, code: "ACCEPTANCE_OR_TESTS_REQUIRED", completed: false };
     }

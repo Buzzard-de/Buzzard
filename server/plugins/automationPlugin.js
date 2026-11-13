@@ -53,13 +53,28 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.configure")) return;
       const action = req.params.action;
-      let state;
-      if (action === "start") state = jobWorker.startWorker();
-      else if (action === "pause") state = jobWorker.pauseWorker();
-      else if (action === "resume") state = jobWorker.resumeWorker();
-      else if (action === "stop") state = jobWorker.stopWorker();
-      else return res.status(400).json({ success: false, errorKey: "automation.invalidAction" });
-
+      if (action !== "pause" && action !== "stop") {
+        if (action === "start" || action === "resume") {
+          res.status(403).json({
+            success: false,
+            errorCode: "LEGACY_WORKER_START_BLOCKED",
+            queued: false,
+            executed: false,
+            salesOpen: false,
+            egressAllowed: false,
+            productionReady: false,
+            purchased: false,
+            moneyMoved: false,
+            refunded: false,
+            shipmentCreated: false,
+            orderChanged: false,
+          });
+          return;
+        }
+        res.status(400).json({ success: false, errorKey: "automation.invalidAction" });
+        return;
+      }
+      const state = action === "pause" ? jobWorker.pauseWorker() : jobWorker.stopWorker();
       logAuditFromRequest(req, {
         action: `worker.${action}`,
         entityType: "worker",
@@ -94,17 +109,25 @@ module.exports = {
     app.post("/api/admin/automation/jobs/:id/retry", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.configure")) return;
-      try {
-        const job = jobQueue.retryJob(req.params.id);
-        logAuditFromRequest(req, {
-          action: "job.retry",
-          entityType: "background_job",
-          entityId: req.params.id,
-        });
-        res.json({ success: true, job });
-      } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
+      const existing = jobQueue.getJob(req.params.id);
+      if (!existing) {
+        res.json({ success: true, job: null });
+        return;
       }
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_JOB_ENQUEUE_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
+      });
     });
 
     app.post("/api/admin/automation/jobs/:id/cancel", (req, res) => {
@@ -123,18 +146,20 @@ module.exports = {
     app.post("/api/admin/automation/jobs", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.configure")) return;
-      const job = jobQueue.enqueueJob({
-        jobType: req.body?.jobType || JOB_TYPES.SYSTEM_HEALTH,
-        payload: req.body?.payload || {},
-        priority: req.body?.priority,
-        createdBy: req.adminUser.email,
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_JOB_ENQUEUE_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      logAuditFromRequest(req, {
-        action: "job.enqueue",
-        entityType: "background_job",
-        entityId: job.id,
-      });
-      res.status(201).json({ success: true, job });
     });
 
     app.get("/api/admin/automation/schedules", (req, res) => {
@@ -146,16 +171,20 @@ module.exports = {
     app.post("/api/admin/automation/schedules", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.configure")) return;
-      const schedule = jobScheduler.createSchedule({
-        ...req.body,
-        createdBy: req.adminUser.email,
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_SCHEDULE_CREATE_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      logAuditFromRequest(req, {
-        action: "schedule.create",
-        entityType: "schedule",
-        entityId: schedule.id,
-      });
-      res.status(201).json({ success: true, schedule });
     });
 
     app.delete("/api/admin/automation/schedules/:id", (req, res) => {
@@ -188,27 +217,20 @@ module.exports = {
     app.post("/api/admin/automation/sync/:kind", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "sync.run")) return;
-      const kind = req.params.kind;
-      const typeMap = {
-        product: JOB_TYPES.PRODUCT_SYNC,
-        price: JOB_TYPES.PRICE_SYNC,
-        stock: JOB_TYPES.STOCK_SYNC,
-        supplier: JOB_TYPES.SUPPLIER_SYNC,
-      };
-      const jobType = typeMap[kind];
-      if (!jobType) return res.status(400).json({ success: false, errorKey: "sync.invalidKind" });
-      const job = jobQueue.enqueueJob({
-        jobType,
-        payload: { ...(req.body || {}), dryRun: true },
-        priority: req.body?.priority || "NORMAL",
-        createdBy: req.adminUser.email,
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_AUTOMATION_SYNC_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      logAuditFromRequest(req, {
-        action: `sync.${kind}.enqueue`,
-        entityType: "background_job",
-        entityId: job.id,
-      });
-      res.status(201).json({ success: true, job });
     });
 
     app.get("/api/admin/automation/readiness/:categoryId", async (req, res) => {

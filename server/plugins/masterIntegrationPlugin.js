@@ -87,11 +87,16 @@ module.exports = {
       if (!requirePermission(req, res, "products.read")) return;
       const body = req.body || {};
       const idempotencyKey = body.idempotencyKey || req.headers["idempotency-key"] || null;
+      const payload = body.payload && typeof body.payload === "object" && !Array.isArray(body.payload)
+        ? { ...body.payload }
+        : {};
+      delete payload.deciderId;
       try {
         const outcome = await pusat.dispatch({
           action: body.action,
-          payload: body.payload || {},
+          payload,
           actorId: req.adminUser?.email || req.adminUser?.userId,
+          sessionRole: req.adminUser?.role || null,
           correlationId: req.correlationId || body.correlationId,
           idempotencyKey,
         });

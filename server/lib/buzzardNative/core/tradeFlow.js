@@ -20,8 +20,8 @@ const TASK_KINDS = Object.freeze([
 function runImportToEuCustomer({ sku = "cotton_tshirt", origin = "TR", destination = "FR", sellerCountry = "DE", net = 100 } = {}) {
   const router = createRouter();
   const created = router.create({ title: "import to EU customer", fromId: "pusat", kind: "TRADE_COMPLIANCE_REVIEW" });
-  router.assign({ taskId: created.task.id, agentId: "tuncay_bey" });
-  router.assign({ taskId: created.task.id, agentId: "nedim_bey" });
+  router.assign({ taskId: created.task.id, agentId: "tuncay_bey", fromId: "pusat" });
+  router.assign({ taskId: created.task.id, agentId: "nedim_bey", fromId: "pusat" });
   const customs = screen({
     actorId: "tuncay_bey",
     sku,

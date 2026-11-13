@@ -18,6 +18,19 @@ function gate(name, status, detail, extras = {}) {
   return { gate: name, status, detail, ...extras };
 }
 
+function workersReadiness(worker) {
+  const report = worker && typeof worker === "object" ? worker : {};
+  const status = typeof report.status === "string" && report.status.trim() ? report.status.trim() : "UNKNOWN";
+  const storedStatus = typeof report.storedStatus === "string" && report.storedStatus.trim() ? report.storedStatus.trim() : null;
+  const runtimeVerified = report.runtimeVerified === true;
+  const verifiedRunning = runtimeVerified && status === "RUNNING";
+  return {
+    verifiedRunning,
+    gateStatus: verifiedRunning ? READINESS_GATE_STATUS.PASS : READINESS_GATE_STATUS.CONDITION,
+    detail: `status=${status} storedStatus=${storedStatus || "none"} runtimeVerified=${runtimeVerified} queued=${report.queue?.queued ?? 0}`,
+  };
+}
+
 async function evaluateGoLiveReadiness() {
   const gates = [];
   const flags = getEffectiveFlags();
@@ -104,14 +117,8 @@ async function evaluateGoLiveReadiness() {
     )
   );
 
-  const worker = getWorkerHealth();
-  gates.push(
-    gate(
-      "WORKERS",
-      worker.enabled ? READINESS_GATE_STATUS.PASS : READINESS_GATE_STATUS.CONDITION,
-      `status=${worker.status} queued=${worker.queue?.queued ?? 0}`
-    )
-  );
+  const workers = workersReadiness(getWorkerHealth());
+  gates.push(gate("WORKERS", workers.gateStatus, workers.detail));
 
   gates.push(
     gate("MONITORING", READINESS_GATE_STATUS.PASS, "/api/health/production available")
@@ -140,6 +147,7 @@ async function evaluateGoLiveReadiness() {
   let overall = "READY";
   if (failCount > 0 || blockedCount > 0) overall = "NOT_READY";
   else if (conditionCount > 0) overall = "CONDITION";
+  if (overall === "READY" && !workers.verifiedRunning) overall = "CONDITION";
 
   return {
     overall,

@@ -9,6 +9,7 @@ const os = require("os");
 const path = require("path");
 const { createRequire } = require("module");
 const { createMultiMemory } = require("../buzzardNative/core/multiMemory");
+const { getAgentExact } = require("../buzzardNative/core/identityRegistry");
 const { assertNotGuardian } = require("../pusat/durableTaskQueue");
 
 const SKEW_MS = 300_000;
@@ -148,7 +149,7 @@ function createWhatsappSandbox({ dbPath } = {}) {
       return { ok: false, code: "REPLAY", sent: false, eventId, conversationId };
     }
 
-    mem.put({
+    const stored = mem.put({
       actorId: "banu_hanim",
       ownerId: "banu_hanim",
       type: "personal",
@@ -164,7 +165,7 @@ function createWhatsappSandbox({ dbPath } = {}) {
       hmacIsSignature: false,
       eventId,
       conversationId,
-      namespace: "memory/banu/",
+      namespace: stored.namespace || getAgentExact("banu_hanim").memory_namespace,
       ownerId: bound.owner_id,
       normalized: { from, text },
       outbound: send(),

@@ -40,51 +40,93 @@ async function getRedisHealth() {
   }
 }
 
+function configurationIntent(name) {
+  const requested = Object.prototype.hasOwnProperty.call(process.env, name) ? process.env[name] : null;
+  return { requested, autoStart: false, honored: false };
+}
+
+function readWorkerRuntime() {
+  const jobWorker = require("./jobWorker");
+  const state = jobWorker.getWorkerState() || {};
+  const storedStatus = typeof state.status === "string" ? state.status : null;
+  const verified = storedStatus === "STOPPED" || storedStatus === "PAUSED";
+  return {
+    status: verified ? storedStatus : "UNKNOWN",
+    runtimeVerified: verified,
+    storedStatus,
+    workerId: state.workerId ?? null,
+    jobsProcessed: state.jobsProcessed ?? null,
+    lastTickAt: state.lastTickAt ?? null,
+  };
+}
+
+function readQueueCounts() {
+  const { db } = require("./db");
+  const count = (sql) => db.prepare(sql).get().n;
+  return {
+    queued: count("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('QUEUED','RETRYING','queued','retrying')"),
+    failed: count("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('FAILED','failed')"),
+    deadLetter: count("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('DEAD_LETTER','dead_letter')"),
+  };
+}
+
 function getWorkerHealth() {
+  const report = {
+    enabled: false,
+    autoStart: false,
+    status: "UNKNOWN",
+    runtimeVerified: false,
+    storedStatus: null,
+    configurationIntent: configurationIntent("BUZZARD_WORKER_ENABLED"),
+    workerId: null,
+    jobsProcessed: null,
+    lastTickAt: null,
+    queue: null,
+    supplierOrdersBlocked: !isSalesEnabled(),
+  };
   try {
-    const jobWorker = require("./jobWorker");
-    const state = jobWorker.getWorkerState();
-    const { db } = require("./db");
-    const queued = db
-      .prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('QUEUED','RETRYING','queued','retrying')")
-      .get().n;
-    const failed = db
-      .prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('FAILED','failed')")
-      .get().n;
-    const deadLetter = db
-      .prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('DEAD_LETTER','dead_letter')")
-      .get().n;
-    return {
-      enabled: process.env.BUZZARD_WORKER_ENABLED !== "0",
-      status: state.status,
-      workerId: state.workerId,
-      jobsProcessed: state.jobsProcessed,
-      lastTickAt: state.lastTickAt,
-      queue: { queued, failed, deadLetter },
-      supplierOrdersBlocked: !isSalesEnabled(),
-    };
+    Object.assign(report, readWorkerRuntime());
   } catch (err) {
-    return { enabled: false, status: "ERROR", error: err.message };
+    report.status = "UNKNOWN";
+    report.runtimeVerified = false;
+    report.error = err.message;
   }
+  try {
+    report.queue = readQueueCounts();
+  } catch (err) {
+    report.queue = null;
+    report.queueError = err.message;
+  }
+  if (report.status === "RUNNING") report.status = "UNKNOWN";
+  return report;
 }
 
 function getSchedulerHealth() {
+  const report = {
+    enabled: false,
+    autoStart: false,
+    status: "UNKNOWN",
+    runtimeVerified: false,
+    configurationIntent: configurationIntent("BUZZARD_SCHEDULER_ENABLED"),
+    total: null,
+    enabledCount: null,
+    nextRuns: [],
+  };
   try {
     const { listSchedules } = require("./jobScheduler");
-    const schedules = listSchedules({ limit: 100 });
-    const enabled = schedules.filter((s) => s.enabled).length;
-    return {
-      enabled: true,
-      total: schedules.length,
-      enabledCount: enabled,
-      nextRuns: schedules
-        .filter((s) => s.enabled && s.nextRunAt)
-        .slice(0, 5)
-        .map((s) => ({ id: s.id, name: s.name, nextRunAt: s.nextRunAt })),
-    };
+    const schedules = listSchedules({ limit: 100 }) || [];
+    const enabledRows = schedules.filter((s) => s.enabled);
+    report.total = schedules.length;
+    report.enabledCount = enabledRows.length;
+    report.nextRuns = enabledRows
+      .filter((s) => s.nextRunAt)
+      .slice(0, 5)
+      .map((s) => ({ id: s.id, name: s.name, nextRunAt: s.nextRunAt }));
   } catch (err) {
-    return { enabled: false, error: err.message };
+    report.status = "UNKNOWN";
+    report.error = err.message;
   }
+  return report;
 }
 
 async function getAiHealthSummary() {

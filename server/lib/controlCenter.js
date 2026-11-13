@@ -215,6 +215,13 @@ function getAiEmployee(id) {
 }
 
 function updateAiEmployeeStatus(id, status) {
+  if (!Object.values(AI_EMPLOYEE_STATUS).includes(status)) {
+    const error = new Error("Invalid AI employee status");
+    error.code = "AI_EMPLOYEE_STATUS_INVALID";
+    throw error;
+  }
+  const existing = db.prepare("SELECT id FROM core_ai_employees WHERE id = ?").get(id);
+  if (!existing) return null;
   db.prepare(`
     UPDATE core_ai_employees SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
   `).run(status, id);

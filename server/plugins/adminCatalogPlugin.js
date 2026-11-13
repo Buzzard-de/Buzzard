@@ -238,9 +238,20 @@ module.exports = {
     app.post("/api/admin/sync/retry", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "sync.run")) return;
-      const result = importPipeline.retryImportLog(req.body?.logId);
-      if (!result) return res.status(404).json({ success: false, errorKey: "admin.sync.retryNotFound" });
-      return res.json({ success: true, job: result });
+      return res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_SYNC_RETRY_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
+      });
     });
 
     app.get("/api/admin/orders", (req, res) => {

@@ -3,7 +3,9 @@
  * Default OFF. No domain invention. No money/supplier writes.
  */
 const crypto = require("crypto");
+const path = require("path");
 const { MODE, label } = require("../integrationMode");
+const { can } = require("../rbac");
 const productService = require("../productService");
 const inventory = require("../commerce/inventoryIntegration");
 const pricing = require("../commerce/pricingIntegration");
@@ -271,7 +273,81 @@ function executeEsat(action, payload, { actorId, correlationId }) {
   return null;
 }
 
-function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null } = {}) {
+function commerceClosed() {
+  return {
+    salesOpen: false,
+    egressAllowed: false,
+    productionReady: false,
+    executed: false,
+    purchased: false,
+    moneyMoved: false,
+    refunded: false,
+    shipmentCreated: false,
+    orderChanged: false,
+  };
+}
+
+function protectedApprovalPath(dbPath) {
+  if (!dbPath) return false;
+  const resolved = path.resolve(String(dbPath));
+  const base = path.basename(resolved);
+  if (base === "buzzard.db" || base.startsWith("buzzard_guardian")) return true;
+  return resolved.includes(`${path.sep}server${path.sep}data${path.sep}`);
+}
+
+function resolveServerDecider(sessionRole) {
+  if (!sessionRole || !can(sessionRole, "ai.execute")) {
+    return { ok: false, code: "PERMISSION_DENIED" };
+  }
+  return { ok: true, actorId: "operator" };
+}
+
+function decideOrchestrationApproval(payload, { correlationId, sessionRole }) {
+  const action = ACTIONS.ORCHESTRATE_APPROVE;
+  const decision = resolveServerDecider(sessionRole);
+  if (!decision.ok) {
+    return {
+      ok: false,
+      code: "PERMISSION_DENIED",
+      action,
+      actorId: null,
+      correlationId,
+      data: { ok: false, code: "PERMISSION_DENIED", changed: false },
+      ...commerceClosed(),
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (protectedApprovalPath(payload.dbPath)) {
+    return {
+      ok: false,
+      code: "DATA_PATH_REFUSED",
+      action,
+      actorId: decision.actorId,
+      correlationId,
+      data: { ok: false, code: "DATA_PATH_REFUSED", changed: false },
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
+  const { getOrchestrator } = require("./orchRuntime");
+  const orch = getOrchestrator({ dbPath: payload.dbPath });
+  const decided = orch.approvals.decide({
+    id: payload.approvalId,
+    approved: payload.approved !== false,
+    actorId: decision.actorId,
+  });
+  return {
+    ok: decided.ok,
+    action,
+    data: decided,
+    actorId: decision.actorId,
+    correlationId,
+    ...commerceClosed(),
+    ...label(MODE.DRY_RUN),
+  };
+}
+
+function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null, sessionRole = null } = {}) {
   const esatResult = executeEsat(action, payload, { actorId, correlationId });
   if (esatResult) return esatResult;
 
@@ -414,13 +490,28 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
   }
 
   if (CONTROL_ACTIONS.includes(action)) {
-    return executeControl(action, payload, { actorId, correlationId: corr });
+    return executeControl(action, payload, { actorId, correlationId: corr, sessionRole });
   }
 
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };
 }
 
-function executeControl(action, payload, { actorId, correlationId }) {
+function executeControl(action, payload, { actorId, correlationId, sessionRole = null }) {
+  if (action === ACTIONS.ORCHESTRATE_TICK) {
+    return {
+      ok: false,
+      code: "LEGACY_ORCHESTRATION_TICK_BLOCKED",
+      action,
+      actorId,
+      correlationId,
+      scheduled: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
+    return decideOrchestrationApproval(payload, { correlationId, sessionRole });
+  }
   const store = getDurable();
   if (action === ACTIONS.GET_COUNCIL) {
     return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
@@ -901,39 +992,6 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ...label(MODE.DRY_RUN),
     };
   }
-  if (action === ACTIONS.ORCHESTRATE_TICK) {
-    const { getOrchestrator } = require("./orchRuntime");
-    const orch = getOrchestrator({ dbPath: payload.dbPath });
-    if (payload.schedule) orch.schedule(payload.schedule);
-    const ran = payload.coordinate
-      ? orch.coordinateCouncil({ kind: payload.kind || "THINK" })
-      : orch.tick({ limit: payload.limit || 8 });
-    return {
-      ok: true,
-      action,
-      data: { ...ran, status: orch.status(), live: false, hostedFactory: false, dbPath: orch.queue.dbPath },
-      actorId,
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
-    const { getOrchestrator } = require("./orchRuntime");
-    const orch = getOrchestrator({ dbPath: payload.dbPath });
-    const decided = orch.approvals.decide({
-      id: payload.approvalId,
-      approved: payload.approved !== false,
-      actorId: payload.deciderId || actorId,
-    });
-    return {
-      ok: decided.ok,
-      action,
-      data: decided,
-      actorId,
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
   if (action === ACTIONS.TEN_AGENT_COUNCIL) {
     return {
       ok: true,
@@ -987,8 +1045,9 @@ async function dispatch({
   actorId = null,
   correlationId = null,
   idempotencyKey = null,
+  sessionRole = null,
 } = {}) {
-  const run = () => executeReadOnly(action, payload, { actorId, correlationId });
+  const run = () => executeReadOnly(action, payload, { actorId, correlationId, sessionRole });
   if (!idempotencyKey) {
     const result = run();
     return { replayed: false, result };

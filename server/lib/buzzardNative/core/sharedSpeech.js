@@ -6,18 +6,42 @@ function speak({ agentId, text, lang = "tr" }) {
   const agent = getAgent(agentId);
   if (!agent) return { ok: false, code: "UNKNOWN_AGENT" };
   if (!canUse(agentId, "speech")) return { ok: false, code: "CAPABILITY_DENIED" };
+  const profile = agent.voice_profile || {};
+  const official = profile.officialSinan === true && profile.status === "REFERENCE_REGISTERED";
+  if (!official) {
+    return {
+      ok: false,
+      code: "VOICE_NOT_CONFIGURED",
+      agentId,
+      voice_profile_id: profile.voice_profile_id || null,
+      voiceStatus: profile.status || "NOT_CONFIGURED",
+      officialVoiceUsed: false,
+      cloneAuthorized: false,
+      mixedWithSinan: false,
+      live: false,
+      ready: false,
+      ttsReady: false,
+      serviceConnected: false,
+      audioProduced: false,
+    };
+  }
   const proto = protoSynth({ text, lang });
-  const official = agent.voice_profile.officialSinan === true;
   return {
-    ok: true,
+    ok: proto.ok === true,
+    code: proto.ok === true ? "LOCAL_PROTO_NOT_SERVICE" : "MEASURED_F0_ABSENT",
     agentId,
-    voice_profile_id: agent.voice_profile.voice_profile_id,
-    voiceStatus: agent.voice_profile.status,
+    voice_profile_id: profile.voice_profile_id,
+    voiceStatus: profile.status,
     officialVoiceUsed: false,
     cloneAuthorized: false,
     mixedWithSinan: false,
-    proto: official ? proto : { ...proto, hz: agentId === "sinan_bey" ? proto.hz : 190 },
-    kind: official ? proto.kind : "PROTO_TONE_NOT_CHARACTER_VOICE",
+    proto,
+    kind: proto.kind,
+    live: false,
+    ready: false,
+    ttsReady: false,
+    serviceConnected: false,
+    codePresent: true,
   };
 }
 

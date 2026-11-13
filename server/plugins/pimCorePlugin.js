@@ -19,8 +19,6 @@ const productAudit = require("../lib/pim/productAudit");
 const qualityScore = require("../lib/pim/qualityScore");
 const bulkOperations = require("../lib/pim/bulkOperations");
 const productAiFoundation = require("../lib/pim/productAiFoundation");
-const jobQueue = require("../lib/jobQueue");
-const { JOB_TYPES_PIM } = require("../core/productConstants");
 
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
@@ -152,8 +150,24 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "imports.run")) return;
       const dryRun = req.body?.dryRun !== false;
+      if (!dryRun) {
+        return res.status(403).json({
+          success: false,
+          errorCode: "LEGACY_PIM_LIVE_IMPORT_BLOCKED",
+          queued: false,
+          executed: false,
+          salesOpen: false,
+          egressAllowed: false,
+          productionReady: false,
+          purchased: false,
+          moneyMoved: false,
+          refunded: false,
+          shipmentCreated: false,
+          orderChanged: false,
+        });
+      }
       try {
-        adminSafetyGate.requireAdminAction(dryRun ? "import" : "import_live", { req, body: req.body, dryRun });
+        adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun });
       } catch (err) {
         return res.status(403).json({ success: false, error: err.code, message: err.message, details: err.details });
       }
@@ -178,22 +192,20 @@ module.exports = {
     app.post("/api/admin/pim-core/import/enqueue", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "imports.run")) return;
-      try {
-        adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: req.body?.dryRun !== false });
-      } catch (err) {
-        return res.status(403).json({ success: false, error: err.code, message: err.message });
-      }
-      const job = jobQueue.enqueueJob({
-        jobType: JOB_TYPES_PIM.PRODUCT_IMPORT,
-        payload: { raw: req.body?.raw || req.body, dryRun: req.body?.dryRun !== false },
-        createdBy: req.adminUser.email,
-        idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
-        correlationId: req.correlationId,
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_JOB_ENQUEUE_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      if (job.duplicate) {
-        return res.status(200).json({ success: true, duplicate: true, ...job });
-      }
-      res.status(201).json({ success: true, job });
     });
 
     app.get("/api/admin/pim-core/search", (req, res) => {

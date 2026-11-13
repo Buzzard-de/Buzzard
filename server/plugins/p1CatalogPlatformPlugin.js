@@ -12,7 +12,6 @@ const productAi = require("../lib/productAi");
 const customsAi = require("../lib/customsAi");
 const categoryIntelligence = require("../lib/categoryIntelligence");
 const p1Platform = require("../lib/p1CatalogPlatform");
-const importPipeline = require("../lib/importPipeline");
 const supplierStore = require("../lib/supplierStore");
 const seoGooglePrep = require("../lib/seoGooglePrep");
 const i18nCatalog = require("../lib/i18nCatalog");
@@ -56,16 +55,20 @@ module.exports = {
     app.post("/api/admin/p1/adapters/:adapterId/import", async (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "imports.run")) return;
-      const supplierId = req.body?.supplierId || "SUP-DEMO-001";
-      if (!supplierStore.getSupplier(supplierId)) {
-        return res.status(400).json({ success: false, errorKey: "admin.supplier.notFound" });
-      }
-      const fetched = await supplierAdapter.fetchCatalog(req.params.adapterId || "mock", req.body || {});
-      if (!fetched.records?.length) {
-        return res.json({ success: true, imported: 0, message: "No mock records to import." });
-      }
-      const job = importPipeline.processRecords(fetched.records, supplierId, { mode: "mock_adapter" });
-      return res.json({ success: true, job, mock: true });
+      return res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_P1_CATALOG_IMPORT_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
+      });
     });
 
     app.get("/api/admin/p1/tecdoc/vehicles", (req, res) => {

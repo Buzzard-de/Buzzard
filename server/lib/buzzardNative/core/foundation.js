@@ -35,9 +35,9 @@ function runFoundation({ actorId = "sinan_bey" } = {}) {
   const priv = bus.send({ sender: "sinan_bey", receiver: "amelia", type: "note", permission_scope: "personal_memory" });
   const router = createRouter();
   const task = router.create({ title: "research payments locally", fromId: "pusat" });
-  router.assign({ taskId: task.task.id, agentId: "dogu_bey" });
-  router.assign({ taskId: task.task.id, agentId: "sinan_bey" });
-  router.assign({ taskId: task.task.id, agentId: "esat_bey" });
+  router.assign({ taskId: task.task.id, agentId: "dogu_bey", fromId: "pusat" });
+  router.assign({ taskId: task.task.id, agentId: "sinan_bey", fromId: "pusat" });
+  router.assign({ taskId: task.task.id, agentId: "esat_bey", fromId: "pusat" });
   const ran = router.runAssigned(task.task.id);
   const snap = router.snapshot();
   const router2 = createRouter({ seed: snap });

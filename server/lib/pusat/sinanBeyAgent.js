@@ -291,8 +291,16 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
       stt: voice.stt,
       tts: voice.tts,
       liveCalls: false,
+      voice: voice.voice,
+      sttStatus: voice.sttStatus,
+      ttsStatus: voice.ttsStatus,
+      phone: voice.phone,
+      liveNetwork: voice.liveNetwork,
       providers: providerAdapters(),
-      status: "CODE_READY",
+      codeStatus: "CODE_READY",
+      status: "NOT_CONFIGURED",
+      reachable: false,
+      codeReadyIsLive: false,
       completeClaim: false,
     };
   }

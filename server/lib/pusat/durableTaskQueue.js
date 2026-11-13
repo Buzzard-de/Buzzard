@@ -125,8 +125,25 @@ function createDurableTaskQueue({ dbPath }) {
       leaseOwner: row.lease_owner,
       identitiesMerged: false,
       live: false,
+      completed: row.state === "COMPLETED",
       payload: JSON.parse(row.payload_json || "{}"),
     };
+  }
+
+  function withFailure(task, reason) {
+    const payload = { ...(task.payload || {}) };
+    const history = Array.isArray(payload.failureHistory) ? payload.failureHistory.slice() : [];
+    const entry = {
+      at: new Date().toISOString(),
+      reason: String(reason || "FAILED"),
+      attempt: task.attempts,
+      priorState: task.state,
+    };
+    history.push(entry);
+    payload.failureHistory = history;
+    payload.lastError = entry.reason;
+    payload.completed = false;
+    return payload;
   }
 
   function enqueue({
@@ -340,15 +357,18 @@ function createDurableTaskQueue({ dbPath }) {
 
   function complete(id) {
     const task = get(id);
-    if (!task) return { ok: false, code: "NOT_FOUND" };
-    if (task.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL" };
+    if (!task) return { ok: false, code: "NOT_FOUND", completed: false };
+    if (task.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false };
+    if (task.state === "DEAD_LETTER" || task.state === "REJECTED" || task.state === "COMPLETED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, task };
+    }
     if (!task.testsPassed || !task.acceptancePassed) {
       return { ok: false, code: "ACCEPTANCE_OR_TESTS_REQUIRED", completed: false };
     }
-    db.prepare(`UPDATE orch_tasks SET state = 'COMPLETED', lease_owner = NULL, updated_at = ? WHERE id = ?`).run(
-      new Date().toISOString(),
-      id
-    );
+    const info = db.prepare(
+      `UPDATE orch_tasks SET state = 'COMPLETED', lease_owner = NULL, updated_at = ? WHERE id = ? AND state IN ('RUNNING','QUEUED')`
+    ).run(new Date().toISOString(), id);
+    if (info.changes !== 1) return { ok: false, code: "TERMINAL_STATE", completed: false, task: get(id) };
     audit(id, "COMPLETE", {});
     return { ok: true, task: get(id) };
   }
@@ -363,26 +383,40 @@ function createDurableTaskQueue({ dbPath }) {
 
   function fail(id, { reason = "FAILED" } = {}) {
     const task = get(id);
-    if (!task) return { ok: false, code: "NOT_FOUND" };
-    if (task.attempts >= task.maxAttempts) {
-      db.prepare(`UPDATE orch_tasks SET state = 'DEAD_LETTER', lease_owner = NULL, updated_at = ? WHERE id = ?`).run(
-        new Date().toISOString(),
-        id
-      );
+    if (!task) return { ok: false, code: "NOT_FOUND", completed: false, failed: false };
+    if (task.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false, failed: false, task };
+    if (task.state !== "RUNNING" && task.state !== "QUEUED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, failed: false, task };
+    }
+    const payload = withFailure(task, reason);
+    const dead = task.attempts >= task.maxAttempts;
+    const nextState = dead ? "DEAD_LETTER" : "QUEUED";
+    const info = db.prepare(
+      `UPDATE orch_tasks SET state = ?, lease_owner = NULL, payload_json = ?, updated_at = ? WHERE id = ? AND state = ?`
+    ).run(nextState, JSON.stringify(payload), new Date().toISOString(), id, task.state);
+    if (info.changes !== 1) return { ok: false, code: "STATE_CHANGED", completed: false, failed: false, task: get(id) };
+    if (dead) {
       db.prepare(`INSERT OR REPLACE INTO orch_dead (task_id, reason, at) VALUES (?,?,?)`).run(
         id,
-        reason,
+        payload.lastError,
         new Date().toISOString()
       );
-      audit(id, "DEAD_LETTER", { reason });
-      return { ok: true, task: get(id) };
+      audit(id, "DEAD_LETTER", { reason: payload.lastError, attempt: task.attempts });
+    } else {
+      audit(id, "RETRY", { reason: payload.lastError, attempt: task.attempts });
     }
-    db.prepare(`UPDATE orch_tasks SET state = 'QUEUED', lease_owner = NULL, updated_at = ? WHERE id = ?`).run(
-      new Date().toISOString(),
-      id
-    );
-    audit(id, "RETRY", { reason });
-    return { ok: true, task: get(id) };
+    return { ok: true, failed: true, completed: false, deadLetter: dead, retried: !dead, task: get(id) };
+  }
+
+  function listDeadLetters() {
+    return db.prepare(`SELECT task_id AS taskId, reason, at FROM orch_dead ORDER BY at ASC`).all();
+  }
+
+  function listAudit(taskId) {
+    return db
+      .prepare(`SELECT task_id AS taskId, event, at, detail FROM orch_audit WHERE task_id = ? ORDER BY id ASC`)
+      .all(taskId)
+      .map((row) => ({ ...row, detail: row.detail ? JSON.parse(row.detail) : null }));
   }
 
   function setPayload(id, payload) {
@@ -543,6 +577,8 @@ function createDurableTaskQueue({ dbPath }) {
     markTests,
     complete,
     fail,
+    listDeadLetters,
+    listAudit,
     block,
     setPayload,
     health,

@@ -5,6 +5,8 @@
 const permission = require("../buzzardNative/core/permissionEngine");
 const { evaluateOffer, selectTransportCost } = require("./pricingPolicy");
 const { decideAsset } = require("../banking/eu27/fiatPolicy");
+const { methodsForCountry, isVerifiedMethod } = require("../banking/eu27/payments");
+const { route } = require("../banking/eu27/routing");
 const { deriveStockStatus } = require("../operations/stockEngine");
 const { buyStock, paySupplier, inspectFeeds } = require("../buzzardNative/core/specialists/stockEngine");
 const { reply, refund } = require("../buzzardNative/core/specialists/banuEngine");
@@ -78,7 +80,16 @@ function sensitiveOperation(engineId, input) {
   if (engineId === "order" && (flagged || action === "create" || action === "place")) return spec(SENSITIVE.order, { orderCreated: false, paymentAuthorized: false });
   if (engineId === "inventory" && (flagged || action === "buy")) return spec(SENSITIVE.inventory, { purchased: false, stockChanged: false });
   if (engineId === "supplier" && (flagged || action === "pay")) return spec(SENSITIVE.supplier, { purchased: false });
-  if (engineId === "payment" && (flagged || action === "capture")) return spec(SENSITIVE.payment, { captured: false, cardStored: false });
+  if (engineId === "payment" && (flagged || action === "capture" || action === "pay" || action === "charge")) {
+    return spec(SENSITIVE.payment, {
+      captured: false,
+      paymentCaptured: false,
+      moneyMoved: false,
+      sandboxConnected: false,
+      cardStored: false,
+      live: false,
+    });
+  }
   if (engineId === "shipping" && (flagged || action === "create" || action === "ship")) return spec(SENSITIVE.shipping, { shipmentCreated: false });
   if (engineId === "customer" && (flagged || action === "export")) return spec(SENSITIVE.customer, { exported: false });
   if (engineId === "returns" && (flagged || action === "refund" || action === "execute")) return spec(SENSITIVE.returns, { customerRefund: null, supplierCredit: null, labelIssued: false });
@@ -166,10 +177,95 @@ function runShipping(input) {
   };
 }
 
+function paymentClosure(result) {
+  return {
+    ...result,
+    captured: false,
+    paymentCaptured: false,
+    cardStored: false,
+    live: false,
+    moneyMoved: false,
+    provider: null,
+    sandboxConnected: false,
+    salesEnabled: isSalesEnabled(),
+  };
+}
+
+function closeCollection(engineId, input, result) {
+  const action = input && typeof input.action === "string" ? input.action : "";
+  if (engineId !== "payment" || (action !== "capture" && action !== "pay" && action !== "charge")) return result;
+  return {
+    ...result,
+    captured: false,
+    paymentCaptured: false,
+    moneyMoved: false,
+    sandboxConnected: false,
+    performed: false,
+    live: false,
+  };
+}
+
 function runPayment(input) {
-  if (input.action === "capture") return { ok: false, code: "PAYMENT_NOT_LIVE", captured: false, paymentCaptured: false, cardStored: false, live: false };
+  const action = typeof input.action === "string" ? input.action : "";
+  if (action === "capture" || action === "pay" || action === "charge") {
+    return paymentClosure({ ok: false, code: "PAYMENT_NOT_LIVE", performed: false });
+  }
+  const country = String(input.country || input.countryCode || "").toUpperCase();
   const asset = decideAsset({ currency: input.currency, assetType: input.assetType });
-  return { ok: asset.code === "FIAT_ACCEPTED", code: asset.code, captured: false, paymentCaptured: false, cardStored: false, live: false };
+  if (input.action === "methods") {
+    if (!EU_COUNTRY_CODES.has(country)) return paymentClosure({ ok: false, code: "UNKNOWN_MARKET", country: country || null, currency: null });
+    const market = getMarket(country);
+    return paymentClosure({
+      ok: true,
+      code: "METHOD_CATALOGUE",
+      country,
+      currency: market ? market.currency : null,
+      methods: methodsForCountry(country),
+    });
+  }
+  if (input.action === "route") {
+    if (!EU_COUNTRY_CODES.has(country)) return paymentClosure({ ok: false, code: "UNKNOWN_MARKET", country: country || null });
+    const market = getMarket(country);
+    const expected = market && market.currency ? String(market.currency).toUpperCase() : null;
+    if (!asset.ok) return paymentClosure({ ok: false, code: asset.code, country, currency: asset.currency || null, expectedCurrency: expected });
+    if (!expected || asset.currency !== expected) {
+      return paymentClosure({
+        ok: false,
+        code: "CURRENCY_COUNTRY_MISMATCH",
+        country,
+        currency: asset.currency,
+        expectedCurrency: expected,
+        assetDecision: asset.code,
+      });
+    }
+    const method = isVerifiedMethod(country, input.methodId);
+    const searched = route({
+      countryCode: country,
+      currency: asset.currency,
+      methodId: input.methodId,
+      assetType: "fiat",
+      candidates: [],
+      sandboxMethodOverride: false,
+    });
+    const code = searched.code === "SANDBOX_ROUTE" ? "NO_ELIGIBLE_PROVIDER" : searched.code;
+    return paymentClosure({
+      ok: false,
+      code,
+      country,
+      currency: asset.currency,
+      expectedCurrency: expected,
+      methodId: input.methodId || null,
+      methodCode: method.code || searched.code,
+      verificationStatus: method.method ? method.method.verificationStatus : "UNVERIFIED",
+      assetDecision: asset.code,
+    });
+  }
+  return paymentClosure({
+    ok: asset.code === "FIAT_ACCEPTED",
+    code: asset.code,
+    currency: asset.currency || null,
+    assetDecision: asset.code,
+  });
 }
 
 function runMarket(input) {
@@ -246,33 +342,34 @@ const RUNNERS = {
 function callEngine(engineId, input = {}, options = {}) {
   const started = Date.now();
   const id = String(engineId || "");
+  const finish = (result) => closeCollection(id, input, result);
   if (!ENGINE_IDS.includes(id)) {
     const missing = { ok: false, code: "UNKNOWN_ENGINE", engineId: id, live: false };
     audit({ engineId: id, code: missing.code, ok: false });
-    return missing;
+    return finish(missing);
   }
   if (options.deadlineMs != null && Date.now() > Number(options.deadlineMs)) {
     const late = { ok: false, code: "TIMEOUT", engineId: id, live: false, elapsedMs: 0 };
     audit({ engineId: id, code: late.code, actorId: input.actorId || null, ok: false });
-    return late;
+    return finish(late);
   }
   const actor = actorOk(input.actorId);
   const operation = sensitiveOperation(id, input);
   if (!actor.ok) {
     audit({ engineId: id, code: actor.code, actorId: input.actorId || null, ok: false });
-    if (operation) return rejectSensitive(id, input.actorId, actor.code, operation);
-    return { ok: false, code: actor.code, engineId: id, live: false };
+    if (operation) return finish(rejectSensitive(id, input.actorId, actor.code, operation));
+    return finish({ ok: false, code: actor.code, engineId: id, live: false });
   }
   const key = input.idempotencyKey ? `${id}:${input.idempotencyKey}` : null;
   if (key && idempotency.has(key)) {
-    return { ...idempotency.get(key), replay: true, elapsedMs: Date.now() - started };
+    return finish({ ...idempotency.get(key), replay: true, elapsedMs: Date.now() - started });
   }
   if (operation) {
     const gate = permission.check(input.actorId, operation.permission);
     const blocked = rejectSensitive(id, actor.agentId, gate.ok ? "LIVE_ACTION_CLOSED" : gate.code, operation);
     audit({ engineId: id, code: blocked.code, actorId: actor.agentId, ok: false });
     if (key) idempotency.set(key, blocked);
-    return blocked;
+    return finish(blocked);
   }
   let result;
   try {
@@ -291,7 +388,7 @@ function callEngine(engineId, input = {}, options = {}) {
   };
   audit({ engineId: id, code: envelope.code, actorId: actor.agentId, ok: envelope.ok === true });
   if (key) idempotency.set(key, envelope);
-  return envelope;
+  return finish(envelope);
 }
 
 function runChain(input = {}, options = {}) {

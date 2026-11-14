@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const { createRequire } = require("module");
 const { SECTIONS, encodeRecord } = require("./sinanMemory");
+const { hasAssignmentGrant } = require("../pusatPolicyAdapter");
 
 const TASK_STATUS = Object.freeze([
   "NOT_STARTED",
@@ -128,7 +129,10 @@ function createSinanDurable(db, { ensureSchema = true } = {}) {
     return { id, kind, actor, at };
   }
 
-  function assignTask({ fromId = "pusat", title } = {}) {
+  function assignTask({ fromId, title, grant } = {}) {
+    if (fromId !== "pusat" || !hasAssignmentGrant(grant)) {
+      return { ok: false, code: "PERMISSION_DENIED", stored: false };
+    }
     ensureSinanSchema(db);
     const id = `stask_${crypto.randomBytes(6).toString("hex")}`;
     const at = new Date().toISOString();

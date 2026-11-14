@@ -7,6 +7,7 @@ const { SYSTEM_INSTRUCTION } = require("./sinanInstruction");
 const { identity, coordinate } = require("./sinanBey");
 const { getMember, canShare, CLASSIFICATION } = require("./council");
 const { createApprovalCenter, RISK } = require("./humanApproval");
+const { hasAssignmentGrant } = require("../pusatPolicyAdapter");
 const { createSinanDurable, TASK_STATUS } = require("./sinanDurable");
 const { assessVoice, providerAdapters } = require("../voice/councilVoice");
 const { catalog } = require("../buzzardNative/motors");
@@ -98,25 +99,75 @@ const DOMAIN_PATHS = Object.freeze({
   cicd_and_tests: "server/__tests__",
 });
 
-function createSinanBeyAgent({ db = null, approvals = null, openIsolated = null, dbError = null } = {}) {
+function createSinanBeyAgent({
+  db = null,
+  approvals = null,
+  openIsolated = null,
+  resolvePath = null,
+  dbError = null,
+} = {}) {
   let durable = db ? createSinanDurable(db) : null;
+  let durableHandle = db || null;
   let durableMode = db ? "explicit" : null;
+  let boundPath = null;
   let approvalCenter = approvals;
   const attendance = new Map();
   const lab = createLab();
   const xfLab = createTransformerLab();
 
+  function releaseBound() {
+    const handle = durableHandle;
+    durable = null;
+    durableHandle = null;
+    durableMode = null;
+    boundPath = null;
+    if (handle && typeof handle.close === "function") {
+      try {
+        handle.close();
+      } catch {
+        /* the refused path must not fall back to this handle */
+      }
+    }
+  }
+
   function store(writable) {
+    if (durableMode === "explicit") return durable;
+    if (typeof resolvePath === "function") {
+      let binding;
+      try {
+        binding = resolvePath();
+      } catch (err) {
+        const refused = new Error(err.message || "DATA_PATH_REFUSED");
+        refused.code = err.code || "DATA_PATH_REFUSED";
+        throw refused;
+      }
+      const nextPath = binding && typeof binding.path === "string" ? binding.path : "";
+      if (!nextPath) {
+        const refused = new Error("DATA_PATH_REFUSED");
+        refused.code = "DATA_PATH_REFUSED";
+        throw refused;
+      }
+      const nextKey = `${nextPath}\0${binding.commercePath || ""}`;
+      if (durable && boundPath === nextKey && (durableMode === "write" || !writable)) return durable;
+      if (durable) releaseBound();
+      const handle = openIsolated(Boolean(writable), binding);
+      if (!handle) return null;
+      durableHandle = handle;
+      durable = createSinanDurable(handle, { ensureSchema: Boolean(writable) });
+      durableMode = writable ? "write" : "read";
+      boundPath = nextKey;
+      return durable;
+    }
     if (dbError) {
       const err = new Error(dbError.message || "DATA_PATH_REFUSED");
       err.code = dbError.code || "DATA_PATH_REFUSED";
       throw err;
     }
-    if (durableMode === "explicit") return durable;
     if (!openIsolated) return null;
     if (writable) {
       if (durableMode !== "write") {
         const handle = openIsolated(true);
+        durableHandle = handle;
         durable = createSinanDurable(handle, { ensureSchema: true });
         durableMode = "write";
       }
@@ -125,6 +176,7 @@ function createSinanBeyAgent({ db = null, approvals = null, openIsolated = null,
     if (!durable) {
       const handle = openIsolated(false);
       if (!handle) return null;
+      durableHandle = handle;
       durable = createSinanDurable(handle, { ensureSchema: false });
       durableMode = "read";
     }
@@ -149,7 +201,7 @@ function createSinanBeyAgent({ db = null, approvals = null, openIsolated = null,
   function esatWatch(type, details) {
     try {
       const esat = require("../security/esatBey");
-      return esat.inspect({ type, details, actor: ID });
+      return esat.inspect({ type, details, actor: ID, memoryOnly: true });
     } catch {
       return { allowed: false, hold: true, reviewer: "esat_bey", soleDefense: false };
     }
@@ -177,8 +229,13 @@ function createSinanBeyAgent({ db = null, approvals = null, openIsolated = null,
     });
   }
 
-  function assignFromPusat(title) {
-    return withStore(true, (durableStore) => ({ ok: true, ...durableStore.assignTask({ fromId: "pusat", title }) }));
+  function assignFromPusat(title, grant) {
+    if (!hasAssignmentGrant(grant)) return { ok: false, code: "PERMISSION_DENIED", stored: false };
+    return withStore(true, (durableStore) => {
+      const stored = durableStore.assignTask({ fromId: "pusat", title, grant });
+      if (!stored || stored.ok === false) return stored;
+      return { ok: true, ...stored };
+    });
   }
 
   function acceptTask(taskId) {

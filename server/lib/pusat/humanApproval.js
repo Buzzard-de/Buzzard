@@ -6,6 +6,7 @@
 const { createDurableTaskQueue } = require("./durableTaskQueue");
 const { authorizeDelegated } = require("../buzzardNative/core/permissionEngine");
 const { classifyAction } = require("./actionPolicy");
+const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
@@ -32,8 +33,114 @@ function normalizeCallerRisk(risk) {
   return RISK.HIGH;
 }
 
-function createApprovalCenter({ dbPath } = {}) {
-  const resolved = dbPath || path.join(os.tmpdir(), "buzzard-approvals.sqlite");
+function approvalRefuse() {
+  const err = new Error("APPROVAL_DB_PATH_REFUSED");
+  err.code = "APPROVAL_DB_PATH_REFUSED";
+  throw err;
+}
+
+function existingRealPath(file) {
+  try {
+    return fs.realpathSync(file);
+  } catch (err) {
+    if (err && err.code === "ENOENT") return null;
+    approvalRefuse();
+  }
+  return null;
+}
+
+function existingStat(file) {
+  try {
+    return fs.statSync(file);
+  } catch (err) {
+    if (err && err.code === "ENOENT") return null;
+    approvalRefuse();
+  }
+  return null;
+}
+
+function linkStatus(file) {
+  try {
+    return fs.lstatSync(file);
+  } catch (err) {
+    if (err && err.code === "ENOENT") return null;
+    approvalRefuse();
+  }
+  return null;
+}
+
+function describeApprovalPath(file) {
+  const resolved = path.resolve(file);
+  const link = linkStatus(resolved);
+  if (link && link.isSymbolicLink()) {
+    const direct = existingRealPath(resolved);
+    if (!direct) approvalRefuse();
+    const stat = existingStat(direct);
+    if (!stat || stat.isDirectory()) approvalRefuse();
+    return { real: direct, stat };
+  }
+  if (link) {
+    if (link.isDirectory()) approvalRefuse();
+    return { real: existingRealPath(resolved) || resolved, stat: link };
+  }
+  const parentReal = existingRealPath(path.dirname(resolved));
+  if (!parentReal) approvalRefuse();
+  const real = path.join(parentReal, path.basename(resolved));
+  const stat = existingStat(real);
+  if (stat && stat.isDirectory()) approvalRefuse();
+  return { real, stat };
+}
+
+function sameFileIdentity(left, right) {
+  if (!left || !right) return false;
+  if (left.real && right.real && left.real === right.real) return true;
+  if (
+    left.stat
+    && right.stat
+    && left.stat.ino === right.stat.ino
+    && left.stat.dev === right.stat.dev
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function commerceCandidates(commercePath) {
+  const candidates = [path.join(__dirname, "..", "..", "data", "buzzard.db")];
+  if (typeof process.env.BUZZARD_DB_PATH === "string" && process.env.BUZZARD_DB_PATH.trim()) {
+    candidates.push(process.env.BUZZARD_DB_PATH.trim());
+  }
+  if (typeof commercePath === "string" && commercePath.trim()) candidates.push(commercePath.trim());
+  return candidates;
+}
+
+function assertApprovalDbPath(dbPath, commercePath) {
+  if (typeof dbPath !== "string" || !dbPath.trim() || dbPath.includes("\0")) approvalRefuse();
+  const resolved = path.resolve(dbPath.trim());
+  if (!resolved || !path.isAbsolute(resolved)) approvalRefuse();
+  const base = path.basename(resolved);
+  if (!base || base === "." || base === ".." || base.startsWith("buzzard_guardian")) approvalRefuse();
+  const described = describeApprovalPath(resolved);
+  const dataDir = existingRealPath(path.resolve(path.join(__dirname, "..", "..", "data")))
+    || path.resolve(path.join(__dirname, "..", "..", "data"));
+  if (described.real === dataDir || described.real.startsWith(`${dataDir}${path.sep}`)) approvalRefuse();
+  const realBase = path.basename(described.real);
+  if (realBase === "buzzard.db" || realBase.startsWith("buzzard_guardian")) approvalRefuse();
+  for (const candidate of commerceCandidates(commercePath)) {
+    let commerce = null;
+    try {
+      commerce = describeApprovalPath(candidate);
+    } catch {
+      commerce = null;
+    }
+    if (sameFileIdentity(described, commerce)) approvalRefuse();
+  }
+  return described.real;
+}
+
+function createApprovalCenter({ dbPath, commercePath } = {}) {
+  const selected = dbPath || path.join(os.tmpdir(), "buzzard-approvals.sqlite");
+  const resolved = assertApprovalDbPath(selected, commercePath);
   const queue = createDurableTaskQueue({ dbPath: resolved });
 
   function submit({

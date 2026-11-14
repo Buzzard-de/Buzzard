@@ -215,26 +215,26 @@ function getDurable() {
 
 let sinanAgent = null;
 function getSinanAgent() {
-  if (sinanAgent) return sinanAgent;
-  const { createSinanBeyAgent } = require("./sinanBeyAgent");
-  const { openSinanDatabase } = require("./sinanDurable");
-  let dbError = null;
-  let pusatPath = null;
-  let commercePath = null;
-  try {
-    const { resolveDbPath } = require("./orchRuntime");
-    pusatPath = resolveDbPath();
-    commercePath = db && typeof db.name === "string" && db.name.trim() ? db.name.trim() : null;
-  } catch (err) {
-    dbError = err;
+  if (!sinanAgent) {
+    const { createSinanBeyAgent } = require("./sinanBeyAgent");
+    const { openSinanDatabase } = require("./sinanDurable");
+    sinanAgent = createSinanBeyAgent({
+      db: null,
+      resolvePath() {
+        const { resolveDbPath } = require("./orchRuntime");
+        const pusatPath = resolveDbPath();
+        const commercePath = db && typeof db.name === "string" && db.name.trim() ? db.name.trim() : null;
+        return { path: pusatPath, commercePath };
+      },
+      openIsolated(schema, binding) {
+        return openSinanDatabase({
+          dbPath: binding.path,
+          commercePath: binding.commercePath,
+          schema,
+        });
+      },
+    });
   }
-  sinanAgent = createSinanBeyAgent({
-    db: null,
-    dbError,
-    openIsolated: dbError
-      ? null
-      : (schema) => openSinanDatabase({ dbPath: pusatPath, commercePath, schema }),
-  });
   return sinanAgent;
 }
 
@@ -415,18 +415,14 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
 
   if (WRITE_ACTIONS.includes(action)) {
     try {
-      const exceptions = require("../exceptionBus");
-      exceptions.emit({
-        type: exceptions.TYPES.PERMISSION_DENIED,
-        severity: "HIGH",
-        source: "pusat",
-        entity: "tool",
-        correlationId: corr,
-        message: `Pusat write denied: ${action}`,
-        retryable: false,
+      const esat = require("../security/esatBey");
+      esat.inspect({
+        type: "PERMISSION_DENIED",
+        actor: typeof actorId === "string" && actorId.trim() ? actorId.trim() : "pusat",
+        details: { action, source: "pusat", correlationId: corr },
       });
     } catch {
-      /* audit best-effort */
+      /* denial stays in force when the memory record cannot be kept */
     }
     return {
       ok: false,
@@ -597,6 +593,19 @@ function readPusatMemory(action, payload, { actorId, correlationId }) {
   return { ok: true, action, data, correlationId, ...label(MODE.DRY_RUN) };
 }
 
+function verifiedPusatAssigner(actorId, payload) {
+  const context = typeof actorId === "string" ? actorId.trim() : "";
+  if (!context) return { ok: false, actorId: null };
+  const claimed = [payload && payload.actorId, payload && payload.fromId, payload && payload.requestedBy]
+    .filter((value) => typeof value === "string" && value.trim())
+    .map((value) => value.trim());
+  if (claimed.some((value) => value !== context)) return { ok: false, actorId: null };
+  const { assignmentGrant } = require("../pusatPolicyAdapter");
+  const grant = assignmentGrant(context);
+  if (!grant.ok || grant.agentId !== "pusat") return { ok: false, actorId: grant.agentId };
+  return grant;
+}
+
 function executeControl(action, payload, { actorId, correlationId, sessionRole = null }) {
   if (action === ACTIONS.ORCHESTRATE_TICK) {
     return {
@@ -638,11 +647,24 @@ function executeControl(action, payload, { actorId, correlationId, sessionRole =
     return { ok: true, action, data: getSinanAgent().profile(), actorId, correlationId, ...label(MODE.DRY_RUN) };
   }
   if (action === ACTIONS.SINAN_ASSIGN) {
+    const decision = verifiedPusatAssigner(actorId, payload);
+    if (!decision.ok) {
+      return {
+        ok: false,
+        code: "PERMISSION_DENIED",
+        action,
+        actorId: decision.actorId,
+        correlationId,
+        stored: false,
+        data: { ok: false, code: "PERMISSION_DENIED", stored: false },
+        ...label(MODE.DRY_RUN),
+      };
+    }
     return {
       ok: true,
       action,
-      data: getSinanAgent().assignFromPusat(payload.title),
-      actorId,
+      data: getSinanAgent().assignFromPusat(payload.title, decision.grant),
+      actorId: decision.actorId,
       correlationId,
       ...label(MODE.DRY_RUN),
     };

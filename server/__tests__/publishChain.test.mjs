@@ -100,7 +100,8 @@ describe("in-process publish is not a customer delivery", () => {
       context: { email: "buyer@example.com", amount: 10 },
     });
     expect(ex.status).toBe("OPEN");
-    const row = db.prepare("SELECT context_json FROM system_exceptions WHERE id = ?").get(ex.id);
+    expect(ex.persisted).toBe(false);
+    const row = exceptions.get(ex.id);
     expect(row.context_json).not.toContain("buyer@example.com");
 
     const notes = db.prepare("SELECT COUNT(*) n FROM core_notifications").get().n;

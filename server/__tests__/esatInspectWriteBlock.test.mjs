@@ -220,7 +220,10 @@ describe("ESAT_INSPECT runtime write block", () => {
     const quiet = esat.watchSalesAttempt({ envWantsSales: false, allowed: false });
     expect(quiet.hold).toBe(false);
     expect(calls.inspect).toBe(1);
-    expect(calls.persist).toBe(2);
+    expect(calls.persist).toBe(0);
+    expect(calls.db).toBe(0);
+    expect(esat.recent().some((event) => event.type === "credential_exfiltration")).toBe(true);
+    expect(esat.recent().some((event) => event.type === "EXTERNAL_AI_EGRESS_DENIED")).toBe(true);
     expect(calls.durable).toBe(0);
 
     const after = calls.inspect;
@@ -263,8 +266,9 @@ describe("ESAT_INSPECT runtime write block", () => {
       { url: "https://payments.example/synthetic" },
     );
     expect(egress.hold).toBe(true);
-    expect(calls.persist).toBe(persisted + 2);
-    expect(calls.db).toBeGreaterThan(dbWrites);
+    expect(calls.persist).toBe(persisted);
+    expect(calls.db).toBe(dbWrites);
+    expect(esat.recent().some((event) => event.type === "PAYMENT_CAPTURE")).toBe(true);
 
     const status = executeReadOnly("ESAT_STATUS", {}, { correlationId: "corr-activated" });
     expect(status.ok).toBe(true);

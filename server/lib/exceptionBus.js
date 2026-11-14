@@ -1,8 +1,11 @@
 /**
  * Unified exception bus. Does not auto-heal or fake success.
+ * While sales are closed, or the resolved database is the protected commerce
+ * file, events stay in memory and SQLite is not opened.
  */
 const crypto = require("crypto");
-const { db } = require("./db");
+const fs = require("fs");
+const path = require("path");
 const { redact } = require("./privacyRedact");
 
 const TYPES = Object.freeze({
@@ -39,6 +42,80 @@ const TYPES = Object.freeze({
   FULFILLMENT_NOT_LIVE: "FULFILLMENT_NOT_LIVE",
 });
 
+const events = [];
+
+function salesAllowPersistence() {
+  try {
+    const { isSalesEnabled } = require("./salesMode");
+    return isSalesEnabled() === true;
+  } catch {
+    return false;
+  }
+}
+
+function canonicalCommercePath() {
+  return path.resolve(__dirname, "..", "data", "buzzard.db");
+}
+
+function sameFile(left, right) {
+  try {
+    const a = fs.realpathSync(path.resolve(left));
+    const b = fs.realpathSync(path.resolve(right));
+    if (a === b) return true;
+    const as = fs.statSync(a);
+    const bs = fs.statSync(b);
+    return as.ino === bs.ino && as.dev === bs.dev;
+  } catch {
+    return false;
+  }
+}
+
+function brokenSymlink(file) {
+  let stat;
+  try {
+    stat = fs.lstatSync(file);
+  } catch (err) {
+    return Boolean(err) && err.code !== "ENOENT";
+  }
+  if (!stat.isSymbolicLink()) return false;
+  try {
+    fs.realpathSync(file);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function pathIsProtected(dbPath) {
+  if (typeof dbPath !== "string" || !dbPath.trim() || dbPath.includes("\0")) return true;
+  const resolved = path.resolve(dbPath.trim());
+  const base = path.basename(resolved);
+  if (!resolved || base.startsWith("buzzard_guardian") || base === "buzzard.db") return true;
+  if (resolved.includes(`${path.sep}server${path.sep}data${path.sep}`)) return true;
+  if (brokenSymlink(resolved)) return true;
+  if (sameFile(resolved, canonicalCommercePath())) return true;
+  return false;
+}
+
+function persistenceDecision() {
+  if (!salesAllowPersistence()) return { persist: false, code: "SALES_CLOSED" };
+  let selected;
+  try {
+    const { resolveDbPath } = require("./dbPaths");
+    selected = resolveDbPath();
+  } catch {
+    return { persist: false, code: "EXCEPTION_DB_PATH_REFUSED" };
+  }
+  if (pathIsProtected(selected)) return { persist: false, code: "EXCEPTION_DB_PATH_REFUSED" };
+  return { persist: true, code: null, path: selected };
+}
+
+function remember(record) {
+  events.unshift(record);
+  if (events.length > 400) events.pop();
+  return record;
+}
+
 function emit({
   type,
   severity = "HIGH",
@@ -55,44 +132,74 @@ function emit({
   if (!type || !TYPES[type]) {
     throw new Error(`Unknown exception type: ${type}`);
   }
-  const id = `ex_${crypto.randomBytes(8).toString("hex")}`;
-  db.prepare(
-    `
-    INSERT INTO system_exceptions(
-      id, type, severity, source, entity, entity_id, correlation_id,
-      message, context_json, retry_policy, owner, status, retryable
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'OPEN', ?)
-  `
-  ).run(
-    id,
+  const decision = persistenceDecision();
+  const record = remember({
+    id: `ex_${crypto.randomBytes(8).toString("hex")}`,
     type,
     severity,
     source,
     entity,
-    entityId,
-    correlationId,
-    message || type,
-    JSON.stringify(redact(context)),
-    retryPolicy,
+    entity_id: entityId,
+    correlation_id: correlationId,
+    message: message || type,
+    context_json: JSON.stringify(redact(context)),
+    retry_policy: retryPolicy,
     owner,
-    retryable ? 1 : 0
-  );
+    status: "OPEN",
+    retryable: retryable ? 1 : 0,
+    stored: false,
+    persisted: false,
+    memory: true,
+    code: decision.code,
+  });
   try {
     require("./security/esatBey").watchException({ type, severity, source });
   } catch {
-    /* Esat is additive */
+    /* Esat is additive and must not open the commerce database */
   }
-  return get(id);
+  if (!decision.persist) return record;
+  try {
+    const { db } = require("./db");
+    db.prepare(
+      `
+      INSERT INTO system_exceptions(
+        id, type, severity, source, entity, entity_id, correlation_id,
+        message, context_json, retry_policy, owner, status, retryable
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?, 'OPEN', ?)
+    `
+    ).run(
+      record.id,
+      record.type,
+      record.severity,
+      record.source,
+      record.entity,
+      record.entity_id,
+      record.correlation_id,
+      record.message,
+      record.context_json,
+      record.retry_policy,
+      record.owner,
+      record.retryable,
+    );
+    record.stored = true;
+    record.persisted = true;
+    record.code = null;
+    return record;
+  } catch {
+    record.stored = false;
+    record.persisted = false;
+    record.code = "EXCEPTION_DB_WRITE_REFUSED";
+    return record;
+  }
 }
 
 function get(id) {
-  return db.prepare("SELECT * FROM system_exceptions WHERE id = ?").get(id) || null;
+  return events.find((event) => event.id === id) || null;
 }
 
 function list({ status = "OPEN", limit = 50 } = {}) {
-  return db
-    .prepare("SELECT * FROM system_exceptions WHERE status = ? ORDER BY created_at DESC LIMIT ?")
-    .all(status, limit);
+  const cap = Math.max(0, Number(limit) || 50);
+  return events.filter((event) => event.status === status).slice(0, cap);
 }
 
 module.exports = { TYPES, emit, get, list };

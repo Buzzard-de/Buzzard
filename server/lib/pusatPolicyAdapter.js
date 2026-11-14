@@ -216,6 +216,8 @@ async function executeReadOnlyBuzzardAction(action, payload, context = {}) {
   });
 }
 
+const PUSAT_ASSIGN_GRANT = Symbol("buzzard.pusat.assign");
+
 function assignmentAuthority(agentId) {
   const agent = resolveSeedAgent(agentId);
   if (!agent.ok) return { ...agent, assignAllowed: false };
@@ -231,6 +233,18 @@ function assignmentAuthority(agentId) {
   });
 }
 
+function assignmentGrant(agentId) {
+  const authority = assignmentAuthority(agentId);
+  if (!authority.assignAllowed || authority.agentId !== "pusat") {
+    return { ok: false, code: "PERMISSION_DENIED", grant: null, agentId: authority.agentId || null };
+  }
+  return { ok: true, code: "ALLOW", grant: PUSAT_ASSIGN_GRANT, agentId: "pusat" };
+}
+
+function hasAssignmentGrant(grant) {
+  return grant === PUSAT_ASSIGN_GRANT;
+}
+
 module.exports = {
   NOT_IMPLEMENTED_READ_ACTIONS,
   FACADE_WRITE_MAP,
@@ -238,4 +252,6 @@ module.exports = {
   mapFacadeAction,
   executeReadOnlyBuzzardAction,
   assignmentAuthority,
+  assignmentGrant,
+  hasAssignmentGrant,
 };

@@ -14,7 +14,6 @@ const { isSotActive, getStatus: getProductSotStatus } = require("../productSot")
 const { createIdempotencyService } = require("./idempotencyService");
 const { roster } = require("./council");
 const { createDurable } = require("./durable");
-const { TOPICS } = require("./doguResearch");
 
 let pusatIdempotency = null;
 
@@ -217,6 +216,16 @@ const WRITE_ACTIONS = Object.freeze([
   "CREATE_ORDER",
   "CAPTURE_PAYMENT",
   "CREATE_SHIPMENT",
+]);
+
+const DURABLE_WRITE_ACTIONS = new Set([
+  "OPEN_MEETING",
+  "REPORT_MEETING",
+  "CLOSE_MEETING",
+  "MEMORY_PUT",
+  "RESEARCH_REQUEST",
+  "RESEARCH_COMPLETE",
+  "SCREEN_TRADE",
 ]);
 
 const SPECIALISTS = Object.freeze([
@@ -512,42 +521,21 @@ function executeControl(action, payload, { actorId, correlationId, sessionRole =
   if (action === ACTIONS.ORCHESTRATE_APPROVE) {
     return decideOrchestrationApproval(payload, { correlationId, sessionRole });
   }
+  if (DURABLE_WRITE_ACTIONS.has(action)) {
+    return {
+      ok: false,
+      code: "LEGACY_PUSAT_DURABLE_WRITE_BLOCKED",
+      action,
+      actorId,
+      correlationId,
+      stored: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
   const store = getDurable();
   if (action === ACTIONS.GET_COUNCIL) {
     return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.OPEN_MEETING) {
-    return { ok: true, action, data: store.openMeeting(payload), actorId, correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.REPORT_MEETING) {
-    return {
-      ok: true,
-      action,
-      data: store.addMeetingEvent({
-        meetingId: payload.meetingId,
-        kind: "report",
-        speakerId: payload.speakerId || actorId,
-        payload,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.CLOSE_MEETING) {
-    return { ok: true, action, data: store.closeMeeting(payload.meetingId), correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.MEMORY_PUT) {
-    return {
-      ok: true,
-      action,
-      data: store.putMemory({
-        ownerId: payload.ownerId || actorId,
-        key: payload.key,
-        value: payload.value,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
   }
   if (action === ACTIONS.MEMORY_GET) {
     return {
@@ -556,35 +544,6 @@ function executeControl(action, payload, { actorId, correlationId, sessionRole =
       data: store.getMemory({
         ownerId: payload.ownerId,
         requesterId: payload.requesterId || actorId,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.RESEARCH_REQUEST) {
-    if (!TOPICS.includes(payload.topic)) {
-      return { ok: false, code: "UNKNOWN_TOPIC", action, correlationId, ...label(MODE.DRY_RUN) };
-    }
-    return {
-      ok: true,
-      action,
-      data: store.requestResearch({
-        fromId: payload.fromId || actorId,
-        topic: payload.topic,
-        question: payload.question,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.RESEARCH_COMPLETE) {
-    return {
-      ok: true,
-      action,
-      data: store.completeResearch({
-        requestId: payload.requestId,
-        findings: payload.findings,
-        sources: payload.sources,
       }),
       correlationId,
       ...label(MODE.DRY_RUN),
@@ -1018,19 +977,6 @@ function executeControl(action, payload, { actorId, correlationId, sessionRole =
       correlationId,
       ...label(MODE.DRY_RUN),
     };
-  }
-  if (action === ACTIONS.SCREEN_TRADE) {
-    const { screenTrade } = require("../commerce/ab27Logistics");
-    const result = screenTrade({
-      ...payload,
-      persistHold: (item) =>
-        store.holdTrade({
-          destination: payload.destination,
-          reason: item.reason,
-          payload: item.payload,
-        }),
-    });
-    return { ok: result.ok, action, data: result, correlationId, ...label(MODE.DRY_RUN) };
   }
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId, ...label(MODE.DISABLED) };
 }

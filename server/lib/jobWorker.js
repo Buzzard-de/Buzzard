@@ -32,7 +32,14 @@ function getWorkerState() {
   };
 }
 
+function rejectLegacyWorker(code = "LEGACY_WORKER_MUTATION_BLOCKED") {
+  const err = new Error(code);
+  err.code = code;
+  throw err;
+}
+
 function setWorkerState(partial) {
+  rejectLegacyWorker();
   const current = getWorkerState();
   db.prepare(`
     UPDATE core_worker_state SET
@@ -82,6 +89,7 @@ async function runJobWithTimeout(job, timeoutMs) {
 }
 
 async function processOneJob() {
+  rejectLegacyWorker();
   if (shuttingDown) return false;
   const state = getWorkerState();
   if (state.status === WORKER_STATE.PAUSED) return false;
@@ -135,6 +143,7 @@ async function processOneJob() {
 }
 
 async function tick() {
+  rejectLegacyWorker();
   jobQueue.releaseStaleLocks();
   setWorkerState({ lastTickAt: new Date().toISOString() });
   let processed = 0;
@@ -146,6 +155,7 @@ async function tick() {
 }
 
 function startWorker({ pollIntervalMs = 3000 } = {}) {
+  rejectLegacyWorker("LEGACY_WORKER_START_BLOCKED");
   if (pollTimer) return getWorkerState();
   shuttingDown = false;
   setWorkerState({
@@ -165,16 +175,19 @@ function startWorker({ pollIntervalMs = 3000 } = {}) {
 }
 
 function pauseWorker() {
+  rejectLegacyWorker();
   setWorkerState({ status: WORKER_STATE.PAUSED, pausedAt: new Date().toISOString() });
   return getWorkerState();
 }
 
 function resumeWorker() {
+  rejectLegacyWorker("LEGACY_WORKER_START_BLOCKED");
   setWorkerState({ status: WORKER_STATE.RUNNING, pausedAt: null });
   return getWorkerState();
 }
 
 function stopWorker() {
+  rejectLegacyWorker();
   shuttingDown = true;
   if (pollTimer) {
     clearInterval(pollTimer);
@@ -189,6 +202,7 @@ function stopWorker() {
 }
 
 function setupGracefulShutdown() {
+  rejectLegacyWorker();
   const shutdown = () => {
     stopWorker();
     process.exit(0);

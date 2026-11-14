@@ -74,13 +74,20 @@ module.exports = {
         res.status(400).json({ success: false, errorKey: "automation.invalidAction" });
         return;
       }
-      const state = action === "pause" ? jobWorker.pauseWorker() : jobWorker.stopWorker();
-      logAuditFromRequest(req, {
-        action: `worker.${action}`,
-        entityType: "worker",
-        entityId: "default",
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_WORKER_MUTATION_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      res.json({ success: true, worker: state });
     });
 
     app.get("/api/admin/automation/jobs", (req, res) => {
@@ -133,14 +140,20 @@ module.exports = {
     app.post("/api/admin/automation/jobs/:id/cancel", (req, res) => {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "system.configure")) return;
-      const job = jobQueue.cancelJob(req.params.id);
-      if (!job) return res.status(404).json({ success: false, errorKey: "job.notFound" });
-      logAuditFromRequest(req, {
-        action: "job.cancel",
-        entityType: "background_job",
-        entityId: req.params.id,
+      res.status(403).json({
+        success: false,
+        errorCode: "LEGACY_JOB_MUTATION_BLOCKED",
+        queued: false,
+        executed: false,
+        salesOpen: false,
+        egressAllowed: false,
+        productionReady: false,
+        purchased: false,
+        moneyMoved: false,
+        refunded: false,
+        shipmentCreated: false,
+        orderChanged: false,
       });
-      res.json({ success: true, job });
     });
 
     app.post("/api/admin/automation/jobs", (req, res) => {

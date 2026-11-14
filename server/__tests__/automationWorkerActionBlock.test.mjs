@@ -201,15 +201,19 @@ describe("automation worker action guard", () => {
     expect(dbCalls).toEqual([]);
   });
 
-  it("keeps pause and stop from starting work or touching the queue", () => {
+  it("blocks pause and stop before the worker state is written", () => {
     const paused = postAction("pause", "admin", { status: "RUNNING", paymentStatus: "paid" });
     const stopped = postAction("stop", "admin");
-    expect(paused.statusCode).toBe(200);
-    expect(paused.body.worker.status).toBe("PAUSED");
-    expect(stopped.statusCode).toBe(200);
-    expect(stopped.body.worker.status).toBe("STOPPED");
-    expect(calls).toEqual({ start: 0, pause: 1, resume: 0, stop: 1, enqueue: 0, claim: 0, execute: 0 });
+    expect(paused.statusCode).toBe(403);
+    expect(paused.body.errorCode).toBe("LEGACY_WORKER_MUTATION_BLOCKED");
+    expect(paused.body.executed).toBe(false);
+    expect(paused.body.worker).toBeUndefined();
+    expect(stopped.statusCode).toBe(403);
+    expect(stopped.body.errorCode).toBe("LEGACY_WORKER_MUTATION_BLOCKED");
+    expect(stopped.body.executed).toBe(false);
+    expect(calls).toEqual({ start: 0, pause: 0, resume: 0, stop: 0, enqueue: 0, claim: 0, execute: 0 });
     expect(dbCalls).toEqual([]);
+    expect(fs.readdirSync(tempDir)).toEqual([]);
   });
 
   it("leaves the commerce database and sales switch untouched", () => {

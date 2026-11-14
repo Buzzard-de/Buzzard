@@ -1,63 +1,103 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
+import path from "node:path";
 
 const require = createRequire(import.meta.url);
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const commerceDb = path.join(repoRoot, "server/data/buzzard.db");
+const ordersPath = path.join(repoRoot, "server/data/orders.json");
 
-describe("jobQueue lock", () => {
-  let jobQueue;
+function fileMark(file) {
+  if (!fs.existsSync(file)) return null;
+  const stat = fs.statSync(file);
+  return { ino: stat.ino, size: stat.size, mtimeMs: stat.mtimeMs };
+}
 
-  beforeEach(() => {
-    process.env.BUZZARD_JOB_LOCK_TTL_MS = "60000";
-    delete require.cache[require.resolve("../lib/jobQueue.js")];
-    jobQueue = require("../lib/jobQueue.js");
-    const { db } = require("../lib/db.js");
-    db.prepare("DELETE FROM core_background_jobs").run();
+const dbBefore = fileMark(commerceDb);
+const ordersBefore = fileMark(ordersPath);
+const dbCalls = [];
+
+function stub(rel, exports) {
+  const resolved = require.resolve(rel);
+  require.cache[resolved] = {
+    id: resolved,
+    filename: resolved,
+    loaded: true,
+    exports,
+  };
+}
+
+stub("../lib/db.js", {
+  db: {
+    prepare(sql) {
+      dbCalls.push(String(sql));
+      throw new Error("commerce database must stay closed");
+    },
+    exec() {
+      throw new Error("commerce database must stay closed");
+    },
+  },
+});
+stub("../lib/jobHandlers.js", {
+  executeJob() {
+    throw new Error("job handler must not run");
+  },
+});
+stub("../lib/jobObservability.js", {
+  appendJobLog() {
+    throw new Error("job log must not be written");
+  },
+});
+
+delete require.cache[require.resolve("../lib/jobQueue.js")];
+delete require.cache[require.resolve("../lib/jobWorker.js")];
+const jobQueue = require("../lib/jobQueue.js");
+const jobWorker = require("../lib/jobWorker.js");
+
+describe("job queue lock mutations stay closed", () => {
+  it("refuses claim, stale recovery, and retry before SQLite", () => {
+    expect(() => jobQueue.claimNextJob("test_worker_1")).toThrowError(
+      expect.objectContaining({ code: "LEGACY_JOB_MUTATION_BLOCKED" })
+    );
+    expect(() => jobQueue.releaseStaleLocks(new Date("2000-01-01T00:00:00.000Z"))).toThrowError(
+      expect.objectContaining({ code: "LEGACY_JOB_MUTATION_BLOCKED" })
+    );
+    expect(() => jobQueue.extendLock("job_locked", "test_worker_1")).toThrowError(
+      expect.objectContaining({ code: "LEGACY_JOB_MUTATION_BLOCKED" })
+    );
+    expect(() => jobQueue.retryJob("job_failed")).toThrowError(
+      expect.objectContaining({ code: "LEGACY_JOB_ENQUEUE_BLOCKED" })
+    );
+    expect(dbCalls).toEqual([]);
   });
 
-  it("claimNextJob sets RUNNING with lock", () => {
-    jobQueue.releaseStaleLocks();
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH", priority: "HIGH" });
-    const claimed = jobQueue.claimNextJob("test_worker_1");
-    expect(claimed?.id).toBe(job.id);
-    expect(claimed?.status).toBe("RUNNING");
-    expect(claimed?.lockOwner).toBe("test_worker_1");
+  it("refuses worker start, tick, pause, and stop before worker state is written", async () => {
+    expect(() => jobWorker.startWorker()).toThrowError(
+      expect.objectContaining({ code: "LEGACY_WORKER_START_BLOCKED" })
+    );
+    expect(() => jobWorker.resumeWorker()).toThrowError(
+      expect.objectContaining({ code: "LEGACY_WORKER_START_BLOCKED" })
+    );
+    expect(() => jobWorker.pauseWorker()).toThrowError(
+      expect.objectContaining({ code: "LEGACY_WORKER_MUTATION_BLOCKED" })
+    );
+    expect(() => jobWorker.stopWorker()).toThrowError(
+      expect.objectContaining({ code: "LEGACY_WORKER_MUTATION_BLOCKED" })
+    );
+    expect(() => jobWorker.setupGracefulShutdown()).toThrowError(
+      expect.objectContaining({ code: "LEGACY_WORKER_MUTATION_BLOCKED" })
+    );
+    await expect(jobWorker.tick()).rejects.toMatchObject({ code: "LEGACY_WORKER_MUTATION_BLOCKED" });
+    await expect(jobWorker.processOneJob()).rejects.toMatchObject({ code: "LEGACY_WORKER_MUTATION_BLOCKED" });
+    expect(dbCalls).toEqual([]);
   });
+});
 
-  it("duplicate claim prevented for locked job", () => {
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH", priority: "CRITICAL" });
-    const first = jobQueue.claimNextJob("worker_a");
-    expect(first?.id).toBeTruthy();
-    const locked = jobQueue.getJob(job.id);
-    if (locked.status === "RUNNING") {
-      expect(locked.lockOwner).toBe("worker_a");
-      const { db } = require("../lib/db.js");
-      const attempt = db.prepare(`
-        UPDATE core_background_jobs
-        SET status = 'RUNNING', lock_owner = 'worker_b', lock_expires_at = ?
-        WHERE id = ? AND status IN ('QUEUED', 'RETRYING')
-        AND (lock_owner IS NULL OR lock_expires_at IS NULL OR lock_expires_at < ?)
-      `).run(new Date(Date.now() + 60000).toISOString(), job.id, new Date().toISOString());
-      expect(attempt.changes).toBe(0);
-    }
-  });
-
-  it("releaseStaleLocks recovers expired RUNNING jobs", () => {
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH" });
-    jobQueue.claimNextJob("stale_worker");
-    const { db } = require("../lib/db.js");
-    db.prepare(`
-      UPDATE core_background_jobs SET lock_expires_at = '2000-01-01T00:00:00.000Z' WHERE id = ?
-    `).run(job.id);
-    const released = jobQueue.releaseStaleLocks();
-    expect(released).toBeGreaterThan(0);
-    const updated = jobQueue.getJob(job.id);
-    expect(updated.status).toBe("RETRYING");
-  });
-
-  it("retryJob resets failed job to QUEUED", () => {
-    const job = jobQueue.enqueueJob({ jobType: "SYSTEM_HEALTH" });
-    jobQueue.updateJob(job.id, { status: "FAILED", error: "test" });
-    const retried = jobQueue.retryJob(job.id);
-    expect(retried.status).toBe("QUEUED");
-  });
+afterAll(() => {
+  expect(fileMark(commerceDb)).toEqual(dbBefore);
+  expect(fileMark(ordersPath)).toEqual(ordersBefore);
+  expect(dbBefore).toMatchObject({ ino: 615782, size: 1736704 });
+  expect(ordersBefore).toBe(null);
 });

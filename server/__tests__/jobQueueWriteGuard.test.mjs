@@ -165,35 +165,24 @@ describe("central job queue write guard", () => {
     expect(dbCalls).toEqual([]);
   });
 
-  it("keeps updateJob, markDeadLetter, and claimNextJob behavior", () => {
+  it("rejects lock, claim, update, cancel, and dead-letter writes before the database", () => {
     seed("job_open", "QUEUED");
     seed("job_failed", "FAILED");
-
-    const updated = jobQueue.updateJob("job_open", {
+    const blocked = { code: "LEGACY_JOB_MUTATION_BLOCKED" };
+    expect(() => jobQueue.updateJob("job_open", {
       status: jobQueue.JOB_STATUS.COMPLETED,
       result: { ok: true },
-      executionMs: 12,
-    });
-    expect(updated.status).toBe("COMPLETED");
-    expect(updated.result).toEqual({ ok: true });
-    expect(updated.executionMs).toBe(12);
-    expect(updated.completedAt).toBeTruthy();
-    expect(updated.lockOwner).toBeNull();
-
-    const dead = jobQueue.markDeadLetter("job_failed", "boom", "UNKNOWN");
-    expect(dead.status).toBe("DEAD_LETTER");
-    expect(dead.error).toBe("boom");
-    expect(dead.failureKind).toBe("UNKNOWN");
-    expect(dead.completedAt).toBeTruthy();
-
-    seed("job_queued", "QUEUED");
-    const claimed = jobQueue.claimNextJob("worker-1");
-    expect(claimed.id).toBe("job_queued");
-    expect(claimed.status).toBe("RUNNING");
-    expect(claimed.lockOwner).toBe("worker-1");
-    expect(claimed.workerId).toBe("worker-1");
-    expect(jobQueue.claimNextJob("worker-2")).toBeNull();
-    expect(dbCalls.length).toBeGreaterThan(0);
+    })).toThrowError(expect.objectContaining(blocked));
+    expect(() => jobQueue.markDeadLetter("job_failed", "boom", "UNKNOWN")).toThrowError(
+      expect.objectContaining(blocked)
+    );
+    expect(() => jobQueue.claimNextJob("worker-1")).toThrowError(expect.objectContaining(blocked));
+    expect(() => jobQueue.releaseStaleLocks()).toThrowError(expect.objectContaining(blocked));
+    expect(() => jobQueue.cancelJob("job_open")).toThrowError(expect.objectContaining(blocked));
+    expect(() => jobQueue.extendLock("job_open", "worker-1")).toThrowError(expect.objectContaining(blocked));
+    expect(rows.get("job_open").status).toBe("QUEUED");
+    expect(rows.get("job_failed").status).toBe("FAILED");
+    expect(dbCalls).toEqual([]);
   });
 });
 

@@ -1,17 +1,266 @@
 const fs = require("fs");
 const path = require("path");
-const Database = require("better-sqlite3");
-const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
+const { getPersistenceInfo } = require("./dbPaths");
 
-const dataDir = path.join(__dirname, "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
+const COMMERCE_DB = path.resolve(__dirname, "..", "data", "buzzard.db");
 
-const dbPath = ensureDbDirectory(resolveDbPath());
-const db = new Database(dbPath);
-db.pragma("busy_timeout = 8000");
-db.pragma("foreign_keys = ON");
+const READ_ONLY = Symbol("buzzard.db.READ_ONLY");
+const WRITE_ENABLED = Symbol("buzzard.db.WRITE_ENABLED");
+const MODE_NAME = new Map([
+  [READ_ONLY, "READ_ONLY"],
+  [WRITE_ENABLED, "WRITE_ENABLED"],
+]);
 
-db.exec(`
+let handle = null;
+let activePath = null;
+let activeMode = "UNINITIALIZED";
+
+function refusal(code) {
+  const err = new Error(code);
+  err.code = code;
+  return err;
+}
+
+function salesAllowsInitialization() {
+  try {
+    return require("./salesMode").isSalesEnabled() === true;
+  } catch {
+    return false;
+  }
+}
+
+function isProtected(candidate) {
+  if (typeof candidate !== "string" || !candidate.trim() || candidate.includes("\0")) return true;
+  const resolved = path.resolve(candidate.trim());
+  const base = path.basename(resolved);
+  if (!base || base === "buzzard.db" || base.startsWith("buzzard_guardian")) return true;
+  const marker = `${path.sep}server${path.sep}data`;
+  if (resolved.endsWith(marker) || resolved.includes(`${marker}${path.sep}`)) return true;
+  return false;
+}
+
+function sameCommerceFile(candidate) {
+  if (!fs.existsSync(COMMERCE_DB) || !fs.existsSync(candidate)) return false;
+  try {
+    const left = fs.realpathSync(candidate);
+    const right = fs.realpathSync(COMMERCE_DB);
+    if (left === right) return true;
+    const leftStat = fs.statSync(left);
+    const rightStat = fs.statSync(right);
+    return leftStat.ino === rightStat.ino && leftStat.dev === rightStat.dev;
+  } catch {
+    return true;
+  }
+}
+
+function canonicalizeMissing(resolved) {
+  const parent = path.dirname(resolved);
+  const base = path.basename(resolved);
+  let parentListed;
+  try {
+    parentListed = fs.lstatSync(parent);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (!parentListed.isDirectory() && !parentListed.isSymbolicLink()) throw refusal("DATA_PATH_REFUSED");
+  let parentReal;
+  try {
+    parentReal = fs.realpathSync(parent);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (!fs.statSync(parentReal).isDirectory()) throw refusal("DATA_PATH_REFUSED");
+  const canonical = path.join(parentReal, base);
+  if (isProtected(canonical) || isProtected(parentReal) || sameCommerceFile(canonical)) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  return canonical;
+}
+
+function canonicalizeRequested(requested) {
+  if (typeof requested !== "string" || !requested.trim() || requested.includes("\0")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const resolved = path.resolve(requested.trim());
+  if (isProtected(resolved)) throw refusal("DATA_PATH_REFUSED");
+  let listed;
+  try {
+    listed = fs.lstatSync(resolved);
+  } catch (err) {
+    if (!err || err.code !== "ENOENT") throw refusal("DATA_PATH_REFUSED");
+    return canonicalizeMissing(resolved);
+  }
+  if (listed.isSymbolicLink()) {
+    let target;
+    try {
+      target = fs.realpathSync(resolved);
+    } catch {
+      throw refusal("DATA_PATH_REFUSED");
+    }
+    if (isProtected(target) || sameCommerceFile(target)) throw refusal("DATA_PATH_REFUSED");
+    if (!fs.statSync(target).isFile()) throw refusal("DATA_PATH_REFUSED");
+    return target;
+  }
+  if (!listed.isFile()) throw refusal("DATA_PATH_REFUSED");
+  let canonical;
+  try {
+    canonical = fs.realpathSync(resolved);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isProtected(canonical) || sameCommerceFile(canonical)) throw refusal("DATA_PATH_REFUSED");
+  return canonical;
+}
+
+function releaseHandle() {
+  const current = handle;
+  handle = null;
+  activePath = null;
+  activeMode = "UNINITIALIZED";
+  if (current && typeof current.close === "function") {
+    try {
+      current.close();
+    } catch {
+      /* a refused path must not keep the previous connection */
+    }
+  }
+}
+
+function isWriteSql(sql) {
+  const stripped = String(sql)
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/--[^\n]*/g, " ")
+    .replace(/'(?:''|[^'])*'/g, "''")
+    .replace(/"(?:[^"]|"")*"/g, '""');
+  return /\b(?:insert|update|delete|alter|drop|create|replace|attach|detach|reindex|vacuum|analyze)\b/i.test(stripped)
+    || /\bbegin\s+(?:immediate|exclusive)\b/i.test(stripped)
+    || /\bpragma\s+[A-Za-z_][A-Za-z0-9_]*\s*=/i.test(stripped);
+}
+
+function rejectReadOnlyWrite(sql) {
+  if (activeMode === "READ_ONLY" && isWriteSql(sql)) throw refusal("DATABASE_READ_ONLY");
+}
+
+function notInitialized() {
+  const err = new Error("DATABASE_NOT_INITIALIZED");
+  err.code = "DATABASE_NOT_INITIALIZED";
+  throw err;
+}
+
+const db = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      if (typeof prop === "symbol" || prop === "then") return undefined;
+      if (!handle) {
+        if (prop === "name") return null;
+        if (prop === "open" || prop === "readonly" || prop === "memory" || prop === "inTransaction") return false;
+        return () => notInitialized();
+      }
+      const value = handle[prop];
+      if (activeMode === "READ_ONLY") {
+        if (prop === "prepare") {
+          return (sql, ...args) => {
+            rejectReadOnlyWrite(sql);
+            return handle.prepare(sql, ...args);
+          };
+        }
+        if (prop === "exec") {
+          return (sql) => {
+            rejectReadOnlyWrite(sql);
+            return handle.exec(sql);
+          };
+        }
+        if (prop === "pragma") {
+          return (source, pragmaOptions) => {
+            rejectReadOnlyWrite(`PRAGMA ${source}`);
+            return handle.pragma(source, pragmaOptions);
+          };
+        }
+        if (prop === "backup" || prop === "function" || prop === "aggregate" || prop === "table" || prop === "loadExtension") {
+          return () => {
+            throw refusal("DATABASE_READ_ONLY");
+          };
+        }
+      }
+      return typeof value === "function" ? value.bind(handle) : value;
+    },
+  },
+);
+
+function initializationResult(canonical, reused) {
+  return {
+    ok: true,
+    path: canonical,
+    mode: activeMode,
+    reused,
+    persisted: activeMode === "WRITE_ENABLED",
+    queryOnly: activeMode === "READ_ONLY",
+  };
+}
+
+function initializeDatabase(options = {}) {
+  const settings = options && typeof options === "object" ? options : null;
+  if (!settings || !Object.prototype.hasOwnProperty.call(settings, "mode")) {
+    releaseHandle();
+    throw refusal("DATABASE_MODE_REFUSED");
+  }
+  const modeName = MODE_NAME.get(settings.mode);
+  if (!modeName) {
+    releaseHandle();
+    throw refusal("DATABASE_MODE_REFUSED");
+  }
+  const requested = Object.prototype.hasOwnProperty.call(settings, "dbPath")
+    ? settings.dbPath
+    : process.env.BUZZARD_DB_PATH;
+  if (modeName === "WRITE_ENABLED" && !salesAllowsInitialization()) {
+    releaseHandle();
+    throw refusal("SALES_CLOSED");
+  }
+  let canonical;
+  try {
+    canonical = canonicalizeRequested(requested);
+  } catch (err) {
+    releaseHandle();
+    throw err;
+  }
+  if (modeName === "READ_ONLY" && !fs.existsSync(canonical)) {
+    releaseHandle();
+    throw refusal("DATABASE_FILE_REQUIRED");
+  }
+  if (handle && activePath === canonical && activeMode === modeName) {
+    return initializationResult(canonical, true);
+  }
+  releaseHandle();
+  const Database = require("better-sqlite3");
+  try {
+    if (modeName === "READ_ONLY") {
+      handle = new Database(canonical, { readonly: true, fileMustExist: true });
+      handle.pragma("query_only = ON");
+      const flag = handle.pragma("query_only", { simple: true });
+      if (Number(flag) !== 1) throw refusal("DATABASE_READ_ONLY_UNAVAILABLE");
+      activePath = canonical;
+      activeMode = "READ_ONLY";
+    } else {
+      handle = new Database(canonical);
+      activePath = canonical;
+      activeMode = "WRITE_ENABLED";
+      applyBaseSchema();
+      applyMigrations();
+      seed();
+      resetE2eFixtureInventory();
+    }
+  } catch (err) {
+    releaseHandle();
+    throw err;
+  }
+  return initializationResult(canonical, false);
+}
+
+function applyBaseSchema() {
+  db.pragma("busy_timeout = 8000");
+  db.pragma("foreign_keys = ON");
+  db.exec(`
 CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  email TEXT UNIQUE NOT NULL,
@@ -242,6 +491,7 @@ CREATE TABLE IF NOT EXISTS tax_rates (
  rate REAL NOT NULL
 );
 `);
+}
 
 function slugify(value) {
   return String(value || "")
@@ -296,7 +546,6 @@ function migrateCatalogSeo() {
   `);
 }
 
-migrateCatalogSeo();
 
 const DEFAULT_LOCALES = [
   ["de-DE", "Deutsch", "EUR", "DE"],
@@ -403,7 +652,6 @@ function migrateLocalizationFeeds() {
   }
 }
 
-migrateLocalizationFeeds();
 
 function migrateCustomerCheckout() {
   ensureColumn("addresses", "phone", "TEXT DEFAULT ''");
@@ -482,7 +730,6 @@ function migrateCustomerCheckout() {
   }
 }
 
-migrateCustomerCheckout();
 
 function migrateCustomerSupport() {
   ensureColumn("notifications", "channel", "TEXT DEFAULT 'in_app'");
@@ -540,7 +787,6 @@ function migrateCustomerSupport() {
   }
 }
 
-migrateCustomerSupport();
 
 function migrateCrmLoyalty() {
   db.exec(`
@@ -653,7 +899,6 @@ function migrateCrmLoyalty() {
   }
 }
 
-migrateCrmLoyalty();
 
 function migrateAnalyticsDashboard() {
   db.exec(`
@@ -737,7 +982,6 @@ function migrateAnalyticsDashboard() {
   }
 }
 
-migrateAnalyticsDashboard();
 
 function migrateMarketingCenter() {
   db.exec(`
@@ -872,7 +1116,6 @@ function migrateMarketingCenter() {
   }
 }
 
-migrateMarketingCenter();
 
 function migrateMarketplaceHub() {
   db.exec(`
@@ -996,7 +1239,6 @@ function migrateMarketplaceHub() {
   }
 }
 
-migrateMarketplaceHub();
 
 function migrateSupplierHubV16() {
   [
@@ -1101,7 +1343,6 @@ function migrateSupplierHubV16() {
   }
 }
 
-migrateSupplierHubV16();
 
 function migrateLogisticsFulfillmentV17() {
   db.exec(`
@@ -1199,7 +1440,6 @@ function migrateLogisticsFulfillmentV17() {
   }
 }
 
-migrateLogisticsFulfillmentV17();
 
 function migrateWmsInventoryV18() {
   db.exec(`
@@ -1320,7 +1560,6 @@ function migrateWmsInventoryV18() {
   }
 }
 
-migrateWmsInventoryV18();
 
 function migratePimCatalogV19() {
   db.exec(`
@@ -1493,7 +1732,6 @@ function migratePimCatalogV19() {
   }
 }
 
-migratePimCatalogV19();
 
 function migrateIdentitySecurityV20() {
   [
@@ -1582,7 +1820,6 @@ function migrateIdentitySecurityV20() {
   db.prepare("UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR updated_at = ''").run();
 }
 
-migrateIdentitySecurityV20();
 
 function migratePaymentsFinanceV21() {
   db.exec(`
@@ -1712,7 +1949,6 @@ function migratePaymentsFinanceV21() {
   }
 }
 
-migratePaymentsFinanceV21();
 
 function migrateOrderManagementV22() {
   db.exec(`
@@ -1801,7 +2037,6 @@ function migrateOrderManagementV22() {
   }
 }
 
-migrateOrderManagementV22();
 
 function migrateCartCheckoutV23() {
   db.exec(`
@@ -1889,7 +2124,6 @@ function migrateCartCheckoutV23() {
   }
 }
 
-migrateCartCheckoutV23();
 
 function migrateCrmCustomerServiceV24() {
   db.exec(`
@@ -2001,7 +2235,6 @@ function migrateCrmCustomerServiceV24() {
   }
 }
 
-migrateCrmCustomerServiceV24();
 
 function migrateReturnsRmaV25() {
   db.exec(`
@@ -2114,7 +2347,6 @@ function migrateReturnsRmaV25() {
   }
 }
 
-migrateReturnsRmaV25();
 
 function migrateMarketingLoyaltyV26() {
   db.exec(`
@@ -2229,7 +2461,6 @@ function migrateMarketingLoyaltyV26() {
   }
 }
 
-migrateMarketingLoyaltyV26();
 
 function migrateReviewsRatingsV27() {
   db.exec(`
@@ -2334,7 +2565,6 @@ function migrateReviewsRatingsV27() {
   }
 }
 
-migrateReviewsRatingsV27();
 
 function migrateAiCenterV28() {
   db.exec(`
@@ -2405,7 +2635,6 @@ function migrateAiCenterV28() {
   }
 }
 
-migrateAiCenterV28();
 
 function migrateAdvancedSearchV29() {
   db.exec(`
@@ -2518,7 +2747,6 @@ function migrateAdvancedSearchV29() {
   }
 }
 
-migrateAdvancedSearchV29();
 
 function migrateProductCatalogPimV30() {
   db.exec(`
@@ -2710,7 +2938,6 @@ function migrateProductCatalogPimV30() {
   }
 }
 
-migrateProductCatalogPimV30();
 
 function migrateSupplierIntegrationHubV31() {
   db.exec(`
@@ -2848,7 +3075,6 @@ function migrateSupplierIntegrationHubV31() {
   }
 }
 
-migrateSupplierIntegrationHubV31();
 function migrateOrderManagementV32() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS oms32_records(
@@ -2884,7 +3110,6 @@ function migrateOrderManagementV32() {
   }
 }
 
-migrateOrderManagementV32();
 
 
 function migrateFulfillmentV33() {
@@ -2922,7 +3147,6 @@ function migrateFulfillmentV33() {
   }
 }
 
-migrateFulfillmentV33();
 
 
 function migrateLogisticsV34() {
@@ -2960,7 +3184,6 @@ function migrateLogisticsV34() {
   }
 }
 
-migrateLogisticsV34();
 
 
 function migrateMarketplaceV35() {
@@ -2998,7 +3221,6 @@ function migrateMarketplaceV35() {
   }
 }
 
-migrateMarketplaceV35();
 
 
 function migratePaymentsV36() {
@@ -3036,7 +3258,6 @@ function migratePaymentsV36() {
   }
 }
 
-migratePaymentsV36();
 
 
 function migrateInternationalV37() {
@@ -3074,7 +3295,6 @@ function migrateInternationalV37() {
   }
 }
 
-migrateInternationalV37();
 
 
 function migrateSecurityV38() {
@@ -3112,7 +3332,6 @@ function migrateSecurityV38() {
   }
 }
 
-migrateSecurityV38();
 
 
 function migrateAnalyticsV39() {
@@ -3150,7 +3369,6 @@ function migrateAnalyticsV39() {
   }
 }
 
-migrateAnalyticsV39();
 
 
 function migrateMasterAdminV40() {
@@ -3188,7 +3406,6 @@ function migrateMasterAdminV40() {
   }
 }
 
-migrateMasterAdminV40();
 
 function migrateCoreFoundationPart2() {
   db.exec(`
@@ -3820,16 +4037,6 @@ function migrateCoreFoundationPart17() {
   }
 }
 
-migrateCoreFoundationPart2();
-migrateCoreFoundationPart5();
-migrateCoreFoundationPart6();
-migrateCoreFoundationPart8();
-migrateCoreFoundationPart10();
-migrateCoreFoundationPart16();
-migrateCoreFoundationPart17();
-migrateMasterIntegrationFoundation();
-migrateMasterIntegrationPhase2();
-migrateMasterIntegrationPhase3();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4022,52 +4229,120 @@ function resetE2eFixtureInventory() {
   `).run();
 }
 
-seed();
-resetE2eFixtureInventory();
+function applyMigrations() {
+  migrateCatalogSeo();
+  migrateLocalizationFeeds();
+  migrateCustomerCheckout();
+  migrateCustomerSupport();
+  migrateCrmLoyalty();
+  migrateAnalyticsDashboard();
+  migrateMarketingCenter();
+  migrateMarketplaceHub();
+  migrateSupplierHubV16();
+  migrateLogisticsFulfillmentV17();
+  migrateWmsInventoryV18();
+  migratePimCatalogV19();
+  migrateIdentitySecurityV20();
+  migratePaymentsFinanceV21();
+  migrateOrderManagementV22();
+  migrateCartCheckoutV23();
+  migrateCrmCustomerServiceV24();
+  migrateReturnsRmaV25();
+  migrateMarketingLoyaltyV26();
+  migrateReviewsRatingsV27();
+  migrateAiCenterV28();
+  migrateAdvancedSearchV29();
+  migrateProductCatalogPimV30();
+  migrateSupplierIntegrationHubV31();
+  migrateOrderManagementV32();
+  migrateFulfillmentV33();
+  migrateLogisticsV34();
+  migrateMarketplaceV35();
+  migratePaymentsV36();
+  migrateInternationalV37();
+  migrateSecurityV38();
+  migrateAnalyticsV39();
+  migrateMasterAdminV40();
+  migrateCoreFoundationPart2();
+  migrateCoreFoundationPart5();
+  migrateCoreFoundationPart6();
+  migrateCoreFoundationPart8();
+  migrateCoreFoundationPart10();
+  migrateCoreFoundationPart16();
+  migrateCoreFoundationPart17();
+  migrateMasterIntegrationFoundation();
+  migrateMasterIntegrationPhase2();
+  migrateMasterIntegrationPhase3();
+}
+
+function publicPersistence() {
+  if (!activePath) {
+    return {
+      initialized: false,
+      path: null,
+      accessMode: "UNINITIALIZED",
+      queryOnly: false,
+      persistent: false,
+    };
+  }
+  const info = getPersistenceInfo(activePath);
+  return {
+    initialized: true,
+    path: activePath,
+    accessMode: activeMode,
+    queryOnly: activeMode === "READ_ONLY",
+    storageMode: info.mode,
+    persistent: Boolean(info.persistent),
+    ephemeralRisk: info.ephemeralRisk,
+    syncHint: info.syncHint,
+  };
+}
 
 function getDatabaseHealth() {
+  const base = {
+    enabled: activeMode === "WRITE_ENABLED",
+    readable: activeMode === "READ_ONLY" || activeMode === "WRITE_ENABLED",
+    initialized: activeMode !== "UNINITIALIZED",
+    opened: Boolean(handle && activePath),
+    mode: activeMode,
+    queryOnly: activeMode === "READ_ONLY",
+    path: activePath,
+    version: "0.3.0",
+    salesOpen: salesAllowsInitialization(),
+    egressAllowed: false,
+    productionReady: false,
+  };
+  if (!handle || !activePath) {
+    return { ...base, code: "DATABASE_NOT_INITIALIZED", path: null };
+  }
   try {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
     const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
     const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
-    const persistence = getPersistenceInfo(dbPath);
-    return {
-      enabled: true,
-      path: dbPath,
-      version: "0.3.0",
-      users,
-      products,
-      orders,
-      persistence: {
-        mode: persistence.mode,
-        persistent: persistence.persistent,
-        ephemeralRisk: persistence.ephemeralRisk,
-        backupDir: persistence.backupDir,
-        renderDisk: persistence.renderDisk,
-        syncHint: persistence.syncHint,
-      },
-    };
+    return { ...base, users, products, orders, persistence: publicPersistence() };
   } catch (error) {
-    const persistence = getPersistenceInfo(dbPath);
-    return {
-      enabled: true,
-      path: dbPath,
-      version: "0.3.0",
-      error: error.message,
-      persistence: {
-        mode: persistence.mode,
-        persistent: persistence.persistent,
-        ephemeralRisk: persistence.ephemeralRisk,
-        renderDisk: persistence.renderDisk,
-        syncHint: persistence.syncHint,
-      },
-    };
+    return { ...base, error: error.message, persistence: publicPersistence() };
   }
 }
 
 module.exports = {
   db,
-  dbPath,
+  DatabaseMode: {
+    READ_ONLY,
+    WRITE_ENABLED,
+  },
+  DatabaseState: {
+    UNINITIALIZED: "UNINITIALIZED",
+    READ_ONLY: "READ_ONLY",
+    WRITE_ENABLED: "WRITE_ENABLED",
+  },
+  get dbPath() {
+    return activePath;
+  },
+  get databaseMode() {
+    return activeMode;
+  },
+  initializeDatabase,
   getDatabaseHealth,
-  getPersistenceInfo: () => getPersistenceInfo(dbPath),
+  getPersistenceInfo: publicPersistence,
 };

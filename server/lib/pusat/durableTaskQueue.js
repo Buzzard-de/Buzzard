@@ -18,18 +18,35 @@ function loadSqlite() {
   }
 }
 
+function refuseDbPath(message, code) {
+  const err = new Error(message);
+  err.code = code;
+  throw err;
+}
+
 function assertNotGuardian(dbPath) {
-  const base = path.basename(String(dbPath || ""));
-  if (base.startsWith("buzzard_guardian")) {
-    throw new Error("GUARDIAN_SQLITE_FORBIDDEN");
+  if (typeof dbPath !== "string" || !dbPath.trim() || dbPath.includes("\0")) {
+    refuseDbPath("ORCH_DB_PATH_UNVERIFIED", "DATA_PATH_REFUSED");
   }
+  const resolved = path.resolve(dbPath.trim());
+  if (!resolved || !path.isAbsolute(resolved)) {
+    refuseDbPath("ORCH_DB_PATH_UNVERIFIED", "DATA_PATH_REFUSED");
+  }
+  const base = path.basename(resolved);
+  if (base.startsWith("buzzard_guardian")) {
+    refuseDbPath("GUARDIAN_SQLITE_FORBIDDEN", "GUARDIAN_SQLITE_FORBIDDEN");
+  }
+  if (base === "buzzard.db" || resolved.includes(`${path.sep}server${path.sep}data${path.sep}`)) {
+    refuseDbPath("DEV_DB_FORBIDDEN", "DATA_PATH_REFUSED");
+  }
+  return resolved;
 }
 
 function openDb(dbPath) {
-  assertNotGuardian(dbPath);
-  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const resolved = assertNotGuardian(dbPath);
+  fs.mkdirSync(path.dirname(resolved), { recursive: true });
   const Database = loadSqlite();
-  const db = new Database(dbPath);
+  const db = new Database(resolved);
   db.exec(`
     CREATE TABLE IF NOT EXISTS orch_tasks (
       id TEXT PRIMARY KEY,

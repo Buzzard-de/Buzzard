@@ -269,15 +269,24 @@ function health() {
 }
 
 function executeEsat(action, payload, { actorId, correlationId }) {
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return {
+      ok: false,
+      code: "LEGACY_ESAT_INSPECT_WRITE_BLOCKED",
+      action,
+      actorId,
+      correlationId,
+      inspected: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
   const esat = require("../security/esatBey");
   if (action === ACTIONS.ESAT_STATUS) {
     return { ok: true, action, data: esat.status(), actorId, correlationId };
   }
   if (action === ACTIONS.ESAT_RECENT) {
     return { ok: true, action, data: esat.recent(payload.limit), actorId, correlationId };
-  }
-  if (action === ACTIONS.ESAT_INSPECT) {
-    return { ok: true, action, data: esat.inspect({ ...payload, actor: actorId || "pusat" }), actorId, correlationId };
   }
   return null;
 }
@@ -993,6 +1002,12 @@ async function dispatch({
   idempotencyKey = null,
   sessionRole = null,
 } = {}) {
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return {
+      replayed: false,
+      result: executeReadOnly(action, payload, { actorId, correlationId, sessionRole }),
+    };
+  }
   const run = () => executeReadOnly(action, payload, { actorId, correlationId, sessionRole });
   if (!idempotencyKey) {
     const result = run();

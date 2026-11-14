@@ -211,7 +211,16 @@ function watchException({ type, severity, source } = {}) {
 function activate() {
   if (!activated) {
     activated = true;
-    record({ type: "ESAT_ACTIVE", severity: "INFO", action: "WATCH", details: { hooks: HOOKS }, actor: ID });
+    events.unshift({
+      id: `esat_${crypto.randomBytes(6).toString("hex")}`,
+      type: "ESAT_ACTIVE",
+      severity: "INFO",
+      action: "WATCH",
+      actor: ID,
+      details: redact({ hooks: HOOKS }),
+      at: new Date().toISOString(),
+    });
+    if (events.length > 400) events.pop();
   }
   return status();
 }

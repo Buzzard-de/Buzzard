@@ -91,8 +91,15 @@ describe("EU27 carrier master v5", () => {
     expect(sel.fallback).not.toBeNull();
     const life = mockShipmentLifecycle(sel);
     expect(life.createShipment.blocked).toBe(true);
-    expect(life.track.mock).toBe(true);
-    expect(life.returns.data.status).toBe("MOCK_RETURN_NOT_LIVE");
+    expect(life.track.ok).toBe(false);
+    expect(life.track.mock).toBe(false);
+    expect(life.track.live).toBe(false);
+    expect(life.track.status).toBe("BLOCKED_EXTERNAL");
+    expect(life.track.events).toEqual([]);
+    expect(life.returns.ok).toBe(false);
+    expect(life.returns.blocked).toBe(true);
+    expect(life.returns.live).toBe(false);
+    expect(life.returns.label).toBe(false);
     expect(listAudit().length).toBeGreaterThan(0);
     expect(loadV5().coverage).toHaveLength(27);
     expect(loadV5().coverage.every((c) => c.coverageVerified === false)).toBe(true);

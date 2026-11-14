@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { getSession, extractToken } = require("../lib/customerAuth");
 const { verifyPaymentIntent } = require("../lib/paymentVerification");
 const {
   createRateLimiter,
@@ -12,9 +11,7 @@ const {
 } = require("../lib/security");
 const { logSecurityEvent } = require("../lib/securityLog");
 const { calculateShipping } = require("../lib/shippingEngine");
-const fulfillmentPipeline = require("../lib/fulfillmentPipeline");
 const fulfillmentStore = require("../lib/fulfillmentStore");
-const { validateCoupon } = require("../lib/coupons");
 
 const rootDir = path.join(__dirname, "..", "..");
 const dataDir = path.join(__dirname, "..", "data");
@@ -57,13 +54,14 @@ function writeOrders(orders) {
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2), "utf8");
 }
 
-function validateCouponForOrder(code, subtotal) {
-  const result = validateCoupon(code, subtotal);
-  if (!result.valid) return { valid: false, discount: 0 };
+function validateCouponForOrder() {
   return {
-    valid: true,
-    discount: result.discount,
-    normalizedCode: result.normalizedCode,
+    valid: false,
+    discount: null,
+    status: "BLOCKED",
+    commercial: false,
+    callerFlagIgnored: true,
+    code: "COUPON_UNVERIFIED",
   };
 }
 
@@ -117,7 +115,23 @@ function attachShipments(order) {
   return clone;
 }
 
-function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
+function calculateQuote(lines, shippingMethodId, couponCode, country) {
+  const { isSalesEnabled } = require("../lib/salesMode");
+  if (!isSalesEnabled()) {
+    return {
+      errorKey: "SALES_CLOSED",
+      code: "SALES_CLOSED",
+      discount: null,
+      total: null,
+      taxBase: null,
+      vatAmount: null,
+      commercialEligibility: "BLOCKED",
+      couponApplied: false,
+      couponStatus: couponCode ? "BLOCKED" : "UNKNOWN",
+      orderCreated: false,
+      invented: false,
+    };
+  }
   const resolved = [];
   for (const line of lines) {
     const priced = resolveLine(line.productId, line.variantIds || [], line.qty);
@@ -126,9 +140,9 @@ function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
   }
 
   const subtotal = resolved.reduce((sum, line) => sum + line.lineTotal, 0);
-  const coupon = validateCouponForOrder(couponCode, subtotal);
-  const discount = coupon.valid ? coupon.discount : 0;
-  const discountedSubtotal = Math.max(0, subtotal - discount);
+  validateCouponForOrder();
+  const discount = null;
+  const discountedSubtotal = subtotal;
   const products = loadProducts();
   const shippingResult = calculateShipping({
     lines: resolved.map((line) => ({
@@ -141,8 +155,16 @@ function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
     subtotal: discountedSubtotal,
     productsById: products,
   });
-  if (shippingResult.errorKey) return { errorKey: shippingResult.errorKey };
-  const shipping = shippingResult.shipping ?? 0;
+  if (!shippingResult.ok || shippingResult.commercialEligibility !== "ELIGIBLE" || shippingResult.shipping == null) {
+    return {
+      errorKey: "SHIPPING_RATE_UNVERIFIED",
+      shipping: null,
+      commercialEligibility: "BLOCKED",
+      total: null,
+      invented: false,
+    };
+  }
+  const shipping = shippingResult.shipping;
   const vatAmount = Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
   const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
@@ -152,11 +174,13 @@ function calculateQuote(lines, shippingMethodId, couponCode, country = "DE") {
     subtotal,
     shipping,
     discount,
+    couponApplied: false,
+    couponStatus: couponCode ? "BLOCKED" : "UNKNOWN",
     vatAmount,
     total,
     freeShippingRemaining: shippingResult.freeShippingRemaining ?? 0,
     shippingMethodId,
-    couponCode: coupon.valid ? coupon.normalizedCode : undefined,
+    couponCode: null,
   };
 }
 
@@ -203,7 +227,7 @@ module.exports = {
     ensureDataDir();
 
     app.post("/api/checkout/quote", (req, res) => {
-      const { lines, shippingMethodId = "standard", couponCode, country = "DE" } = req.body || {};
+      const { lines, shippingMethodId = "standard", couponCode, country } = req.body || {};
       if (!Array.isArray(lines) || lines.length === 0) {
         return res.status(400).json({ success: false, errorKey: "checkout.errorRequired" });
       }
@@ -279,7 +303,9 @@ module.exports = {
         return res.status(400).json({ success: false, errorKey: "checkout.errorRequired" });
       }
 
-      const country = String(body.shippingAddress?.country || "DE").toUpperCase();
+      const country = body.shippingAddress?.country
+        ? String(body.shippingAddress.country).toUpperCase()
+        : undefined;
       const quote = calculateQuote(
         body.lines,
         body.shippingMethodId || "standard",
@@ -300,16 +326,13 @@ module.exports = {
 
       const orders = readOrders();
       const orderNumber = nextOrderNumber(orders);
-      const now = new Date().toISOString();
-      const customerSession = getSession(extractToken(req));
-
       const payment = verifyPaymentIntent({
         provider: body.paymentProvider,
         orderNumber,
         amount: quote.total,
         currency: quote.currency,
       });
-      if (!payment.ok) {
+      if (!payment.ok || payment.demo === true || payment.live !== true || payment.captured !== true) {
         logSecurityEvent({
           type: "payment_verification_failed",
           success: false,
@@ -320,87 +343,12 @@ module.exports = {
         return res.status(402).json({ success: false, errorKey: payment.errorKey });
       }
 
-      const order = {
-        id: crypto.randomUUID(),
-        orderNumber,
-        customerId: customerSession?.customerId || null,
-        status: "paid",
-        createdAt: now,
-        customer: {
-          email: normalizeText(body.customer.email, 254).toLowerCase(),
-          firstName: normalizeText(body.customer.firstName, 100),
-          lastName: normalizeText(body.customer.lastName, 100),
-          phone: normalizeText(body.customer.phone, 40),
-          guest: body.customer.guest !== false && !customerSession,
-        },
-        shippingAddress: body.shippingAddress,
-        billingAddress: body.billingSameAsShipping ? body.shippingAddress : body.billingAddress,
-        shippingMethodId: body.shippingMethodId || "standard",
-        paymentProvider: body.paymentProvider,
-        paymentStatus: "paid",
-        paymentTransactionId: payment.transactionId,
-        lines: quote.lines,
-        subtotal: quote.subtotal,
-        shipping: quote.shipping,
-        discount: quote.discount,
-        vatAmount: quote.vatAmount,
-        total: quote.total,
-        currency: quote.currency,
-        couponCode: quote.couponCode,
-        trackingNumber: null,
-        trackingCarrier: null,
-      };
-
-      orders.push(order);
-      writeOrders(orders);
-
-      fulfillmentPipeline.createFulfillmentsForOrder(order, loadProducts(), req);
-      const shipments = fulfillmentStore.listShipmentsForOrder(orderNumber);
-      const tracked = shipments.find((s) => s.trackingNumber);
-      const orderIdx = orders.length - 1;
-      orders[orderIdx].status = shipments.some((s) => s.status !== "pending") ? "processing" : "paid";
-      if (tracked) {
-        orders[orderIdx].trackingNumber = tracked.trackingNumber;
-        orders[orderIdx].trackingCarrier = tracked.carrier;
-      }
-      writeOrders(orders);
-      order.status = orders[orderIdx].status;
-      order.trackingNumber = orders[orderIdx].trackingNumber;
-      order.trackingCarrier = orders[orderIdx].trackingCarrier;
-
-      logSecurityEvent({
-        type: "order_created",
-        success: true,
-        ip: getClientIp(req),
-        userId: customerSession?.customerId || null,
-        path: "/api/orders",
-        detail: { orderNumber, total: quote.total, demoPayment: Boolean(payment.demo) },
+      return res.status(409).json({
+        success: false,
+        errorKey: "PAYMENT_UNVERIFIED",
+        code: "PAYMENT_UNVERIFIED",
+        orderCreated: false,
       });
-
-      try {
-        const automationEngine = require("../lib/automationEngine");
-        const automationPayload = {
-          orderNumber,
-          email: order.customer.email,
-          customerId: order.customerId,
-          language: body.language || "de",
-          marketingConsent: body.marketingConsent !== false,
-          total: quote.total,
-        };
-        automationEngine.emit("new_order", automationPayload, { idempotencyKey: orderNumber });
-        automationEngine.emit("payment_confirmed", automationPayload, { idempotencyKey: `pay:${orderNumber}` });
-      } catch {
-        /* automation is non-blocking */
-      }
-
-      try {
-        const orderAutomation = require("../lib/orderAutomation");
-        orderAutomation.queueOrderCreated(orderNumber);
-      } catch {
-        /* non-blocking */
-      }
-
-      return res.status(201).json({ success: true, order: attachShipments(order) });
     });
 
     app.get("/api/orders/:orderNumber", (req, res) => {

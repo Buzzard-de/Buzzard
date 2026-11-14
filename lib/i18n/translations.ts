@@ -151,6 +151,22 @@ export function fallbackChain(language: string): BuzzardLocale[] {
   return [language as BuzzardLocale, FALLBACK_LOCALE];
 }
 
+/** Selected locale only. A missing key stays missing instead of showing another language. */
+export function storefrontString(locale: string, key: string) {
+  const own = resolve(catalogs[locale], key);
+  if (!own) {
+    return { text: "MISSING_TRANSLATION", status: "MISSING_TRANSLATION" as const, provenance: "ABSENT", review: "UNREVIEWED", humanReviewed: false };
+  }
+  const authored = resolve(authoredCatalogs[locale], key);
+  if (locale === "de" && authored) {
+    return { text: own, status: "PRESENT" as const, provenance: "SOURCE_DE", review: "UNREVIEWED", humanReviewed: false };
+  }
+  if (authored) {
+    return { text: own, status: "PRESENT" as const, provenance: "AUTHORED", review: "UNREVIEWED", humanReviewed: false };
+  }
+  return { text: own, status: "PRESENT" as const, provenance: "MACHINE_DRAFT", review: "UNREVIEWED", humanReviewed: false };
+}
+
 export function flattenCatalog(tree: TranslationTree, prefix = ""): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(tree)) {

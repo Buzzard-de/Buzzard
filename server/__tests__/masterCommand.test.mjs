@@ -3,18 +3,22 @@ import { describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
 const { roster } = require("../lib/pusat/council.js");
+const { SEED_IDS } = require("../lib/buzzardNative/core/identityRegistry.js");
 const { exchangeClassification } = require("../lib/commerce/taxCustomsBridge.js");
 const { payTax, postNetIncome, resetPools } = require("../lib/commerce/taxPools.js");
 
 describe("master command locks", () => {
   it("keeps approved council roles without granting sales or payment power", () => {
-    const ids = roster().map((m) => m.id);
-    expect(ids).toEqual(
+    expect(roster().map((member) => member.id)).toEqual([...SEED_IDS]);
+    expect(roster().some((member) => ["nesrin_hanim", "finance_ai", "customs_ai", "phone_ai"].includes(member.id))).toBe(false);
+    expect(roster().find((member) => member.id === "sales_analysis_ai").canEnableSales).toBe(false);
+    expect(roster().find((member) => member.id === "zeynep_hanim").liveCalls).toBe(false);
+    const legacy = roster("legacy");
+    expect(legacy.map((member) => member.id)).toEqual(
       expect.arrayContaining(["pusat", "nesrin_hanim", "esat_bey", "customs_ai", "phone_ai", "sinan_bey"]),
     );
-    expect(roster().find((m) => m.id === "finance_ai").cannotExecutePayments).toBe(true);
-    expect(roster().find((m) => m.id === "sales_analysis_ai").cannotEnableSales).toBe(true);
-    expect(roster().find((m) => m.id === "phone_ai").liveCalls).toBe(false);
+    expect(legacy.find((member) => member.id === "finance_ai").cannotExecutePayments).toBe(true);
+    expect(legacy.find((member) => member.id === "phone_ai").liveCalls).toBe(false);
   });
 
   it("holds incomplete tax/customs exchanges for a human", () => {

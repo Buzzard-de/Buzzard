@@ -90,7 +90,7 @@ module.exports = {
 
     app.post("/api/identity-security/auth/password-reset-request", (req, res) => {
       const result = identitySecurity.requestPasswordReset(req.body || {}, req);
-      return res.json(result);
+      return res.status(result.status || 403).json({ ...result, ok: false, sent: false, customerNotified: false, email: null });
     });
 
     app.post("/api/identity-security/auth/password-reset", (req, res) => {
@@ -102,16 +102,16 @@ module.exports = {
     app.get("/api/identity-security/account", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      const result = identitySecurity.getAccount(user.sub);
+      const result = identitySecurity.getAccount(user.sub, user.sub);
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result.account);
+      return res.json({ ...result.account, email: null, phone: null, emailVerified: false });
     });
 
     app.patch("/api/identity-security/account", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
       const result = identitySecurity.updateAccount(user.sub, req.body || {}, req);
-      return res.json(result);
+      return res.status(result.status || 200).json({ ...result, ok: false, email: null, phone: null, customerNotified: false });
     });
 
     app.get("/api/identity-security/account/addresses", (req, res) => {
@@ -125,7 +125,7 @@ module.exports = {
       if (!user) return;
       const result = identitySecurity.createAddress(user.sub, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.address);
+      return res.status(200).json({ ...result, ok: false, shippingVerified: false, delivered: false, phone: null });
     });
 
     app.delete("/api/identity-security/account/addresses/:id", (req, res) => {
@@ -143,15 +143,31 @@ module.exports = {
     app.post("/api/identity-security/account/2fa/disable", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
-      return res.json(identitySecurity.disableTwoFactor(user.sub, req));
+      const result = identitySecurity.disableTwoFactor();
+      return res.status(result.status || 403).json({ ...result, email: null, secret: null });
     });
 
     app.post("/api/identity-security/privacy/request", (req, res) => {
       const user = requireIdentityAuth(req, res);
       if (!user) return;
       const result = identitySecurity.createPrivacyRequest(user.sub, req.body || {}, req);
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.request);
+      if (result.error) {
+        return res.status(result.status || 400).json({
+          error: result.error,
+          recorded: false,
+          fulfilled: false,
+          exportCompleted: false,
+          deleteCompleted: false,
+        });
+      }
+      return res.status(result.status || 201).json({
+        ...result.request,
+        recorded: true,
+        fulfilled: false,
+        exportCompleted: false,
+        deleteCompleted: false,
+        email: null,
+      });
     });
 
     app.get("/api/identity-security/privacy/requests", (req, res) => {

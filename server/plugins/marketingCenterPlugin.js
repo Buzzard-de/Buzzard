@@ -42,15 +42,25 @@ module.exports = {
     app.patch("/api/admin/marketing-center/providers/:provider", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketingCenter.updateProvider(req.params.provider, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result.provider);
+      return res.status(result.status || 403).json({ ...result, ok: false, live: false, stored: false });
     });
 
     app.post("/api/admin/marketing-center/campaigns", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = marketingCenter.createCampaign(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(result.status || 201).json(result.campaign);
+      return res.status(result.status || 403).json({ ...result, ok: false, created: false, couponIssued: false });
+    });
+
+    app.patch("/api/admin/marketing-center/campaigns/:id", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const result = marketingCenter.updateCampaign(req.params.id, req.body || {});
+      return res.status(result.status || 403).json({ ...result, ok: false, updated: false });
+    });
+
+    app.delete("/api/admin/marketing-center/campaigns/:id", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      const result = marketingCenter.deleteCampaign(req.params.id, req.body || {});
+      return res.status(result.status || 403).json({ ...result, ok: false, deleted: false });
     });
 
     app.get("/api/admin/marketing-center/campaigns", (req, res) => {

@@ -237,10 +237,16 @@ function smartSearch(body = {}) {
 
 function retryJob(jobId) {
   const job = db.prepare("SELECT * FROM aictr_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "AI job not found", status: 404 };
-
-  db.prepare("UPDATE aictr_jobs SET status = 'queued', completed_at = NULL WHERE id = ?").run(job.id);
-  return { ok: true, status: "queued" };
+  if (!job) return { error: "AI job not found", status: 404, recovered: false };
+  return {
+    ok: false,
+    error: "RETRY_NOT_CONFIRMED",
+    code: "RETRY_NOT_CONFIRMED",
+    status: 409,
+    recovered: false,
+    requeued: false,
+    live: false,
+  };
 }
 
 function listJobs() {

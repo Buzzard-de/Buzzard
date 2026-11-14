@@ -1,17 +1,6 @@
 const crypto = require("crypto");
 const { db } = require("./db");
 
-const VAT_RATES = {
-  DE: 19,
-  AT: 20,
-  FR: 20,
-  IT: 22,
-  ES: 21,
-  BE: 21,
-  NL: 21,
-  PL: 23,
-};
-
 function isEnabled() {
   return process.env.BUZZARD_CART_CHECKOUT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
 }
@@ -20,8 +9,16 @@ function cartToken() {
   return crypto.randomUUID();
 }
 
-function vatRate(country) {
-  return VAT_RATES[String(country || "DE").toUpperCase()] || 19;
+function checkoutVat(country) {
+  return {
+    country: String(country || "").trim().toUpperCase() || null,
+    rate: null,
+    tax: null,
+    official: false,
+    verified: false,
+    source: "UNKNOWN",
+    status: "VAT_UNVERIFIED",
+  };
 }
 
 function getActiveCart(token) {
@@ -46,18 +43,21 @@ function computeTotals(cart) {
     }
   }
 
-  const taxBase = Math.max(0, subtotal - discount);
-  const tax = (taxBase * vatRate(cart.country)) / 100;
+  const taxInfo = checkoutVat(cart.country);
 
   return {
     items,
     subtotal,
     discount,
-    shipping: 0,
-    tax,
-    total: taxBase + tax,
+    shipping: null,
+    shippingStatus: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    tax: taxInfo.tax,
+    total: null,
     currency: cart.currency,
-    taxRate: vatRate(cart.country),
+    taxRate: taxInfo.rate,
+    taxStatus: taxInfo.status,
+    vatOfficial: false,
   };
 }
 
@@ -89,24 +89,16 @@ function addCartItem(token, body = {}) {
   const cart = getActiveCart(token);
   if (!cart) return { error: "Cart not found", status: 404 };
   if (!body.sku || Number(body.quantity) < 1) return { error: "Invalid item", status: 400 };
-
-  db.prepare(`
-    INSERT INTO cc_cart_items(cart_id, sku, title, qty, price, tax)
-    VALUES(?,?,?,?,?,?)
-    ON CONFLICT(cart_id, sku) DO UPDATE SET
-      qty = qty + excluded.qty,
-      price = excluded.price,
-      title = excluded.title
-  `).run(
-    cart.id,
-    body.sku,
-    body.title || "",
-    Number(body.quantity),
-    Number(body.unitPrice || body.unit_price || 0),
-    vatRate(cart.country)
-  );
-
-  return computeTotals(cart);
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    stored: false,
+    purchased: false,
+    live: false,
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED"],
+  };
 }
 
 function updateCartItem(token, sku, body = {}) {
@@ -116,15 +108,18 @@ function updateCartItem(token, sku, body = {}) {
   const quantity = Number(body.quantity || 0);
   if (quantity <= 0) {
     db.prepare("DELETE FROM cc_cart_items WHERE cart_id = ? AND sku = ?").run(cart.id, sku);
-  } else {
-    db.prepare("UPDATE cc_cart_items SET qty = ? WHERE cart_id = ? AND sku = ?").run(
-      quantity,
-      cart.id,
-      sku
-    );
+    return computeTotals(cart);
   }
-
-  return computeTotals(cart);
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    stored: false,
+    purchased: false,
+    stockDecremented: false,
+    live: false,
+  };
 }
 
 function applyCoupon(token, body = {}) {
@@ -146,8 +141,15 @@ function applyCoupon(token, body = {}) {
 
 function listShippingRates(country) {
   return db
-    .prepare("SELECT * FROM cc_shipping_rates WHERE country = ? AND active = 1 ORDER BY price")
-    .all(String(country || "DE").toUpperCase());
+    .prepare("SELECT id, country, code, name, min_days, max_days FROM cc_shipping_rates WHERE country = ? AND active = 1 ORDER BY code")
+    .all(String(country || "").toUpperCase())
+    .map((row) => ({
+      ...row,
+      price: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+      live: false,
+    }));
 }
 
 function createCheckoutSession(body = {}) {
@@ -159,15 +161,41 @@ function createCheckoutSession(body = {}) {
   if (!cart) return { error: "Cart not found", status: 404 };
 
   const totals = computeTotals(cart);
-  const shippingRate = body.shippingId || body.shipping_id
-    ? db
-        .prepare("SELECT * FROM cc_shipping_rates WHERE id = ? AND country = ? AND active = 1")
-        .get(body.shippingId || body.shipping_id, cart.country)
-    : null;
-
-  const shipping = shippingRate?.price || 0;
+  const { selectTransportCost } = require("./commerce/pricingPolicy");
+  const transport = selectTransportCost({
+    origin: body.origin || body.supplierOrigin,
+    country: cart.country,
+    zone: body.zone || body.deliveryZone,
+    weightKg: body.weightKg,
+    dimensions: body.dimensions,
+  });
+  if (!transport.ok) {
+    return {
+      error: "SHIPPING_RATE_UNVERIFIED",
+      code: transport.code || "SHIPPING_RATE_UNVERIFIED",
+      status: 409,
+      shipping: null,
+      commercialEligibility: "BLOCKED",
+      orderCreated: false,
+      tablePriceUsed: false,
+    };
+  }
+  const shipping = transport.shippingCost;
+  const taxInfo = checkoutVat(cart.country);
+  if (!taxInfo.verified || taxInfo.tax == null) {
+    return {
+      error: "VAT_UNVERIFIED",
+      code: "VAT_UNVERIFIED",
+      status: 409,
+      tax: null,
+      taxRate: null,
+      commercialEligibility: "BLOCKED",
+      orderCreated: false,
+      paymentAuthorized: false,
+    };
+  }
   const base = Math.max(0, totals.subtotal - totals.discount + shipping);
-  const tax = (base * vatRate(cart.country)) / 100;
+  const tax = taxInfo.tax;
   const total = base + tax;
   const checkoutToken = cartToken();
 
@@ -223,15 +251,16 @@ function completeCheckoutSession(token) {
 
   const session = db.prepare("SELECT * FROM cc_checkout_sessions WHERE token = ?").get(token);
   if (!session) return { error: "Checkout not found", status: 404 };
-
-  db.prepare("UPDATE cc_checkout_sessions SET status = 'ready_for_payment' WHERE id = ?").run(session.id);
-
   return {
-    ok: true,
-    status: "ready_for_payment",
-    amount: session.total,
-    currency: session.currency,
-    next: "v2.1 payment intent + v2.2 order",
+    ok: false,
+    code: "STOCK_UNVERIFIED",
+    error: "STOCK_UNVERIFIED",
+    status: 409,
+    orderCreated: false,
+    purchased: false,
+    paymentAuthorized: false,
+    live: false,
+    reasons: ["STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED", "ORDER_UNVERIFIED"],
   };
 }
 
@@ -274,7 +303,16 @@ function listCoupons() {
 }
 
 function listShippingRatesAdmin() {
-  return db.prepare("SELECT * FROM cc_shipping_rates ORDER BY country, price").all();
+  return db
+    .prepare("SELECT id, country, code, name, min_days, max_days FROM cc_shipping_rates ORDER BY country, code")
+    .all()
+    .map((row) => ({
+      ...row,
+      price: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+      live: false,
+    }));
 }
 
 function getCartCheckoutStatus() {
@@ -311,4 +349,5 @@ module.exports = {
   listCoupons,
   listShippingRatesAdmin,
   getCartCheckoutStatus,
+  checkoutVat,
 };

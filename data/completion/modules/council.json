@@ -1,0 +1,12 @@
+{
+  "id": "council",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "seedIds": 17,
+  "humanApproval": "HUMAN_APPROVAL_REQUIRED",
+  "memoryIsolated": true,
+  "crashIsolated": true,
+  "liveVerified": false,
+  "productionReady": false
+}

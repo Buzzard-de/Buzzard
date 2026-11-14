@@ -1,0 +1,11 @@
+{
+  "id": "pricing",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "minNetProfitEur": 0.5,
+  "fiatOnly": true,
+  "humanApproval": "HUMAN_APPROVAL_REQUIRED",
+  "liveVerified": false,
+  "productionReady": false
+}

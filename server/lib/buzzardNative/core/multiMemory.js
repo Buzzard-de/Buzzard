@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { resolveIdentity } = require("./councilAliasMap");
+const { getAgentExact } = require("./identityRegistry");
 const { check } = require("./permissionEngine");
 
 const TYPES = Object.freeze([
@@ -83,9 +84,17 @@ function createMultiMemory() {
       return { ok: false, code: "MEMORY_ISOLATION_DENIED" };
     }
     const row = store.get(nsKey(ownerId, type, key));
-    if (!row) return { ok: true, found: false };
+    const namespace = namespaceOf(ownerId);
+    if (!row) return { ok: true, found: false, namespace };
     const intact = crypto.createHash("sha256").update(row.payload).digest("hex") === row.integrity;
-    return { ok: true, found: true, intact, version: row.version, value: intact ? JSON.parse(row.payload).value : null };
+    return {
+      ok: true,
+      found: true,
+      intact,
+      version: row.version,
+      value: intact ? JSON.parse(row.payload).value : null,
+      namespace,
+    };
   }
   function restore({ actorId, ownerId, type = "personal", key, version }) {
     if (actorId !== ownerId) return { ok: false, code: "MEMORY_ISOLATION_DENIED" };
@@ -110,14 +119,16 @@ function createMultiMemory() {
     return actorId === ownerId;
   }
   function namespaceOf(ownerId) {
-    const map = {
+    const exact = getAgentExact(ownerId);
+    if (exact?.memory_namespace) return exact.memory_namespace;
+    const legacy = {
       sinan_bey: "memory/sinan/",
       esat_bey: "memory/esat/",
       dogu_bey: "memory/dogu/",
       nedim_bey: "memory/nedim/",
       tuncay_bey: "memory/tuncay/",
     };
-    return map[ownerId] || `memory/${ownerId}/`;
+    return legacy[ownerId] || `memory/${ownerId}/`;
   }
   return { put, get, restore, tamperDetect, audit: () => audit.slice(), TYPES };
 }

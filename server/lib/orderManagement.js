@@ -36,83 +36,46 @@ function createOrder(body = {}) {
         WHERE i.idempotency_key = ?
       `)
       .get(key);
-    if (existing) return { order: existing };
+    if (existing) return { ok: false, code: "DUPLICATE_ORDER", error: "DUPLICATE_ORDER", orderCreated: false, status: 409 };
   }
 
   const items = Array.isArray(body.items) ? body.items : [];
-  if (!items.length) return { error: "At least one item is required", status: 400 };
+  if (!items.length) return { error: "At least one item is required", status: 400, orderCreated: false };
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
-    0
-  );
-  const shipping = Number(body.shippingTotal || body.shipping_total || 0);
-  const discount = Number(body.discountTotal || body.discount_total || 0);
-  const tax = Number(body.taxTotal || body.tax_total || 0);
-  const total = Math.max(0, subtotal + shipping + tax - discount);
-  const orderNo = body.orderNumber || body.order_number || orderNumber();
-
-  try {
-    const result = db
-      .prepare(`
-        INSERT INTO oms_orders(
-          order_number, customer_id, customer_email, channel, currency,
-          subtotal, shipping_total, discount_total, tax_total, grand_total,
-          payment_status, order_status, shipping_address_json, billing_address_json
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-      `)
-      .run(
-        orderNo,
-        body.customerId || body.customer_id || null,
-        body.customerEmail || body.customer_email || "",
-        body.channel || "web",
-        body.currency || process.env.OMS_DEFAULT_CURRENCY || "EUR",
-        subtotal,
-        shipping,
-        discount,
-        tax,
-        total,
-        body.paymentStatus || body.payment_status || "pending",
-        "pending",
-        JSON.stringify(body.shippingAddress || body.shipping_address || {}),
-        JSON.stringify(body.billingAddress || body.billing_address || {})
-      );
-
-    const insertItem = db.prepare(`
-      INSERT INTO oms_order_items(
-        order_id, product_sku, title, quantity, unit_price, tax_rate, supplier_id, warehouse_id
-      )
-      VALUES(?,?,?,?,?,?,?,?)
-    `);
-    items.forEach((item) => {
-      insertItem.run(
-        result.lastInsertRowid,
-        item.sku || item.product_sku,
-        item.title || "",
-        Number(item.quantity || 1),
-        Number(item.unitPrice || item.unit_price || 0),
-        Number(item.taxRate || item.tax_rate || 0),
-        item.supplierId || item.supplier_id || null,
-        item.warehouseId || item.warehouse_id || null
-      );
-    });
-
-    if (key) {
-      db.prepare("INSERT INTO oms_order_idempotency(idempotency_key, order_id) VALUES(?,?)").run(
-        key,
-        result.lastInsertRowid
-      );
-    }
-
-    recordEvent(result.lastInsertRowid, "order_created", null, "pending", "Order created", {
-      channel: body.channel || "web",
-    });
-    const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid);
-    return { order, created: true };
-  } catch (error) {
-    return { error: "Order creation conflict", detail: error.message, status: 409 };
+  const { selectTransportCost } = require("./commerce/pricingPolicy");
+  const transport = selectTransportCost({
+    origin: body.origin || body.supplierOrigin,
+    country: body.destinationCountry || body.country,
+    zone: body.deliveryZone || body.zone,
+    weightKg: body.weightKg,
+    dimensions: body.dimensions,
+  });
+  if (!transport.ok) {
+    return {
+      error: "SHIPPING_RATE_UNVERIFIED",
+      code: transport.code || "SHIPPING_RATE_UNVERIFIED",
+      status: 409,
+      orderCreated: false,
+      shipping: null,
+      commercialEligibility: "BLOCKED",
+    };
   }
+  const salesOpen = require("./salesMode").isSalesEnabled();
+  const reasons = [];
+  if (!salesOpen) reasons.push("SALES_CLOSED");
+  if (body.mock === true || body.demo === true) reasons.push("MOCK_NOT_COMMERCIAL");
+  reasons.push("PAYMENT_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED", "STOCK_UNVERIFIED", "VAT_UNVERIFIED");
+  return {
+    ok: false,
+    error: reasons[0],
+    code: reasons[0],
+    reasons,
+    status: 409,
+    orderCreated: false,
+    shipping: transport.shippingCost,
+    live: false,
+  };
+
 }
 
 function getOrderByNumber(orderNumber) {
@@ -167,165 +130,67 @@ function updateOrderStatus(id, body = {}) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!order) return { error: "Order not found", status: 404 };
 
-  const next = body.status;
-  if (!VALID_TRANSITIONS[order.order_status]?.includes(next)) {
-    return { error: `Invalid transition ${order.order_status} -> ${next}`, status: 400 };
-  }
-
-  db.prepare("UPDATE oms_orders SET order_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    next,
-    order.id
-  );
-  recordEvent(order.id, "status_changed", order.order_status, next, body.message || "");
-  return { order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
+  return { ok: false, code: "ORDER_UNVERIFIED", status: 409, applied: false, from: order.order_status, requested: body.status || null, live: false };
 }
 
-function updatePaymentStatus(id, body = {}) {
+function updatePaymentStatus(id) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!order) return { error: "Order not found", status: 404 };
-
-  const status = body.status;
-  db.prepare("UPDATE oms_orders SET payment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    status,
-    order.id
-  );
-  recordEvent(order.id, "payment_status_changed", order.payment_status, status, "Payment status updated");
-  return { order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
+  return { ok: false, code: "PAYMENT_UNVERIFIED", status: 409, applied: false, live: false };
 }
 
-function updateFulfillmentStatus(id, body = {}) {
+function updateFulfillmentStatus(id) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!order) return { error: "Order not found", status: 404 };
-
-  const status = body.status;
-  db.prepare("UPDATE oms_orders SET fulfillment_status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    status,
-    order.id
-  );
-  recordEvent(order.id, "fulfillment_status_changed", order.fulfillment_status, status, "Fulfillment status updated");
-  return { order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
+  return { ok: false, code: "FULFILLMENT_NOT_LIVE", status: 409, applied: false, shipped: false, delivered: false, live: false };
 }
 
-function cancelOrder(id, body = {}) {
+function cancelOrder(id) {
   const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!order) return { error: "Order not found", status: 404 };
-  if (!["pending", "confirmed", "processing", "partially_fulfilled"].includes(order.order_status)) {
-    return { error: "Order cannot be cancelled", status: 400 };
-  }
-
-  db.prepare("UPDATE oms_orders SET order_status = 'cancelled', updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    order.id
-  );
-  recordEvent(order.id, "cancelled", order.order_status, "cancelled", body.reason || "Customer/admin cancellation");
-  return { ok: true, order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
+  return {
+    ok: false,
+    code: "CANCELLATION_UNVERIFIED",
+    status: 409,
+    cancelled: false,
+    supplierCancelled: false,
+    live: false,
+  };
 }
 
 function splitOrder(id, body = {}) {
   const parent = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!parent) return { error: "Order not found", status: 404 };
 
-  const requested = Array.isArray(body.items) ? body.items : [];
-  if (!requested.length) return { error: "Split items required", status: 400 };
+  return {
+    ok: false,
+    code: "ORDER_UNVERIFIED",
+    status: 409,
+    orderCreated: false,
+    childOrder: null,
+    live: false,
+  };
 
-  const childNo = orderNumber();
-  const result = db
-    .prepare(`
-      INSERT INTO oms_orders(
-        order_number, customer_id, customer_email, channel, currency,
-        shipping_total, tax_total, grand_total, payment_status, order_status,
-        parent_order_id, shipping_address_json, billing_address_json
-      )
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `)
-    .run(
-      childNo,
-      parent.customer_id,
-      parent.customer_email,
-      parent.channel,
-      parent.currency,
-      0,
-      0,
-      0,
-      parent.payment_status,
-      "confirmed",
-      parent.id,
-      parent.shipping_address_json,
-      parent.billing_address_json
-    );
-
-  let subtotal = 0;
-  const add = db.prepare(`
-    INSERT INTO oms_order_items(order_id, product_sku, title, quantity, unit_price, tax_rate, supplier_id, warehouse_id)
-    VALUES(?,?,?,?,?,?,?,?)
-  `);
-  requested.forEach((item) => {
-    subtotal += Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0);
-    add.run(
-      result.lastInsertRowid,
-      item.sku || item.product_sku,
-      item.title || "",
-      Number(item.quantity || 1),
-      Number(item.unitPrice || item.unit_price || 0),
-      Number(item.taxRate || item.tax_rate || 0),
-      item.supplierId || item.supplier_id || null,
-      item.warehouseId || item.warehouse_id || null
-    );
-  });
-
-  db.prepare("UPDATE oms_orders SET subtotal = ?, grand_total = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    subtotal,
-    subtotal,
-    result.lastInsertRowid
-  );
-  db.prepare("INSERT INTO oms_order_splits(parent_order_id, child_order_id, split_reason) VALUES(?,?,?)").run(
-    parent.id,
-    result.lastInsertRowid,
-    body.reason || "fulfillment_split"
-  );
-  recordEvent(parent.id, "order_split", parent.order_status, parent.order_status, "Child order created", {
-    childOrder: childNo,
-  });
-  recordEvent(result.lastInsertRowid, "order_created", null, "confirmed", "Split child order created", {
-    parentOrder: parent.order_number,
-  });
-
-  return { order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid), created: true };
 }
 
 function addFulfillmentLink(id, body = {}) {
   const order = db.prepare("SELECT id FROM oms_orders WHERE id = ?").get(id);
   if (!order) return { error: "Order not found", status: 404 };
 
-  const result = db
-    .prepare(`
-      INSERT INTO oms_fulfillment_links(
-        order_id, order_item_id, supplier_id, warehouse_id, shipment_id, status, external_reference
-      )
-      VALUES(?,?,?,?,?,?,?)
-    `)
-    .run(
-      order.id,
-      body.orderItemId || body.order_item_id || null,
-      body.supplierId || body.supplier_id || null,
-      body.warehouseId || body.warehouse_id || null,
-      body.shipmentId || body.shipment_id || null,
-      body.status || "queued",
-      body.externalReference || body.external_reference || ""
-    );
-
-  return { link: db.prepare("SELECT * FROM oms_fulfillment_links WHERE id = ?").get(result.lastInsertRowid) };
+  return {
+    ok: false,
+    code: "FULFILLMENT_NOT_LIVE",
+    status: 409,
+    linked: false,
+    shipmentCreated: false,
+    live: false,
+  };
 }
 
-function addOrderNote(id, body = {}) {
+function addOrderNote(id) {
   const order = db.prepare("SELECT id FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { error: "Order not found", status: 404 };
-
-  db.prepare("INSERT INTO oms_order_notes(order_id, note, internal) VALUES(?,?,?)").run(
-    order.id,
-    body.note || "",
-    body.internal === false ? 0 : 1
-  );
-  return { ok: true };
+  if (!order) return { error: "Order not found", status: 404, stored: false, noteSaved: false };
+  return { ok: false, code: "ORDER_UNVERIFIED", status: 409, stored: false, noteSaved: false, customerNotified: false, callerFlagIgnored: true };
 }
 
 function getOmsOverview() {
@@ -335,9 +200,10 @@ function getOmsOverview() {
     processing: db.prepare("SELECT COUNT(*) n FROM oms_orders WHERE order_status = 'processing'").get().n,
     fulfilled: db.prepare("SELECT COUNT(*) n FROM oms_orders WHERE order_status = 'fulfilled'").get().n,
     cancelled: db.prepare("SELECT COUNT(*) n FROM oms_orders WHERE order_status = 'cancelled'").get().n,
-    grossValue: db
-      .prepare("SELECT COALESCE(SUM(grand_total), 0) n FROM oms_orders WHERE order_status <> 'cancelled'")
-      .get().n,
+    grossValue: null,
+    revenue: null,
+    salesRecorded: false,
+    code: "SALES_CLOSED",
   };
 }
 

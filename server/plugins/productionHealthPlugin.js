@@ -12,10 +12,19 @@ function attachAdmin(req, res) {
   req.adminUser = {
     userId: session.userId,
     id: session.userId,
-    email: session.email,
+    email: null,
     role: session.role,
   };
   return session;
+}
+
+function workerDeploymentCheck(worker) {
+  const status = typeof worker?.status === "string" && worker.status.trim() ? worker.status.trim() : "UNKNOWN";
+  const runtimeVerified = worker?.runtimeVerified === true;
+  const detail = `status=${status} runtimeVerified=${runtimeVerified}`;
+  if (runtimeVerified && status === "RUNNING") return { ok: true, detail };
+  if (status === "BLOCKED") return { ok: false, detail };
+  return { ok: null, detail };
 }
 
 function mapReadinessStatus(summary) {
@@ -29,7 +38,8 @@ function mapReadinessStatus(summary) {
   push("environment", summary.environment?.ok === true, summary.environment?.errors?.[0]?.message || "ok");
   push("deployment", summary.deployment?.status === "SYNCED", summary.deployment?.status);
   push("redis", summary.redis?.ok !== false, summary.redis?.status);
-  push("worker", summary.worker?.enabled && summary.worker?.status === "RUNNING", summary.worker?.status);
+  const workerCheck = workerDeploymentCheck(summary.worker);
+  push("worker", workerCheck.ok, workerCheck.detail);
   push("catalog", summary.catalog?.status === "OK", `${summary.catalog?.productCount ?? 0} products`);
   push("commerce_safety", summary.commerce?.salesEnabled === false, `sales=${summary.commerce?.salesEnabled}`);
   push("go_live_lock", summary.goLiveLock === true, "ACTIVE");

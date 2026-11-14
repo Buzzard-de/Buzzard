@@ -100,7 +100,9 @@ describe("connected commerce and finance", () => {
     expect(runConnected("failed_payment").events[0].sent).toBe(false);
     expect(runConnected("supplier_refuses_reimbursement").events[0].assumed).toBe(false);
     const partial = runConnected("partial_refund");
-    expect(partial.actualProfit).toBe(9);
+    expect(partial.actualProfit).toBeNull();
+    expect(partial.stages.refunds.refunded).toBe(false);
+    expect(partial.stages.refunds.customerRefund).toBeNull();
     expect(partial.consistent).toBe(true);
     expect(runConnected("insufficient_profit").live).toBe(false);
   });
@@ -108,9 +110,16 @@ describe("connected commerce and finance", () => {
   it("keeps refunds off supplier credits and DE tax separate", () => {
     const after = applyCustomerRefund({ estimatedProfit: 20, refund: 4 });
     expect(after.supplierReimbursementAssumed).toBe(false);
-    expect(after.actualProfit).toBe(16);
+    expect(after.supplierReimbursement).toBeNull();
+    expect(after.customerRefund).toBeNull();
+    expect(after.actualProfit).toBeNull();
+    expect(after.refunded).toBe(false);
     expect(split({ netProfit: 40, taxEstimate: 8, country: "ES" }).emergencyReserve).toBe(10);
     expect(split({ netProfit: 40, taxEstimate: 8, country: "DE" }).emergencyReserve).toBe(0);
+    expect(split({ country: "ES" }).emergencyReserve).toBeNull();
+    expect(split({ country: "DE" }).emergencyReserve).toBeNull();
+    expect(split({ netProfit: 0, country: "ES" }).emergencyReserve).toBe(0);
+    expect(split({ netProfit: -1, country: "ES" }).code).toBe("INVALID_AMOUNT");
     const q = calculate({
       actorId: "pricing_ai",
       supplierCost: 100,

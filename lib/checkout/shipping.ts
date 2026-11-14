@@ -1,67 +1,42 @@
-import { calculateMarketShipping, freeShippingRemaining as marketFreeShippingRemaining, getFreeShippingThreshold } from "@/lib/market/shipping";
-import { calculateLinesWeightKg } from "@/lib/market/weight";
-import { defaultMarketCountryCode } from "@/lib/market/countries";
-import type { CheckoutCartLineInput } from "./types";
-import type { ShippingMethodOption } from "./types";
+import type { CheckoutCartLineInput, ShippingMethodOption } from "./types";
 
-export const FREE_SHIPPING_THRESHOLD = 79;
-export const STANDARD_SHIPPING_COST = 5.99;
+export const STANDARD_SHIPPING_COST = null;
 
 export const SHIPPING_METHODS: ShippingMethodOption[] = [
   {
     id: "standard",
     labelKey: "checkout.shippingStandard",
     descriptionKey: "checkout.shippingStandardDesc",
-    baseCost: STANDARD_SHIPPING_COST,
-    etaDays: "2-4",
+    baseCost: null,
+    etaDays: "UNKNOWN",
   },
   {
     id: "express",
     labelKey: "checkout.shippingExpress",
     descriptionKey: "checkout.shippingExpressDesc",
-    baseCost: 12.99,
-    etaDays: "1-2",
+    baseCost: null,
+    etaDays: "UNKNOWN",
   },
 ];
 
 export function getShippingMethod(id: string): ShippingMethodOption | undefined {
-  return SHIPPING_METHODS.find((m) => m.id === id);
+  return SHIPPING_METHODS.find((method) => method.id === id);
 }
 
-export function calculateShippingCost(
-  subtotal: number,
-  methodId: string,
-  countryCode = defaultMarketCountryCode(),
-  weightKg = 2
-): number {
-  if (subtotal <= 0) return 0;
-
-  const standard = calculateMarketShipping(countryCode, weightKg, subtotal);
-  if (methodId === "standard") return standard;
-
-  const method = getShippingMethod(methodId) ?? SHIPPING_METHODS[0];
-  if (method.id === "express") {
-    return standard > 0 ? standard + (method.baseCost - SHIPPING_METHODS[0].baseCost) : method.baseCost;
-  }
-
-  return method.baseCost;
+export function calculateShippingCost(): number | null {
+  return null;
 }
 
-export function calculateShippingCostForLines(
-  subtotal: number,
-  methodId: string,
-  countryCode = defaultMarketCountryCode(),
-  lines: CheckoutCartLineInput[] = []
-): number {
-  const weightKg = lines.length ? calculateLinesWeightKg(lines) : 2;
-  return calculateShippingCost(subtotal, methodId, countryCode, weightKg);
+export function calculateShippingCostForLines(): number | null {
+  return null;
 }
 
-export function freeShippingRemaining(
-  subtotal: number,
-  countryCode = defaultMarketCountryCode()
-): number {
-  return marketFreeShippingRemaining(subtotal, countryCode);
+export function freeShippingRemaining(): number | null {
+  return null;
 }
 
-export { getFreeShippingThreshold };
+export function getFreeShippingThreshold(): number | null {
+  return null;
+}
+
+export type { CheckoutCartLineInput };

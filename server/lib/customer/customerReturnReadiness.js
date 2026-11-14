@@ -11,7 +11,7 @@ function getReturnRefundReadiness() {
     customerReturnRoute: "POST /api/returns-rma/returns",
     failClosedWhileSalesOff: true,
     realRefundExecution: false,
-    refundNote: "processRefund marks succeeded — payment bridge required at go-live",
+    refundNote: "REFUND_UNVERIFIED until a verified payment and a real refund proof exist",
     realMoneyMovement: false,
     ...guard,
   };

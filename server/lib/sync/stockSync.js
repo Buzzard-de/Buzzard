@@ -7,7 +7,8 @@ const { appendJobLog } = require("../jobObservability");
 
 async function runPipeline({ supplierId = "mock", jobId, dryRun = true } = {}) {
   const adapter = getAdapter(supplierId);
-  const products = await adapter.fetchProducts();
+  const fetched = await adapter.fetchProducts();
+  const products = Array.isArray(fetched) ? fetched : fetched.records || [];
   const updates = [];
 
   for (const raw of products) {
@@ -16,25 +17,34 @@ async function runPipeline({ supplierId = "mock", jobId, dryRun = true } = {}) {
     if (!check.ok) continue;
     updates.push({
       sku: p.sku,
-      quantity: check.value,
-      availability: p.availability,
+      quantity: null,
+      fixtureQuantity: check.value,
+      availability: "UNKNOWN",
       supplierId,
-      lastUpdate: new Date().toISOString(),
-      syncStatus: dryRun ? "simulated" : "pending",
+      commercialUse: false,
+      syncStatus: "BLOCKED_EXTERNAL",
     });
   }
 
   if (jobId) {
-    appendJobLog(jobId, `Stock sync: ${updates.length} items`, {
-      metadata: { supplierId, dryRun },
+    appendJobLog(jobId, `Stock sync blocked: ${updates.length} fixture rows ignored`, {
+      metadata: { supplierId, dryRun, status: "BLOCKED_EXTERNAL" },
     });
   }
 
   return {
+    ok: false,
+    live: false,
+    mock: fetched.mock === true,
+    status: fetched.status || "BLOCKED_EXTERNAL",
+    code: fetched.code,
+    commercialEligibility: "BLOCKED",
     supplierId,
     dryRun,
-    updated: dryRun ? 0 : updates.length,
-    items: updates,
+    updated: 0,
+    items: [],
+    ignoredFixtureRows: updates.length,
+    purchased: false,
   };
 }
 

@@ -21,12 +21,37 @@ function paySupplier({ actorId = "logistics_ai", approved = false } = {}) {
   };
 }
 
-function separateRefundAndCredit({ customerRefund = 0, supplierCredit = 0 } = {}) {
+function moneyOrNull(value) {
+  if (value == null || value === "") return { present: false, value: null };
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return { invalid: true, value: null };
+  if (!/^\d+(\.\d{1,2})?$/.test(String(value))) return { invalid: true, value: null };
+  return { present: true, value };
+}
+
+function separateRefundAndCredit({ customerRefund, supplierCredit } = {}) {
+  const customer = moneyOrNull(customerRefund);
+  const supplier = moneyOrNull(supplierCredit);
+  if (customer.invalid || supplier.invalid) {
+    return {
+      ok: false,
+      code: "INVALID_AMOUNT",
+      customerRefund: null,
+      supplierCredit: null,
+      reconciled: false,
+      mixed: false,
+      assumeSupplierRepaysCustomer: false,
+      refunded: false,
+    };
+  }
   return {
-    customerRefund: Number(customerRefund) || 0,
-    supplierCredit: Number(supplierCredit) || 0,
+    ok: false,
+    code: "PROVIDER_NOT_LIVE",
+    customerRefund: customer.present ? customer.value : null,
+    supplierCredit: supplier.present ? supplier.value : null,
+    reconciled: false,
     mixed: false,
     assumeSupplierRepaysCustomer: false,
+    refunded: false,
   };
 }
 

@@ -1,0 +1,12 @@
+{
+  "id": "logistics",
+  "phase": 7,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "blocked_by_external_dependency",
+  "stockBuy": "HUMAN_GATE_REQUIRED",
+  "shipmentCreated": false,
+  "supplierPurchased": false,
+  "liveCarrier": false,
+  "evidence": "engineRegistry.buyStock and returnsEngine.startReturn",
+  "liveVerified": false
+}

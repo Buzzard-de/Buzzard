@@ -18,10 +18,8 @@ function escapeXml(value) {
     .replace(/"/g, "&quot;");
 }
 
-function mapAvailability(stockStatus) {
-  const s = String(stockStatus || "").toLowerCase();
-  if (s === "in_stock" || s === "low_stock") return "in_stock";
-  return "out_of_stock";
+function mapAvailability() {
+  return null;
 }
 
 function resolveGoogleCategory(categoryId) {
@@ -58,7 +56,7 @@ function buildEligibleFeedItems(filters = {}) {
       description: mapped.description || mapped.shortDescription || mapped.title,
       link: `${base}/produkt/${mapped.seo?.slug || mapped.sku}/?lang=${locale}`,
       image_link: mapped.images?.[0] || mapped.media?.find((m) => m.type === "image")?.url || "",
-      availability: mapAvailability(mapped.stockStatus),
+      availability: mapAvailability(),
       price: salesEnabled ? `${Number(mapped.price).toFixed(2)} ${currency}` : null,
       brand: mapped.brand?.name || "",
       gtin: gtinResult.normalized || mapped.gtin || mapped.ean,
@@ -82,7 +80,6 @@ function buildGoogleMerchantFeedXml(filters = {}) {
         `<g:title>${escapeXml(item.title)}</g:title>`,
         `<g:description>${escapeXml(item.description)}</g:description>`,
         `<g:link>${escapeXml(item.link)}</g:link>`,
-        `<g:availability>${item.availability}</g:availability>`,
         `<g:condition>${item.condition}</g:condition>`,
       ];
       if (item.image_link) parts.push(`<g:image_link>${escapeXml(item.image_link)}</g:image_link>`);

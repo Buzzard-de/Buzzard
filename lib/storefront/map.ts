@@ -36,10 +36,10 @@ export function mapStorefrontToPublic(product: StorefrontProduct): PublicProduct
       stock: v.stock || 0,
     })),
     price: product.price,
-    vatRate: 19,
+    vatRate: null,
     stock: product.stock,
     stockStatus: toStockStatus(product.stockStatus, product.stock),
-    shipping: { weight_kg: 1, length_cm: 20, width_cm: 20, height_cm: 10, class: "standard" },
+    shipping: { weight_kg: null, length_cm: null, width_cm: null, height_cm: null, class: null, status: "UNKNOWN" },
     seo: {
       slug,
       title: product.seo.metaTitle || product.title,

@@ -57,55 +57,36 @@ function createReview(body = {}) {
     .run(
       productSku,
       body.customerId || body.customer_id || null,
-      body.customerName || body.customer_name || "",
-      body.orderNumber || body.order_number || "",
+      "",
+      "",
       rating,
       body.title || "",
       reviewBody,
       "pending",
-      body.verifiedPurchase || body.verified_purchase ? 1 : 0,
+      0,
       body.language || "de"
     );
 
-  const insertMedia = db.prepare(`
-    INSERT INTO revr_review_media(review_id, media_type, storage_key, url, alt_text)
-    VALUES(?,?,?,?,?)
-  `);
-  (body.media || []).forEach((item) => {
-    insertMedia.run(
-      result.lastInsertRowid,
-      item.type || item.media_type || "image",
-      item.storageKey || item.storage_key || "",
-      item.url || "",
-      item.altText || item.alt_text || ""
-    );
-  });
-
   return {
-    review: db.prepare("SELECT * FROM revr_reviews WHERE id = ?").get(result.lastInsertRowid),
+    ok: false,
     created: true,
+    published: false,
+    verifiedPurchase: false,
+    purchaseVerified: false,
+    ratingApplied: false,
+    rewardIssued: false,
+    customerNotified: false,
+    callerFlagIgnored: true,
+    review: { id: result.lastInsertRowid, status: "pending", verified_purchase: 0 },
   };
 }
 
 function getProductReviews(sku) {
-  const stats =
-    db.prepare("SELECT * FROM revr_product_rating_stats WHERE product_sku = ?").get(sku) || {
-      product_sku: sku,
-      review_count: 0,
-      average_rating: 0,
-    };
-
-  const reviews = db
-    .prepare(`
-      SELECT r.*, CASE WHEN r.verified_purchase = 1 THEN 1 ELSE 0 END verified
-      FROM revr_reviews r
-      WHERE r.product_sku = ? AND r.status = 'published'
-      ORDER BY r.id DESC
-      LIMIT 100
-    `)
-    .all(sku);
-
-  return { stats, reviews };
+  return {
+    stats: { product_sku: sku, review_count: 0, average_rating: null, published: false, verifiedPurchase: false },
+    reviews: [],
+    published: false,
+  };
 }
 
 function getCustomerReviews(customerId) {
@@ -114,17 +95,8 @@ function getCustomerReviews(customerId) {
     .all(customerId);
 }
 
-function markHelpful(reviewId, body = {}) {
-  const customerId = body.customerId || body.customer_id;
-  if (customerId) {
-    db.prepare(`
-      INSERT OR IGNORE INTO revr_review_votes(review_id, customer_id, vote)
-      VALUES(?,?,?)
-    `).run(reviewId, customerId, "helpful");
-  }
-
-  db.prepare("UPDATE revr_reviews SET helpful_count = helpful_count + 1 WHERE id = ?").run(reviewId);
-  return { ok: true };
+function markHelpful() {
+  return { ok: false, code: "ORDER_UNVERIFIED", stored: false, ratingApplied: false, customerNotified: false, callerFlagIgnored: true };
 }
 
 function reportReview(reviewId, body = {}) {
@@ -143,55 +115,47 @@ function reportReview(reviewId, body = {}) {
     WHERE id = ?
   `).run(reviewId);
 
-  return { ok: true, created: true };
+  return { ok: false, created: true, published: false, customerNotified: false, verifiedPurchase: false };
 }
 
-function addReply(reviewId, body = {}) {
+function addReply(reviewId) {
   const review = db.prepare("SELECT id FROM revr_reviews WHERE id = ?").get(reviewId);
-  if (!review) return { error: "Review not found", status: 404 };
-
-  db.prepare(`
-    INSERT INTO revr_review_replies(review_id, author_type, author_name, body)
-    VALUES(?,?,?,?)
-  `).run(
-    reviewId,
-    body.authorType || body.author_type || "seller",
-    body.authorName || body.author_name || "Buzzard",
-    body.body || ""
-  );
-
-  return { ok: true };
+  if (!review) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 404, stored: false, customerNotified: false };
+  return { ok: false, code: "ORDER_UNVERIFIED", status: 409, stored: false, customerNotified: false, callerFlagIgnored: true };
 }
 
 function moderateReview(reviewId, body = {}) {
   const review = db.prepare("SELECT * FROM revr_reviews WHERE id = ?").get(reviewId);
   if (!review) return { error: "Review not found", status: 404 };
 
-  const status = body.status;
-  if (!VALID_STATUSES.includes(status)) {
-    return { error: "Invalid review status", status: 400 };
+  const status = String(body.status || "");
+  if (status === "published" || body.approved === true || body.verified === true || body.live === true) {
+    return {
+      ok: false,
+      error: "ORDER_UNVERIFIED",
+      code: "ORDER_UNVERIFIED",
+      status: 409,
+      published: false,
+      verifiedPurchase: false,
+      ratingApplied: false,
+      rewardIssued: false,
+      customerNotified: false,
+      callerFlagIgnored: true,
+    };
   }
-
-  db.prepare(`
-    UPDATE revr_reviews
-    SET status = ?, risk_flag = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(status, body.riskFlag || body.risk_flag || review.risk_flag, reviewId);
-
+  if (status !== "rejected" && status !== "hidden") {
+    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, published: false };
+  }
+  db.prepare("UPDATE revr_reviews SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status, reviewId);
   refreshProductStats(review.product_sku);
-  return { review: db.prepare("SELECT * FROM revr_reviews WHERE id = ?").get(reviewId) };
+  return { ok: false, code: "WITHDRAWN", status: 200, published: false, moderated: true, customerNotified: false, rewardIssued: false };
 }
 
 function moderateMedia(mediaId, body = {}) {
   const media = db.prepare("SELECT id FROM revr_review_media WHERE id = ?").get(mediaId);
   if (!media) return { error: "Media not found", status: 404 };
 
-  db.prepare("UPDATE revr_review_media SET status = ? WHERE id = ?").run(
-    body.status || "approved",
-    mediaId
-  );
-
-  return { ok: true };
+  return { ok: false, code: "ORDER_UNVERIFIED", status: 409, stored: false, published: false, callerFlagIgnored: true };
 }
 
 function listReviews(query = {}) {
@@ -224,11 +188,11 @@ function getReviewsOverview() {
     pending: db.prepare("SELECT COUNT(*) n FROM revr_reviews WHERE status = 'pending'").get().n,
     published: db.prepare("SELECT COUNT(*) n FROM revr_reviews WHERE status = 'published'").get().n,
     rejected: db.prepare("SELECT COUNT(*) n FROM revr_reviews WHERE status = 'rejected'").get().n,
-    verified: db.prepare("SELECT COUNT(*) n FROM revr_reviews WHERE verified_purchase = 1").get().n,
+    verified: null,
     reports: db.prepare("SELECT COUNT(*) n FROM revr_review_reports WHERE status = 'open'").get().n,
-    average: db
-      .prepare("SELECT COALESCE(AVG(rating), 0) n FROM revr_reviews WHERE status = 'published'")
-      .get().n,
+    average: null,
+    publishedScore: null,
+    verifiedPurchase: false,
   };
 }
 

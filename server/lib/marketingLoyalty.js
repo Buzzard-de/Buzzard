@@ -1,12 +1,8 @@
-const crypto = require("crypto");
 const { db } = require("./db");
+const { isSalesEnabled } = require("./salesMode");
 
 function isEnabled() {
   return process.env.BUZZARD_MARKETING_LOYALTY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
-}
-
-function referralCode() {
-  return `BUZ-${crypto.randomBytes(5).toString("hex").toUpperCase()}`;
 }
 
 function seedTiers() {
@@ -38,180 +34,91 @@ function refreshTier(customerId) {
   }
 }
 
-function createCampaign(body = {}) {
-  if (!body.code || !body.name) {
-    return { error: "Code and name required", status: 400 };
+function createCampaign() {
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, created: false, stored: false, discount: null, callerFlagIgnored: true };
   }
-
-  try {
-    const result = db
-      .prepare(`
-        INSERT INTO mktloy_campaigns(
-          code, name, type, status, audience_segment, discount_type, discount_value,
-          minimum_order, max_uses, starts_at, ends_at, channel
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
-      `)
-      .run(
-        String(body.code).toUpperCase(),
-        body.name,
-        body.type || "coupon",
-        body.status || "draft",
-        body.audienceSegment || body.audience_segment || "all",
-        body.discountType || body.discount_type || "percent",
-        Number(body.discountValue ?? body.discount_value ?? 0),
-        Number(body.minimumOrder ?? body.minimum_order ?? 0),
-        Number(body.maxUses ?? body.max_uses ?? 0),
-        body.startsAt || body.starts_at || null,
-        body.endsAt || body.ends_at || null,
-        body.channel || "all"
-      );
-
-    return {
-      campaign: db.prepare("SELECT * FROM mktloy_campaigns WHERE id = ?").get(result.lastInsertRowid),
-      created: true,
-    };
-  } catch {
-    return { error: "Campaign code already exists", status: 409 };
-  }
+  return { ok: false, error: "COUPON_UNVERIFIED", code: "COUPON_UNVERIFIED", status: 409, created: false, stored: false, discount: null, callerFlagIgnored: true };
 }
 
 function listCampaigns() {
   return db.prepare("SELECT * FROM mktloy_campaigns ORDER BY id DESC").all();
 }
 
-function updateCampaign(id, body = {}) {
-  const campaign = db.prepare("SELECT * FROM mktloy_campaigns WHERE id = ?").get(id);
-  if (!campaign) return { error: "Campaign not found", status: 404 };
-
-  db.prepare(`
-    UPDATE mktloy_campaigns
-    SET name = ?, status = ?, audience_segment = ?, discount_type = ?, discount_value = ?,
-        minimum_order = ?, max_uses = ?, starts_at = ?, ends_at = ?, channel = ?
-    WHERE id = ?
-  `).run(
-    body.name ?? campaign.name,
-    body.status ?? campaign.status,
-    body.audienceSegment ?? body.audience_segment ?? campaign.audience_segment,
-    body.discountType ?? body.discount_type ?? campaign.discount_type,
-    body.discountValue ?? body.discount_value ?? campaign.discount_value,
-    body.minimumOrder ?? body.minimum_order ?? campaign.minimum_order,
-    body.maxUses ?? body.max_uses ?? campaign.max_uses,
-    body.startsAt ?? body.starts_at ?? campaign.starts_at,
-    body.endsAt ?? body.ends_at ?? campaign.ends_at,
-    body.channel ?? campaign.channel,
-    campaign.id
-  );
-
-  return { campaign: db.prepare("SELECT * FROM mktloy_campaigns WHERE id = ?").get(campaign.id) };
+function updateCampaign() {
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, discount: null, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "COUPON_UNVERIFIED", code: "COUPON_UNVERIFIED", status: 409, stored: false, discount: null, callerFlagIgnored: true };
 }
 
 function applyCampaign(code, body = {}) {
-  const campaign = db
-    .prepare(`
-      SELECT * FROM mktloy_campaigns
-      WHERE code = ?
-        AND status = 'active'
-        AND (starts_at IS NULL OR starts_at <= datetime('now'))
-        AND (ends_at IS NULL OR ends_at > datetime('now'))
-    `)
-    .get(String(code).toUpperCase());
-
-  if (!campaign) return { error: "Campaign inactive or not found", status: 404 };
-
-  const subtotal = Number(body.subtotal || 0);
-  if (subtotal < campaign.minimum_order) {
-    return { error: "Minimum order not reached", status: 400 };
+  const normalized = String(code || "").trim();
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  if (!normalized) reasons.push("UNKNOWN");
+  else reasons.push("COUPON_UNVERIFIED");
+  if (body.mock === true || body.demo === true || body.source === "mock" || /MOCK|DEMO|TEST|FAKE/i.test(normalized)) {
+    reasons.push("MOCK_COUPON");
   }
-  if (campaign.max_uses > 0 && campaign.used_count >= campaign.max_uses) {
-    return { error: "Campaign usage limit reached", status: 400 };
-  }
-
-  const discount =
-    campaign.discount_type === "percent"
-      ? (subtotal * campaign.discount_value) / 100
-      : Math.min(campaign.discount_value, subtotal);
-
   return {
-    valid: true,
-    campaign: campaign.code,
-    discount,
-    finalTotal: subtotal - discount,
+    ok: false,
+    valid: false,
+    error: reasons[0] || "COUPON_UNVERIFIED",
+    code: reasons[0] || "COUPON_UNVERIFIED",
+    status: reasons[0] === "SALES_CLOSED" ? 403 : 409,
+    arithmeticOnly: false,
+    discount: null,
+    finalTotal: null,
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    couponStatus: normalized ? "BLOCKED" : "UNKNOWN",
+    commercialApplied: false,
+    applied: false,
+    callerFlagIgnored: true,
+    orderCreated: false,
+    reasons,
   };
 }
 
-function useCampaign(code, body = {}) {
-  const campaign = db.prepare("SELECT * FROM mktloy_campaigns WHERE code = ?").get(String(code).toUpperCase());
-  if (!campaign) return { error: "Campaign not found", status: 404 };
-
-  db.prepare("UPDATE mktloy_campaigns SET used_count = used_count + 1 WHERE id = ?").run(campaign.id);
-  db.prepare(`
-    INSERT INTO mktloy_promotion_uses(campaign_id, customer_id, order_number, discount_amount)
-    VALUES(?,?,?,?)
-  `).run(
-    campaign.id,
-    body.customerId || body.customer_id || null,
-    body.orderNumber || body.order_number || "",
-    Number(body.discountAmount ?? body.discount_amount ?? 0)
-  );
-
-  return { ok: true };
+function useCampaign() {
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, used: false, orderCreated: false, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "COUPON_UNVERIFIED", code: "COUPON_UNVERIFIED", status: 409, stored: false, used: false, orderCreated: false, callerFlagIgnored: true };
 }
 
-function createLoyaltyAccount(body = {}) {
-  const customerId = body.customerId || body.customer_id;
-  if (!customerId) return { error: "customerId required", status: 400 };
-
-  let account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
-  if (!account) {
-    seedTiers();
-    const tier = db.prepare("SELECT id FROM mktloy_loyalty_tiers WHERE code = 'BRONZE'").get();
-    const result = db
-      .prepare("INSERT INTO mktloy_loyalty_accounts(customer_id, tier_id) VALUES(?,?)")
-      .run(customerId, tier.id);
-    account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE id = ?").get(result.lastInsertRowid);
+function createLoyaltyAccount() {
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, accountCreated: false, callerFlagIgnored: true };
   }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, accountCreated: false, callerFlagIgnored: true };
+}
 
+function adjustPoints() {
+  if (!isSalesEnabled()) {
+    return {
+      ok: false,
+      error: "SALES_CLOSED",
+      code: "SALES_CLOSED",
+      status: 403,
+      stored: false,
+      pointsApplied: false,
+      balance: null,
+      callerFlagIgnored: true,
+    };
+  }
   return {
-    ...account,
-    tier: db.prepare("SELECT * FROM mktloy_loyalty_tiers WHERE id = ?").get(account.tier_id),
+    ok: false,
+    error: "ORDER_UNVERIFIED",
+    code: "ORDER_UNVERIFIED",
+    status: 409,
+    stored: false,
+    pointsApplied: false,
+    balance: null,
+    callerFlagIgnored: true,
   };
-}
-
-function adjustPoints(body = {}) {
-  const points = Number(body.points || 0);
-  const customerId = body.customerId || body.customer_id;
-  if (!customerId || !points) {
-    return { error: "Customer and points required", status: 400 };
-  }
-
-  let account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
-  if (!account) {
-    db.prepare("INSERT INTO mktloy_loyalty_accounts(customer_id) VALUES(?)").run(customerId);
-    account = db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId);
-  }
-
-  const newBalance = account.points_balance + points;
-  const lifetime = Math.max(account.lifetime_points, account.lifetime_points + Math.max(points, 0));
-  db.prepare(`
-    UPDATE mktloy_loyalty_accounts
-    SET points_balance = ?, lifetime_points = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE customer_id = ?
-  `).run(newBalance, lifetime, customerId);
-
-  db.prepare(`
-    INSERT INTO mktloy_loyalty_ledger(customer_id, points, type, reference, description)
-    VALUES(?,?,?,?,?)
-  `).run(
-    customerId,
-    points,
-    body.type || "adjustment",
-    body.reference || "",
-    body.description || ""
-  );
-
-  refreshTier(customerId);
-  return { account: db.prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?").get(customerId) };
 }
 
 function getLoyaltyProfile(customerId) {
@@ -227,63 +134,167 @@ function getLoyaltyProfile(customerId) {
   };
 }
 
-function createReferral(body = {}) {
-  const referrerCustomerId = body.referrerCustomerId || body.referrer_customer_id;
-  if (!referrerCustomerId) return { error: "Referrer required", status: 400 };
+const referralCompletionAttempts = new Set();
 
-  let code;
-  do {
-    code = referralCode();
-  } while (db.prepare("SELECT id FROM mktloy_referrals WHERE code = ?").get(code));
-
-  const result = db
-    .prepare("INSERT INTO mktloy_referrals(referrer_customer_id, code, reward_points) VALUES(?,?,?)")
-    .run(referrerCustomerId, code, Number(body.rewardPoints ?? body.reward_points ?? 250));
-
+function referralRefusal(body = {}, referral = null, duplicate = false) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("PAYMENT_UNVERIFIED");
+  reasons.push("REFERRAL_UNVERIFIED");
+  const code = String(body.code || "").trim();
+  if (!code) reasons.push("UNKNOWN");
+  if (body.mock === true || body.demo === true || body.source === "mock" || body.source === "DEMO") {
+    reasons.push("MOCK_REFERRAL");
+  }
+  const arithmeticReward = referral && Number.isFinite(Number(referral.reward_points)) ? Number(referral.reward_points) : null;
   return {
-    referral: db.prepare("SELECT * FROM mktloy_referrals WHERE id = ?").get(result.lastInsertRowid),
-    created: true,
+    ok: false,
+    error: reasons[0] || "SALES_CLOSED",
+    code: reasons[0] || "SALES_CLOSED",
+    status: reasons[0] === "SALES_CLOSED" ? 403 : 409,
+    referralStatus: code ? "BLOCKED" : "UNKNOWN",
+    earned: false,
+    completed: false,
+    cancelled: false,
+    reversed: false,
+    rewardReversed: false,
+    rewardPoints: null,
+    arithmeticReward,
+    arithmeticOnly: arithmeticReward != null,
+    balance: null,
+    balanceChanged: false,
+    negativeBalance: false,
+    ledgerWritten: false,
+    accountCreated: false,
+    couponIssued: false,
+    discountApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    callerFlagIgnored: true,
+    idempotent: true,
+    duplicate: Boolean(duplicate),
+    reasons,
+  };
+}
+
+function createReferral() {
+  if (!isSalesEnabled()) {
+    return {
+      ok: false,
+      error: "SALES_CLOSED",
+      code: "SALES_CLOSED",
+      status: 403,
+      created: false,
+      rewardPoints: null,
+      commercial: false,
+      callerFlagIgnored: true,
+    };
+  }
+  return {
+    ok: false,
+    error: "REFERRAL_UNVERIFIED",
+    code: "REFERRAL_UNVERIFIED",
+    status: 409,
+    created: false,
+    rewardPoints: null,
+    commercial: false,
+    callerFlagIgnored: true,
   };
 }
 
 function completeReferral(body = {}) {
-  const referral = db
-    .prepare("SELECT * FROM mktloy_referrals WHERE code = ? AND status = 'pending'")
-    .get(body.code);
-  if (!referral) return { error: "Referral not found", status: 404 };
+  const code = String(body.code || "").trim();
+  const duplicate = code ? referralCompletionAttempts.has(code) : false;
+  if (code) referralCompletionAttempts.add(code);
+  const referral = code ? db.prepare("SELECT * FROM mktloy_referrals WHERE code = ?").get(code) : null;
+  return referralRefusal(body, referral, duplicate);
+}
 
-  db.prepare(`
-    UPDATE mktloy_referrals
-    SET referred_customer_id = ?, status = 'completed', completed_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(body.referredCustomerId || body.referred_customer_id, referral.id);
+function cancelReferral(body = {}) {
+  return referralRefusal(body, body.code ? db.prepare("SELECT * FROM mktloy_referrals WHERE code = ?").get(String(body.code)) : null, false);
+}
 
-  db.prepare(`
-    INSERT INTO mktloy_loyalty_ledger(customer_id, points, type, reference, description)
-    VALUES(?,?,?,?,?)
-  `).run(referral.referrer_customer_id, referral.reward_points, "referral", referral.code, "Referral reward");
+const preferenceWithdrawals = new Set();
 
-  let account = db
-    .prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?")
-    .get(referral.referrer_customer_id);
-  if (!account) {
-    db.prepare("INSERT INTO mktloy_loyalty_accounts(customer_id) VALUES(?)").run(referral.referrer_customer_id);
-    account = db
-      .prepare("SELECT * FROM mktloy_loyalty_accounts WHERE customer_id = ?")
-      .get(referral.referrer_customer_id);
-  }
+function explicitTrue(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
+}
 
-  db.prepare(`
-    UPDATE mktloy_loyalty_accounts
-    SET points_balance = points_balance + ?, lifetime_points = lifetime_points + ?, updated_at = CURRENT_TIMESTAMP
-    WHERE customer_id = ?
-  `).run(referral.reward_points, referral.reward_points, referral.referrer_customer_id);
+function explicitFalse(value) {
+  return value === false || value === 0 || value === "0" || value === "false";
+}
 
-  refreshTier(referral.referrer_customer_id);
-  return { ok: true, rewardPoints: referral.reward_points };
+function preferenceId(customerId) {
+  const raw = String(customerId ?? "").trim();
+  return /^[1-9]\d{0,17}$/.test(raw) ? raw : null;
+}
+
+function preferenceChannels(body = {}) {
+  const all = body.withdraw === true || body.unsubscribe === true || body.revoked === true || explicitFalse(body.marketing) || explicitFalse(body.consent);
+  const email = all || explicitFalse(body.emailOptIn) || explicitFalse(body.email_opt_in);
+  const sms = all || explicitFalse(body.smsOptIn) || explicitFalse(body.sms_opt_in);
+  const push = all || explicitFalse(body.pushOptIn) || explicitFalse(body.push_opt_in);
+  const whatsapp = all || explicitFalse(body.whatsappOptIn) || explicitFalse(body.whatsapp);
+  const grant = explicitTrue(body.consent) || explicitTrue(body.approved) || explicitTrue(body.verified) || explicitTrue(body.marketing) || explicitTrue(body.emailOptIn) || explicitTrue(body.email_opt_in) || explicitTrue(body.smsOptIn) || explicitTrue(body.sms_opt_in) || explicitTrue(body.pushOptIn) || explicitTrue(body.push_opt_in) || explicitTrue(body.whatsappOptIn) || explicitTrue(body.whatsapp);
+  return { all, email, sms, push, whatsapp, any: email || sms || push || whatsapp, grant };
+}
+
+function preferenceResult(extra = {}) {
+  return {
+    ok: false,
+    granted: false,
+    consentVerified: false,
+    consentSource: "UNKNOWN",
+    consentScope: "UNKNOWN",
+    consentAt: null,
+    preferenceOnly: true,
+    notificationSent: false,
+    customerNotified: false,
+    emailSent: false,
+    smsSent: false,
+    whatsappSent: false,
+    campaignCreated: false,
+    couponIssued: false,
+    referralCreated: false,
+    balanceChanged: false,
+    orderCreated: false,
+    callerFlagIgnored: true,
+    ...extra,
+  };
 }
 
 function updatePreferences(customerId, body = {}) {
+  const id = preferenceId(customerId);
+  const channels = preferenceChannels(body);
+  if (!id) {
+    return preferenceResult({
+      code: "UNKNOWN",
+      status: 400,
+      marketingPermission: "UNKNOWN",
+      withdrawn: false,
+      stored: false,
+      reasons: ["UNKNOWN"],
+    });
+  }
+  if (!channels.any) {
+    return preferenceResult({
+      code: "CONSENT_UNVERIFIED",
+      status: 403,
+      marketingPermission: "BLOCKED",
+      withdrawn: false,
+      stored: false,
+      reasons: ["CONSENT_UNVERIFIED", "SALES_CLOSED"],
+    });
+  }
+
+  const duplicate = preferenceWithdrawals.has(id);
+  preferenceWithdrawals.add(id);
+  const existing = db.prepare("SELECT email_opt_in, sms_opt_in, push_opt_in FROM mktloy_marketing_preferences WHERE customer_id = ?").get(id) || {
+    email_opt_in: 0,
+    sms_opt_in: 0,
+    push_opt_in: 0,
+  };
+  const keep = (previous, withdraw) => (withdraw ? 0 : Number(previous) === 1 ? 1 : 0);
   db.prepare(`
     INSERT INTO mktloy_marketing_preferences(customer_id, email_opt_in, sms_opt_in, push_opt_in)
     VALUES(?,?,?,?)
@@ -292,29 +303,40 @@ function updatePreferences(customerId, body = {}) {
       sms_opt_in = excluded.sms_opt_in,
       push_opt_in = excluded.push_opt_in,
       updated_at = CURRENT_TIMESTAMP
-  `).run(
-    customerId,
-    body.emailOptIn || body.email_opt_in ? 1 : 0,
-    body.smsOptIn || body.sms_opt_in ? 1 : 0,
-    body.pushOptIn || body.push_opt_in ? 1 : 0
-  );
+  `).run(id, keep(existing.email_opt_in, channels.email), keep(existing.sms_opt_in, channels.sms), keep(existing.push_opt_in, channels.push));
 
-  return {
-    preferences: db
-      .prepare("SELECT * FROM mktloy_marketing_preferences WHERE customer_id = ?")
-      .get(customerId),
-  };
+  return preferenceResult({
+    code: "WITHDRAWN",
+    status: 200,
+    marketingPermission: "WITHDRAWN",
+    withdrawn: true,
+    stored: true,
+    duplicate,
+    idempotent: true,
+    reasons: ["WITHDRAWN"],
+  });
 }
 
 function getPreferences(customerId) {
-  return (
-    db.prepare("SELECT * FROM mktloy_marketing_preferences WHERE customer_id = ?").get(customerId) || {
-      customer_id: Number(customerId),
-      email_opt_in: 0,
-      sms_opt_in: 0,
-      push_opt_in: 0,
-    }
-  );
+  const id = preferenceId(customerId);
+  if (!id) {
+    return preferenceResult({ code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false });
+  }
+  const row = db.prepare("SELECT email_opt_in, sms_opt_in, push_opt_in FROM mktloy_marketing_preferences WHERE customer_id = ?").get(id);
+  if (!row) {
+    return preferenceResult({ code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, emailPermission: "UNKNOWN", smsPermission: "UNKNOWN", pushPermission: "UNKNOWN" });
+  }
+  const channel = (value) => (Number(value) === 0 ? "WITHDRAWN" : "BLOCKED");
+  const permissions = [channel(row.email_opt_in), channel(row.sms_opt_in), channel(row.push_opt_in)];
+  return preferenceResult({
+    code: permissions.every((item) => item === "WITHDRAWN") ? "WITHDRAWN" : "CONSENT_UNVERIFIED",
+    marketingPermission: permissions.every((item) => item === "WITHDRAWN") ? "WITHDRAWN" : "BLOCKED",
+    emailPermission: channel(row.email_opt_in),
+    smsPermission: channel(row.sms_opt_in),
+    pushPermission: channel(row.push_opt_in),
+    stored: true,
+    granted: false,
+  });
 }
 
 function getMarketingLoyaltyOverview() {
@@ -363,6 +385,7 @@ module.exports = {
   getLoyaltyProfile,
   createReferral,
   completeReferral,
+  cancelReferral,
   updatePreferences,
   getPreferences,
   getMarketingLoyaltyOverview,

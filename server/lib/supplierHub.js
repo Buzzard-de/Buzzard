@@ -159,112 +159,35 @@ function upsertSupplierProduct(supplierId, body = {}) {
   const supplier = db.prepare("SELECT id FROM suppliers WHERE id = ?").get(supplierId);
   if (!supplier) return { error: "Supplier not found", status: 404 };
   if (!body.supplierSku || !body.name) return { error: "supplierSku and name required", status: 400 };
-
-  const productSku = body.productSku || body.buzzardSku || "";
-  db.prepare(`
-    INSERT INTO supplier_products(
-      supplier_id, supplier_sku, product_sku, buzzard_sku, name, cost_eur, stock, brand, category, ean, tecdoc_article, active, updated_at
-    )
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,1,CURRENT_TIMESTAMP)
-    ON CONFLICT(supplier_id, supplier_sku) DO UPDATE SET
-      product_sku = excluded.product_sku,
-      buzzard_sku = excluded.buzzard_sku,
-      name = excluded.name,
-      cost_eur = excluded.cost_eur,
-      stock = excluded.stock,
-      brand = excluded.brand,
-      category = excluded.category,
-      ean = excluded.ean,
-      tecdoc_article = excluded.tecdoc_article,
-      updated_at = CURRENT_TIMESTAMP
-  `).run(
-    supplier.id,
-    body.supplierSku,
-    productSku,
-    productSku,
-    body.name,
-    Number(body.cost ?? body.cost_eur ?? 0),
-    Number(body.stock || 0),
-    body.brand || "",
-    body.category || "",
-    body.ean || "",
-    body.tecdocArticle || ""
-  );
-
-  return { ok: true };
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    stored: false,
+    purchased: false,
+    supplierConfirmed: false,
+    live: false,
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED"],
+  };
 }
 
-function syncSupplierFeed(supplierId, body = {}) {
+function syncSupplierFeed(supplierId) {
   const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(supplierId);
   if (!supplier) return { error: "Supplier not found", status: 404 };
-
-  const { format = "json", payload = [] } = body;
-  let list = [];
-  try {
-    list = parseSupplierFeed(format, payload);
-  } catch (error) {
-    const run = db
-      .prepare("INSERT INTO sync_runs(supplier_id, status, errors, message) VALUES(?,?,?,?)")
-      .run(supplier.id, "failed", 1, error.message);
-    return { error: error.message, runId: run.lastInsertRowid, status: 400 };
-  }
-
-  let imported = 0;
-  let updated = 0;
-  let errors = 0;
-  const upsert = db.prepare(`
-    INSERT INTO supplier_products (supplier_id, supplier_sku, product_sku, buzzard_sku, name, cost_eur, stock, updated_at)
-    VALUES(?,?,?,?,?,?,?, CURRENT_TIMESTAMP)
-    ON CONFLICT(supplier_id, supplier_sku) DO UPDATE SET
-      product_sku = excluded.product_sku,
-      buzzard_sku = excluded.buzzard_sku,
-      name = excluded.name,
-      cost_eur = excluded.cost_eur,
-      stock = excluded.stock,
-      updated_at = CURRENT_TIMESTAMP
-  `);
-
-  const tx = db.transaction(() => {
-    for (const item of list) {
-      try {
-        const sku = String(item.sku ?? item.id ?? item.SupplierSKU ?? "").trim();
-        if (!sku) throw new Error("Missing SKU");
-        const cost = Number(item.cost_eur ?? item.cost ?? item.price ?? 0);
-        const stock = Number(item.stock ?? item.quantity ?? 0);
-        const mappedSku = item.buzzard_sku ?? item.BuzzardSKU ?? item.product_sku ?? null;
-        const existing = db
-          .prepare("SELECT id FROM supplier_products WHERE supplier_id = ? AND supplier_sku = ?")
-          .get(supplier.id, sku);
-        upsert.run(supplier.id, sku, mappedSku, mappedSku, item.name ?? item.title ?? sku, cost, stock);
-        if (existing) updated += 1;
-        else imported += 1;
-      } catch (error) {
-        errors += 1;
-        db.prepare("INSERT INTO sync_errors(supplier_id, message, payload) VALUES(?,?,?)").run(
-          supplier.id,
-          error.message,
-          JSON.stringify(item)
-        );
-      }
-    }
-  });
-  tx();
-
-  const run = db
-    .prepare(`
-      INSERT INTO sync_runs(supplier_id, status, imported, updated, errors, message)
-      VALUES(?,?,?,?,?,?)
-    `)
-    .run(
-      supplier.id,
-      errors ? "completed_with_errors" : "completed",
-      imported,
-      updated,
-      errors,
-      `${list.length} records processed`
-    );
-
-  return { runId: run.lastInsertRowid, imported, updated, errors };
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    imported: 0,
+    updated: 0,
+    stored: false,
+    purchased: false,
+    supplierConfirmed: false,
+    live: false,
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "STALE_STOCK"],
+  };
 }
 
 function listSyncRuns(limit = 100) {
@@ -388,19 +311,17 @@ function getSupplierHubStatus() {
 }
 
 function queueSupplierSyncAll() {
-  const suppliers = db.prepare("SELECT id FROM suppliers WHERE status = 'active' OR active = 1").all();
-  const insert = db.prepare(
-    "INSERT INTO supplier_sync_jobs(supplier_id, job_type, entity_key) VALUES(?,?,?)"
-  );
-  const tx = db.transaction(() => {
-    suppliers.forEach((supplier) => {
-      insert.run(supplier.id, "catalog", "*");
-      insert.run(supplier.id, "stock", "*");
-      insert.run(supplier.id, "price", "*");
-    });
-  });
-  tx();
-  return { suppliers: suppliers.length, queued: suppliers.length * 3 };
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    queued: 0,
+    stored: false,
+    purchased: false,
+    supplierConfirmed: false,
+    live: false,
+  };
 }
 
 function listSupplierSyncJobs() {
@@ -418,12 +339,16 @@ function listSupplierSyncJobs() {
 function updateSupplierSyncJobResult(jobId, body = {}) {
   const job = db.prepare("SELECT id FROM supplier_sync_jobs WHERE id = ?").get(jobId);
   if (!job) return { error: "Sync job not found", status: 404 };
-  db.prepare(`
-    UPDATE supplier_sync_jobs
-    SET status = ?, attempts = attempts + 1, error_message = ?, finished_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(body.status === "success" ? "success" : "failed", body.error || null, jobId);
-  return { ok: true };
+  return {
+    ok: false,
+    error: "STOCK_UNVERIFIED",
+    code: "STOCK_UNVERIFIED",
+    status: 409,
+    confirmed: false,
+    supplierConfirmed: false,
+    live: false,
+    callerFlagIgnored: true,
+  };
 }
 
 function searchSourcing(filters = {}) {
@@ -450,6 +375,9 @@ function searchSourcing(filters = {}) {
     ...row,
     product_sku: row.product_sku || row.buzzard_sku || "",
     cost: row.cost_eur,
+    stockVerified: false,
+    supplierConfirmed: false,
+    purchasable: false,
   }));
 }
 
@@ -457,30 +385,15 @@ function createSupplierOrder(body = {}, req = null) {
   const salesGuard = require("./commerce/salesGuard");
   const block = salesGuard.assertSupplierOrderAllowed({ req });
   if (block) return salesGuard.blockHttpResult(block);
-
-  const supplier = db.prepare("SELECT * FROM suppliers WHERE id = ?").get(body.supplierId);
-  if (!supplier) return { error: "Supplier not found", status: 404 };
-  if (!supplier.dropship) return { error: "Supplier does not support dropshipping", status: 400 };
-  if (!body.orderNumber) return { error: "orderNumber required", status: 400 };
-
-  const result = db
-    .prepare(`
-      INSERT INTO supplier_orders(supplier_id, order_number, status, shipping_method, white_label, blind_shipping, payload_json)
-      VALUES(?,?,?,?,?,?,?)
-    `)
-    .run(
-      supplier.id,
-      body.orderNumber,
-      "queued",
-      body.shippingMethod || "standard",
-      body.whiteLabel ? 1 : 0,
-      body.blindShipping === undefined ? (supplier.blind_shipping ? 1 : 0) : body.blindShipping ? 1 : 0,
-      JSON.stringify(body)
-    );
-
   return {
-    order: db.prepare("SELECT * FROM supplier_orders WHERE id = ?").get(result.lastInsertRowid),
-    status: 201,
+    ok: false,
+    blocked: true,
+    code: "SUPPLIER_NOT_LIVE",
+    status: 409,
+    supplierOrderCreated: false,
+    purchased: false,
+    live: false,
+    submissionStatus: "BLOCKED_EXTERNAL",
   };
 }
 

@@ -17,11 +17,14 @@ function roundMoney(value) {
   return Number(Number(value).toFixed(2));
 }
 
-function autoPrice(cost, marginFloor = Number(process.env.MIN_MARGIN || 0.12)) {
-  const target = Math.max(marginFloor, Number(process.env.DEFAULT_MARGIN || 0.3));
-  const safeCost = Number(cost) || 0;
-  if (safeCost <= 0) return 0;
-  return roundMoney(safeCost / (1 - target));
+const { CATEGORY_MARGINS } = require("./commerce/pricingPolicy");
+
+function autoPrice(cost, marginFloor = CATEGORY_MARGINS.other) {
+  const target = Number(marginFloor);
+  if (cost == null || cost === "" || !Number.isFinite(Number(cost)) || Number(cost) < 0) return null;
+  if (!Number.isFinite(target) || target <= 0 || target >= 1) return null;
+  if (Number(cost) === 0) return 0;
+  return roundMoney(Number(cost) / (1 - target));
 }
 
 function audit(productId, action, details) {
@@ -158,7 +161,7 @@ function createProduct(body = {}) {
     categoryId,
     supplierCostEur = 0,
     priceEur,
-    marginFloor = Number(process.env.MIN_MARGIN || 0.12),
+    marginFloor = CATEGORY_MARGINS.other,
     stock = 0,
     imageUrl = "",
     seoTitle,
@@ -166,7 +169,7 @@ function createProduct(body = {}) {
     slug,
   } = body;
   if (!sku || !name) return { error: "sku and name required", status: 400 };
-  const cost = Number(supplierCostEur) || 0;
+  const cost = supplierCostEur == null || supplierCostEur === "" ? null : Number(supplierCostEur);
   const floor = Number(marginFloor);
   const price = priceEur != null && priceEur !== "" ? Number(priceEur) : autoPrice(cost, floor);
   const productSlug = slugify(slug || name);
@@ -287,8 +290,8 @@ function getCatalogSeoStatus() {
     enabled: isEnabled(),
     publicBaseUrl: process.env.PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://buzzard24.de",
     pricing: {
-      defaultMargin: Number(process.env.DEFAULT_MARGIN || 0.3),
-      minMargin: Number(process.env.MIN_MARGIN || 0.12),
+      defaultMargin: CATEGORY_MARGINS.other,
+      minMargin: CATEGORY_MARGINS.other,
     },
     totals: {
       categories: db.prepare("SELECT COUNT(*) n FROM categories WHERE active = 1").get().n,

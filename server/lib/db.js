@@ -264,7 +264,7 @@ function migrateCatalogSeo() {
   ensureColumn("categories", "active", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn("products", "slug", "TEXT");
   ensureColumn("products", "supplier_cost_eur", "REAL DEFAULT 0");
-  ensureColumn("products", "margin_floor", "REAL DEFAULT 0.12");
+  ensureColumn("products", "margin_floor", "REAL DEFAULT 0.07");
   ensureColumn("products", "image_url", "TEXT DEFAULT ''");
   ensureColumn("products", "seo_title", "TEXT DEFAULT ''");
   ensureColumn("products", "seo_description", "TEXT DEFAULT ''");
@@ -355,12 +355,7 @@ function migrateLocalizationFeeds() {
 
   const shippingCount = db.prepare("SELECT COUNT(*) n FROM shipping_rates").get().n;
   if (shippingCount === 0) {
-    const insertShipping = db.prepare(
-      "INSERT INTO shipping_rates(country_code, method, price, free_from) VALUES(?,?,?,?)"
-    );
-    insertShipping.run("DE", "standard", 4.99, 49);
-    insertShipping.run("GB", "standard", 6.99, 59);
-    insertShipping.run("TR", "standard", 5.99, 49);
+    void shippingCount;
   }
 
   const translationCount = db.prepare("SELECT COUNT(*) n FROM product_translations").get().n;
@@ -483,20 +478,7 @@ function migrateCustomerCheckout() {
 
   const methodCount = db.prepare("SELECT COUNT(*) n FROM shipping_methods").get().n;
   if (methodCount === 0) {
-    const insertMethod = db.prepare(
-      "INSERT INTO shipping_methods(country_code, code, name, price, free_from) VALUES(?,?,?,?,?)"
-    );
-    [
-      ["DE", "standard", "DHL Standard", 4.99, 79],
-      ["DE", "express", "Express", 9.99, 149],
-      ["FR", "standard", "Standard", 8.99, 99],
-      ["NL", "standard", "Standard", 7.99, 99],
-      ["PL", "standard", "Standard", 29.99, 449],
-      ["GB", "standard", "Standard", 9.99, 99],
-      ["TR", "standard", "Standard", 5.99, 49],
-      ["RS", "standard", "Standard", 6.99, 59],
-      ["BA", "standard", "Standard", 6.99, 59],
-    ].forEach((row) => insertMethod.run(...row));
+    void methodCount;
   }
 }
 
@@ -1213,11 +1195,7 @@ function migrateLogisticsFulfillmentV17() {
       )
       VALUES(?,?,?,?,?,?,?,?)
     `);
-    insertService.run(ids.DHL, "standard", "DHL Paket Standard", 31.5, 4.99, 1, 3, "DE,AT,BE,NL,FR");
-    insertService.run(ids.DHL, "express", "DHL Express", 31.5, 11.99, 1, 2, "DE,AT,BE,NL,FR");
-    insertService.run(ids.DPD, "standard", "DPD Classic", 31.5, 5.49, 2, 4, "DE,AT,BE,NL,FR,PL");
-    insertService.run(ids.GLS, "standard", "GLS Standard", 40, 5.29, 2, 4, "DE,AT,BE,NL,FR,PL,CZ");
-    insertService.run(ids.UPS, "standard", "UPS Standard", 70, 8.99, 2, 5, "DE,FR,NL,BE,PL,IT,ES");
+    void ids;
   }
 }
 
@@ -1819,25 +1797,7 @@ function migrateOrderManagementV22() {
 
   const orderCount = db.prepare("SELECT COUNT(*) n FROM oms_orders").get().n;
   if (orderCount === 0) {
-    const result = db
-      .prepare(`
-        INSERT INTO oms_orders(
-          order_number, customer_id, customer_email, channel, currency,
-          subtotal, shipping_total, tax_total, grand_total, payment_status, order_status
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
-      `)
-      .run("BZ-2026-DEMO01", 1, "demo@example.com", "web", "EUR", 79.8, 4.99, 13.55, 84.79, "paid", "confirmed");
-
-    db.prepare(`
-      INSERT INTO oms_order_items(order_id, product_sku, title, quantity, unit_price, tax_rate, reserved_quantity)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "BZ-OIL-5W30", "Premium Motoröl 5W-30", 2, 39.9, 19, 2);
-
-    db.prepare(`
-      INSERT INTO oms_order_events(order_id, event_type, old_status, new_status, message)
-      VALUES(?,?,?,?,?)
-    `).run(result.lastInsertRowid, "order_created", null, "confirmed", "Demo order created");
+    void orderCount;
   }
 }
 
@@ -1925,23 +1885,7 @@ function migrateCartCheckoutV23() {
 
   const shippingCount = db.prepare("SELECT COUNT(*) n FROM cc_shipping_rates").get().n;
   if (shippingCount === 0) {
-    const insert = db.prepare(`
-      INSERT INTO cc_shipping_rates(country, code, name, price, min_days, max_days)
-      VALUES(?,?,?,?,?,?)
-    `);
-    for (const [country, price] of [
-      ["DE", 4.99],
-      ["AT", 8.99],
-      ["BE", 9.49],
-      ["NL", 9.49],
-      ["FR", 9.99],
-      ["PL", 10.99],
-      ["IT", 12.99],
-      ["ES", 13.99],
-    ]) {
-      insert.run(country, "standard", "Standard Delivery", price, 2, 5);
-    }
-    insert.run("DE", "express", "Express Delivery", 11.99, 1, 2);
+    void shippingCount;
   }
 }
 
@@ -2900,10 +2844,7 @@ function migrateSupplierIntegrationHubV31() {
       VALUES(?,?,?,?,?)
     `).run(result.lastInsertRowid, "SUP-5W30", "BZ-OIL-5W30", "4008177104722", "Castrol");
 
-    db.prepare(`
-      INSERT INTO supih_shipping_methods(supplier_id, code, name, carrier, service, price, estimated_days)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "DE-DHL", "Standard DHL", "DHL", "Standard", 4.99, 2);
+    void result;
   }
 }
 

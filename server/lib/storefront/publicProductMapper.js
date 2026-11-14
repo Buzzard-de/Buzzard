@@ -47,12 +47,6 @@ function mapMedia(images = [], documents = []) {
   return mapped;
 }
 
-function stockStatus(stock) {
-  if (stock <= 0) return "out_of_stock";
-  if (stock < 10) return "low_stock";
-  return "in_stock";
-}
-
 function resolveCategorySlug(categoryId) {
   if (!categoryId) return null;
   const cat = categoryEngine.findTaxonomyCategory(categoryId);
@@ -74,8 +68,7 @@ function buildStructuredData(product, seo) {
           "@type": "Offer",
           price: product.price,
           priceCurrency: product.currency || "EUR",
-          availability:
-            product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
+          availability: "https://schema.org/OutOfStock",
           url: seo.canonical || undefined,
         }
       : {
@@ -137,8 +130,11 @@ function mapPimToStorefront(product) {
     images: salesEnabled && imageUrls.length ? imageUrls : [],
     price: Number(product.price) || 0,
     currency: product.currency || "EUR",
-    stock: Number(product.stock) || 0,
-    stockStatus: stockStatus(Number(product.stock) || 0),
+    stock: null,
+    fixtureStock: product.stock == null ? null : Number(product.stock),
+    stockStatus: "UNKNOWN",
+    stockVerified: false,
+    purchasable: false,
     seo,
     structuredData: buildStructuredData({ ...product, media }, seo),
     catalogMode: !salesEnabled,

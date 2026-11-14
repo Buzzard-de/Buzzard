@@ -1,6 +1,8 @@
 /**
  * Executes a specialist action. Rule-based / adapter. Not 17 LLMs.
+ * Human-gated kinds are recorded in the Human Approval Center and are not executed.
  */
+const crypto = require("crypto");
 const { think } = require("./sharedThinking");
 const { getAgent, ids } = require("./identityRegistry");
 const { resolveIdentity } = require("./councilAliasMap");
@@ -19,6 +21,15 @@ const { initiateTransfer } = require("../../finance/bankingAdapter");
 const esat = require("../../security/esatBey");
 const { createDoguDesk } = require("../../pusat/doguResearch");
 const { draft: brandDraft, campaignAnalyze, requestApproval } = require("./specialists/brandDraft");
+const { createApprovalCenter } = require("../../pusat/humanApproval");
+const { createRouter } = require("./taskRouter");
+
+const GATED_KIND_ACTION = Object.freeze({
+  STOCK_BUY: "STOCK_BUY",
+  CUSTOMER_REFUND: "CUSTOMER_REFUND",
+  PHONE_LIVE_CALL: "PHONE_LIVE_CALL",
+  BANK_TRANSFER: "BANK_TRANSFER",
+});
 
 const doguDesk = createDoguDesk();
 
@@ -46,7 +57,46 @@ function allowedKinds(nativeId) {
   return AGENT_KINDS[nativeId] || [];
 }
 
-function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
+function notExecuted() {
+  return {
+    executed: false,
+    purchased: false,
+    moneyMoved: false,
+    refunded: false,
+    shipmentCreated: false,
+    deployed: false,
+    sent: false,
+    live: false,
+  };
+}
+
+function recordHumanGate({ approvals, nativeId, kind, action }) {
+  const owned = !approvals;
+  const center = approvals || createApprovalCenter();
+  try {
+    const submitted = center.submit({
+      action,
+      requestedBy: nativeId,
+      reason: `dispatch:${kind}`,
+      risk: "CRITICAL",
+      taskId: `dsp_${crypto.randomBytes(6).toString("hex")}`,
+      payload: { kind, agentId: nativeId, ...notExecuted() },
+    });
+    const status = submitted.item?.status || null;
+    return {
+      recorded: status === "WAITING_APPROVAL",
+      id: submitted.item?.id || null,
+      status,
+      action: submitted.item?.action || action,
+      auto: false,
+      ...notExecuted(),
+    };
+  } finally {
+    if (owned) center.close();
+  }
+}
+
+function dispatch({ agentId, kind = "THINK", input = {}, approvals = null } = {}) {
   const resolved = resolveIdentity(agentId);
   const nativeId = resolved.ok ? resolved.nativeId : agentId;
   const agent = getAgent(nativeId);
@@ -59,7 +109,15 @@ function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
 
   function wrap(nextKind, result, extra = {}) {
     const ok = extra.ok !== undefined ? extra.ok : Boolean(result && result.ok !== false);
-    return { ...base, ok, kind: nextKind, result, code: extra.code || result?.code || (ok ? "OK" : "FAIL"), humanApproved: Boolean(input.humanApproved) };
+    return {
+      ...base,
+      ok,
+      kind: nextKind,
+      result,
+      code: extra.code || result?.code || (ok ? "OK" : "FAIL"),
+      humanApproved: Boolean(input.humanApproved),
+      approval: extra.approval || null,
+    };
   }
 
   try {
@@ -67,29 +125,59 @@ function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
       return wrap(kind, think({ agentId: nativeId, facts: { ask_expertise: true, ...input } }));
     }
     if (kind === "ASSIGN_TASK") {
-      return wrap(kind, { ok: check("pusat", "ASSIGN_TASK").ok, live: false });
+      const routed = createRouter().assignNew({
+        fromId: nativeId,
+        assigneeId: input.assigneeId || input.receiver || input.agentId,
+        title: input.title || "local assignment",
+        originRequesterId: input.originRequesterId || null,
+        delegationChain: Array.isArray(input.delegationChain) ? input.delegationChain : [],
+      });
+      return wrap(kind, routed, { ok: routed.ok === true, code: routed.ok ? "OK" : routed.code });
     }
     if (kind === "PRICE_CALCULATE") return wrap(kind, quote({ actorId: "pricing_ai", ...input }));
     if (kind === "STOCK_READ") return wrap(kind, inspectFeeds({ actorId: "stock_ai", feeds: input.feeds || [] }));
     if (kind === "STOCK_BUY") {
+      const approval = recordHumanGate({ approvals, nativeId, kind, action: GATED_KIND_ACTION.STOCK_BUY });
+      const blocked = {
+        ...buyStock(),
+        ...notExecuted(),
+        ok: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        dryRun: false,
+        approval,
+      };
       if (input.humanApproved) {
-        return wrap(kind, { ...buyStock(), ok: true, purchased: false, live: false, dryRun: true }, { ok: true, code: "APPROVED_DRY_RUN" });
+        return wrap(kind, { ...blocked, code: "PURCHASE_BLOCKED" }, { ok: false, code: "PURCHASE_BLOCKED", approval });
       }
-      return wrap(kind, buyStock(), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+      return wrap(kind, blocked, { ok: false, code: "HUMAN_GATE_REQUIRED", approval });
     }
     if (kind === "CATEGORY_READ") return wrap(kind, inspectTree({ actorId: "category_ai", ...input }));
     if (kind === "CUSTOMER_REPLY" || kind === "CUSTOMER_READ") {
       return wrap(kind, reply({ actorId: "banu_hanim", ...input }));
     }
-    if (kind === "CUSTOMER_REFUND") return wrap(kind, refund(), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    if (kind === "CUSTOMER_REFUND") {
+      const approval = recordHumanGate({ approvals, nativeId, kind, action: GATED_KIND_ACTION.CUSTOMER_REFUND });
+      return wrap(kind, { ...refund(), ...notExecuted(), approval }, { ok: false, code: "HUMAN_GATE_REQUIRED", approval });
+    }
     if (kind === "PHONE_SESSION") return wrap(kind, session({ actorId: "zeynep_hanim", ...input }));
-    if (kind === "PHONE_LIVE_CALL") return wrap(kind, liveDial(), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    if (kind === "PHONE_LIVE_CALL") {
+      const approval = recordHumanGate({ approvals, nativeId, kind, action: GATED_KIND_ACTION.PHONE_LIVE_CALL });
+      return wrap(kind, { ...liveDial(), ...notExecuted(), liveCall: false, approval }, { ok: false, code: "HUMAN_GATE_REQUIRED", approval });
+    }
     if (kind === "SALES_REPORT") return wrap(kind, report({ actorId: "sales_analysis_ai", ...input }));
     if (kind === "SEO_DRAFT") return wrap(kind, draft({ actorId: "seo_ai", ...input }));
     if (kind === "ANALYZE_CODE") return wrap(kind, analyze({ actorId: "sinan_bey", ...input }));
     if (kind === "SANCTIONS_SCREEN") return wrap(kind, screen(input));
     if (kind === "TAX_SPLIT") return wrap(kind, { ok: true, ...split(input) });
-    if (kind === "BANK_TRANSFER") return wrap(kind, initiateTransfer(), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    if (kind === "BANK_TRANSFER") {
+      const approval = recordHumanGate({ approvals, nativeId, kind, action: GATED_KIND_ACTION.BANK_TRANSFER });
+      return wrap(
+        kind,
+        { ...initiateTransfer(), ...notExecuted(), realMoneyMovement: false, approval },
+        { ok: false, code: "HUMAN_GATE_REQUIRED", approval },
+      );
+    }
     if (kind === "SECURITY_STATUS") return wrap(kind, { ok: true, ...esat.status() });
     if (kind === "INCIDENT_CLASSIFY") {
       const classified = esat.inspect({ type: input.type || "WATCH", details: input, actor: "esat_bey" });
@@ -120,7 +208,15 @@ function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
       return wrap(kind, brandDraft({ actorId: nativeId, kind, facts: input }));
     }
     if (kind === "CAMPAIGN_ANALYZE") return wrap(kind, campaignAnalyze({ actorId: nativeId, rows: input.rows || [] }));
-    if (kind === "APPROVAL_REQUEST") return wrap(kind, requestApproval({ actorId: nativeId, action: input.action }), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    if (kind === "APPROVAL_REQUEST") {
+      const action = typeof input.action === "string" && input.action.trim() ? input.action.trim() : "BRAND_LIVE_PUBLISH";
+      const approval = recordHumanGate({ approvals, nativeId, kind, action });
+      return wrap(
+        kind,
+        { ...requestApproval({ actorId: nativeId, action }), ...notExecuted(), approval },
+        { ok: false, code: "HUMAN_GATE_REQUIRED", approval },
+      );
+    }
     if (kind === "TRANSFER_MONEY" || kind === "DEPLOY") {
       return { ...base, ok: false, code: "HUMAN_GATE_REQUIRED", kind };
     }

@@ -44,12 +44,11 @@ function buildBuzzardProduct(record, supplier, options = {}) {
 
   const salePrice = pricing.calculateSalePrice({
     supplierPrice: record.supplier_price.amount,
-    markupPercent: supplier.default_markup_percent,
-    minimumMarginPercent: supplier.minimum_margin_percent,
+    category: record.category || options.category,
     currency: record.supplier_price.currency,
   });
 
-  const stockInfo = pricing.applySafetyStock(record.stock, supplier.safety_stock);
+  const reportedStock = Number.isFinite(Number(record.stock)) ? Number(record.stock) : null;
   const slug = slugify(record.name);
   const existing = productStore.findDuplicate({
     supplierId: supplier.supplier_id,
@@ -89,18 +88,21 @@ function buildBuzzardProduct(record, supplier, options = {}) {
     variants: protectedFields.includes("variants") ? base.variants : record.variants,
     price: salePrice,
     compare_at_price: base.compare_at_price || null,
-    vat_rate: base.vat_rate || 19,
-    stock: stockInfo.stock,
-    stock_status: stockInfo.stock_status,
+    vat_rate: base.vat_rate == null || base.vat_rate === "" || !Number.isFinite(Number(base.vat_rate)) ? null : Number(base.vat_rate),
+    stock: null,
+    stock_status: "UNKNOWN",
+    stock_verified: false,
+    supplier_stock_reported: reportedStock,
     supplier_id: supplier.supplier_id,
     supplier_sku: record.supplier_sku,
     supplier_price: record.supplier_price,
     shipping: base.shipping || {
-      weight_kg: 1,
-      length_cm: 20,
-      width_cm: 20,
-      height_cm: 10,
-      class: "standard",
+      weight_kg: null,
+      length_cm: null,
+      width_cm: null,
+      height_cm: null,
+      class: null,
+      status: "UNKNOWN",
     },
     seo: protectedFields.includes("seo")
       ? base.seo
@@ -196,7 +198,7 @@ function processRecords(records, supplierId, ctx = {}) {
 
   supplierStore.upsertSupplier({
     ...supplier,
-    sync_status: failed > 0 ? "completed_with_errors" : "completed",
+    sync_status: "BLOCKED_EXTERNAL",
     last_sync_at: new Date().toISOString(),
   });
 
@@ -205,7 +207,7 @@ function processRecords(records, supplierId, ctx = {}) {
     records_updated: updated,
     records_skipped: skipped,
     records_failed: failed,
-    status: failed > 0 ? "completed_with_errors" : "completed",
+    status: "BLOCKED_EXTERNAL",
   });
 }
 

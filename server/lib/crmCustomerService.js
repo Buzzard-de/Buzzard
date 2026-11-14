@@ -36,12 +36,13 @@ function createCustomer(body = {}) {
         body.countryCode || body.country_code || "DE",
         body.language || "de-DE",
         body.segment || "standard",
-        body.marketingEmail || body.marketing_email ? 1 : 0,
-        body.marketingSms || body.marketing_sms ? 1 : 0
+        0,
+        0
       );
 
-    recordEvent(result.lastInsertRowid, "customer_created", "", "Customer created");
-    return { customer: db.prepare("SELECT * FROM crmcs_customers WHERE id = ?").get(result.lastInsertRowid), created: true };
+    recordEvent(result.lastInsertRowid, "customer_created", "", "local");
+    const customer = db.prepare("SELECT id, marketing_email, marketing_sms FROM crmcs_customers WHERE id = ?").get(result.lastInsertRowid);
+    return { customer, created: true, marketingPermission: "BLOCKED", email: null };
   } catch {
     return { error: "Customer already exists", status: 409 };
   }
@@ -52,13 +53,13 @@ function getCustomer(id) {
   if (!customer) return { error: "Customer not found", status: 404 };
 
   return {
-    customer,
+    customer: { id: customer.id, status: customer.status, segment: customer.segment, email: null, phone: null, marketing_email: 0, marketing_sms: 0 },
     tags: db.prepare("SELECT tag FROM crmcs_customer_tags WHERE customer_id = ?").all(customer.id),
     events: db
-      .prepare("SELECT * FROM crmcs_customer_events WHERE customer_id = ? ORDER BY id DESC")
+      .prepare("SELECT id, event_type FROM crmcs_customer_events WHERE customer_id = ? ORDER BY id DESC")
       .all(customer.id),
     tickets: db
-      .prepare("SELECT * FROM crmcs_tickets WHERE customer_id = ? ORDER BY id DESC")
+      .prepare("SELECT id, status, ticket_number FROM crmcs_tickets WHERE customer_id = ? ORDER BY id DESC")
       .all(customer.id),
   };
 }
@@ -76,45 +77,51 @@ function updateCustomer(id, body = {}) {
   `).run(
     body.firstName ?? body.first_name ?? customer.first_name,
     body.lastName ?? body.last_name ?? customer.last_name,
-    body.phone ?? customer.phone,
+    customer.phone,
     body.countryCode ?? body.country_code ?? customer.country_code,
     body.language ?? customer.language,
     body.segment ?? customer.segment,
     body.status ?? customer.status,
-    body.marketingEmail == null && body.marketing_email == null
-      ? customer.marketing_email
-      : body.marketingEmail || body.marketing_email
-        ? 1
-        : 0,
-    body.marketingSms == null && body.marketing_sms == null
-      ? customer.marketing_sms
-      : body.marketingSms || body.marketing_sms
-        ? 1
-        : 0,
+    0,
+    0,
     customer.id
   );
 
-  return { customer: db.prepare("SELECT * FROM crmcs_customers WHERE id = ?").get(customer.id) };
+  return { customer: { id: customer.id, email: null, phone: null, marketing_email: 0, marketing_sms: 0 } };
 }
 
-function addCustomerTag(id, body = {}) {
-  const tag = String(body.tag || "").trim();
-  if (!tag) return { error: "Tag required", status: 400 };
+const customerTagAttempts = new Set();
 
-  db.prepare("INSERT OR IGNORE INTO crmcs_customer_tags(customer_id, tag) VALUES(?,?)").run(id, tag);
-  return { ok: true };
+function addCustomerTag(id, body = {}) {
+  const customer = db.prepare("SELECT id FROM crmcs_customers WHERE id = ?").get(id);
+  if (!customer) {
+    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 404, stored: false, commercial: false, consentVerified: false, customerNotified: false, externalWrite: false, callerFlagIgnored: true };
+  }
+  const tag = String(body.tag || "").trim().slice(0, 64);
+  if (!tag) {
+    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, stored: false, commercial: false, consentVerified: false, customerNotified: false, externalWrite: false };
+  }
+  const key = `${customer.id}:${tag.toLowerCase()}`;
+  const existing = db.prepare("SELECT 1 AS n FROM crmcs_customer_tags WHERE customer_id = ? AND tag = ?").get(customer.id, tag);
+  if (customerTagAttempts.has(key) || existing) {
+    customerTagAttempts.add(key);
+    return { ok: false, code: "DUPLICATE", duplicate: true, stored: false, commercial: false, consentVerified: false, marketingPermission: "BLOCKED", customerNotified: false, externalWrite: false, callerFlagIgnored: true };
+  }
+  customerTagAttempts.add(key);
+  db.prepare("INSERT OR IGNORE INTO crmcs_customer_tags(customer_id, tag) VALUES(?,?)").run(customer.id, tag);
+  return { ok: false, stored: true, commercial: false, consentVerified: false, marketingPermission: "BLOCKED", orderCreated: false, customerNotified: false, externalWrite: false, callerFlagIgnored: true, duplicate: false };
 }
 
 function listCustomers(query = {}) {
   const search = query.search || "";
   const segment = query.segment || "";
   const status = query.status || "";
-  let sql = "SELECT * FROM crmcs_customers WHERE 1=1";
+  let sql = "SELECT id, status, segment, NULL AS email, NULL AS phone, 0 AS marketing_email FROM crmcs_customers WHERE 1=1";
   const args = [];
 
   if (search) {
-    sql += " AND (email LIKE ? OR first_name LIKE ? OR last_name LIKE ?)";
-    args.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    sql += " AND (first_name LIKE ? OR last_name LIKE ?)";
+    args.push(`%${search}%`, `%${search}%`);
   }
   if (segment) {
     sql += " AND segment = ?";
@@ -152,9 +159,9 @@ function createTicket(body = {}) {
       body.priority || "normal",
       "open",
       body.channel || "web",
-      body.assignedAgent || body.assigned_agent || "",
+      "",
       Number(body.slaHours || body.sla_hours || 24),
-      body.orderNumber || body.order_number || ""
+      null
     );
 
   if (body.message) {
@@ -170,10 +177,21 @@ function createTicket(body = {}) {
   }
 
   if (customer) {
-    recordEvent(customer.id, "ticket_created", String(result.lastInsertRowid), body.subject);
+    recordEvent(customer.id, "ticket_created", String(result.lastInsertRowid), "local");
   }
 
-  return { ticket: db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(result.lastInsertRowid), created: true };
+  return {
+    ok: false,
+    stored: true,
+    sent: false,
+    delivered: false,
+    delivery: "BLOCKED_EXTERNAL",
+    customerNotified: false,
+    orderLinked: false,
+    commercial: false,
+    callerFlagIgnored: true,
+    ticket: { id: result.lastInsertRowid, status: "open" },
+  };
 }
 
 function getTicket(number) {
@@ -186,12 +204,17 @@ function getTicket(number) {
     `)
     .get(number);
 
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+  if (!ticket) return { error: "UNKNOWN", code: "UNKNOWN", status: 404, customerNotified: false };
 
   return {
-    ticket,
+    ticket: {
+      id: ticket.id,
+      ticket_number: ticket.ticket_number,
+      status: ticket.status,
+      customer_email: null,
+    },
     messages: db
-      .prepare("SELECT * FROM crmcs_ticket_messages WHERE ticket_id = ? ORDER BY id")
+      .prepare("SELECT id, sender_type, internal, created_at FROM crmcs_ticket_messages WHERE ticket_id = ? ORDER BY id")
       .all(ticket.id),
     notes: db
       .prepare("SELECT * FROM crmcs_ticket_notes WHERE ticket_id = ? ORDER BY id DESC")
@@ -199,55 +222,31 @@ function getTicket(number) {
   };
 }
 
-function addTicketMessage(id, body = {}) {
-  const ticket = db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(id);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
+const crmMessageAttempts = new Set();
 
+function addTicketMessage(id, body = {}) {
+  const ticket = db.prepare("SELECT id FROM crmcs_tickets WHERE id = ?").get(id);
+  if (!ticket) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 404, stored: false, sent: false, delivery: "BLOCKED_EXTERNAL", customerNotified: false };
+  const text = String(body.message || "").trim();
+  if (!text) return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, stored: false, sent: false, delivery: "BLOCKED_EXTERNAL", customerNotified: false };
+  const key = `${ticket.id}:${require("crypto").createHash("sha256").update(text).digest("hex")}`;
+  if (crmMessageAttempts.has(key)) {
+    return { ok: false, code: "DUPLICATE", duplicate: true, stored: false, sent: false, delivered: false, delivery: "BLOCKED_EXTERNAL", customerNotified: false, callerFlagIgnored: true };
+  }
+  crmMessageAttempts.add(key);
   db.prepare(`
     INSERT INTO crmcs_ticket_messages(ticket_id, sender_type, sender_name, message, internal)
     VALUES(?,?,?,?,?)
-  `).run(
-    ticket.id,
-    body.senderType || body.sender_type || "agent",
-    body.senderName || body.sender_name || "Agent",
-    body.message || "",
-    body.internal ? 1 : 0
-  );
-
-  db.prepare("UPDATE crmcs_tickets SET updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(ticket.id);
-  return { ok: true };
+  `).run(ticket.id, "agent", "", text, body.internal ? 1 : 0);
+  return { ok: false, stored: true, sent: false, delivered: false, delivery: "BLOCKED_EXTERNAL", customerNotified: false, commercial: false, callerFlagIgnored: true };
 }
 
-function updateTicket(id, body = {}) {
-  const ticket = db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(id);
-  if (!ticket) return { error: "Ticket not found", status: 404 };
-
-  db.prepare(`
-    UPDATE crmcs_tickets SET
-      priority = ?, status = ?, category = ?, assigned_agent = ?, order_number = ?,
-      updated_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(
-    body.priority ?? ticket.priority,
-    body.status ?? ticket.status,
-    body.category ?? ticket.category,
-    body.assignedAgent ?? body.assigned_agent ?? ticket.assigned_agent,
-    body.orderNumber ?? body.order_number ?? ticket.order_number,
-    ticket.id
-  );
-
-  if (ticket.customer_id && body.status) {
-    recordEvent(ticket.customer_id, "ticket_updated", ticket.ticket_number, "Support ticket updated", {
-      status: body.status,
-    });
-  }
-
-  return { ticket: db.prepare("SELECT * FROM crmcs_tickets WHERE id = ?").get(ticket.id) };
+function updateTicket() {
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, customerNotified: false, orderLinked: false, callerFlagIgnored: true };
 }
 
-function addTicketNote(id, body = {}) {
-  db.prepare("INSERT INTO crmcs_ticket_notes(ticket_id, note) VALUES(?,?)").run(id, body.note || "");
-  return { ok: true };
+function addTicketNote() {
+  return { ok: false, stored: false, sent: false, delivery: "BLOCKED_EXTERNAL", customerNotified: false, callerFlagIgnored: true };
 }
 
 function listTickets(query = {}) {
@@ -255,7 +254,7 @@ function listTickets(query = {}) {
   const priority = query.priority || "";
   const search = query.search || "";
   let sql = `
-    SELECT t.*, c.email AS customer_email, c.first_name, c.last_name
+    SELECT t.id, t.ticket_number, t.status, t.priority, t.category, NULL AS customer_email
     FROM crmcs_tickets t
     LEFT JOIN crmcs_customers c ON c.id = t.customer_id
     WHERE 1=1
@@ -271,8 +270,8 @@ function listTickets(query = {}) {
     args.push(priority);
   }
   if (search) {
-    sql += " AND (t.ticket_number LIKE ? OR t.subject LIKE ? OR c.email LIKE ?)";
-    args.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    sql += " AND (t.ticket_number LIKE ? OR t.subject LIKE ?)";
+    args.push(`%${search}%`, `%${search}%`);
   }
 
   sql += " ORDER BY t.id DESC LIMIT 500";

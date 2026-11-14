@@ -1,0 +1,145 @@
+{
+  "schema": "buzzard.eu27-continuation.v2",
+  "recordedAt": "2026-11-10T19:26:43.860Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "registry": "EU27_REGISTRY_INCOMPLETE",
+  "globalSoftwareCompletion": 1,
+  "autonomousSoftwareCompletion": 1,
+  "projectCompletionIncludingGates": 0.25,
+  "softwareTasks": 6,
+  "softwareCompleted": 6,
+  "humanAndExternalGates": 18,
+  "excludedFromCompletion": [
+    "EU27_REGISTRY_IMPORT",
+    "LIVE_BANK_CONNECTORS",
+    "GIT_PUSH",
+    "MERGE",
+    "DEPLOY",
+    "CLONE_OFFICIAL_VOICE",
+    "LICENSE_SPEECH_TEXT_DATA",
+    "DOWNLOAD_OR_HOST_MODELS",
+    "GPU_OR_24_7_HOST",
+    "OFFSITE_BACKUP",
+    "LIVE_WEBRTC_MEDIA",
+    "CHANGE_EGRESS_DENY",
+    "ENABLE_SALES_OR_PAYMENTS",
+    "ENABLE_LIVE_CARRIER",
+    "PRODUCTION_RESTORE",
+    "DATA_DELETE",
+    "EXPORT_SECRETS",
+    "PURCHASE_ANYTHING"
+  ],
+  "tasks": [
+    {
+      "id": "FIAT_POLICY_SEPARATION",
+      "priority": 10,
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "FIAT_ONLY codes separated",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "FX_WITHOUT_INVENTED_RATE",
+      "priority": 20,
+      "dependencies": [
+        "FIAT_POLICY_SEPARATION"
+      ],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "identity rate only",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "FRAUD_REVIEW_BOUNDARY",
+      "priority": 30,
+      "dependencies": [
+        "FIAT_POLICY_SEPARATION"
+      ],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "PASS_SYNTHETIC",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "REGISTRY_COMPLETENESS_GATE",
+      "priority": 40,
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "EU27_REGISTRY_INCOMPLETE",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "EVIDENCE_DIMENSIONS",
+      "priority": 50,
+      "dependencies": [
+        "REGISTRY_COMPLETENESS_GATE"
+      ],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "QUOTED_FROM_CITED_REGISTER",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "CARD_DATA_NOT_STORED",
+      "priority": 60,
+      "dependencies": [
+        "FIAT_POLICY_SEPARATION"
+      ],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/eu27FiatEngine.test.mjs"
+      ],
+      "evidence": "fiat_card_token",
+      "attempts": 1,
+      "blocker": null,
+      "next": null
+    },
+    {
+      "id": "EU27_REGISTRY_IMPORT",
+      "priority": 1,
+      "dependencies": [],
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "tests": [],
+      "evidence": null,
+      "next": "LIVE_BANK_CONNECTORS",
+      "reason": "EBA bulk registers and the remaining national registers were not available as structured current lists."
+    },
+    {
+      "id": "LIVE_BANK_CONNECTORS",
+      "priority": 2,
+      "dependencies": [
+        "EU27_REGISTRY_IMPORT"
+      ],
+      "status": "HUMAN_APPROVAL_REQUIRED",
+      "blocker": "HUMAN_APPROVAL_REQUIRED",
+      "tests": [],
+      "evidence": null,
+      "next": null,
+      "reason": "A live connector needs a reviewed API document, a contract, and an approval that this software does not grant."
+    }
+  ]
+}

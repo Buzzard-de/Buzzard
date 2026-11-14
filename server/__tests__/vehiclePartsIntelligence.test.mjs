@@ -409,7 +409,11 @@ describe("import and sourcing", () => {
     expect(ranked.items[0].warehouse.inferredFromSupplierCountry).toBe(false);
     const tiny = previewSalePrice({ supplierPrice: 1, markupPercent: 0, minimumMarginPercent: 0 });
     expect(tiny.netProfit).toBeGreaterThanOrEqual(MIN_NET_PROFIT_EUR);
-    expect(pricing.calculateSalePrice({ supplierPrice: 100 }).amount).toBe(138);
+    const policyPrice = Math.round((100 / (1 - 0.07)) * 100) / 100;
+    const sale = pricing.calculateSalePrice({ supplierPrice: 100, markupPercent: 38 });
+    expect(sale.amount).toBe(policyPrice);
+    expect(sale.marginOverrideIgnored).toBe(true);
+    expect(sale.targetMargin).toBe(0.07);
   });
 });
 

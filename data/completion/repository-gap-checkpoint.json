@@ -1,0 +1,140 @@
+{
+  "schema": "buzzard.repository-gaps.v1",
+  "recordedAt": "2026-11-10T19:34:46.116Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "discoveredSoftware": 2,
+  "discoveredBlocked": 11,
+  "softwareCompleted": 2,
+  "autonomousSoftwareCompletion": 1,
+  "projectCompletionIncludingGates": 0.15384615384615385,
+  "tasks": [
+    {
+      "id": "SEO_SCHEMA_LOCAL_CHECK",
+      "module": "seo",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/repositoryGaps.test.mjs"
+      ],
+      "evidence": "CHECKED_LOCAL",
+      "attempts": 1,
+      "blocker": null,
+      "next": "SEO_IN_LANGUAGE_30"
+    },
+    {
+      "id": "SEO_IN_LANGUAGE_30",
+      "module": "seo",
+      "dependencies": [
+        "SEO_SCHEMA_LOCAL_CHECK"
+      ],
+      "status": "TEST_COMPLETE",
+      "tests": [
+        "server/__tests__/repositoryGaps.test.mjs"
+      ],
+      "evidence": "30 locales",
+      "attempts": 1,
+      "blocker": null,
+      "next": "HEARING_HUMAN_STT"
+    },
+    {
+      "id": "HEARING_HUMAN_STT",
+      "module": "hearing",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "Human STT needs a licensed speech dataset. Egress stays DENY.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "SPEECH_OFFICIAL_TTS",
+      "module": "speech",
+      "status": "HUMAN_APPROVAL_REQUIRED",
+      "blocker": "HUMAN_APPROVAL_REQUIRED",
+      "reason": "Official voice cloneAuthorized is false.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "PRODUCTION_TRANSFORMER",
+      "module": "thinking",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "No local model weights. A transformer is not marked implemented.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "VISION_SCENE_UNDERSTAND",
+      "module": "vision",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "Bitmap OCR is not scene understanding.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "LIPSYNC_AUDIO",
+      "module": "motion",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "Viseme timeline is not audio-aligned lip sync.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "BODY_3D",
+      "module": "digital_body",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "No 3D body asset is in the repository.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "ALWAYS_ON_HOST",
+      "module": "platform",
+      "status": "HUMAN_APPROVAL_REQUIRED",
+      "blocker": "HUMAN_APPROVAL_REQUIRED",
+      "reason": "A 24/7 host is hardware and an approval, not a local function.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "OFFSITE_BACKUP",
+      "module": "survival",
+      "status": "HUMAN_APPROVAL_REQUIRED",
+      "blocker": "HUMAN_APPROVAL_REQUIRED",
+      "reason": "Offsite location is a human decision.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "LIVE_CARRIER_TRACK",
+      "module": "logistics",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "Carrier credentials and a live track call are not available.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "EU27_REGISTRY_IMPORT",
+      "module": "banking",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "blocker": "EXTERNAL_DEPENDENCY_BLOCKED",
+      "reason": "No new institution row without a fetched official table.",
+      "evidence": null,
+      "next": null
+    },
+    {
+      "id": "LIVE_BANK_CONNECTORS",
+      "module": "banking",
+      "status": "HUMAN_APPROVAL_REQUIRED",
+      "blocker": "HUMAN_APPROVAL_REQUIRED",
+      "reason": "A live connector needs a contract and approval.",
+      "evidence": null,
+      "next": null
+    }
+  ]
+}

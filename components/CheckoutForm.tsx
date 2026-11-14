@@ -27,7 +27,6 @@ import type { PaymentProviderId } from "@/lib/payments/types";
 import { formatPrice } from "@/lib/products";
 import CatalogInquiryPanel from "@/components/shop/CatalogInquiryPanel";
 import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
-import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { isCheckoutEnabled, shouldUseCommerceCore } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
@@ -61,7 +60,7 @@ export default function CheckoutForm() {
   const { t } = useLocale();
   const { countryCode, deliveryDays } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
-  const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
+  const { items, couponCode, clear, subtotal, shipping, vatAmount, total } = useCart();
   const idempotencyRef = useRef<string | null>(null);
   const submittingRef = useRef(false);
   const [step, setStep] = useState<CheckoutStep>("customer");
@@ -78,10 +77,10 @@ export default function CheckoutForm() {
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [serverQuote, setServerQuote] = useState<{
     subtotal: number;
-    shipping: number;
-    discount: number;
-    vatAmount: number;
-    total: number;
+    shipping: number | null;
+    discount: number | null;
+    vatAmount: number | null;
+    total: number | null;
   } | null>(null);
   const [apiShippingMethods, setApiShippingMethods] = useState<CustomerShippingMethod[]>([]);
   const useCustomerCheckoutApi = shouldUseCustomerCheckoutApi();
@@ -300,7 +299,7 @@ export default function CheckoutForm() {
           labelKey: method.labelKey,
           descriptionKey: method.descriptionKey,
           baseCost: method.baseCost,
-          freeFrom: getFreeShippingThreshold(countryCode),
+          freeFrom: null,
         }));
 
   useEffect(() => {
@@ -471,7 +470,7 @@ export default function CheckoutForm() {
 
   const displaySubtotal = serverQuote?.subtotal ?? quote?.subtotal ?? subtotal;
   const displayShipping = serverQuote?.shipping ?? quote?.shipping ?? shipping;
-  const displayDiscount = serverQuote?.discount ?? quote?.discount ?? discount;
+  const displayDiscount = null;
   const displayVat = serverQuote?.vatAmount ?? quote?.vatAmount ?? vatAmount;
   const displayTotal = serverQuote?.total ?? quote?.total ?? total;
 
@@ -601,14 +600,16 @@ export default function CheckoutForm() {
                       </strong>
                       <small>
                         {useCustomerCheckoutApi && apiShippingMethods.length > 0
-                          ? `${formatPrice(method.baseCost)} · ${deliveryDays}`
+                          ? `${method.baseCost == null ? "UNKNOWN" : formatPrice(method.baseCost)} · ${deliveryDays}`
                           : `${t(method.descriptionKey)} · ${deliveryDays}`}
                       </small>
                     </span>
                     <em>
-                      {displaySubtotal - displayDiscount >= method.freeFrom
+                      {method.freeFrom != null && displaySubtotal >= method.freeFrom
                         ? t("cart.shippingFree")
-                        : formatPrice(method.baseCost)}
+                        : method.baseCost == null
+                          ? "UNKNOWN"
+                          : formatPrice(method.baseCost)}
                     </em>
                   </label>
                 ))}
@@ -687,7 +688,7 @@ export default function CheckoutForm() {
               </label>
               {errorKey && <p className="shop-modal-error">{t(errorKey)}</p>}
               <button type="submit" className="shop-btn-primary" disabled={loading}>
-                {loading ? t("checkout.placing") : `${t("checkout.placeOrder")} – ${formatPrice(displayTotal)}`}
+                {loading ? t("checkout.placing") : `${t("checkout.placeOrder")} – ${displayTotal == null ? "UNKNOWN" : formatPrice(displayTotal)}`}
               </button>
             </form>
           )}
@@ -734,15 +735,15 @@ export default function CheckoutForm() {
           )}
           <div className="cart-summary-row">
             <span>{t("cart.shipping")}</span>
-            <span>{displayShipping === 0 ? t("cart.shippingFree") : formatPrice(displayShipping)}</span>
+            <span>{displayShipping == null ? "UNKNOWN" : displayShipping === 0 ? t("cart.shippingFree") : formatPrice(displayShipping)}</span>
           </div>
           <div className="cart-summary-row">
             <span>{t("cart.vat")}</span>
-            <span>{formatPrice(displayVat)}</span>
+            <span>{displayVat == null ? "UNKNOWN" : formatPrice(displayVat)}</span>
           </div>
           <div className="cart-summary-row cart-summary-total">
             <span>{t("cart.total")}</span>
-            <span>{formatPrice(displayTotal)}</span>
+            <span>{displayTotal == null ? "UNKNOWN" : formatPrice(displayTotal)}</span>
           </div>
         </aside>
       </div>

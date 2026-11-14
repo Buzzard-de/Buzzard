@@ -3,7 +3,9 @@
  * Esat Bey is a security monitor, not the only defense layer.
  */
 const crypto = require("crypto");
-const { resolveIdentity, LEGACY_ALIAS_TO_NATIVE } = require("../buzzardNative/core/councilAliasMap");
+const { resolveIdentity, LEGACY_ALIAS_TO_NATIVE, MEMBERS_ONLY_IDS } = require("../buzzardNative/core/councilAliasMap");
+const { SEED_IDS, getAgent } = require("../buzzardNative/core/identityRegistry");
+const { explicitPermissions } = require("../buzzardNative/core/permissionEngine");
 
 const CLASSIFICATION = Object.freeze({
   PUBLIC: "public",
@@ -18,7 +20,7 @@ const MEMBERS = Object.freeze([
     name: "Pusat Orchestrator",
     role: "central_coordination",
     canRoute: true,
-    permissions: ["ai.route", "ai.read", "meeting.chair", "shared.read", "shared.write"],
+    permissions: ["ai.route", "ai.read", "meeting.chair", "shared.read", "shared.write", "task.create", "research.request"],
     share: [CLASSIFICATION.PUBLIC, CLASSIFICATION.SHARED],
   },
   {
@@ -265,12 +267,31 @@ function hasPermission(memberId, permission) {
   return Boolean(member?.permissions?.includes(permission));
 }
 
-function createTask({ fromId, title, assigneeId, dueAt, classification = CLASSIFICATION.PUBLIC } = {}) {
-  if (!hasPermission(fromId, "task.create") && fromId !== "pusat") {
-    return { ok: false, code: "PERMISSION_DENIED" };
+function createTask({
+  fromId,
+  title,
+  assigneeId,
+  dueAt,
+  classification = CLASSIFICATION.PUBLIC,
+  originRequesterId = null,
+  delegationChain = [],
+} = {}) {
+  const actors = [];
+  if (originRequesterId) actors.push(originRequesterId);
+  for (const id of delegationChain || []) actors.push(id);
+  actors.push(fromId);
+  for (const actor of actors) {
+    if (!hasPermission(actor, "task.create")) {
+      return {
+        ok: false,
+        code: "PERMISSION_DENIED",
+        permission: { actor, perm: "task.create", decision: "DENY", permissionIncreased: false },
+        assigned: false,
+      };
+    }
   }
-  if (!canShare({ fromId, toId: assigneeId, classification }) && fromId !== "pusat") {
-    return { ok: false, code: "SHARE_DENIED" };
+  if (!canShare({ fromId, toId: assigneeId, classification })) {
+    return { ok: false, code: "SHARE_DENIED", permission: { actor: fromId, perm: "share", decision: "DENY", classification } };
   }
   return {
     ok: true,
@@ -287,8 +308,8 @@ function createTask({ fromId, title, assigneeId, dueAt, classification = CLASSIF
   };
 }
 
-function roster() {
-  return MEMBERS.map((m) => ({
+function projectMember(m) {
+  return {
     id: m.id,
     name: m.name,
     role: m.role,
@@ -306,7 +327,246 @@ function roster() {
     avatar: m.avatar || null,
     commercialCommit: m.commercialCommit === true,
     alwaysOnProcess: m.alwaysOnProcess === true,
+  };
+}
+
+function memberForSeed(seedId) {
+  return getMember(seedId) || MEMBERS.find((member) => member.aliasOfNative === seedId) || null;
+}
+
+function seedParticipant(seedId) {
+  const agent = getAgent(seedId);
+  const member = memberForSeed(seedId);
+  const permissions = explicitPermissions(seedId);
+  return {
+    id: seedId,
+    name: agent?.display_name || null,
+    role: agent?.role || null,
+    seedId,
+    permissions,
+    councilPermissions: member ? [...member.permissions] : [],
+    present: Boolean(agent),
+    chair: seedId === "pusat",
+    liveCalls: agent?.liveCalls === true,
+    soleDefense: false,
+    canBuyStock: false,
+    canExecutePayments: false,
+    canEnableSales: false,
+    canExportCustomerData: false,
+    canDeploy: false,
+    canDistribute: false,
+    orderCreated: false,
+    paymentCreated: false,
+    purchased: false,
+    shipmentCreated: false,
+    refunded: false,
+  };
+}
+
+function officialRoster() {
+  const seen = new Set();
+  const participants = [];
+  for (const id of SEED_IDS) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    participants.push(seedParticipant(id));
+  }
+  return participants;
+}
+
+function roster(scope) {
+  if (scope === "legacy") return MEMBERS.map(projectMember);
+  return officialRoster();
+}
+
+const seedMeetingLedger = new Map();
+
+function closedMeetingFlags() {
+  return {
+    executed: false,
+    orderCreated: false,
+    paymentCreated: false,
+    purchased: false,
+    shipmentCreated: false,
+    refunded: false,
+    exported: false,
+    deployed: false,
+    salesEnabled: false,
+    productionReady: false,
+    liveNetwork: false,
+  };
+}
+
+function holdSeedMeeting() {
+  const agendaKey = "seed-council-17";
+  const existing = seedMeetingLedger.get(agendaKey);
+  if (existing) {
+    return { ...existing, ok: false, code: "DUPLICATE_MEETING", duplicate: true };
+  }
+  const participants = roster("seed-meeting").filter(
+    (participant) => SEED_IDS.includes(participant.id) && !MEMBERS_ONLY_IDS.includes(participant.id),
+  );
+  const ids = participants.map((participant) => participant.id);
+  const unique = new Set(ids);
+  const openedAt = new Date().toISOString();
+  const meetingId = `seedmeet_${crypto.randomBytes(4).toString("hex")}`;
+  const complete =
+    ids.length === SEED_IDS.length &&
+    unique.size === SEED_IDS.length &&
+    SEED_IDS.every((id) => unique.has(id)) &&
+    participants.every((participant) => participant.present && participant.name && participant.role) &&
+    participants.filter((participant) => participant.chair).map((participant) => participant.id).join() === "pusat";
+  const decision = {
+    id: `dec_${meetingId}`,
+    text: "Synthetic local minutes. No commercial execution.",
+    recordedBy: "pusat",
+    at: openedAt,
+    ...closedMeetingFlags(),
+  };
+  const opinions = participants.map((participant) => ({
+    speakerId: participant.id,
+    text: "Local opinion only. No execution.",
+    at: openedAt,
+    executed: false,
   }));
+  const meeting = {
+    ok: complete,
+    synthetic: true,
+    productionReady: false,
+    productionClaim: false,
+    salesEnabled: false,
+    liveNetwork: false,
+    agendaKey,
+    meetingId,
+    openedAt,
+    chairId: "pusat",
+    participants,
+    count: participants.length,
+    uniqueCount: unique.size,
+    opinions,
+    decisions: [decision],
+    decisionHistory: [decision],
+    tasks: [],
+    duplicate: false,
+    orderCreated: false,
+    paymentCreated: false,
+    purchased: false,
+    shipmentCreated: false,
+    refunded: false,
+    exported: false,
+    deployed: false,
+  };
+  seedMeetingLedger.set(agendaKey, meeting);
+  return meeting;
+}
+
+function seedMeetingRecord(meetingId) {
+  for (const meeting of seedMeetingLedger.values()) {
+    if (meeting.meetingId === meetingId) return meeting;
+  }
+  return null;
+}
+
+function recordSeedDecision({ meetingId, text, recordedBy = "pusat" } = {}) {
+  const meeting = seedMeetingRecord(meetingId);
+  if (!meeting) return { ok: false, code: "MEETING_NOT_FOUND", ...closedMeetingFlags(), recorded: false };
+  if (recordedBy !== "pusat") return { ok: false, code: "CHAIR_REQUIRED", ...closedMeetingFlags(), recorded: false };
+  if (meeting.decisions.some((decision) => decision.text === text)) {
+    return { ok: false, code: "DUPLICATE_DECISION", ...closedMeetingFlags(), recorded: false };
+  }
+  const entry = {
+    id: `dec_${crypto.randomBytes(4).toString("hex")}`,
+    text,
+    recordedBy,
+    at: new Date().toISOString(),
+    ...closedMeetingFlags(),
+  };
+  meeting.decisions.push(entry);
+  meeting.decisionHistory.push(entry);
+  return { ok: true, decision: entry, recorded: true, ...closedMeetingFlags() };
+}
+
+function assignFromSeedMeeting({ meetingId, fromId, assigneeId, title } = {}) {
+  const meeting = seedMeetingRecord(meetingId);
+  if (!meeting) return { ok: false, code: "MEETING_NOT_FOUND", assigned: false, ...closedMeetingFlags() };
+  if (fromId !== "pusat") return { ok: false, code: "PERMISSION_DENIED", assigned: false, created: false, ...closedMeetingFlags() };
+  const taskTitle = String(title || "seed meeting task");
+  if (meeting.tasks.some((task) => task.receiver === assigneeId && task.title === taskTitle)) {
+    return { ok: false, code: "DUPLICATE_ASSIGNMENT", assigned: false, created: false, ...closedMeetingFlags() };
+  }
+  const { createRouter } = require("../buzzardNative/core/taskRouter");
+  const routed = createRouter().assignNew({ fromId, assigneeId, title: taskTitle });
+  if (!routed.ok) return { ...routed, ...closedMeetingFlags(), executed: false };
+  const record = {
+    taskId: routed.taskId,
+    sender: routed.sender,
+    receiver: routed.receiver,
+    permission_scope: routed.permission_scope,
+    title: taskTitle,
+    at: new Date().toISOString(),
+    executed: false,
+  };
+  meeting.tasks.push(record);
+  meeting.decisionHistory.push({
+    id: `hist_${record.taskId}`,
+    kind: "assignment",
+    taskId: record.taskId,
+    sender: record.sender,
+    receiver: record.receiver,
+    at: record.at,
+    executed: false,
+  });
+  return { ok: true, assignment: record, permissionIncreased: false, ...closedMeetingFlags() };
+}
+
+function delegateWithinMeeting({ fromId, toId, permission } = {}) {
+  const participants = roster("seed-meeting");
+  const from = participants.find((participant) => participant.id === fromId);
+  const to = participants.find((participant) => participant.id === toId);
+  const blocked = new Set([
+    "STOCK_BUY",
+    "SUPPLIER_PAY",
+    "PAYMENT_ACTIVATE",
+    "LIVE_PAYMENT",
+    "BANK_TRANSFER",
+    "SALES_ACTIVATE",
+    "SALES_WRITE",
+    "DATA_EXPORT",
+    "DEPLOY",
+    "DEPLOYMENT",
+    "SHIPMENT_CREATE",
+    "CUSTOMER_REFUND",
+    "PRICE_PUBLISH_LIVE",
+  ]);
+  if (!from || !to) {
+    return { ok: false, code: "UNKNOWN_IDENTITY", permissionIncreased: false, granted: false, executed: false };
+  }
+  const originHas = from.permissions.includes(permission);
+  const targetHas = to.permissions.includes(permission);
+  if (blocked.has(permission) || !originHas) {
+    return {
+      ok: false,
+      code: "DELEGATION_ESCALATION_DENIED",
+      permissionIncreased: false,
+      granted: false,
+      executed: false,
+      salesEnabled: false,
+      orderCreated: false,
+      paymentCreated: false,
+      purchased: false,
+    };
+  }
+  return {
+    ok: targetHas,
+    code: targetHas ? "ALLOW" : "PERMISSION_DENIED",
+    permissionIncreased: false,
+    granted: false,
+    executed: false,
+    salesEnabled: false,
+    orderCreated: false,
+    paymentCreated: false,
+    purchased: false,
+  };
 }
 
 module.exports = {
@@ -318,4 +578,8 @@ module.exports = {
   hasPermission,
   createTask,
   roster,
+  holdSeedMeeting,
+  recordSeedDecision,
+  assignFromSeedMeeting,
+  delegateWithinMeeting,
 };

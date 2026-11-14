@@ -187,12 +187,9 @@ function getCommerceHealth() {
     catalogHealth = { error: "unavailable" };
   }
 
-  let workerStatus = "unknown";
-  try {
-    workerStatus = process.env.BUZZARD_WORKER_ENABLED === "0" ? "disabled" : "enabled";
-  } catch {
-    workerStatus = "unknown";
-  }
+  const workerStored = readStoredWorkerStatus();
+  const workerRuntime = unverifiedRuntime(workerStored);
+  const schedulerRuntime = unverifiedRuntime(null);
 
   return {
     enabled: isCommerceCoreEnabled(),
@@ -204,12 +201,42 @@ function getCommerceHealth() {
     payment: paymentHealth(),
     shipping: shippingHealth(),
     tax: taxHealth(),
-    worker: workerStatus,
-    scheduler: process.env.BUZZARD_SCHEDULER_ENABLED === "0" ? "disabled" : "enabled",
+    worker: workerRuntime.status,
+    scheduler: schedulerRuntime.status,
+    workerRuntime,
+    workerConfiguration: configurationRequest("BUZZARD_WORKER_ENABLED"),
+    schedulerRuntime,
+    schedulerConfiguration: configurationRequest("BUZZARD_SCHEDULER_ENABLED"),
     redis: process.env.REDIS_URL ? "configured" : "not_configured",
     ordersByType: orderService.countOrdersByType(),
     readiness: runReadinessGate().overall,
     secretsExposed: false,
+  };
+}
+
+function configurationRequest(name) {
+  return {
+    requested: Object.prototype.hasOwnProperty.call(process.env, name) ? process.env[name] : null,
+    autoStart: false,
+    honored: false,
+  };
+}
+
+function readStoredWorkerStatus() {
+  try {
+    const row = db.prepare("SELECT status FROM core_worker_state WHERE id = 'default'").get();
+    return row && typeof row.status === "string" ? row.status : null;
+  } catch {
+    return null;
+  }
+}
+
+function unverifiedRuntime(storedStatus) {
+  return {
+    status: "BLOCKED",
+    verified: false,
+    storedStatus,
+    storedStatusIsProof: false,
   };
 }
 

@@ -5,7 +5,7 @@ const { hashPassword, verifyPassword, needsRehash } = require("./password");
 const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
 
 function signUser(user) {
-  return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, { expiresIn: "7d" });
+  return jwt.sign({ sub: user.id, role: user.role }, secret, { expiresIn: "7d" });
 }
 
 function verifyToken(token) {

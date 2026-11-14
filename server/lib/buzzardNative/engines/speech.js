@@ -8,10 +8,12 @@ const { benchAll } = require("../speech/ttsBench");
 const { cloneAttempt, verifyOfficialFile } = require("../speech/officialVoiceGuard");
 
 const VOICES = Object.freeze({
-  sinan_bey: { character: "serious_calm_professional_male", live: false },
-  pusat: { character: "coordinator_neutral", live: false },
-  esat_bey: { character: "security_reserved_male", live: false },
-  dogu_bey: { character: "research_measured_male", live: false },
+  sinan_bey: {
+    character: "serious_calm_professional_male",
+    status: "REFERENCE_REGISTERED",
+    live: false,
+    serviceConnected: false,
+  },
 });
 
 function createSpeechEngine() {
@@ -22,7 +24,16 @@ function createSpeechEngine() {
       const op = input.op || "identity";
       if (op === "identity") {
         const id = input.memberId || "sinan_bey";
-        return { op, voice: VOICES[id] || null, known: Boolean(VOICES[id]), liveTts: false };
+        const voice = VOICES[id] || null;
+        return {
+          op,
+          voice,
+          known: Boolean(voice),
+          status: voice ? voice.status : "NOT_CONFIGURED",
+          liveTts: false,
+          serviceConnected: false,
+          ready: false,
+        };
       }
       if (op === "test_tone") {
         const wav = wavTone(input);

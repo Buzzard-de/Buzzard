@@ -158,7 +158,8 @@ describe("persistent approval resume", () => {
     expect(decided.ok).toBe(true);
     expect(orch2.queue.get(gated.executed[0].taskId).state).toBe("QUEUED");
     const resumed = orch2.tick({ limit: 1 });
-    expect(resumed.executed[0].status).toBe("COMPLETED");
+    expect(resumed.executed[0].status).toBe("FAILED");
+    expect(resumed.executed[0].result.code).toBe("PURCHASE_BLOCKED");
     expect(resumed.executed[0].result.result.purchased).toBe(false);
     expect(resumed.executed[0].result.result.live).toBe(false);
     orch2.close();

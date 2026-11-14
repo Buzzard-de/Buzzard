@@ -69,16 +69,27 @@ class Egress44Python(unittest.TestCase):
             guarded_urlopen("https://example.com/")
         self.assertEqual(ctx2.exception.code, "HOST_NOT_ALLOWLISTED")
 
+    def test_storefront_host_never_requests(self):
+        with patch("security.guarded_fetch.resolve_and_check", side_effect=AssertionError("dns must not run")):
+            with patch("requests.Session.request", side_effect=AssertionError("fetch must not run")):
+                with self.assertRaises(EgressDenied) as ctx:
+                    guarded_get("https://buzzard24.de/out")
+        self.assertEqual(ctx.exception.code, "EGRESS_DENIED")
+        self.assertFalse(ctx.exception.allowed)
+
     def test_redirect_not_followed(self):
         class Fake:
             is_redirect = True
             status_code = 302
             headers = {"Location": "https://api.anthropic.com/v1"}
 
-        with patch("security.guarded_fetch.resolve_and_check", return_value={"allowed": True, "code": "RESOLVED_OK", "host": "buzzard24.de"}):
+        with patch(
+            "security.guarded_fetch.resolve_and_check",
+            return_value={"allowed": True, "code": "RESOLVED_OK", "host": "buzzard-api.onrender.com"},
+        ):
             with patch("requests.Session.request", return_value=Fake()):
                 with self.assertRaises(EgressDenied) as ctx:
-                    guarded_get("https://buzzard24.de/out")
+                    guarded_get("https://buzzard-api.onrender.com/out")
         self.assertEqual(ctx.exception.code, "REDIRECT_DENIED")
 
     def test_archive_check_url_does_not_open_network(self):

@@ -20,8 +20,8 @@ const TASK_KINDS = Object.freeze([
 function runImportToEuCustomer({ sku = "cotton_tshirt", origin = "TR", destination = "FR", sellerCountry = "DE", net = 100 } = {}) {
   const router = createRouter();
   const created = router.create({ title: "import to EU customer", fromId: "pusat", kind: "TRADE_COMPLIANCE_REVIEW" });
-  router.assign({ taskId: created.task.id, agentId: "tuncay_bey" });
-  router.assign({ taskId: created.task.id, agentId: "nedim_bey" });
+  router.assign({ taskId: created.task.id, agentId: "tuncay_bey", fromId: "pusat" });
+  router.assign({ taskId: created.task.id, agentId: "nedim_bey", fromId: "pusat" });
   const customs = screen({
     actorId: "tuncay_bey",
     sku,
@@ -39,15 +39,19 @@ function runImportToEuCustomer({ sku = "cotton_tshirt", origin = "TR", destinati
     goodsNet: net,
     kind: "B2C",
   });
-  const finance = netIncomeReport({
-    actorId: "nedim_bey",
-    incomeCountry: destination,
-    gross: net + (tax.vat || 0),
-    vat: tax.vat || 0,
-    commission: 0,
-    logistics: 0,
-    supplierCost: 40,
-  });
+  const finance =
+    tax.ok === true && tax.definitive === true
+      ? netIncomeReport({
+          actorId: "nedim_bey",
+          incomeCountry: destination,
+          gross: net + tax.vat,
+          vat: tax.vat,
+          refund: 0,
+          commission: 0,
+          logistics: 0,
+          supplierCost: 40,
+        })
+      : { ok: false, status: "UNKNOWN", code: "VAT_UNVERIFIED", invented: false, liveLegal: false, filed: false };
   const tuncayThink = think({ agentId: "tuncay_bey", facts: { ask_expertise: true } });
   const nedimThink = think({ agentId: "nedim_bey", facts: { ask_expertise: true } });
   const conflict =

@@ -1,0 +1,15 @@
+{
+  "id": "catalog",
+  "phase": 4,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "existing_but_incomplete",
+  "categories": 50,
+  "subcategoryStatus": "TAXONOMY_DATA_REQUIRED",
+  "price": "UNKNOWN",
+  "stock": "UNKNOWN",
+  "pimLive": false,
+  "openedDevDb": false,
+  "evidence": "validateHierarchy and pimReadOnlyAdapter",
+  "linguisticReview": "UNREVIEWED",
+  "liveVerified": false
+}

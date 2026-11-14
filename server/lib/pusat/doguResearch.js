@@ -25,8 +25,8 @@ function createDoguDesk({ now = () => new Date() } = {}) {
   const tasks = [];
 
   function requestResearch({ fromId, topic, question, categoryCode } = {}) {
-    if (!hasPermission(fromId, "research.request") && fromId !== "pusat") {
-      return { ok: false, code: "PERMISSION_DENIED" };
+    if (!hasPermission(fromId, "research.request")) {
+      return { ok: false, code: "PERMISSION_DENIED", permission: { actor: fromId, perm: "research.request", decision: "DENY" } };
     }
     if (!TOPICS.includes(topic)) {
       return { ok: false, code: "UNKNOWN_TOPIC" };

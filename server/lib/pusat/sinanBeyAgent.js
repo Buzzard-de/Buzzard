@@ -98,11 +98,53 @@ const DOMAIN_PATHS = Object.freeze({
   cicd_and_tests: "server/__tests__",
 });
 
-function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } = {}) {
-  const durable = db ? createSinanDurable(db) : null;
+function createSinanBeyAgent({ db = null, approvals = null, openIsolated = null, dbError = null } = {}) {
+  let durable = db ? createSinanDurable(db) : null;
+  let durableMode = db ? "explicit" : null;
+  let approvalCenter = approvals;
   const attendance = new Map();
   const lab = createLab();
   const xfLab = createTransformerLab();
+
+  function store(writable) {
+    if (dbError) {
+      const err = new Error(dbError.message || "DATA_PATH_REFUSED");
+      err.code = dbError.code || "DATA_PATH_REFUSED";
+      throw err;
+    }
+    if (durableMode === "explicit") return durable;
+    if (!openIsolated) return null;
+    if (writable) {
+      if (durableMode !== "write") {
+        const handle = openIsolated(true);
+        durable = createSinanDurable(handle, { ensureSchema: true });
+        durableMode = "write";
+      }
+      return durable;
+    }
+    if (!durable) {
+      const handle = openIsolated(false);
+      if (!handle) return null;
+      durable = createSinanDurable(handle, { ensureSchema: false });
+      durableMode = "read";
+    }
+    return durable;
+  }
+
+  function withStore(writable, run) {
+    try {
+      const durableStore = store(writable);
+      if (!durableStore) return { ok: false, code: "NO_DURABLE_STORE", stored: false };
+      return run(durableStore);
+    } catch (err) {
+      return { ok: false, code: err.code || "DATA_PATH_REFUSED", stored: false };
+    }
+  }
+
+  function humanApprovals() {
+    if (!approvalCenter) approvalCenter = createApprovalCenter();
+    return approvalCenter;
+  }
 
   function esatWatch(type, details) {
     try {
@@ -126,7 +168,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   function requestHumanGate(action) {
     if (!HUMAN_GATES.includes(action)) return { ok: false, code: "UNKNOWN_GATE" };
     esatWatch("PERMISSION_DENIED", { action, requestedBy: ID });
-    return approvals.submit({
+    return humanApprovals().submit({
       action,
       requestedBy: ID,
       reason: `${action} requires Süleyman Bey approval`,
@@ -136,27 +178,24 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
   }
 
   function assignFromPusat(title) {
-    if (durable) return { ok: true, ...durable.assignTask({ fromId: "pusat", title }) };
-    return { ok: true, id: "stask_memory", fromId: "pusat", title, status: "NOT_STARTED", durable: false };
+    return withStore(true, (durableStore) => ({ ok: true, ...durableStore.assignTask({ fromId: "pusat", title }) }));
   }
 
   function acceptTask(taskId) {
-    if (durable) {
-      const updated = durable.setStatus({ taskId, status: "IN_PROGRESS" });
+    return withStore(true, (durableStore) => {
+      const updated = durableStore.setStatus({ taskId, status: "IN_PROGRESS" });
       if (!updated.ok) return updated;
       return { ok: true, accepted: true, taskId, status: "IN_PROGRESS" };
-    }
-    return { ok: true, accepted: true, taskId, status: "IN_PROGRESS", durable: false };
+    });
   }
 
   function reportToPusat({ taskId, kind, body, status, testResult, branch, commitSha, blockedReason } = {}) {
-    if (status && durable) {
-      const st = durable.setStatus({ taskId, status, testResult, branch, commitSha, blockedReason });
+    return withStore(true, (durableStore) => {
+    if (status) {
+      const st = durableStore.setStatus({ taskId, status, testResult, branch, commitSha, blockedReason });
       if (!st.ok) return st;
     }
-    const report = durable
-      ? durable.report({ taskId, kind: kind || "pusat_report", body })
-      : { ok: true, id: "srep_memory", durable: false };
+    const report = durableStore.report({ taskId, kind: kind || "pusat_report", body });
     let reply = REPLIES.IN_PROGRESS;
     if (status === "BLOCKED") reply = REPLIES.BLOCKED;
     else if (status === "TESTED" || status === "CODE_READY") reply = REPLIES.COMPLETED_WITH_EVIDENCE;
@@ -168,6 +207,7 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
       liveVerified: false,
       testedIsNotLive: true,
     };
+    });
   }
 
   function review(payload) {
@@ -223,15 +263,21 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
       motors: catalog(),
       supervisor: supervisorStatus(),
       voice: voiceAvatar(),
-      tasks: durable ? durable.listTasks() : [],
+      tasks: (() => {
+        try {
+          const durableStore = store(false);
+          return durableStore ? durableStore.listTasks() : [];
+        } catch {
+          return [];
+        }
+      })(),
       liveVerified: false,
       alwaysOn: false,
     };
   }
 
   function remember({ section, key, value, source } = {}) {
-    if (!durable) return { ok: false, code: "NO_DURABLE_STORE" };
-    return durable.putPartitioned({ section, key, value, source });
+    return withStore(true, (durableStore) => durableStore.putPartitioned({ section, key, value, source }));
   }
 
   function requestDoguResearch({ topic, question }) {
@@ -291,21 +337,32 @@ function createSinanBeyAgent({ db = null, approvals = createApprovalCenter() } =
       stt: voice.stt,
       tts: voice.tts,
       liveCalls: false,
+      voice: voice.voice,
+      sttStatus: voice.sttStatus,
+      ttsStatus: voice.ttsStatus,
+      phone: voice.phone,
+      liveNetwork: voice.liveNetwork,
       providers: providerAdapters(),
-      status: "CODE_READY",
+      codeStatus: "CODE_READY",
+      status: "NOT_CONFIGURED",
+      reachable: false,
+      codeReadyIsLive: false,
       completeClaim: false,
     };
   }
 
   function backupPersonalMemory() {
-    if (!durable) return { ok: false, code: "NO_DURABLE_STORE", completeClaim: false };
-    const snap = durable.snapshotMemory(ID);
-    return { ok: true, snapshot: snap, offsite: false, worm: false, completeClaim: false };
+    return withStore(false, (durableStore) => {
+      const snap = durableStore.snapshotMemory(ID);
+      if (snap && snap.code === "PUSAT_TABLE_MISSING") {
+        return { ok: false, code: snap.code, completeClaim: false, stored: false };
+      }
+      return { ok: true, snapshot: snap, offsite: false, worm: false, completeClaim: false };
+    });
   }
 
   function restorePersonalMemory(snapshot) {
-    if (!durable) return { ok: false, code: "NO_DURABLE_STORE" };
-    return durable.restoreMemorySnapshot(snapshot, { ownerId: ID });
+    return withStore(true, (durableStore) => durableStore.restoreMemorySnapshot(snapshot, { ownerId: ID }));
   }
 
   function trainPlan() {

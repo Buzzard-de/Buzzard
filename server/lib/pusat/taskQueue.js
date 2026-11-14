@@ -3,7 +3,7 @@
  * Complete is blocked until acceptance+tests pass and approvals clear.
  */
 const crypto = require("crypto");
-const { check } = require("../buzzardNative/core/permissionEngine");
+const { authorizeDelegated } = require("../buzzardNative/core/permissionEngine");
 const { resolveIdentity } = require("../buzzardNative/core/councilAliasMap");
 
 const PRIORITY = Object.freeze(["P0", "P1", "P2", "P3"]);
@@ -77,9 +77,17 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     maxAttempts = 3,
     needsApproval = false,
     acceptance = [],
+    originRequesterId = null,
+    delegationChain = [],
   } = {}) {
-    if (!check(ownerId, "ASSIGN_TASK").ok && ownerId !== "pusat") {
-      return { ok: false, code: "PERMISSION_DENIED" };
+    const permission = authorizeDelegated({
+      actorId: ownerId,
+      originRequesterId,
+      chain: delegationChain,
+      perm: "ASSIGN_TASK",
+    });
+    if (!permission.ok) {
+      return { ok: false, code: permission.code, permission, assigned: false, permissionIncreased: false };
     }
     if (idempotencyKey && idempotency.has(idempotencyKey)) {
       return { ok: true, duplicate: true, task: tasks.get(idempotency.get(idempotencyKey)) };
@@ -108,8 +116,8 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     };
     tasks.set(id, row);
     if (idempotencyKey) idempotency.set(idempotencyKey, id);
-    auditPush({ event: "ENQUEUE", id, ownerId });
-    return { ok: true, task: { ...row } };
+    auditPush({ event: "ENQUEUE", id, ownerId, permission: permission.code });
+    return { ok: true, task: { ...row }, permission, permissionIncreased: false };
   }
 
   function depsMet(row) {
@@ -134,19 +142,27 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     return { ok: true, started };
   }
 
-  function fail(id, { retry = true } = {}) {
+  function fail(id, { retry = true, reason = "FAILED" } = {}) {
     const row = tasks.get(id);
-    if (!row) return { ok: false, code: "NOT_FOUND" };
-    workers.inFlight = Math.max(0, workers.inFlight - 1);
+    if (!row) return { ok: false, code: "NOT_FOUND", completed: false, failed: false };
+    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false, failed: false, task: { ...row } };
+    if (row.state !== "RUNNING" && row.state !== "QUEUED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, failed: false, task: { ...row } };
+    }
+    if (row.state === "RUNNING") workers.inFlight = Math.max(0, workers.inFlight - 1);
+    const entry = { at: new Date(now()).toISOString(), reason: String(reason || "FAILED"), attempt: row.attempts, priorState: row.state };
+    row.failureHistory = [...(row.failureHistory || []), entry];
+    row.lastError = entry.reason;
+    row.completed = false;
     if (retry && row.attempts < row.maxAttempts) {
       row.state = "QUEUED";
-      auditPush({ event: "RETRY", id });
-      return { ok: true, task: { ...row } };
+      auditPush({ event: "RETRY", id, reason: entry.reason });
+      return { ok: true, failed: true, completed: false, retried: true, task: { ...row } };
     }
     row.state = "DEAD_LETTER";
-    deadLetters.push({ id, reason: "FAILED" });
-    auditPush({ event: "DEAD_LETTER", id });
-    return { ok: true, task: { ...row } };
+    deadLetters.push({ id, reason: entry.reason, at: entry.at });
+    auditPush({ event: "DEAD_LETTER", id, reason: entry.reason });
+    return { ok: true, failed: true, completed: false, deadLetter: true, task: { ...row } };
   }
 
   function timeout(id) {
@@ -158,8 +174,9 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     if (!row) return { ok: false, code: "NOT_FOUND" };
     if (row.state !== "DEAD_LETTER") return { ok: false, code: "NOT_DEAD_LETTER" };
     row.state = "QUEUED";
+    row.completed = false;
     auditPush({ event: "RECOVER", id });
-    return { ok: true, task: { ...row } };
+    return { ok: true, executed: false, task: { ...row } };
   }
 
   function markTests({ id, testsPassed, acceptancePassed }) {
@@ -173,7 +190,10 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
   function complete(id) {
     const row = tasks.get(id);
     if (!row) return { ok: false, code: "NOT_FOUND" };
-    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL" };
+    if (row.state === "BLOCKED_APPROVAL") return { ok: false, code: "BLOCKED_APPROVAL", completed: false };
+    if (row.state === "DEAD_LETTER" || row.state === "REJECTED" || row.state === "COMPLETED") {
+      return { ok: false, code: "TERMINAL_STATE", completed: false, task: { ...row } };
+    }
     if (!row.testsPassed || !row.acceptancePassed) {
       return { ok: false, code: "ACCEPTANCE_OR_TESTS_REQUIRED", completed: false };
     }

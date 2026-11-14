@@ -462,10 +462,13 @@ function computeInventoryAnalytics(role) {
   return {
     totals: {
       activeProducts: activeProducts.length,
-      inStock: activeProducts.filter((p) => p.stock_status === "in_stock").length,
-      lowStock: activeProducts.filter((p) => p.stock_status === "low_stock" || (p.stock > 0 && p.stock <= LOW_STOCK_THRESHOLD)).length,
-      outOfStock: activeProducts.filter((p) => p.stock_status === "out_of_stock" || p.stock <= 0).length,
+      inStock: null,
+      lowStock: null,
+      outOfStock: null,
+      commercialQty: "UNKNOWN",
+      stockVerified: false,
     },
+    code: "STOCK_UNVERIFIED",
     lowStockThreshold: LOW_STOCK_THRESHOLD,
     syncErrors: importLogs.filter((l) => l.retry_status === "pending").length,
     recentSyncFailures: syncJobs.filter((j) => j.status === "failed").slice(-5),

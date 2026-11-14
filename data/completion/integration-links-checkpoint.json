@@ -1,0 +1,110 @@
+{
+  "schema": "buzzard.integration-links.v1",
+  "recordedAt": "2026-11-10T19:46:28.208Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "liveVerified": false,
+  "softwareCompleted": 11,
+  "softwareTasks": 11,
+  "integrationCompletion": 1,
+  "auditRows": 9,
+  "tasks": [
+    {
+      "id": "PRODUCT_CATEGORY",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "CUSTOMS_BLOCKS_DUAL_USE",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "CUSTOMS_BLOCKS_SANCTION",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "SHIPPING_DISCARDS_INVENTED_PRICE",
+      "dependencies": [
+        "CUSTOMS_BLOCKS_DUAL_USE"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": null
+    },
+    {
+      "id": "RESERVE_AND_RELEASE",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "RATE_LIMIT",
+      "dependencies": [
+        "RESERVE_AND_RELEASE"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": null
+    },
+    {
+      "id": "SECRET_NOT_STORED",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "PUSAT_17",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "VOICE_NOT_LIVE",
+      "dependencies": [
+        "PUSAT_17"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": null
+    },
+    {
+      "id": "REPORT_REDACTS_CUSTOMER",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    },
+    {
+      "id": "RETRY_RECOVERY",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false,
+      "next": "external gates stay queued"
+    }
+  ],
+  "blocked": [
+    {
+      "id": "LIVE_CARRIER_RATE",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED"
+    },
+    {
+      "id": "LIVE_TARIC",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED"
+    },
+    {
+      "id": "LIVE_VOICE_CALL",
+      "status": "HUMAN_APPROVAL_REQUIRED"
+    }
+  ]
+}

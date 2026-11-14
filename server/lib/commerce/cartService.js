@@ -6,16 +6,16 @@ const { db } = require("../db");
 const productService = require("../productService");
 const catalogReadService = require("../storefront/catalogReadService");
 const pathAdapter = require("./canonicalCommercePath");
-const inventory = require("./inventoryIntegration");
 const { isProductVisibleOnStorefront } = require("../storefront/storefrontVisibility");
 const {
   validateQuantity,
   detectPriceTampering,
   computeLineTotal,
-  validateCartItemCount,
 } = require("./commerceValidation");
 const { assertCustomerResourceAccess } = require("./commerceGuards");
 const { logSecurityEvent } = require("../securityLog");
+const { isSalesEnabled } = require("../salesMode");
+const pricing = require("./pricingIntegration");
 const { MAX_CART_ITEMS } = require("../../core/commerceConstants");
 const commerceCouponService = require("./commerceCouponService");
 
@@ -58,7 +58,9 @@ function buildPriceSnapshot(product, variantId) {
     priceSnapshot: Math.max(0, price),
     currency: product.currency || "EUR",
     stock,
-    purchasable: stock > 0,
+    purchasable: false,
+    stockVerified: false,
+    reserved: false,
     categoryId: product.category || product.taxonomy_category_id,
   };
 }
@@ -105,8 +107,10 @@ function getCart(cartId, { customerId, req } = {}) {
       currency: auth.currency,
       sku: auth.sku,
       title: auth.title,
-      stock: auth.stock,
-      purchasable: auth.purchasable,
+      stock: null,
+      stockVerified: false,
+      purchasable: false,
+      reserved: false,
       vat: metadata.vat ?? null,
       snapshotVersion: metadata.snapshotVersion || null,
       productSnapshot: metadata.productSnapshot || null,
@@ -137,21 +141,102 @@ function getCart(cartId, { customerId, req } = {}) {
   };
 }
 
-function buildCouponTotals(couponCode, subtotal) {
-  const coupon = commerceCouponService.resolveCouponDiscount(couponCode, subtotal);
-  const discount = coupon.ok ? coupon.discount : 0;
-  const discountedSubtotal = Math.round(Math.max(0, subtotal - discount) * 100) / 100;
+function couponReasons(couponCode, input = {}) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  const code = String(couponCode || "").trim();
+  if (!code) {
+    reasons.push("UNKNOWN");
+    return reasons;
+  }
+  reasons.push("COUPON_UNVERIFIED");
+  if (
+    input.mock === true ||
+    input.demo === true ||
+    input.test === true ||
+    input.source === "mock" ||
+    input.source === "DEMO" ||
+    /MOCK|DEMO|TEST|FAKE/i.test(code)
+  ) {
+    reasons.push("MOCK_COUPON");
+  }
+  try {
+    const row = db.prepare("SELECT active, expires_at FROM coupons WHERE code = ?").get(code.toUpperCase());
+    if (row?.expires_at && Number.isNaN(Date.parse(row.expires_at)) === false && new Date(row.expires_at) < new Date()) {
+      reasons.push("COUPON_EXPIRED");
+    }
+    if (row && Number(row.active) === 0) reasons.push("COUPON_INACTIVE");
+  } catch {
+    reasons.push("UNKNOWN");
+  }
+  return reasons;
+}
+
+function buildCouponTotals(couponCode, _subtotal, input = {}) {
+  const reasons = couponReasons(couponCode, input);
+  const code = String(couponCode || "").trim();
   return {
-    couponCode: coupon.ok ? coupon.couponCode : couponCode || null,
-    discount,
-    couponValid: coupon.ok,
-    couponError: coupon.ok ? null : coupon.error,
-    discountedSubtotal,
+    couponCode: code || null,
+    discount: null,
+    couponValid: false,
+    couponApplied: false,
+    couponStatus: code ? "BLOCKED" : "UNKNOWN",
+    couponError: reasons[0] || "COUPON_UNVERIFIED",
+    code: reasons[0] || "COUPON_UNVERIFIED",
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    callerFlagIgnored: true,
+    reasons,
+    purchased: false,
+    orderCreated: false,
   };
 }
 
+function cartRefusal(code, reasons, extra = {}) {
+  return {
+    ok: false,
+    code,
+    error: code,
+    reasons,
+    status: code === "SALES_CLOSED" ? 403 : 409,
+    stored: false,
+    reserved: false,
+    purchased: false,
+    stockDecremented: false,
+    purchasable: false,
+    checkoutAllowed: false,
+    live: false,
+    callerFlagIgnored: true,
+    ...extra,
+  };
+}
+
+function cartBlockReasons(input = {}, product) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("STOCK_UNVERIFIED");
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  reasons.push("ORDER_UNVERIFIED");
+  const observed = input.stockObservedAt || input.observedAt;
+  if (!observed || Number.isNaN(Date.parse(String(observed)))) reasons.push("STALE_STOCK");
+  if (input.mock === true || input.demo === true || input.source === "mock" || input.source === "DEMO") {
+    reasons.push("MOCK_STOCK");
+  }
+  if (product) {
+    const quote = pricing.quotePrice({
+      productId: product.id,
+      offerPrice: Number(product.price),
+      supplierCost: pricing.readSupplierCost(product),
+      currency: product.currency || "EUR",
+    });
+    if (!pricing.priceAcceptedForCheckout(quote)) reasons.push("PRICE_POLICY_BLOCKED");
+  }
+  return reasons;
+}
+
 function addItem(cartId, input = {}) {
-  const { productId, variantId, quantity, clientPrice, metadata, customerId, req } = input;
+  const { productId, variantId, quantity, clientPrice, customerId, req } = input;
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
   if (!cartRow) return { error: "cart_not_found", status: 404 };
 
@@ -187,53 +272,31 @@ function addItem(cartId, input = {}) {
     }
   }
 
-  const existingCount = db.prepare("SELECT COUNT(*) n FROM commerce_cart_items WHERE cart_id = ?").get(cartId).n;
+  const product = productService.getProduct(auth.productId);
+  const reasons = cartBlockReasons(input, product);
   const existing = db
     .prepare("SELECT * FROM commerce_cart_items WHERE cart_id = ? AND product_id = ? AND IFNULL(variant_id,'') = IFNULL(?, '')")
     .get(cartId, auth.productId, auth.variantId || "");
-
-  if (!existing && existingCount >= MAX_CART_ITEMS) {
-    return { error: "cart_too_large", status: 400 };
+  const sameKey = input.idempotencyKey
+    ? db.prepare("SELECT id, quantity, metadata_json FROM commerce_cart_items WHERE cart_id = ?").all(cartId).some((row) => {
+        try {
+          return JSON.parse(row.metadata_json || "{}").idempotencyKey === input.idempotencyKey;
+        } catch {
+          return false;
+        }
+      })
+    : false;
+  if (existing || sameKey) {
+    return cartRefusal("DUPLICATE_CART_ITEM", reasons.concat("DUPLICATE_CART_ITEM"), {
+      duplicate: true,
+      quantity: existing?.quantity ?? null,
+    });
   }
-
-  const newQty = (existing?.quantity || 0) + qtyCheck.quantity;
-  const countCheck = validateCartItemCount(existing ? existingCount : existingCount + 1);
-  if (!countCheck.ok) return { error: countCheck.code, status: 400 };
-
-  const inv = inventory.getInventory(auth.productId);
-  const available = inv.error ? auth.stock : inv.saleable;
-  if (newQty > available) {
-    return { error: "insufficient_stock", code: "INVENTORY_INSUFFICIENT", message: "Not enough stock (dry-run validation)", status: 400, dryRun: true };
-  }
-
-  const canonical = pathAdapter.buildImmutableSnapshot(auth.productId, newQty);
-  const snapMeta = {
-    ...(metadata || {}),
-    source: "D",
-    snapshotVersion: canonical.ok ? canonical.snapshotVersion : null,
-    productSnapshot: canonical.ok ? canonical.productSnapshot : null,
-    vat: canonical.ok ? canonical.item.vat : null,
-    unitPrice: auth.priceSnapshot,
-  };
-
-  const itemId = existing?.id || newId("ci");
-  if (existing) {
-    db.prepare(`
-      UPDATE commerce_cart_items SET quantity = ?, price_snapshot = ?, metadata_json = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `).run(newQty, auth.priceSnapshot, JSON.stringify(snapMeta), itemId);
-  } else {
-    db.prepare(`
-      INSERT INTO commerce_cart_items(id, cart_id, product_id, variant_id, quantity, price_snapshot, currency, metadata_json)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(itemId, cartId, auth.productId, auth.variantId, qtyCheck.quantity, auth.priceSnapshot, auth.currency, JSON.stringify(snapMeta));
-  }
-
-  db.prepare("UPDATE commerce_carts SET updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(cartId);
-  const { emitPath } = pathAdapter;
-  const events = require("../eventBus");
-  emitPath(events.TYPES.CartUpdated, "cart", cartId, { productId: auth.productId, quantity: newQty });
-  return getCart(cartId, { customerId, req });
+  return cartRefusal(reasons[0] || "STOCK_UNVERIFIED", reasons, {
+    productId: auth.productId,
+    sku: auth.sku,
+    priceSnapshot: auth.priceSnapshot,
+  });
 }
 
 function updateItemQuantity(cartId, itemId, quantity, ctx = {}) {
@@ -243,48 +306,70 @@ function updateItemQuantity(cartId, itemId, quantity, ctx = {}) {
   const item = db.prepare("SELECT * FROM commerce_cart_items WHERE id = ? AND cart_id = ?").get(itemId, cartId);
   if (!item) return { error: "item_not_found", status: 404 };
 
-  const auth = resolveAuthoritativePrice(item.product_id, item.variant_id);
-  if (auth.error) return { error: auth.error, status: auth.status };
+  const before = item.quantity;
+  return cartRefusal(isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED", cartBlockReasons(ctx), {
+    quantity: before,
+  });
+}
 
-  if (qtyCheck.quantity > auth.stock) {
-    return { error: "insufficient_stock", status: 400, dryRun: true };
-  }
-
-  db.prepare("UPDATE commerce_cart_items SET quantity = ?, price_snapshot = ? WHERE id = ?").run(
-    qtyCheck.quantity,
-    auth.priceSnapshot,
-    itemId
-  );
-  return getCart(cartId, ctx);
+function localCartClearResult(cart, extra = {}) {
+  return {
+    ...cart,
+    localRowsCleared: true,
+    saleOpened: false,
+    purchased: false,
+    checkoutCompleted: false,
+    orderCreated: false,
+    paymentCreated: false,
+    reservationCreated: false,
+    refundCreated: false,
+    shipmentCreated: false,
+    commercialDiscountApplied: false,
+    idempotent: true,
+    discount: null,
+    discountedSubtotal: null,
+    ...extra,
+  };
 }
 
 function removeItem(cartId, itemId, ctx = {}) {
-  db.prepare("DELETE FROM commerce_cart_items WHERE id = ? AND cart_id = ?").run(itemId, cartId);
-  return getCart(cartId, ctx);
+  const cartRow = db.prepare("SELECT id, customer_id FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
+  if (!cartRow) return { error: "cart_not_found", status: 404 };
+  const access = assertCustomerResourceAccess({
+    resourceCustomerId: cartRow.customer_id,
+    requestCustomerId: ctx.customerId,
+    resourceType: "cart",
+    req: ctx.req,
+  });
+  if (access?.blocked && cartRow.customer_id) {
+    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  }
+  const before = db.prepare("SELECT id FROM commerce_cart_items WHERE id = ? AND cart_id = ?").get(itemId, cartId);
+  if (before) {
+    db.prepare("DELETE FROM commerce_cart_items WHERE id = ? AND cart_id = ?").run(itemId, cartId);
+  }
+  return localCartClearResult(getCart(cartId, ctx), { localRowCleared: Boolean(before), removedItemId: itemId });
 }
 
 function validateStockForCheckout(cartId) {
   const cart = getCart(cartId);
   if (cart.error) return cart;
 
-  const issues = [];
-  for (const item of cart.items) {
-    if (!item.purchasable || item.quantity > item.stock) {
-      issues.push({
-        productId: item.productId,
-        sku: item.sku,
-        requested: item.quantity,
-        available: item.stock,
-        code: "stock_unavailable",
-      });
-    }
-  }
-
   return {
-    ok: issues.length === 0,
-    dryRun: true,
+    ok: false,
+    code: isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED",
+    checkoutAllowed: false,
     reservation: false,
-    issues,
+    purchased: false,
+    dryRun: true,
+    issues: (cart.items || []).map((item) => ({
+      productId: item.productId,
+      sku: item.sku,
+      requested: item.quantity,
+      available: null,
+      code: "STOCK_UNVERIFIED",
+    })),
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "ORDER_UNVERIFIED"],
     cart,
   };
 }
@@ -313,40 +398,14 @@ function clearCart(cartId, ctx = {}) {
 
   db.prepare("DELETE FROM commerce_cart_items WHERE cart_id = ?").run(cartId);
   db.prepare("UPDATE commerce_carts SET coupon_code = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(cartId);
-  return getCart(cartId, ctx);
+  return localCartClearResult(getCart(cartId, ctx));
 }
 
-function applyCoupon(cartId, { couponCode, clientDiscount, customerId, req } = {}) {
-  const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
-  if (!cartRow) return { error: "cart_not_found", status: 404 };
-
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: cartRow.customer_id,
-    requestCustomerId: customerId,
-    resourceType: "cart",
-    req,
-  });
-  if (access?.blocked && cartRow.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+function applyCoupon(cartId) {
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, applied: false, stored: false, purchased: false, cartId: cartId || null };
   }
-
-  const cart = getCart(cartId, { customerId, req });
-  if (cart.error) return cart;
-
-  const validated = commerceCouponService.validateCouponRequest(
-    { couponCode, clientDiscount, discount: clientDiscount },
-    cart.subtotal,
-    { req }
-  );
-  if (!validated.ok) {
-    return { error: validated.error, status: validated.status || 400 };
-  }
-
-  db.prepare("UPDATE commerce_carts SET coupon_code = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
-    validated.couponCode || null,
-    cartId
-  );
-  return getCart(cartId, { customerId, req });
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, applied: false, stored: false, purchased: false, cartId: cartId || null };
 }
 
 function removeCoupon(cartId, ctx = {}) {
@@ -364,7 +423,18 @@ function removeCoupon(cartId, ctx = {}) {
   }
 
   db.prepare("UPDATE commerce_carts SET coupon_code = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(cartId);
-  return getCart(cartId, ctx);
+  const cart = getCart(cartId, ctx);
+  return {
+    ...cart,
+    localFieldCleared: true,
+    commercialDiscountApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    refundCreated: false,
+    idempotent: true,
+    discount: null,
+    discountedSubtotal: null,
+  };
 }
 
 function validateCouponForCart(cartId, body = {}, ctx = {}) {
@@ -377,15 +447,23 @@ function validateCouponForCart(cartId, body = {}, ctx = {}) {
     cart.subtotal,
     ctx
   );
-  if (!validated.ok) {
-    return { ok: false, error: validated.error, status: validated.status || 400 };
+  if (!validated.ok && validated.error === "coupon_tampering") {
+    return { ok: false, error: validated.error, code: validated.error, status: validated.status || 400, applied: false, discount: null, callerFlagIgnored: true };
   }
+  const reasons = couponReasons(code, body);
+  const refusal = reasons[0] || "COUPON_UNVERIFIED";
   return {
-    ok: true,
-    couponCode: validated.couponCode,
-    discount: validated.discount,
-    subtotal: cart.subtotal,
-    discountedSubtotal: Math.round(Math.max(0, cart.subtotal - validated.discount) * 100) / 100,
+    ok: false,
+    error: refusal,
+    code: refusal,
+    status: refusal === "SALES_CLOSED" ? 403 : 409,
+    applied: false,
+    discount: null,
+    discountedSubtotal: null,
+    purchased: false,
+    callerFlagIgnored: true,
+    idempotent: true,
+    reasons,
   };
 }
 

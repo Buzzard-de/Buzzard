@@ -14,7 +14,7 @@ function measuredF0Hz() {
   } catch {
     /* sidecar absent */
   }
-  return 110;
+  return null;
 }
 
 const TR = { ç: "tʃ", ğ: "ː", ı: "ɯ", ö: "ø", ş: "ʃ", ü: "y", a: "a", e: "e", i: "i", o: "o", u: "u" };
@@ -36,6 +36,22 @@ function protoSynth({ text, lang = "tr" } = {}) {
   const { phonemes } = g2p(text, lang);
   const ms = Math.min(400, 40 + phonemes.length * 8);
   const hz = measuredF0Hz();
+  if (typeof hz !== "number") {
+    return {
+      ok: false,
+      kind: "PROTO_TONE_BLOCKED_NO_MEASURED_F0_NOT_OFFICIAL_VOICE_NOT_CLONE",
+      voiceId: VOICE_ID,
+      hz: null,
+      inventedHz: false,
+      officialVoiceUsed: false,
+      clone: false,
+      liveTts: false,
+      naturalHumanClaim: false,
+      bytes: 0,
+      phonemes: phonemes.slice(0, 24),
+      lang,
+    };
+  }
   const wav = wavTone({ hz, ms });
   return {
     ok: true,

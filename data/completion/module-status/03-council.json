@@ -1,0 +1,13 @@
+{
+  "id": "council",
+  "phase": 3,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "existing_but_incomplete",
+  "seedIds": 17,
+  "duplicateAgentsCreated": false,
+  "syntheticMeeting": true,
+  "memoryIsolation": "PERSONAL_MEMORY_DENIED",
+  "llmCompleted": false,
+  "evidence": "globalProgram synthetic council test and p0 delegation tests",
+  "liveVerified": false
+}

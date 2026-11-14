@@ -99,13 +99,25 @@ describe("Buzzard 10-agent council", () => {
       incomeCountry: "FR",
       gross: 100,
       vat: 20,
+      refund: 0,
+      commission: 0,
+      logistics: 0,
       supplierCost: 20,
     });
     expect(fr.reserveRate).toBe(0.25);
     expect(fr.emergencyReserve).toBe((100 - 20 - 20) * 0.25);
     expect(fr.reserveIsNotTax).toBe(true);
     expect(fr.autoTransfer).toBe(false);
-    const de = netIncomeReport({ actorId: "nedim_bey", incomeCountry: "DE", gross: 100, vat: 19, supplierCost: 0 });
+    const de = netIncomeReport({
+      actorId: "nedim_bey",
+      incomeCountry: "DE",
+      gross: 100,
+      vat: 19,
+      refund: 0,
+      commission: 0,
+      logistics: 0,
+      supplierCost: 0,
+    });
     expect(de.reserveRate).toBe(0);
     expect(netIncomeReport({ actorId: "nedim_bey", incomeCountry: "FR", gross: null }).status).toBe("UNKNOWN");
   });

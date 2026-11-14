@@ -13,7 +13,6 @@ import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { getProductUrl } from "@/lib/products";
 import { isCartEnabled, isCheckoutEnabled, showPrices } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
-import { useMarket } from "@/lib/market/context";
 
 export default function CartView() {
   const {
@@ -34,8 +33,7 @@ export default function CartView() {
     lastErrorKey,
   } = useCart();
   const { t } = useLocale();
-  const { countryCode } = useMarket();
-  const freeShippingThreshold = getFreeShippingThreshold(countryCode);
+  const freeShippingThreshold = getFreeShippingThreshold();
   const [couponInput, setCouponInput] = useState(couponCode);
 
   if (!isCartEnabled()) {
@@ -70,7 +68,7 @@ export default function CartView() {
       {syncing && <p className="cart-loading" aria-live="polite">{t("cart.loading") || "Warenkorb wird aktualisiert…"}</p>}
       {lastErrorKey && <p className="shop-modal-error" role="alert">{t(lastErrorKey) || lastErrorKey}</p>}
 
-      {showPrices() && freeShippingRemaining > 0 && (
+      {showPrices() && freeShippingRemaining != null && freeShippingThreshold != null && freeShippingRemaining > 0 && (
         <p className="cart-shipping-hint">
           {t("cart.freeShippingHint")
             .replace("{amount}", formatPrice(freeShippingRemaining))
@@ -165,15 +163,15 @@ export default function CartView() {
               )}
               <div className="cart-summary-row">
                 <span>{t("cart.shipping")}</span>
-                <span>{shipping === 0 ? t("cart.shippingFree") : formatPrice(shipping)}</span>
+                <span>{shipping == null ? "UNKNOWN" : shipping === 0 ? t("cart.shippingFree") : formatPrice(shipping)}</span>
               </div>
               <div className="cart-summary-row">
                 <span>{t("cart.vat")}</span>
-                <span>{formatPrice(vatAmount)}</span>
+                <span>{vatAmount == null ? "UNKNOWN" : formatPrice(vatAmount)}</span>
               </div>
               <div className="cart-summary-row cart-summary-total">
                 <span>{t("cart.total")}</span>
-                <span>{formatPrice(total)}</span>
+                <span>{total == null ? "UNKNOWN" : formatPrice(total)}</span>
               </div>
             </>
           ) : null}

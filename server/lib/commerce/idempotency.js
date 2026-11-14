@@ -70,9 +70,9 @@ function withIdempotency({ key, scope, handler, req, payload = null }) {
     const { logSecurityEvent } = require("../securityLog");
     logSecurityEvent({
       type: "idempotency_conflict",
-      success: true,
+      success: false,
       path: req?.url,
-      detail: { scope, replay: true },
+      detail: { scope, replay: true, orderCreated: false },
     });
     return { ...existing.response, idempotencyReplay: true };
   }

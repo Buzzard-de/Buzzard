@@ -9,7 +9,8 @@ const CRITICAL_PRICE_CHANGE_pct = 25;
 
 async function runPipeline({ supplierId = "mock", dryRun = true, req = null } = {}) {
   const adapter = getAdapter(supplierId);
-  const products = await adapter.fetchProducts();
+  const fetched = await adapter.fetchProducts();
+  const products = Array.isArray(fetched) ? fetched : fetched.records || [];
   const changes = [];
 
   for (const raw of products) {
@@ -43,12 +44,20 @@ async function runPipeline({ supplierId = "mock", dryRun = true, req = null } = 
   }
 
   return {
+    ok: false,
+    live: false,
+    mock: fetched.mock === true,
+    status: fetched.status || "BLOCKED_EXTERNAL",
+    code: fetched.code,
+    commercialEligibility: "BLOCKED",
     supplierId,
     dryRun,
-    changes: changes.length,
-    criticalChanges: changes.filter((c) => c.critical).length,
-    details: changes,
-    note: "Critical changes require Human Approval — AI cannot bypass",
+    changes: 0,
+    criticalChanges: 0,
+    details: [],
+    ignoredFixtureRows: changes.length,
+    purchased: false,
+    note: "A mock or unverified supplier price is not a commercial price",
   };
 }
 

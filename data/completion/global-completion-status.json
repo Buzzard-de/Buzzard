@@ -1,0 +1,33 @@
+{
+  "schema": "buzzard.global-completion-status.v1",
+  "recordedAt": "2026-11-11T17:08:00+01:00",
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "productionReady": false,
+  "liveVerified": false,
+  "sales": "CLOSED",
+  "egress": "DENY",
+  "commit": false,
+  "modules": {
+    "core": "VERIFIED_PARTIAL",
+    "ecommerce": "VERIFIED_PARTIAL",
+    "council": "VERIFIED_PARTIAL",
+    "catalog": "VERIFIED_PARTIAL",
+    "eu27": "VERIFIED_PARTIAL",
+    "pricing": "VERIFIED_PARTIAL",
+    "logistics": "VERIFIED_PARTIAL",
+    "security": "VERIFIED_PARTIAL",
+    "voice": "BLOCKED_EXTERNAL",
+    "live_operations": "BLOCKED_EXTERNAL"
+  },
+  "verifiedComplete": [],
+  "testsThisProgram": {
+    "nodeTest": { "passed": 19, "failed": 0, "skipped": 0 },
+    "vitest": { "files": 128, "passed": 1065, "failed": 0, "skipped": 0 },
+    "pythonEgress": { "passed": 9, "failed": 0, "skipped": 0 },
+    "tsc": { "exit": 0 },
+    "nextBuild": { "exit": 0, "staticPages": 3738 },
+    "playwright": "NOT_EXECUTED",
+    "part24to35": "NOT_EXECUTED"
+  }
+}

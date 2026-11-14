@@ -27,6 +27,29 @@ const {
   ORDER_TYPE,
 } = require("../../core/commerceConstants");
 const { getEffectiveFlags } = require("./commerceFeatureFlags");
+const { isSalesEnabled } = require("../salesMode");
+
+function checkoutClosed(extra = {}) {
+  const salesOpen = isSalesEnabled();
+  const code = salesOpen ? "STOCK_UNVERIFIED" : "SALES_CLOSED";
+  return {
+    ok: false,
+    code,
+    error: code,
+    status: salesOpen ? 409 : 403,
+    checkoutCreated: false,
+    orderCreated: false,
+    paymentAuthorized: false,
+    purchased: false,
+    reserved: false,
+    checkoutAllowed: false,
+    live: false,
+    reasons: salesOpen
+      ? ["STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED", "SHIPPING_RATE_UNVERIFIED", "ORDER_UNVERIFIED"]
+      : ["SALES_CLOSED", "STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED", "SHIPPING_RATE_UNVERIFIED", "ORDER_UNVERIFIED"],
+    ...extra,
+  };
+}
 
 function newId(prefix) {
   return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
@@ -74,6 +97,7 @@ function getCheckout(checkoutId, ctx = {}) {
 function transitionCheckout(checkoutId, toState) {
   const row = db.prepare("SELECT state FROM commerce_checkouts WHERE id = ?").get(checkoutId);
   if (!row) return { error: "checkout_not_found", status: 404 };
+  if (!isSalesEnabled()) return checkoutClosed({ from: row.state, to: toState });
   if (!canTransitionCheckout(row.state, toState)) {
     return { error: "illegal_state_transition", from: row.state, to: toState, status: 409 };
   }
@@ -82,6 +106,7 @@ function transitionCheckout(checkoutId, toState) {
 }
 
 function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = {}) {
+  if (!isSalesEnabled()) return checkoutClosed();
   const flags = getEffectiveFlags();
   if (!flags.checkoutEnabled) {
     logCommerceBlock("checkout_blocked", { reason: "checkout_disabled" }, req);
@@ -110,6 +135,7 @@ function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = 
 function validateCheckout(checkoutId, body = {}, ctx = {}) {
   const checkout = getCheckout(checkoutId, ctx);
   if (checkout.error) return checkout;
+  if (!isSalesEnabled()) return checkoutClosed();
 
   transitionCheckout(checkoutId, CHECKOUT_STATE.VALIDATING);
 
@@ -152,7 +178,13 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
       message: lines.error || lines.code,
       retryable: false,
     });
-    return { error: lines.error, code: lines.code, status: lines.status || 400 };
+    return {
+      error: lines.error,
+      code: lines.code,
+      status: lines.status || 400,
+      orderCreated: false,
+      policyStatus: lines.policyStatus || "UNKNOWN",
+    };
   }
 
   const billing = body.billingAddress || body.billing || {};
@@ -164,15 +196,27 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
   }
 
   const shipping = shippingProvider.calculateShipping({
-    methodId: body.shippingMethod || "standard",
-    country: shippingAddr.country || "DE",
-    subtotal: stock.cart.discountedSubtotal ?? stock.cart.subtotal,
+    methodId: body.shippingMethod,
+    country: shippingAddr.country,
+    zone: shippingAddr.zone,
     itemCount: stock.cart.itemCount,
   });
+  if (!shipping.ok || shipping.commercialEligibility !== "ELIGIBLE" || shipping.price == null) {
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    return {
+      error: "SHIPPING_RATE_UNVERIFIED",
+      code: "SHIPPING_RATE_UNVERIFIED",
+      status: 409,
+      orderCreated: false,
+      paymentAuthorized: false,
+      commercialEligibility: "BLOCKED",
+      shippingCost: null,
+    };
+  }
 
   const tax = taxProvider.calculateTax({
     country: shippingAddr.country || "DE",
-    subtotal: stock.cart.discountedSubtotal ?? stock.cart.subtotal,
+    subtotal: stock.cart.subtotal,
   });
   if (!tax.ok) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
@@ -183,9 +227,20 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     items: stock.cart.items,
     shipping: shipping.price,
     taxRate: tax.rate,
-    discount: stock.cart.discount || 0,
+    discount: null,
     currency: stock.cart.cart.currency,
   });
+  if (totals.total == null || totals.totalsVerified !== true) {
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    return {
+      error: "TOTALS_UNVERIFIED",
+      code: totals.code || "AMOUNT_UNKNOWN",
+      status: 409,
+      orderCreated: false,
+      paymentAuthorized: false,
+      totals: null,
+    };
+  }
 
   const risk = assessCheckoutRisk({
     items: stock.cart.items,
@@ -227,9 +282,7 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     shipping,
     tax,
     risk,
-    coupon: stock.cart.cart.couponCode
-      ? { code: stock.cart.cart.couponCode, discount: stock.cart.discount }
-      : null,
+    coupon: null,
     dryRun: getEffectiveFlags().checkoutDryRunOnly,
     salesEnabled: getEffectiveFlags().salesEnabled,
   };
@@ -237,6 +290,7 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
 
 function completeCheckout(checkoutId, body = {}, ctx = {}) {
   const run = () => {
+    if (!isSalesEnabled()) return checkoutClosed();
     const checkout = getCheckout(checkoutId, ctx);
     if (checkout.error) return checkout;
     if (checkout.state !== CHECKOUT_STATE.READY) {
@@ -254,8 +308,6 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       return { error: sanitized.code, status: 400 };
     }
 
-    transitionCheckout(checkoutId, CHECKOUT_STATE.PAYMENT_PENDING);
-
     const totals = checkout.totals || {};
     if (body.capture === true || body.capturePayment === true) {
       const blocked = paymentService.capturePayment({ checkoutId });
@@ -264,7 +316,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
     }
     const payment = paymentService.authorizePayment({
       amount: totals.total,
-      currency: totals.currency || "EUR",
+      currency: totals.currency || null,
       customerId: checkout.customerId,
       idempotencyKey: body.idempotencyKey || checkout.idempotencyKey,
       req: ctx.req,
@@ -272,12 +324,10 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       dryRun: true,
     });
 
-    if (payment.blocked || payment.error) {
+    if (payment.blocked || payment.error || payment.ok === false || payment.paymentAuthorized !== true || payment.live !== true) {
       transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
       return payment;
     }
-
-    transitionCheckout(checkoutId, CHECKOUT_STATE.PAYMENT_AUTHORIZED);
 
     const order = orderService.createOrderFromCheckout({
       checkout,

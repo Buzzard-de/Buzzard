@@ -1,0 +1,11 @@
+{
+  "id": "security",
+  "phase": 8,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "existing_but_incomplete",
+  "egress": "DENY",
+  "criticalAuthorizationBypass": false,
+  "evidence": "p0 closure, Vitest security files, Python security.test_egress 9 passed",
+  "missing": ["full Playwright browser security pass in this run", "external penetration test"],
+  "liveVerified": false
+}

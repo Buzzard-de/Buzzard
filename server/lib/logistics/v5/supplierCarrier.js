@@ -47,8 +47,11 @@ function linkSupplierCarrier({ supplierId, carrierId, ownFleetVerified = false }
     return { ok: false, error: "SUPPLIER_IS_NOT_CARRIER_WITHOUT_OWN_FLEET", edges: [] };
   }
   return {
-    ok: true,
+    ok: false,
     live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "CARRIER_LINK_UNVERIFIED",
     edge: { type: "SUPPLIER_USES_CARRIER", supplierId, carrierId, verified: false },
   };
 }

@@ -1,7 +1,6 @@
 /**
  * Part 8 — Order foundation (commercial orders blocked when SALES=0)
  */
-const crypto = require("crypto");
 const { db } = require("../db");
 const {
   ORDER_STATUS,
@@ -16,10 +15,9 @@ const {
 } = require("./commerceGuards");
 const { logSecurityEvent } = require("../securityLog");
 const { listAudit } = require("../coreAudit");
-
-function newId(prefix) {
-  return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
-}
+const { selectTransportCost } = require("./pricingPolicy");
+const { quoteRate } = require("../banking/eu27/fx");
+const { decideAsset } = require("../banking/eu27/fiatPolicy");
 
 function parseJson(val, fallback = {}) {
   try {
@@ -51,86 +49,81 @@ function mapOrder(row) {
   };
 }
 
-function createOrderFromCheckout({ checkout, payment, orderType, req }) {
-  const block = assertCanCreateOrder({ orderType, req });
-  if (block && isCommercialOrderType(orderType)) return block;
-
-  if (!isCommercialOrderType(orderType)) {
-    const commercialCount = db
-      .prepare("SELECT COUNT(*) n FROM commerce_orders WHERE order_type = ?")
-      .get(ORDER_TYPE.COMMERCIAL).n;
-    if (commercialCount > 0 && !require("../salesMode").isSalesEnabled()) {
-      logSecurityEvent({
-        type: "order_creation_blocked",
-        success: false,
-        detail: { reason: "commercial_orders_exist_while_sales_disabled" },
-      });
-    }
-  }
-
-  const totals = checkout.totals || {};
-  const cartService = require("./cartService");
-  const cart = cartService.getCart(checkout.cartId);
-  const pathAdapter = require("./canonicalCommercePath");
-  const items = [];
-  for (const i of cart.items || []) {
-    const snap = pathAdapter.buildImmutableSnapshot(i.productId, i.quantity);
-    if (!snap.ok) {
-      return { error: snap.error, code: snap.code, status: snap.status || 400 };
-    }
-    items.push({
-      productId: i.productId,
-      canonicalProductId: i.productId,
-      variantId: i.variantId,
-      sku: i.sku,
-      title: i.title,
-      quantity: i.quantity,
-      priceSnapshot: i.priceSnapshot,
-      unitPrice: i.unitPrice || i.priceSnapshot,
-      lineTotal: i.lineTotal,
-      snapshotVersion: i.snapshotVersion || snap.snapshotVersion || null,
-      productSnapshot: i.productSnapshot || snap.productSnapshot || null,
-      priceQuoteSnapshot: snap.ok ? snap.priceSnapshot : null,
-      taxSnapshot: snap.ok ? snap.taxSnapshot : null,
-      inventorySnapshot: snap.ok ? snap.inventorySnapshot : null,
-      supplierSnapshot: snap.supplierSnapshot,
-    });
-  }
-
-  const id = newId("ord");
-  const status = isCommercialOrderType(orderType) ? ORDER_STATUS.PENDING : ORDER_STATUS.CONFIRMED;
-
-  db.prepare(`
-    INSERT INTO commerce_orders(
-      id, checkout_id, customer_id, order_type, status, payment_status, fulfillment_status,
-      currency, subtotal, shipping, tax, discount, total, items_json, metadata_json
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    id,
-    checkout.id,
-    checkout.customerId,
-    orderType,
+function refuseOrder(code, status = 409, reasons = []) {
+  return {
+    ok: false,
+    error: code,
+    code,
     status,
-    payment?.status || "NONE",
-    "NONE",
-    totals.currency || "EUR",
-    totals.subtotal || 0,
-    totals.shipping || 0,
-    totals.tax || 0,
-    totals.discount || 0,
-    totals.total || 0,
-    JSON.stringify(items),
-    JSON.stringify({
-      dryRun: !isCommercialOrderType(orderType),
-      paymentReference: payment?.reference,
-      paymentStatus: payment?.status || "NONE",
-      captured: false,
-      realMoneyMovement: false,
-      supplierOrderSubmitted: false,
-    })
-  );
+    reasons,
+    blocked: true,
+    orderCreated: false,
+    paymentAuthorized: false,
+    paymentCaptured: false,
+    purchased: false,
+    live: false,
+    commercialEligibility: "BLOCKED",
+    shipping: null,
+    supplierCost: null,
+    total: null,
+  };
+}
 
-  return mapOrder(db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(id));
+function moneyPresent(value) {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function existingOrderForCheckout(checkoutId) {
+  if (!checkoutId) return null;
+  try {
+    return db.prepare("SELECT id FROM commerce_orders WHERE checkout_id = ?").get(checkoutId) || null;
+  } catch {
+    return null;
+  }
+}
+
+function orderBlockReasons(checkout, payment, salesOpen) {
+  const totals = checkout.totals || {};
+  const reasons = [];
+  if (checkout.mock === true || payment?.mock === true || payment?.mockOnly === true || payment?.dryRun === true) {
+    reasons.push("MOCK_NOT_COMMERCIAL");
+  }
+  const currency = totals.currency || checkout.currency || payment?.currency;
+  const assetType = payment?.assetType || checkout.assetType;
+  const instrument = payment?.instrument || checkout.instrument;
+  if (currency || assetType || instrument) {
+    const asset = decideAsset({ currency, assetType, instrument });
+    if (!asset.ok) reasons.push(asset.code);
+  }
+  const transport = selectTransportCost(checkout.transport || {});
+  if (transport.ok !== true || transport.live === true) reasons.push("SHIPPING_RATE_UNVERIFIED");
+  if (!moneyPresent(checkout.marketplaceFee ?? totals.marketplaceFee)) reasons.push("MARKETPLACE_FEE_UNVERIFIED");
+  if (!moneyPresent(checkout.paymentFee ?? totals.paymentFee)) reasons.push("PAYMENT_FEE_UNVERIFIED");
+  reasons.push("VAT_UNVERIFIED");
+  const fx = quoteRate({ base: totals.currency || checkout.currency, quote: "EUR" });
+  if (fx.ok !== true || fx.code !== "IDENTITY_RATE" || fx.live === true || checkout.fxVerified === true || checkout.fxLive === true) {
+    reasons.push("FX_UNVERIFIED");
+  }
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  if (!moneyPresent(totals.subtotal)) reasons.push("PRODUCT_COST_UNVERIFIED");
+  reasons.push("STOCK_UNVERIFIED");
+  reasons.push("PAYMENT_UNVERIFIED");
+  if (!salesOpen) reasons.push("SALES_CLOSED");
+  return reasons;
+}
+
+function createOrderFromCheckout({ checkout = {}, payment = {}, orderType, req } = {}) {
+  const salesOpen = require("../salesMode").isSalesEnabled();
+  const block = assertCanCreateOrder({ orderType, req });
+  if (block && isCommercialOrderType(orderType)) {
+    return { ...block, ...refuseOrder(block.code || "SALES_CLOSED", block.status || 403), blocked: true };
+  }
+
+  if (existingOrderForCheckout(checkout.id)) return refuseOrder("DUPLICATE_ORDER");
+  const totals = checkout.totals || {};
+  const reasons = orderBlockReasons(checkout, payment, salesOpen);
+  if (reasons.length) return refuseOrder(reasons[0], reasons[0] === "SALES_CLOSED" ? 403 : 409, reasons);
+  return refuseOrder("ORDER_UNVERIFIED", 409, ["ORDER_UNVERIFIED", "STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED"]);
 }
 
 function getOrder(orderId, ctx = {}) {
@@ -158,17 +151,14 @@ function transitionOrderStatus(orderId, toStatus) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
 
-  const livePayment = process.env.BUZZARD_PAYMENT_LIVE === "1";
-  const liveFulfillment = process.env.BUZZARD_FULFILLMENT_LIVE === "1";
-  const liveRefund = process.env.BUZZARD_REFUND_LIVE === "1";
-  if (toStatus === ORDER_STATUS.PAID && !livePayment) {
-    return { error: "PAYMENT_NOT_LIVE", code: "PAYMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  if (toStatus === ORDER_STATUS.PAID) {
+    return { error: "PAYMENT_NOT_LIVE", code: "PAYMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403, live: false };
   }
-  if ((toStatus === ORDER_STATUS.SHIPPED || toStatus === ORDER_STATUS.DELIVERED) && !liveFulfillment) {
-    return { error: "FULFILLMENT_NOT_LIVE", code: "FULFILLMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  if (toStatus === ORDER_STATUS.SHIPPED || toStatus === ORDER_STATUS.DELIVERED) {
+    return { error: "FULFILLMENT_NOT_LIVE", code: "FULFILLMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403, live: false };
   }
-  if (toStatus === ORDER_STATUS.REFUNDED && !liveRefund) {
-    return { error: "REFUND_NOT_LIVE", code: "REFUND_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
+  if (toStatus === ORDER_STATUS.REFUNDED) {
+    return { error: "REFUND_NOT_LIVE", code: "REFUND_NOT_LIVE", from: row.status, to: toStatus, status: 403, live: false };
   }
 
   db.prepare("UPDATE commerce_orders SET status = ? WHERE id = ?").run(toStatus, orderId);

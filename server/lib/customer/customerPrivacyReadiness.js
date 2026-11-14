@@ -26,15 +26,8 @@ function getPrivacyReadiness() {
   };
 }
 
-function bridgePrivacyExport(customerId) {
-  const exportData = customerStore.exportCustomerData(customerId);
-  if (!exportData) return null;
-  return {
-    ...exportData,
-    exportedAt: new Date().toISOString(),
-    testOnly: false,
-    redactedSecrets: true,
-  };
+function bridgePrivacyExport() {
+  return { ok: false, exported: false, code: "EXPORT_BLOCKED", customer: null, email: null, phone: null, testOnly: false };
 }
 
 function bridgeDeletionRequest(customerId) {

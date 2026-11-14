@@ -88,7 +88,7 @@ describe("egress 4.3 browser vs server", () => {
     };
     setDnsLookup(async () => [{ address: "203.0.113.10" }]);
     try {
-      const hop = await guardedFetch("https://buzzard24.de/pay-out", {}, { ping: true });
+      const hop = await guardedFetch("https://buzzard-api.onrender.com/pay-out", {}, { ping: true });
       expect(hop.blocked).toBe(true);
       expect(hop.followedRedirect).toBe(false);
       expect(hop.decision.code).toBe("REDIRECT_DENIED");

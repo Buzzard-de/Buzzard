@@ -22,20 +22,11 @@ async function completeReadinessOrder(request: import("@playwright/test").APIReq
     data: { cartId, orderType: "READINESS_TEST" },
   });
   const started = await start.json();
-  const checkoutId = started.checkout?.id || started.id;
-  expect(checkoutId).toBeTruthy();
-  const addr = { line1: "E2E 1", city: "Berlin", postalCode: "10115", country: "DE" };
-  await request.post(`${API}/api/commerce/checkout/${checkoutId}/validate`, {
-    data: { billingAddress: addr, shippingAddress: addr },
-  });
-  const complete = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
-    data: { orderType: "READINESS_TEST" },
-    headers: { "Idempotency-Key": `e2e-ui-complete-${Date.now()}` },
-  });
-  const result = await complete.json();
-  expect(complete.ok()).toBeTruthy();
-  expect(result.order?.orderType).toBe("READINESS_TEST");
-  expect(result.payment?.realMoneyMovement).toBe(false);
+  expect(start.status()).toBe(403);
+  expect(started.errorKey).toBe("SALES_CLOSED");
+  expect(started.checkoutCreated).toBe(false);
+  expect(started.orderCreated).toBe(false);
+  expect(started.paymentAuthorized).toBe(false);
 }
 
 test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
@@ -51,7 +42,7 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     await assertNoHorizontalOverflow(page);
   });
 
-  test("product → cart → checkout → READINESS_TEST success", async ({ page, request }) => {
+  test("product → cart → checkout stays blocked without a verified price", async ({ page, request }) => {
     const product = await resolveDemoProduct(request);
 
     const cartRes = await request.post(`${API}/api/commerce/cart`, {
@@ -62,7 +53,11 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
     const addRes = await request.post(`${API}/api/commerce/cart/${cartId}/items`, {
       data: { productId: product.id, quantity: 1 },
     });
-    expect(addRes.ok()).toBeTruthy();
+    expect(addRes.ok()).toBeFalsy();
+    const added = await addRes.json();
+    expect(added.errorKey).toBe("SALES_CLOSED");
+    expect(added.purchased).toBe(false);
+    expect(added.stored).toBe(false);
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.evaluate((id) => {

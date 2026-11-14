@@ -23,13 +23,8 @@ const SEARCH_FIELDS = Object.freeze([
   "vehicleCompatibility",
 ]);
 
-function normalizeAvailability(value) {
-  if (!value) return null;
-  const v = String(value).toLowerCase();
-  if (["in_stock", "instock", "1", "true"].includes(v)) return "in_stock";
-  if (["out_of_stock", "outofstock", "0", "false"].includes(v)) return "out_of_stock";
-  if (["low_stock", "low"].includes(v)) return "low_stock";
-  return v;
+function normalizeAvailability() {
+  return null;
 }
 
 function productMatchesQuery(mapped, q) {

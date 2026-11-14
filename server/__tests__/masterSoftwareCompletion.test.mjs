@@ -60,10 +60,17 @@ describe("carrier contract", () => {
     for (const id of CARRIER_IDS) {
       const adapter = getAdapter(id);
       expect(adapter.createShipment({ orderId: "x" }).liveShipment).toBe(false);
-      expect(adapter.trackShipment({ status: "LOST" }).status).toBe("LOST");
+      const tracked = adapter.trackShipment({ status: "LOST" });
+      expect(tracked.status).toBe("LOST");
+      expect(tracked.ok).toBe(false);
+      expect(tracked.events).toEqual([]);
+      expect(tracked.trackingNumber).toBeNull();
       const payload = `${id}-hook`;
       const header = createHmac("sha256", secret).update(payload).digest("hex");
-      expect(adapter.verifyWebhook({ payload, header, secret }).ok).toBe(true);
+      const hook = adapter.verifyWebhook({ payload, header, secret });
+      expect(hook.signatureMatched).toBe(true);
+      expect(hook.ok).toBe(false);
+      expect(hook.shipmentCreated).toBe(false);
       expect(adapter.verifyWebhook({ payload, header, secret }).code).toBe("REPLAY");
     }
   });
@@ -137,8 +144,13 @@ describe("queue concurrency and backup corruption", () => {
 
 describe("currency fixture", () => {
   it("converts with frozen rates and never claims live FX", () => {
-    expect(convert({ amount: 10, from: "EUR", to: "TRY" }).converted).toBe(375);
-    expect(convert({ amount: 10, from: "EUR", to: "TRY" }).live).toBe(false);
+    const fixture = convert({ amount: 10, from: "EUR", to: "TRY" });
+    expect(fixture.converted).toBe(375);
+    expect(fixture.live).toBe(false);
+    expect(fixture.ok).toBe(false);
+    expect(fixture.official).toBe(false);
+    expect(convert({ from: "EUR", to: "TRY" }).converted).toBeNull();
+    expect(convert({ amount: Number.NaN, from: "EUR", to: "TRY" }).code).toBe("INVALID_AMOUNT");
     expect(convert({ amount: 1, from: "XXX", to: "EUR" }).ok).toBe(false);
   });
 });

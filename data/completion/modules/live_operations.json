@@ -1,0 +1,11 @@
+{
+  "id": "live_operations",
+  "status": "CODE_READY",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "humanApproval": "HUMAN_APPROVAL_REQUIRED",
+  "external": "EXTERNAL_DEPENDENCY_BLOCKED",
+  "contract": "CONTRACT_REQUIRED",
+  "liveVerified": false,
+  "productionReady": false
+}

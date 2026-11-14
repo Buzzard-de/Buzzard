@@ -32,13 +32,17 @@ describe("autonomous continuation v3", () => {
     expect(evaluateEgress({ destinationUrl: "https://127.0.0.1/" }).allowed).toBe(false);
     const h = createIsolatedHttp({
       fixtures: {
-        "https://buzzard24.de/health": { status: 200, body: "ok" },
-        "https://buzzard24.de/go": { redirect: true },
-        "https://buzzard24.de/slow": { delayMs: 5000, status: 200 },
+        "https://buzzard-api.onrender.com/health": { status: 200, body: "ok" },
+        "https://buzzard-api.onrender.com/go": { redirect: true },
+        "https://buzzard-api.onrender.com/slow": { delayMs: 5000, status: 200 },
       },
       timeoutMs: 50,
     });
-    const allowed = await h.request("https://buzzard24.de/health");
+    const storefront = await h.request("https://buzzard24.de/health", { payload: { email: "customer@example.test" } });
+    expect(storefront.blocked).toBe(true);
+    expect(storefront.reachedNetwork).toBe(false);
+    expect(storefront.code).toBe("EGRESS_DENIED");
+    const allowed = await h.request("https://buzzard-api.onrender.com/health");
     expect(allowed.reachedNetwork).toBe(false);
     expect(allowed.isolated).toBe(true);
     expect(allowed.status).toBe(200);
@@ -49,11 +53,11 @@ describe("autonomous continuation v3", () => {
     expect(priv.code).toBe("PRIVATE_OR_IP_DENIED");
     const rebind = await h.request("https://127.0.0.1.nip.io/");
     expect(rebind.blocked).toBe(true);
-    const redir = await h.request("https://buzzard24.de/go");
+    const redir = await h.request("https://buzzard-api.onrender.com/go");
     expect(redir.code).toBe("REDIRECT_DENIED");
     const invalid = await h.request("not-a-url");
     expect(invalid.code).toBe("INVALID_URL");
-    const slow = await h.request("https://buzzard24.de/slow");
+    const slow = await h.request("https://buzzard-api.onrender.com/slow");
     expect(slow.code).toBe("ISOLATED_TIMEOUT");
     process.env.BUZZARD_EGRESS_EXTRA_HOSTS = "api.openai.com";
     expect(evaluateEgress({ destinationUrl: "https://api.openai.com/v1" }).allowed).toBe(false);

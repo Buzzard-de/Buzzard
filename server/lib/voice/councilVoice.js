@@ -14,7 +14,15 @@ function assessVoice() {
     liveCalls: false,
     voiceAsAuth: false,
     e2eAudioTested: false,
-    status: "CODE_READY",
+    voice: "NOT_CONFIGURED",
+    sttStatus: "NOT_CONFIGURED",
+    ttsStatus: "NOT_CONFIGURED",
+    phone: "NOT_CONFIGURED",
+    liveNetwork: "NOT_CONFIGURED",
+    codeStatus: "CODE_READY",
+    status: "NOT_CONFIGURED",
+    reachable: false,
+    codeReadyIsLive: false,
     completeClaim: false,
   };
 }
@@ -52,13 +60,32 @@ function escalateIncident({ severity, quietHours = false } = {}) {
   return { notify: true, channel: "in_app", liveCallPlaced: false };
 }
 
+function envPresent(name) {
+  return Boolean(process.env[name]);
+}
+
+function adapter(id, { codePresent, credentialNames = [], blocked = false }) {
+  const credentialPresent = credentialNames.some((name) => envPresent(name));
+  return {
+    id,
+    configured: credentialPresent,
+    codePresent,
+    serviceConnected: false,
+    status: credentialPresent ? "UNKNOWN" : blocked ? "BLOCKED" : "NOT_CONFIGURED",
+    live: false,
+    credentialInvented: false,
+  };
+}
+
 function providerAdapters() {
   return [
-    { id: "sip", configured: false, status: "BLOCKED" },
-    { id: "twilio", configured: false, status: "BLOCKED" },
-    { id: "stt", configured: false, status: "CODE_READY" },
-    { id: "tts", configured: false, status: "CODE_READY" },
-    { id: "stun_turn", configured: false, status: "BLOCKED" },
+    adapter("stt", { codePresent: true, credentialNames: ["BUZZARD_STT_ENDPOINT"] }),
+    adapter("tts", { codePresent: true, credentialNames: ["BUZZARD_TTS_ENDPOINT"] }),
+    adapter("webrtc", { codePresent: true }),
+    adapter("stun_turn", { codePresent: false, credentialNames: ["BUZZARD_TURN_URL", "BUZZARD_STUN_URL"] }),
+    adapter("phone", { codePresent: true, credentialNames: ["BUZZARD_SIP_URI"] }),
+    adapter("sip", { codePresent: false, credentialNames: ["BUZZARD_SIP_URI"], blocked: true }),
+    adapter("twilio", { codePresent: false, credentialNames: ["BUZZARD_TWILIO_ACCOUNT_SID"], blocked: true }),
   ];
 }
 

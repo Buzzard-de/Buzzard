@@ -1,7 +1,11 @@
 /**
- * Persistent Sinan Bey tables on the existing Pusat sqlite. Additive only.
+ * Persistent Sinan Bey tables on the isolated Pusat sqlite. Additive only.
+ * Commerce SQLite is never opened here.
  */
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { createRequire } = require("module");
 const { SECTIONS, encodeRecord } = require("./sinanMemory");
 
 const TASK_STATUS = Object.freeze([
@@ -14,6 +18,54 @@ const TASK_STATUS = Object.freeze([
   "HUMAN_APPROVED",
   "LIVE_VERIFIED",
 ]);
+
+function refuse(message, code) {
+  const err = new Error(message);
+  err.code = code;
+  throw err;
+}
+
+function loadSqlite() {
+  const root = path.join(__dirname, "..", "..", "..");
+  try {
+    return createRequire(path.join(root, "server", "package.json"))("better-sqlite3");
+  } catch {
+    return require("better-sqlite3");
+  }
+}
+
+function fileIdentity(file) {
+  const resolved = path.resolve(String(file));
+  try {
+    return fs.realpathSync(resolved);
+  } catch {
+    return resolved;
+  }
+}
+
+function openSinanDatabase({ dbPath, commercePath, schema = false } = {}) {
+  const { assertNotGuardian } = require("./durableTaskQueue");
+  const resolved = assertNotGuardian(dbPath);
+  if (commercePath && fileIdentity(resolved) === fileIdentity(commercePath)) {
+    refuse("PUSAT_DB_MATCHES_COMMERCE", "DATA_PATH_REFUSED");
+  }
+  if (!schema && !fs.existsSync(resolved)) return null;
+  if (!fs.existsSync(path.dirname(resolved))) {
+    refuse("ORCH_DB_PATH_UNVERIFIED", "DATA_PATH_REFUSED");
+  }
+  const Database = loadSqlite();
+  if (!schema) {
+    return new Database(resolved, { readonly: true, fileMustExist: true });
+  }
+  const raw = new Database(resolved);
+  ensureSinanSchema(raw);
+  return raw;
+}
+
+function tableExists(db, name) {
+  const row = db.prepare(`SELECT 1 AS present FROM sqlite_master WHERE type = 'table' AND name = ?`).get(name);
+  return Boolean(row);
+}
 
 function ensureSinanSchema(db) {
   db.exec(`
@@ -59,9 +111,9 @@ function ensureSinanSchema(db) {
   `);
 }
 
-function createSinanDurable(db) {
+function createSinanDurable(db, { ensureSchema = true } = {}) {
   if (!db) throw new Error("sinan durable requires db");
-  ensureSinanSchema(db);
+  if (ensureSchema) ensureSinanSchema(db);
 
   function audit(kind, actor, payload) {
     const id = `saud_${crypto.randomBytes(6).toString("hex")}`;
@@ -77,6 +129,7 @@ function createSinanDurable(db) {
   }
 
   function assignTask({ fromId = "pusat", title } = {}) {
+    ensureSinanSchema(db);
     const id = `stask_${crypto.randomBytes(6).toString("hex")}`;
     const at = new Date().toISOString();
     db.prepare(
@@ -90,6 +143,7 @@ function createSinanDurable(db) {
   function setStatus({ taskId, status, blockedReason, branch, commitSha, testResult, evidence } = {}) {
     if (!TASK_STATUS.includes(status)) return { ok: false, code: "UNKNOWN_STATUS" };
     if (status === "LIVE_VERIFIED") return { ok: false, code: "LIVE_VERIFIED_FORBIDDEN" };
+    if (!tableExists(db, "sinan_tasks")) return { ok: false, code: "SINAN_TABLE_MISSING" };
     const row = db.prepare(`SELECT * FROM sinan_tasks WHERE id = ?`).get(taskId);
     if (!row) return { ok: false, code: "NOT_FOUND" };
     const at = new Date().toISOString();
@@ -110,6 +164,7 @@ function createSinanDurable(db) {
   }
 
   function report({ taskId, kind, body } = {}) {
+    ensureSinanSchema(db);
     const id = `srep_${crypto.randomBytes(6).toString("hex")}`;
     const at = new Date().toISOString();
     db.prepare(`INSERT INTO sinan_reports (id, task_id, kind, body_json, created_at) VALUES (?,?,?,?,?)`).run(
@@ -124,16 +179,21 @@ function createSinanDurable(db) {
   }
 
   function getTask(taskId) {
+    if (!tableExists(db, "sinan_tasks")) return { ok: false, code: "SINAN_TABLE_MISSING" };
     const row = db.prepare(`SELECT * FROM sinan_tasks WHERE id = ?`).get(taskId);
     if (!row) return { ok: false, code: "NOT_FOUND" };
     return { ok: true, task: { ...row, evidence: JSON.parse(row.evidence_json || "{}") } };
   }
 
   function listTasks() {
+    if (!tableExists(db, "sinan_tasks")) return [];
     return db.prepare(`SELECT * FROM sinan_tasks ORDER BY created_at DESC LIMIT 100`).all();
   }
 
   function snapshotMemory(ownerId = "sinan_bey") {
+    if (!tableExists(db, "pusat_memories")) {
+      return { ownerId, at: new Date().toISOString(), records: [], live: false, code: "PUSAT_TABLE_MISSING" };
+    }
     const records = db
       .prepare(`SELECT id, key, value_json, created_at FROM pusat_memories WHERE owner_id = ?`)
       .all(ownerId);
@@ -147,6 +207,8 @@ function createSinanDurable(db) {
 
   function restoreMemorySnapshot(snapshot, { ownerId = "sinan_bey" } = {}) {
     if (!snapshot || snapshot.ownerId !== ownerId) return { ok: false, code: "OWNER_MISMATCH" };
+    if (!tableExists(db, "pusat_memories")) return { ok: false, code: "PUSAT_TABLE_MISSING" };
+    ensureSinanSchema(db);
     const insert = db.prepare(
       `INSERT OR REPLACE INTO pusat_memories (id, owner_id, classification, key, value_json, created_at) VALUES (?,?,?,?,?,?)`,
     );
@@ -158,6 +220,7 @@ function createSinanDurable(db) {
   }
 
   function putPartitioned({ section, key, value, source } = {}) {
+    ensureSinanSchema(db);
     if (!SECTIONS[section] && !Object.values(SECTIONS).includes(section)) {
       return { ok: false, code: "UNKNOWN_SECTION" };
     }
@@ -191,6 +254,7 @@ function createSinanDurable(db) {
   }
 
   function listPartition(section) {
+    if (!tableExists(db, "sinan_memory_versions")) return [];
     const sectionName = SECTIONS[section] || section;
     return db
       .prepare(
@@ -200,6 +264,7 @@ function createSinanDurable(db) {
   }
 
   function listAudit() {
+    if (!tableExists(db, "sinan_audit")) return [];
     return db.prepare(`SELECT * FROM sinan_audit ORDER BY created_at DESC LIMIT 100`).all();
   }
 
@@ -218,4 +283,4 @@ function createSinanDurable(db) {
   };
 }
 
-module.exports = { TASK_STATUS, ensureSinanSchema, createSinanDurable, SECTIONS: require("./sinanMemory").SECTIONS };
+module.exports = { TASK_STATUS, ensureSinanSchema, createSinanDurable, openSinanDatabase, SECTIONS: require("./sinanMemory").SECTIONS };

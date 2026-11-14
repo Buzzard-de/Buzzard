@@ -34,7 +34,10 @@ function buildMarket(country) {
     timezone: country.timezone,
     textDirection: country.textDirection || "ltr",
     vat: {
-      standardRate: overlay.taxRate ?? 0.2,
+      standardRate: overlay.taxRate == null ? null : overlay.taxRate,
+      official: false,
+      verified: false,
+      source: overlay.taxRate == null ? "UNKNOWN" : "UNVERIFIED_LOCAL_SNAPSHOT",
       pricesIncludeVat: true,
       taxModel: overlay.taxModel || "VAT",
     },

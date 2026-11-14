@@ -37,24 +37,28 @@ function approveGoLive({ requestId, decidedBy } = {}) {
   if (!row) return { error: "request_not_found", status: 404 };
 
   db.prepare(`
-    UPDATE commerce_go_live SET status = 'APPROVED', admin_approval = 1, decided_at = CURRENT_TIMESTAMP, decided_by = ?
+    UPDATE commerce_go_live SET status = 'RECORDED_NOT_ACTIVATED', admin_approval = 0, decided_at = CURRENT_TIMESTAMP, decided_by = ?
     WHERE id = ?
   `).run(decidedBy || null, requestId);
 
   logSecurityEvent({
     type: "go_live_approved",
-    success: true,
+    success: false,
     userId: decidedBy,
-    detail: { requestId, salesActivated: false, productionSafetyLock: PRODUCTION_SAFETY_LOCK },
+    detail: { requestId, salesActivated: false, paymentCaptured: false, productionSafetyLock: PRODUCTION_SAFETY_LOCK },
   });
 
-  orderService.auditCommerceAction("go_live_approved", { type: "admin", id: decidedBy }, { requestId });
+  orderService.auditCommerceAction("go_live_approved", { type: "admin", id: decidedBy }, { requestId, salesActivated: false });
 
   return {
     id: requestId,
-    status: "APPROVED",
+    status: "RECORDED_NOT_ACTIVATED",
+    code: "HUMAN_REQUIRED",
+    approved: false,
     salesEnabled: false,
-    message: "Go-live approved in foundation only — BUZZARD_SALES_ENABLED remains locked",
+    salesActivated: false,
+    paymentCaptured: false,
+    message: "Go-live request recorded. Sales stay closed and no payment is captured.",
     productionSafetyLock: PRODUCTION_SAFETY_LOCK,
     requiresManualSalesActivation: true,
   };

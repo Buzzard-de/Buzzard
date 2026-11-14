@@ -31,8 +31,11 @@ export interface MarketplaceCapability {
 export type CustomerType = "B2C" | "B2B";
 
 export interface VatRules {
-  /** Standard domestic rate (decimal, e.g. 0.19). */
-  standardRate: number;
+  /** Local snapshot only. Null when no overlay rate exists. Not an official filing rate. */
+  standardRate: number | null;
+  official: false;
+  verified: false;
+  source: "UNKNOWN" | "UNVERIFIED_LOCAL_SNAPSHOT";
   /** Prices shown VAT-inclusive for this market (B2C default). */
   pricesIncludeVat: boolean;
   /** Tax model label from overlay (e.g. VAT). */
@@ -48,10 +51,12 @@ export interface VatContextInput {
 }
 
 export interface VatContext {
-  rate: number;
+  rate: number | null;
   included: boolean;
   reverseCharge: boolean;
   reason: string;
+  official?: false;
+  verified?: false;
 }
 
 export interface MarketConfig {
@@ -95,7 +100,7 @@ export interface DisplayPriceInput {
 
 export interface DisplayPriceResult {
   netPrice: number;
-  vatAmount: number;
+  vatAmount: number | null;
   grossPrice: number;
   currency: string;
   formatted: string;

@@ -64,15 +64,19 @@ async function fetchPrices(options = {}) {
   return { ok: true, mock: true, records };
 }
 
-async function prepareOrder(orderPayload, options = {}) {
+async function prepareOrder() {
   return {
-    ok: true,
+    ok: false,
     mock: true,
-    dryRun: options.dryRun !== false,
-    status: "prepared_not_sent",
-    supplierOrderNumber: `MOCK-PREP-${Date.now()}`,
-    message: "Order preparation only — no real supplier dispatch (catalog mode).",
-    payload: orderPayload,
+    dryRun: true,
+    sent: false,
+    accepted: false,
+    submitted: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "SUPPLIER_NOT_LIVE",
+    supplierOrderNumber: null,
+    supplierResponse: null,
+    message: "No supplier order is created from a local adapter call.",
   };
 }
 

@@ -1,7 +1,97 @@
 /**
  * Durable Pusat control-plane store. Not money, stock, or sales writes.
+ * The runtime memory connection is a separate read-only file, never commerce SQLite.
  */
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { createRequire } = require("module");
+
+const ALLOWED_TABLES = new Set([
+  "pusat_memories",
+  "pusat_meetings",
+  "pusat_meeting_events",
+  "pusat_research",
+  "pusat_trade_holds",
+  "sqlite_master",
+  "sqlite_schema",
+]);
+
+function loadSqlite() {
+  const root = path.join(__dirname, "..", "..", "..");
+  try {
+    return createRequire(path.join(root, "server", "package.json"))("better-sqlite3");
+  } catch {
+    return require("better-sqlite3");
+  }
+}
+
+function refuse(message, code) {
+  const err = new Error(message);
+  err.code = code;
+  throw err;
+}
+
+function fileIdentity(file) {
+  const resolved = path.resolve(String(file));
+  try {
+    return fs.realpathSync(resolved);
+  } catch {
+    return resolved;
+  }
+}
+
+function referencedTables(sql) {
+  const text = String(sql || "");
+  if (/\b(attach|detach)\b/i.test(text)) refuse("PUSAT_TABLE_FORBIDDEN", "PUSAT_TABLE_FORBIDDEN");
+  const names = [];
+  const re = /\b(?:from|into|update|join|table)\s+(?:if\s+not\s+exists\s+)?["'`]?([A-Za-z_][A-Za-z0-9_]*)/gi;
+  let match;
+  while ((match = re.exec(text))) names.push(match[1]);
+  if (!names.length) refuse("PUSAT_SQL_UNVERIFIED", "DATA_PATH_REFUSED");
+  for (const name of names) {
+    if (!ALLOWED_TABLES.has(name)) refuse("PUSAT_TABLE_FORBIDDEN", "PUSAT_TABLE_FORBIDDEN");
+  }
+}
+
+function guardReadOnly(raw) {
+  return {
+    name: raw.name,
+    exec(sql) {
+      referencedTables(sql);
+      if (/^\s*(insert|update|delete|create|alter|drop|replace|reindex|vacuum)\b/i.test(sql)) {
+        refuse("PUSAT_MEMORY_READONLY", "PUSAT_TABLE_FORBIDDEN");
+      }
+      return raw.exec(sql);
+    },
+    prepare(sql) {
+      referencedTables(sql);
+      if (/^\s*(insert|update|delete|create|alter|drop|replace|reindex|vacuum)\b/i.test(sql)) {
+        refuse("PUSAT_MEMORY_READONLY", "PUSAT_TABLE_FORBIDDEN");
+      }
+      return raw.prepare(sql);
+    },
+    close() {
+      return raw.close();
+    },
+  };
+}
+
+function openPusatMemory({ dbPath, commercePath } = {}) {
+  const { assertNotGuardian } = require("./durableTaskQueue");
+  const resolved = assertNotGuardian(dbPath);
+  if (commercePath && fileIdentity(resolved) === fileIdentity(commercePath)) {
+    refuse("PUSAT_DB_MATCHES_COMMERCE", "DATA_PATH_REFUSED");
+  }
+  if (!fs.existsSync(path.dirname(resolved))) {
+    refuse("ORCH_DB_PATH_UNVERIFIED", "DATA_PATH_REFUSED");
+  }
+  const Database = loadSqlite();
+  const raw = new Database(resolved);
+  raw.pragma("busy_timeout = 8000");
+  raw.pragma("query_only = ON");
+  return createDurable(guardReadOnly(raw), { ensureSchema: false });
+}
 
 function ensureSchema(db) {
   db.exec(`
@@ -51,9 +141,14 @@ function ensureSchema(db) {
   `);
 }
 
-function createDurable(db) {
+function tableExists(db, name) {
+  const row = db.prepare(`SELECT 1 AS present FROM sqlite_master WHERE type = 'table' AND name = ?`).get(name);
+  return Boolean(row);
+}
+
+function createDurable(db, options = {}) {
   if (!db) throw new Error("durable store requires db");
-  ensureSchema(db);
+  if (options.ensureSchema !== false) ensureSchema(db);
 
   function putMemory({ ownerId, key, value, classification = "personal" }) {
     const id = `mem_${crypto.randomBytes(6).toString("hex")}`;
@@ -68,6 +163,9 @@ function createDurable(db) {
   function getMemory({ ownerId, requesterId }) {
     if (ownerId !== requesterId) {
       return { ok: false, code: "PERSONAL_MEMORY_DENIED" };
+    }
+    if (!tableExists(db, "pusat_memories")) {
+      return { ok: false, code: "PUSAT_TABLE_MISSING", table: "pusat_memories" };
     }
     const records = db
       .prepare(`SELECT id, key, value_json, created_at FROM pusat_memories WHERE owner_id = ? ORDER BY created_at`)
@@ -140,6 +238,9 @@ function createDurable(db) {
   }
 
   function listHolds() {
+    if (!tableExists(db, "pusat_trade_holds")) {
+      return { ok: false, code: "PUSAT_TABLE_MISSING", table: "pusat_trade_holds" };
+    }
     return db.prepare(`SELECT * FROM pusat_trade_holds ORDER BY created_at DESC LIMIT 50`).all();
   }
 
@@ -156,4 +257,4 @@ function createDurable(db) {
   };
 }
 
-module.exports = { ensureSchema, createDurable };
+module.exports = { ensureSchema, createDurable, openPusatMemory, referencedTables };

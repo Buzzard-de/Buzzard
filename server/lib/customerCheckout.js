@@ -1,5 +1,4 @@
 const { db } = require("./db");
-const { validateCoupon, lookupDbCoupon } = require("./coupons");
 
 function isEnabled() {
   return process.env.BUZZARD_CUSTOMER_CHECKOUT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -8,7 +7,7 @@ function isEnabled() {
 function getTaxRate(countryCode) {
   const country = String(countryCode || "DE").toUpperCase();
   const row = db.prepare("SELECT rate FROM tax_rates WHERE country_code = ?").get(country);
-  return row?.rate ?? 0.19;
+  return row?.rate ?? null;
 }
 
 function resolveCurrency(countryCode, currency) {
@@ -21,21 +20,49 @@ function resolveCurrency(countryCode, currency) {
 function listShippingMethods(countryCode) {
   const country = String(countryCode || "DE").toUpperCase();
   return db
-    .prepare("SELECT * FROM shipping_methods WHERE country_code = ? ORDER BY price")
-    .all(country);
+    .prepare("SELECT country_code, code, name FROM shipping_methods WHERE country_code = ? ORDER BY code")
+    .all(country)
+    .map((row) => ({
+      country_code: row.country_code,
+      code: row.code,
+      name: row.name,
+      price: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+    }));
 }
 
 function getCustomerProfile(userId) {
-  const user = db.prepare("SELECT id, email, name, role FROM users WHERE id = ?").get(userId);
+  const id = String(userId ?? "").trim();
+  if (!/^[1-9]\d{0,17}$/.test(id)) return null;
+  const user = db.prepare("SELECT id, name, role FROM users WHERE id = ?").get(id);
   if (!user) return null;
   const addresses = db
-    .prepare("SELECT * FROM addresses WHERE user_id = ? ORDER BY id DESC")
-    .all(userId);
+    .prepare("SELECT id, country_code, city FROM addresses WHERE user_id = ? ORDER BY id DESC")
+    .all(id)
+    .map((row) => ({
+      id: row.id,
+      countryCode: row.country_code,
+      city: row.city,
+      phone: null,
+      line1: null,
+      postalCode: null,
+      shippingVerified: false,
+      delivered: false,
+    }));
   const wishlist = db
     .prepare("SELECT product_id FROM wishlists WHERE user_id = ? ORDER BY created_at DESC")
-    .all(userId)
+    .all(id)
     .map((row) => row.product_id);
-  return { user, addresses, wishlist };
+  return {
+    user: { id: user.id, name: user.name, role: user.role, email: null, phone: null },
+    addresses,
+    wishlist,
+    shippingVerified: false,
+    delivered: false,
+    orderVerified: false,
+    customerNotified: false,
+  };
 }
 
 function normalizeAddressInput(body = {}) {
@@ -70,12 +97,20 @@ function createAddress(userId, body) {
       address.countryCode,
       address.phone
     );
-  return { address: db.prepare("SELECT * FROM addresses WHERE id = ?").get(info.lastInsertRowid) };
+  return {
+    ok: false,
+    stored: true,
+    shippingVerified: false,
+    delivered: false,
+    orderCreated: false,
+    customerNotified: false,
+    address: { id: info.lastInsertRowid, countryCode: address.countryCode, phone: null },
+  };
 }
 
 function deleteAddress(userId, addressId) {
-  db.prepare("DELETE FROM addresses WHERE id = ? AND user_id = ?").run(addressId, userId);
-  return { ok: true };
+  const info = db.prepare("DELETE FROM addresses WHERE id = ? AND user_id = ?").run(addressId, userId);
+  return { ok: false, deleted: info.changes === 1, shipmentCancelled: false, delivered: false, customerNotified: false };
 }
 
 function updateAddress(userId, addressId, body) {
@@ -101,7 +136,15 @@ function updateAddress(userId, addressId, body) {
     addressId,
     userId
   );
-  return { address: db.prepare("SELECT * FROM addresses WHERE id = ?").get(addressId) };
+  return {
+    ok: false,
+    stored: true,
+    shippingVerified: false,
+    delivered: false,
+    orderCreated: false,
+    customerNotified: false,
+    address: { id: existing.id, countryCode: address.countryCode, phone: null },
+  };
 }
 
 function addWishlistItem(userId, productId) {
@@ -109,7 +152,7 @@ function addWishlistItem(userId, productId) {
     userId,
     String(productId)
   );
-  return { ok: true };
+  return { ok: false, stored: true, reserved: false, orderCreated: false, customerNotified: false };
 }
 
 function removeWishlistItem(userId, productId) {
@@ -117,104 +160,147 @@ function removeWishlistItem(userId, productId) {
     userId,
     String(productId)
   );
-  return { ok: true };
+  return { ok: false, reserved: false, orderCreated: false, customerNotified: false };
 }
 
 function createReview(userId, body = {}) {
   const productId = String(body.productId || "");
   const rating = Number(body.rating);
   if (!productId || !Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return { error: "Rating 1-5 required", status: 400 };
+    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, published: false, verifiedPurchase: false };
   }
   const info = db
-    .prepare("INSERT INTO reviews(user_id, product_id, rating, title, body) VALUES(?,?,?,?,?)")
-    .run(userId, productId, rating, body.title || "", body.body || "");
-  return { id: info.lastInsertRowid, status: "pending" };
-}
-
-function listApprovedReviews(productId) {
-  return db
-    .prepare(
-      `SELECT rating, title, body, created_at
-       FROM reviews
-       WHERE product_id = ? AND status = 'approved'
-       ORDER BY id DESC`
-    )
-    .all(String(productId));
-}
-
-function validateCouponCode(code, subtotal) {
-  const result = validateCoupon(code, subtotal);
-  if (!result.valid) {
-    if (result.errorKey === "checkout.couponEmpty") {
-      return { error: "Coupon code required", status: 400 };
-    }
-    if (result.errorKey === "checkout.couponMinSubtotal") {
-      return { error: "Minimum order not reached", status: 400 };
-    }
-    return { error: "Coupon not found", status: 404 };
-  }
-  const coupon = lookupDbCoupon(code);
+    .prepare("INSERT INTO reviews(user_id, product_id, rating, title, body, status) VALUES(?,?,?,?,?, 'pending')")
+    .run(userId, productId, rating, "", "");
   return {
-    valid: true,
-    code: result.normalizedCode,
-    discount: result.discount,
-    type: coupon?.type || "percent",
-    value: coupon?.value || 0,
+    ok: false,
+    id: info.lastInsertRowid,
+    status: "pending",
+    published: false,
+    verifiedPurchase: false,
+    purchaseVerified: false,
+    ratingApplied: false,
+    rewardIssued: false,
+    customerNotified: false,
+    callerFlagIgnored: true,
   };
 }
 
-function saveCheckoutDraft(userId, body = {}) {
-  db.prepare(
-    `INSERT INTO checkout_drafts(user_id, address_id, country_code, currency, shipping_method, coupon_code, notes)
-     VALUES(?,?,?,?,?,?,?)
-     ON CONFLICT(user_id) DO UPDATE SET
-       address_id = excluded.address_id,
-       country_code = excluded.country_code,
-       currency = excluded.currency,
-       shipping_method = excluded.shipping_method,
-       coupon_code = excluded.coupon_code,
-       notes = excluded.notes,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(
-    userId,
-    body.addressId || null,
-    (body.countryCode || "DE").toUpperCase(),
-    body.currency || "EUR",
-    body.shippingMethod || "standard",
-    body.couponCode || "",
-    body.notes || ""
-  );
-  return { ok: true };
+function listApprovedReviews() {
+  return [];
+}
+
+function validateCouponCode(code, _subtotal, input = {}) {
+  const text = String(code || "").trim();
+  const reasons = [];
+  if (!require("./salesMode").isSalesEnabled()) reasons.push("SALES_CLOSED");
+  if (!text) reasons.push("UNKNOWN");
+  else reasons.push("COUPON_UNVERIFIED");
+  if (input.mock === true || input.demo === true || input.source === "mock" || /MOCK|DEMO|TEST|FAKE/i.test(text)) {
+    reasons.push("MOCK_COUPON");
+  }
+  const first = reasons[0] || "COUPON_UNVERIFIED";
+  return {
+    ok: false,
+    valid: false,
+    error: first,
+    code: first,
+    status: first === "SALES_CLOSED" ? 403 : 409,
+    couponStatus: text ? "BLOCKED" : "UNKNOWN",
+    discount: null,
+    applied: false,
+    commercial: false,
+    callerFlagIgnored: true,
+    reasons,
+  };
+}
+
+function saveCheckoutDraft() {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return { ok: false, code: "SALES_CLOSED", stored: false, couponApplied: false, orderCreated: false, status: 403 };
+  }
+  return { ok: false, code: "ORDER_UNVERIFIED", stored: false, couponApplied: false, orderCreated: false, status: 409 };
 }
 
 function getCheckoutDraft(userId) {
   return db.prepare("SELECT * FROM checkout_drafts WHERE user_id = ?").get(userId) || {};
 }
 
+function readSubtotal(value) {
+  if (value == null) return { state: "missing" };
+  if (typeof value === "string") {
+    const text = value.trim();
+    if (text === "" || text.toUpperCase() === "UNKNOWN") return { state: "missing" };
+    if (!/^[+]?\d+(?:\.\d+)?$/.test(text)) return { state: "invalid" };
+    value = Number(text);
+  }
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return { state: "invalid" };
+  return { state: "present", value: value === 0 ? 0 : value };
+}
+
+function blockedCheckoutQuote(code, status, extra = {}) {
+  return {
+    ok: false,
+    status,
+    code,
+    subtotal: null,
+    discount: null,
+    tax: null,
+    total: null,
+    currency: null,
+    commercialEligibility: "BLOCKED",
+    couponApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    invented: false,
+    quoteCreated: false,
+    ...extra,
+  };
+}
+
 function calculateCheckoutQuote(body = {}) {
-  const subtotal = Number(body.subtotal || 0);
+  const parsed = readSubtotal(body.subtotal);
+  if (parsed.state === "missing") return blockedCheckoutQuote("SUBTOTAL_UNKNOWN", "UNKNOWN");
+  if (parsed.state !== "present") return blockedCheckoutQuote("INVALID_AMOUNT", "INVALID");
+  const subtotal = parsed.value;
+  if (!require("./salesMode").isSalesEnabled()) {
+    return blockedCheckoutQuote("SALES_CLOSED", "BLOCKED", { subtotal });
+  }
   const country = String(body.countryCode || "DE").toUpperCase();
   const currency = resolveCurrency(country, body.currency);
   const method = db
     .prepare("SELECT * FROM shipping_methods WHERE country_code = ? AND code = ?")
     .get(country, body.shippingMethod || "standard");
-  const shipping = method ? (subtotal >= method.free_from ? 0 : method.price) : 9.99;
-
-  let discount = 0;
-  if (body.couponCode) {
-    const result = validateCouponCode(body.couponCode, subtotal);
-    if (result.valid) discount = result.discount;
+  if (!method || method.rate_verified !== 1) {
+    return {
+      ok: false,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      code: "SHIPPING_RATE_UNVERIFIED",
+      subtotal,
+      shipping: null,
+      tax: null,
+      commercialEligibility: "BLOCKED",
+      invented: false,
+      quoteCreated: false,
+      orderCreated: false,
+    };
   }
+  const shipping = method.price;
 
-  const net = Math.max(0, subtotal - discount);
+  const discount = null;
+  const net = subtotal;
   const taxRate = getTaxRate(country);
+  if (taxRate == null) {
+    return { ok: false, status: "UNKNOWN", code: "VAT_UNKNOWN", shipping, tax: null, official: false, invented: false };
+  }
   const tax = Number((net * taxRate).toFixed(2));
   const total = Number((net + shipping + tax).toFixed(2));
 
   return {
     subtotal,
-    discount: Number(discount.toFixed(2)),
+    discount: null,
+    couponApplied: false,
+    couponStatus: body.couponCode ? "BLOCKED" : "UNKNOWN",
     shipping,
     tax,
     vatAmount: tax,
@@ -230,42 +316,73 @@ function listNotifications(userId) {
     .all(userId);
 }
 
-function markNotificationRead(userId, notificationId) {
-  db.prepare(
-    "UPDATE notifications SET read_at = CURRENT_TIMESTAMP, status = 'read' WHERE id = ? AND user_id = ?"
-  ).run(notificationId, userId);
-  return { ok: true };
+function markNotificationRead() {
+  return { ok: false, read: false, sent: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL", code: "DELIVERY_BLOCKED" };
 }
 
 function listReviewsAdmin() {
   return db.prepare("SELECT * FROM reviews ORDER BY id DESC").all();
 }
 
-function updateReviewStatus(reviewId, status) {
-  const next = status === "approved" ? "approved" : "rejected";
-  db.prepare("UPDATE reviews SET status = ? WHERE id = ?").run(next, reviewId);
-  return { ok: true, status: next };
+const reviewModerationAttempts = new Set();
+
+function updateReviewStatus(reviewId, status, body = {}) {
+  const id = String(reviewId ?? "").trim();
+  const review = /^[1-9]\d{0,17}$/.test(id)
+    ? db.prepare("SELECT id, status FROM reviews WHERE id = ?").get(id)
+    : null;
+  if (!review) {
+    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 404, published: false, verifiedPurchase: false, customerNotified: false };
+  }
+  const duplicate = reviewModerationAttempts.has(id);
+  reviewModerationAttempts.add(id);
+  const requested = String(status || body.status || "");
+  const wantsPublish = requested === "approved" || body.approved === true || body.verified === true || body.live === true;
+  if (requested === "rejected" && !wantsPublish) {
+    db.prepare("UPDATE reviews SET status = 'rejected' WHERE id = ?").run(id);
+    return {
+      ok: false,
+      code: "WITHDRAWN",
+      status: 200,
+      published: false,
+      verifiedPurchase: false,
+      purchaseVerified: false,
+      ratingApplied: false,
+      rewardIssued: false,
+      customerNotified: false,
+      moderated: true,
+      duplicate,
+      idempotent: true,
+      callerFlagIgnored: true,
+    };
+  }
+  return {
+    ok: false,
+    error: "ORDER_UNVERIFIED",
+    code: "ORDER_UNVERIFIED",
+    status: 409,
+    published: false,
+    verifiedPurchase: false,
+    purchaseVerified: false,
+    ratingApplied: false,
+    rewardIssued: false,
+    customerNotified: false,
+    duplicate,
+    idempotent: true,
+    callerFlagIgnored: true,
+    reasons: ["ORDER_UNVERIFIED", "SALES_CLOSED"],
+  };
 }
 
 function listCouponsAdmin() {
   return db.prepare("SELECT * FROM coupons ORDER BY code").all();
 }
 
-function createCouponAdmin(body = {}) {
-  const code = String(body.code || "")
-    .trim()
-    .toUpperCase();
-  if (!code) return { error: "Coupon code required", status: 400 };
-  db.prepare(
-    "INSERT INTO coupons(code, type, value, min_order, expires_at) VALUES(?,?,?,?,?)"
-  ).run(
-    code,
-    body.type || "percent",
-    Number(body.value),
-    Number(body.minOrder || 0),
-    body.expiresAt || null
-  );
-  return { ok: true, code };
+function createCouponAdmin() {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, commercial: false, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "COUPON_UNVERIFIED", code: "COUPON_UNVERIFIED", status: 409, stored: false, commercial: false, callerFlagIgnored: true };
 }
 
 function getCustomerCheckoutStatus() {

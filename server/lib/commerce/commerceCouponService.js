@@ -4,33 +4,91 @@
 const { validateCoupon, normalizeCouponCode } = require("../coupons");
 const { validateDiscount } = require("./commerceValidation");
 const { logSecurityEvent } = require("../securityLog");
+const { isSalesEnabled } = require("../salesMode");
 
-function resolveCouponDiscount(couponCode, subtotal) {
+function commercialSeparation(input = {}) {
+  return {
+    commercialApplied: false,
+    commercialAuthority: false,
+    couponVerified: false,
+    applied: false,
+    callerFlagIgnored: true,
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    orderCreated: false,
+    paymentCreated: false,
+    callerFlagsSeen: ["valid", "verified", "active", "approved", "live"].filter((key) => input[key] !== undefined),
+  };
+}
+
+function resolveCouponDiscount(couponCode, subtotal, input = {}) {
+  const salesClosed = !isSalesEnabled();
   if (!couponCode || !String(couponCode).trim()) {
-    return { ok: true, discount: 0, couponCode: null, normalizedCode: null };
+    return {
+      ok: false,
+      status: "UNKNOWN",
+      couponStatus: "UNKNOWN",
+      code: salesClosed ? "SALES_CLOSED" : "UNKNOWN",
+      discount: null,
+      arithmeticDiscount: null,
+      arithmeticOnly: false,
+      couponCode: null,
+      normalizedCode: null,
+      reasons: salesClosed ? ["SALES_CLOSED", "UNKNOWN"] : ["UNKNOWN"],
+      ...commercialSeparation(input),
+    };
   }
 
   const result = validateCoupon(couponCode, subtotal);
   if (!result.valid) {
+    const code = salesClosed ? "SALES_CLOSED" : "COUPON_UNVERIFIED";
     return {
       ok: false,
+      status: "BLOCKED",
+      couponStatus: "BLOCKED",
+      code,
       error: result.errorKey || "checkout.couponInvalid",
-      status: 400,
-      discount: 0,
+      statusCode: salesClosed ? 403 : 400,
+      discount: null,
+      arithmeticDiscount: null,
+      arithmeticOnly: false,
+      reasons: salesClosed ? ["SALES_CLOSED", "COUPON_UNVERIFIED"] : ["COUPON_UNVERIFIED"],
+      ...commercialSeparation(input),
     };
   }
 
   const discountCheck = validateDiscount(result.discount, subtotal);
   if (!discountCheck.ok) {
-    return { ok: false, error: discountCheck.code, status: 400, discount: 0 };
+    const code = salesClosed ? "SALES_CLOSED" : discountCheck.code;
+    return {
+      ok: false,
+      status: "BLOCKED",
+      couponStatus: "BLOCKED",
+      code,
+      error: discountCheck.code,
+      statusCode: salesClosed ? 403 : 400,
+      discount: null,
+      arithmeticDiscount: null,
+      arithmeticOnly: false,
+      reasons: salesClosed ? ["SALES_CLOSED", discountCheck.code] : [discountCheck.code],
+      ...commercialSeparation(input),
+    };
   }
 
   return {
     ok: true,
+    arithmeticOnly: true,
     discount: discountCheck.discount,
+    arithmeticDiscount: discountCheck.discount,
     couponCode: result.normalizedCode,
     normalizedCode: result.normalizedCode,
     source: result.source || "server",
+    status: "BLOCKED",
+    couponStatus: "BLOCKED",
+    code: salesClosed ? "SALES_CLOSED" : "COUPON_UNVERIFIED",
+    reasons: salesClosed ? ["SALES_CLOSED", "COUPON_UNVERIFIED"] : ["COUPON_UNVERIFIED"],
+    ...commercialSeparation(input),
   };
 }
 
@@ -75,8 +133,8 @@ function validateCouponRequest(body = {}, subtotal, ctx = {}) {
     return { ok: false, error: "coupon_tampering", status: 400 };
   }
 
-  const resolved = resolveCouponDiscount(requestedCode, subtotal);
-  const serverDiscount = resolved.ok ? resolved.discount : 0;
+  const resolved = resolveCouponDiscount(requestedCode, subtotal, body);
+  const serverDiscount = resolved.arithmeticOnly ? resolved.arithmeticDiscount : 0;
   const tamper = rejectClientCouponFields(body, serverDiscount);
   if (!tamper.ok) {
     logCouponTampering(ctx.req, {
@@ -85,11 +143,39 @@ function validateCouponRequest(body = {}, subtotal, ctx = {}) {
       serverDiscount,
       clientDiscount: body.discount ?? body.clientDiscount ?? body.couponDiscount,
     });
-    return { ok: false, error: tamper.code, status: 400, message: tamper.message };
+    return {
+      ok: false,
+      error: tamper.code,
+      status: 400,
+      message: tamper.message,
+      discount: null,
+      commercialApplied: false,
+      applied: false,
+      couponVerified: false,
+      callerFlagIgnored: true,
+    };
   }
-  if (!resolved.ok) return resolved;
 
-  return resolved;
+  return {
+    ok: false,
+    error: resolved.code || "COUPON_UNVERIFIED",
+    code: resolved.code || "COUPON_UNVERIFIED",
+    status: resolved.code === "SALES_CLOSED" ? 403 : 409,
+    couponStatus: resolved.couponStatus || "BLOCKED",
+    discount: null,
+    arithmeticDiscount: resolved.arithmeticOnly ? resolved.arithmeticDiscount : null,
+    arithmeticOk: resolved.arithmeticOnly === true,
+    commercialApplied: false,
+    commercialAuthority: false,
+    applied: false,
+    couponVerified: false,
+    callerFlagIgnored: true,
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    orderCreated: false,
+    reasons: resolved.reasons,
+  };
 }
 
 module.exports = {

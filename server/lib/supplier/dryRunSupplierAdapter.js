@@ -71,34 +71,63 @@ class DryRunSupplierAdapter extends BaseSupplierAdapter {
   async fetchProductsDryRun(options = {}) {
     const limit = Math.min(Number(options.limit) || 10, 100);
     return {
-      ok: true,
+      ok: false,
       dryRun: true,
       live: false,
-      records: SAMPLE_PRODUCTS.slice(0, limit),
+      mock: true,
+      status: "BLOCKED_EXTERNAL",
+      code: "MOCK_NOT_COMMERCIAL",
+      commercialEligibility: "BLOCKED",
+      supplierCost: null,
+      price: null,
+      stock: null,
+      purchased: false,
+      records: SAMPLE_PRODUCTS.slice(0, limit).map((row) => ({
+        ...row,
+        supplier_price: null,
+        stock: null,
+        fixturePrice: row.supplier_price,
+        fixtureStock: row.stock,
+        commercialUse: false,
+        mock: true,
+        live: false,
+      })),
       total: SAMPLE_PRODUCTS.length,
-      fetchedAt: new Date().toISOString(),
+      fetchedAt: null,
     };
   }
 
   async fetchStock() {
-    return this.fetchProductsDryRun().then((r) =>
-      r.records.map((p) => ({
+    const fetched = await this.fetchProductsDryRun();
+    return {
+      ...fetched,
+      records: fetched.records.map((p) => ({
         sku: p.supplier_sku,
-        stock: p.stock,
-        updatedAt: new Date().toISOString(),
-      }))
-    );
+        stock: null,
+        fixtureStock: p.fixtureStock,
+        updatedAt: null,
+        mock: true,
+        live: false,
+        commercialUse: false,
+      })),
+    };
   }
 
   async fetchPrices() {
-    return this.fetchProductsDryRun().then((r) =>
-      r.records.map((p) => ({
+    const fetched = await this.fetchProductsDryRun();
+    return {
+      ...fetched,
+      records: fetched.records.map((p) => ({
         sku: p.supplier_sku,
-        amount: p.supplier_price?.amount,
-        currency: p.supplier_price?.currency || "EUR",
-        updatedAt: new Date().toISOString(),
-      }))
-    );
+        amount: null,
+        fixturePrice: p.fixturePrice,
+        currency: null,
+        updatedAt: null,
+        mock: true,
+        live: false,
+        commercialUse: false,
+      })),
+    };
   }
 
   mapProduct(raw) {
@@ -115,9 +144,9 @@ class DryRunSupplierAdapter extends BaseSupplierAdapter {
       brand: raw.brand || null,
       title: raw.name || raw.title || "",
       category: raw.supplier_category || raw.category || null,
-      price: raw.supplier_price?.amount ?? raw.price ?? null,
-      currency: raw.supplier_price?.currency || raw.currency || "EUR",
-      stock: Number(raw.stock ?? 0),
+      price: raw.commercialUse === false ? null : raw.supplier_price?.amount ?? raw.price ?? null,
+      currency: raw.supplier_price?.currency || raw.currency || null,
+      stock: raw.commercialUse === false || raw.stock == null || raw.stock === "" ? null : Number(raw.stock),
       images: raw.images || [],
       supplierId: this.id,
       raw,
@@ -127,12 +156,17 @@ class DryRunSupplierAdapter extends BaseSupplierAdapter {
   async healthCheck() {
     const config = this.validateConfiguration();
     return {
-      ok: true,
+      ok: false,
+      live: false,
+      mock: false,
+      status: "BLOCKED_EXTERNAL",
+      code: config.credentialsConfigured ? "CREDENTIALS_NOT_A_CONNECTION" : "MISSING_CREDENTIALS",
       dryRun: true,
-      latencyMs: 0,
+      latencyMs: null,
       credentialsConfigured: config.credentialsConfigured,
       networkBlocked: this.networkBlocked,
       adapterFormat: this.adapterFormat,
+      commercialEligibility: "BLOCKED",
     };
   }
 }

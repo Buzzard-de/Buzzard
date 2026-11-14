@@ -38,19 +38,20 @@ async function handleSupplierSync(job) {
 
   const { getAdapter } = require("./supplier/adapterRegistry");
   const adapter = getAdapter(job.payload?.supplierId || "mock");
-  const health = await adapter.healthCheck();
-  if (!health.ok) {
-    const err = new Error(health.error || "Supplier health check failed");
-    err.failureKind = FAILURE_KIND.PROVIDER;
-    throw err;
-  }
+  const health = await adapter.healthCheck(job.payload || {});
   return {
+    ok: false,
+    live: false,
+    mock: health.mock === true,
+    status: health.status || "BLOCKED_EXTERNAL",
+    code: health.code,
     supplierId: adapter.id,
     format: adapter.format,
     capabilities: adapter.capabilities,
     synced: false,
+    purchased: false,
     dryRun: job.payload?.dryRun !== false,
-    note: "Foundation only — no live supplier sync without REAL_SUPPLIER_LIVE_IMPORT=1 and credentials",
+    commercialEligibility: "BLOCKED",
   };
 }
 
@@ -113,7 +114,8 @@ async function handleProductNormalize(job) {
       category: raw.category,
       brand: raw.brand,
       price: raw.price,
-      stock: raw.stock,
+      stock: null,
+      stockVerified: false,
       attributes: raw.attributes || {},
       images: raw.images || [],
     },

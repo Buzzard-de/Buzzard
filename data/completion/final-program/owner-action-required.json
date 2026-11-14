@@ -1,0 +1,69 @@
+{
+  "schema": "buzzard.final-program.owner-actions.v1",
+  "recordedAt": "2026-11-11T19:22:00+01:00",
+  "items": [
+    {
+      "id": "sales-activation",
+      "why": "Opening sales is a business authorization, not a code change.",
+      "needed": "A separate written decision to set sales enabled after the pricing and security gates are accepted.",
+      "prepared": "isSalesEnabled is false. Checkout of a blocked price returns PRICE_POLICY_BLOCKED.",
+      "after": "The sales gate can be reviewed. Incomplete prices remain rejected."
+    },
+    {
+      "id": "fx-source",
+      "why": "A cross-currency rate cannot be invented.",
+      "needed": "The approved rate provider, the currency list, and the verification date.",
+      "prepared": "Identity rates work. Every other pair stays FX_RATE_UNKNOWN.",
+      "after": "Only a verified rate can enter recommendPrice."
+    },
+    {
+      "id": "vat-source",
+      "why": "The stored snapshot is not an official filing rate.",
+      "needed": "A verified rate table and a licensed review before any return is filed.",
+      "prepared": "Tax calculation returns VAT_UNVERIFIED. payTax stays HUMAN_GATE_REQUIRED.",
+      "after": "A verified amount can be passed as vatVerified. The software still does not file."
+    },
+    {
+      "id": "bank-and-payments",
+      "why": "Real payment capture needs the owner's provider account.",
+      "needed": "Provider approval and credentials outside the repository.",
+      "prepared": "Capture returns PAYMENT_NOT_LIVE. Card numbers are rejected and not stored.",
+      "after": "A human approval can be recorded. It still does not capture money until sales and the provider are separately enabled."
+    },
+    {
+      "id": "supplier-and-carrier",
+      "why": "Purchases and labels need the owner's accounts.",
+      "needed": "Supplier and carrier authorization. No credential should be pasted into chat.",
+      "prepared": "Stock purchase and shipment functions return human-gate or blocked results.",
+      "after": "Contract tests can be pointed at a sandbox the owner approves."
+    },
+    {
+      "id": "marketplaces",
+      "why": "Publishing a listing requires the owner's marketplace accounts.",
+      "needed": "Account authorization for Amazon, eBay, Kaufland, Allegro, bol.com, Cdiscount, OTTO, eMAG, and Skroutz.",
+      "prepared": "No listing was published.",
+      "after": "Local simulators can be connected only after authorization."
+    },
+    {
+      "id": "voice-consent",
+      "why": "A voice must not be cloned or presented as a live person without consent.",
+      "needed": "Written consent and the approved voice asset for each speaker.",
+      "prepared": "Voice sessions stay blocked.",
+      "after": "The local adapter can be configured. It still must not place a real call without a second approval."
+    },
+    {
+      "id": "translations-and-registers",
+      "why": "Machine text and incomplete registers cannot be certified by software.",
+      "needed": "Human translation review and official EU27 register extracts.",
+      "prepared": "Translations stay UNREVIEWED. The register stays EU27_REGISTRY_INCOMPLETE.",
+      "after": "Reviewed strings and quoted entities can replace the unknown fields."
+    },
+    {
+      "id": "production-deployment",
+      "why": "Deployment is an operational approval.",
+      "needed": "A separate production authorization.",
+      "prepared": "No deploy, commit, or push was made.",
+      "after": "A release can be prepared only after that approval."
+    }
+  ]
+}

@@ -115,10 +115,10 @@ describe("Buzzard Native AI Core — Multi-Agent Foundation", () => {
       "PRIVATE_MEMORY_TRANSFER_DENIED",
     );
     const router = createRouter();
-    const t = router.create({ title: "research payments" });
-    router.assign({ taskId: t.task.id, agentId: "dogu_bey" });
-    router.assign({ taskId: t.task.id, agentId: "sinan_bey" });
-    router.assign({ taskId: t.task.id, agentId: "esat_bey" });
+    const t = router.create({ title: "research payments", fromId: "pusat" });
+    router.assign({ taskId: t.task.id, agentId: "dogu_bey", fromId: "pusat" });
+    router.assign({ taskId: t.task.id, agentId: "sinan_bey", fromId: "pusat" });
+    router.assign({ taskId: t.task.id, agentId: "esat_bey", fromId: "pusat" });
     const ran = router.runAssigned(t.task.id);
     expect(ran.task.reports).toHaveLength(3);
     expect(ran.completed).toBe(false);

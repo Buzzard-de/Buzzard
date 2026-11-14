@@ -16,17 +16,17 @@ export interface CustomerShippingMethod {
   country_code: string;
   code: string;
   name: string;
-  price: number;
-  free_from: number;
+  price: number | null;
+  free_from: number | null;
 }
 
 export interface CustomerCheckoutQuote {
   subtotal: number;
   discount: number;
-  shipping: number;
-  tax: number;
-  vatAmount: number;
-  total: number;
+  shipping: number | null;
+  tax: number | null;
+  vatAmount: number | null;
+  total: number | null;
   currency: string;
   taxRate?: number;
 }

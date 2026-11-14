@@ -1,8 +1,12 @@
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 const require = createRequire(import.meta.url);
-const { canShare, createTask, roster, CLASSIFICATION } = require("../lib/pusat/council.js");
+const { canShare, createTask, roster, holdSeedMeeting, delegateWithinMeeting, CLASSIFICATION } = require("../lib/pusat/council.js");
+const { SEED_IDS } = require("../lib/buzzardNative/core/identityRegistry.js");
 const { createMemoryStore } = require("../lib/pusat/memory.js");
 const { createMeetingService } = require("../lib/pusat/meetings.js");
 const { createDoguDesk } = require("../lib/pusat/doguResearch.js");
@@ -103,10 +107,57 @@ describe("Pusat council and research", () => {
   });
 
   it("holds high-risk work for humans; Esat is not sole defense", () => {
-    const approvals = createApprovalCenter();
-    const held = approvals.submit({ action: "LIVE_PAYMENT", requestedBy: "finance_ai", risk: RISK.CRITICAL });
-    expect(held.item.status).toBe("WAITING_APPROVAL");
+    const approvals = createApprovalCenter({
+      dbPath: path.join(mkdtempSync(path.join(tmpdir(), "buzzard-council-apr-")), "approvals.sqlite"),
+    });
+    try {
+      expect(SEED_IDS).not.toContain("finance_ai");
+      const held = approvals.submit({
+        action: "LIVE_PAYMENT",
+        requestedBy: "nedim_bey",
+        risk: RISK.CRITICAL,
+        taskId: "live-payment-nedim",
+      });
+      expect(held.auto).toBe(false);
+      expect(held.item.status).toBe("WAITING_APPROVAL");
+      expect(held.item.requested_by).toBe("nedim_bey");
+      const decided = approvals.decide({ id: held.item.id, approved: true, actorId: "human" });
+      expect(decided.item.status).toBe("APPROVED");
+      expect(decided.task).toBeNull();
+      expect(decided.moneyMoved).toBeUndefined();
+    } finally {
+      approvals.close();
+    }
     expect(roster().find((m) => m.id === "esat_bey").soleDefense).toBe(false);
-    expect(roster().find((m) => m.id === "nesrin_hanim").cannotChair).toBe(true);
+    expect(roster().some((m) => m.id === "nesrin_hanim")).toBe(false);
+    expect(roster("legacy").find((m) => m.id === "nesrin_hanim").cannotChair).toBe(true);
+  });
+
+  it("seats every seed identity once and does not execute the decision", () => {
+    const meeting = holdSeedMeeting();
+    const ids = meeting.participants.map((participant) => participant.id);
+    expect(meeting.ok).toBe(true);
+    expect(ids).toEqual([...SEED_IDS]);
+    expect(new Set(ids).size).toBe(17);
+    expect(meeting.chairId).toBe("pusat");
+    expect(meeting.salesEnabled).toBe(false);
+    expect(meeting.productionReady).toBe(false);
+    expect(meeting.decisions[0].executed).toBe(false);
+    expect(meeting.orderCreated).toBe(false);
+    expect(meeting.paymentCreated).toBe(false);
+    expect(meeting.purchased).toBe(false);
+    expect(meeting.shipmentCreated).toBe(false);
+    expect(meeting.refunded).toBe(false);
+    expect(meeting.exported).toBe(false);
+    expect(meeting.deployed).toBe(false);
+    expect(meeting.participants.every((participant) => participant.canEnableSales === false)).toBe(true);
+    expect(meeting.participants.every((participant) => participant.canBuyStock === false)).toBe(true);
+    expect(meeting.participants.every((participant) => participant.canExportCustomerData === false)).toBe(true);
+    const denied = delegateWithinMeeting({ fromId: "pusat", toId: "banu_hanim", permission: "DATA_EXPORT" });
+    expect(denied.ok).toBe(false);
+    expect(denied.permissionIncreased).toBe(false);
+    expect(denied.granted).toBe(false);
+    expect(roster().find((member) => member.id === "nesrin_hanim")).toBeUndefined();
+    expect(roster("legacy").find((member) => member.id === "nesrin_hanim").cannotChair).toBe(true);
   });
 });

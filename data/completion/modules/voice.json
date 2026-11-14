@@ -1,0 +1,42 @@
+{
+  "id": "voice",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "external": "EXTERNAL_DEPENDENCY_BLOCKED",
+  "liveCalls": false,
+  "characters": [
+    {
+      "id": "sinan_bey",
+      "present": true,
+      "cloneAuthorized": false
+    },
+    {
+      "id": "mira",
+      "present": true,
+      "cloneAuthorized": false
+    },
+    {
+      "id": "leon",
+      "present": true,
+      "cloneAuthorized": false
+    },
+    {
+      "id": "amelia",
+      "present": true,
+      "cloneAuthorized": false
+    },
+    {
+      "id": "adrian",
+      "present": true,
+      "cloneAuthorized": false
+    },
+    {
+      "id": "zeynep_hanim",
+      "present": true,
+      "cloneAuthorized": false
+    }
+  ],
+  "liveVerified": false,
+  "productionReady": false
+}

@@ -1,0 +1,40 @@
+{
+  "status": "VERIFIED_PARTIAL",
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "committed": false,
+  "policy": {
+    "automotive": 0.11,
+    "defaultOther": 0.07,
+    "beverageCrate": 0.15,
+    "minNetProfitEur": 0.5,
+    "marketUndercutEur": 0.1,
+    "callerMarginOverride": false
+  },
+  "independentExamples": {
+    "costStackCents": "1000+200+100+30+50=1380",
+    "automotivePriceOn100": "100/0.89 rounded to 112.36, net 12.36",
+    "defaultPriceOn100": "100/0.93 rounded to 107.53, net 7.53",
+    "beveragePriceOn100": "100/0.85 rounded to 117.65, net 17.65",
+    "franceReserve": "(100-20-4-6-30)*0.25=10",
+    "germanyReserve": 0
+  },
+  "tests": {
+    "vitest": {
+      "files": 129,
+      "passed": 1073,
+      "failed": 0,
+      "skipped": 0,
+      "startedUtc": "2026-11-11T16:24:08Z"
+    },
+    "nodeTest": {
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "protectedDatabaseOpened": false,
+  "egress": "DENY",
+  "salesEnabled": false,
+  "ordersPaymentsPurchasesShipments": false
+}

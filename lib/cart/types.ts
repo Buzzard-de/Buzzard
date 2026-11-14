@@ -13,7 +13,7 @@ export interface CartLineItem {
   variantIds: string[];
   variantLabel: string;
   imageKey?: string;
-  vatRate: number;
+  vatRate: number | null;
 }
 
 /** @deprecated Use CartLineItem */
@@ -54,7 +54,7 @@ export function migrateLegacyCart(raw: unknown[]): CartLineItem[] {
           qty: Math.max(1, Number(item.qty) || 1),
           variantIds: [],
           variantLabel: "",
-          vatRate: 19,
+          vatRate: null,
         } satisfies CartLineItem;
       }
       return null;

@@ -27,7 +27,7 @@ export function calculateDisplayPrice(
   const locale = input.locale || market?.source.locale || market?.locales[0] || "de-DE";
   const decimalDigits = getCurrencyDecimalDigits(currency);
   const quantity = input.quantity ?? 1;
-  const discount = input.discountAmount ?? 0;
+  const discount = 0;
   const shipping = input.shippingAmount ?? 0;
 
   const vatContext = getVatContext({
@@ -39,6 +39,20 @@ export function calculateDisplayPrice(
 
   const vatRate = input.vatRate ?? vatContext.rate;
   const priceIncludesVat = input.priceIncludesVat ?? vatContext.included;
+
+  if (vatRate == null) {
+    const shown = roundMoney(input.amount, decimalDigits);
+    const formatted = formatCurrencyIntl(shown, currency, locale);
+    return {
+      netPrice: shown,
+      vatAmount: null,
+      grossPrice: shown,
+      currency,
+      formatted,
+      formattedNet: formatted,
+      formattedVat: "UNKNOWN",
+    };
+  }
 
   let unitNet: number;
   let unitVat: number;

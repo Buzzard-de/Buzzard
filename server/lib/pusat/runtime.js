@@ -3,23 +3,31 @@
  * Default OFF. No domain invention. No money/supplier writes.
  */
 const crypto = require("crypto");
+const path = require("path");
 const { MODE, label } = require("../integrationMode");
+const { can } = require("../rbac");
 const productService = require("../productService");
 const inventory = require("../commerce/inventoryIntegration");
 const pricing = require("../commerce/pricingIntegration");
 const { db } = require("../db");
 const { isSotActive, getStatus: getProductSotStatus } = require("../productSot");
-const { createIdempotencyService } = require("./idempotencyService");
+const idempotencyApi = require("./idempotencyService");
 const { roster } = require("./council");
-const { createDurable } = require("./durable");
-const { TOPICS } = require("./doguResearch");
+const durableApi = require("./durable");
 
 let pusatIdempotency = null;
 
 function getIdempotencyService() {
-  if (!pusatIdempotency) {
-    pusatIdempotency = createIdempotencyService(db);
+  if (pusatIdempotency) return pusatIdempotency;
+  if (typeof idempotencyApi.openIdempotencyDatabase !== "function") {
+    pusatIdempotency = idempotencyApi.createIdempotencyService();
+    return pusatIdempotency;
   }
+  const { resolveDbPath } = require("./orchRuntime");
+  const pusatPath = resolveDbPath();
+  const commercePath = db && typeof db.name === "string" && db.name.trim() ? db.name.trim() : null;
+  const handle = idempotencyApi.openIdempotencyDatabase({ dbPath: pusatPath, commercePath });
+  pusatIdempotency = idempotencyApi.createIdempotencyService(handle, { commercePath });
   return pusatIdempotency;
 }
 
@@ -193,16 +201,40 @@ const CONTROL_ACTIONS = Object.freeze([
 
 let durable = null;
 function getDurable() {
-  if (!durable) durable = createDurable(db);
+  if (durable) return durable;
+  if (typeof durableApi.openPusatMemory !== "function") {
+    durable = durableApi.createDurable(db, { ensureSchema: false });
+    return durable;
+  }
+  const { resolveDbPath } = require("./orchRuntime");
+  const pusatPath = resolveDbPath();
+  const commercePath = db && typeof db.name === "string" && db.name.trim() ? db.name.trim() : null;
+  durable = durableApi.openPusatMemory({ dbPath: pusatPath, commercePath });
   return durable;
 }
 
 let sinanAgent = null;
 function getSinanAgent() {
-  if (!sinanAgent) {
-    const { createSinanBeyAgent } = require("./sinanBeyAgent");
-    sinanAgent = createSinanBeyAgent({ db });
+  if (sinanAgent) return sinanAgent;
+  const { createSinanBeyAgent } = require("./sinanBeyAgent");
+  const { openSinanDatabase } = require("./sinanDurable");
+  let dbError = null;
+  let pusatPath = null;
+  let commercePath = null;
+  try {
+    const { resolveDbPath } = require("./orchRuntime");
+    pusatPath = resolveDbPath();
+    commercePath = db && typeof db.name === "string" && db.name.trim() ? db.name.trim() : null;
+  } catch (err) {
+    dbError = err;
   }
+  sinanAgent = createSinanBeyAgent({
+    db: null,
+    dbError,
+    openIsolated: dbError
+      ? null
+      : (schema) => openSinanDatabase({ dbPath: pusatPath, commercePath, schema }),
+  });
   return sinanAgent;
 }
 
@@ -215,6 +247,16 @@ const WRITE_ACTIONS = Object.freeze([
   "CREATE_ORDER",
   "CAPTURE_PAYMENT",
   "CREATE_SHIPMENT",
+]);
+
+const DURABLE_WRITE_ACTIONS = new Set([
+  "OPEN_MEETING",
+  "REPORT_MEETING",
+  "CLOSE_MEETING",
+  "MEMORY_PUT",
+  "RESEARCH_REQUEST",
+  "RESEARCH_COMPLETE",
+  "SCREEN_TRADE",
 ]);
 
 const SPECIALISTS = Object.freeze([
@@ -258,6 +300,18 @@ function health() {
 }
 
 function executeEsat(action, payload, { actorId, correlationId }) {
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return {
+      ok: false,
+      code: "LEGACY_ESAT_INSPECT_WRITE_BLOCKED",
+      action,
+      actorId,
+      correlationId,
+      inspected: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
   const esat = require("../security/esatBey");
   if (action === ACTIONS.ESAT_STATUS) {
     return { ok: true, action, data: esat.status(), actorId, correlationId };
@@ -265,13 +319,86 @@ function executeEsat(action, payload, { actorId, correlationId }) {
   if (action === ACTIONS.ESAT_RECENT) {
     return { ok: true, action, data: esat.recent(payload.limit), actorId, correlationId };
   }
-  if (action === ACTIONS.ESAT_INSPECT) {
-    return { ok: true, action, data: esat.inspect({ ...payload, actor: actorId || "pusat" }), actorId, correlationId };
-  }
   return null;
 }
 
-function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null } = {}) {
+function commerceClosed() {
+  return {
+    salesOpen: false,
+    egressAllowed: false,
+    productionReady: false,
+    executed: false,
+    purchased: false,
+    moneyMoved: false,
+    refunded: false,
+    shipmentCreated: false,
+    orderChanged: false,
+  };
+}
+
+function protectedApprovalPath(dbPath) {
+  try {
+    const { resolveDbPath } = require("./orchRuntime");
+    resolveDbPath(dbPath);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function resolveServerDecider(sessionRole) {
+  if (!sessionRole || !can(sessionRole, "ai.execute")) {
+    return { ok: false, code: "PERMISSION_DENIED" };
+  }
+  return { ok: true, actorId: "operator" };
+}
+
+function decideOrchestrationApproval(payload, { correlationId, sessionRole }) {
+  const action = ACTIONS.ORCHESTRATE_APPROVE;
+  const decision = resolveServerDecider(sessionRole);
+  if (!decision.ok) {
+    return {
+      ok: false,
+      code: "PERMISSION_DENIED",
+      action,
+      actorId: null,
+      correlationId,
+      data: { ok: false, code: "PERMISSION_DENIED", changed: false },
+      ...commerceClosed(),
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (protectedApprovalPath(payload.dbPath)) {
+    return {
+      ok: false,
+      code: "DATA_PATH_REFUSED",
+      action,
+      actorId: decision.actorId,
+      correlationId,
+      data: { ok: false, code: "DATA_PATH_REFUSED", changed: false },
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
+  const { getOrchestrator } = require("./orchRuntime");
+  const orch = getOrchestrator({ dbPath: payload.dbPath });
+  const decided = orch.approvals.decide({
+    id: payload.approvalId,
+    approved: payload.approved !== false,
+    actorId: decision.actorId,
+  });
+  return {
+    ok: decided.ok,
+    action,
+    data: decided,
+    actorId: decision.actorId,
+    correlationId,
+    ...commerceClosed(),
+    ...label(MODE.DRY_RUN),
+  };
+}
+
+function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null, sessionRole = null } = {}) {
   const esatResult = executeEsat(action, payload, { actorId, correlationId });
   if (esatResult) return esatResult;
 
@@ -414,93 +541,95 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
   }
 
   if (CONTROL_ACTIONS.includes(action)) {
-    return executeControl(action, payload, { actorId, correlationId: corr });
+    return executeControl(action, payload, { actorId, correlationId: corr, sessionRole });
   }
 
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };
 }
 
-function executeControl(action, payload, { actorId, correlationId }) {
-  const store = getDurable();
-  if (action === ACTIONS.GET_COUNCIL) {
-    return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.OPEN_MEETING) {
-    return { ok: true, action, data: store.openMeeting(payload), actorId, correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.REPORT_MEETING) {
+function readPusatMemory(action, payload, { actorId, correlationId }) {
+  let store;
+  try {
+    store = getDurable();
+  } catch (err) {
     return {
-      ok: true,
+      ok: false,
+      code: err.code || "DATA_PATH_REFUSED",
       action,
-      data: store.addMeetingEvent({
-        meetingId: payload.meetingId,
-        kind: "report",
-        speakerId: payload.speakerId || actorId,
-        payload,
-      }),
+      actorId,
       correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.CLOSE_MEETING) {
-    return { ok: true, action, data: store.closeMeeting(payload.meetingId), correlationId, ...label(MODE.DRY_RUN) };
-  }
-  if (action === ACTIONS.MEMORY_PUT) {
-    return {
-      ok: true,
-      action,
-      data: store.putMemory({
-        ownerId: payload.ownerId || actorId,
-        key: payload.key,
-        value: payload.value,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
     };
   }
   if (action === ACTIONS.MEMORY_GET) {
-    return {
-      ok: true,
-      action,
-      data: store.getMemory({
-        ownerId: payload.ownerId,
-        requesterId: payload.requesterId || actorId,
-      }),
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.RESEARCH_REQUEST) {
-    if (!TOPICS.includes(payload.topic)) {
-      return { ok: false, code: "UNKNOWN_TOPIC", action, correlationId, ...label(MODE.DRY_RUN) };
+    const data = store.getMemory({
+      ownerId: payload.ownerId,
+      requesterId: payload.requesterId || actorId,
+    });
+    if (data && data.code === "PUSAT_TABLE_MISSING") {
+      return {
+        ok: false,
+        code: data.code,
+        action,
+        actorId,
+        correlationId,
+        data,
+        ...commerceClosed(),
+        ...label(MODE.DRY_RUN),
+      };
     }
+    return { ok: true, action, data, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  const data = store.listHolds();
+  if (!Array.isArray(data)) {
     return {
-      ok: true,
+      ok: false,
+      code: (data && data.code) || "PUSAT_TABLE_MISSING",
       action,
-      data: store.requestResearch({
-        fromId: payload.fromId || actorId,
-        topic: payload.topic,
-        question: payload.question,
-      }),
+      actorId,
       correlationId,
+      data,
+      ...commerceClosed(),
       ...label(MODE.DRY_RUN),
     };
   }
-  if (action === ACTIONS.RESEARCH_COMPLETE) {
+  return { ok: true, action, data, correlationId, ...label(MODE.DRY_RUN) };
+}
+
+function executeControl(action, payload, { actorId, correlationId, sessionRole = null }) {
+  if (action === ACTIONS.ORCHESTRATE_TICK) {
     return {
-      ok: true,
+      ok: false,
+      code: "LEGACY_ORCHESTRATION_TICK_BLOCKED",
       action,
-      data: store.completeResearch({
-        requestId: payload.requestId,
-        findings: payload.findings,
-        sources: payload.sources,
-      }),
+      actorId,
       correlationId,
-      ...label(MODE.DRY_RUN),
+      scheduled: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
     };
   }
-  if (action === ACTIONS.LIST_TRADE_HOLDS) {
-    return { ok: true, action, data: store.listHolds(), correlationId, ...label(MODE.DRY_RUN) };
+  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
+    return decideOrchestrationApproval(payload, { correlationId, sessionRole });
+  }
+  if (DURABLE_WRITE_ACTIONS.has(action)) {
+    return {
+      ok: false,
+      code: "LEGACY_PUSAT_DURABLE_WRITE_BLOCKED",
+      action,
+      actorId,
+      correlationId,
+      stored: false,
+      ...commerceClosed(),
+      ...label(MODE.DISABLED),
+    };
+  }
+  if (action === ACTIONS.GET_COUNCIL) {
+    return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.MEMORY_GET || action === ACTIONS.LIST_TRADE_HOLDS) {
+    return readPusatMemory(action, payload, { actorId, correlationId });
   }
   const esatControl = executeEsat(action, payload, { actorId, correlationId });
   if (esatControl) return { ...esatControl, ...label(MODE.DRY_RUN) };
@@ -890,45 +1019,23 @@ function executeControl(action, payload, { actorId, correlationId }) {
     };
   }
   if (action === ACTIONS.ORCHESTRATE_STATUS) {
+    if (protectedApprovalPath(payload.dbPath)) {
+      return {
+        ok: false,
+        code: "DATA_PATH_REFUSED",
+        action,
+        actorId,
+        correlationId,
+        ...commerceClosed(),
+        ...label(MODE.DISABLED),
+      };
+    }
     const { getOrchestrator } = require("./orchRuntime");
     const orch = getOrchestrator({ dbPath: payload.dbPath });
     return {
       ok: true,
       action,
       data: orch.status(),
-      actorId,
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.ORCHESTRATE_TICK) {
-    const { getOrchestrator } = require("./orchRuntime");
-    const orch = getOrchestrator({ dbPath: payload.dbPath });
-    if (payload.schedule) orch.schedule(payload.schedule);
-    const ran = payload.coordinate
-      ? orch.coordinateCouncil({ kind: payload.kind || "THINK" })
-      : orch.tick({ limit: payload.limit || 8 });
-    return {
-      ok: true,
-      action,
-      data: { ...ran, status: orch.status(), live: false, hostedFactory: false, dbPath: orch.queue.dbPath },
-      actorId,
-      correlationId,
-      ...label(MODE.DRY_RUN),
-    };
-  }
-  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
-    const { getOrchestrator } = require("./orchRuntime");
-    const orch = getOrchestrator({ dbPath: payload.dbPath });
-    const decided = orch.approvals.decide({
-      id: payload.approvalId,
-      approved: payload.approved !== false,
-      actorId: payload.deciderId || actorId,
-    });
-    return {
-      ok: decided.ok,
-      action,
-      data: decided,
       actorId,
       correlationId,
       ...label(MODE.DRY_RUN),
@@ -961,19 +1068,6 @@ function executeControl(action, payload, { actorId, correlationId }) {
       ...label(MODE.DRY_RUN),
     };
   }
-  if (action === ACTIONS.SCREEN_TRADE) {
-    const { screenTrade } = require("../commerce/ab27Logistics");
-    const result = screenTrade({
-      ...payload,
-      persistHold: (item) =>
-        store.holdTrade({
-          destination: payload.destination,
-          reason: item.reason,
-          payload: item.payload,
-        }),
-    });
-    return { ok: result.ok, action, data: result, correlationId, ...label(MODE.DRY_RUN) };
-  }
   return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId, ...label(MODE.DISABLED) };
 }
 
@@ -987,13 +1081,35 @@ async function dispatch({
   actorId = null,
   correlationId = null,
   idempotencyKey = null,
+  sessionRole = null,
 } = {}) {
-  const run = () => executeReadOnly(action, payload, { actorId, correlationId });
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return {
+      replayed: false,
+      result: executeReadOnly(action, payload, { actorId, correlationId, sessionRole }),
+    };
+  }
+  const run = () => executeReadOnly(action, payload, { actorId, correlationId, sessionRole });
   if (!idempotencyKey) {
     const result = run();
     return { replayed: false, result };
   }
-  const outcome = await getIdempotencyService().execute({
+  let idempotency;
+  try {
+    idempotency = getIdempotencyService();
+  } catch (err) {
+    return {
+      replayed: false,
+      result: {
+        ok: false,
+        code: err.code || "DATA_PATH_REFUSED",
+        action,
+        ...commerceClosed(),
+        ...label(MODE.DISABLED),
+      },
+    };
+  }
+  const outcome = await idempotency.execute({
     operation: "PUSAT_DISPATCH",
     idempotencyKey,
     payload: { action, payload },

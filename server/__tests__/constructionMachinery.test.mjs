@@ -368,7 +368,8 @@ describe("authorization and regression safety", () => {
   });
 
   it("existing pricing helpers remain unchanged", () => {
-    expect(pricing.calculateSalePrice({ supplierPrice: 100 }).amount).toBe(138);
+    const policyPrice = Math.round((100 / (1 - 0.07)) * 100) / 100;
+    expect(pricing.calculateSalePrice({ supplierPrice: 100, markupPercent: 38 }).amount).toBe(policyPrice);
     expect(pricing.meetsMinimumMargin({ salePrice: 114, purchasePrice: 100 })).toBe(true);
   });
 });

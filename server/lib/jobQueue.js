@@ -53,6 +53,12 @@ function mapRow(row) {
   };
 }
 
+function rejectLegacyQueueWrite() {
+  const err = new Error("LEGACY_JOB_ENQUEUE_BLOCKED");
+  err.code = "LEGACY_JOB_ENQUEUE_BLOCKED";
+  throw err;
+}
+
 function enqueueJob({
   jobType,
   payload,
@@ -64,6 +70,7 @@ function enqueueJob({
   idempotencyKey,
   correlationId,
 }) {
+  rejectLegacyQueueWrite();
   if (idempotencyKey) {
     const jobIdempotency = require("./operations/jobIdempotency");
     const begin = jobIdempotency.beginOperation({
@@ -257,6 +264,7 @@ function cancelJob(id) {
 }
 
 function retryJob(id) {
+  rejectLegacyQueueWrite();
   const job = getJob(id);
   if (!job) return null;
   if (![JOB_STATUS.FAILED, JOB_STATUS.DEAD_LETTER, JOB_STATUS.RETRYING].includes(job.status)) {

@@ -12,12 +12,12 @@
  * Does not activate sales, Exclusive SoT, or live payment/supplier.
  */
 const productService = require("../productService");
-const inventory = require("./inventoryIntegration");
 const pricing = require("./pricingIntegration");
 const events = require("../eventBus");
 const exceptions = require("../exceptionBus");
 const { db } = require("../db");
 const { MODE, label } = require("../integrationMode");
+const { isSalesEnabled } = require("../salesMode");
 
 function rejectClientOverrides(body = {}) {
   if (body.clientVat !== undefined || body.vat !== undefined || body.clientTax !== undefined) {
@@ -86,7 +86,34 @@ function buildImmutableSnapshot(productId, quantity = 1) {
     return { ok: false, code: "CHECKOUT_INVALID", error: "product_not_active", status: 409 };
   }
 
-  const price = pricing.quotePrice({ productId: product.id, supplierCost: product.price });
+  const price = pricing.quotePrice({
+    productId: product.id,
+    offerPrice: Number(product.price),
+    supplierCost: pricing.readSupplierCost(product),
+    currency: product.currency || "EUR",
+  });
+  if (!pricing.priceAcceptedForCheckout(price)) {
+    return {
+      ok: false,
+      code: "PRICE_POLICY_BLOCKED",
+      error: "price_policy_blocked",
+      status: 409,
+      policyStatus: price.policyStatus || "UNKNOWN",
+      orderCreated: false,
+      salesEnabled: isSalesEnabled(),
+      commerciallyEligible: false,
+      priceSnapshot: price,
+      snapshotVersion: `${product.id}:${product.updatedAt || "v1"}`,
+      productSnapshot: {
+        id: product.id,
+        sku: product.sku,
+        ean: product.ean,
+        title: product.title,
+        status: product.status,
+        updatedAt: product.updatedAt,
+      },
+    };
+  }
   if (!price.valid || !(Number(product.price) > 0)) {
     exceptions.emit({
       type: exceptions.TYPES.PRICE_INVALID,
@@ -99,56 +126,24 @@ function buildImmutableSnapshot(productId, quantity = 1) {
     return { ok: false, code: "PRICE_INVALID", error: "invalid_price", status: 400 };
   }
 
-  const inv = inventory.getInventory(product.id);
-  if (inv.saleable < quantity) {
-    exceptions.emit({
-      type: exceptions.TYPES.INVENTORY_INSUFFICIENT,
-      source: "canonicalCommercePath",
-      entity: "product",
-      entityId: product.id,
-      message: "Insufficient saleable inventory",
-      context: { quantity, saleable: inv.saleable },
-      retryable: true,
-    });
-    return {
-      ok: false,
-      code: "INVENTORY_INSUFFICIENT",
-      error: "insufficient_saleable",
-      status: 409,
-      saleable: inv.saleable,
-    };
-  }
-
-  emitPath(events.TYPES.ProductResolved, "product", product.id, { sku: product.sku });
-  emitPath(events.TYPES.PriceResolved, "price", product.id, { unitPrice: Number(product.price) });
-  emitPath(events.TYPES.InventoryChecked, "inventory", product.id, { saleable: inv.saleable });
-
-  const snapshotVersion = `${product.id}:${product.updatedAt || "v1"}`;
   return {
-    ok: true,
-    item: {
-      productId: product.id,
-      sku: product.sku,
-      quantity,
-      unitPrice: Number(product.price),
-      currency: product.currency || "EUR",
-      vat: price.vatAmount,
-      snapshotVersion,
-    },
+    ok: false,
+    code: isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED",
+    error: isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED",
+    status: isSalesEnabled() ? 409 : 403,
+    reasons: ["SALES_CLOSED", "STOCK_UNVERIFIED", "SUPPLIER_COST_UNVERIFIED", "ORDER_UNVERIFIED"],
+    orderCreated: false,
+    reserved: false,
+    purchased: false,
+    commerciallyEligible: false,
+    salesEnabled: isSalesEnabled(),
     productSnapshot: {
       id: product.id,
       sku: product.sku,
-      ean: product.ean,
       title: product.title,
       status: product.status,
-      updatedAt: product.updatedAt,
     },
     priceSnapshot: price,
-    taxSnapshot: { vatRate: price.vatRate, vatAmount: price.vatAmount },
-    inventorySnapshot: inv,
-    supplierSnapshot: { supplierId: product.supplier || null, mode: MODE.DRY_RUN },
-    snapshotVersion,
-    ...label(MODE.DRY_RUN),
   };
 }
 
@@ -157,7 +152,13 @@ function validateCheckoutLines(items = []) {
     const snap = buildImmutableSnapshot(item.productId, item.quantity);
     if (!snap.ok) return snap;
   }
-  return { ok: true };
+  return {
+    ok: false,
+    code: isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED",
+    error: isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED",
+    orderCreated: false,
+    checkoutAllowed: false,
+  };
 }
 
 module.exports = {

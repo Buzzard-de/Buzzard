@@ -107,7 +107,7 @@ module.exports = {
       return res.json({
         success: true,
         user: customerStore.publicUser(customer),
-        preferences: customer.preferences,
+        ...customerStore.accountConsentView(customer),
         addressCount: customer.addresses?.length || 0,
         wishlistCount: customer.wishlist?.length || 0,
       });
@@ -223,14 +223,8 @@ module.exports = {
       const session = requireCustomer(req, res);
       if (!session) return;
       const customer = customerStore.findById(session.customerId);
-      const preferences = { ...(customer?.preferences || {}) };
-      const marketingPermission = preferences.marketing === false ? "WITHDRAWN" : preferences.marketingPermission || "UNKNOWN";
-      for (const key of ["marketing", "marketingConsent", "emailOptIn", "smsOptIn", "pushOptIn", "whatsappOptIn", "consent"]) {
-        if (preferences[key] === true) delete preferences[key];
-      }
-      preferences.granted = false;
-      preferences.consentVerified = false;
-      return res.json({ success: true, granted: false, consentVerified: false, marketingPermission, notificationSent: false, preferences });
+      if (!customer) return res.status(404).json({ success: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", granted: false });
+      return res.json({ success: true, ...customerStore.accountConsentView(customer) });
     });
 
     app.put("/api/account/preferences", (req, res) => {
@@ -240,12 +234,10 @@ module.exports = {
       if (!result) return res.status(404).json({ success: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", granted: false });
       return res.status(result.stored ? 200 : 403).json({
         success: false,
-        granted: false,
-        consentVerified: false,
-        marketingPermission: result.marketingPermission,
-        notificationSent: false,
+        ...customerStore.accountConsentView({ id: session.customerId, preferences: result.preferences }),
+        stored: result.stored === true,
+        persisted: result.persisted === true,
         customerNotified: false,
-        preferences: result.preferences,
       });
     });
 

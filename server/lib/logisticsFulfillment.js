@@ -109,32 +109,20 @@ function listShipments() {
     .all();
 }
 
-function getShipmentTracking(orderNumber) {
-  const shipment = db
-    .prepare(`
-      SELECT sh.*, c.name AS carrier, s.name AS service_name
-      FROM logistics_shipments sh
-      LEFT JOIN logistics_carriers c ON c.id = sh.carrier_id
-      LEFT JOIN logistics_shipping_services s ON s.id = sh.service_id
-      WHERE sh.order_number = ?
-    `)
-    .get(orderNumber);
-  if (!shipment) return { error: "Shipment not found", status: 404 };
-  const events = db
-    .prepare(
-      "SELECT * FROM logistics_tracking_events WHERE shipment_id = ? ORDER BY event_time DESC, id DESC"
-    )
-    .all(shipment.id);
+function getShipmentTracking() {
   return {
     ok: false,
     live: false,
     mock: false,
     status: "BLOCKED_EXTERNAL",
     verified: false,
+    code: "LIVE_CONNECTION_ABSENT",
     trackingNumber: null,
     events: [],
     delivered: false,
-    tracking: { ...shipment, events, live: false, verified: false },
+    deliveryConfirmed: false,
+    shipmentCreated: false,
+    tracking: null,
   };
 }
 

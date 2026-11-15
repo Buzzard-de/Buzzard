@@ -101,10 +101,11 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
     expect(adapterLoaded.some((id) => id.replaceAll("\\", "/").includes("/lib/pusat/"))).toBe(false);
     expect(adapterLoaded.some((id) => id.endsWith(`${path.sep}lib${path.sep}db.js`))).toBe(false);
     expect(adapterLoaded.some((id) => id.endsWith("productService.js") || id.endsWith("productSot.js"))).toBe(false);
-    expect(opens).toEqual([
+    expect(opens.filter((opened) => typeof opened.filename === "string")).toEqual([
       { filename: path.resolve(synthetic), readonly: false, fileMustExist: false },
       { filename: path.resolve(synthetic), readonly: true, fileMustExist: true },
     ]);
+    expect(opens.filter((opened) => Buffer.isBuffer(opened.filename))).toHaveLength(1);
   });
 
   it("reads a product by id and by sku", () => {
@@ -120,11 +121,14 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
     });
   });
 
-  it("prefers id when id and sku identify different products", () => {
+  it("searches the exact id and falls back to the exact sku", () => {
     const selected = read({ id: "fiction-lamp-1", sku: "FICTION-MUG-001" });
     expect(selected.data.id).toBe("fiction-lamp-1");
     expect(selected.data.sku).toBe("FICTION-LAMP-001");
-    expect(read({ id: "missing-id", sku: "FICTION-MUG-001" }).code).toBe("NOT_FOUND");
+    expect(read({ id: "missing-id", sku: "FICTION-MUG-001" }).data).toMatchObject({
+      id: "fiction-mug-1",
+      sku: "FICTION-MUG-001",
+    });
     expect(read({ id: "", sku: "FICTION-MUG-001" }).data.sku).toBe("FICTION-MUG-001");
   });
 
@@ -165,7 +169,8 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
       action: "GET_PRODUCT",
       correlationId: "corr-missing",
       mappingStatus: "UNMAPPED",
-      sotActive: true,
+      sotActive: false,
+      sotClaim: "UNVERIFIED",
       mode: "DRY_RUN",
       live: false,
       mock: false,
@@ -193,6 +198,7 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
       source: "UNKNOWN",
       mappingStatus: "CANDIDATE",
       sotActive: false,
+      sotClaim: "UNVERIFIED",
       actorId: "fixture-actor",
       correlationId: "corr-success",
       mode: "DRY_RUN",
@@ -206,10 +212,23 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
     expect(result.data.price).toBeNull();
   });
 
-  it("uses UNKNOWN unless the caller supplies a source", () => {
+  it("keeps UNKNOWN as the default and refuses commerce source D", () => {
     expect(read({ id: "fiction-mug-1" }).source).toBe("UNKNOWN");
     expect(read({ id: "fiction-mug-1" }, { source: "   " }).source).toBe("UNKNOWN");
+    expect(read({ id: "fiction-mug-1" }, { source: "SYNTHETIC_CATALOG" }).source).toBe("SYNTHETIC_CATALOG");
     expect(read({ id: "fiction-mug-1" }, { source: "CATALOG_FIXTURE" }).source).toBe("CATALOG_FIXTURE");
+    for (const source of ["D", "d", " D ", "LIVE", { source: "D" }]) {
+      const refused = read({ id: "fiction-mug-1" }, { source });
+      expect(refused).toMatchObject({
+        ok: false,
+        code: "SOURCE_REFUSED",
+        mode: "DRY_RUN",
+        live: false,
+        dryRun: true,
+      });
+      expect(refused.data).toBeUndefined();
+      expect(refused.source).toBeUndefined();
+    }
   });
 
   it("rejects a writable connection and write SQL without changing the fixture", () => {
@@ -274,13 +293,13 @@ describe("isolated Pusat GET_PRODUCT adapter", () => {
     expect(fileMark(commerceDb)).toEqual(dbBefore);
     expect(fileMark(workspaceDb)).toEqual(workspaceBefore);
     expect(fileMark(pusatMemory)).toEqual(pusatBefore);
-    expect(opens.every((opened) => opened.filename === path.resolve(synthetic))).toBe(true);
+    expect(opens.filter((opened) => typeof opened.filename === "string").every((opened) => opened.filename === path.resolve(synthetic))).toBe(true);
     expect(adaptGetProduct({
       catalog,
       payload: { id: commerceDb },
       sotActive: false,
       dbPath: workspaceDb,
     }).code).toBe("NOT_FOUND");
-    expect(opens).toHaveLength(2);
+    expect(opens.filter((opened) => typeof opened.filename === "string")).toHaveLength(2);
   });
 });

@@ -1,4 +1,6 @@
 const { db } = require("./db");
+const { decideCampaignAuthority } = require("./commerce/campaignAuthorityGate");
+const { readMarketingConsent } = require("./commerce/marketingConsentGate");
 
 const PROVIDERS = ["google_ads", "meta", "tiktok", "ebay", "amazon", "google_shopping"];
 
@@ -82,10 +84,72 @@ function updateProvider(provider) {
 }
 
 function createCampaign(body = {}) {
-  const name = String(body.name || "").trim().toLowerCase();
-  const duplicate = name ? campaignAttempts.has(name) : false;
-  if (name) campaignAttempts.add(name);
-  return campaignRefusal({ duplicate, idempotent: true });
+  const request = body && typeof body === "object" ? body : {};
+  const decision = decideCampaignAuthority({
+    ...request,
+    idempotencyKey: request.idempotencyKey || `campaign-create:${request.campaignId || request.name || "campaign"}:${request.sourceRecordId || ""}`,
+  });
+  const consent = readMarketingConsent(request.customerId || "");
+  const authorized = decision.ok === true
+    && decision.authorized === true
+    && decision.verified === true
+    && consent.granted === true
+    && consent.consentVerified === true
+    && decision.status !== "UNKNOWN"
+    && decision.status !== "BLOCKED"
+    && decision.status !== "FAILED"
+    && decision.code !== "TIMEOUT"
+    && decision.code !== "NETWORK_ERROR";
+  if (authorized) {
+    return campaignRefusal({
+      code: decision.code,
+      status: decision.status,
+      created: false,
+      stored: false,
+      authorized: false,
+    });
+  }
+  return {
+    ok: false,
+    error: decision.code,
+    code: decision.code,
+    status: decision.status,
+    created: false,
+    updated: false,
+    deleted: false,
+    stored: false,
+    published: false,
+    live: false,
+    enabled: false,
+    authorized: false,
+    verified: false,
+    approved: false,
+    active: false,
+    budget: null,
+    spend: null,
+    discount: null,
+    commercialTotal: null,
+    couponIssued: false,
+    discountApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    customerNotified: false,
+    messageSent: false,
+    emailSent: false,
+    smsSent: false,
+    pushSent: false,
+    consentVerified: false,
+    granted: false,
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    callerFlagIgnored: true,
+    callerPermissionIgnored: request.permission === true || request.authorized === true || request.ok === true || request.status === 200,
+    duplicate: decision.duplicate === true,
+    idempotent: true,
+    landingUrl: null,
+    reasons: Array.isArray(decision.reasons) ? decision.reasons.slice() : [decision.code],
+  };
 }
 
 function updateCampaign() {

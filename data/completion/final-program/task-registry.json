@@ -1,8 +1,8 @@
 {
   "schema": "buzzard.final-program.task-registry.v1",
-  "recordedAt": "2026-11-11T20:57:05+01:00",
+  "recordedAt": "2026-11-15T10:39:00+01:00",
   "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
-  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "head": "128cbc06a8d7b345cea2de2f847fd0ae1de3016f",
   "projectStatus": {
     "SOFTWARE_COMPLETE": false,
     "INTEGRATION_READY": false,
@@ -16,17 +16,22 @@
       "module": "security",
       "description": "Explicit default-deny authorization, delegation intersection, and human approval that does not execute payment or shipment.",
       "dependencies": [],
-      "status": "IMPLEMENTED",
+      "status": "VERIFIED_PARTIAL",
       "sourceFiles": [
         "server/lib/pusat/actionPolicy.js",
         "server/lib/pusat/humanApproval.js",
-        "server/lib/buzzardNative/core/permissionEngine.js"
+        "server/lib/buzzardNative/core/permissionEngine.js",
+        "server/lib/pusat/runtime.js",
+        "server/lib/pusat/durableTaskQueue.js",
+        "server/plugins/controlCenterPlugin.js",
+        "server/__tests__/p0AuthBoundaries.test.mjs",
+        "server/__tests__/pusatDeciderAuthority.test.mjs"
       ],
-      "implementationEvidence": "Default-deny allow list and authorizeDelegated intersection are in the working tree.",
-      "testEvidence": "node --test server/__tests__/p0Remediation.test.mjs: 6 passed, 0 failed, 0 skipped. Run together with the journey file at about 20:41 Europe/Berlin.",
-      "remainingWork": "The authorization checks passed in this session. This is not a production authorization sign-off.",
-      "blocker": null,
-      "nextAction": "FIN-M8-SECURITY"
+      "implementationEvidence": "humanDeciderRole allows only the explicit admin, administrator, and super_admin roles to record a decision as operator. ai.execute, a caller actorId, and a caller sessionRole do not. authorizeDelegated rejects a non-array chain and keeps the effective set inside every participant. A recorded human approval of LIVE_PAYMENT or SHIPMENT_CREATE sets executed, paymentCreated, shipmentCreated, moneyMoved, and orderCreated to false.",
+      "testEvidence": "node --test server/__tests__/p0AuthBoundaries.test.mjs and server/__tests__/p0Remediation.test.mjs at 2026-11-15T10:48+01:00: 10 passed, 0 failed. npx vitest run pusatDeciderAuthority -t agent role and server-verified admin: 2 passed, 10 skipped. These local tests are not a separate acceptance review. No protected database was queried.",
+      "remainingWork": "The local default-deny, delegation intersection, and non-executing approval checks passed. There is no separate acceptance review, so FIN-P0-AUTH stays VERIFIED_PARTIAL. This is not a production authorization sign-off.",
+      "blocker": "BLOCKED_EXTERNAL",
+      "nextAction": "Do not mark FIN-P0-AUTH VERIFIED_COMPLETE from these local tests."
     },
     {
       "id": "FIN-M6-POLICY",
@@ -90,16 +95,19 @@
       "dependencies": [
         "FIN-M6-POLICY"
       ],
-      "status": "IMPLEMENTED",
+      "status": "VERIFIED_PARTIAL",
       "sourceFiles": [
         "server/lib/commerce/taxProvider.js",
-        "server/lib/customerCheckout.js"
+        "server/lib/customerCheckout.js",
+        "server/lib/buzzardNative/core/tax/vatEngine.js",
+        "server/lib/commerce/isolatedCatalog.js",
+        "server/__tests__/checkoutTaxUnverified.test.mjs"
       ],
-      "implementationEvidence": "calculateTax returns VAT_UNVERIFIED with a null rate. A missing tax_rates row no longer becomes 0.19. A missing shipping method no longer becomes 9.99.",
-      "testEvidence": "Covered indirectly by the vitest suite. No separate numeric VAT filing test was added.",
-      "remainingWork": "Official VAT rates and filings.",
+      "implementationEvidence": "Checkout does not multiply a stored country rate. taxProvider keeps every country UNKNOWN, unofficial, and unverified, and ignores a caller rate. customerCheckout no longer reads tax_rates. calculateVat no longer multiplies the EC snapshot for any member. Germany's snapshot label stays 19 and its reserve stays separate, with vatOfficial false and tax null. The other 26 members keep their own snapshot labels and also return a null tax. No official rate was added.",
+      "testEvidence": "node --test server/__tests__/checkoutTaxUnverified.test.mjs at 2026-11-15T11:22+01:00: 1 passed, 0 failed. npx vitest run checkoutVat, buzzardNative10AgentCouncil, and pricingFinance: 3 files, 19 passed, 0 failed. No tax filing and no protected database query.",
+      "remainingWork": "No official tax authority source or owner filing approval is present. FIN-M6-VAT stays VERIFIED_PARTIAL. Snapshot labels are not official rates.",
       "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Wait for a verified VAT source before any tax amount is eligible."
+      "nextAction": "Do not mark FIN-M6-VAT VERIFIED_COMPLETE without an official VAT source."
     },
     {
       "id": "FIN-M6-FX",
@@ -283,14 +291,16 @@
       "dependencies": [
         "FIN-M6-POLICY"
       ],
-      "status": "IMPLEMENTED",
+      "status": "VERIFIED_PARTIAL",
       "sourceFiles": [
-        "server/lib/commerce/isolatedCatalog.js"
+        "server/lib/commerce/isolatedCatalog.js",
+        "lib/storefront/productSeo.ts",
+        "lib/i18n/translations.ts"
       ],
-      "implementationEvidence": "Isolated catalog quote uses the pricing policy and marks the VAT snapshot unofficial.",
-      "testEvidence": "Prior isolatedCatalog node test. Not re-run this session.",
-      "remainingWork": "Official subcategories, reviewed translations, and live PIM.",
-      "blocker": "Live PIM and human translation review.",
+      "implementationEvidence": "Catalog copy that exists is PRESENT or MISSING_TRANSLATION. Review stays UNREVIEWED and humanReviewed stays false. Subcategory stays UNKNOWN. No live PIM account was added.",
+      "testEvidence": "The isolated catalog test passed at 2026-11-15T10:58+01:00. Storefront review labels in productSeo.ts and translations.ts stay UNREVIEWED. This is not a translation acceptance review.",
+      "remainingWork": "Official subcategories, a human translation review, and a live PIM account are absent. FIN-M4-CATALOG stays VERIFIED_PARTIAL.",
+      "blocker": "BLOCKED_EXTERNAL",
       "nextAction": "Keep machine translations marked UNREVIEWED."
     },
     {
@@ -300,14 +310,14 @@
       "dependencies": [
         "FIN-M6-VAT"
       ],
-      "status": "IMPLEMENTED",
+      "status": "VERIFIED_PARTIAL",
       "sourceFiles": [
         "server/lib/buzzardNative/core/tax/vatEngine.js",
         "server/lib/banking/eu27/inventory.js"
       ],
-      "implementationEvidence": "Germany reserve is 0. Other registry countries use 25% of positive net income. The institution register is incomplete.",
-      "testEvidence": "pricingFinance country calculation and prior eu27 node tests.",
-      "remainingWork": "Official institution records and VAT verification.",
+      "implementationEvidence": "Germany's reserve rate stays 0 and the other registry countries use 25 percent of positive net income. coverage() returns EU27_REGISTRY_INCOMPLETE, complete false, and liveReady false. No institution was certified.",
+      "testEvidence": "npx vitest run server/__tests__/pricingFinance.test.mjs at 2026-11-15T10:58+01:00: 8 passed, 0 failed. The registry assertion is inside that file.",
+      "remainingWork": "Official institution records and VAT verification are absent. FIN-M5-EU27 stays VERIFIED_PARTIAL.",
       "blocker": "BLOCKED_EXTERNAL",
       "nextAction": "Do not certify the register."
     },
@@ -357,13 +367,16 @@
       ],
       "status": "BLOCKED_EXTERNAL",
       "sourceFiles": [
-        "server/lib/commerce/carrierAdapters.js"
+        "server/lib/commerce/carrierAdapters.js",
+        "server/lib/marketplaceHub.js",
+        "server/lib/marketplaceV35.js",
+        "server/__tests__/marketplaceContract.test.mjs"
       ],
-      "implementationEvidence": "Live connectors remain closed. No account was activated.",
-      "testEvidence": "Not re-run this session.",
-      "remainingWork": "Contract tests for every marketplace simulator are not all present.",
+      "implementationEvidence": "Amazon, eBay, Google Shopping, and TikTok Shop listing, mapping, account, sync, and order-import calls return before any database write. Marketplace v35 create, update, and job calls do not store a record. Carrier inventory stays unconnected and a label request stays LIVE_SHIPMENT_BLOCKED. No listing was published.",
+      "testEvidence": "node --test server/__tests__/marketplaceContract.test.mjs at 2026-11-15T11:02+01:00: 1 passed, 0 failed. No protected database query and no marketplace account.",
+      "remainingWork": "Owner account authorization is absent. FIN-M10-LIVE stays BLOCKED_EXTERNAL.",
       "blocker": "Owner account authorization.",
-      "nextAction": "Add local contract tests only. Do not publish listings."
+      "nextAction": "Do not publish a listing or open a marketplace, bank, or carrier account from this result."
     },
     {
       "id": "FIN-X-JOURNEY",
@@ -373,15 +386,16 @@
         "FIN-M2-CHECKOUT-BLOCK",
         "FIN-M6-POLICY"
       ],
-      "status": "IMPLEMENTED",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
-        "server/lib/platform/tenModuleProgram.js"
+        "server/lib/platform/tenModuleProgram.js",
+        "server/__tests__/tenModuleProgram.test.mjs"
       ],
-      "implementationEvidence": "The journey calls local engines. Checkout of an incomplete price is now blocked.",
-      "testEvidence": "node --test server/__tests__/tenModuleProgram.test.mjs: 2 passed, 0 failed. The protected database mtime did not change. placeOrder stayed SALES_CLOSED and orderCreated false.",
-      "remainingWork": "The journey still passes an explicit fixture shippingCost of 2 into evaluateOffer. It does not query a carrier and it does not create an order.",
+      "implementationEvidence": "evaluateOffer receives shippingCost from SYNTHETIC_COST_STACK. The amount is 2, the source is SYNTHETIC_COST_STACK, carrierQueried is false, and orderCreated is false. No carrier is queried and no order is created.",
+      "testEvidence": "node --test server/__tests__/tenModuleProgram.test.mjs at 2026-11-15T10:35+01:00: 2 passed, 0 failed. The protected database was not opened. placeOrder stayed SALES_CLOSED and orderCreated false.",
+      "remainingWork": "None for this synthetic cost stack. A live carrier tariff and a real order remain outside this task.",
       "blocker": null,
-      "nextAction": "Leave the fixture labeled as a synthetic cost stack."
+      "nextAction": "Do not query a carrier or create an order from this fixture."
     },
     {
       "id": "FIN-M1-ENGINE-BUS",
@@ -394,13 +408,14 @@
       ],
       "status": "VERIFIED_PARTIAL",
       "sourceFiles": [
-        "server/lib/commerce/coreEngines.js"
+        "server/lib/commerce/coreEngines.js",
+        "server/__tests__/coreEngines.test.mjs"
       ],
-      "implementationEvidence": "Local verification only. callEngine and runChain reach product, order, inventory, customer, market, supplier, pricing, payment, shipping, returns, notification, and reporting. The 3/3 file shows executed true, with commercialReady, orderCreated, paymentCaptured, shipmentCreated, salesEnabled, and chain live false. The order code is SALES_CLOSED. The payment code is FIAT_ACCEPTED with captured false; that is a local fiat policy result, not a bank charge. An unknown actor returns UNKNOWN_IDENTITY. A sensitive inventory buy returns HUMAN_GATE_REQUIRED with performed false. The same idempotency key returns that stored result with replay true. A past deadline returns TIMEOUT with live false. BTC returns REJECTED_CRYPTO_POLICY with captured false. No live bank, marketplace, supplier, or carrier connection was opened.",
-      "testEvidence": "2026-11-12T21:53 Europe/Berlin. npx vitest run server/__tests__/coreEngines.test.mjs: 1 file, 3 passed, 0 failed, 0 skipped. Two tests cover the local bus: the twelve-engine chain, plus idempotency, TIMEOUT, and HUMAN_GATE_REQUIRED. The third test is a local transport-cost fixture and is not a carrier connection. The protected database was not opened. This local result is not live integration evidence and is not a go-live approval. productionReady remains false. SALES remains closed. The integration inventory below is a read of the call path. No service was called.",
-      "remainingWork": "Integration inventory from server/lib/commerce/coreEngines.js. No live provider is connected. Local modules and stubs are not connections. product: categoryHierarchy.js reads a local taxonomy file. No PIM provider, no account. Missing a reviewed product source. Human approval required before a live catalog. order: storefrontCatalogAdapter.js placeOrder returns SALES_CLOSED. No order API. Missing sales approval. Human approval required. inventory: operations/stockEngine.js and specialists/stockEngine.js. inspectFeeds is BLOCKED_EXTERNAL and liveSupplierApi false. No supplier feed API. Missing a supplier account. Human approval required for STOCK_BUY. customer: banuEngine.js. liveMailbox false. No mailbox or CRM provider. Missing a customer-message account. Human approval required for export and refund. market: marketEngineRegistry.js reads local JSON. vatOfficial false. No marketplace API is called. Missing a seller account. Human approval required. supplier: no provider. Result SUPPLIER_DATA_UNKNOWN. pay is not a transfer. Missing a supplier account. Human approval required for SUPPLIER_PAY. pricing: pricingPolicy.js evaluateOffer. livePriceWrite false. No price or FX API. Missing official VAT and FX sources. Human approval required before a live price. payment: fiatPolicy.js decideAsset. FIAT_ACCEPTED is not a charge. captured false. No bank, card acquirer, Stripe, or PayPal client. Missing a payment-provider account. Human approval required for LIVE_PAYMENT. shipping: pricingPolicy.js selectTransportCost. apiConnected false and shipmentCreated false. No carrier API. Missing a carrier account and a verified tariff. Human approval required for SHIPMENT_CREATE. returns: logistics/v5/returnsEngine.js stays blocked. No label or refund provider. Missing a carrier return account. Human approval required. notification: logistics/v5/notifyStub.js. sent false. No email or SMS provider. Missing a message-provider account. Human approval required before a customer send. reporting: inline SYNTHETIC_REPORT. liveMetrics null. No analytics provider. Missing a live metrics source. Human approval required before production metrics. Priority: payment provider account, then carrier account and tariff, then supplier account and feed, then marketplace seller account, then customer message provider, then official VAT and FX, then reporting metrics, then a reviewed product source. None of these accounts is connected.",
+      "implementationEvidence": "Local verification only. callEngine and runChain reach the twelve engines. The observation chain still shows executed true, with commercialReady, orderCreated, paymentCaptured, shipmentCreated, salesEnabled, and chain live false. The order code is SALES_CLOSED. FIAT_ACCEPTED and METHOD_CATALOGUE stay visible and now have ok false, so an unverified fiat label or method list is not a successful payment. A product frame with no found SKU, an ungrounded customer reply, and a synthetic report also have ok false. requireDependencies runs dependencies first and returns DEPENDENCY_BLOCKED without calling the downstream runner. An ENGINE_FAULT stops a dependent engine. An unknown actor returns UNKNOWN_IDENTITY. A sensitive action returns HUMAN_GATE_REQUIRED or LIVE_ACTION_CLOSED with performed false. No live bank, marketplace, supplier, or carrier connection was opened.",
+      "testEvidence": "2026-11-15T11:29 Europe/Berlin. npx vitest run server/__tests__/coreEngines.test.mjs: 1 file, 34 passed, 0 failed. The protected database was not opened. This local result is not live integration evidence and is not a go-live approval. productionReady remains false. SALES remains closed.",
+      "remainingWork": "No live provider is connected. Local modules and stubs are not connections. A human-approved payment provider account is still absent, then a carrier account and tariff, a supplier account and feed, a marketplace seller account, a customer message account, official VAT and FX, reporting metrics, and a reviewed product source. None of these accounts is connected.",
       "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "No further task was started. The single next target is a human-approved payment provider account. Do not treat this inventory as a bank, marketplace, supplier, carrier, or message connection."
+      "nextAction": "Do not mark FIN-M1-ENGINE-BUS VERIFIED_COMPLETE without a human-approved payment provider account. Do not treat this bus as a bank, marketplace, supplier, carrier, or message connection."
     },
     {
       "id": "FIN-M6-VAT-SNAPSHOT",
@@ -409,18 +424,18 @@
       "dependencies": [
         "FIN-M6-VAT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/core/marketEngineRegistry.js",
         "lib/market-engine/registry.ts",
         "lib/market-engine/price.ts",
         "lib/market-engine/admin.ts"
       ],
-      "implementationEvidence": "A missing overlay rate is null and the source is UNKNOWN. Stored overlay rates stay unofficial snapshots. Admin labels them UNVERIFIED. A missing display rate does not become zero VAT.",
-      "testEvidence": "npx tsc --noEmit exited 0. lib/market-engine/marketEngine.test.ts passed inside the 1087-test Vitest run.",
-      "remainingWork": "Official VAT filing remains an owner action. The checkout 19 fallback is tracked as FIN-M6-CHECKOUT-VAT.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Keep snapshot rates unofficial until the owner files a verified rate."
+      "implementationEvidence": "A missing market overlay does not become 0.20 or Germany's 0.19 snapshot. The rate stays null and the source stays UNKNOWN. Stored overlay rates stay unofficial and unverified. Admin still labels them UNVERIFIED. A missing display rate stays UNKNOWN and is not added to the price. Reverse charge remains an explicit zero rule, not a standard rate.",
+      "testEvidence": "npx vitest run lib/market-engine/marketEngine.test.ts and server/__tests__/marketEngine.test.mjs at 2026-11-15T11:51+01:00: 2 files, 65 passed, 0 failed. Synthetic country XX only. No official rate was added. The protected database was not opened.",
+      "remainingWork": "Official VAT filing remains an owner action and is outside this technical rule. Live checkout use stays closed. The checkout 19 fallback is removed by FIN-M6-CHECKOUT-VAT.",
+      "blocker": null,
+      "nextAction": "Do not treat the local snapshot as a filed VAT rate."
     },
     {
       "id": "FIN-M6-CHECKOUT-VAT",
@@ -429,7 +444,7 @@
       "dependencies": [
         "FIN-M6-VAT-SNAPSHOT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "lib/checkout/countries.ts",
         "lib/checkout/shipping.ts",
@@ -441,13 +456,16 @@
         "lib/products/format.ts",
         "components/CartView.tsx",
         "components/CheckoutForm.tsx",
-        "components/admin/AdminLocalizationPanel.tsx"
+        "components/admin/AdminLocalizationPanel.tsx",
+        "lib/market/tax.ts",
+        "lib/market/context.tsx",
+        "server/plugins/ordersPlugin.js"
       ],
-      "implementationEvidence": "Every checkout country has vatRate null, vatOfficial false, and vatSource UNKNOWN. Server checkoutVat returns the same and createCheckoutSession stops with VAT_UNVERIFIED before insert. Client shipping calculators return null. A missing product VAT rate and parcel size stay null. The admin shipping form does not submit 4.99.",
-      "testEvidence": "npx vitest run lib/checkout/vatShipping.test.ts server/__tests__/checkoutVat.test.mjs at 2026-11-11T21:09:38+01:00: 2 files, 5 passed, 0 failed. npx tsc --noEmit exit 0. Playwright customer-journey, commerce-storefront, and commerce-security on api, chromium-desktop, chromium-mobile, and chromium-tablet at 2026-11-11T21:08:25+01:00: 43 passed, 8 skipped, 0 failed.",
-      "remainingWork": "Official VAT, carrier tariffs, and Bulgaria's currency stay UNKNOWN. Admin and master-command Playwright files were not part of this run.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "The eight remaining Playwright files passed. Keep UNKNOWN currency and VAT empty."
+      "implementationEvidence": "Checkout countries keep vatRate null, vatOfficial false, vatVerified false, and vatSource UNKNOWN. getMarketTaxRate and estimateDestinationTax return null for Germany, a missing country, and an unknown country, so the removed 19 percent fallback and the overlay label are not used as checkout VAT. formatVatInfo stays UNKNOWN even when a caller passes 19. A product record stores vat_rate null, vat_official false, and vat_source UNKNOWN when the caller supplies 19. Order lines keep vatRate and vatAmount null. Shipping methods stay null and do not restore 5.99 or 12.99. Market context taxRate is null. The admin tax table labels a stored rate UNVERIFIED. createCheckoutSession still stops with VAT_UNVERIFIED before insert.",
+      "testEvidence": "npx vitest run lib/checkout/vatShipping.test.ts server/__tests__/checkoutVat.test.mjs at 2026-11-15T11:55+01:00: 2 files, 9 passed, 0 failed. Synthetic inputs only. No official rate was added. The protected database was not opened.",
+      "remainingWork": "Official VAT rates, carrier tariffs, and Bulgaria's currency remain owner actions and are outside this technical removal. Live checkout use stays closed.",
+      "blocker": null,
+      "nextAction": "Do not use an overlay label or the removed 19 percent fallback as a checkout VAT amount."
     },
     {
       "id": "FIN-M6-EU27-MODEL",
@@ -456,15 +474,16 @@
       "dependencies": [
         "FIN-M6-CHECKOUT-VAT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
-        "server/lib/buzzardNative/core/tax/countryRegistry.js"
+        "server/lib/buzzardNative/core/tax/countryRegistry.js",
+        "server/__tests__/eu27CountryModel.test.mjs"
       ],
-      "implementationEvidence": "Germany is EUR. Poland is PLN. Bulgaria is UNKNOWN. VAT stays unofficial. Payment, shipping, returns, marketplace, compliance, and locale are UNKNOWN. The snapshot retrieval date is not stored as a verification date.",
-      "testEvidence": "The EU currency assertion passed inside server/__tests__/checkoutVat.test.mjs at 2026-11-11T21:09:38+01:00.",
-      "remainingWork": "Official registers, payment contracts, carrier tariffs, and Bulgaria's currency remain owner actions.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Leave UNKNOWN fields unknown until the owner supplies a source."
+      "implementationEvidence": "The country model lists the same 27 members from an explicit code table. Greece is stored as EL and resolves from both EL and GR. Germany is EUR. Poland is PLN. Czechia, Denmark, Hungary, Romania, and Sweden keep their own currency codes. Bulgaria stays UNKNOWN. A missing snapshot rate stays null and UNKNOWN and does not inherit Germany's 19. Cyprus keeps its own snapshot label. Every VAT row stays vatOfficial false, vatVerified false, and verificationStatus UNVERIFIED. The snapshot retrieval date is not a verification date. Payment, shipping, returns, marketplace, compliance, tax authority, filing, and OSS/IOSS stay UNKNOWN. validateCountry stops invalid and unknown codes and does not report a commercial success.",
+      "testEvidence": "npx vitest run server/__tests__/eu27CountryModel.test.mjs and server/__tests__/checkoutVat.test.mjs at 2026-11-15T11:59+01:00: 2 files, 6 passed, 0 failed. node --test server/__tests__/checkoutTaxUnverified.test.mjs at the same time: 1 passed, 0 failed. Synthetic codes only. No official rate was added. The protected database was not opened.",
+      "remainingWork": "Official registers, payment contracts, carrier tariffs, and Bulgaria's currency remain owner actions and are outside this technical model. Live filing stays closed.",
+      "blocker": null,
+      "nextAction": "Do not mark an unverified snapshot rate or Bulgaria's currency as official."
     },
     {
       "id": "FIN-M10-CARRIER-STATUS",
@@ -474,19 +493,16 @@
         "FIN-M10-LIVE",
         "FIN-M7-DYNAMIC-SHIPPING"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
-        "server/lib/commercialIntegrations.js",
-        "server/lib/dbCarriers.js",
-        "server/lib/logistics/carrierAdapter.js",
-        "server/lib/dbOrders.js",
-        "server/lib/commerce/taxProvider.js"
+        "server/lib/logistics/carrierContract.js",
+        "server/__tests__/remainingSoftwareGaps.test.mjs"
       ],
-      "implementationEvidence": "DHL, DPD, GLS, UPS, and Hermes return BLOCKED_EXTERNAL with trackingNumber null. An omitted carrier is CARRIER_UNKNOWN and is not relabeled DHL. Stripe and PayPal return SALES_CLOSED before any network call while sales are closed. A missing order country is DESTINATION_UNKNOWN. A missing tax country stays null.",
-      "testEvidence": "npx vitest run checkoutVat, autonomousContinuation, pusatOrchestrator, and shippingAuthority at 2026-11-11T21:22:03+01:00: 4 files, 42 passed, 0 failed. eu27CarrierMasterV5 and checkoutVat at 2026-11-11T21:22:58+01:00: 2 files, 10 passed, 0 failed.",
-      "remainingWork": "Rates and addresses are recorded on FIN-M10-RATES. Protocol fixtures in carrierContract.js still return ok true.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Keep a stored key from being treated as a live tariff."
+      "implementationEvidence": "runProtocolFixture and a shaped createShipment return ok false. shipmentCreated, liveTariff, shippingCost, and trackingNumber stay empty. A stored DHL_API_KEY is credentialsPresent and credentialsAccepted false. The sample response is nested and is not a shipment number.",
+      "testEvidence": "npx vitest run remainingSoftwareGaps, masterSoftwareCompletion, carrierQuoteBlocked, and checkoutVat at 2026-11-15T10:39+01:00: 4 files, 27 passed, 0 failed. No live carrier call. The protected database was not opened.",
+      "remainingWork": "Live tariffs and address proof remain on FIN-M10-RATES. This task does not open a carrier account.",
+      "blocker": null,
+      "nextAction": "Do not treat a stored key as a live tariff."
     },
     {
       "id": "FIN-M10-TRACKING",
@@ -495,7 +511,7 @@
       "dependencies": [
         "FIN-M10-CARRIER-STATUS"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/logistics/v5/adapterFramework.js",
         "server/lib/logisticsFulfillment.js",
@@ -504,13 +520,18 @@
         "server/lib/notificationHub.js",
         "server/plugins/logisticsPlugin.js",
         "server/lib/fulfillmentPipeline.js",
-        "server/lib/supplier/realSupplierConnector.js"
+        "server/lib/supplier/realSupplierConnector.js",
+        "server/lib/logistics/carrierContract.js",
+        "server/lib/logistics/v5/trackingNormalize.js",
+        "server/lib/logistics/carrierAdapter.js",
+        "server/lib/blockedAdapters/shells.js",
+        "server/__tests__/trackingBlocked.test.mjs"
       ],
-      "implementationEvidence": "trackShipment and getTrackingEvents return ok false, live false, mock false, status BLOCKED_EXTERNAL, trackingNumber null, and events empty. Missing, invalid, mock, duplicate, and unconfirmed delivery inputs stay blocked. A well-formed carrier payload still requires a live connection. Label writes, webhooks, return labels, shipment records, delivery notices, and admin status patches do not create a shipment. A supplier fetch no longer reports live true.",
-      "testEvidence": "npx vitest run trackingBlocked, eu27CarrierMasterV5, eu27CarrierMasterV6, and checkoutVat at 2026-11-11T21:28:10+01:00: 4 files, 23 passed, 0 failed. part15RealSupplierConnector and trackingBlocked at 2026-11-11T21:28:48+01:00: 2 files, 30 passed, 0 failed.",
-      "remainingWork": "Rate and address blocking is recorded on FIN-M10-RATES.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Keep tracking writers from storing a client delivery."
+      "implementationEvidence": "A missing carrier status stays UNKNOWN and is not defaulted to IN_TRANSIT. An unknown scan word stays UNKNOWN and is not stored as CREATED. Explicit synthetic words still map, including transit to IN_TRANSIT and lost to LOST, while delivered stays deliveryConfirmed false and shipmentCreated false. Tracking numbers from fixtures and synthetic events stay null. Event history is kept as an unverified projection with an empty public event list and customerVisible NO_VERIFIED_TRACKING. A shaped carrier payload still returns LIVE_CONNECTION_REQUIRED. Stored shipment tracking is not read or returned. Label writes, webhooks, return labels, and delivery notices still do not create a shipment.",
+      "testEvidence": "npx vitest run trackingBlocked, remainingSoftwareGaps, and eu27CarrierMasterV11 at 2026-11-15T12:02+01:00: 3 files, 22 passed, 0 failed. node --test blockedShells and workflowChain at the same time: 7 passed, 0 failed. Synthetic carrier payloads only. No live carrier call. The protected database was not opened.",
+      "remainingWork": "A live carrier account, API credentials, and a real tracking feed remain owner actions and are outside this technical gate. Tariffs stay on FIN-M10-RATES.",
+      "blocker": null,
+      "nextAction": "Do not treat a synthetic status word, fixture tracking number, or stored key as a delivery."
     },
     {
       "id": "FIN-M10-RATES",
@@ -519,19 +540,28 @@
       "dependencies": [
         "FIN-M10-TRACKING"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/logistics/v5/adapterFramework.js",
         "server/lib/logistics/v5/supplierCarrier.js",
         "server/lib/logistics/v5/webhookReceiver.js",
         "server/lib/logistics/carrierContract.js",
-        "server/lib/commerce/shippingProvider.js"
+        "server/lib/commerce/shippingProvider.js",
+        "server/lib/commerce/pricingPolicy.js",
+        "server/lib/commerce/pricingIntegration.js",
+        "server/lib/commerce/orderService.js",
+        "server/lib/logistics/v5/costEngine.js",
+        "server/lib/logistics/v5/operationsPlane.js",
+        "server/lib/logistics/selectCarrier.js",
+        "server/plugins/eu27LogisticsPlugin.js",
+        "server/__tests__/shippingAuthority.test.mjs",
+        "server/__tests__/carrierQuoteBlocked.test.mjs"
       ],
-      "implementationEvidence": "getRates returns ok false, live false, mock false, status BLOCKED_EXTERNAL, and rates empty. validateAddress returns the same block with validatedAddress null. Missing, invalid, and unknown addresses, unknown carriers, mock tariffs, timeout, and network errors stay distinct. A complete synthetic request stays LIVE_CONNECTION_REQUIRED. A stored API key does not change the result. Coverage, pickup, locker, service, and delivery-estimate calls no longer return ok true. An unverified supplier-carrier link returns BLOCKED_EXTERNAL. calculateShipping does not turn the empty rate list into a price. carrierContract trackShipment returns ok false and an empty event list while keeping the mapped status word. A missing address is MISSING_ADDRESS. A shape-complete address is LIVE_CONNECTION_REQUIRED and still does not create a shipment. A matching HMAC is signatureMatched or accepted, with ok false, and does not create a shipment. Reconciliation returns matched null.",
-      "testEvidence": "npx vitest run carrierQuoteBlocked, eu27CarrierMasterV5, eu27CarrierMasterV6, eu27CarrierMasterV10, eu27CarrierMasterV11, trackingBlocked, shippingAuthority, and checkoutVat at 2026-11-11T21:35:21+01:00: 8 files, 51 passed, 0 failed. node --test integrationPass and blockedShells at 2026-11-11T21:37:17+01:00: 6 passed, 0 failed. npx vitest run eu27CarrierMasterV6, carrierQuoteBlocked, remainingSoftwareGaps, and masterSoftwareCompletion at 2026-11-11T21:37:42+01:00: 4 files, 26 passed, 0 failed.",
-      "remainingWork": "Supplier adapter blocking is recorded on FIN-M11-SUPPLIER.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Keep a stored carrier key from being treated as a live tariff."
+      "implementationEvidence": "A synthetic verified flag, a supplied amount, and a supplier offer id do not become a shipping price or a commercial tariff. Missing country scope does not apply a rate to every country. A Germany-scoped synthetic row does not match France. Weight, dimensions, and a published volumetric divisor still measure chargeable weight, and the amount stays unadopted. Missing destination and origin stay UNKNOWN instead of Germany. quoteCost ignores a caller liveRate flag. DHL, DPD, GLS, Hermes, and UPS stay blocked with a null price. Adapter quotes still return BLOCKED_EXTERNAL and an empty rate list.",
+      "testEvidence": "npx vitest run shippingAuthority, carrierQuoteBlocked, and coreEngines at 2026-11-15T12:06+01:00: 3 files, 53 passed, 0 failed. The same session also passed eu27LogisticsOps, trackingBlocked, and eu27CarrierMasterV11: 3 files, 18 passed, 0 failed. Synthetic tariffs only. No live carrier call. The protected database was not opened.",
+      "remainingWork": "Live DHL, DPD, GLS, Hermes, and UPS contracts and API access remain owner actions and are outside this technical gate. Supplier account blocking stays on FIN-M11-SUPPLIER.",
+      "blocker": null,
+      "nextAction": "Do not treat a synthetic amount or a stored carrier key as a live tariff."
     },
     {
       "id": "FIN-M11-SUPPLIER",
@@ -540,7 +570,7 @@
       "dependencies": [
         "FIN-M10-RATES"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/supplier/baseAdapter.js",
         "server/lib/supplier/mockAdapter.js",
@@ -553,13 +583,21 @@
         "server/lib/commerce/pricingPolicy.js",
         "server/lib/buzzardNative/core/specialists/stockEngine.js",
         "server/lib/operations/stockEngine.js",
-        "server/lib/operations/priceEngine.js"
+        "server/lib/operations/priceEngine.js",
+        "server/lib/supplier/offerValidation.js",
+        "server/lib/supplier/manualSupplierAdapter.js",
+        "server/lib/supplier/apiSupplierAdapter.js",
+        "server/lib/supplier/xmlSupplierAdapter.js",
+        "server/lib/supplier/csvSupplierAdapter.js",
+        "server/lib/adapters/mockSupplierAdapter.js",
+        "server/lib/adapters/supplierAdapter.js",
+        "server/__tests__/supplierAdapterBlocked.test.mjs"
       ],
-      "implementationEvidence": "Base and mock supplier calls return ok false and live false. A missing account is BLOCKED_EXTERNAL. An unknown supplier is SUPPLIER_UNKNOWN. Timeout and network error stay separate. A stored API key is not a connection. Mock rows keep fixture amounts off price and stock. Sync pipelines import nothing and record no commercial price or stock change. An unverified or mock supplier cost is SUPPLIER_COST_UNVERIFIED, UNKNOWN, and BLOCKED in the pricing policy. AI stock purchase stays blocked even when a human flag is set. Supplier selection without a verified customer order returns ORDER_UNVERIFIED and chooses nobody. A catalog stock total that is missing is MISSING_STOCK rather than zero. A stored stock number does not become sellable.",
-      "testEvidence": "npx vitest run supplierAdapterBlocked, supplierSync, part5Foundation, part23, remainingSoftwareGaps, coreEngines, and shippingAuthority at 2026-11-11T21:47:10+01:00: 7 files, 72 passed, 0 failed. part15, part16, part23, supplierAdapterBlocked, supplierSync, and remainingSoftwareGaps at 2026-11-11T21:47:51+01:00: 6 files, 96 passed, 0 failed. part17 at 2026-11-11T21:49:31+01:00: 1 file, 19 passed, 0 failed.",
-      "remainingWork": "Order creation from checkout is recorded on FIN-M12-ORDER.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Keep an unverified supplier cost out of the commercial price."
+      "implementationEvidence": "API, XML, CSV, and manual adapters stay dry-run. A missing credential is MISSING_CREDENTIALS and a stored key is not a connection. Product, price, stock, currency, lead time, and country scope are validated locally. Missing currency and lead time stay UNKNOWN. A Germany-only row is OUT_OF_SCOPE for France and is not selected. Synthetic catalog and XML rows keep price and stock null and do not default to EUR or zero. Unknown supplier ids do not fall through to the mock catalog. Selection without a verified customer order returns ORDER_UNVERIFIED and chooses nobody. buyStock without that order stays purchased false. A verified order flag still does not purchase or reserve stock.",
+      "testEvidence": "npx vitest run supplierAdapterBlocked, buzzardNative17AgentCouncil, coreEngines, carrierQuoteBlocked, and trackingBlocked at 2026-11-15T12:09+01:00: 5 files, 67 passed, 0 failed. Synthetic supplier rows only. No live supplier call. The protected database was not opened.",
+      "remainingWork": "A live supplier account, API key, contract, and feed remain owner actions and are outside this technical gate. Checkout order creation stays on FIN-M12-ORDER.",
+      "blocker": null,
+      "nextAction": "Do not treat a synthetic supplier row or a stored key as stock or a purchase."
     },
     {
       "id": "FIN-M12-ORDER",
@@ -568,17 +606,19 @@
       "dependencies": [
         "FIN-M11-SUPPLIER"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/orderService.js",
         "server/lib/commerce/paymentService.js",
-        "server/lib/commerce/checkoutService.js"
+        "server/lib/commerce/checkoutService.js",
+        "server/__tests__/orderLocalGate.test.mjs",
+        "server/__tests__/orderFromCheckoutBlocked.test.mjs"
       ],
-      "implementationEvidence": "createOrderFromCheckout returns a distinct first code and a reasons list. A bare shipping number is SHIPPING_RATE_UNVERIFIED. Missing marketplace fee and payment fee have their own codes. VAT stays VAT_UNVERIFIED. Cross-currency FX stays FX_UNVERIFIED. Supplier cost, stock, and payment stay unverified even when the caller sets live or verified flags. Crypto and CBDC are rejected. A repeated checkout id returns DUPLICATE_ORDER and does not insert another row. authorizePayment and createPaymentIntent return PAYMENT_UNVERIFIED. approveGoLive stores RECORDED_NOT_ACTIVATED, admin_approval 0, and success false. Sales stay closed.",
-      "testEvidence": "npx vitest run orderFromCheckoutBlocked, part8Foundation, trackingBlocked, canonicalLocales, and masterIntegrationPhase3 at 2026-11-12T15:22:54+01:00: 5 files, 45 passed, 0 failed. part12Foundation plus orderFromCheckoutBlocked at 2026-11-12T15:23:21+01:00: 2 files, 13 passed, 0 failed.",
-      "remainingWork": "createFulfillmentsForOrder writes no supplier order. A local adapter no longer mints a supplier order number. Live supplier, bank, and carrier accounts remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/customerCheckout.js calculateCheckoutQuote. Do not turn a missing subtotal into zero. Do not enable sales."
+      "implementationEvidence": "A checkout without a customer, customer approval, product, country, verified shipping, VAT, stock, or payment stays blocked and orderCreated false. Crypto and CBDC stay rejected. A repeated checkout id returns DUPLICATE_ORDER from the local record and does not insert a database row. Local records start PENDING, cancel to CANCELLED, and fail to FAILED. A second cancel or fail is ILLEGAL_TRANSITION. Paid and shipped transitions are not applied. Supplier submission without a customer order returns ORDER_UNVERIFIED with purchased and reserved false. A customer-approved flag still does not create a supplier order while the supplier feature is closed. Sales stay closed.",
+      "testEvidence": "npx vitest run orderLocalGate, orderFromCheckoutBlocked, carrierQuoteBlocked, and trackingBlocked at 2026-11-15T12:12+01:00: 4 files, 26 passed, 2 skipped, 0 failed. The skipped cases write the protected database and were not run. Synthetic checkouts only. No live payment, supplier, or carrier call.",
+      "remainingWork": "Live payment, supplier, carrier, and marketplace accounts remain owner actions and are outside this technical gate. Return storage stays on FIN-M13-REFUND.",
+      "blocker": null,
+      "nextAction": "Do not turn a local blocked record or a customer-approved flag into a live order or a supplier purchase."
     },
     {
       "id": "FIN-M13-REFUND",
@@ -593,13 +633,15 @@
         "server/lib/paymentsFinance.js",
         "server/lib/orderAutomation.js",
         "server/lib/fulfillmentPipeline.js",
-        "server/lib/dbOrders.js"
+        "server/lib/dbOrders.js",
+        "server/lib/customerCheckout.js",
+        "server/__tests__/checkoutQuoteSubtotal.test.mjs"
       ],
-      "implementationEvidence": "processRefund no longer writes refund_status succeeded or status refunded. processExchange does not invent an exchange order number. A missing refund amount stays null. paymentsFinance does not insert a demo payment, succeeded refund, issued invoice, payout, or dispute from a caller payload. orderAutomation does not mark a webhook as paid and does not queue a default DHL or Stripe job. recordSupplierResult does not store accepted. fulfillmentPipeline submitSupplierOrder no longer returns a DEMO tracking number. createOrderFromCart does not decrement stock or insert an order after the tax check. startReturn does not echo a caller shipment id, does not open RETURN_REQUESTED, and does not store a return. applyCustomerRefund keeps a missing customer refund and a missing supplier reimbursement null. An explicit zero request stays distinct and is not a paid refund. Invalid, foreign, mock, and repeated calls do not move money. The isolated ledger stores a blocked refund request and does not insert a second row. A missing ledger amount is null. No bank or provider call is made.",
-      "testEvidence": "npx vitest run refundAmountGate, autonomousContinuation, autonomousContinuationV3, autonomousContinuationV4, masterCompletion, and fulfillmentChain at 2026-11-12T20:27+01:00: 6 files, 50 passed, 0 failed. node --test workflowChain, tenModuleProgram, and eu27FiatEngine: 14 passed, 0 failed. Synthetic isolated databases. No live bank or supplier call.",
-      "remainingWork": "A live bank or payment provider has not verified a customer refund or a supplier reimbursement. FIN-M13 stays VERIFIED_PARTIAL. taxReserves.split no longer treats a missing net profit as zero. The next software function is calculateCheckoutQuote, which still coerces a missing subtotal to zero behind the closed sales gate.",
+      "implementationEvidence": "processRefund no longer writes refund_status succeeded or status refunded. processExchange does not invent an exchange order number. A missing refund amount stays null. paymentsFinance does not insert a demo payment, succeeded refund, issued invoice, payout, or dispute from a caller payload. orderAutomation does not mark a webhook as paid and does not queue a default DHL or Stripe job. recordSupplierResult does not store accepted. fulfillmentPipeline submitSupplierOrder no longer returns a DEMO tracking number. createOrderFromCart does not decrement stock or insert an order after the tax check. startReturn does not echo a caller shipment id, does not open RETURN_REQUESTED, and does not store a return. applyCustomerRefund keeps a missing customer refund and a missing supplier reimbursement null. An explicit zero request stays distinct and is not a paid refund. Invalid, foreign, mock, and repeated calls do not move money. The isolated ledger stores a blocked refund request and does not insert a second row. A missing ledger amount is null. No bank or provider call is made. calculateCheckoutQuote stops a missing, blank, or UNKNOWN subtotal as SUBTOTAL_UNKNOWN with subtotal null. Explicit zero and a positive amount stay unchanged and stop at SALES_CLOSED. The quote does not create a refund, invoice, payout, or payment.",
+      "testEvidence": "npx vitest run refundAmountGate, autonomousContinuation, autonomousContinuationV3, autonomousContinuationV4, masterCompletion, and fulfillmentChain at 2026-11-12T20:27+01:00: 6 files, 50 passed, 0 failed. node --test workflowChain, tenModuleProgram, and eu27FiatEngine: 14 passed, 0 failed. Synthetic isolated databases. No live bank or supplier call. npx vitest run server/__tests__/checkoutQuoteSubtotal.test.mjs at 2026-11-15T10:42+01:00: 1 file, 1 passed, 0 failed. No live payment or refund call. The protected database was not opened.",
+      "remainingWork": "A live bank or payment provider has not verified a customer refund or a supplier reimbursement. The missing-subtotal zero coercion is closed. FIN-M13 stays VERIFIED_PARTIAL.",
       "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/customerCheckout.js calculateCheckoutQuote. Do not turn a missing subtotal into zero. Do not enable sales. Do not mark FIN-M13 VERIFIED_COMPLETE without a live provider."
+      "nextAction": "Do not mark FIN-M13 VERIFIED_COMPLETE without a live provider. Do not enable sales."
     },
     {
       "id": "FIN-M15-NOTIFICATION",
@@ -608,20 +650,21 @@
       "dependencies": [
         "FIN-M14-FULFILLMENT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/notificationHub.js",
         "server/lib/notificationEngine.js",
         "server/lib/automationEngine.js",
         "server/lib/customerSupport.js",
         "server/lib/coreAudit.js",
-        "server/lib/orderAutomation.js"
+        "server/lib/orderAutomation.js",
+        "server/__tests__/notificationLocalGate.test.mjs"
       ],
-      "implementationEvidence": "deliverNotification returns UNKNOWN for an internal channel and BLOCKED_EXTERNAL for email, SMS, WhatsApp, order, return, and shipment topics. SENT, QUEUED, and DELIVERY_CONFIRMED are not returned. Caller sent, delivered, and acknowledged flags are ignored. Timeout and network failure stay FAILED with sent false. A repeated idempotency key returns DUPLICATE_NOTIFICATION. Mock messages return MOCK_NOT_SENT. The audit row result is blocked and does not contain the customer address. Email and WhatsApp queue functions do not insert a notification row. Tracking events, delivered integration events, supplier confirmation, automation retries, and campaign conversions are not stored as success. Checkout and automation emits do not notify the customer.",
-      "testEvidence": "npx vitest run notificationChain, trackingBlocked, canonicalLocales, part19CustomerExperienceReadiness, and eu27LogisticsOps at 2026-11-12T15:50:16+01:00: 5 files, 43 passed, 0 failed.",
-      "remainingWork": "Live email, SMS, and WhatsApp providers remain absent. The in-process publish claim is closed in FIN-M16-PUBLISH.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from inventory.reserve after the publish gate."
+      "implementationEvidence": "Customer notices require a matching customer and order. A mismatch returns CUSTOMER_ORDER_MISMATCH with no template and no address. Unverified order, payment, cancellation, refund, shipment, and delivery facts return FACT_UNVERIFIED and a held UNVERIFIED template. The held text does not say the event succeeded. Claimed order, payment, and cancellation facts stay NOTIFICATION_NOT_LIVE on email, SMS, and in-app. Claimed shipment and delivery facts stay CARRIER_NOT_LIVE. A repeated key is DUPLICATE_NOTIFICATION. A timeout stays FAILED, and the retry records a second attempt without sending. The error log stores the order number and the attempt count, not the customer address. Existing internal, mock, and automation gates still do not deliver.",
+      "testEvidence": "npx vitest run notificationLocalGate, notificationChain, canonicalLocales, and trackingBlocked at 2026-11-15T12:23+01:00: 4 files, 18 passed, 6 skipped, 0 failed. The skipped notification cases write the protected database and were not run. Synthetic notices only. No email, SMS, or in-app delivery.",
+      "remainingWork": "A live email provider, an SMS service, and any in-app delivery account remain owner actions and are outside this technical gate. In-process publish stays on FIN-M16-PUBLISH.",
+      "blocker": null,
+      "nextAction": "Do not send a success notice for an unverified order, payment, shipment, or delivery."
     },
     {
       "id": "FIN-M14-FULFILLMENT",
@@ -630,19 +673,20 @@
       "dependencies": [
         "FIN-M13-REFUND"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/fulfillmentPipeline.js",
         "server/lib/fulfillmentStore.js",
         "server/lib/paymentVerification.js",
         "server/lib/orderManagement.js",
-        "server/plugins/ordersPlugin.js"
+        "server/plugins/ordersPlugin.js",
+        "server/__tests__/fulfillmentLocalGate.test.mjs"
       ],
-      "implementationEvidence": "createFulfillmentsForOrder writes no fulfillment while sales are closed. Caller live, verified, submitted, and approved flags do not create a row. The first code is SALES_CLOSED and the reasons include PAYMENT_UNVERIFIED, SUPPLIER_COST_UNVERIFIED, STOCK_UNVERIFIED, and SHIPPING_RATE_UNVERIFIED. An existing order number returns DUPLICATE_FULFILLMENT. submitSupplierOrder returns TIMEOUT or NETWORK_ERROR as SUBMISSION_FAILED, rejects DEMO tracking, and a repeated request id returns DUPLICATE_SUPPLIER_SUBMISSION. It never returns SUBMITTED_CONFIRMED. updateShipment refuses a delivered status and a tracking number. verifyPaymentIntent does not mint a DEMO transaction. The storefront order route does not write a paid order. OMS status, cancellation, split, and fulfillment link calls do not apply a caller success status. A missing customer refund and supplier credit stay null.",
-      "testEvidence": "npx vitest run fulfillmentChain, masterCompletion, part12Foundation, and shippingAuthority at 2026-11-12T15:40:51+01:00: 4 files, 26 passed, 0 failed. The earlier run with orderFromCheckoutBlocked at 2026-11-12T15:40:28+01:00: 4 files, 29 passed, 0 failed.",
-      "remainingWork": "The local submitted write stays closed. Customer notification claims are closed in FIN-M15-NOTIFICATION.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from runtimeCore.publish after the notification gate."
+      "implementationEvidence": "Fulfillment does not start without a verified customer order. A customer flag without supplier acceptance stays at SUPPLIER and creates no shipment. Supplier acceptance without a live carrier stays at PACK, packed false, tracking null. Synthetic tracking, labels, and carrier responses return TRACKING_NOT_A_SHIPMENT and do not create a shipment. Cancel ends at CANCELLED and fail ends at FAILED. A second cancel or fail is ILLEGAL_TRANSITION. A partial plan ships zero lines and reserves no stock. A repeated order number is DUPLICATE_FULFILLMENT. A repeated shipment key is DUPLICATE_SHIPMENT. Existing sales-closed fulfillment writes still create nothing.",
+      "testEvidence": "npx vitest run fulfillmentLocalGate, fulfillmentChain, trackingBlocked, and orderLocalGate at 2026-11-15T12:19+01:00: 4 files, 21 passed, 1 skipped, 0 failed. The skipped case writes the protected database and was not run. Synthetic orders only. No live supplier or carrier call.",
+      "remainingWork": "Live supplier acceptance and a carrier account remain owner actions and are outside this technical gate. Customer notification stays on FIN-M15-NOTIFICATION.",
+      "blocker": null,
+      "nextAction": "Do not treat a synthetic tracking number, label, or carrier response as a shipment."
     },
     {
       "id": "FIN-M16-PUBLISH",
@@ -651,20 +695,23 @@
       "dependencies": [
         "FIN-M15-NOTIFICATION"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/buzzardNative/runtimeCore.js",
         "server/lib/eventBus.js",
         "server/lib/exceptionBus.js",
         "server/lib/controlCenter.js",
         "server/lib/commerce/coreEngineChain.js",
-        "server/lib/privacyRedact.js"
+        "server/lib/privacyRedact.js",
+        "server/lib/pim/catalogPublishGate.js",
+        "server/lib/pim/productCatalogPublish.js",
+        "server/__tests__/catalogPublishGate.test.mjs"
       ],
-      "implementationEvidence": "publish returns UNKNOWN for an engine reply and BLOCKED_EXTERNAL for shipment, order, refund, and mock topics. queued, sent, and deliveryConfirmed stay false. Caller sent, delivered, acknowledged, and live flags are ignored. Timeout and network failure stay FAILED. A repeated task id returns DUPLICATE_EVENT and does not push a second bus row. Audit result is blocked. Email and card values are redacted before the bus, the event row, the exception context, and the system-event metadata. createNotification does not insert a PENDING row. prepareOrder does not insert a PREPARED order or reserve stock.",
-      "testEvidence": "npx vitest run publishChain, buzzardNativePhase7, buzzardNativeRuntime, buzzardNativePhase10, masterIntegrationFoundation, and masterIntegrationPhase2 at 2026-11-12T15:56:31+01:00: 6 files, 36 passed, 0 failed.",
-      "remainingWork": "The direct reservation write is closed in FIN-M17-INVENTORY. Live providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from cartService.addItem. A catalog quantity is still used as a dry-run cart ceiling."
+      "implementationEvidence": "A catalog plan does not publish a product. Missing product, category, price, stock, or image facts stay unverified, and price and stock stay null so the product is not sellable. Missing translations are listed and translationsComplete stays false. A non-EU27 country is OUT_OF_SCOPE. Greece maps to EL and stays in scope, but the marketplace is not authorized. Caller published, sellable, live, and marketplaceAuthorized flags are ignored. A repeated key is DUPLICATE_PUBLISH. A timeout stays FAILED, and the retry records a second attempt without publishing. Synthetic input is MOCK_NOT_A_PUBLISH. publishProduct and publishDryRun no longer read or write the catalog. A demo SKU stays SKIPPED_DEMO. Any other SKU returns SALES_CLOSED. productionReady stays false. The in-process bus publish remains undelivered.",
+      "testEvidence": "npx vitest run catalogPublishGate and publishChain at 2026-11-15T12:27+01:00: 2 files, 5 passed, 1 skipped, 0 failed. The skipped bus case writes the protected database and was not run. Synthetic products only. No live marketplace call.",
+      "remainingWork": "A live marketplace account and human publish approval remain owner actions and are outside this technical gate. Stock reservation stays on FIN-M17-INVENTORY.",
+      "blocker": null,
+      "nextAction": "Do not show a product for sale without verified price, stock, images, translations, and marketplace authority."
     },
     {
       "id": "FIN-M17-INVENTORY",
@@ -673,7 +720,7 @@
       "dependencies": [
         "FIN-M16-PUBLISH"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/inventoryIntegration.js",
         "server/lib/priceStockQueue.js",
@@ -681,13 +728,15 @@
         "server/lib/supplierIntegrationHub.js",
         "server/lib/dbOrders.js",
         "server/lib/pim/productCore.js",
-        "server/lib/cartCheckout.js"
+        "server/lib/cartCheckout.js",
+        "server/lib/commerce/inventoryGate.js",
+        "server/__tests__/inventoryLocalGate.test.mjs"
       ],
-      "implementationEvidence": "reserve writes no inventory_sot_reservations row. While sales are closed the first code is SALES_CLOSED. reasons keeps ORDER_UNVERIFIED, STOCK_UNVERIFIED, SUPPLIER_COST_UNVERIFIED, STALE_STOCK, and MOCK_STOCK when those apply. Caller live, verified, approved, and available flags are ignored. An existing idempotency key returns DUPLICATE_RESERVATION and does not insert a second row. release marks only an existing local row RELEASED and returns purchased false. expireReservations changes nothing. decrementStock does not change product stock. Price and supplier stock sync, snapshot, and caller success status do not write stock. Catalog import stores stock as null. A direct product stock update is ignored. Legacy cart quantity writes, the cc_cart item insert, checkout completion, and createOrderFromCart do not treat catalog stock as a purchase.",
-      "testEvidence": "npx vitest run inventoryReserve, masterIntegrationPhase2, masterIntegrationPhase3, fulfillmentChain, and publishChain at 2026-11-12T17:24+01:00: 5 files, 30 passed, 0 failed. The later run with part15RealSupplierConnector, part6Foundation, supplierSync, supplierAdapterBlocked, and part17OperationsReadiness at 2026-11-12T17:26+01:00: 8 files, 95 passed, 0 failed. node --test integrationLinks and workflowChain: 7 passed, 0 failed. Synthetic isolated databases. No live supplier call.",
-      "remainingWork": "The cart add write is closed in FIN-M18-CART. supplierSnapshot is closed in FIN-M19-SUPPLIER-SNAPSHOT. The isolated holds file still records a local counter. Live supplier stock, bank, carrier, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/commerce/integrationLinks.js openHolds.reserve. The isolated holds file still inserts a local counter."
+      "implementationEvidence": "Dropshipping stock does not become warehouse stock. A supplier report needs a matching product, SKU, and supplier. A negative, fractional, or non-numeric quantity is QTY_REJECTED. A conflicting report is STOCK_CONFLICT and the quantity is not published. German supplier stock does not apply in another EU country, including Greece as EL. Missing or old observations stay unverified. A reservation is not available stock and is not created without a verified customer order. Caller verified, available, and live flags are ignored. The publish quantity stays null. A repeated key is DUPLICATE_STOCK_UPDATE. Synthetic stock is MOCK_STOCK. A timeout stays FAILED, and the retry records a second attempt without reserving or purchasing. SALES_CLOSED remains in the reasons. No inventory table is read or written.",
+      "testEvidence": "npx vitest run inventoryLocalGate at 2026-11-15T12:32+01:00: 1 file, 4 passed, 0 failed. inventoryReserve was not run because it inserts into the protected database. Synthetic stock only. No live supplier call.",
+      "remainingWork": "A live supplier stock feed and account remain owner actions and are outside this technical gate. Cart handling stays on FIN-M18-CART.",
+      "blocker": null,
+      "nextAction": "Do not show supplier stock as available outside the country it was reported for."
     },
     {
       "id": "FIN-M18-CART",
@@ -696,7 +745,7 @@
       "dependencies": [
         "FIN-M17-INVENTORY"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/cartService.js",
         "server/lib/commerce/checkoutService.js",
@@ -704,13 +753,15 @@
         "server/lib/commerce/coreEngineChain.js",
         "server/lib/commerce/pricingIntegration.js",
         "server/lib/commerce/paymentSandbox.js",
-        "server/lib/commerce/workflowChain.js"
+        "server/lib/commerce/workflowChain.js",
+        "server/lib/commerce/cartGate.js",
+        "server/__tests__/cartLocalGate.test.mjs"
       ],
-      "implementationEvidence": "addItem does not insert or update a commerce_cart_items row. While sales are closed the first code is SALES_CLOSED. reasons include STOCK_UNVERIFIED, SUPPLIER_COST_UNVERIFIED, ORDER_UNVERIFIED, STALE_STOCK, MOCK_STOCK, and PRICE_POLICY_BLOCKED. Caller live, verified, and available flags are ignored. An existing line or idempotency key returns DUPLICATE_CART_ITEM and does not change quantity. updateItemQuantity does not write. startCheckout, validateCheckout, completeCheckout, and transitionCheckout do not create or advance a checkout while sales are closed. buildImmutableSnapshot does not return ok true from catalog saleable quantity. applyPriceChange does not write a price after approval. sandboxAuthorize does not mint a payment id. foldTracking ignores a delivered caller code. A silent payment attempt returns ok false.",
-      "testEvidence": "npx vitest run cartCheckoutGate, masterIntegrationPhase2, masterIntegrationPhase3, part8Foundation, masterCompletion, and ecosystemScorecard at 2026-11-12T17:36+01:00: 6 files, 47 passed, 0 failed. node --test workflowChain at 2026-11-12T17:37+01:00: 4 passed, 0 failed. Synthetic. No live payment or carrier call.",
-      "remainingWork": "supplierSnapshot is closed in FIN-M19-SUPPLIER-SNAPSHOT. The isolated holds file still records a local counter. Live bank, carrier, supplier, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/commerce/integrationLinks.js openHolds.reserve."
+      "implementationEvidence": "A cart line stays separate from an order. A mismatched customer, product, or SKU is CART_RELATION_MISMATCH. A zero, negative, or fractional quantity is QTY_REJECTED. A non-EU27 country is OUT_OF_SCOPE, while product eligibility stays UNVERIFIED on its own. An unverified product is not purchasable. Price and stock stay UNKNOWN, so subtotal and total stay null. Shipping, VAT, and discount stay null instead of a supplied number. A repeated cart line or key is DUPLICATE_CART_ITEM. Synthetic input is MOCK_NOT_COMMERCIAL. Checkout does not start an order, reservation, or payment. A timeout stays FAILED, and the retry records a second attempt without purchasing. SALES_CLOSED remains in the reasons. No cart table is read or written.",
+      "testEvidence": "npx vitest run cartLocalGate at 2026-11-15T12:35+01:00: 1 file, 3 passed, 0 failed. cartCheckoutGate was not run because it writes the protected database. Synthetic carts only. No live payment or carrier call.",
+      "remainingWork": "Live bank, carrier, supplier, and notification accounts remain owner actions and are outside this technical gate. Supplier snapshot handling stays on FIN-M19-SUPPLIER-SNAPSHOT.",
+      "blocker": null,
+      "nextAction": "Do not turn a cart line into an order or a total while price, stock, shipping, VAT, or discount is UNKNOWN."
     },
     {
       "id": "FIN-M19-SUPPLIER-SNAPSHOT",
@@ -719,7 +770,7 @@
       "dependencies": [
         "FIN-M18-CART"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/workflowChain.js",
         "server/lib/supplier/realSupplierConnector.js",
@@ -728,13 +779,15 @@
         "server/lib/commerce/orderService.js",
         "server/lib/commerce/pricingIntegration.js",
         "server/lib/importPipeline.js",
-        "server/lib/logisticsFulfillment.js"
+        "server/lib/logisticsFulfillment.js",
+        "server/lib/supplier/supplierSnapshotGate.js",
+        "server/__tests__/supplierSnapshotLocalGate.test.mjs"
       ],
-      "implementationEvidence": "supplierSnapshot returns ok false. A missing quantity stays qty UNKNOWN and code QTY_UNKNOWN. A caller integer is not adopted. Timeout keeps the previous local quantity and bought false. Caller live, verified, available, and approved flags are ignored. reasons include SALES_CLOSED, STOCK_UNVERIFIED, SUPPLIER_COST_UNVERIFIED, ORDER_UNVERIFIED, STALE_STOCK, and MOCK_STOCK when those apply. canAttemptLiveFetch does not return ok true. Direct fulfillment, shipment, supplier-order, and return-store writes do not create a commercial row. createReturn, warranty, inspection, and return status do not write a return or a refund. createOrderFromCheckout has no order insert after the refusal. A calculated price plus a shipping object does not open checkout while sales are closed. Catalog import finish status is BLOCKED_EXTERNAL.",
-      "testEvidence": "node --test workflowChain and tenModuleProgram at 2026-11-12T17:52+01:00: 6 passed and 4 passed, 0 failed. npx vitest run fulfillmentChain, orderFromCheckoutBlocked, cartCheckoutGate, inventoryReserve, part15RealSupplierConnector, and part16TechnicalCompletion at 2026-11-12T17:52+01:00: 6 files, 64 passed, 0 failed. Later shippingAuthority, masterCompletion, orderFromCheckoutBlocked, and part6Foundation runs passed. Synthetic. No live supplier, bank, carrier, or notification call.",
-      "remainingWork": "The isolated hold counter is now labeled as a test fixture. Catalog saleable quantity is closed in FIN-M20-STOCK-AUTHORITY. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/commerce/cartService.js buildCouponTotals."
+      "implementationEvidence": "A supplier snapshot stays unverified. Supplier, SKU, and product must match. Currency that is not a three-letter code is CURRENCY_UNKNOWN. Price and stock stay UNKNOWN independently, and a supplied number is not adopted. A snapshot older than one day is STALE_SNAPSHOT and is not current. A German price or stock figure is not applied in another EU country. Greece maps to EL. A repeated key is DUPLICATE_SNAPSHOT. Conflicting price or quantity leaves selectedSource null. Synthetic input is MOCK_NOT_SUPPLIER. The snapshot does not create an order, a purchase, or a reservation. A timeout stays FAILED, and the retry records a second attempt without choosing a quantity. SALES_CLOSED remains in the reasons. No supplier table is read or written.",
+      "testEvidence": "npx vitest run supplierSnapshotLocalGate at 2026-11-15T12:38+01:00: 1 file, 4 passed, 0 failed. workflowChain was not run because its later cases open sqlite files. Synthetic snapshots only. No live supplier call.",
+      "remainingWork": "A live supplier feed remains an owner action and is outside this technical gate. Catalog saleable quantity stays on FIN-M20-STOCK-AUTHORITY.",
+      "blocker": null,
+      "nextAction": "Do not adopt a supplier price or quantity from an unverified, stale, foreign, or conflicting snapshot."
     },
     {
       "id": "FIN-M20-STOCK-AUTHORITY",
@@ -743,20 +796,22 @@
       "dependencies": [
         "FIN-M19-SUPPLIER-SNAPSHOT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/integrationLinks.js",
         "server/lib/commerce/inventoryIntegration.js",
         "server/lib/pim/productCore.js",
         "server/lib/commerce/cartService.js",
         "server/lib/operations/stockEngine.js",
-        "server/lib/storefront/publicProductMapper.js"
+        "server/lib/storefront/publicProductMapper.js",
+        "server/lib/commerce/stockAuthorityGate.js",
+        "server/__tests__/stockAuthorityLocalGate.test.mjs"
       ],
-      "implementationEvidence": "openHolds.reserve keeps an isolated TEST_FIXTURE counter. The commercial code is SALES_CLOSED. fixtureCode stays RESERVED for the test counter. A repeated key or the same order id returns DUPLICATE_RESERVATION and does not insert a second row. commercialReservation, purchased, supplierConfirmed, and stockChanged stay false. Caller flags are ignored. createProduct stores a missing or mock quantity as null. An explicit number remains a fixture and is marked stockVerified false, purchasable false, and saleable null. getInventory returns saleable null, available null, commercialQty UNKNOWN, and code SALES_CLOSED. A fixture number adds INVENTORY_SOURCE_CONFLICT and FALSE_SALEABLE. Import, staging, migration, storefront mapping, merchant availability, analytics stock counts, and deriveStockStatus do not publish that number as in-stock. applyCoupon and validateCouponForCart do not write a coupon or return a discounted total.",
-      "testEvidence": "node --test integrationLinks and workflowChain at 2026-11-12T18:01+01:00: 7 passed, 0 failed. npx vitest run stockAuthority, masterIntegrationPhase2, part6Foundation, part7Foundation, part16TechnicalCompletion, inventoryReserve, and cartCheckoutGate at 2026-11-12T18:01+01:00: 7 files, 77 passed, 0 failed. Later part17, part18, checkoutVat, commerceCoupon, and part8 also passed. Synthetic. No live supplier or payment call.",
-      "remainingWork": "Coupon totals are closed in FIN-M21-COUPON-GATE. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/commerce/commerceCouponService.js resolveCouponDiscount. The math helper still returns ok true for WELCOME10. That return is not a commercial total."
+      "implementationEvidence": "Stock authority does not make a supplier report saleable. A missing supplier, SKU, or product match is STOCK_RELATION_MISMATCH. A missing source is STOCK_SOURCE_UNVERIFIED. Source reliability stays UNVERIFIED and the quantity stays null. Caller verified, available, and sellable flags are ignored. Stale stock stays UNKNOWN. A conflicting quantity is STOCK_CONFLICT and no source is selected. German stock does not apply in another EU country, including Greece as EL. Synthetic input is MOCK_NOT_AUTHORITY. The decision does not reserve or purchase. A repeated key is DUPLICATE_STOCK_DECISION. A timeout stays FAILED, and the retry records a second attempt without a quantity. SALES_CLOSED remains in the reasons. No stock table is read or written.",
+      "testEvidence": "npx vitest run stockAuthorityLocalGate at 2026-11-15T12:42+01:00: 1 file, 3 passed, 0 failed. stockAuthority was not run because it writes catalog products through the protected database path. Synthetic reports only. No live supplier call.",
+      "remainingWork": "A live supplier stock feed remains an owner action and is outside this technical gate. Coupon totals stay on FIN-M21-COUPON-GATE.",
+      "blocker": null,
+      "nextAction": "Do not treat a catalog number or a caller sellable flag as stock authority."
     },
     {
       "id": "FIN-M21-COUPON-GATE",
@@ -765,19 +820,21 @@
       "dependencies": [
         "FIN-M20-STOCK-AUTHORITY"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/cartService.js",
         "server/lib/commerce/checkoutService.js",
         "server/lib/commerce/commerceValidation.js",
         "server/plugins/ordersPlugin.js",
-        "server/lib/customerCheckout.js"
+        "server/lib/customerCheckout.js",
+        "server/lib/commerce/couponGate.js",
+        "server/__tests__/couponLocalGate.test.mjs"
       ],
-      "implementationEvidence": "computeOrderTotals no longer defaults a missing shipping amount to zero or a missing VAT rate to 19. Those fields stay null and the total stays null. buildCouponTotals returns discount null, discountedSubtotal null, taxBase null, and commercialTotal null. A code is BLOCKED with SALES_CLOSED first and COUPON_UNVERIFIED. An empty code is UNKNOWN. Expired, inactive, and mock or test codes add COUPON_EXPIRED, COUPON_INACTIVE, or MOCK_COUPON. Caller valid, verified, active, approved, and live flags are ignored. validateCouponForCart returns the same refusal after a tamper check. applyCoupon does not write. removeCoupon clears only commerce_carts.coupon_code and returns localFieldCleared true, commercialDiscountApplied false, and no order, payment, or refund. Repeating apply or remove does not create a second commercial row. computeOrderTotals ignores the discount argument. ordersPlugin.calculateQuote and customerCheckout.calculateCheckoutQuote do not subtract a coupon. saveCheckoutDraft does not store a draft while sales are closed. DELETE /api/commerce/cart/:id/coupon returns success false and does not claim a commercial discount. resolveCouponDiscount still returns the WELCOME10 math result because commerceCoupon.test.mjs requires that helper. That result is not applied as a cart or order total.",
-      "testEvidence": "npx vitest run cartCouponGate, commerceCoupon, and part8Foundation at 2026-11-12T18:10+01:00: 3 files, 26 passed, 0 failed. Earlier cartCheckoutGate and orderFromCheckoutBlocked in the same coupon edit passed before the final assertion fix. Synthetic isolated database. No live payment or supplier call.",
-      "remainingWork": "The arithmetic and commercial split is recorded in FIN-M22-COUPON-AUTHORITY. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from lib/checkout/coupons.ts validateCoupon. The client helper can still return valid true for WELCOME10. That return is not a cart discount."
+      "implementationEvidence": "A coupon check does not apply a discount. A mismatched customer, product, SKU, or campaign is COUPON_RELATION_MISMATCH. An expired coupon is COUPON_EXPIRED and a future start is COUPON_NOT_STARTED. A spent campaign limit is COUPON_USAGE_EXCEEDED and a spent customer limit is COUPON_CUSTOMER_LIMIT. A missing rate or amount stays null and is DISCOUNT_UNKNOWN. An unverified coupon stays unapplied, with total null. A currency or country mismatch is blocked. Greece maps to EL. Caller valid, approved, and active flags are ignored. A repeated key is DUPLICATE_COUPON. Synthetic input is MOCK_NOT_CAMPAIGN. The check does not create an order, a payment, or a reservation. A timeout stays FAILED, and the retry records a second attempt without a discount. SALES_CLOSED remains in the reasons. No coupon table is read or written.",
+      "testEvidence": "npx vitest run couponLocalGate at 2026-11-15T12:44+01:00: 1 file, 3 passed, 0 failed. cartCouponGate was not run because it writes coupons and carts in the protected database. Synthetic coupons only. No live payment call.",
+      "remainingWork": "A live campaign account remains an owner action and is outside this technical gate. Coupon authority stays on FIN-M22-COUPON-AUTHORITY.",
+      "blocker": null,
+      "nextAction": "Do not apply a coupon amount while the campaign, window, limit, currency, or country is unverified."
     },
     {
       "id": "FIN-M22-COUPON-AUTHORITY",
@@ -786,22 +843,25 @@
       "dependencies": [
         "FIN-M21-COUPON-GATE"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/commerce/commerceCouponService.js",
+        "server/lib/coupons.js",
         "server/lib/commerce/cartService.js",
         "server/plugins/commerceCorePlugin.js",
         "server/plugins/ordersPlugin.js",
         "server/lib/dbOrders.js",
         "lib/checkout/totals.ts",
         "lib/cart.tsx",
-        "lib/commerce/cartBridge.ts"
+        "lib/commerce/cartBridge.ts",
+        "server/lib/commerce/couponAuthorityGate.js",
+        "server/__tests__/couponAuthorityLocalGate.test.mjs"
       ],
-      "implementationEvidence": "resolveCouponDiscount still returns ok true and discount 5 for WELCOME10, and ok true and discount 5 for BUZZARD5. arithmeticOnly is true. commercialApplied, couponVerified, and applied are false. discountedSubtotal, taxBase, and commercialTotal stay null. The commercial code is SALES_CLOSED. Caller valid, verified, active, approved, and live flags are ignored. An empty code is UNKNOWN with discount null. An unknown code is BLOCKED with discount null. validateCouponRequest returns ok false and discount null, while arithmeticDiscount keeps the math result. computeOrderTotals does not reduce the tax base by that number. clearCart deletes only the targeted cart rows and coupon field. A second call stays idempotent. Another cart, commerce_orders, and commerce_checkouts stay unchanged. removeItem deletes only the named local line. createOrderFromCartWithPayment does not open a payment session or notify a customer. calculateQuote returns SALES_CLOSED and total null while sales are closed. Storefront calculateOrderQuote and the cart total no longer subtract a client coupon.",
-      "testEvidence": "npx vitest run cartCouponGate and commerceCoupon at 2026-11-12T18:19+01:00: 2 files, 12 passed, 0 failed. part8Foundation, cartCheckoutGate, and orderFromCheckoutBlocked at 2026-11-12T18:19+01:00: 3 files, 27 passed, 0 failed. The existing WELCOME10 assertion ok true and discount 5 stayed unchanged. Synthetic isolated database. No live payment or supplier call.",
-      "remainingWork": "Client validateCoupon is separated in this same record. Campaign and admin coupon entry points are closed in FIN-M23-COUPON-ENTRIES. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/marketingLoyalty.js completeReferral. It can still credit reward points and return ok true."
+      "implementationEvidence": "Coupon authority does not authorize a campaign. A missing source is CAMPAIGN_SOURCE_UNKNOWN. A mismatched campaign is COUPON_CAMPAIGN_MISMATCH. Caller verified, authorized, approved, and active flags are ignored, so the owner stays CAMPAIGN_OWNER_UNVERIFIED. Synthetic input is MOCK_NOT_CAMPAIGN. An expired campaign is CAMPAIGN_EXPIRED and a cancelled campaign is CAMPAIGN_CANCELLED. Country and currency scope are checked separately. Greece maps to EL. Conflicting authority records return COUPON_AUTHORITY_CONFLICT and select nothing. The authority discount stays null. A repeated key is DUPLICATE_AUTHORITY. A timeout stays FAILED, and the retry records a second attempt without a payment. The FIN-M21 gate still returns COUPON_UNVERIFIED with a null discount. WELCOME10 still returns arithmetic discount 5 with commercialApplied false and commercialTotal null. No coupon table is read or written.",
+      "testEvidence": "npx vitest run couponAuthorityLocalGate, couponLocalGate, and commerceCoupon at 2026-11-15T12:46+01:00: 3 files, 13 passed, 0 failed. cartCouponGate was not run because it writes coupons and carts in the protected database. Synthetic campaigns only. No live campaign call.",
+      "remainingWork": "A live campaign authority remains an owner action and is outside this technical gate. Campaign entry points stay on FIN-M23-COUPON-ENTRIES.",
+      "blocker": null,
+      "nextAction": "Do not treat WELCOME10 arithmetic or a caller authorized flag as campaign authority."
     },
     {
       "id": "FIN-M23-COUPON-ENTRIES",
@@ -810,7 +870,7 @@
       "dependencies": [
         "FIN-M22-COUPON-AUTHORITY"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "lib/checkout/coupons.ts",
         "lib/checkout/totals.ts",
@@ -818,13 +878,15 @@
         "components/CheckoutForm.tsx",
         "lib/market-engine/price.ts",
         "server/lib/customerCheckout.js",
-        "server/lib/marketingLoyalty.js"
+        "server/lib/marketingLoyalty.js",
+        "server/lib/commerce/couponEntryGate.js",
+        "server/__tests__/couponEntryLocalGate.test.mjs"
       ],
-      "implementationEvidence": "validateCoupon still returns valid true and discount 5 for WELCOME10, and valid true and discount 5 for BUZZARD5. arithmeticOnly is true. commercialApplied, couponVerified, and applied are false. discountedSubtotal, taxBase, and commercialTotal stay null. couponStatus is BLOCKED and the commercial code is SALES_CLOSED. Caller valid, verified, active, approved, and live flags are ignored. An empty code is UNKNOWN with discount null. NOTREAL and MOCK-SAVE are BLOCKED with discount null. EXPIRED10 and a caller-supplied past expiry add COUPON_EXPIRED. The cart apply path does not store the code. Checkout no longer renders a savings line from a quote discount. calculateDisplayPrice does not subtract discountAmount. createCouponAdmin does not insert a coupon. applyCampaign does not return a final total. useCampaign does not insert a promotion use. adjustPoints does not change a points balance or ledger.",
-      "testEvidence": "npx vitest run lib/checkout/coupons.test.ts, cartCouponGate, and commerceCoupon at 2026-11-12T18:27+01:00: 3 files, 14 passed, 0 failed. The earlier run with lib/market-engine/marketEngine.test.ts at 2026-11-12T18:26+01:00 passed inside 4 files and 62 tests. The existing server WELCOME10 assertion stayed ok true and discount 5. Synthetic. No live payment or supplier call.",
-      "remainingWork": "Referral completion is closed in FIN-M24-REFERRAL-REWARD. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/marketingLoyalty.js updatePreferences. A stored preference is not a reward or a verified opt-in delivery."
+      "implementationEvidence": "A coupon entry passes through the FIN-M21 gate and the FIN-M22 authority check. An empty code is COUPON_CODE_EMPTY. A malformed code is COUPON_CODE_INVALID. A broken customer, product, or SKU link is COUPON_RELATION_MISMATCH. A future start is COUPON_NOT_STARTED, an expired code is COUPON_EXPIRED, and a cancelled campaign is CAMPAIGN_CANCELLED. Currency and country mismatches stay blocked. An unverified code is COUPON_UNKNOWN with a null discount and a null commercial total. Caller valid, approved, active, and verified flags are ignored. Synthetic input is MOCK_NOT_CAMPAIGN. A repeated key is DUPLICATE_COUPON_ENTRY. A timeout stays FAILED, and the retry records a second attempt without a payment. WELCOME10 arithmetic stays discount 5 with commercialApplied false. The client validator stays arithmeticOnly. No coupon table is read or written.",
+      "testEvidence": "npx vitest run couponEntryLocalGate, couponLocalGate, couponAuthorityLocalGate, commerceCoupon, and lib/checkout/coupons.test.ts at 2026-11-15T12:49+01:00: 5 files, 19 passed, 0 failed. cartCouponGate was not run because it writes coupons and carts in the protected database. Synthetic codes only. No live campaign call.",
+      "remainingWork": "A live campaign account remains an owner action and is outside this technical gate. Referral rewards stay on FIN-M24-REFERRAL-REWARD.",
+      "blocker": null,
+      "nextAction": "Do not store an entered coupon code as a commercial discount."
     },
     {
       "id": "FIN-M24-REFERRAL-REWARD",
@@ -833,16 +895,18 @@
       "dependencies": [
         "FIN-M23-COUPON-ENTRIES"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/marketingLoyalty.js",
-        "server/plugins/marketingLoyaltyPlugin.js"
+        "server/plugins/marketingLoyaltyPlugin.js",
+        "server/lib/commerce/referralAuthorityGate.js",
+        "server/__tests__/referralAuthorityLocalGate.test.mjs"
       ],
-      "implementationEvidence": "completeReferral does not change a pending referral to completed and does not write a ledger row, loyalty account, or points balance. rewardPoints stays null. A stored reward_points value is returned only as arithmeticReward with arithmeticOnly true. Caller completed, paid, verified, approved, successful, and live flags are ignored. Reasons start with SALES_CLOSED and include PAYMENT_UNVERIFIED and REFERRAL_UNVERIFIED. A second call and one of two paired calls report duplicate true and still write nothing. cancelReferral does not reverse a reward, change a balance, or create a negative balance. createReferral does not insert a referral. createCampaign and updateCampaign do not store a coupon campaign or a discount. createLoyaltyAccount does not insert an account. The complete and cancel API responses keep ok false, earned false, and rewardPoints null.",
-      "testEvidence": "npx vitest run referralRewardGate and cartCouponGate at 2026-11-12T18:32+01:00: 2 files, 9 passed, 0 failed. Earlier the same referral file passed 3 tests, and the prior coupon files stayed green. Synthetic isolated database. No live payment or supplier call.",
-      "remainingWork": "Marketing preference consent is closed in FIN-M25-MARKETING-CONSENT. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/crmLoyalty.js markCartRecovered. A recovered cart flag is not a completed sale."
+      "implementationEvidence": "A referral check does not create a reward. A missing referrer is REFERRER_UNKNOWN and a missing referred customer is REFERRED_UNKNOWN. The same customer on both sides is SELF_REFERRAL. A second invite for the same customer is DUPLICATE_REFERRAL. An malformed code is REFERRAL_CODE_INVALID and a code without a campaign source is REFERRAL_CODE_UNKNOWN. A missing reward amount stays null and is REWARD_UNKNOWN. A complete-looking referral stays REWARD_UNVERIFIED. Caller verified, approved, eligible, and completed flags are ignored. An expired campaign is CAMPAIGN_EXPIRED, a future start is CAMPAIGN_NOT_STARTED, and a cancelled campaign is CAMPAIGN_CANCELLED. Country and currency scope are checked separately. Greece maps to EL. A conflicting amount is REFERRAL_CONFLICT and selects nothing. Synthetic input is MOCK_NOT_REWARD. The same key is DUPLICATE_REWARD. A timeout stays FAILED, and the retry records a second attempt without a balance change, transfer, order, or payment. WELCOME10 arithmetic stays discount 5 with a null commercial total. Coupon entry stays unapplied. No referral table is read or written.",
+      "testEvidence": "npx vitest run referralAuthorityLocalGate, couponEntryLocalGate, commerceCoupon, and lib/checkout/coupons.test.ts at 2026-11-15T12:51+01:00: 4 files, 16 passed, 0 failed. referralRewardGate was not run because it inserts referral rows in the protected database. Synthetic referrals only. No live payment call.",
+      "remainingWork": "A live campaign and payment account remain owner actions and are outside this technical gate. Marketing consent stays on FIN-M25-MARKETING-CONSENT.",
+      "blocker": null,
+      "nextAction": "Do not credit a referral reward while the customers, campaign, country, currency, or amount are unverified."
     },
     {
       "id": "FIN-M25-MARKETING-CONSENT",
@@ -851,7 +915,7 @@
       "dependencies": [
         "FIN-M24-REFERRAL-REWARD"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/marketingLoyalty.js",
         "server/plugins/marketingLoyaltyPlugin.js",
@@ -860,13 +924,15 @@
         "server/lib/privacy/legalDisclosure.js",
         "server/lib/notificationEngine.js",
         "server/plugins/aiAutomationPlugin.js",
-        "server/lib/crmLoyalty.js"
+        "server/lib/crmLoyalty.js",
+        "server/lib/commerce/marketingConsentGate.js",
+        "server/__tests__/marketingConsentLocalGate.test.mjs"
       ],
-      "implementationEvidence": "updatePreferences does not store an opt-in from consent, approved, verified, or channel-true flags. Missing source, scope, and time stay UNKNOWN. Marketing permission is BLOCKED and consentVerified is false. An explicit withdrawal stores channel flags at 0, returns WITHDRAWN, and does not send email, SMS, or WhatsApp. A repeat withdrawal and both paired calls stay duplicate and leave one row at 0. A later grant does not flip the row back to 1. Customer profile patches keep a language change and drop a marketing grant. Cookie records do not treat a marketing flag as lawful consent. Abandoned-cart automation returns marketing_consent_required and does not store the cart or queue recovery. CRM profile marketing columns stay 0. earnPoints and redeemReward do not write points or an offer. Responses do not contain the supplied email address.",
-      "testEvidence": "npx vitest run marketingPreferenceGate, referralRewardGate, notificationChain, and cartCouponGate at 2026-11-12T18:39+01:00: 4 files, 18 passed, 0 failed. Synthetic isolated database. No live payment, message, or supplier call.",
-      "remainingWork": "Cart recovery is closed in FIN-M26-CART-RECOVERY. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/marketingCenter.js createCampaign. A stored campaign is not a sale or a verified consent."
+      "implementationEvidence": "Marketing consent is stored per channel in memory. Email, SMS, and push do not share a grant. A caller consent, approved, verified, or subscribed flag does not open a channel. A prechecked box is DEFAULT_CONSENT_REJECTED. Missing source, scope, or time is CONSENT_UNKNOWN. A complete-looking grant stays CONSENT_UNVERIFIED and BLOCKED. Withdrawal sets only that channel to WITHDRAWN and a later grant does not reopen it. A conflicting grant and withdrawal is CONSENT_CONFLICT. Synthetic input is MOCK_NOT_CONSENT. A repeated key is DUPLICATE_CONSENT. A timeout sets the channel CLOSED, and the retry records a second attempt without sending. History records the channel and the code and does not store an address. No email, SMS, or ad is sent. Coupon arithmetic and referral rewards stay commercially closed. No preference table is read or written.",
+      "testEvidence": "npx vitest run marketingConsentLocalGate, referralAuthorityLocalGate, couponEntryLocalGate, and commerceCoupon at 2026-11-15T12:54+01:00: 4 files, 18 passed, 0 failed. marketingPreferenceGate was not run because it writes preference rows in the protected database. Synthetic customers only. No live message call.",
+      "remainingWork": "A live email, SMS, and advertising account remain owner actions and are outside this technical gate. Cart recovery stays on FIN-M26-CART-RECOVERY.",
+      "blocker": null,
+      "nextAction": "Do not send marketing on a channel that is UNKNOWN, BLOCKED, CLOSED, or WITHDRAWN."
     },
     {
       "id": "FIN-M26-CART-RECOVERY",
@@ -875,18 +941,21 @@
       "dependencies": [
         "FIN-M25-MARKETING-CONSENT"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/crmLoyalty.js",
         "server/plugins/crmLoyaltyPlugin.js",
         "server/lib/analyticsDashboard.js",
-        "server/lib/marketingCenter.js"
+        "server/lib/marketingCenter.js",
+        "server/lib/commerce/cartRecoveryGate.js",
+        "server/__tests__/cartRecoveryLocalGate.test.mjs",
+        "server/lib/commerce/marketingConsentGate.js"
       ],
-      "implementationEvidence": "markCartRecovered does not change an open cart to recovered and does not set recovered_at. Caller recovered, converted, purchased, paid, and successful flags are ignored. The result is ok false, code SALES_CLOSED, with ORDER_UNVERIFIED and PAYMENT_UNVERIFIED. recovered, converted, sale, revenue, order, and payment stay false or null. A repeat call and both paired calls are duplicate and write nothing. A customer without a profile is BLOCKED. A withdrawn profile stays WITHDRAWN. No notification, campaign, coupon, point balance, or offer is created. CRM status keeps recovered carts out of revenue and conversion totals. Abandoned-cart admin rows expose sale false and revenue null. Analytics purchase events and marketing conversion events are not stored. Sales summaries return revenue null, orders null, and recoveredIsSale false. addCampaignSpend and addPoints do not write.",
-      "testEvidence": "npx vitest run cartRecoveryGate, marketingPreferenceGate, notificationChain, and cartCouponGate at 2026-11-12T18:44+01:00: 4 files, 17 passed, 0 failed. Synthetic isolated database. No live payment, message, or supplier call.",
-      "remainingWork": "Campaign creation is closed in FIN-M27-CAMPAIGN-AUTHORITY. Live supplier stock, bank, carrier, VAT, FX, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/customerCheckout.js updateReviewStatus. An approved review is not a verified purchase."
+      "implementationEvidence": "Cart recovery does not message or sell. A mismatched customer is CART_OWNER_MISMATCH. A deleted cart is CART_DELETED and a cancelled cart is CART_CANCELLED. An active, ordered, or recently seen cart is CART_NOT_ABANDONED. Caller recovered, eligible, consent, and abandoned flags are ignored. Price, currency, and items stay null. Stock and price are not guaranteed, and a coupon is not added. Email and SMS are checked separately against FIN-M25 consent. UNKNOWN consent does not send. A withdrawn email channel is CONSENT_WITHDRAWN and does not authorize SMS. Synthetic input is MOCK_NOT_CART. A repeated key is DUPLICATE_RECOVERY. A timeout stays FAILED, and the retry records a second attempt without an order, payment, reservation, or message. Marketing consent remains ungranted. The cart total stays null. WELCOME10 arithmetic stays discount 5 with a null commercial total. No cart table is read or written.",
+      "testEvidence": "npx vitest run cartRecoveryLocalGate, marketingConsentLocalGate, cartLocalGate, and commerceCoupon at 2026-11-15T12:56+01:00: 4 files, 17 passed, 0 failed. cartRecoveryGate was not run because it writes recovery rows in the protected database. Synthetic carts only. No live message or payment call.",
+      "remainingWork": "A live email and SMS account remain owner actions and are outside this technical gate. Campaign authority stays on FIN-M27-CAMPAIGN-AUTHORITY.",
+      "blocker": null,
+      "nextAction": "Do not send a cart reminder without a verified channel consent and a verified abandoned cart."
     },
     {
       "id": "FIN-M27-CAMPAIGN-AUTHORITY",
@@ -895,20 +964,22 @@
       "dependencies": [
         "FIN-M26-CART-RECOVERY"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/marketingCenter.js",
         "server/plugins/marketingCenterPlugin.js",
         "server/lib/commerce/pricingPolicy.js",
         "server/lib/pim/productStagingService.js",
         "server/lib/orderManagement.js",
-        "server/plugins/orderManagementPlugin.js"
+        "server/plugins/orderManagementPlugin.js",
+        "server/lib/commerce/campaignAuthorityGate.js",
+        "server/__tests__/campaignAuthorityLocalGate.test.mjs"
       ],
-      "implementationEvidence": "createCampaign, updateCampaign, and deleteCampaign do not write. Repeat and paired creates stay duplicate and do not insert a second campaign. Budget and coupon stay null and unissued. updateProvider does not enable a provider. getCampaignBySlug does not return a landing URL. addCampaignSpend does not write spend. A caller fxVerified flag no longer becomes a CALLER_VERIFIED rate. promoteToPimCore does not create a catalog product while sales are closed; the dry-run path still returns without writing. addOrderNote does not store note text. Order split and fulfillment link responses are not HTTP 201 successes. OMS gross value and revenue stay null.",
-      "testEvidence": "npx vitest run marketingCampaignGate, shippingAuthority, fulfillmentChain, and notificationChain at 2026-11-12T18:50+01:00: 4 files, 24 passed, 0 failed. Earlier marketingCampaignGate, cartRecoveryGate, notificationChain, pricingFinance, and part16TechnicalCompletion: 5 files, 40 passed. Synthetic isolated database. No live payment, ad account, or supplier call.",
-      "remainingWork": "Review publication is closed in FIN-M28-REVIEW-AUTHORITY. Official VAT, FX, carrier tariffs, bank, marketplace, voice, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/customerSupport.js addCustomerMessage. A stored support message is not a sent customer notification."
+      "implementationEvidence": "Campaign authority does not create a discount. A missing campaign id, source record, or source name is CAMPAIGN_SOURCE_UNKNOWN. A missing owner is CAMPAIGN_OWNER_UNKNOWN. A synthetic campaign is MOCK_NOT_CAMPAIGN. Caller verified, approved, authorized, and active flags stay false. A complete local record stays CAMPAIGN_OWNER_UNVERIFIED because no owner authority is verified. Cancelled records are CAMPAIGN_CANCELLED. A future start is CAMPAIGN_NOT_STARTED. A past end is CAMPAIGN_EXPIRED. A missing window is CAMPAIGN_WINDOW_UNKNOWN. Country, currency, product, and category scopes are checked separately and return UNKNOWN or MISMATCH without a price. Conflicting source, record, or owner values return CAMPAIGN_AUTHORITY_CONFLICT. Discount, commercial total, budget, and spend stay null. A repeated key is DUPLICATE_CAMPAIGN. A timeout stays UNKNOWN, and the retry records a second attempt without an order, payment, reservation, or message. Coupon planning, coupon authority, and cart recovery remain commercially closed. WELCOME10 arithmetic stays discount 5 with a null commercial total. No campaign table is read or written.",
+      "testEvidence": "npx vitest run campaignAuthorityLocalGate, couponLocalGate, couponAuthorityLocalGate, cartRecoveryLocalGate, and commerceCoupon at 2026-11-15T12:59+01:00: 5 files, 23 passed, 0 failed. marketingCampaignGate was not run because it reads and writes campaign rows in the protected database. Synthetic campaigns only. No live discount, payment, or message call.",
+      "remainingWork": "Review publication stays on FIN-M28-REVIEW-AUTHORITY. A live campaign owner registry, ad account, and notification provider remain absent.",
+      "blocker": null,
+      "nextAction": "Do not apply a campaign discount without a verified owner, source record, date window, and country, currency, product, and category scope."
     },
     {
       "id": "FIN-M28-REVIEW-AUTHORITY",
@@ -917,7 +988,7 @@
       "dependencies": [
         "FIN-M27-CAMPAIGN-AUTHORITY"
       ],
-      "status": "VERIFIED_PARTIAL",
+      "status": "VERIFIED_COMPLETE",
       "sourceFiles": [
         "server/lib/customerCheckout.js",
         "server/plugins/customerCheckoutPlugin.js",
@@ -925,13 +996,15 @@
         "server/lib/productAi.js",
         "server/plugins/p1CatalogPlatformPlugin.js",
         "server/lib/customerSupport.js",
-        "server/plugins/customerSupportPlugin.js"
+        "server/plugins/customerSupportPlugin.js",
+        "server/lib/commerce/reviewAuthorityGate.js",
+        "server/__tests__/reviewAuthorityLocalGate.test.mjs"
       ],
-      "implementationEvidence": "updateReviewStatus does not set a review to approved. Caller approved, verified, and live flags are ignored. The result is ORDER_UNVERIFIED, published false, verifiedPurchase false, and customerNotified false. A repeat call and both paired calls stay unpublished. Rejection stores rejected and does not notify. Public approved lists stay empty. Catalog reviews stay pending with verified_purchase 0. Publishing moderation does not change the rating average. Helpful votes and seller replies do not write. Overview average and verified counts stay null. Product AI approval does not store a reviewer address. Support reply and ticket status updates do not notify the customer or return ok true.",
-      "testEvidence": "npx vitest run reviewAuthorityGate and notificationChain at 2026-11-12T19:08+01:00: 2 files, 7 passed, 0 failed. The same review file also passed with marketingCampaignGate and cartCouponGate at 2026-11-12T19:07+01:00: 3 files, 9 passed. Synthetic isolated database. No live payment, message, or supplier call.",
-      "remainingWork": "Support delivery is closed in FIN-M29-SUPPORT-DELIVERY. Official VAT, FX, carrier tariffs, bank, marketplace, voice, and notification providers remain absent.",
-      "blocker": "BLOCKED_EXTERNAL",
-      "nextAction": "Continue from server/lib/customerCheckout.js getCustomerProfile. A profile read must not return another customer's address or treat an address as a verified shipment."
+      "implementationEvidence": "Review authority does not publish a rating or mark a verified purchase. A missing customer is REVIEW_OWNER_UNKNOWN and a mismatched customer is REVIEW_OWNER_MISMATCH. A missing product is REVIEW_PRODUCT_UNKNOWN and a mismatched product is REVIEW_PRODUCT_MISMATCH. Conflicting review records are REVIEW_RECORD_CONFLICT. Caller verified, approved, purchased, and eligible flags are ignored. A synthetic review is MOCK_NOT_REVIEW. verifiedPurchase and published stay false. A missing order is PURCHASE_UNKNOWN. A structurally matching order stays PURCHASE_UNVERIFIED. Deleted and cancelled orders are ORDER_NOT_PURCHASE. An order for another product is ORDER_PRODUCT_MISMATCH. Ratings outside 1 to 5 are RATING_OUT_OF_RANGE and a missing rating is RATING_UNKNOWN. A second review for the same customer and product is DUPLICATE_REVIEW. Publish is PUBLISH_UNAUTHORIZED and does not notify the customer. Moderation without a moderator is MODERATION_UNKNOWN and does not create a verified purchase. A repeated publish is DUPLICATE_MODERATION. The same decision key is DUPLICATE_REVIEW_DECISION. An editor who is not the owner is REVIEW_ACTOR_MISMATCH. A matching edit is EDIT_NOT_APPLIED and a matching delete is DELETE_NOT_APPLIED. A timeout stays UNKNOWN, and the retry records a second attempt with publication closed. Catalog publish stays unpublished. Campaign authority stays unauthorized. Marketing consent stays ungranted. WELCOME10 arithmetic stays discount 5 with a null commercial total. No review table is read or written.",
+      "testEvidence": "npx vitest run reviewAuthorityLocalGate, campaignAuthorityLocalGate, marketingConsentLocalGate, catalogPublishGate, and commerceCoupon at 2026-11-15T13:03+01:00: 5 files, 24 passed, 0 failed. reviewAuthorityGate was not run because it writes review rows in the protected database. Synthetic reviews only. No live publication, notification, or payment call.",
+      "remainingWork": "Support delivery stays on FIN-M29-SUPPORT-DELIVERY. A live purchase ledger and review publication authority remain absent.",
+      "blocker": null,
+      "nextAction": "Do not publish a review or mark a verified purchase without a verified customer, product, order, and a separate moderation authority."
     },
     {
       "id": "FIN-M29-SUPPORT-DELIVERY",
@@ -1025,6 +1098,46 @@
       "remainingWork": "The missing-refund zero write is closed in FIN-M13-REFUND. The seven IMPLEMENTED tasks still lack acceptance evidence. Official VAT, FX, carrier tariffs, bank, marketplace, voice, and notification providers remain absent.",
       "blocker": "BLOCKED_EXTERNAL",
       "nextAction": "Continue from server/lib/customerCheckout.js calculateCheckoutQuote. Do not turn a missing subtotal into zero. Do not enable sales. Do not mark FIN-P0-AUTH VERIFIED_COMPLETE from the existing local tests."
+    },
+    {
+      "id": "FIN-M33-EU27-POSTCODE",
+      "module": "checkout",
+      "description": "Add the published postcode shape for the 11 EU members that still used the generic checkout pattern.",
+      "dependencies": [
+        "FIN-M5-EU27"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "lib/checkout/countries.ts",
+        "lib/checkout/vatShipping.test.ts"
+      ],
+      "implementationEvidence": "BG, HR, CY, EE, GR, LV, LT, LU, MT, SK, and SI no longer fall through to the generic ^[\\w\\s-]{3,12}$ pattern. The shapes follow the August 2026 UPU format column and the market code GR. Existing patterns for the other countries were not changed. VAT, currency, and shipping prices stay UNKNOWN. No carrier postcode file was added.",
+      "testEvidence": "npx vitest run lib/checkout/vatShipping.test.ts at 2026-11-15T10:13+01:00: 1 file, 3 passed, 0 failed. The same postal cases passed again inside the 4-test file at 2026-11-15T10:26+01:00. No protected database was opened.",
+      "remainingWork": "A number with the right shape can still be unassigned. Official VAT, FX, and carrier tariffs remain outside this task.",
+      "blocker": null,
+      "nextAction": "Do not treat a format match as a live delivery promise."
+    },
+    {
+      "id": "FIN-M34-DELIVERY-ESTIMATE",
+      "module": "checkout",
+      "description": "Remove unverified delivery day ranges from checkout and return UNKNOWN when no carrier tariff exists.",
+      "dependencies": [
+        "FIN-M7-SHIPPING-UNVERIFIED"
+      ],
+      "status": "VERIFIED_COMPLETE",
+      "sourceFiles": [
+        "data/global/market_country_overlay.json",
+        "lib/market/countries.ts",
+        "lib/market/delivery.ts",
+        "lib/market/context.tsx",
+        "components/CheckoutForm.tsx",
+        "lib/checkout/vatShipping.test.ts"
+      ],
+      "implementationEvidence": "The 35 overlay deliveryDays values and the 2-5 and 3-8 working-day fallbacks are gone. getDeliveryEstimate returns UNKNOWN. Checkout renders that value. taxRate fields, postal patterns, VAT, currency, and shipping prices were not changed. No carrier ETA was invented.",
+      "testEvidence": "npx vitest run of the checkout and delivery files at 2026-11-15T10:26+01:00: 9 files, 89 passed, 0 failed. The delivery case expects UNKNOWN for DE, AT, BG, HR, CY, EE, GR, LV, LT, LU, MT, SK, SI, FR, and ZZ. No protected database was opened.",
+      "remainingWork": "A verified carrier tariff is still absent. Sentences outside checkout, including aiChatService, the German locale file, and buzzard_europe_countries.json, were left unchanged.",
+      "blocker": null,
+      "nextAction": "Do not open a carrier account from this result. The payment-provider account remains unstarted."
     }
   ]
 }

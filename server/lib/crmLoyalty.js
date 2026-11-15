@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { db } = require("./db");
+const { decideMarketingConsent, persistWithdrawal, persistGrant, projectMarketingConsent } = require("./commerce/marketingConsentGate");
 
 function isEnabled() {
   return process.env.BUZZARD_CRM_LOYALTY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -25,52 +26,128 @@ function addPoints() {
   return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
 }
 
-function getCrmProfile(userId) {
-  const profile = db.prepare("SELECT * FROM crm_profiles WHERE user_id = ?").get(userId) || null;
-  const loyalty =
-    db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) ||
-    { points: 0, lifetime_points: 0, tier: "Bronze" };
-  return { profile, loyalty };
+function presentCrmProfile(row, userId) {
+  const consent = projectMarketingConsent(userId);
+  const profile = {
+    user_id: row && row.user_id != null ? row.user_id : userId,
+    phone: row && row.phone ? String(row.phone) : "",
+    country_code: row && row.country_code ? String(row.country_code) : "",
+    language: row && row.language ? String(row.language) : "",
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    whatsappPermission: consent.whatsappPermission,
+    marketingPermission: consent.marketingPermission,
+    granted: false,
+    consentVerified: false,
+  };
+  return { profile, loyalty: null, ...consent };
 }
 
-function upsertCrmProfile(userId, body = {}) {
-  const id = String(userId ?? "").trim();
-  if (!/^[1-9]\d{0,17}$/.test(id)) {
-    return { ok: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, granted: false, consentVerified: false, notificationSent: false };
-  }
-  const grant = body.marketingEmail === true || body.marketingSms === true || body.marketingWhatsapp === true || body.consent === true || body.approved === true || body.verified === true;
-  const withdrawn = body.marketingEmail === false || body.marketingSms === false || body.marketingWhatsapp === false || body.withdraw === true || body.unsubscribe === true;
+function getCrmProfile(userId) {
+  let row = null;
+  let loyalty = { points: 0, lifetime_points: 0, tier: "Bronze" };
   try {
-    db.prepare(
-      `INSERT INTO crm_profiles(
-         user_id, phone, country_code, language, marketing_email, marketing_sms, marketing_whatsapp
-       ) VALUES(?,?,?,?,?,?,?)
-       ON CONFLICT(user_id) DO UPDATE SET
-         country_code = excluded.country_code,
-         language = excluded.language,
-         marketing_email = 0,
-         marketing_sms = 0,
-         marketing_whatsapp = 0,
-         updated_at = CURRENT_TIMESTAMP`
-    ).run(id, "", (body.countryCode || "DE").toUpperCase(), body.language || "de-DE", 0, 0, 0);
-  } catch {
-    return {
-      ok: false,
-      code: "UNKNOWN",
-      marketingPermission: "BLOCKED",
-      stored: false,
-      granted: false,
-      withdrawn: false,
-      consentVerified: false,
-      notificationSent: false,
-      customerNotified: false,
-    };
+    row = db.prepare("SELECT user_id, phone, country_code, language FROM crm_profiles WHERE user_id = ?").get(userId) || null;
+    loyalty = db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) || loyalty;
+  } catch (error) {
+    if (!error || error.code !== "DATABASE_NOT_INITIALIZED") throw error;
   }
+  return { ...presentCrmProfile(row, userId), loyalty };
+}
+
+function storeCrmContact(userId, request) {
+  const fields = [];
+  const values = [];
+  if (Object.prototype.hasOwnProperty.call(request, "language")) {
+    fields.push("language = ?");
+    values.push(String(request.language || "").trim().slice(0, 32));
+  }
+  if (Object.prototype.hasOwnProperty.call(request, "phone")) {
+    fields.push("phone = ?");
+    values.push(String(request.phone || "").slice(0, 32));
+  }
+  if (Object.prototype.hasOwnProperty.call(request, "countryCode")) {
+    fields.push("country_code = ?");
+    values.push(String(request.countryCode || "").trim().slice(0, 8).toUpperCase());
+  }
+  if (!fields.length) return { contactStored: false, contactCode: "UNCHANGED" };
+  try {
+    const result = db.prepare(
+      `UPDATE crm_profiles SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`
+    ).run(...values, Number(userId));
+    return { contactStored: Number(result && result.changes) > 0, contactCode: Number(result && result.changes) > 0 ? "CONTACT_STORED" : "CONTACT_ABSENT" };
+  } catch (error) {
+    return { contactStored: false, contactCode: error && error.code === "DATABASE_NOT_INITIALIZED" ? "DATABASE_NOT_INITIALIZED" : "CONTACT_NOT_STORED" };
+  }
+}
+
+function explicitTrue(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
+}
+
+function explicitFalse(value) {
+  return value === false || value === 0 || value === "0" || value === "false";
+}
+
+function crmConsentIntents(body = {}) {
+  const blanketGrant = explicitTrue(body.ok)
+    || explicitTrue(body.authorized)
+    || explicitTrue(body.granted)
+    || body.status === 200
+    || explicitTrue(body.consent)
+    || explicitTrue(body.approved)
+    || explicitTrue(body.verified);
+  const blanketWithdraw = body.withdraw === true || body.unsubscribe === true;
+  const spec = {
+    email: { grant: explicitTrue(body.marketingEmail), withdraw: explicitFalse(body.marketingEmail) },
+    sms: { grant: explicitTrue(body.marketingSms), withdraw: explicitFalse(body.marketingSms) },
+    push: { grant: explicitTrue(body.marketingPush) || explicitTrue(body.pushOptIn), withdraw: explicitFalse(body.marketingPush) || explicitFalse(body.pushOptIn) },
+  };
+  const intents = { blanketWithdraw };
+  for (const channel of ["email", "sms", "push"]) {
+    const withdraw = blanketWithdraw || spec[channel].withdraw;
+    intents[channel] = { grant: !withdraw && (blanketGrant || spec[channel].grant), withdraw };
+  }
+  return intents;
+}
+
+function crmConsentDecision(customerId, channel, body, action) {
+  const grant = action === "grant";
+  return decideMarketingConsent({
+    customerId: String(customerId),
+    channel,
+    action,
+    withdraw: !grant,
+    consent: grant,
+    source: grant ? (body.consentSource || body.source || "") : (body.consentSource || body.source || "customer-opt-out"),
+    scope: grant ? (body.consentScope || body.scope || "") : (body.consentScope || body.scope || `marketing-${channel}`),
+    consentedAt: grant ? (body.consentAt || body.consentedAt || "") : (body.consentAt || body.consentedAt || "2026-11-15T00:00:00.000Z"),
+    timeout: body.timeout === true,
+    networkError: body.networkError === true,
+    idempotencyKey: `${body.idempotencyKey || customerId}:${channel}:${action}:crm`,
+  });
+}
+
+function crmConsentResult(id, decisions, persisted, contact = {}) {
+  const consent = projectMarketingConsent(id);
+  const failed = decisions.find((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR");
+  const withdrawn = decisions.some((decision) => decision.code === "CONSENT_WITHDRAWN" || decision.code === "DUPLICATE_CONSENT");
+  const durable = persisted === true;
+  const marketingPermission = consent.marketingPermission === "CLOSED"
+    ? "CLOSED"
+    : consent.marketingPermission === "WITHDRAWN" || withdrawn
+      ? "WITHDRAWN"
+      : decisions.length > 0
+        ? "BLOCKED"
+        : consent.marketingPermission;
   return {
     ok: false,
-    code: grant && !withdrawn ? "CONSENT_UNVERIFIED" : withdrawn ? "WITHDRAWN" : "CONSENT_UNVERIFIED",
-    marketingPermission: withdrawn ? "WITHDRAWN" : "BLOCKED",
-    stored: true,
+    code: failed ? failed.code : durable ? "WITHDRAWN" : withdrawn ? "WITHDRAWN_NOT_PERSISTED" : "CONSENT_UNVERIFIED",
+    gateCode: failed ? failed.code : withdrawn ? "CONSENT_WITHDRAWN" : "CONSENT_UNVERIFIED",
+    marketingPermission,
+    stored: durable,
+    persisted: durable,
     granted: false,
     withdrawn,
     consentVerified: false,
@@ -78,7 +155,51 @@ function upsertCrmProfile(userId, body = {}) {
     notificationSent: false,
     customerNotified: false,
     callerFlagIgnored: true,
+    marketingSendsOpen: false,
+    productionReady: false,
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    whatsappPermission: consent.whatsappPermission,
+    contactStored: contact.contactStored === true,
+    contactCode: contact.contactCode || "UNCHANGED",
   };
+}
+
+function upsertCrmProfile(userId, body = {}) {
+  const request = body && typeof body === "object" ? body : {};
+  const id = String(userId ?? "").trim();
+  if (!/^[1-9]\d{0,17}$/.test(id)) {
+    decideMarketingConsent({
+      customerId: "",
+      channel: "email",
+      action: "grant",
+      idempotencyKey: `crm-missing:${id || "none"}:email:grant`,
+    });
+    return { ok: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, granted: false, consentVerified: false, notificationSent: false };
+  }
+  const intents = crmConsentIntents(request);
+  const decisions = [];
+  for (const channel of ["email", "sms", "push"]) {
+    if (intents[channel].withdraw) decisions.push(crmConsentDecision(id, channel, request, "withdraw"));
+    else if (intents[channel].grant) {
+      const decision = crmConsentDecision(id, channel, request, "grant");
+      decisions.push(decision);
+      persistGrant(decision);
+    }
+  }
+  const contact = storeCrmContact(id, request);
+  const withdrawals = decisions.filter((decision) => intents[decision.channel]?.withdraw === true && (decision.code === "CONSENT_WITHDRAWN" || decision.code === "DUPLICATE_CONSENT"));
+  const failedClosed = decisions.some((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR" || decision.status === "FAILED");
+  if (withdrawals.length === 0 || failedClosed) return crmConsentResult(id, decisions, false, contact);
+  const results = withdrawals.map((decision) => persistWithdrawal({
+    customerId: id,
+    channel: decision.channel,
+    idempotencyKey: `${request.idempotencyKey || id}:${decision.channel}:withdraw:crm`,
+    source: "crm-opt-out",
+  }));
+  const persisted = results.length > 0 && results.every((item) => item && item.persisted === true);
+  return crmConsentResult(id, decisions, persisted, contact);
 }
 
 function getLoyaltyDashboard(userId) {
@@ -112,30 +233,39 @@ function trackAbandonedCart() {
   return { ok: false, code: "CONSENT_UNVERIFIED", marketingPermission: "BLOCKED", stored: false, cartStored: false, notified: false, customerNotified: false };
 }
 
-const recoveryAttempts = new Set();
-
 function markCartRecovered(userId, body = {}) {
-  const id = String(userId ?? "").trim();
-  const duplicate = id ? recoveryAttempts.has(id) : false;
-  if (id) recoveryAttempts.add(id);
-  const { isSalesEnabled } = require("./salesMode");
-  const reasons = [];
-  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
-  reasons.push("ORDER_UNVERIFIED");
-  reasons.push("PAYMENT_UNVERIFIED");
-  if (!/^[1-9]\d{0,17}$/.test(id)) reasons.push("UNKNOWN");
-  let marketingPermission = "UNKNOWN";
-  if (/^[1-9]\d{0,17}$/.test(id)) {
-    const profile = db.prepare("SELECT marketing_email, marketing_sms, marketing_whatsapp FROM crm_profiles WHERE user_id = ?").get(id);
-    if (!profile) marketingPermission = "BLOCKED";
-    else if (Number(profile.marketing_email) === 0 && Number(profile.marketing_sms) === 0 && Number(profile.marketing_whatsapp) === 0) marketingPermission = "WITHDRAWN";
-    else marketingPermission = "BLOCKED";
-  }
+  const request = body && typeof body === "object" ? body : {};
+  const channel = String(request.channel || "email").toLowerCase();
+  const customerId = request.customerId != null && String(request.customerId).trim()
+    ? String(request.customerId).trim()
+    : String(userId ?? "").trim();
+  const send = require("./notificationEngine").canSend({
+    customerId,
+    cartCustomerId: request.cartCustomerId != null ? String(request.cartCustomerId) : customerId,
+    cartId: request.cartId || request.cartKey || "",
+    channel,
+    cartStatus: request.cartStatus,
+    orderStatus: request.orderStatus,
+    orderId: request.orderId,
+    abandonedAt: request.abandonedAt,
+    timeout: request.timeout === true,
+    networkError: request.networkError === true,
+    mock: request.mock === true,
+    synthetic: request.synthetic === true,
+    source: request.source,
+    action: request.action,
+    idempotencyKey: request.idempotencyKey || `cart-recovered:${customerId}:${request.cartId || request.cartKey || ""}:${channel}`,
+  }, "abandoned_cart");
+  const marketingPermission = channel === "sms"
+    ? send.smsPermission
+    : channel === "push"
+      ? send.pushPermission
+      : send.emailPermission;
   return {
     ok: false,
-    error: reasons[0] || "SALES_CLOSED",
-    code: reasons[0] || "SALES_CLOSED",
-    status: reasons[0] === "SALES_CLOSED" ? 403 : 409,
+    error: send.code,
+    code: send.code,
+    status: send.status,
     recovered: false,
     converted: false,
     purchased: false,
@@ -152,13 +282,23 @@ function markCartRecovered(userId, body = {}) {
     campaignCreated: false,
     notificationSent: false,
     customerNotified: false,
-    marketingPermission,
+    queued: false,
+    sent: false,
+    messageSent: false,
+    emailSent: false,
+    smsSent: false,
+    pushSent: false,
+    marketingPermission: marketingPermission || "UNKNOWN",
+    emailPermission: send.emailPermission,
+    smsPermission: send.smsPermission,
+    pushPermission: send.pushPermission,
     consentVerified: false,
     callerFlagIgnored: true,
+    callerPermissionIgnored: request.permission === true || request.ok === true || request.status === 200 || request.authorized === true,
     idempotent: true,
-    duplicate,
-    reasons,
-    ignored: body ? true : true,
+    duplicate: send.duplicate === true,
+    reasons: send.reasons,
+    ignored: true,
   };
 }
 
@@ -226,6 +366,7 @@ function getCrmLoyaltyStatus() {
 module.exports = {
   isEnabled,
   getCrmProfile,
+  presentCrmProfile,
   upsertCrmProfile,
   getLoyaltyDashboard,
   earnPoints,

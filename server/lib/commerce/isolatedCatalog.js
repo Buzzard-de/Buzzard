@@ -442,7 +442,9 @@ function openCatalog(dbPath) {
       goodsNet: price,
       kind: "B2C",
     });
-    if (!vat.ok) return { ok: false, code: vat.code || "VAT_UNKNOWN", vatOfficial: false, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, salesEnabled: isSalesEnabled() };
+    if (!vat.ok && vat.code !== "VAT_UNVERIFIED") {
+      return { ok: false, code: vat.code || "VAT_UNKNOWN", vatOfficial: false, publicPrice: "UNKNOWN", livePrice: false, orderCreated: false, salesEnabled: isSalesEnabled() };
+    }
     const offerInput = {
       offerPrice: price,
       supplierCost: Number(supplierCost),
@@ -460,13 +462,14 @@ function openCatalog(dbPath) {
       offerInput.vatAmount = vatAmount;
     }
     const offer = evaluateOffer(offerInput);
+    const usableRate = vat.ok === true && vat.official === true && vat.verified === true && typeof vat.rate === "number";
     const snapshot = {
-      vatRate: vat.rate,
+      vatRate: usableRate ? vat.rate : null,
       vatOfficial: false,
-      vatDefinitive: vat.definitive === true,
-      net: vat.net,
-      vat: vat.vat,
-      gross: vat.gross,
+      vatDefinitive: false,
+      net: null,
+      vat: null,
+      gross: null,
     };
     if (!offer.ok) {
       return {

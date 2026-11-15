@@ -148,6 +148,7 @@ const SAFE = Object.freeze({
 const revoked = new Map();
 const decisionAudit = [];
 const REVOKERS = new Set(["human", "operator"]);
+const HUMAN_DECIDER_ROLES = new Set(["admin", "administrator", "super_admin"]);
 
 function auditPush(entry) {
   decisionAudit.push({ at: new Date().toISOString(), ...entry });
@@ -266,10 +267,34 @@ function clearRevocations({ clearedBy } = {}) {
   return result;
 }
 
+function deniedDelegation(perm, code) {
+  return {
+    ok: false,
+    perm,
+    actors: [],
+    decisions: [],
+    effective: [],
+    permissionIncreased: false,
+    elevated: false,
+    code,
+    selfElevate: false,
+    identitiesMerged: false,
+  };
+}
+
+function humanDeciderRole(sessionRole) {
+  const role = typeof sessionRole === "string" ? sessionRole.trim() : "";
+  if (!HUMAN_DECIDER_ROLES.has(role)) {
+    return { ok: false, code: "PERMISSION_DENIED", actorId: null, role: role || null, paymentCreated: false, shipmentCreated: false };
+  }
+  return { ok: true, code: "ALLOW", actorId: "operator", role, paymentCreated: false, shipmentCreated: false };
+}
+
 function authorizeDelegated({ actorId, originRequesterId = null, chain = [], perm } = {}) {
+  if (!Array.isArray(chain)) return deniedDelegation(perm, "DELEGATION_DENIED");
   const actors = [];
   if (originRequesterId) actors.push(originRequesterId);
-  for (const id of chain || []) {
+  for (const id of chain) {
     if (id != null && String(id).trim() !== "") actors.push(id);
   }
   actors.push(actorId);
@@ -311,6 +336,7 @@ module.exports = {
   check,
   explicitPermissions,
   authorizeDelegated,
+  humanDeciderRole,
   revokePermission,
   grantPermission,
   auditDecisions,

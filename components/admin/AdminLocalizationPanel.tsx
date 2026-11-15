@@ -230,7 +230,7 @@ export default function AdminLocalizationPanel() {
                 {status.taxRates.map((row) => (
                   <tr key={row.country_code}>
                     <td>{row.country_code}</td>
-                    <td>{Math.round(row.rate * 100)}%</td>
+                    <td>{row.rate == null ? "UNKNOWN" : `${Math.round(row.rate * 100)}% UNVERIFIED`}</td>
                   </tr>
                 ))}
               </tbody>

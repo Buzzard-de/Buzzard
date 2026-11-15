@@ -1,19 +1,24 @@
 const { check } = require("../permissionEngine");
+const { selectSupplier } = require("../../../supplier/offerValidation");
 
-function inspectFeeds({ actorId = "stock_ai", feeds = [], customerOrderVerified = false } = {}) {
+function inspectFeeds({ actorId = "stock_ai", feeds = [], customerOrderVerified = false, destination } = {}) {
   if (!check(actorId, "STOCK_READ").ok) return { ok: false, code: "PERMISSION_DENIED" };
   const now = Date.now();
   const rows = feeds.map((f) => {
     const qty = Number(f.qty);
     const ageH = f.updatedAt ? (now - f.updatedAt) / 36e5 : Infinity;
+    const reportedQty = Number.isFinite(qty) ? qty : null;
     return {
       supplier: f.supplier,
       sku: f.sku,
-      qty: Number.isFinite(qty) ? qty : null,
+      qty: null,
+      reportedQty,
       stale: ageH > 24,
       format: f.format || "unknown",
+      verified: false,
     };
   });
+  const selection = selectSupplier({ feeds, customerOrderVerified, destination });
   return {
     ok: false,
     live: false,
@@ -25,20 +30,32 @@ function inspectFeeds({ actorId = "stock_ai", feeds = [], customerOrderVerified 
     sellable: false,
     chosen: null,
     purchased: false,
-    stale: rows.filter((r) => r.stale || r.qty == null),
-    zero: rows.filter((r) => r.qty === 0),
-    missing: rows.filter((r) => r.qty == null),
+    reserved: false,
+    stale: rows.filter((r) => r.stale || r.reportedQty == null),
+    zero: rows.filter((r) => r.reportedQty === 0),
+    missing: rows.filter((r) => r.reportedQty == null),
     liveSupplierApi: false,
     commercialEligibility: "BLOCKED",
+    candidates: selection.candidates,
   };
 }
 
-function buyStock() {
-  return { ok: false, code: "HUMAN_GATE_REQUIRED", action: "STOCK_BUY", dropshipOnly: true };
+function buyStock(input = {}) {
+  const orderVerified = input.customerOrderVerified === true;
+  return {
+    ok: false,
+    code: orderVerified ? "LIVE_CONNECTION_ABSENT" : "HUMAN_GATE_REQUIRED",
+    reason: orderVerified ? "SUPPLIER_NOT_LIVE" : "ORDER_UNVERIFIED",
+    action: "STOCK_BUY",
+    dropshipOnly: true,
+    purchased: false,
+    reserved: false,
+    customerOrderVerified: orderVerified,
+  };
 }
 
 function paySupplier() {
   return { ok: false, code: "HUMAN_GATE_REQUIRED", action: "SUPPLIER_PAY" };
 }
 
-module.exports = { inspectFeeds, buyStock, paySupplier };
+module.exports = { inspectFeeds, buyStock, paySupplier, selectSupplier };

@@ -5,7 +5,7 @@
 const crypto = require("crypto");
 const path = require("path");
 const { MODE, label } = require("../integrationMode");
-const { can } = require("../rbac");
+const { humanDeciderRole } = require("../buzzardNative/core/permissionEngine");
 const productService = require("../productService");
 const inventory = require("../commerce/inventoryIntegration");
 const pricing = require("../commerce/pricingIntegration");
@@ -347,9 +347,8 @@ function protectedApprovalPath(dbPath) {
 }
 
 function resolveServerDecider(sessionRole) {
-  if (!sessionRole || !can(sessionRole, "ai.execute")) {
-    return { ok: false, code: "PERMISSION_DENIED" };
-  }
+  const decision = humanDeciderRole(sessionRole);
+  if (!decision.ok) return { ok: false, code: "PERMISSION_DENIED" };
   return { ok: true, actorId: "operator" };
 }
 

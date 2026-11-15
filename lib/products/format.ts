@@ -10,10 +10,9 @@ export function formatPrice(price: number, currency = "EUR", locale?: BuzzardLoc
 
 export function formatVatInfo(price: number, vatRate: number | null, locale?: BuzzardLocale): string {
   const activeLocale = locale ?? getRuntimeLocale();
-  if (vatRate == null) return `${translate(activeLocale, "cart.vat")} UNKNOWN`;
-  const net = price / (1 + vatRate / 100);
-  const vatLabel = translate(activeLocale, "cart.vat");
-  return `${vatLabel} (${formatPrice(price - net, "EUR", activeLocale)})`;
+  void price;
+  void vatRate;
+  return `${translate(activeLocale, "cart.vat")} UNKNOWN`;
 }
 
 export function stockStatusLabel(status: StockStatus, locale?: BuzzardLocale): string {

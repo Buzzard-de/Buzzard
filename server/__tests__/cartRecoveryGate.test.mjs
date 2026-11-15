@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const crm = require("../lib/crmLoyalty.js");
+const consent = require("../lib/commerce/marketingConsentGate.js");
 const analytics = require("../lib/analyticsDashboard.js");
 const marketing = require("../lib/marketingCenter.js");
 const { db } = require("../lib/db");
@@ -51,7 +52,8 @@ describe("markCartRecovered does not record a sale", () => {
       email: secretEmail,
     });
     expect(first.ok).toBe(false);
-    expect(first.code).toBe("SALES_CLOSED");
+    expect(first.code).toBe("CART_OWNER_UNKNOWN");
+    expect(first.status).toBe("UNKNOWN");
     expect(first.recovered).toBe(false);
     expect(first.converted).toBe(false);
     expect(first.purchased).toBe(false);
@@ -62,9 +64,9 @@ describe("markCartRecovered does not record a sale", () => {
     expect(first.paymentCreated).toBe(false);
     expect(first.notificationSent).toBe(false);
     expect(first.customerNotified).toBe(false);
-    expect(first.marketingPermission).toBe("BLOCKED");
+    expect(first.marketingPermission).toBe("UNKNOWN");
     expect(first.callerFlagIgnored).toBe(true);
-    expect(first.reasons).toEqual(expect.arrayContaining(["SALES_CLOSED", "ORDER_UNVERIFIED", "PAYMENT_UNVERIFIED"]));
+    expect(first.reasons).toEqual(expect.arrayContaining(["SALES_CLOSED", "CART_OWNER_UNKNOWN"]));
     expect(JSON.stringify(first)).not.toContain(secretEmail);
     expect(db.prepare("SELECT status, recovered_at FROM abandoned_carts WHERE user_id = ?").get(id)).toEqual({
       status: "open",
@@ -111,9 +113,9 @@ describe("markCartRecovered does not record a sale", () => {
     const before = counts();
     const missing = crm.markCartRecovered(openId, { recovered: true, converted: true, email: secretEmail });
     const withdrawn = crm.markCartRecovered(withdrawnId, { recovered: true, paid: true, email: secretEmail });
-    expect(missing.marketingPermission).toBe("BLOCKED");
+    expect(missing.marketingPermission).toBe("UNKNOWN");
     expect(missing.notificationSent).toBe(false);
-    expect(withdrawn.marketingPermission).toBe("WITHDRAWN");
+    expect(withdrawn.marketingPermission).toBe("UNKNOWN");
     expect(withdrawn.customerNotified).toBe(false);
     expect(withdrawn.campaignCreated).toBe(false);
     expect(JSON.stringify(withdrawn)).not.toContain(secretEmail);
@@ -152,5 +154,148 @@ describe("markCartRecovered does not record a sale", () => {
 
     const after = counts();
     expect(after).toEqual(before);
+  });
+});
+
+describe("FIN-M26 cart recovery stays closed", () => {
+  const old = "2020-01-01T00:00:00.000Z";
+
+  function abandoned(extra = {}) {
+    return {
+      cartStatus: "abandoned",
+      abandonedAt: old,
+      channel: "email",
+      permission: true,
+      ok: true,
+      status: 200,
+      authorized: true,
+      ...extra,
+    };
+  }
+
+  function expectClosed(result) {
+    expect(result.ok).toBe(false);
+    expect(result.queued).toBe(false);
+    expect(result.sent).toBe(false);
+    expect(result.notificationSent).toBe(false);
+    expect(result.customerNotified).toBe(false);
+    expect(result.messageSent).toBe(false);
+    expect(result.emailSent).toBe(false);
+    expect(result.smsSent).toBe(false);
+    expect(result.pushSent).toBe(false);
+    expect(result.recovered).toBe(false);
+    expect(result.orderCreated).toBe(false);
+    expect(result.paymentCreated).toBe(false);
+    expect(result.sale).toBe(false);
+    expect(result.status).not.toBe(200);
+    expect(result.callerPermissionIgnored).toBe(true);
+  }
+
+  function withdraw(customerId, channel) {
+    consent.decideMarketingConsent({
+      idempotencyKey: `m26-withdraw-${customerId}-${channel}`,
+      customerId,
+      channel,
+      action: "withdraw",
+      source: "account-settings",
+      scope: `marketing-${channel}`,
+      consentedAt: old,
+    });
+  }
+
+  it("does not let one channel permission authorize another channel", () => {
+    withdraw("cust-m26-email", "email");
+    const sms = crm.markCartRecovered("cust-m26-email", abandoned({
+      idempotencyKey: "m26-email-for-sms",
+      customerId: "cust-m26-email",
+      cartCustomerId: "cust-m26-email",
+      cartId: "cart-m26-sms",
+      channel: "sms",
+      emailPermission: "GRANTED",
+    }));
+    expectClosed(sms);
+    expect(sms.code).toBe("CONSENT_UNKNOWN");
+    expect(sms.status).toBe("UNKNOWN");
+    expect(sms.smsPermission).toBe("UNKNOWN");
+    expect(sms.emailPermission).toBe("WITHDRAWN");
+    expect(sms.pushPermission).toBe("UNKNOWN");
+
+    withdraw("cust-m26-sms", "sms");
+    const push = crm.markCartRecovered("cust-m26-sms", abandoned({
+      idempotencyKey: "m26-sms-for-push",
+      customerId: "cust-m26-sms",
+      cartCustomerId: "cust-m26-sms",
+      cartId: "cart-m26-push",
+      channel: "push",
+      smsPermission: "GRANTED",
+    }));
+    expectClosed(push);
+    expect(push.code).toBe("CONSENT_UNKNOWN");
+    expect(push.pushPermission).toBe("UNKNOWN");
+    expect(push.smsPermission).toBe("WITHDRAWN");
+    expect(push.emailPermission).toBe("UNKNOWN");
+
+    withdraw("cust-m26-push", "push");
+    const email = crm.markCartRecovered("cust-m26-push", abandoned({
+      idempotencyKey: "m26-push-for-email",
+      customerId: "cust-m26-push",
+      cartCustomerId: "cust-m26-push",
+      cartId: "cart-m26-email",
+      channel: "email",
+      pushPermission: "GRANTED",
+    }));
+    expectClosed(email);
+    expect(email.code).toBe("CONSENT_UNKNOWN");
+    expect(email.emailPermission).toBe("UNKNOWN");
+    expect(email.pushPermission).toBe("WITHDRAWN");
+    expect(email.smsPermission).toBe("UNKNOWN");
+  });
+
+  it("keeps unknown, blocked, timeout, and withdrawn recovery closed", () => {
+    const unknown = crm.markCartRecovered("cust-m26-unknown", abandoned({
+      idempotencyKey: "m26-unknown",
+      customerId: "cust-m26-unknown",
+      cartCustomerId: "cust-m26-unknown",
+      cartId: "cart-m26-unknown",
+    }));
+    expectClosed(unknown);
+    expect(unknown.code).toBe("CONSENT_UNKNOWN");
+    expect(unknown.status).toBe("UNKNOWN");
+
+    const blocked = crm.markCartRecovered("cust-m26-blocked", abandoned({
+      idempotencyKey: "m26-blocked",
+      customerId: "cust-m26-blocked",
+      cartCustomerId: "cust-m26-blocked",
+      cartId: "cart-m26-blocked",
+      cartStatus: "deleted",
+    }));
+    expectClosed(blocked);
+    expect(blocked.code).toBe("CART_DELETED");
+    expect(blocked.status).toBe("BLOCKED");
+
+    const timedOut = crm.markCartRecovered("cust-m26-timeout", abandoned({
+      idempotencyKey: "m26-timeout",
+      customerId: "cust-m26-timeout",
+      cartCustomerId: "cust-m26-timeout",
+      cartId: "cart-m26-timeout",
+      timeout: true,
+    }));
+    expectClosed(timedOut);
+    expect(timedOut.code).toBe("TIMEOUT");
+    expect(timedOut.status).toBe("FAILED");
+
+    const withdrawn = crm.markCartRecovered("cust-m26-email", abandoned({
+      idempotencyKey: "m26-withdrawn-email",
+      customerId: "cust-m26-email",
+      cartCustomerId: "cust-m26-email",
+      cartId: "cart-m26-withdrawn",
+      channel: "email",
+    }));
+    expectClosed(withdrawn);
+    expect(withdrawn.code).toBe("CONSENT_WITHDRAWN");
+    expect(withdrawn.status).toBe("BLOCKED");
+    expect(withdrawn.marketingPermission).toBe("WITHDRAWN");
+    expect(withdrawn.smsPermission).toBe("UNKNOWN");
+    expect(withdrawn.pushPermission).toBe("UNKNOWN");
   });
 });

@@ -207,11 +207,13 @@ function assessShipping(input = {}) {
   }
   return {
     ...base,
-    ok: true,
-    shippingCost: roundMoney(amountRaw),
-    status: "VERIFIED",
-    commercialEligibility: "ELIGIBLE",
-    code: "SHIPPING_RATE_VERIFIED",
+    ok: false,
+    shippingCost: null,
+    suppliedAmount: roundMoney(amountRaw),
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    commercialTariff: false,
+    code: "SYNTHETIC_TARIFF_NOT_A_CARRIER_CONTRACT",
     missing: [],
     country,
     zone,
@@ -239,12 +241,19 @@ function inclusionEvidenceOk(value) {
   return false;
 }
 
+function countryScope(rate) {
+  if (Array.isArray(rate?.countries) && rate.countries.length) {
+    return rate.countries.map((code) => String(code).toUpperCase());
+  }
+  if (rate?.country) return [String(rate.country).toUpperCase()];
+  return null;
+}
+
 function rateFits(rate, lane) {
   if (!rate || rate.suitable !== true) return false;
+  const scope = countryScope(rate);
+  if (!scope || !scope.includes(lane.country)) return false;
   if (rate.origin && String(rate.origin).toUpperCase() !== String(lane.origin).toUpperCase()) return false;
-  if (Array.isArray(rate.countries) && !rate.countries.map((code) => String(code).toUpperCase()).includes(lane.country)) {
-    return false;
-  }
   if (Array.isArray(rate.zones) && !rate.zones.includes(lane.zone)) return false;
   if (rate.maxWeightKg != null && lane.weightKg > Number(rate.maxWeightKg)) return false;
   if (rate.minWeightKg != null && lane.weightKg < Number(rate.minWeightKg)) return false;
@@ -293,13 +302,14 @@ function selectTransportCost(input = {}) {
     }
     return {
       ...base,
-      ok: true,
-      shippingCost: 0,
-      status: "VERIFIED",
-      commercialEligibility: "ELIGIBLE",
-      code: "SHIPPING_INCLUDED_IN_SUPPLIER_OFFER",
+      ok: false,
+      shippingCost: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+      commercialTariff: false,
+      code: "INCLUDED_SHIPPING_NOT_A_CARRIER_CONTRACT",
       inclusionEvidence: evidence,
-      additionalShipping: 0,
+      additionalShipping: null,
       carrierRatesIgnored: true,
       selected: null,
     };
@@ -317,60 +327,40 @@ function selectTransportCost(input = {}) {
   }
   const lane = { origin, country, zone, weightKg: Number(weightRaw), dimensions };
   const offers = Array.isArray(input.rates) ? input.rates : [];
-  const suitable = [];
+  const considered = [];
   for (const rate of offers) {
     const measuredRate = chargeableWeightKg(lane.weightKg, dimensions, rate.volumetricDivisor);
     if (rate.volumetricDivisor != null && measuredRate.volumetricRule !== "RATE_DIVISOR") continue;
     const laneForRate = { ...lane, weightKg: measuredRate.chargeableKg };
-    if (!rateFits(rate, laneForRate)) continue;
-    const assessment = assessShipping({
-      country,
-      zone,
-      weightKg: laneForRate.weightKg,
-      dimensions,
-      service: rate.service,
-      carrier: rate.carrier,
-      shippingCost: rate.amount ?? rate.shippingCost,
-      verified: rate.verified === true,
-    });
-    if (!assessment.ok) continue;
-    suitable.push({
+    const fits = rateFits(rate, laneForRate);
+    considered.push({
       carrier: String(rate.carrier || "").toUpperCase(),
-      service: rate.service,
-      amount: assessment.shippingCost,
-      contracted: rate.contracted === true,
+      service: rate.service || null,
+      countryScope: countryScope(rate),
+      fits,
       chargeableKg: measuredRate.chargeableKg,
       volumetricKg: measuredRate.volumetricKg,
       volumetricRule: measuredRate.volumetricRule,
+      amountAdopted: false,
+      commercialTariff: false,
     });
   }
-  if (!suitable.length) {
-    return {
-      ...base,
-      ok: false,
-      shippingCost: null,
-      status: "SHIPPING_RATE_UNVERIFIED",
-      commercialEligibility: "BLOCKED",
-      code: "NO_VERIFIED_SUITABLE_RATE",
-      compared: 0,
-      rejected: offers.length,
-    };
-  }
-  suitable.sort((a, b) => a.amount - b.amount || String(a.carrier).localeCompare(String(b.carrier)));
-  const selected = suitable[0];
+  const fitting = considered.filter((row) => row.fits);
+  const published = fitting.find((row) => row.volumetricRule === "RATE_DIVISOR");
   return {
     ...base,
-    ok: true,
-    shippingCost: selected.amount,
-    status: "VERIFIED",
-    commercialEligibility: "ELIGIBLE",
-    code: "LOWEST_VERIFIED_TRANSPORT",
-    selected,
-    compared: suitable,
-    rejected: offers.length - suitable.length,
-    chargeableKg: selected.chargeableKg,
-    volumetricKg: selected.volumetricKg,
-    volumetricRule: selected.volumetricRule,
+    ok: false,
+    shippingCost: null,
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    commercialTariff: false,
+    code: "NO_CARRIER_CONTRACT",
+    selected: null,
+    compared: fitting,
+    rejected: offers.length - fitting.length,
+    chargeableKg: published ? published.chargeableKg : measured.chargeableKg,
+    volumetricKg: published ? published.volumetricKg : measured.volumetricKg,
+    volumetricRule: published ? published.volumetricRule : measured.volumetricRule,
   };
 }
 

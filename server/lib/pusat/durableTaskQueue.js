@@ -572,7 +572,16 @@ function createDurableTaskQueue({ dbPath }) {
     } else {
       rejectTerminal(item.task_id, "APPROVAL_REJECTED");
     }
-    return { ok: true, item: getApproval(id), task: get(item.task_id) };
+    return {
+      ok: true,
+      item: getApproval(id),
+      task: get(item.task_id),
+      executed: false,
+      paymentCreated: false,
+      shipmentCreated: false,
+      moneyMoved: false,
+      orderCreated: false,
+    };
   }
 
   function close() {

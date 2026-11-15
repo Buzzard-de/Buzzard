@@ -17,19 +17,19 @@ const { germanyPilot } = require("./germanyPilot");
 const { connectMode } = require("./localConnectModes");
 
 function runDryRun(input = {}) {
-  const destination = input.destination || "DE";
+  const destination = input.destination || "UNKNOWN";
   const destIso = destination === "GR" ? "EL" : String(destination).toUpperCase();
   const salesEnabled = isSalesEnabled();
   const countryOn = isCountryEnabled(destIso);
   const logistics = simulateOrderLogistics(input);
   const customs = assessCustoms({
-    originCountry: input.originCountry || "DE",
+    originCountry: input.originCountry || "UNKNOWN",
     destCountry: destIso,
     productClass: input.productClass,
     partyKnown: Boolean(input.partyKnown),
   });
   const trade = screenTrade({
-    origin: input.originCountry || "DE",
+    origin: input.originCountry || "UNKNOWN",
     destination: destIso,
     goodsCode: input.productClass,
     value: input.value || 0,

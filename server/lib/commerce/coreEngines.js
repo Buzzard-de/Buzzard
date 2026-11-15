@@ -115,7 +115,7 @@ function runProduct(input, root) {
   if (!input.sku || typeof input.sku !== "string") return { ok: false, code: "INVALID_INPUT", missing: ["sku"], found: false, price: null, live: false };
   const hierarchy = validateHierarchy({ root });
   return {
-    ok: hierarchy.ok === true,
+    ok: false,
     code: hierarchy.ok ? "CATALOG_FRAME_READY" : "CATALOG_FRAME_INVALID",
     sku: input.sku,
     found: false,
@@ -216,7 +216,7 @@ function runPayment(input) {
     if (!EU_COUNTRY_CODES.has(country)) return paymentClosure({ ok: false, code: "UNKNOWN_MARKET", country: country || null, currency: null });
     const market = getMarket(country);
     return paymentClosure({
-      ok: true,
+      ok: false,
       code: "METHOD_CATALOGUE",
       country,
       currency: market ? market.currency : null,
@@ -261,7 +261,7 @@ function runPayment(input) {
     });
   }
   return paymentClosure({
-    ok: asset.code === "FIAT_ACCEPTED",
+    ok: false,
     code: asset.code,
     currency: asset.currency || null,
     assetDecision: asset.code,
@@ -286,10 +286,19 @@ function runMarket(input) {
 }
 
 function runCustomer(input) {
-  const closed = { live: false, exported: false, customerRefund: null, sent: false, notificationSent: false, liveMailbox: false };
-  if (input.action === "export") return { ok: false, code: "DATA_EXPORT_BLOCKED", ...closed };
-  if (input.action === "refund") return { ...refund(), ...closed };
-  return { ...reply({ actorId: input.actorId, intent: input.intent, verifiedFacts: input.verifiedFacts || {}, locale: input.locale }), ...closed };
+  const closed = { live: false, exported: false, customerRefund: null, sent: false, notificationSent: false, liveMailbox: false, policyAutoSend: false };
+  if (input.action === "export") return { ok: false, code: "DATA_EXPORT_BLOCKED", text: null, ...closed };
+  if (input.action === "refund") return { ...refund(), ...closed, ok: false, text: null };
+  const facts = input.verifiedFacts && typeof input.verifiedFacts === "object" ? input.verifiedFacts : {};
+  const answered = reply({ actorId: input.actorId, intent: input.intent, verifiedFacts: facts, locale: input.locale });
+  const grounded = answered.ok === true && Boolean(facts.orderId || facts.faqId || facts.trackingId || facts.answer);
+  return {
+    ...answered,
+    ...closed,
+    ok: grounded,
+    code: grounded ? answered.code || "CUSTOMER_REPLY_READY" : answered.ok === true ? "UNVERIFIED_CUSTOMER_FACT" : answered.code,
+    text: grounded ? answered.text : null,
+  };
 }
 
 function runOrder() {
@@ -314,7 +323,7 @@ function runNotification(input) {
 
 function runReporting() {
   return {
-    ok: true,
+    ok: false,
     code: "SYNTHETIC_REPORT",
     synthetic: true,
     production: false,
@@ -391,17 +400,76 @@ function callEngine(engineId, input = {}, options = {}) {
   return finish(envelope);
 }
 
+function executionOrder() {
+  const pending = new Set(ENGINE_IDS);
+  const ordered = [];
+  while (pending.size) {
+    const ready = ENGINE_IDS.filter((id) => pending.has(id) && DEPENDENCIES[id].every((dep) => !pending.has(dep)));
+    if (!ready.length) {
+      for (const id of ENGINE_IDS) if (pending.has(id)) ordered.push(id);
+      break;
+    }
+    for (const id of ready) {
+      ordered.push(id);
+      pending.delete(id);
+    }
+  }
+  return ordered;
+}
+
+function dependencyBlock(id, blockedBy) {
+  return {
+    ok: false,
+    code: "DEPENDENCY_BLOCKED",
+    engineId: id,
+    blockedBy,
+    live: false,
+    performed: false,
+    salesEnabled: isSalesEnabled(),
+    orderCreated: false,
+    paymentAuthorized: false,
+    paymentCaptured: false,
+    captured: false,
+    moneyMoved: false,
+    shipmentCreated: false,
+    purchased: false,
+    stockChanged: false,
+    sellable: false,
+    customerRefund: null,
+    supplierCredit: null,
+    labelIssued: false,
+    sent: false,
+    notificationSent: false,
+    exported: false,
+    price: null,
+    shippingCost: null,
+    invented: false,
+  };
+}
+
+function unmetDependency(id, results, requireDependencies) {
+  for (const dep of DEPENDENCIES[id]) {
+    const prior = results[dep];
+    if (prior && prior.code === "ENGINE_FAULT") return dep;
+    if (requireDependencies && (!prior || prior.ok !== true)) return dep;
+  }
+  return null;
+}
+
 function runChain(input = {}, options = {}) {
-  const results = {};
-  for (const id of ENGINE_IDS) {
-    const deps = DEPENDENCIES[id];
-    const blockedDep = deps.find((dep) => results[dep] && results[dep].ok === false && input.requireDependencies === true);
-    if (blockedDep) {
-      results[id] = { ok: false, code: "DEPENDENCY_BLOCKED", engineId: id, blockedBy: blockedDep, live: false };
+  const scratch = {};
+  const requireDependencies = input.requireDependencies === true;
+  for (const id of executionOrder()) {
+    const blockedBy = unmetDependency(id, scratch, requireDependencies);
+    if (blockedBy) {
+      scratch[id] = dependencyBlock(id, blockedBy);
+      audit({ engineId: id, code: "DEPENDENCY_BLOCKED", actorId: input.actorId || null, ok: false });
       continue;
     }
-    results[id] = callEngine(id, { ...input, ...(input.engines && input.engines[id] ? input.engines[id] : {}) }, options);
+    scratch[id] = callEngine(id, { ...input, ...(input.engines && input.engines[id] ? input.engines[id] : {}) }, options);
   }
+  const results = {};
+  for (const id of ENGINE_IDS) results[id] = scratch[id];
   return {
     ok: false,
     executed: ENGINE_IDS.every((id) => results[id].code !== "ENGINE_FAULT"),

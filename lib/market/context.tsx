@@ -19,6 +19,7 @@ import type { LocalizationCountryConfig } from "@/lib/localizationFeeds/types";
 import type { MarketCountry } from "./types";
 import { persistCountryCode } from "./storage";
 import { resolveBootCountryCode } from "./resolveInitialCountry";
+import { getDeliveryEstimate } from "./delivery";
 
 interface MarketContextValue {
   countryCode: string;
@@ -67,8 +68,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       countryCode: country.code,
       country,
       currency: apiCountryConfig?.locale?.currency || country.currency,
-      deliveryDays: country.deliveryDays,
-      taxRate: apiCountryConfig?.taxRate ?? country.taxRate,
+      deliveryDays: getDeliveryEstimate(country.code),
+      taxRate: null,
       ready,
       setCountryCode,
     }),

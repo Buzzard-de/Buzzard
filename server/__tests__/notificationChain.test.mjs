@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
 import fs from "node:fs";
 import os from "node:os";
@@ -23,9 +23,55 @@ const customerSupport = require("../lib/customerSupport.js");
 const automation = require("../lib/orderAutomation.js");
 const marketing = require("../lib/marketingCenter.js");
 const aiCenter = require("../lib/aiCenter.js");
-const { db } = require("../lib/db");
+const { db, openIsolatedFixtureDatabase, closeIsolatedFixtureDatabase } = require("../lib/db");
+const fixturePath = path.join(os.tmpdir(), `buzzard-notice-chain-${process.pid}.sqlite`);
 
 describe("notification delivery stays unconfirmed", () => {
+  beforeAll(() => {
+    openIsolatedFixtureDatabase(fixturePath);
+    db.exec(`
+      CREATE TABLE notifications (
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER,
+        type TEXT,
+        title TEXT,
+        message TEXT
+      );
+      CREATE TABLE tracking_events (
+        id INTEGER PRIMARY KEY,
+        order_number TEXT,
+        status TEXT
+      );
+      CREATE TABLE integration_events (
+        id INTEGER PRIMARY KEY,
+        event_key TEXT UNIQUE,
+        type TEXT,
+        order_number TEXT,
+        provider TEXT,
+        status TEXT,
+        payload TEXT
+      );
+      CREATE TABLE automation_jobs (
+        id INTEGER PRIMARY KEY,
+        job_key TEXT UNIQUE,
+        type TEXT,
+        order_number TEXT,
+        status TEXT DEFAULT 'queued',
+        attempts INTEGER DEFAULT 0
+      );
+      CREATE TABLE aictr_jobs (
+        id INTEGER PRIMARY KEY,
+        job_type TEXT NOT NULL,
+        status TEXT DEFAULT 'queued'
+      );
+    `);
+  });
+
+  afterAll(() => {
+    closeIsolatedFixtureDatabase();
+    fs.rmSync(fixturePath, { force: true });
+  });
+
   it("does not treat an internal record or caller flags as a customer delivery", () => {
     const internal = deliverNotification({
       channel: "internal",
@@ -170,7 +216,7 @@ describe("notification delivery stays unconfirmed", () => {
     });
     expect(shipped.sent).toBe(false);
     expect(shipped.to).toBeNull();
-    expect(shipped.code).toBe("CARRIER_NOT_LIVE");
+    expect(shipped.code).toBe("repository_unavailable");
     expect(JSON.stringify(shipped)).not.toContain("buyer@example.com");
 
     const first = automationEngine.emit("refund", { email: "buyer@example.com", orderNumber: "BZ-AUTO" }, { idempotencyKey: "refund-notice-1" });

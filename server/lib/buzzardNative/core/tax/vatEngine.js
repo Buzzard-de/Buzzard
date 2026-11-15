@@ -1,4 +1,4 @@
-const { estimateVat, getStandardVat } = require("../../../commerce/ab27Tax");
+const { getStandardVat } = require("../../../commerce/ab27Tax");
 const { getCountry, NET_INCOME_RESERVE_RATE } = require("./countryRegistry");
 const { usable } = require("./sourceRegistry");
 const { check } = require("../permissionEngine");
@@ -17,35 +17,29 @@ function calculateVat({ actorId = "nedim_bey", sellerCountry, customerCountry, d
   if (goodsNet == null || Number.isNaN(Number(goodsNet))) {
     return { ok: false, code: "MISSING_AMOUNT", status: "UNKNOWN", definitive: false };
   }
-  const rate = getStandardVat(dest.iso);
-  if (rate == null) return { ok: false, code: "VAT_UNKNOWN", status: "UNKNOWN", definitive: false };
-  const est = estimateVat({ country: dest.iso, netAmount: goodsNet });
-  const oss =
-    kind === "B2C" &&
-    sellerCountry &&
-    customerCountry &&
-    sellerCountry !== customerCountry &&
-    dest.ossIossApplicability.oss;
   return {
-    ok: true,
+    ok: false,
+    code: dest.vatOfficial === true && dest.vatVerified === true ? "VAT_UNKNOWN" : "VAT_UNVERIFIED",
+    status: dest.vatSource === "UNKNOWN" ? "UNKNOWN" : "UNVERIFIED",
+    official: false,
+    verified: false,
     actorId,
-    kind,
-    sellerCountry,
-    customerCountry,
+    sellerCountry: sellerCountry || null,
+    customerCountry: customerCountry || null,
     deliveryCountry: dest.iso,
-    rate: est.rate,
-    net: est.net,
-    vat: est.vat,
-    gross: est.gross,
-    ossCandidate: Boolean(oss),
+    rate: null,
+    net: null,
+    vat: null,
+    gross: null,
+    ossCandidate: false,
     iossCandidate: false,
     liveOss: false,
     source: src.source,
     verificationStatus: dest.verificationStatus,
     liveLegal: false,
     filingReady: false,
-    definitive: dest.verificationStatus !== "UNVERIFIED",
-    note: "UNVERIFIED snapshot — not a filed return",
+    definitive: false,
+    invented: false,
   };
 }
 
@@ -59,8 +53,12 @@ function germanyPolicy() {
   return {
     country: "DE",
     vatStandard: getStandardVat("DE"),
+    vatOfficial: false,
+    vatVerified: false,
+    tax: null,
     separateFromEu26Reserve: true,
     liveLegal: false,
+    filingReady: false,
   };
 }
 

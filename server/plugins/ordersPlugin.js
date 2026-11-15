@@ -82,8 +82,8 @@ function resolveLine(productId, variantIds, qty) {
 
   const variantLabel = selected.map((v) => `${v.label}: ${v.value}`).join(", ");
   const lineTotal = Math.round(unitPrice * safeQty * 100) / 100;
-  const vatRate = product.vat_rate;
-  const vatAmount = Math.round((lineTotal - lineTotal / (1 + vatRate / 100)) * 100) / 100;
+  const vatRate = null;
+  const vatAmount = null;
 
   return {
     productId: product.id,
@@ -165,7 +165,7 @@ function calculateQuote(lines, shippingMethodId, couponCode, country) {
     };
   }
   const shipping = shippingResult.shipping;
-  const vatAmount = Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
+  const vatAmount = null;
   const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
 
   return {

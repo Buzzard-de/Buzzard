@@ -3,6 +3,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { hashPassword, verifyPassword: verifyPasswordHash } = require("./password");
 const { publicUser } = require("./customerAuth");
+const { decideMarketingConsent, persistWithdrawal, persistGrant, projectMarketingConsent } = require("./commerce/marketingConsentGate");
 
 const dataDir = path.join(__dirname, "..", "data");
 const customersFile = path.join(dataDir, "customers.json");
@@ -85,7 +86,6 @@ function register(payload) {
     createdAt: new Date().toISOString(),
     preferences: {
       language: payload.language || "de",
-      marketing: Boolean(payload.marketing),
       transactional: true,
     },
     addresses: [],
@@ -214,67 +214,209 @@ function explicitFalse(value) {
   return value === false || value === 0 || value === "0" || value === "false";
 }
 
+function explicitTrue(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
+}
+
+function consentIntents(body = {}) {
+  const blanketGrant = explicitTrue(body.ok)
+    || explicitTrue(body.authorized)
+    || explicitTrue(body.granted)
+    || body.status === 200
+    || explicitTrue(body.consent)
+    || explicitTrue(body.approved)
+    || explicitTrue(body.verified)
+    || explicitTrue(body.marketing)
+    || explicitTrue(body.marketingConsent);
+  const blanketWithdraw = body.withdraw === true || body.unsubscribe === true || body.revoked === true;
+  const spec = {
+    email: {
+      grant: explicitTrue(body.emailOptIn) || explicitTrue(body.email_opt_in),
+      withdraw: explicitFalse(body.emailOptIn) || explicitFalse(body.email_opt_in),
+    },
+    sms: {
+      grant: explicitTrue(body.smsOptIn) || explicitTrue(body.sms_opt_in),
+      withdraw: explicitFalse(body.smsOptIn) || explicitFalse(body.sms_opt_in),
+    },
+    push: {
+      grant: explicitTrue(body.pushOptIn) || explicitTrue(body.push_opt_in),
+      withdraw: explicitFalse(body.pushOptIn) || explicitFalse(body.push_opt_in),
+    },
+  };
+  const intents = { blanketWithdraw };
+  for (const channel of ["email", "sms", "push"]) {
+    const withdraw = blanketWithdraw || spec[channel].withdraw;
+    intents[channel] = { grant: !withdraw && (blanketGrant || spec[channel].grant), withdraw };
+  }
+  return intents;
+}
+
+function consentDecision(customerId, channel, body, action) {
+  const grant = action === "grant";
+  return decideMarketingConsent({
+    customerId: customerId == null ? "" : String(customerId),
+    channel,
+    action,
+    withdraw: !grant,
+    consent: grant,
+    source: grant ? (body.consentSource || body.source || "") : (body.consentSource || body.source || "customer-opt-out"),
+    scope: grant ? (body.consentScope || body.scope || "") : (body.consentScope || body.scope || `marketing-${channel}`),
+    consentedAt: grant ? (body.consentAt || body.consentedAt || "") : (body.consentAt || body.consentedAt || "2026-11-15T00:00:00.000Z"),
+    timeout: body.timeout === true,
+    networkError: body.networkError === true,
+    idempotencyKey: `${body.idempotencyKey || customerId}:${channel}:${action}`,
+  });
+}
+
+const MARKETING_KEYS = new Set([
+  "marketing",
+  "marketingConsent",
+  "consent",
+  "approved",
+  "verified",
+  "granted",
+  "emailOptIn",
+  "email_opt_in",
+  "smsOptIn",
+  "sms_opt_in",
+  "pushOptIn",
+  "push_opt_in",
+  "whatsappOptIn",
+  "whatsapp",
+  "marketingPermission",
+  "emailPermission",
+  "smsPermission",
+  "pushPermission",
+  "whatsappPermission",
+]);
+
+function profilePreferences(current = {}, language) {
+  const next = {};
+  const chosen = language != null ? language : current.language;
+  if (chosen != null && String(chosen).trim() !== "") next.language = String(chosen).trim();
+  if (current.transactional !== undefined) next.transactional = current.transactional !== false;
+  return next;
+}
+
+function accountConsentView(customer) {
+  const consent = projectMarketingConsent(customer && customer.id);
+  return {
+    granted: false,
+    consentVerified: false,
+    marketingPermission: consent.marketingPermission,
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    whatsappPermission: consent.whatsappPermission,
+    marketingSendsOpen: false,
+    productionReady: false,
+    notificationSent: false,
+    preferences: {
+      ...profilePreferences(customer && customer.preferences),
+      emailPermission: consent.emailPermission,
+      smsPermission: consent.smsPermission,
+      pushPermission: consent.pushPermission,
+      whatsappPermission: consent.whatsappPermission,
+      granted: false,
+      consentVerified: false,
+    },
+  };
+}
+
 function applyPreferencePatch(current = {}, body = {}) {
-  const next = { ...current };
-  const marketingKeys = new Set([
-    "marketing",
-    "marketingConsent",
-    "consent",
-    "approved",
-    "verified",
-    "emailOptIn",
-    "email_opt_in",
-    "smsOptIn",
-    "sms_opt_in",
-    "pushOptIn",
-    "push_opt_in",
-    "whatsappOptIn",
-    "whatsapp",
-  ]);
+  const next = profilePreferences(current);
   let stored = false;
   let withdrawn = false;
   for (const [key, value] of Object.entries(body || {})) {
     if (key === "email" || key === "phone" || key === "password" || key === "name") continue;
-    if (marketingKeys.has(key)) {
-      if (explicitFalse(value)) {
-        next[key] = false;
-        stored = true;
-        withdrawn = true;
-      }
+    if (MARKETING_KEYS.has(key)) {
+      if (explicitFalse(value)) withdrawn = true;
       continue;
     }
-    next[key] = value;
-    stored = true;
+    if (key === "withdraw" || key === "unsubscribe" || key === "revoked") {
+      if (value === true) withdrawn = true;
+      continue;
+    }
+    if (key === "language") {
+      next.language = String(value ?? "").trim();
+      stored = true;
+      continue;
+    }
+    if (key === "transactional") {
+      next.transactional = value !== false;
+      stored = true;
+    }
   }
-  if (body.withdraw === true || body.unsubscribe === true || body.revoked === true) {
-    for (const key of marketingKeys) next[key] = false;
-    stored = true;
-    withdrawn = true;
-  }
-  next.marketingPermission = withdrawn ? "WITHDRAWN" : "BLOCKED";
-  next.consentVerified = false;
-  next.consentSource = "UNKNOWN";
-  next.granted = false;
+  if (body.withdraw === true || body.unsubscribe === true || body.revoked === true) withdrawn = true;
   return {
     preferences: next,
     stored,
     withdrawn,
     granted: false,
-    marketingPermission: next.marketingPermission,
+    marketingPermission: withdrawn ? "WITHDRAWN" : "BLOCKED",
     consentVerified: false,
     notificationSent: false,
     customerNotified: false,
   };
 }
 
+function preferenceLanguage(body) {
+  if (!Object.prototype.hasOwnProperty.call(body, "language")) return null;
+  return String(body.language ?? "").trim();
+}
+
 function updatePreferences(customerId, preferences) {
+  const body = preferences && typeof preferences === "object" ? preferences : {};
+  const intents = consentIntents(body);
+  const language = preferenceLanguage(body);
+  const hasConsent = ["email", "sms", "push"].some((channel) => intents[channel].grant || intents[channel].withdraw);
+  const decisions = [];
+  if (hasConsent) {
+    for (const channel of ["email", "sms", "push"]) {
+      if (intents[channel].withdraw) decisions.push(consentDecision(customerId, channel, body, "withdraw"));
+      else if (intents[channel].grant) {
+        const decision = consentDecision(customerId, channel, body, "grant");
+        decisions.push(decision);
+        persistGrant(decision);
+      }
+    }
+  }
   const customers = readCustomers();
   const idx = customers.findIndex((c) => c.id === customerId);
   if (idx < 0) return null;
-  const patch = applyPreferencePatch(customers[idx].preferences || {}, preferences || {});
-  customers[idx].preferences = patch.preferences;
-  if (patch.stored) writeCustomers(customers);
-  return patch;
+  const current = customers[idx].preferences || {};
+  const failedClosed = decisions.some((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR" || decision.status === "FAILED");
+  const withdrawals = decisions.filter((decision) => intents[decision.channel]?.withdraw === true && (decision.code === "CONSENT_WITHDRAWN" || decision.code === "DUPLICATE_CONSENT"));
+  const languageStored = language != null && language !== String(current.language || "");
+  const storedPrefs = profilePreferences(current, languageStored ? language : undefined);
+  const durable = [];
+  if (!failedClosed) {
+    for (const decision of withdrawals) {
+      durable.push(persistWithdrawal({
+        customerId,
+        channel: decision.channel,
+        idempotencyKey: `${body.idempotencyKey || customerId}:${decision.channel}:withdraw`,
+        source: "customer-opt-out",
+      }));
+    }
+  }
+  const persisted = durable.length > 0 && durable.every((item) => item && item.persisted === true);
+  const consentFailed = failedClosed || (withdrawals.length > 0 && !persisted);
+  if (languageStored || persisted) {
+    customers[idx].preferences = storedPrefs;
+    writeCustomers(customers);
+  }
+  const view = accountConsentView({ id: customerId, preferences: languageStored || persisted ? storedPrefs : profilePreferences(current) });
+  return {
+    ...view,
+    stored: consentFailed ? false : persisted || languageStored,
+    persisted,
+    withdrawn: persisted,
+    languageStored,
+    callerFlagIgnored: true,
+    granted: false,
+    consentVerified: false,
+  };
 }
 
 function requestDeletion(customerId) {
@@ -303,6 +445,7 @@ module.exports = {
   setWishlist,
   toggleWishlist,
   applyPreferencePatch,
+  accountConsentView,
   updatePreferences,
   requestDeletion,
 };

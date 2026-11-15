@@ -175,7 +175,7 @@ function syntheticTrack() {
   const normalized = adapter.normalizeStatus(raw);
   const events = [
     ...known.events,
-    { status: normalized, providerStatus: raw, unmapped: normalized === "CREATED" && raw !== "CREATED", at: new Date().toISOString(), live: false },
+    { status: normalized, providerStatus: raw, unmapped: normalized === "UNKNOWN" && raw !== "UNKNOWN", at: new Date().toISOString(), live: false },
   ];
   return {
     ok: known.live === false,

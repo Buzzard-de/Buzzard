@@ -134,12 +134,13 @@ const PROFILES = Object.freeze({
 });
 
 function normalizeStatus(raw) {
-  const u = String(raw || "").toUpperCase();
+  const u = String(raw ?? "").trim().toUpperCase();
+  if (!u) return "UNKNOWN";
   if (STATUSES.includes(u)) return u;
   if (u.includes("LOST")) return "LOST";
   if (u.includes("DELAY")) return "DELAYED";
   if (u.includes("RETURN")) return "RETURNING";
-  return "CREATED";
+  return "UNKNOWN";
 }
 
 function mapStatus(profile, raw) {
@@ -152,6 +153,43 @@ function mapStatus(profile, raw) {
 
 function hmac(secret, payload) {
   return crypto.createHmac("sha256", secret).update(String(payload)).digest("hex");
+}
+
+const STORED_KEY_ENV = Object.freeze([
+  "DHL_API_KEY",
+  "DPD_API_KEY",
+  "GLS_API_KEY",
+  "UPS_CLIENT_ID",
+  "UPS_CLIENT_SECRET",
+  "HERMES_API_KEY",
+  "STRIPE_SECRET_KEY",
+  "PAYPAL_CLIENT_SECRET",
+]);
+
+function storedKeyPresent(req = {}) {
+  const supplied = [req.apiKey, req.apiSecret, req.token, req.secret].some((value) => String(value || "").trim() !== "");
+  return supplied || STORED_KEY_ENV.some((name) => String(process.env[name] || "").trim() !== "");
+}
+
+function protocolFixtureResult(profile, credentialsPresent) {
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "FIXTURE_NOT_A_SHIPMENT",
+    protocol: profile.protocol,
+    requestShape: profile.fixture.request,
+    sampleResponse: profile.fixture.response,
+    shipmentCreated: false,
+    liveShipment: false,
+    liveTariff: false,
+    shippingCost: null,
+    trackingNumber: null,
+    label: false,
+    credentialsPresent: credentialsPresent === true,
+    credentialsAccepted: false,
+  };
 }
 
 function validateRequest(profile, req = {}) {
@@ -212,22 +250,30 @@ function makeAdapter(id) {
           orderId: req.orderId || null,
         };
       }
+      const credentialsPresent = storedKeyPresent(req);
       return {
         ok: false,
         code: "HUMAN_GATE_REQUIRED",
         liveShipment: false,
+        liveTariff: false,
+        shipmentCreated: false,
+        trackingNumber: null,
+        shippingCost: null,
         label: false,
+        credentialsPresent,
+        credentialsAccepted: false,
         carrier: id,
         protocol: profile.protocol,
         orderId: req.orderId || null,
-        fixture: profile.fixture.response,
+        fixture: protocolFixtureResult(profile, credentialsPresent),
       };
     },
     createLabel() {
       return { ok: false, code: "HUMAN_GATE_REQUIRED", liveShipment: false, carrier: id, protocol: profile.protocol };
     },
-    trackShipment({ status = "IN_TRANSIT" } = {}) {
-      const mapped = mapStatus(profile, status);
+    trackShipment({ status = null } = {}) {
+      const supplied = status == null || String(status).trim() === "" ? null : status;
+      const mapped = supplied == null ? "UNKNOWN" : mapStatus(profile, supplied);
       return {
         ok: false,
         live: false,
@@ -236,12 +282,15 @@ function makeAdapter(id) {
         resultStatus: "BLOCKED_EXTERNAL",
         code: "LIVE_CONNECTION_ABSENT",
         liveShipment: false,
+        shipmentCreated: false,
         trackingNumber: null,
         carrier: id,
         protocol: profile.protocol,
         status: mapped,
-        providerStatus: String(status),
+        providerStatus: supplied == null ? null : String(supplied),
         events: [],
+        delivered: false,
+        deliveryConfirmed: false,
       };
     },
     normalizeStatus: (raw) => mapStatus(profile, raw),
@@ -299,6 +348,22 @@ function getAdapter(id) {
   return ADAPTERS[id] || null;
 }
 
+function runProtocolFixture(id, req = {}) {
+  const profile = PROFILES[id];
+  if (!profile) {
+    return {
+      ok: false,
+      code: "CARRIER_UNKNOWN",
+      shipmentCreated: false,
+      liveTariff: false,
+      shippingCost: null,
+      trackingNumber: null,
+      credentialsAccepted: false,
+    };
+  }
+  return protocolFixtureResult(profile, storedKeyPresent(req));
+}
+
 function profileOf(id) {
   return PROFILES[id] || null;
 }
@@ -323,6 +388,7 @@ module.exports = {
   normalizeStatus,
   mapStatus,
   getAdapter,
+  runProtocolFixture,
   profileOf,
   snapshot,
   makeAdapter,

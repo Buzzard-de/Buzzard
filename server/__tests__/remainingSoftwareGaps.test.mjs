@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 const require = createRequire(import.meta.url);
 const { dispatch, AGENT_KINDS } = require("../lib/buzzardNative/core/specialistDispatch.js");
 const { verifyDispatch, TASK_KINDS } = require("../lib/pusat/dispatchVerify.js");
-const { CARRIER_IDS, getAdapter, profileOf } = require("../lib/logistics/carrierContract.js");
+const { CARRIER_IDS, getAdapter, profileOf, runProtocolFixture } = require("../lib/logistics/carrierContract.js");
 const { createWhatsappSandbox } = require("../lib/comms/whatsappSandbox.js");
 const { createStore, runIsolatedOrder } = require("../lib/commerce/isolatedOrder.js");
 const { createDurableTaskQueue } = require("../lib/pusat/durableTaskQueue.js");
@@ -97,6 +97,38 @@ describe("provider carrier contracts", () => {
     expect(dhl.createShipment({ address: { postalCode: "10115" }, forceFailure: true }).code).toBe("DHL_ROUTING_REJECTED");
     const protocols = new Set(CARRIER_IDS.map((id) => profileOf(id).protocol));
     expect(protocols.size).toBe(CARRIER_IDS.length);
+  });
+
+  it("does not treat a protocol fixture or a stored key as a shipment or a tariff", () => {
+    const previous = process.env.DHL_API_KEY;
+    process.env.DHL_API_KEY = "stored-not-a-shipment";
+    try {
+      for (const id of CARRIER_IDS) {
+        const fixture = runProtocolFixture(id, { apiKey: process.env.DHL_API_KEY });
+        expect(fixture.ok).toBe(false);
+        expect(fixture.shipmentCreated).toBe(false);
+        expect(fixture.liveTariff).toBe(false);
+        expect(fixture.shippingCost).toBeNull();
+        expect(fixture.trackingNumber).toBeNull();
+        expect(fixture.credentialsPresent).toBe(true);
+        expect(fixture.credentialsAccepted).toBe(false);
+      }
+      const created = getAdapter("DHL").createShipment({
+        orderId: "x",
+        address: { postalCode: "10115" },
+        apiKey: process.env.DHL_API_KEY,
+      });
+      expect(created.ok).toBe(false);
+      expect(created.shipmentCreated).toBe(false);
+      expect(created.liveTariff).toBe(false);
+      expect(created.credentialsAccepted).toBe(false);
+      expect(created.fixture.ok).toBe(false);
+      expect(created.fixture.code).toBe("FIXTURE_NOT_A_SHIPMENT");
+      expect(runProtocolFixture("NOT-A-CARRIER").code).toBe("CARRIER_UNKNOWN");
+    } finally {
+      if (previous == null) delete process.env.DHL_API_KEY;
+      else process.env.DHL_API_KEY = previous;
+    }
   });
 });
 

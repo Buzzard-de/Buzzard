@@ -1,5 +1,7 @@
 const { db } = require("./db");
 const { isSalesEnabled } = require("./salesMode");
+const { decideMarketingConsent, readMarketingConsent, persistWithdrawal, persistGrant } = require("./commerce/marketingConsentGate");
+const { assessReferral } = require("./commerce/referralAuthorityGate");
 
 function isEnabled() {
   return process.env.BUZZARD_MARKETING_LOYALTY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -134,8 +136,6 @@ function getLoyaltyProfile(customerId) {
   };
 }
 
-const referralCompletionAttempts = new Set();
-
 function referralRefusal(body = {}, referral = null, duplicate = false) {
   const reasons = [];
   if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
@@ -177,37 +177,94 @@ function referralRefusal(body = {}, referral = null, duplicate = false) {
   };
 }
 
-function createReferral() {
-  if (!isSalesEnabled()) {
-    return {
-      ok: false,
-      error: "SALES_CLOSED",
-      code: "SALES_CLOSED",
-      status: 403,
-      created: false,
-      rewardPoints: null,
-      commercial: false,
-      callerFlagIgnored: true,
-    };
-  }
+function referralIdentity(value, alias) {
+  const primary = value == null ? "" : String(value).trim();
+  if (primary) return primary;
+  return alias == null ? "" : String(alias).trim();
+}
+
+function referralRequest(body, action) {
+  const request = body && typeof body === "object" ? body : {};
+  const referrerId = referralIdentity(request.referrerId, request.referrerCustomerId);
+  const referredId = referralIdentity(request.referredId, request.referredCustomerId);
+  const code = request.code == null ? "" : String(request.code).trim();
   return {
-    ok: false,
-    error: "REFERRAL_UNVERIFIED",
-    code: "REFERRAL_UNVERIFIED",
-    status: 409,
-    created: false,
-    rewardPoints: null,
-    commercial: false,
-    callerFlagIgnored: true,
+    referrerId,
+    referredId,
+    code,
+    country: request.country,
+    campaignCountry: request.campaignCountry,
+    currency: request.currency,
+    campaignCurrency: request.campaignCurrency,
+    authoritySource: request.authoritySource,
+    rewardAmount: typeof request.rewardAmount === "number" ? request.rewardAmount : undefined,
+    conflictingReward: typeof request.conflictingReward === "number" ? request.conflictingReward : undefined,
+    expiresAt: request.expiresAt,
+    startsAt: request.startsAt,
+    cancelled: request.cancelled === true,
+    campaignStatus: request.campaignStatus,
+    timeout: request.timeout === true,
+    networkError: request.networkError === true,
+    mock: request.mock === true,
+    synthetic: request.synthetic === true,
+    source: request.source,
+    action: request.action,
+    idempotencyKey: request.idempotencyKey || (
+      action === "complete" && code
+        ? `referral-complete:${code}`
+        : `referral-${action}:${referrerId}:${referredId}:${code}`
+    ),
   };
 }
 
+function referralDecision(body, action) {
+  const request = body && typeof body === "object" ? body : {};
+  const decision = assessReferral(referralRequest(request, action));
+  return {
+    ok: false,
+    error: decision.code,
+    code: decision.code,
+    status: decision.status,
+    referralStatus: decision.status,
+    created: false,
+    earned: false,
+    completed: false,
+    cancelled: false,
+    reversed: false,
+    rewardReversed: false,
+    rewardCreated: false,
+    rewardPoints: null,
+    rewardAmount: null,
+    arithmeticReward: null,
+    arithmeticOnly: false,
+    balance: null,
+    balanceChanged: false,
+    negativeBalance: false,
+    ledgerWritten: false,
+    accountCreated: false,
+    couponIssued: false,
+    discountApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    transferCreated: false,
+    purchased: false,
+    commercial: false,
+    authorized: false,
+    productionReady: false,
+    callerFlagIgnored: true,
+    callerAuthorizedIgnored: request.authorized === true || request.ok === true || request.status === 200,
+    idempotent: true,
+    duplicate: decision.duplicate === true,
+    reasons: Array.isArray(decision.reasons) ? decision.reasons.slice() : [decision.code],
+  };
+}
+
+function createReferral(body = {}) {
+  return referralDecision(body, "create");
+}
+
 function completeReferral(body = {}) {
-  const code = String(body.code || "").trim();
-  const duplicate = code ? referralCompletionAttempts.has(code) : false;
-  if (code) referralCompletionAttempts.add(code);
-  const referral = code ? db.prepare("SELECT * FROM mktloy_referrals WHERE code = ?").get(code) : null;
-  return referralRefusal(body, referral, duplicate);
+  return referralDecision(body, "complete");
 }
 
 function cancelReferral(body = {}) {
@@ -239,6 +296,48 @@ function preferenceChannels(body = {}) {
   return { all, email, sms, push, whatsapp, any: email || sms || push || whatsapp, grant };
 }
 
+function grantChannels(body = {}) {
+  const all = explicitTrue(body.marketing) || explicitTrue(body.consent) || explicitTrue(body.approved) || explicitTrue(body.verified);
+  return {
+    email: all || explicitTrue(body.emailOptIn) || explicitTrue(body.email_opt_in),
+    sms: all || explicitTrue(body.smsOptIn) || explicitTrue(body.sms_opt_in),
+    push: all || explicitTrue(body.pushOptIn) || explicitTrue(body.push_opt_in),
+  };
+}
+
+function consentDecision(customerId, channel, body, action) {
+  const grant = action === "grant";
+  return decideMarketingConsent({
+    customerId: String(customerId),
+    channel,
+    action,
+    withdraw: !grant,
+    consent: grant,
+    source: grant ? (body.consentSource || body.source || "") : (body.consentSource || body.source || "customer-opt-out"),
+    scope: grant ? (body.consentScope || body.scope || "") : (body.consentScope || body.scope || `marketing-${channel}`),
+    consentedAt: grant ? (body.consentAt || body.consentedAt || "") : (body.consentAt || body.consentedAt || "2026-11-15T00:00:00.000Z"),
+    timeout: grant && body.timeout === true,
+    networkError: grant && body.networkError === true,
+    prechecked: grant && body.prechecked === true,
+    defaultChecked: grant && body.defaultChecked === true,
+    idempotencyKey: `${body.idempotencyKey || customerId}:${channel}:${action}`,
+  });
+}
+
+function persistWithdrawnChannels(id, withdrawn, request) {
+  const results = [];
+  for (const channel of ["email", "sms", "push"]) {
+    if (!withdrawn[channel]) continue;
+    results.push(persistWithdrawal({
+      customerId: String(id),
+      channel,
+      idempotencyKey: `${request.idempotencyKey || id}:${channel}:withdraw`,
+      source: "loyalty-opt-out",
+    }));
+  }
+  return results;
+}
+
 function preferenceResult(extra = {}) {
   return {
     ok: false,
@@ -250,8 +349,10 @@ function preferenceResult(extra = {}) {
     preferenceOnly: true,
     notificationSent: false,
     customerNotified: false,
+    messageSent: false,
     emailSent: false,
     smsSent: false,
+    pushSent: false,
     whatsappSent: false,
     campaignCreated: false,
     couponIssued: false,
@@ -265,77 +366,165 @@ function preferenceResult(extra = {}) {
 
 function updatePreferences(customerId, body = {}) {
   const id = preferenceId(customerId);
-  const channels = preferenceChannels(body);
+  const request = body || {};
+  const channels = preferenceChannels(request);
   if (!id) {
+    const decision = decideMarketingConsent({
+      customerId: "",
+      channel: "email",
+      action: "grant",
+      idempotencyKey: `missing:${String(customerId)}:email:grant`,
+    });
     return preferenceResult({
-      code: "UNKNOWN",
+      code: decision.code,
+      gateCode: decision.code,
+      gateStatus: decision.status,
       status: 400,
       marketingPermission: "UNKNOWN",
+      emailPermission: decision.emailPermission,
+      smsPermission: decision.smsPermission,
+      pushPermission: decision.pushPermission,
       withdrawn: false,
       stored: false,
-      reasons: ["UNKNOWN"],
+      persisted: false,
+      granted: false,
+      consentVerified: false,
+      messageSent: false,
+      reasons: decision.reasons || [decision.code],
     });
   }
-  if (!channels.any) {
+
+  const withdrawn = { email: channels.email, sms: channels.sms, push: channels.push };
+  const grants = grantChannels(request);
+  const targetedGrant = {
+    email: grants.email && !withdrawn.email,
+    sms: grants.sms && !withdrawn.sms,
+    push: grants.push && !withdrawn.push,
+  };
+  const anyWithdraw = withdrawn.email || withdrawn.sms || withdrawn.push;
+  const anyGrant = targetedGrant.email || targetedGrant.sms || targetedGrant.push;
+  if (!anyWithdraw && !anyGrant) {
     return preferenceResult({
       code: "CONSENT_UNVERIFIED",
+      gateCode: "CONSENT_UNVERIFIED",
+      gateStatus: "BLOCKED",
       status: 403,
       marketingPermission: "BLOCKED",
       withdrawn: false,
       stored: false,
+      persisted: false,
       reasons: ["CONSENT_UNVERIFIED", "SALES_CLOSED"],
     });
   }
 
-  const duplicate = preferenceWithdrawals.has(id);
-  preferenceWithdrawals.add(id);
-  const existing = db.prepare("SELECT email_opt_in, sms_opt_in, push_opt_in FROM mktloy_marketing_preferences WHERE customer_id = ?").get(id) || {
-    email_opt_in: 0,
-    sms_opt_in: 0,
-    push_opt_in: 0,
+  const decisions = [];
+  for (const channel of ["email", "sms", "push"]) {
+    if (withdrawn[channel]) decisions.push(consentDecision(id, channel, request, "withdraw"));
+  }
+  for (const channel of ["email", "sms", "push"]) {
+    if (targetedGrant[channel]) {
+      const decision = consentDecision(id, channel, request, "grant");
+      decisions.push(decision);
+      persistGrant(decision);
+    }
+  }
+  const snapshot = readMarketingConsent(String(id));
+  const duplicateGate = decisions.some((decision) => decision.duplicate === true);
+  const timedOut = decisions.some((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR");
+  const permissions = {
+    emailPermission: snapshot.emailPermission,
+    smsPermission: snapshot.smsPermission,
+    pushPermission: snapshot.pushPermission,
+    messageSent: false,
+    emailSent: false,
+    smsSent: false,
+    pushSent: false,
+    notificationSent: false,
+    customerNotified: false,
+    granted: false,
+    consentVerified: false,
+    campaignCreated: false,
+    orderCreated: false,
   };
-  const keep = (previous, withdraw) => (withdraw ? 0 : Number(previous) === 1 ? 1 : 0);
-  db.prepare(`
-    INSERT INTO mktloy_marketing_preferences(customer_id, email_opt_in, sms_opt_in, push_opt_in)
-    VALUES(?,?,?,?)
-    ON CONFLICT(customer_id) DO UPDATE SET
-      email_opt_in = excluded.email_opt_in,
-      sms_opt_in = excluded.sms_opt_in,
-      push_opt_in = excluded.push_opt_in,
-      updated_at = CURRENT_TIMESTAMP
-  `).run(id, keep(existing.email_opt_in, channels.email), keep(existing.sms_opt_in, channels.sms), keep(existing.push_opt_in, channels.push));
 
+  if (anyWithdraw && !timedOut) {
+    const results = persistWithdrawnChannels(id, withdrawn, request);
+    const persisted = results.length > 0 && results.every((item) => item && item.persisted === true);
+    const duplicate = preferenceWithdrawals.has(id) || duplicateGate || results.some((item) => item && item.duplicate === true);
+    if (persisted) preferenceWithdrawals.add(id);
+    const live = readMarketingConsent(String(id));
+    return preferenceResult({
+      ...permissions,
+      emailPermission: live.emailPermission,
+      smsPermission: live.smsPermission,
+      pushPermission: live.pushPermission,
+      code: persisted ? "CONSENT_WITHDRAWN" : "WITHDRAWN_NOT_PERSISTED",
+      gateCode: duplicateGate ? "DUPLICATE_CONSENT" : "CONSENT_WITHDRAWN",
+      gateStatus: "BLOCKED",
+      status: persisted ? 200 : 403,
+      marketingPermission: live.storeStatus === "UNAVAILABLE" ? "CLOSED" : "WITHDRAWN",
+      withdrawn: true,
+      stored: persisted,
+      persisted,
+      duplicate,
+      idempotent: persisted,
+      marketingSendsOpen: false,
+      productionReady: false,
+      reasons: ["CONSENT_WITHDRAWN", "SALES_CLOSED"],
+    });
+  }
+
+  const unknown = decisions.find((decision) => decision.status === "UNKNOWN");
+  const failed = decisions.find((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR");
+  const primary = failed || unknown || decisions[decisions.length - 1];
   return preferenceResult({
-    code: "WITHDRAWN",
-    status: 200,
-    marketingPermission: "WITHDRAWN",
-    withdrawn: true,
-    stored: true,
-    duplicate,
-    idempotent: true,
-    reasons: ["WITHDRAWN"],
+    ...permissions,
+    code: primary.code,
+    gateCode: primary.code,
+    gateStatus: primary.status,
+    status: primary.status === "UNKNOWN" ? 400 : 403,
+    marketingPermission: primary.status === "UNKNOWN" ? "UNKNOWN" : "BLOCKED",
+    withdrawn: false,
+    stored: false,
+    persisted: false,
+    marketingSendsOpen: false,
+    productionReady: false,
+    duplicate: duplicateGate,
+    reasons: primary.reasons || [primary.code, "SALES_CLOSED"],
   });
 }
 
 function getPreferences(customerId) {
   const id = preferenceId(customerId);
   if (!id) {
-    return preferenceResult({ code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false });
+    return preferenceResult({ code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, persisted: false, marketingSendsOpen: false });
   }
-  const row = db.prepare("SELECT email_opt_in, sms_opt_in, push_opt_in FROM mktloy_marketing_preferences WHERE customer_id = ?").get(id);
-  if (!row) {
-    return preferenceResult({ code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, emailPermission: "UNKNOWN", smsPermission: "UNKNOWN", pushPermission: "UNKNOWN" });
+  const consent = readMarketingConsent(String(id));
+  if (consent.storeStatus === "UNAVAILABLE") {
+    return preferenceResult({
+      code: "CONSENT_STORE_UNAVAILABLE",
+      marketingPermission: "CLOSED",
+      emailPermission: "CLOSED",
+      smsPermission: "CLOSED",
+      pushPermission: "CLOSED",
+      stored: false,
+      persisted: false,
+      granted: false,
+      marketingSendsOpen: false,
+    });
   }
-  const channel = (value) => (Number(value) === 0 ? "WITHDRAWN" : "BLOCKED");
-  const permissions = [channel(row.email_opt_in), channel(row.sms_opt_in), channel(row.push_opt_in)];
+  const values = [consent.emailPermission, consent.smsPermission, consent.pushPermission];
+  const durable = values.some((item) => item === "WITHDRAWN" || item === "GRANTED");
   return preferenceResult({
-    code: permissions.every((item) => item === "WITHDRAWN") ? "WITHDRAWN" : "CONSENT_UNVERIFIED",
-    marketingPermission: permissions.every((item) => item === "WITHDRAWN") ? "WITHDRAWN" : "BLOCKED",
-    emailPermission: channel(row.email_opt_in),
-    smsPermission: channel(row.sms_opt_in),
-    pushPermission: channel(row.push_opt_in),
-    stored: true,
+    code: consent.storeStatus === "READY" && durable ? "WITHDRAWN" : "UNKNOWN",
+    marketingPermission: values.includes("WITHDRAWN") ? "WITHDRAWN" : "UNKNOWN",
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    stored: consent.storeStatus === "READY" && durable,
+    persisted: consent.storeStatus === "READY" && durable,
     granted: false,
+    marketingSendsOpen: false,
   });
 }
 

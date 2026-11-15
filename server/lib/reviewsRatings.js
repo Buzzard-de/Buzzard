@@ -1,4 +1,5 @@
 const { db } = require("./db");
+const { decideReviewAuthority } = require("./commerce/reviewAuthorityGate");
 
 const VALID_STATUSES = ["pending", "published", "rejected", "hidden"];
 
@@ -37,48 +38,78 @@ function refreshProductStats(sku) {
   `).run(sku, count, count ? total / count : 0, get(1), get(2), get(3), get(4), get(5));
 }
 
-function createReview(body = {}) {
-  const rating = Number(body.rating);
-  const reviewBody = String(body.body || "").trim();
-  const productSku = body.productSku || body.product_sku;
+function text(value) {
+  return value == null ? "" : String(value).trim();
+}
 
-  if (!productSku || rating < 1 || rating > 5 || reviewBody.length < 10) {
-    return { error: "Product, rating and review body are required", status: 400 };
-  }
+function reviewAuthorityInput(request, action, reviewId) {
+  const customerId = text(request.customerId || request.customer_id);
+  const productId = text(request.productId || request.productSku || request.product_sku);
+  return {
+    action,
+    customerId,
+    reviewCustomerId: request.reviewCustomerId == null ? customerId : text(request.reviewCustomerId),
+    productId,
+    reviewProductId: request.reviewProductId == null ? productId : text(request.reviewProductId),
+    reviewId: text(reviewId),
+    actorId: text(request.actorId || request.editorId),
+    moderatorId: text(request.moderatorId),
+    orderId: text(request.orderId),
+    orderProductId: text(request.orderProductId),
+    orderCustomerId: text(request.orderCustomerId),
+    orderStatus: text(request.orderStatus),
+    rating: typeof request.rating === "number" ? request.rating : request.rating,
+    timeout: request.timeout === true,
+    forceTimeout: request.forceTimeout === true,
+    networkError: request.networkError === true,
+    mock: request.mock === true,
+    synthetic: request.synthetic === true,
+    source: request.source,
+    conflictingProductId: request.conflictingProductId,
+    conflictingCustomerId: request.conflictingCustomerId,
+    idempotencyKey: request.idempotencyKey,
+  };
+}
 
-  const result = db
-    .prepare(`
-      INSERT INTO revr_reviews(
-        product_sku, customer_id, customer_name, order_number, rating, title, body,
-        status, verified_purchase, language
-      )
-      VALUES(?,?,?,?,?,?,?,?,?,?)
-    `)
-    .run(
-      productSku,
-      body.customerId || body.customer_id || null,
-      "",
-      "",
-      rating,
-      body.title || "",
-      reviewBody,
-      "pending",
-      0,
-      body.language || "de"
-    );
-
+function reviewClosed(request, decision) {
   return {
     ok: false,
-    created: true,
+    error: decision.code,
+    code: decision.code,
+    status: decision.status,
+    created: false,
+    stored: false,
+    moderated: false,
     published: false,
     verifiedPurchase: false,
     purchaseVerified: false,
+    approved: false,
+    verified: false,
+    eligible: false,
     ratingApplied: false,
     rewardIssued: false,
     customerNotified: false,
+    messageSent: false,
+    orderCreated: false,
+    paymentCreated: false,
+    review: null,
+    id: null,
     callerFlagIgnored: true,
-    review: { id: result.lastInsertRowid, status: "pending", verified_purchase: 0 },
+    callerAuthorityIgnored: request.ok === true || request.authorized === true || request.approved === true || request.status === 200 || request.verifiedPurchase === true,
+    duplicate: decision.duplicate === true,
+    reasons: Array.isArray(decision.reasons) ? decision.reasons.slice() : [decision.code],
   };
+}
+
+function createReview(body = {}) {
+  const request = body && typeof body === "object" ? body : {};
+  const productId = text(request.productId || request.productSku || request.product_sku);
+  const customerId = text(request.customerId || request.customer_id);
+  const decision = decideReviewAuthority({
+    ...reviewAuthorityInput(request, "submit", request.reviewId),
+    idempotencyKey: request.idempotencyKey || `ratings-review-create:${customerId}:${productId}:${text(request.orderId)}`,
+  });
+  return reviewClosed(request, decision);
 }
 
 function getProductReviews(sku) {
@@ -125,30 +156,14 @@ function addReply(reviewId) {
 }
 
 function moderateReview(reviewId, body = {}) {
-  const review = db.prepare("SELECT * FROM revr_reviews WHERE id = ?").get(reviewId);
-  if (!review) return { error: "Review not found", status: 404 };
-
-  const status = String(body.status || "");
-  if (status === "published" || body.approved === true || body.verified === true || body.live === true) {
-    return {
-      ok: false,
-      error: "ORDER_UNVERIFIED",
-      code: "ORDER_UNVERIFIED",
-      status: 409,
-      published: false,
-      verifiedPurchase: false,
-      ratingApplied: false,
-      rewardIssued: false,
-      customerNotified: false,
-      callerFlagIgnored: true,
-    };
-  }
-  if (status !== "rejected" && status !== "hidden") {
-    return { ok: false, error: "UNKNOWN", code: "UNKNOWN", status: 400, published: false };
-  }
-  db.prepare("UPDATE revr_reviews SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status, reviewId);
-  refreshProductStats(review.product_sku);
-  return { ok: false, code: "WITHDRAWN", status: 200, published: false, moderated: true, customerNotified: false, rewardIssued: false };
+  const request = body && typeof body === "object" ? body : {};
+  const requested = text(request.status);
+  const action = requested === "published" || requested === "approved" ? "publish" : "moderate";
+  const decision = decideReviewAuthority({
+    ...reviewAuthorityInput(request, action, reviewId),
+    idempotencyKey: request.idempotencyKey || `ratings-review-moderate:${text(reviewId)}:${action}`,
+  });
+  return reviewClosed(request, decision);
 }
 
 function moderateMedia(mediaId, body = {}) {

@@ -3,6 +3,7 @@
  */
 const { isSalesEnabled } = require("../../salesMode");
 const { audit } = require("./auditLog");
+const { projectTrackingHistory } = require("./trackingNormalize");
 
 const LIVE_BLOCK = {
   ok: false,
@@ -55,6 +56,7 @@ function trackingResult(op, extra = {}) {
     trackingNumber: null,
     events: [],
     delivered: false,
+    deliveryConfirmed: false,
     shipmentCreated: false,
     operation: op,
     salesEnabled: isSalesEnabled(),
@@ -106,18 +108,20 @@ function resolveTracking(op, carrierId, id, flags = {}) {
   const request = trackingRequest(id);
   if (request.timeout) return trackingResult(op, { code: "TIMEOUT" });
   if (request.networkError) return trackingResult(op, { code: "NETWORK_ERROR" });
-  if (request.mock) return trackingResult(op, { code: "MOCK_REJECTED" });
-  if (!request.trackingNumber) return trackingResult(op, { code: "MISSING_TRACKING_NUMBER" });
+  const history = projectTrackingHistory(request.events);
+  if (request.mock) return trackingResult(op, { code: "MOCK_REJECTED", history: history.history });
+  if (!request.trackingNumber) return trackingResult(op, { code: "MISSING_TRACKING_NUMBER", history: history.history });
   if (!/^[A-Za-z0-9][A-Za-z0-9-]{5,}$/.test(String(request.trackingNumber))) {
-    return trackingResult(op, { code: "INVALID_TRACKING_NUMBER" });
+    return trackingResult(op, { code: "INVALID_TRACKING_NUMBER", history: history.history });
   }
-  if (duplicateEvents(request.events)) return trackingResult(op, { code: "DUPLICATE_TRACKING_EVENT" });
-  if (request.delivered) return trackingResult(op, { code: "DELIVERY_UNCONFIRMED" });
+  if (duplicateEvents(request.events)) return trackingResult(op, { code: "DUPLICATE_TRACKING_EVENT", history: history.history });
+  if (request.delivered) return trackingResult(op, { code: "DELIVERY_UNCONFIRMED", history: history.history });
   const response = request.contract;
   const shape = Boolean(response && response.trackingNumber && response.carrier && response.receivedAt && Array.isArray(response.events) && response.events.length);
   return trackingResult(op, {
     code: shape ? "LIVE_CONNECTION_REQUIRED" : "LIVE_CONNECTION_ABSENT",
     contract: shape ? "VALID_SHAPE" : "NO_LIVE_CONNECTION",
+    history: history.history,
   });
 }
 

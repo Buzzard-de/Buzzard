@@ -44,13 +44,15 @@ describe("review approval is not a verified purchase", () => {
     expect(created.verifiedPurchase).toBe(false);
     expect(created.rewardIssued).toBe(false);
     expect(created.customerNotified).toBe(false);
-    expect(created.status).toBe("pending");
+    expect(created.code).toBe("PURCHASE_UNKNOWN");
+    expect(created.status).toBe("UNKNOWN");
+    expect(created.created).toBe(false);
+    expect(created.stored).toBe(false);
     expect(JSON.stringify(created)).not.toContain(secret);
-    expect(db.prepare("SELECT status FROM reviews WHERE id = ?").get(created.id).status).toBe("pending");
 
     const approved = checkout.updateReviewStatus(created.id, "approved", { approved: true, verified: true, live: true, email: secret });
     expect(approved.ok).toBe(false);
-    expect(approved.code).toBe("ORDER_UNVERIFIED");
+    expect(approved.code).toBe("REVIEW_OWNER_UNKNOWN");
     expect(approved.published).toBe(false);
     expect(approved.purchaseVerified).toBe(false);
     expect(approved.ratingApplied).toBe(false);
@@ -64,14 +66,13 @@ describe("review approval is not a verified purchase", () => {
     ]);
     expect(left.published).toBe(false);
     expect(right.published).toBe(false);
-    expect(db.prepare("SELECT status FROM reviews WHERE id = ?").get(created.id).status).toBe("pending");
     expect(checkout.listApprovedReviews("sku-1")).toEqual([]);
 
     const rejected = checkout.updateReviewStatus(created.id, "rejected", {});
-    expect(rejected.moderated).toBe(true);
+    expect(rejected.moderated).toBe(false);
     expect(rejected.published).toBe(false);
     expect(rejected.customerNotified).toBe(false);
-    expect(db.prepare("SELECT status FROM reviews WHERE id = ?").get(created.id).status).toBe("rejected");
+    expect(rejected.stored).toBe(false);
 
     const catalog = ratings.createReview({
       productSku: "sku-1",
@@ -84,23 +85,21 @@ describe("review approval is not a verified purchase", () => {
     });
     expect(catalog.published).toBe(false);
     expect(catalog.verifiedPurchase).toBe(false);
-    expect(catalog.review.verified_purchase).toBe(0);
-    expect(catalog.review.status).toBe("pending");
+    expect(catalog.created).toBe(false);
+    expect(catalog.code).toBe("PURCHASE_UNKNOWN");
+    expect(catalog.review).toBeNull();
     expect(JSON.stringify(catalog)).not.toContain(secret);
-    const moderated = ratings.moderateReview(catalog.review.id, { status: "published", approved: true, verified: true, live: true });
-    expect(moderated.code).toBe("ORDER_UNVERIFIED");
+    const moderated = ratings.moderateReview("missing-catalog-review", { status: "published", approved: true, verified: true, live: true });
+    expect(moderated.code).toBe("REVIEW_OWNER_UNKNOWN");
     expect(moderated.ratingApplied).toBe(false);
-    expect(db.prepare("SELECT status, verified_purchase FROM revr_reviews WHERE id = ?").get(catalog.review.id)).toEqual({
-      status: "pending",
-      verified_purchase: 0,
-    });
-    const hidden = ratings.moderateReview(catalog.review.id, { status: "hidden" });
-    expect(hidden.moderated).toBe(true);
+    expect(moderated.stored).toBe(false);
+    const hidden = ratings.moderateReview("missing-catalog-review", { status: "hidden" });
+    expect(hidden.moderated).toBe(false);
     expect(hidden.published).toBe(false);
     expect(ratings.getProductReviews("sku-1").reviews).toEqual([]);
     expect(ratings.getProductReviews("sku-1").stats.average_rating).toBeNull();
-    expect(ratings.markHelpful(catalog.review.id, { customerId: user }).ratingApplied).toBe(false);
-    expect(ratings.addReply(catalog.review.id, { body: "Thanks", email: secret }).customerNotified).toBe(false);
+    expect(ratings.markHelpful("missing-catalog-review", { customerId: user }).ratingApplied).toBe(false);
+    expect(ratings.addReply("missing-catalog-review", { body: "Thanks", email: secret }).customerNotified).toBe(false);
     expect(ratings.getReviewsOverview().average).toBeNull();
     expect(ratings.getReviewsOverview().verified).toBeNull();
 
@@ -122,5 +121,124 @@ describe("review approval is not a verified purchase", () => {
     expect(after.ledger).toBe(before.ledger);
     expect(after.coupons).toBe(before.coupons);
     expect(after.orders).toBe(before.orders);
+  });
+});
+
+describe("FIN-M28 review authority stays closed", () => {
+  function purchase(extra = {}) {
+    return {
+      customerId: "cust-m28",
+      productId: "sku-m28",
+      rating: 5,
+      orderId: "ord-m28",
+      orderProductId: "sku-m28",
+      orderCustomerId: "cust-m28",
+      verifiedPurchase: true,
+      ok: true,
+      authorized: true,
+      approved: true,
+      status: 200,
+      ...extra,
+    };
+  }
+
+  function expectClosed(result) {
+    expect(result.ok).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.stored).toBe(false);
+    expect(result.moderated).toBe(false);
+    expect(result.published).toBe(false);
+    expect(result.verifiedPurchase).toBe(false);
+    expect(result.purchaseVerified).toBe(false);
+    expect(result.approved).toBe(false);
+    expect(result.ratingApplied).toBe(false);
+    expect(result.customerNotified).toBe(false);
+    expect(result.messageSent).toBe(false);
+    expect(result.review).toBeNull();
+    expect(result.id).toBeNull();
+    expect(result.status).not.toBe(200);
+    expect(result.callerAuthorityIgnored).toBe(true);
+  }
+
+  it("does not create a review before the purchase is verified", () => {
+    const checkoutReview = checkout.createReview("cust-m28", purchase({ idempotencyKey: "m28-checkout-purchase" }));
+    const catalogReview = ratings.createReview(purchase({
+      idempotencyKey: "m28-ratings-purchase",
+      customerId: "cust-m28-catalog",
+      orderCustomerId: "cust-m28-catalog",
+    }));
+    expectClosed(checkoutReview);
+    expectClosed(catalogReview);
+    expect(checkoutReview.code).toBe("PURCHASE_UNVERIFIED");
+    expect(catalogReview.code).toBe("PURCHASE_UNVERIFIED");
+    expect(checkoutReview.status).toBe("UNKNOWN");
+    expect(catalogReview.status).toBe("UNKNOWN");
+  });
+
+  it("keeps unknown, blocked, failed, and timeout reviews closed", () => {
+    const unknown = checkout.createReview("cust-m28-unknown", purchase({
+      idempotencyKey: "m28-unknown",
+      customerId: "cust-m28-unknown",
+      orderId: "",
+      orderProductId: "",
+      orderCustomerId: "",
+    }));
+    expectClosed(unknown);
+    expect(unknown.code).toBe("PURCHASE_UNKNOWN");
+    expect(unknown.status).toBe("UNKNOWN");
+
+    const blocked = ratings.moderateReview("rev-m28-blocked", purchase({
+      idempotencyKey: "m28-blocked",
+      customerId: "cust-m28-blocked",
+      orderCustomerId: "cust-m28-blocked",
+      status: "published",
+    }));
+    expectClosed(blocked);
+    expect(blocked.code).toBe("PUBLISH_UNAUTHORIZED");
+    expect(blocked.status).toBe("BLOCKED");
+
+    const failed = checkout.updateReviewStatus("rev-m28-failed", "rejected", purchase({
+      idempotencyKey: "m28-failed",
+      customerId: "cust-m28-failed",
+      networkError: true,
+      status: "FAILED",
+    }));
+    expectClosed(failed);
+    expect(failed.code).toBe("NETWORK_ERROR");
+    expect(failed.status).toBe("UNKNOWN");
+
+    const timedOut = ratings.createReview(purchase({
+      idempotencyKey: "m28-timeout",
+      customerId: "cust-m28-timeout",
+      orderCustomerId: "cust-m28-timeout",
+      timeout: true,
+    }));
+    expectClosed(timedOut);
+    expect(timedOut.code).toBe("TIMEOUT");
+    expect(timedOut.status).toBe("UNKNOWN");
+  });
+
+  it("does not grant a second moderation or publish a review", () => {
+    const first = ratings.moderateReview("rev-m28-repeat", purchase({
+      idempotencyKey: "m28-mod-1",
+      customerId: "cust-m28-mod",
+      orderCustomerId: "cust-m28-mod",
+      moderatorId: "mod-m28",
+      status: "hidden",
+    }));
+    const second = checkout.updateReviewStatus("rev-m28-repeat", "rejected", purchase({
+      idempotencyKey: "m28-mod-2",
+      customerId: "cust-m28-mod",
+      orderCustomerId: "cust-m28-mod",
+      moderatorId: "mod-m28",
+    }));
+    expectClosed(first);
+    expectClosed(second);
+    expect(first.code).toBe("MODERATION_UNVERIFIED");
+    expect(first.status).toBe("UNKNOWN");
+    expect(second.code).toBe("DUPLICATE_MODERATION");
+    expect(second.duplicate).toBe(true);
+    expect(second.published).toBe(false);
+    expect(second.customerNotified).toBe(false);
   });
 });

@@ -107,7 +107,9 @@ test("pricing gates, sales, injection, and isolation reject unsafe input", () =>
   const read = catalog.quote({ offerPrice: 40, supplierCost: 10, shippingCost: 1, country: "DE" });
   assert.equal(read.ok, false);
   assert.equal(read.code, "MISSING_COST");
-  assert.equal(read.vatRate, 19);
+  assert.equal(read.vatRate, null);
+  assert.equal(read.vat, null);
+  assert.equal(read.gross, null);
   assert.equal(read.vatOfficial, false);
   assert.equal(read.vatDefinitive, false);
   assert.equal(read.livePrice, false);

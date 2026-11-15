@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { db } = require("./db");
+const { submitCouponEntry } = require("./commerce/couponEntryGate");
 
 function isEnabled() {
   return process.env.BUZZARD_CART_CHECKOUT !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -123,20 +124,66 @@ function updateCartItem(token, sku, body = {}) {
 }
 
 function applyCoupon(token, body = {}) {
-  const cart = getActiveCart(token);
-  if (!cart) return { error: "Cart not found", status: 404 };
-
-  const code = String(body.code || "").toUpperCase();
-  const coupon = db.prepare("SELECT * FROM cc_coupons WHERE code = ? AND active = 1").get(code);
-  if (!coupon) return { error: "Coupon invalid", status: 400 };
-
-  const preview = computeTotals({ ...cart, coupon: code });
-  if (preview.subtotal < coupon.min_order) {
-    return { error: "Minimum order not reached", status: 400 };
+  const request = body && typeof body === "object" ? body : {};
+  const entry = submitCouponEntry({
+    ...request,
+    cartToken: token || null,
+    idempotencyKey: request.idempotencyKey || `cart-coupon:${token || "none"}:${String(request.code || "").trim()}`,
+  });
+  const authorized = entry.ok === true
+    && entry.accepted === true
+    && entry.authorized === true
+    && entry.applied === true
+    && entry.status !== "UNKNOWN"
+    && entry.status !== "BLOCKED"
+    && entry.status !== "FAILED"
+    && entry.code !== "TIMEOUT"
+    && entry.code !== "NETWORK_ERROR";
+  if (authorized) {
+    return {
+      ok: false,
+      accepted: false,
+      authorized: false,
+      applied: false,
+      couponStored: false,
+      couponWritten: false,
+      discount: null,
+      total: null,
+      commercialTotal: null,
+      orderCreated: false,
+      paymentCreated: false,
+      code: entry.code,
+      status: entry.status,
+    };
   }
-
-  db.prepare("UPDATE cc_carts SET coupon = ? WHERE id = ?").run(code, cart.id);
-  return computeTotals({ ...cart, coupon: code });
+  return {
+    ok: false,
+    accepted: false,
+    authorized: false,
+    applied: false,
+    valid: false,
+    couponStored: false,
+    couponWritten: false,
+    discount: null,
+    total: null,
+    commercialTotal: null,
+    orderCreated: false,
+    paymentCreated: false,
+    purchased: false,
+    reservationCreated: false,
+    live: false,
+    commercial: false,
+    productionReady: false,
+    callerFlagIgnored: true,
+    callerGateIgnored: request.gateResult != null,
+    code: entry.code,
+    status: entry.status,
+    gateCode: entry.gateCode == null ? null : entry.gateCode,
+    authorityCode: entry.authorityCode == null ? null : entry.authorityCode,
+    error: entry.code,
+    reasons: Array.isArray(entry.reasons) ? entry.reasons.slice() : [entry.code],
+    normalizedCode: entry.normalizedCode == null ? null : entry.normalizedCode,
+  };
 }
 
 function listShippingRates(country) {

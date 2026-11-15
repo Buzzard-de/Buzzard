@@ -17,9 +17,13 @@ export interface CrmProfile {
   phone?: string;
   country_code?: string;
   language?: string;
-  marketing_email?: number;
-  marketing_sms?: number;
-  marketing_whatsapp?: number;
+  granted?: boolean;
+  consentVerified?: boolean;
+  emailPermission?: string;
+  smsPermission?: string;
+  pushPermission?: string;
+  whatsappPermission?: string;
+  marketingPermission?: string;
 }
 
 export interface LoyaltyAccount {

@@ -32,6 +32,17 @@ const ZIP_PATTERNS: Record<string, RegExp> = {
   CZ: /^\d{3}\s?\d{2}$/,
   HU: /^\d{4}$/,
   RO: /^\d{6}$/,
+  BG: /^\d{4}$/,
+  HR: /^HR-\d{5}$/i,
+  CY: /^CY-\d{4}$/i,
+  EE: /^\d{5}$/,
+  GR: /^\d{3}\s?\d{2}$/,
+  LV: /^LV-\d{4}$/i,
+  LT: /^LT-\d{5}$/i,
+  LU: /^L-\d{4}$/i,
+  MT: /^[A-Z]{3}\s?\d{4}$/i,
+  SK: /^\d{3}\s?\d{2}$/,
+  SI: /^\d{4}$/,
 };
 
 /** Europe + Balkans storefront countries. VAT stays unknown until an official source is verified. */

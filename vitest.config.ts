@@ -52,6 +52,7 @@ export default defineConfig({
       "lib/mobile/isolation.test.ts",
       "lib/mobile/categoryFilters.test.ts",
       "lib/mobile/visuals.test.ts",
+      "lib/marketing/trackingConsent.test.ts",
       "server/__tests__/ecosystemScorecard.test.mjs",
     ],
     globals: false,

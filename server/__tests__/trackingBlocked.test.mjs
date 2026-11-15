@@ -3,6 +3,8 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { createAdapter } = require("../lib/logistics/v5/adapterFramework.js");
+const { getAdapter, runProtocolFixture } = require("../lib/logistics/carrierContract.js");
+const { projectTrackingHistory } = require("../lib/logistics/v5/trackingNormalize.js");
 const { carriers } = require("../lib/commercialIntegrations.js");
 const { recordShipmentCreated } = require("../lib/orderAutomation.js");
 const { createReturnLabel } = require("../lib/returnsRma.js");
@@ -123,5 +125,56 @@ describe("carrier tracking stays blocked without a live connection", () => {
     expect(handleCarrierWebhook({ orderNumber: "BZ-1", status: "DELIVERED" }).accepted).toBe(false);
     expect(deliverNotification({ kind: "delivery", channel: "email" }).status).toBe("BLOCKED_EXTERNAL");
     expect(deliverNotification({ kind: "delivery" }).sent).toBe(false);
+  });
+
+  it("maps a synthetic carrier status without inventing transit, a tracking number, or a delivery", () => {
+    const dhl = getAdapter("DHL");
+    const omitted = dhl.trackShipment();
+    expect(omitted.status).toBe("UNKNOWN");
+    expect(omitted.trackingNumber).toBeNull();
+    expect(omitted.events).toEqual([]);
+    expect(omitted.delivered).toBe(false);
+    expect(omitted.deliveryConfirmed).toBe(false);
+    expect(omitted.shipmentCreated).toBe(false);
+    expect(dhl.normalizeStatus("not-a-real-scan")).toBe("UNKNOWN");
+    expect(dhl.normalizeStatus("")).toBe("UNKNOWN");
+    expect(dhl.trackShipment({ status: "transit" }).status).toBe("IN_TRANSIT");
+    expect(dhl.trackShipment({ status: "delivered" })).toMatchObject({
+      status: "DELIVERED",
+      delivered: false,
+      deliveryConfirmed: false,
+      trackingNumber: null,
+      shipmentCreated: false,
+    });
+    const fixture = runProtocolFixture("UPS", { apiKey: "synthetic-key" });
+    expect(fixture.sampleResponse.trackingNumber).toBe("1Z-MOCK");
+    expect(fixture.trackingNumber).toBeNull();
+    expect(fixture.shipmentCreated).toBe(false);
+    expect(fixture.ok).toBe(false);
+    const history = projectTrackingHistory([
+      { code: "pickup", at: "2026-11-15T10:00:00Z" },
+      { code: "delivered", at: "2026-11-15T12:00:00Z", trackingNumber: "AB123456" },
+    ]);
+    expect(history.events).toEqual([]);
+    expect(history.trackingNumber).toBeNull();
+    expect(history.delivered).toBe(false);
+    expect(history.customerVisible).toBe("NO_VERIFIED_TRACKING");
+    expect(history.history.map((event) => event.buzzardStatus)).toEqual(["PICKED_UP", "DELIVERED"]);
+    expect(history.history.every((event) => event.deliveryConfirmed === false && event.customerVisible === "NO_VERIFIED_TRACKING")).toBe(true);
+    const shaped = adapter.getTrackingEvents({
+      carrierResponse: {
+        trackingNumber: "AB123456",
+        carrier: "DHL",
+        receivedAt: "2026-11-15T12:00:00Z",
+        events: [{ code: "pickup", at: "2026-11-15T10:00:00Z" }],
+      },
+    });
+    expect(shaped.code).toBe("LIVE_CONNECTION_REQUIRED");
+    expect(shaped.events).toEqual([]);
+    expect(shaped.trackingNumber).toBeNull();
+    expect(shaped.deliveryConfirmed).toBe(false);
+    expect(shaped.history).toEqual([
+      expect.objectContaining({ buzzardStatus: "PICKED_UP", deliveryConfirmed: false, customerVisible: "NO_VERIFIED_TRACKING" }),
+    ]);
   });
 });

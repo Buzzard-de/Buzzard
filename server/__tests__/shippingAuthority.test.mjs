@@ -83,12 +83,15 @@ describe("shipping rate authority", () => {
     expect(invalid.commercialEligibility).toBe("BLOCKED");
   });
 
-  it("accepts only a complete verified local tariff and still does not call a carrier", () => {
+  it("does not turn a complete synthetic tariff into a carrier contract", () => {
     const verified = assessShipping(evidence);
-    expect(verified.ok).toBe(true);
-    expect(verified.shippingCost).toBe(6.4);
-    expect(verified.status).toBe("VERIFIED");
-    expect(verified.commercialEligibility).toBe("ELIGIBLE");
+    expect(verified.ok).toBe(false);
+    expect(verified.shippingCost).toBeNull();
+    expect(verified.suppliedAmount).toBe(6.4);
+    expect(verified.status).toBe("SHIPPING_RATE_UNVERIFIED");
+    expect(verified.commercialEligibility).toBe("BLOCKED");
+    expect(verified.commercialTariff).toBe(false);
+    expect(verified.code).toBe("SYNTHETIC_TARIFF_NOT_A_CARRIER_CONTRACT");
     expect(verified.live).toBe(false);
     expect(verified.integration).toBe("BLOCKED");
     const unverified = assessShipping({ ...evidence, verified: false });
@@ -136,7 +139,7 @@ describe("shipping rate authority", () => {
     expect(blocked.paymentAuthorized).toBe(false);
     const open = assertCommercialCheckout({ quote, shipping: assessShipping(evidence) });
     expect(open.ok).toBe(false);
-    expect(open.code).toBe("SALES_CLOSED");
+    expect(open.code).toBe("SHIPPING_RATE_UNVERIFIED");
     expect(open.commercialEligibility).toBe("BLOCKED");
     expect(open.checkoutAllowed).toBe(false);
     expect(open.paymentAuthorized).toBe(false);
@@ -145,7 +148,7 @@ describe("shipping rate authority", () => {
     expect(isSalesEnabled()).toBe(false);
   });
 
-  it("selects the lowest verified suitable transport cost and blocks the rest", () => {
+  it("matches zone and country scope without adopting a synthetic tariff", () => {
     const lane = {
       origin: "DE-WH-1",
       country: "FR",
@@ -161,12 +164,25 @@ describe("shipping rate authority", () => {
       { carrier: "HERMES", service: "standard", amount: 4.99, verified: true, suitable: true, countries: ["DE"] },
     ];
     const selected = selectTransportCost({ ...lane, rates });
-    expect(selected.ok).toBe(true);
-    expect(selected.shippingCost).toBe(1.2);
-    expect(selected.selected.carrier).toBe("DPD");
+    expect(selected.ok).toBe(false);
+    expect(selected.shippingCost).toBeNull();
+    expect(selected.selected).toBeNull();
+    expect(selected.commercialTariff).toBe(false);
+    expect(selected.code).toBe("NO_CARRIER_CONTRACT");
     expect(selected.live).toBe(false);
     expect(selected.integration).toBe("BLOCKED");
-    expect(selected.compared.map((row) => row.amount)).toEqual([1.2, 8.5]);
+    expect(selected.compared).toEqual([]);
+    const scoped = selectTransportCost({
+      ...lane,
+      rates: [
+        { carrier: "DHL", service: "standard", amount: 8.5, verified: true, suitable: true, countries: ["DE"] },
+        { carrier: "DPD", service: "standard", amount: 1.2, verified: true, suitable: true, countries: ["FR"] },
+      ],
+    });
+    expect(scoped.shippingCost).toBeNull();
+    expect(scoped.commercialTariff).toBe(false);
+    expect(scoped.compared.map((row) => row.carrier)).toEqual(["DPD"]);
+    expect(scoped.compared.every((row) => row.amountAdopted === false)).toBe(true);
     const missing = selectTransportCost({ ...lane, weightKg: null, rates });
     expect(missing.shippingCost).toBeNull();
     expect(missing.commercialEligibility).toBe("BLOCKED");
@@ -182,15 +198,15 @@ describe("shipping rate authority", () => {
       vatVerified: true,
       currency: "EUR",
     });
-    expect(priced.shippingCost).toBe(1.2);
-    expect(priced.status).toBe("CALCULATED");
+    expect(priced.shippingCost).toBeNull();
+    expect(priced.status).toBe("BLOCKED");
     const blocked = priceWithTransport({ ...lane, rates: [], offerPrice: 30, supplierCost: 10 });
     expect(blocked.status).toBe("BLOCKED");
     expect(blocked.shippingCost).toBeNull();
     expect(blocked.profit).toBeNull();
   });
 
-  it("uses zero additional shipping only when inclusion is proven", () => {
+  it("does not turn a supplier offer id into free shipping", () => {
     const lane = {
       origin: "NL-WH",
       country: "DE",
@@ -207,7 +223,9 @@ describe("shipping rate authority", () => {
       shippingIncluded: true,
       inclusionEvidence: { supplierOfferId: "SUP-1" },
     });
-    expect(included.shippingCost).toBe(0);
+    expect(included.shippingCost).toBeNull();
+    expect(included.code).toBe("INCLUDED_SHIPPING_NOT_A_CARRIER_CONTRACT");
+    expect(included.commercialTariff).toBe(false);
     expect(included.carrierRatesIgnored).toBe(true);
     expect(included.inclusionEvidence.supplierOfferId).toBe("SUP-1");
     const offer = priceWithTransport({
@@ -222,14 +240,15 @@ describe("shipping rate authority", () => {
       vatAmount: 0,
       vatVerified: true,
     });
-    expect(offer.shippingCost).toBe(0);
+    expect(offer.shippingCost).toBeNull();
     expect(offer.transport.carrierRatesIgnored).toBe(true);
+    expect(offer.transport.commercialTariff).toBe(false);
     const sinan = analyze({ actorId: "sinan_bey", root: "/tmp/buzzard-eu27" });
     expect(sinan.shippingCostPolicy.fixedDefault).toBe(false);
     expect(sinan.shippingCostPolicy.liveCarrierQuery).toBe(false);
   });
 
-  it("connects every shipping calculator to the same verified examples", () => {
+  it("keeps every shipping calculator blocked for synthetic rates", () => {
     const lane = {
       origin: "DE-WH-1",
       country: "PL",
@@ -245,10 +264,11 @@ describe("shipping rate authority", () => {
     const engine = shippingEngine.calculateShipping({ ...lane, rates });
     const table = dbShipping.calculateShipping({ ...lane, rates });
     const quote = logisticsFulfillment.quoteShipment({ ...lane, rates });
-    expect(engine.shipping).toBe(0.8);
-    expect(table.shippingCost).toBe(0.8);
-    expect(quote.estimatedCost).toBe(0.8);
-    expect(quote.quote.selected.carrier).toBe("GLS");
+    expect(engine.shipping).toBeNull();
+    expect(table.shippingCost).toBeNull();
+    expect(quote.estimatedCost).toBeNull();
+    expect(quote.quote.selected).toBeNull();
+    expect(quote.quote.commercialTariff).toBe(false);
     expect(quote.live).toBe(false);
     const included = shippingEngine.calculateShipping({
       ...lane,
@@ -256,7 +276,7 @@ describe("shipping rate authority", () => {
       shippingIncluded: true,
       inclusionEvidence: { supplierOfferId: "SUP-INCLUDED" },
     });
-    expect(included.shipping).toBe(0);
+    expect(included.shipping).toBeNull();
     expect(included.carrierRatesIgnored).toBe(true);
     const rules = JSON.stringify(shippingEngine.loadRules());
     expect(rules).not.toContain("5.99");
@@ -278,7 +298,8 @@ describe("shipping rate authority", () => {
     });
     expect(dryRun.orderCreated).toBe(false);
     expect(dryRun.shipping).toBeNull();
-    expect(dryRun.code).toBe("SHIPPING_RATE_UNVERIFIED");
+    expect(dryRun.code).toBe("CUSTOMER_UNVERIFIED");
+    expect(dryRun.reasons).toContain("SHIPPING_RATE_UNVERIFIED");
   });
 
   it("keeps missing marketplace, payment, and return costs blocked and does not invent VAT", () => {

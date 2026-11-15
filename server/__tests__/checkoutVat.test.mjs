@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { checkoutVat } = require("../lib/cartCheckout.js");
+const { checkoutVat, applyCoupon } = require("../lib/cartCheckout.js");
+const { getDatabaseHealth } = require("../lib/db.js");
 const { validateProduct } = require("../lib/productValidator.js");
 const { getCountry } = require("../lib/buzzardNative/core/tax/countryRegistry.js");
 const { carriers, payments } = require("../lib/commercialIntegrations.js");
@@ -31,6 +32,19 @@ describe("server checkout VAT", () => {
     });
     expect(result.ok).toBe(true);
     expect(result.product.vat_rate).toBeNull();
+    expect(result.product.vat_official).toBe(false);
+    expect(result.product.vat_verified).toBe(false);
+    const supplied = validateProduct({
+      sku: "VAT-SUPPLIED-1",
+      name: "Caller rate",
+      supplier_id: "SUP-TEST",
+      supplier_sku: "SUP-VAT-SUPPLIED-1",
+      price: { amount: 19, currency: "EUR" },
+      vat_rate: 19,
+    });
+    expect(supplied.ok).toBe(true);
+    expect(supplied.product.vat_rate).toBeNull();
+    expect(supplied.product.vat_source).toBe("UNKNOWN");
     expect(result.product.shipping.weight_kg).toBeNull();
     expect(result.product.shipping.length_cm).toBeNull();
     expect(result.product.shipping.status).toBe("UNKNOWN");
@@ -88,5 +102,117 @@ describe("server checkout VAT", () => {
       if (previousSales == null) delete process.env.BUZZARD_SALES_ENABLED;
       else process.env.BUZZARD_SALES_ENABLED = previousSales;
     }
+  });
+});
+
+describe("FIN-M23 cart coupon entry stays closed", () => {
+  function record(extra = {}) {
+    return {
+      code: "WELCOME10",
+      customerId: "cust-cart",
+      couponCustomerId: "cust-cart",
+      productId: "prod-1",
+      campaignId: "camp-1",
+      couponCampaignId: "camp-1",
+      campaignCode: "WELCOME10",
+      sku: "BZ-1",
+      productSku: "BZ-1",
+      usageLimit: 5,
+      usageCount: 0,
+      customerLimit: 1,
+      customerUses: 0,
+      currency: "EUR",
+      couponCurrency: "EUR",
+      campaignCurrency: "EUR",
+      country: "DE",
+      couponCountry: "DE",
+      campaignCountry: "DE",
+      discountRate: 10,
+      authoritySource: "campaign-registry",
+      ownerId: "owner-1",
+      ...extra,
+    };
+  }
+
+  function expectClosed(result) {
+    expect(result.ok).toBe(false);
+    expect(result.accepted).toBe(false);
+    expect(result.authorized).toBe(false);
+    expect(result.applied).toBe(false);
+    expect(result.couponStored).toBe(false);
+    expect(result.couponWritten).toBe(false);
+    expect(result.discount).toBeNull();
+    expect(result.total).toBeNull();
+    expect(result.commercialTotal).toBeNull();
+    expect(result.orderCreated).toBe(false);
+    expect(result.paymentCreated).toBe(false);
+    expect(result.productionReady).toBe(false);
+    expect(result.code).not.toBe("COUPON_UNKNOWN");
+    expect(result.status).not.toBe(200);
+    expect(getDatabaseHealth().initialized).toBe(false);
+  }
+
+  it("runs the entry gate before any cart coupon write", () => {
+    const result = applyCoupon("cart-token-a", record({ idempotencyKey: "m23-before-write" }));
+    expectClosed(result);
+    expect(result.code).toBe("COUPON_WINDOW_UNKNOWN");
+    expect(result.gateCode).toBe("COUPON_WINDOW_UNKNOWN");
+    expect(result.authorityCode).toBe("COUPON_WINDOW_UNKNOWN");
+    expect(result.status).toBe("UNKNOWN");
+  });
+
+  it("keeps a blocked relation closed", () => {
+    const result = applyCoupon("cart-token-b", { code: "WELCOME10", idempotencyKey: "m23-blocked" });
+    expectClosed(result);
+    expect(result.code).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.gateCode).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.authorityCode).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.status).toBe("BLOCKED");
+  });
+
+  it("keeps a network failure closed", () => {
+    const result = applyCoupon("cart-token-c", {
+      code: "WELCOME10",
+      idempotencyKey: "m23-failed",
+      networkError: true,
+      ok: true,
+    });
+    expectClosed(result);
+    expect(result.code).toBe("NETWORK_ERROR");
+    expect(result.status).toBe("FAILED");
+  });
+
+  it("keeps a timeout closed", () => {
+    const result = applyCoupon("cart-token-d", {
+      code: "WELCOME10",
+      idempotencyKey: "m23-timeout",
+      timeout: true,
+      status: 200,
+      ok: true,
+      valid: true,
+    });
+    expectClosed(result);
+    expect(result.code).toBe("TIMEOUT");
+    expect(result.status).toBe("FAILED");
+  });
+
+  it("ignores HTTP 200, ok true, and a forged gate result", () => {
+    const result = applyCoupon("cart-token-e", {
+      code: "WELCOME10",
+      idempotencyKey: "m23-forged",
+      ok: true,
+      valid: true,
+      status: 200,
+      discount: 15,
+      gateResult: { ok: true, authorized: true, accepted: true, code: "PASS", status: "PASS" },
+    });
+    expectClosed(result);
+    expect(result.code).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.gateCode).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.authorityCode).toBe("COUPON_RELATION_MISMATCH");
+    expect(result.status).toBe("BLOCKED");
+    expect(result.callerGateIgnored).toBe(true);
+    expect(result.callerFlagIgnored).toBe(true);
+    expect(result.discount).not.toBe(15);
   });
 });

@@ -1,5 +1,6 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
+const { humanDeciderRole } = require("../lib/buzzardNative/core/permissionEngine");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const { SEED_IDS } = require("../lib/buzzardNative/core/identityRegistry");
 
@@ -175,12 +176,17 @@ function createControlCenterHandlers({ facade, readers } = {}) {
   async function decideApproval(req, res) {
     if (!attachAdmin(req, res)) return;
     if (!requirePerm(req, res, "ai.execute")) return;
+    const decider = humanDeciderRole(req.adminUser && req.adminUser.role);
+    if (!decider.ok) {
+      res.status(403).json(closedBody({ errorCode: "PERMISSION_DENIED", code: "PERMISSION_DENIED" }));
+      return;
+    }
     if (await facadeDisabled(api)) return sendDisabled(res);
     const approved = req.body?.decision === "approve";
     const result = await api.decideHumanApproval({
       id: req.params?.id,
       approved,
-      actorId: "operator",
+      actorId: decider.actorId,
     });
     if (result.status === "DISABLED" || result.errorCode === "ORCHESTRATION_FACADE_DISABLED") return sendDisabled(res);
     if (!result.ok) {

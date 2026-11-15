@@ -37,19 +37,19 @@ describe("completeReferral does not grant a commercial reward", () => {
       referredCustomerId: referrer + 1,
     });
     expect(first.ok).toBe(false);
-    expect(first.code).toBe("SALES_CLOSED");
-    expect(first.referralStatus).toBe("BLOCKED");
+    expect(first.code).toBe("REFERRER_UNKNOWN");
+    expect(first.referralStatus).toBe("UNKNOWN");
     expect(first.earned).toBe(false);
     expect(first.completed).toBe(false);
     expect(first.rewardPoints).toBeNull();
-    expect(first.arithmeticOnly).toBe(true);
-    expect(first.arithmeticReward).toBe(40);
+    expect(first.arithmeticOnly).toBe(false);
+    expect(first.arithmeticReward).toBeNull();
     expect(first.balance).toBeNull();
     expect(first.ledgerWritten).toBe(false);
     expect(first.couponIssued).toBe(false);
     expect(first.discountApplied).toBe(false);
     expect(first.callerFlagIgnored).toBe(true);
-    expect(first.reasons).toEqual(expect.arrayContaining(["SALES_CLOSED", "PAYMENT_UNVERIFIED", "REFERRAL_UNVERIFIED"]));
+    expect(first.reasons).toEqual(expect.arrayContaining(["SALES_CLOSED", "REFERRER_UNKNOWN"]));
 
     const second = loyalty.completeReferral({ code, completed: true, paid: true });
     expect(second.duplicate).toBe(true);
@@ -133,7 +133,7 @@ describe("completeReferral does not grant a commercial reward", () => {
     expect(created.ok).toBe(false);
     expect(created.created).toBe(false);
     expect(created.rewardPoints).toBeNull();
-    expect(created.code).toBe("SALES_CLOSED");
+    expect(created.code).toBe("REFERRED_UNKNOWN");
     expect(counts().referrals).toBe(before.referrals);
 
     const campaignsBefore = db.prepare("SELECT COUNT(*) n FROM mktloy_campaigns").get().n;
@@ -161,5 +161,150 @@ describe("completeReferral does not grant a commercial reward", () => {
     expect(account.accountCreated).toBe(false);
     expect(account.code).toBe("SALES_CLOSED");
     expect(counts().accounts).toBe(before.accounts);
+  });
+});
+
+describe("FIN-M24 referral authority stays closed", () => {
+  function referral(extra = {}) {
+    return {
+      referrerId: "cust-m24-a",
+      referredId: "cust-m24-b",
+      code: "REF-SAVE",
+      country: "DE",
+      campaignCountry: "DE",
+      currency: "EUR",
+      campaignCurrency: "EUR",
+      rewardAmount: 10,
+      authoritySource: "referral-registry",
+      ok: true,
+      authorized: true,
+      status: 200,
+      ...extra,
+    };
+  }
+
+  function expectClosed(result) {
+    expect(result.ok).toBe(false);
+    expect(result.authorized).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.earned).toBe(false);
+    expect(result.completed).toBe(false);
+    expect(result.rewardCreated).toBe(false);
+    expect(result.rewardPoints).toBeNull();
+    expect(result.rewardAmount).toBeNull();
+    expect(result.balance).toBeNull();
+    expect(result.balanceChanged).toBe(false);
+    expect(result.ledgerWritten).toBe(false);
+    expect(result.orderCreated).toBe(false);
+    expect(result.paymentCreated).toBe(false);
+    expect(result.transferCreated).toBe(false);
+    expect(result.commercial).toBe(false);
+    expect(result.status).not.toBe(200);
+    expect(result.callerAuthorizedIgnored).toBe(true);
+  }
+
+  it("blocks a self referral and an unknown referrer or referred customer", () => {
+    const self = loyalty.createReferral(referral({
+      idempotencyKey: "m24-self",
+      referredId: "cust-m24-a",
+    }));
+    expectClosed(self);
+    expect(self.code).toBe("SELF_REFERRAL");
+    expect(self.status).toBe("BLOCKED");
+
+    const referrer = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-referrer",
+      referrerId: "",
+      referredId: "cust-m24-referrer",
+    }));
+    expectClosed(referrer);
+    expect(referrer.code).toBe("REFERRER_UNKNOWN");
+    expect(referrer.status).toBe("UNKNOWN");
+
+    const referred = loyalty.createReferral(referral({
+      idempotencyKey: "m24-referred",
+      referredId: "",
+      referrerId: "cust-m24-referred-owner",
+    }));
+    expectClosed(referred);
+    expect(referred.code).toBe("REFERRED_UNKNOWN");
+    expect(referred.status).toBe("UNKNOWN");
+  });
+
+  it("does not authorize an unknown source, an unknown country, or an unverified reward", () => {
+    const source = loyalty.createReferral(referral({
+      idempotencyKey: "m24-source",
+      referredId: "cust-m24-source",
+      authoritySource: "",
+    }));
+    expectClosed(source);
+    expect(source.code).toBe("REFERRAL_CODE_UNKNOWN");
+    expect(source.status).toBe("UNKNOWN");
+
+    const country = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-country",
+      referredId: "cust-m24-country",
+      country: "",
+      campaignCountry: "",
+    }));
+    expectClosed(country);
+    expect(country.code).toBe("COUNTRY_SCOPE_UNKNOWN");
+    expect(country.status).toBe("BLOCKED");
+
+    const reward = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-reward",
+      referredId: "cust-m24-reward",
+    }));
+    expectClosed(reward);
+    expect(reward.code).toBe("REWARD_UNVERIFIED");
+    expect(reward.status).toBe("UNKNOWN");
+    expect(reward.ledgerWritten).toBe(false);
+  });
+
+  it("keeps timeout, network failure, caller flags, and a repeated invite from creating a reward", () => {
+    const timedOut = loyalty.createReferral(referral({
+      idempotencyKey: "m24-timeout",
+      referredId: "cust-m24-timeout",
+      timeout: true,
+    }));
+    expectClosed(timedOut);
+    expect(timedOut.code).toBe("TIMEOUT");
+    expect(timedOut.status).toBe("FAILED");
+
+    const failed = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-network",
+      referredId: "cust-m24-network",
+      networkError: true,
+    }));
+    expectClosed(failed);
+    expect(failed.code).toBe("NETWORK_ERROR");
+    expect(failed.status).toBe("FAILED");
+
+    const first = loyalty.createReferral(referral({
+      idempotencyKey: "m24-repeat",
+      referredId: "cust-m24-repeat",
+    }));
+    const second = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-repeat",
+      referredId: "cust-m24-repeat",
+      authorized: true,
+      status: 200,
+    }));
+    expectClosed(first);
+    expectClosed(second);
+    expect(first.code).toBe("REWARD_UNVERIFIED");
+    expect(second.code).toBe("DUPLICATE_REWARD");
+    expect(second.duplicate).toBe(true);
+    expect(second.rewardCreated).toBe(false);
+    expect(second.ledgerWritten).toBe(false);
+
+    const again = loyalty.completeReferral(referral({
+      idempotencyKey: "m24-repeat-next",
+      referredId: "cust-m24-repeat",
+    }));
+    expectClosed(again);
+    expect(again.code).toBe("DUPLICATE_REFERRAL");
+    expect(again.rewardCreated).toBe(false);
+    expect(again.paymentCreated).toBe(false);
   });
 });

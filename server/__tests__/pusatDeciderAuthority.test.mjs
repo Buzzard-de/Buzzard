@@ -198,6 +198,29 @@ describe("Pusat runtime decider authority", () => {
     expect(stored(approval.file, approval.id)).toEqual(before);
   });
 
+  it("does not let an agent role or a payload role approve payment", () => {
+    const approval = seed("agent-role");
+    const before = stored(approval.file, approval.id);
+    const result = pusat.executeReadOnly("ORCHESTRATE_APPROVE", {
+      approvalId: approval.id,
+      dbPath: approval.file,
+      deciderId: "operator",
+      actorId: "operator",
+      sessionRole: "administrator",
+      approved: true,
+    }, {
+      actorId: "agent@example.com",
+      sessionRole: "ai_agent",
+    });
+    expect(result.ok).toBe(false);
+    expect(result.code).toBe("PERMISSION_DENIED");
+    expect(result.actorId).toBe(null);
+    expect(result.moneyMoved).toBe(false);
+    expect(result.shipmentCreated).toBe(false);
+    expect(result.executed).toBe(false);
+    expect(stored(approval.file, approval.id)).toEqual(before);
+  });
+
   it("rejects human and operator impersonation without ai.execute", () => {
     const approval = seed("impersonation");
     const before = stored(approval.file, approval.id);

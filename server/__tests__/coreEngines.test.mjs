@@ -147,14 +147,16 @@ describe("twelve local commerce engines", () => {
       { carrier: "DPD", service: "standard", amount: 1.2, verified: true, suitable: true },
     ];
     const selected = selectTransportCost({ ...lane, rates });
-    expect(selected.shippingCost).toBe(1.2);
-    expect(selected.selected.carrier).toBe("DPD");
+    expect(selected.shippingCost).toBeNull();
+    expect(selected.selected).toBeNull();
+    expect(selected.commercialTariff).toBe(false);
     expect(selected.volumetricRule).toBe("NOT_PUBLISHED");
     const priced = selectTransportCost({
       ...lane,
-      rates: [{ carrier: "GLS", service: "standard", amount: 0.8, verified: true, suitable: true, volumetricDivisor: 5000, maxWeightKg: 10 }],
+      rates: [{ carrier: "GLS", service: "standard", amount: 0.8, verified: true, suitable: true, volumetricDivisor: 5000, maxWeightKg: 10, countries: ["PL"] }],
     });
-    expect(priced.shippingCost).toBe(0.8);
+    expect(priced.shippingCost).toBeNull();
+    expect(priced.commercialTariff).toBe(false);
     expect(priced.volumetricKg).toBe(4.8);
     expect(priced.chargeableKg).toBe(4.8);
     expect(priced.volumetricRule).toBe("RATE_DIVISOR");
@@ -194,6 +196,8 @@ describe("each commerce engine stays non-live", () => {
     const direct = engines.callEngine("product", { actorId: "category_ai", sku: "BZ-SYN" });
     const chain = chainFor("product");
     expect(direct.code).toBe("CATALOG_FRAME_READY");
+    expect(direct.ok).toBe(false);
+    expect(direct.found).toBe(false);
     expect(direct.live).toBe(false);
     expect(direct.price).toBeNull();
     expect(chain.engines.product.price).toBeNull();
@@ -228,6 +232,10 @@ describe("each commerce engine stays non-live", () => {
   it("customer does not export data or refund", () => {
     const direct = engines.callEngine("customer", { actorId: "banu_hanim", intent: "faq" });
     const chain = chainFor("customer");
+    expect(direct.ok).toBe(false);
+    expect(direct.code).toBe("UNVERIFIED_CUSTOMER_FACT");
+    expect(direct.text).toBeNull();
+    expect(direct.policyAutoSend).toBe(false);
     expect(direct.live).toBe(false);
     expect(direct.exported).toBe(false);
     expect(direct.customerRefund).toBeNull();
@@ -276,6 +284,7 @@ describe("each commerce engine stays non-live", () => {
     const direct = engines.callEngine("payment", { actorId: "nedim_bey", currency: "EUR", assetType: "fiat" });
     const chain = chainFor("payment");
     expect(direct.code).toBe("FIAT_ACCEPTED");
+    expect(direct.ok).toBe(false);
     expect(direct.live).toBe(false);
     expect(direct.captured).toBe(false);
     expect(direct.paymentCaptured).toBe(false);
@@ -325,6 +334,7 @@ describe("each commerce engine stays non-live", () => {
     const direct = engines.callEngine("reporting", { actorId: "pusat" });
     const chain = chainFor("reporting");
     expect(direct.code).toBe("SYNTHETIC_REPORT");
+    expect(direct.ok).toBe(false);
     expect(direct.live).toBe(false);
     expect(direct.synthetic).toBe(true);
     expect(direct.production).toBe(false);
@@ -550,6 +560,7 @@ describe("EU-27 payment catalogue stays unverified", () => {
     for (const [country, currency] of Object.entries(currencies)) {
       const listed = engines.callEngine("payment", { actorId: "nedim_bey", action: "methods", country });
       expect(listed.code).toBe("METHOD_CATALOGUE");
+      expect(listed.ok).toBe(false);
       expect(listed.country).toBe(country);
       expect(listed.currency).toBe(currency);
       expect(listed.methods.length).toBeGreaterThan(0);
@@ -728,8 +739,132 @@ describe("EU-27 payment catalogue stays unverified", () => {
   it("does not treat FIAT_ACCEPTED as a capture", () => {
     const decision = engines.callEngine("payment", { actorId: "nedim_bey", currency: "EUR", assetType: "fiat" });
     expect(decision.code).toBe("FIAT_ACCEPTED");
+    expect(decision.ok).toBe(false);
     expect(decision.assetDecision).toBe("FIAT_ACCEPTED");
     expect(decision.code).not.toBe("NO_ELIGIBLE_PROVIDER");
     closed(decision);
+  });
+});
+
+describe("engine dependencies stop before a live runner", () => {
+  const stock = require("../lib/buzzardNative/core/specialists/stockEngine.js");
+  const customer = require("../lib/buzzardNative/core/specialists/banuEngine.js");
+  const returns = require("../lib/logistics/v5/returnsEngine.js");
+  const orders = require("../lib/commerce/storefrontCatalogAdapter.js");
+  const pricing = require("../lib/commerce/pricingPolicy.js");
+  const fiat = require("../lib/banking/eu27/fiatPolicy.js");
+  const notice = require("../lib/logistics/v5/notifyStub.js");
+  const originals = {
+    buyStock: stock.buyStock,
+    paySupplier: stock.paySupplier,
+    refund: customer.refund,
+    startReturn: returns.startReturn,
+    placeOrder: orders.placeOrder,
+    selectTransportCost: pricing.selectTransportCost,
+    decideAsset: fiat.decideAsset,
+    notifyCustomer: notice.notifyCustomer,
+  };
+  const enginePath = require.resolve("../lib/commerce/coreEngines.js");
+  let counts;
+  let fresh;
+
+  beforeEach(() => {
+    counts = { placeOrder: 0, buyStock: 0, paySupplier: 0, decideAsset: 0, selectTransportCost: 0, refund: 0, startReturn: 0, notifyCustomer: 0 };
+    orders.placeOrder = () => {
+      counts.placeOrder += 1;
+      return { code: "RUNNER_CALLED", orderCreated: true };
+    };
+    stock.buyStock = () => {
+      counts.buyStock += 1;
+      return { code: "RUNNER_CALLED", purchased: true };
+    };
+    stock.paySupplier = () => {
+      counts.paySupplier += 1;
+      return { code: "RUNNER_CALLED", purchased: true };
+    };
+    fiat.decideAsset = () => {
+      counts.decideAsset += 1;
+      return { ok: true, code: "FIAT_ACCEPTED", currency: "EUR" };
+    };
+    pricing.selectTransportCost = () => {
+      counts.selectTransportCost += 1;
+      return { ok: true, code: "RUNNER_CALLED", shippingCost: 1, shipmentCreated: true };
+    };
+    customer.refund = () => {
+      counts.refund += 1;
+      return { code: "RUNNER_CALLED", customerRefund: 1 };
+    };
+    returns.startReturn = () => {
+      counts.startReturn += 1;
+      return { code: "RUNNER_CALLED", labelIssued: true, customerRefund: 1 };
+    };
+    notice.notifyCustomer = () => {
+      counts.notifyCustomer += 1;
+      return { sent: true, reason: "RUNNER_CALLED" };
+    };
+    delete require.cache[enginePath];
+    fresh = require("../lib/commerce/coreEngines.js");
+  });
+
+  afterEach(() => {
+    orders.placeOrder = originals.placeOrder;
+    stock.buyStock = originals.buyStock;
+    stock.paySupplier = originals.paySupplier;
+    fiat.decideAsset = originals.decideAsset;
+    pricing.selectTransportCost = originals.selectTransportCost;
+    customer.refund = originals.refund;
+    returns.startReturn = originals.startReturn;
+    notice.notifyCustomer = originals.notifyCustomer;
+    delete require.cache[enginePath];
+  });
+
+  it("does not call downstream runners when an upstream result is not ok", () => {
+    const chain = fresh.runChain({
+      actorId: "pusat",
+      sku: "BZ-SYN",
+      country: "DE",
+      currency: "EUR",
+      requireDependencies: true,
+    });
+    expect(chain.ok).toBe(false);
+    expect(chain.live).toBe(false);
+    expect(chain.salesEnabled).toBe(false);
+    expect(chain.orderCreated).toBe(false);
+    expect(chain.paymentCaptured).toBe(false);
+    expect(chain.shipmentCreated).toBe(false);
+    expect(chain.engines.supplier.code).toBe("SUPPLIER_DATA_UNKNOWN");
+    expect(chain.engines.inventory.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.inventory.blockedBy).toBe("supplier");
+    expect(chain.engines.inventory.purchased).toBe(false);
+    expect(chain.engines.shipping.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.shipping.shipmentCreated).toBe(false);
+    expect(chain.engines.shipping.shippingCost).toBeNull();
+    expect(chain.engines.payment.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.payment.captured).toBe(false);
+    expect(chain.engines.order.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.order.orderCreated).toBe(false);
+    expect(chain.engines.returns.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.returns.labelIssued).toBe(false);
+    expect(chain.engines.notification.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.notification.sent).toBe(false);
+    expect(chain.engines.reporting.code).toBe("DEPENDENCY_BLOCKED");
+    expect(counts).toEqual({ placeOrder: 0, buyStock: 0, paySupplier: 0, decideAsset: 0, selectTransportCost: 0, refund: 0, startReturn: 0, notifyCustomer: 0 });
+  });
+
+  it("stops a dependent engine when an upstream engine faults", () => {
+    const chain = fresh.runChain(
+      { actorId: "pusat", sku: "BZ-SYN", country: "DE", currency: "EUR" },
+      { root: "/tmp/buzzard-missing-taxonomy-root" },
+    );
+    expect(chain.executed).toBe(false);
+    expect(chain.engines.product.code).toBe("ENGINE_FAULT");
+    expect(chain.engines.product.live).toBe(false);
+    expect(chain.engines.reporting.code).toBe("DEPENDENCY_BLOCKED");
+    expect(chain.engines.reporting.blockedBy).toBe("product");
+    expect(chain.engines.order.orderCreated).toBe(false);
+    expect(chain.orderCreated).toBe(false);
+    expect(chain.live).toBe(false);
+    expect(counts.placeOrder).toBe(1);
+    expect(counts.buyStock).toBe(0);
   });
 });

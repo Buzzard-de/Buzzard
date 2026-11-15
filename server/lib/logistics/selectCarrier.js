@@ -11,7 +11,7 @@ function recommend({
   destination,
   origin,
   postalCode,
-  weightKg = 1,
+  weightKg = null,
   volumetricKg,
   preferSpeed = false,
 } = {}) {

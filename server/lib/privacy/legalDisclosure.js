@@ -25,7 +25,11 @@ function cookieConsentRecord({ necessary = true, analytics = false } = {}) {
     necessary: Boolean(necessary),
     analytics: Boolean(analytics),
     marketing: false,
+    marketing_tracking: "BLOCKED",
     marketingPermission: "BLOCKED",
+    trackingPermission: "BLOCKED",
+    trackingGranted: false,
+    trackingVerified: false,
     consentVerified: false,
     consentSource: "UNKNOWN",
     actorId: null,
@@ -35,6 +39,7 @@ function cookieConsentRecord({ necessary = true, analytics = false } = {}) {
       necessary: "legitimate_interest_or_contract",
       analytics: analytics ? "consent" : "not_granted",
       marketing: "not_granted",
+      marketing_tracking: "not_granted",
     },
   };
 }

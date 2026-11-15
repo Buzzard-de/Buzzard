@@ -82,12 +82,16 @@ describe("Buzzard 10-agent council", () => {
       goodsNet: 100,
       kind: "B2C",
     });
-    expect(vat.ok).toBe(true);
-    expect(vat.rate).toBe(20);
+    expect(vat.ok).toBe(false);
+    expect(vat.code).toBe("VAT_UNVERIFIED");
+    expect(vat.rate).toBeNull();
+    expect(vat.vat).toBeNull();
+    expect(vat.official).toBe(false);
+    expect(vat.verified).toBe(false);
     expect(vat.liveLegal).toBe(false);
     expect(vat.filingReady).toBe(false);
     expect(vat.definitive).toBe(false);
-    expect(vat.ossCandidate).toBe(true);
+    expect(vat.ossCandidate).toBe(false);
     expect(vat.liveOss).toBe(false);
     expect(calculateVat({ actorId: "nedim_bey", deliveryCountry: "FR" }).status).toBe("UNKNOWN");
     expect(calculateVat({ actorId: "nedim_bey", deliveryCountry: "XX", goodsNet: 1 }).status).toBe("UNKNOWN");

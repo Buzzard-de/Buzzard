@@ -11,6 +11,21 @@ function isEnabled() {
   return process.env.BUZZARD_MARKETPLACE_HUB !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
 }
 
+function notLive(code) {
+  return {
+    ok: false,
+    code,
+    published: false,
+    listingCreated: false,
+    orderImported: false,
+    queued: 0,
+    enabled: false,
+    connected: false,
+    live: false,
+    stored: false,
+  };
+}
+
 function listMarketplaces() {
   return db
     .prepare("SELECT * FROM marketplace_channels ORDER BY name")
@@ -28,113 +43,28 @@ function listMarketplaces() {
     }));
 }
 
-function updateMarketplace(code, body = {}) {
-  const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(code);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
-  db.prepare(
-    "UPDATE marketplace_channels SET enabled = ?, account_label = ?, status = ?, last_sync = CURRENT_TIMESTAMP WHERE id = ?"
-  ).run(
-    body.enabled ? 1 : 0,
-    body.accountLabel || marketplace.account_label || "",
-    body.enabled ? "connected" : "disconnected",
-    marketplace.id
-  );
-  return {
-    marketplace: db.prepare("SELECT * FROM marketplace_channels WHERE id = ?").get(marketplace.id),
-  };
+function updateMarketplace() {
+  return notLive("MARKETPLACE_NOT_LIVE");
 }
 
 function queueStockSync() {
-  const rows = db.prepare("SELECT * FROM marketplace_listings").all();
-  const insert = db.prepare(
-    "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
-  );
-  const tx = db.transaction(() => {
-    rows.forEach((row) => {
-      insert.run(row.marketplace_id, "stock", row.product_sku, JSON.stringify({ stock: row.stock }));
-    });
-  });
-  tx();
-  return { queued: rows.length };
+  return notLive("MARKETPLACE_SYNC_NOT_LIVE");
 }
 
 function queuePriceSync() {
-  const rows = db.prepare("SELECT * FROM marketplace_listings").all();
-  const insert = db.prepare(
-    "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
-  );
-  const tx = db.transaction(() => {
-    rows.forEach((row) => {
-      insert.run(
-        row.marketplace_id,
-        "price",
-        row.product_sku,
-        JSON.stringify({ price: row.price, currency: row.currency })
-      );
-    });
-  });
-  tx();
-  return { queued: rows.length };
+  return notLive("MARKETPLACE_SYNC_NOT_LIVE");
 }
 
 function queueOrderSync() {
-  const marketplaces = db.prepare("SELECT * FROM marketplace_channels WHERE enabled = 1").all();
-  const insert = db.prepare(
-    "INSERT INTO marketplace_sync_jobs(marketplace_id, job_type, entity_key, payload_json) VALUES(?,?,?,?)"
-  );
-  const tx = db.transaction(() => {
-    marketplaces.forEach((marketplace) => {
-      insert.run(marketplace.id, "orders", "*", "{}");
-    });
-  });
-  tx();
-  return { queued: marketplaces.length };
+  return notLive("MARKETPLACE_SYNC_NOT_LIVE");
 }
 
-function upsertListing(body = {}) {
-  const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
-  if (!body.productSku) return { error: "productSku required", status: 400 };
-
-  db.prepare(`
-    INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
-    VALUES(?,?,?,?,?,?,?,?)
-    ON CONFLICT(marketplace_id, product_sku) DO UPDATE SET
-      channel_sku = excluded.channel_sku,
-      title = excluded.title,
-      price = excluded.price,
-      currency = excluded.currency,
-      stock = excluded.stock,
-      status = excluded.status,
-      updated_at = CURRENT_TIMESTAMP
-  `).run(
-    marketplace.id,
-    body.productSku,
-    body.channelSku || body.productSku,
-    body.title || "",
-    Number(body.price || 0),
-    body.currency || "EUR",
-    Number(body.stock || 0),
-    body.status || "draft"
-  );
-
-  return { ok: true };
+function upsertListing() {
+  return notLive("LISTING_NOT_LIVE");
 }
 
-function upsertSkuMapping(body = {}) {
-  const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace) return { error: "Marketplace not found", status: 404 };
-  if (!body.productSku || !body.channelSku) {
-    return { error: "productSku and channelSku required", status: 400 };
-  }
-
-  db.prepare(`
-    INSERT INTO marketplace_sku_mappings(marketplace_id, product_sku, channel_sku)
-    VALUES(?,?,?)
-    ON CONFLICT(marketplace_id, product_sku) DO UPDATE SET channel_sku = excluded.channel_sku
-  `).run(marketplace.id, body.productSku, body.channelSku);
-
-  return { ok: true };
+function upsertSkuMapping() {
+  return notLive("LISTING_NOT_LIVE");
 }
 
 function listSyncJobs() {
@@ -149,15 +79,8 @@ function listSyncJobs() {
     .all();
 }
 
-function updateSyncJobResult(jobId, body = {}) {
-  const job = db.prepare("SELECT id FROM marketplace_sync_jobs WHERE id = ?").get(jobId);
-  if (!job) return { error: "Sync job not found", status: 404 };
-  db.prepare(`
-    UPDATE marketplace_sync_jobs
-    SET status = ?, attempts = attempts + 1, error_message = ?, finished_at = CURRENT_TIMESTAMP
-    WHERE id = ?
-  `).run(body.status === "success" ? "success" : "failed", body.error || null, jobId);
-  return { ok: true };
+function updateSyncJobResult() {
+  return notLive("MARKETPLACE_SYNC_NOT_LIVE");
 }
 
 function listChannelOrders() {
@@ -172,28 +95,8 @@ function listChannelOrders() {
     .all();
 }
 
-function importOrderWebhook(body = {}) {
-  const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
-  if (!marketplace || !body.externalOrderId) {
-    return { error: "marketplace and externalOrderId required", status: 400 };
-  }
-  try {
-    db.prepare(`
-      INSERT INTO marketplace_channel_orders(marketplace_id, external_order_id, internal_order_number, status, total, currency, customer_country)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(
-      marketplace.id,
-      body.externalOrderId,
-      body.internalOrderNumber || null,
-      body.status || "imported",
-      Number(body.total || 0),
-      body.currency || "EUR",
-      body.customerCountry || ""
-    );
-  } catch {
-    /* idempotent */
-  }
-  return { ok: true, status: 202 };
+function importOrderWebhook() {
+  return notLive("ORDER_IMPORT_NOT_LIVE");
 }
 
 function getMarketplaceHubStatus() {

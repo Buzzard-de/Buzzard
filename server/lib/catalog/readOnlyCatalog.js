@@ -1,4 +1,49 @@
-const { canonicalizeCatalogPath, refusal } = require("./catalogPath");
+const crypto = require("crypto");
+const fs = require("fs");
+const { canonicalizeCatalogPath, refusal: codedRefusal } = require("./catalogPath");
+
+function refusal(code) {
+  const error = codedRefusal(code);
+  error.stack = undefined;
+  return error;
+}
+
+const LIST_LIMITS = Object.freeze({
+  tables: 32,
+  categories: 200,
+  brands: 200,
+  identifiers: 100,
+  variants: 100,
+  media: 100,
+});
+
+const ALLOWED_READS = new Map([
+  [
+    "SELECTID,SKU,TITLE,STATUS,VISIBILITYFROMCATALOG_PRODUCTSWHEREID=?",
+    "SELECT id, sku, title, status, visibility FROM catalog_products WHERE id = ? LIMIT 2",
+  ],
+  [
+    "SELECTID,SKU,TITLE,STATUS,VISIBILITYFROMCATALOG_PRODUCTSWHERESKU=?",
+    "SELECT id, sku, title, status, visibility FROM catalog_products WHERE sku = ? LIMIT 2",
+  ],
+]);
+
+function compactSql(sql) {
+  return String(sql)
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/--[^\n]*/g, "")
+    .replace(/'(?:''|[^'])*'/g, "")
+    .replace(/"(?:[^"]|"")*"/g, "")
+    .replace(/`(?:``|[^`])*`/g, "")
+    .toUpperCase()
+    .replace(/\s+/g, "");
+}
+
+function matchAllowedRead(sql) {
+  const compact = compactSql(sql);
+  if (compact.includes(";") || compact.includes("PRICE") || compact.includes("STOCK")) return null;
+  return ALLOWED_READS.get(compact) || null;
+}
 
 const sessions = new WeakSet();
 
@@ -15,47 +60,157 @@ function isWriteSql(sql) {
     || /\bpragma\s+[A-Za-z_][A-Za-z0-9_]*\s*=/i.test(stripped);
 }
 
-function openReadOnlyCatalog({ dbPath } = {}) {
+function describeFd(fd) {
+  const first = fs.fstatSync(fd);
+  if (!first.isFile()) throw refusal("CATALOG_INTEGRITY_FAILED");
+  const bytes = Buffer.alloc(first.size);
+  let offset = 0;
+  while (offset < bytes.length) {
+    const count = fs.readSync(fd, bytes, offset, bytes.length - offset, offset);
+    if (count <= 0) throw refusal("CATALOG_INTEGRITY_FAILED");
+    offset += count;
+  }
+  const second = fs.fstatSync(fd);
+  if (
+    second.dev !== first.dev
+    || second.ino !== first.ino
+    || second.size !== first.size
+    || Math.trunc(second.mtimeMs) !== Math.trunc(first.mtimeMs)
+  ) {
+    throw refusal("CATALOG_INTEGRITY_FAILED");
+  }
+  return {
+    dev: second.dev,
+    ino: second.ino,
+    size: second.size,
+    mtimeMs: second.mtimeMs,
+    mtimeTrunc: Math.trunc(second.mtimeMs),
+    hash: crypto.createHash("sha256").update(bytes).digest("hex"),
+    bytes,
+  };
+}
+
+function sameIdentity(left, right) {
+  return left.dev === right.dev
+    && left.ino === right.ino
+    && left.size === right.size
+    && left.mtimeTrunc === right.mtimeTrunc
+    && left.hash === right.hash;
+}
+
+function assertPathMatches(baseline) {
+  let listed;
+  try {
+    listed = fs.lstatSync(baseline.path);
+  } catch {
+    throw refusal("CATALOG_INTEGRITY_FAILED");
+  }
+  if (!listed.isFile() || listed.isSymbolicLink()) throw refusal("CATALOG_INTEGRITY_FAILED");
+  let real;
+  try {
+    real = fs.realpathSync(baseline.path);
+  } catch {
+    throw refusal("CATALOG_INTEGRITY_FAILED");
+  }
+  if (real !== baseline.path) throw refusal("CATALOG_INTEGRITY_FAILED");
+  const stat = fs.statSync(real);
+  if (stat.dev !== baseline.dev || stat.ino !== baseline.ino || stat.size !== baseline.size || Math.trunc(stat.mtimeMs) !== baseline.mtimeTrunc) {
+    throw refusal("CATALOG_INTEGRITY_FAILED");
+  }
+}
+
+function openReadOnlyCatalog({ dbPath, integrityProbe } = {}) {
   if (!dbPath) throw refusal("DATA_PATH_REFUSED");
   const canonical = canonicalizeCatalogPath(dbPath, { allowMissing: false });
-  const fs = require("fs");
   if (!fs.existsSync(canonical)) throw refusal("DATABASE_FILE_REQUIRED");
+  const probe = typeof integrityProbe === "function" ? integrityProbe : null;
   const Database = require("better-sqlite3");
+  const fd = fs.openSync(canonical, fs.constants.O_RDONLY);
   let handle;
+  let memory;
+  let baseline;
   try {
+    const opened = describeFd(fd);
+    assertPathMatches({ ...opened, path: canonical });
     handle = new Database(canonical, { readonly: true, fileMustExist: true });
     handle.pragma("query_only = ON");
-    const flag = handle.pragma("query_only", { simple: true });
-    if (Number(flag) !== 1) throw refusal("CATALOG_READ_ONLY_UNAVAILABLE");
+    if (Number(handle.pragma("query_only", { simple: true })) !== 1) throw refusal("CATALOG_READ_ONLY_UNAVAILABLE");
+    const confirmed = describeFd(fd);
+    if (!sameIdentity(opened, confirmed)) throw refusal("CATALOG_INTEGRITY_FAILED");
+    memory = new Database(opened.bytes);
+    memory.pragma("query_only = ON");
+    if (Number(memory.pragma("query_only", { simple: true })) !== 1) throw refusal("CATALOG_READ_ONLY_UNAVAILABLE");
+    const settled = describeFd(fd);
+    if (!sameIdentity(opened, settled)) throw refusal("CATALOG_INTEGRITY_FAILED");
+    baseline = {
+      path: canonical,
+      dev: opened.dev,
+      ino: opened.ino,
+      size: opened.size,
+      mtimeMs: opened.mtimeMs,
+      mtimeTrunc: opened.mtimeTrunc,
+      hash: opened.hash,
+    };
   } catch (err) {
-    if (handle) {
-      try { handle.close(); } catch { /* leave no open catalog connection */ }
-    }
+    try { if (memory) memory.close(); } catch { /* drop the unused snapshot */ }
+    try { if (handle) handle.close(); } catch { /* drop the unused file connection */ }
+    try { fs.closeSync(fd); } catch { /* the descriptor could not be closed */ }
     throw err;
+  }
+
+  let closed = false;
+
+  function assertIntact() {
+    if (closed) throw refusal("CATALOG_CONNECTION_REQUIRED");
+    assertPathMatches(baseline);
+    const current = describeFd(fd);
+    if (!sameIdentity(baseline, current)) throw refusal("CATALOG_INTEGRITY_FAILED");
   }
 
   function selectAll(sql, params = []) {
     if (isWriteSql(sql) || FORBIDDEN.test(sql)) throw refusal(isWriteSql(sql) ? "CATALOG_READ_ONLY" : "CATALOG_SCOPE_REFUSED");
-    return handle.prepare(sql).all(...params);
+    assertIntact();
+    if (probe) probe("before-query");
+    let rows;
+    try {
+      rows = memory.prepare(sql).all(...params);
+    } catch (error) {
+      try { assertIntact(); } catch (integrityError) { throw integrityError; }
+      if (error && typeof error.code === "string" && (error.code.startsWith("CATALOG_") || error.code === "DATA_PATH_REFUSED" || error.code === "DATABASE_FILE_REQUIRED")) {
+        throw error;
+      }
+      throw refusal("REQUEST_REFUSED");
+    }
+    if (probe) probe("after-query");
+    assertIntact();
+    return rows;
   }
 
-  function selectOne(sql, params = []) {
-    const rows = selectAll(sql, params);
+  function bounded(sql, params, limit) {
+    const rows = selectAll(`${sql} LIMIT ?`, [...params, limit + 1]);
+    if (rows.length > limit) throw refusal("CATALOG_RESULT_LIMIT");
+    return rows;
+  }
+
+  function exactlyOne(sql, value) {
+    const rows = selectAll(sql, [value]);
+    if (rows.length > 1) throw refusal("CATALOG_KEY_AMBIGUOUS");
     return rows[0] || null;
   }
 
   function getProduct(key) {
     if (!key) return null;
-    return selectOne(
-      `SELECT id, sku, title, status, visibility, category_id, brand_id
-       FROM catalog_products
-       WHERE id = ? OR sku = ?`,
-      [key, key],
-    );
+    const columns = "id, sku, title, status, visibility, category_id, brand_id";
+    const byId = exactlyOne(`SELECT ${columns} FROM catalog_products WHERE id = ?`, key);
+    if (byId) return byId;
+    return exactlyOne(`SELECT ${columns} FROM catalog_products WHERE sku = ?`, key);
   }
 
   const session = {
-    path: canonical,
+    get path() {
+      if (closed) throw refusal("CATALOG_CONNECTION_REQUIRED");
+      return canonical;
+    },
     mode: "READ_ONLY",
     capabilities: Object.freeze({
       write: false,
@@ -63,33 +218,50 @@ function openReadOnlyCatalog({ dbPath } = {}) {
       egress: false,
       productionReady: false,
     }),
+    identity() {
+      if (closed) throw refusal("CATALOG_CONNECTION_REQUIRED");
+      return Object.freeze({
+        path: baseline.path,
+        dev: baseline.dev,
+        ino: baseline.ino,
+        size: baseline.size,
+        mtimeMs: baseline.mtimeMs,
+        sha256: baseline.hash,
+      });
+    },
     listTables() {
-      return selectAll("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
-        .map((row) => row.name);
+      return bounded(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+        [],
+        LIST_LIMITS.tables,
+      ).map((row) => row.name);
     },
     listCategories() {
-      return selectAll("SELECT id, name, slug FROM catalog_categories ORDER BY name");
+      return bounded("SELECT id, name, slug FROM catalog_categories ORDER BY name", [], LIST_LIMITS.categories);
     },
     listBrands() {
-      return selectAll("SELECT id, name, slug FROM catalog_brands ORDER BY name");
+      return bounded("SELECT id, name, slug FROM catalog_brands ORDER BY name", [], LIST_LIMITS.brands);
     },
     getProduct,
     listIdentifiers(productId) {
-      return selectAll(
+      return bounded(
         "SELECT id, product_id, kind, value FROM catalog_identifiers WHERE product_id = ? ORDER BY kind",
         [productId],
+        LIST_LIMITS.identifiers,
       );
     },
     listVariants(productId) {
-      return selectAll(
+      return bounded(
         "SELECT id, product_id, sku, axis, value FROM catalog_variants WHERE product_id = ? ORDER BY sku",
         [productId],
+        LIST_LIMITS.variants,
       );
     },
     listMedia(productId) {
-      return selectAll(
+      return bounded(
         "SELECT id, product_id, media_type, label, sort_order FROM catalog_media WHERE product_id = ? ORDER BY sort_order",
         [productId],
+        LIST_LIMITS.media,
       );
     },
     readProductForPusat(key) {
@@ -108,15 +280,22 @@ function openReadOnlyCatalog({ dbPath } = {}) {
     },
     readSql(sql, params = []) {
       if (isWriteSql(sql)) throw refusal("CATALOG_READ_ONLY");
-      if (FORBIDDEN.test(sql)) throw refusal("CATALOG_SCOPE_REFUSED");
-      if (!/^\s*select\b/i.test(String(sql))) throw refusal("CATALOG_READ_ONLY");
-      return selectAll(sql, params);
+      const canonical = matchAllowedRead(sql);
+      if (!canonical || !Array.isArray(params) || params.length !== 1) throw refusal("CATALOG_SCOPE_REFUSED");
+      const rows = selectAll(canonical, params);
+      if (rows.length > 1) throw refusal("CATALOG_KEY_AMBIGUOUS");
+      return rows;
     },
     queryOnly() {
-      return Number(handle.pragma("query_only", { simple: true })) === 1;
+      assertIntact();
+      return Number(memory.pragma("query_only", { simple: true })) === 1;
     },
     close() {
-      handle.close();
+      if (closed) return;
+      closed = true;
+      try { memory.close(); } catch { /* the snapshot is already closed */ }
+      try { handle.close(); } catch { /* the file connection is already closed */ }
+      try { fs.closeSync(fd); } catch { /* the descriptor is already closed */ }
     },
   };
   Object.freeze(session);

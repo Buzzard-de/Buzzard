@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { marketingConfig } from "@/lib/marketing/config";
-import { hasAnalyticsConsent, hasMarketingConsent, readConsent, type ConsentState } from "@/lib/marketing/consent";
+import { hasAnalyticsConsent, readConsent, type ConsentState } from "@/lib/marketing/consent";
+import { applyMarketingScriptPlan, decideMetaPixel } from "@/lib/marketing/trackingConsent";
 
 function injectScript(id: string, src: string): void {
   if (document.getElementById(id)) return;
@@ -26,6 +27,13 @@ export default function MarketingScripts() {
   }, []);
 
   useEffect(() => {
+    const plan = decideMetaPixel({
+      browser: consent,
+      ledger: null,
+      serviceAvailable: false,
+    });
+    applyMarketingScriptPlan(plan, document);
+
     if (!consent) return;
     window.dataLayer = window.dataLayer || [];
 
@@ -44,14 +52,6 @@ export default function MarketingScripts() {
       );
       (window.dataLayer as Array<unknown>).push(["js", new Date()]);
       (window.dataLayer as Array<unknown>).push(["config", marketingConfig.ga4Id, { anonymize_ip: true }]);
-    }
-
-    if (hasMarketingConsent(consent) && marketingConfig.metaPixelId) {
-      injectScript(
-        "buzzard-meta-pixel",
-        `https://connect.facebook.net/en_US/fbevents.js`
-      );
-      window.dataLayer.push({ event: "meta_pixel_init", pixel_id: marketingConfig.metaPixelId });
     }
   }, [consent]);
 

@@ -2,9 +2,9 @@
  * Part 10 — Server-authoritative coupon validation for Commerce Core
  */
 const { validateCoupon, normalizeCouponCode } = require("../coupons");
+const { decideCouponAuthority } = require("./couponAuthorityGate");
 const { validateDiscount } = require("./commerceValidation");
 const { logSecurityEvent } = require("../securityLog");
-const { isSalesEnabled } = require("../salesMode");
 
 function commercialSeparation(input = {}) {
   return {
@@ -23,72 +23,61 @@ function commercialSeparation(input = {}) {
 }
 
 function resolveCouponDiscount(couponCode, subtotal, input = {}) {
-  const salesClosed = !isSalesEnabled();
-  if (!couponCode || !String(couponCode).trim()) {
-    return {
-      ok: false,
-      status: "UNKNOWN",
-      couponStatus: "UNKNOWN",
-      code: salesClosed ? "SALES_CLOSED" : "UNKNOWN",
-      discount: null,
-      arithmeticDiscount: null,
-      arithmeticOnly: false,
-      couponCode: null,
-      normalizedCode: null,
-      reasons: salesClosed ? ["SALES_CLOSED", "UNKNOWN"] : ["UNKNOWN"],
-      ...commercialSeparation(input),
-    };
-  }
-
-  const result = validateCoupon(couponCode, subtotal);
-  if (!result.valid) {
-    const code = salesClosed ? "SALES_CLOSED" : "COUPON_UNVERIFIED";
-    return {
-      ok: false,
-      status: "BLOCKED",
-      couponStatus: "BLOCKED",
-      code,
-      error: result.errorKey || "checkout.couponInvalid",
-      statusCode: salesClosed ? 403 : 400,
-      discount: null,
-      arithmeticDiscount: null,
-      arithmeticOnly: false,
-      reasons: salesClosed ? ["SALES_CLOSED", "COUPON_UNVERIFIED"] : ["COUPON_UNVERIFIED"],
-      ...commercialSeparation(input),
-    };
-  }
-
-  const discountCheck = validateDiscount(result.discount, subtotal);
-  if (!discountCheck.ok) {
-    const code = salesClosed ? "SALES_CLOSED" : discountCheck.code;
-    return {
-      ok: false,
-      status: "BLOCKED",
-      couponStatus: "BLOCKED",
-      code,
-      error: discountCheck.code,
-      statusCode: salesClosed ? 403 : 400,
-      discount: null,
-      arithmeticDiscount: null,
-      arithmeticOnly: false,
-      reasons: salesClosed ? ["SALES_CLOSED", discountCheck.code] : [discountCheck.code],
-      ...commercialSeparation(input),
-    };
-  }
-
+  const request = input && typeof input === "object" ? input : {};
+  const normalized = normalizeCouponCode(couponCode);
+  const legacyKey = `m21:${request.idempotencyKey || normalized || "empty"}`;
+  const legacy = validateCoupon(couponCode, subtotal, {
+    ...request,
+    idempotencyKey: legacyKey,
+  });
+  const authority = decideCouponAuthority({
+    ...request,
+    code: normalized,
+    authorityKey: `m22:${request.authorityKey || request.idempotencyKey || normalized || "empty"}`,
+  });
+  const gatesAuthorize = legacy.valid === true
+    && legacy.ok === true
+    && authority.ok === true
+    && authority.authorized === true
+    && authority.applied === true
+    && authority.status !== "UNKNOWN"
+    && authority.status !== "BLOCKED"
+    && authority.status !== "FAILED"
+    && authority.code !== "TIMEOUT"
+    && authority.code !== "NETWORK_ERROR";
+  const arithmetic = gatesAuthorize ? validateDiscount(legacy.discount, subtotal) : null;
+  const arithmeticOk = arithmetic?.ok === true;
   return {
-    ok: true,
-    arithmeticOnly: true,
-    discount: discountCheck.discount,
-    arithmeticDiscount: discountCheck.discount,
-    couponCode: result.normalizedCode,
-    normalizedCode: result.normalizedCode,
-    source: result.source || "server",
-    status: "BLOCKED",
-    couponStatus: "BLOCKED",
-    code: salesClosed ? "SALES_CLOSED" : "COUPON_UNVERIFIED",
-    reasons: salesClosed ? ["SALES_CLOSED", "COUPON_UNVERIFIED"] : ["COUPON_UNVERIFIED"],
-    ...commercialSeparation(input),
+    ...commercialSeparation(request),
+    ok: false,
+    authorized: false,
+    arithmeticOnly: false,
+    arithmeticOk: false,
+    commercialAuthority: false,
+    couponVerified: false,
+    applied: false,
+    discount: null,
+    arithmeticDiscount: arithmeticOk ? arithmetic.discount : null,
+    total: null,
+    commercialTotal: null,
+    discountedSubtotal: null,
+    taxBase: null,
+    orderCreated: false,
+    paymentCreated: false,
+    code: authority.code,
+    status: authority.status,
+    couponStatus: authority.status,
+    gateCode: authority.gateCode || legacy.code || null,
+    authorityCode: authority.code,
+    legacyCode: legacy.code || null,
+    legacyStatus: legacy.status || null,
+    error: legacy.errorKey || authority.code,
+    reasons: Array.isArray(authority.reasons) ? authority.reasons.slice() : [authority.code],
+    couponCode: normalized || null,
+    normalizedCode: normalized || null,
+    callerGateIgnored: request.gateResult != null || authority.callerGateIgnored === true,
+    callerFlagIgnored: true,
+    productionReady: false,
   };
 }
 

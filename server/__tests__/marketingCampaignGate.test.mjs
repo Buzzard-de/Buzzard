@@ -33,7 +33,9 @@ describe("marketing campaigns are not sales", () => {
       paid: true,
     });
     expect(created.ok).toBe(false);
-    expect(created.code).toBe("SALES_CLOSED");
+    expect(created.code).toBe("CAMPAIGN_SOURCE_UNKNOWN");
+    expect(created.status).toBe("UNKNOWN");
+    expect(created.authorized).toBe(false);
     expect(created.created).toBe(false);
     expect(created.stored).toBe(false);
     expect(created.budget).toBeNull();
@@ -106,5 +108,150 @@ describe("marketing campaigns are not sales", () => {
     expect(overview.grossValue).toBeNull();
     expect(overview.revenue).toBeNull();
     expect(overview.salesRecorded).toBe(false);
+  });
+});
+
+describe("FIN-M27 campaign creation stays closed", () => {
+  function campaign(extra = {}) {
+    return {
+      name: "Closed Campaign",
+      campaignId: "camp-m27",
+      sourceRecordId: "rec-m27",
+      authoritySource: "campaign-registry",
+      ownerId: "owner-m27",
+      country: "DE",
+      campaignCountry: "DE",
+      currency: "EUR",
+      campaignCurrency: "EUR",
+      productId: "prod-m27",
+      campaignProductId: "prod-m27",
+      category: "sensors",
+      campaignCategory: "sensors",
+      startsAt: "2020-06-01T00:00:00.000Z",
+      endsAt: "2099-01-01T00:00:00.000Z",
+      customerId: "cust-m27",
+      ...extra,
+    };
+  }
+
+  function expectClosed(result) {
+    expect(result.ok).toBe(false);
+    expect(result.authorized).toBe(false);
+    expect(result.created).toBe(false);
+    expect(result.stored).toBe(false);
+    expect(result.published).toBe(false);
+    expect(result.granted).toBe(false);
+    expect(result.consentVerified).toBe(false);
+    expect(result.budget).toBeNull();
+    expect(result.spend).toBeNull();
+    expect(result.discount).toBeNull();
+    expect(result.commercialTotal).toBeNull();
+    expect(result.orderCreated).toBe(false);
+    expect(result.paymentCreated).toBe(false);
+    expect(result.customerNotified).toBe(false);
+    expect(result.messageSent).toBe(false);
+    expect(result.emailSent).toBe(false);
+    expect(result.smsSent).toBe(false);
+    expect(result.pushSent).toBe(false);
+    expect(result.status).not.toBe(200);
+  }
+
+  it("does not store a campaign for an unverified owner or an unknown source", () => {
+    const owner = marketing.createCampaign(campaign({ idempotencyKey: "m27-owner" }));
+    expectClosed(owner);
+    expect(owner.code).toBe("CAMPAIGN_OWNER_UNVERIFIED");
+    expect(owner.status).toBe("UNKNOWN");
+
+    const source = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-source",
+      authoritySource: "",
+      sourceRecordId: "",
+    }));
+    expectClosed(source);
+    expect(source.code).toBe("CAMPAIGN_SOURCE_UNKNOWN");
+    expect(source.status).toBe("UNKNOWN");
+  });
+
+  it("keeps an unknown window and an unknown permission closed", () => {
+    const window = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-window",
+      startsAt: "",
+      endsAt: "",
+    }));
+    expectClosed(window);
+    expect(window.code).toBe("CAMPAIGN_WINDOW_UNKNOWN");
+    expect(window.status).toBe("UNKNOWN");
+    expect(window.emailPermission).toBe("UNKNOWN");
+    expect(window.smsPermission).toBe("UNKNOWN");
+    expect(window.pushPermission).toBe("UNKNOWN");
+  });
+
+  it("keeps a blocked campaign and a timeout closed", () => {
+    const blocked = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-blocked",
+      campaignStatus: "cancelled",
+    }));
+    expectClosed(blocked);
+    expect(blocked.code).toBe("CAMPAIGN_CANCELLED");
+    expect(blocked.status).toBe("BLOCKED");
+
+    const timedOut = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-timeout",
+      timeout: true,
+      ok: true,
+      status: 200,
+      authorized: true,
+      permission: true,
+    }));
+    expectClosed(timedOut);
+    expect(timedOut.code).toBe("TIMEOUT");
+    expect(timedOut.status).toBe("UNKNOWN");
+    expect(timedOut.callerPermissionIgnored).toBe(true);
+
+    const failed = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-failed",
+      networkError: true,
+    }));
+    expectClosed(failed);
+    expect(failed.code).toBe("NETWORK_ERROR");
+    expect(failed.status).toBe("UNKNOWN");
+  });
+
+  it("does not let one channel permission authorize another channel or a campaign", () => {
+    const email = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-email",
+      channel: "email",
+      permission: true,
+      emailPermission: "GRANTED",
+      ok: true,
+      status: 200,
+    }));
+    expectClosed(email);
+    expect(email.code).toBe("CAMPAIGN_OWNER_UNVERIFIED");
+    expect(email.emailPermission).toBe("UNKNOWN");
+    expect(email.smsPermission).toBe("UNKNOWN");
+    expect(email.pushPermission).toBe("UNKNOWN");
+
+    const sms = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-sms",
+      channel: "sms",
+      smsPermission: "GRANTED",
+      permission: true,
+    }));
+    expectClosed(sms);
+    expect(sms.smsPermission).toBe("UNKNOWN");
+    expect(sms.emailPermission).toBe("UNKNOWN");
+    expect(sms.pushPermission).toBe("UNKNOWN");
+
+    const push = marketing.createCampaign(campaign({
+      idempotencyKey: "m27-push",
+      channel: "push",
+      pushPermission: "GRANTED",
+    }));
+    expectClosed(push);
+    expect(push.pushPermission).toBe("UNKNOWN");
+    expect(push.emailPermission).toBe("UNKNOWN");
+    expect(push.smsPermission).toBe("UNKNOWN");
+    expect(push.messageSent).toBe(false);
   });
 });

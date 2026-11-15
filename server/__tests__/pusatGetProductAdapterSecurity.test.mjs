@@ -31,7 +31,7 @@ const opens = [];
 
 function CountingDatabase(filename, options) {
   const instance = new RealDatabase(filename, options);
-  opens.push(path.resolve(String(filename)));
+  opens.push(Buffer.isBuffer(filename) ? ":memory:" : path.resolve(String(filename)));
   return instance;
 }
 
@@ -216,13 +216,11 @@ describe("Pusat catalog adapter security", () => {
     fs.renameSync(renamedFile, path.join(dir, "rename-old.sqlite"));
     fs.renameSync(replacement, renamedFile);
     expect(fs.statSync(renamedFile).ino).not.toBe(openedInode);
-    const kept = adaptGetProduct({
+    expect(codeOf(() => adaptGetProduct({
       catalog: renamed,
       payload: { id: "fiction-lamp-1" },
       sotActive: false,
-    });
-    expect(kept.data.title).toBe("Paper Lantern Sample");
-    expect(kept.data.price).toBeNull();
+    }))).toBe("CATALOG_INTEGRITY_FAILED");
     renamed.close();
   });
 
@@ -266,17 +264,18 @@ describe("Pusat catalog adapter security", () => {
     expect(result.data.id).toBe("fiction-lamp-1");
     expect(Object.keys(result.data)).toEqual(["id", "sku", "title", "status", "visibility", "stock", "price"]);
     expect(codeOf(() => catalog.readSql("SELECT password FROM users"))).toBe("CATALOG_SCOPE_REFUSED");
-    let unknownColumn = null;
+    let refusedPrice = null;
     try {
       catalog.readSql("SELECT price, stock, vat, fx FROM catalog_products");
     } catch (error) {
-      unknownColumn = error;
+      refusedPrice = error;
     }
-    expect(unknownColumn.code).toBe("SQLITE_ERROR");
-    expect(unknownColumn.message).toMatch(/no such column/i);
+    expect(refusedPrice.code).toBe("CATALOG_SCOPE_REFUSED");
+    expect(refusedPrice.message).toBe("CATALOG_SCOPE_REFUSED");
+    expect(refusedPrice.stack).toBeUndefined();
     expect(codeOf(() => catalog.readSql("ATTACH DATABASE 'injected.sqlite' AS outside"))).toBe("CATALOG_READ_ONLY");
-    const columns = catalog.readSql("SELECT name FROM pragma_table_info('catalog_products')").map((row) => row.name);
-    expect(columns).toEqual(["id", "sku", "title", "status", "visibility", "category_id", "brand_id"]);
+    expect(codeOf(() => catalog.readSql("SELECT name FROM pragma_table_info('catalog_products')"))).toBe("CATALOG_SCOPE_REFUSED");
+    expect(Object.keys(catalog.getProduct("fiction-lamp-1"))).not.toEqual(expect.arrayContaining(["price", "stock"]));
     expect(digest(synthetic)).toBe(fixtureHash);
   });
 
@@ -312,10 +311,11 @@ describe("Pusat catalog adapter security", () => {
     expect(Object.prototype.live).toBeUndefined();
     expect(Object.prototype.productionReady).toBeUndefined();
 
-    const explicit = read({ id: "fiction-mug-1" }, { source: "LIVE", sotActive: true, actorId: { admin: true } });
-    expect(explicit.source).toBe("LIVE");
-    expect(explicit.sotActive).toBe(true);
-    expect(explicit.mappingStatus).toBe("CANDIDATE");
+    const explicit = read({ id: "fiction-mug-1" }, { source: "D", sotActive: true, actorId: { admin: true } });
+    expect(explicit.code).toBe("SOURCE_REFUSED");
+    expect(explicit.data).toBeUndefined();
+    expect(explicit.source).toBeUndefined();
+    expect(explicit.sotActive).toBeUndefined();
     dryRun(explicit);
     expect(explicit.productionReady).toBeUndefined();
   });
@@ -341,7 +341,10 @@ describe("Pusat catalog adapter security", () => {
       }))).toBe("SOT_ACTIVE_REQUIRED");
     }
     expect(calls).toEqual([]);
-    expect(read({ id: "fiction-lamp-1" }, { sotActive: true }).sotActive).toBe(true);
+    const claimed = read({ id: "fiction-lamp-1" }, { sotActive: true });
+    expect(claimed.sotActive).toBe(false);
+    expect(claimed.sotClaim).toBe("UNVERIFIED");
+    expect(JSON.stringify(claimed)).not.toContain('"sotActive":true');
     expect(read({ id: "fiction-lamp-1" }, { sotActive: false }).sotActive).toBe(false);
   });
 
@@ -378,14 +381,9 @@ describe("Pusat catalog adapter security", () => {
     } catch (error) {
       outcome = error;
     }
-    if (outcome instanceof Error) {
-      expect(outcome.code).toBe("CATALOG_CONNECTION_REQUIRED");
-    } else {
-      expect(outcome.data.price).toBeNull();
-      expect(outcome.data.stock).toBeNull();
-      expect(Object.keys(outcome.data)).toEqual(["id", "sku", "title", "status", "visibility", "stock", "price"]);
-      dryRun(outcome);
-    }
+    expect(outcome).toBeInstanceOf(Error);
+    expect(outcome.code).toBe("CATALOG_INTEGRITY_FAILED");
+    expect(outcome.data).toBeUndefined();
     expect(opens.length).toBe(opensBefore);
     priced.close();
   });
@@ -414,7 +412,7 @@ describe("Pusat catalog adapter security", () => {
     expect(fileMark(commerceDb)).toEqual(dbBefore);
     expect(fileMark(workspaceDb)).toEqual(workspaceBefore);
     expect(fileMark(pusatMemory)).toEqual(pusatBefore);
-    expect(opens.every((opened) => opened.startsWith(dir + path.sep))).toBe(true);
+    expect(opens.every((opened) => opened === ":memory:" || opened.startsWith(dir + path.sep))).toBe(true);
     expect(process.env.BUZZARD_SALES_ENABLED).toBeUndefined();
     expect(digest(synthetic)).toBe(fixtureHash);
   });

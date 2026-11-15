@@ -29,6 +29,14 @@ const { startReturn } = require("../logistics/v5/returnsEngine");
 const CHARACTERS = Object.freeze(["sinan_bey", "mira", "leon", "amelia", "adrian", "zeynep_hanim"]);
 const FORBIDDEN_DB = path.resolve("/workspace/server/data/buzzard.db");
 
+/** Local arithmetic sample. Not a carrier tariff and not a shipment price. */
+const SYNTHETIC_COST_STACK = Object.freeze({
+  source: "SYNTHETIC_COST_STACK",
+  shippingCost: 2,
+  carrierQueried: false,
+  orderCreated: false,
+});
+
 function assertIsolatedPath(file) {
   const resolved = path.resolve(file);
   if (resolved === FORBIDDEN_DB || path.basename(resolved) === "buzzard.db") {
@@ -59,7 +67,7 @@ function runJourney(dir) {
   const fixture = evaluateOffer({
     offerPrice: 20,
     supplierCost: 8,
-    shippingCost: 2,
+    shippingCost: SYNTHETIC_COST_STACK.shippingCost,
     marketplaceFee: 1,
     paymentFee: 0,
     vatOnFees: 0,
@@ -155,6 +163,12 @@ function runJourney(dir) {
         fixtureAccepted: fixture.ok,
         salesEnabled: fixture.salesEnabled,
         inventedCatalogPrice: false,
+        shippingCost: {
+          amount: SYNTHETIC_COST_STACK.shippingCost,
+          source: SYNTHETIC_COST_STACK.source,
+          carrierQueried: SYNTHETIC_COST_STACK.carrierQueried,
+          orderCreated: SYNTHETIC_COST_STACK.orderCreated,
+        },
       },
       inventory: {
         ok: false,
@@ -266,7 +280,7 @@ function runProgram({ dir, writeCheckpoints = false, checkpointRoot = null } = {
       evaluateOffer({
         offerPrice: 20,
         supplierCost: 8,
-        shippingCost: 2,
+        shippingCost: SYNTHETIC_COST_STACK.shippingCost,
         marketplaceFee: 1,
         paymentFee: 0,
         returnReserve: 0.5,
@@ -370,4 +384,4 @@ function runProgram({ dir, writeCheckpoints = false, checkpointRoot = null } = {
   return report;
 }
 
-module.exports = { runProgram, runJourney, CHARACTERS };
+module.exports = { runProgram, runJourney, CHARACTERS, SYNTHETIC_COST_STACK };

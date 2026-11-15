@@ -9,8 +9,36 @@ const registry = new Map([
   ["tecdoc", tecdocAdapter],
 ]);
 
+function unknownAdapter(id) {
+  const closed = (code = "SUPPLIER_UNKNOWN") => ({
+    ok: false,
+    live: false,
+    mock: false,
+    status: "SUPPLIER_UNKNOWN",
+    code,
+    price: null,
+    stock: null,
+    supplierCost: null,
+    purchased: false,
+    reserved: false,
+    commercialEligibility: "BLOCKED",
+    records: [],
+  });
+  return {
+    id: id || null,
+    name: "Unknown supplier",
+    mock: false,
+    fetchCatalog: async () => closed(),
+    fetchStock: async () => closed(),
+    fetchPrices: async () => closed(),
+    prepareOrder: async () => closed("PURCHASE_BLOCKED"),
+    parseXmlFeed: () => closed(),
+  };
+}
+
 function getAdapter(adapterId = "mock") {
-  return registry.get(adapterId) || mockAdapter;
+  if (!adapterId) return registry.get("mock");
+  return registry.get(adapterId) || unknownAdapter(adapterId);
 }
 
 function listAdapters() {

@@ -7,7 +7,7 @@ import test from "node:test";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { runProgram } = require("../lib/platform/tenModuleProgram.js");
+const { runProgram, SYNTHETIC_COST_STACK } = require("../lib/platform/tenModuleProgram.js");
 const { decideAsset } = require("../lib/banking/eu27/fiatPolicy.js");
 const { quoteRate } = require("../lib/banking/eu27/fx.js");
 const { registryComplete } = require("../lib/banking/eu27/inventory.js");
@@ -60,6 +60,20 @@ test("the closed journey calls engines and does not award completion labels", ()
   assert.equal(desk.sent, false);
   assert.equal(notice.sent, false);
   assert.equal(returned.labelIssued, false);
+  assert.equal(SYNTHETIC_COST_STACK.source, "SYNTHETIC_COST_STACK");
+  assert.equal(SYNTHETIC_COST_STACK.shippingCost, 2);
+  assert.equal(SYNTHETIC_COST_STACK.carrierQueried, false);
+  assert.equal(SYNTHETIC_COST_STACK.orderCreated, false);
+  assert.deepEqual(report.journey.steps.pricing.shippingCost, {
+    amount: SYNTHETIC_COST_STACK.shippingCost,
+    source: SYNTHETIC_COST_STACK.source,
+    carrierQueried: false,
+    orderCreated: false,
+  });
+  assert.equal(report.journey.steps.pricing.fixtureAccepted, true);
+  assert.equal(report.journey.shipmentCreated, false);
+  assert.equal(report.journey.orderCreated, false);
+  assert.equal(source.split("shippingCost: 2").length - 1, 1);
   assert.equal(report.journey.steps.order.code, order.code);
   assert.equal(report.journey.steps.order.orderCreated, false);
   assert.equal(report.journey.steps.order.invoked, "storefrontCatalogAdapter.placeOrder");

@@ -1,4 +1,5 @@
 const { db } = require("./db");
+const { planCoupon } = require("./commerce/couponGate");
 
 /** Canonical coupon codes — kept in sync with SQLite seed data and storefront fallback. */
 const FALLBACK_COUPONS = {
@@ -39,7 +40,13 @@ function lookupDbCoupon(code) {
   const normalized = normalizeCouponCode(code);
   if (!normalized) return null;
 
-  const primary = db.prepare("SELECT * FROM coupons WHERE code = ? AND active = 1").get(normalized);
+  let primary;
+  try {
+    primary = db.prepare("SELECT * FROM coupons WHERE code = ? AND active = 1").get(normalized);
+  } catch (err) {
+    if (err && err.code === "DATABASE_NOT_INITIALIZED") return null;
+    throw err;
+  }
   if (primary) {
     if (primary.expires_at && new Date(primary.expires_at) < new Date()) return null;
     return rowToCoupon(primary);
@@ -49,27 +56,52 @@ function lookupDbCoupon(code) {
   return rowToCoupon(cartCoupon);
 }
 
-function validateCoupon(code, subtotal) {
+function closedCoupon(gate, normalized, errorKey) {
+  return {
+    valid: false,
+    ok: false,
+    discount: null,
+    discountAmount: null,
+    total: null,
+    commercialTotal: null,
+    applied: false,
+    commercialApplied: false,
+    orderCreated: false,
+    paymentCreated: false,
+    reservationCreated: false,
+    purchased: false,
+    live: false,
+    commercial: false,
+    productionReady: false,
+    callerFlagIgnored: true,
+    code: gate.code,
+    status: gate.status,
+    gateCode: gate.code,
+    gateStatus: gate.status,
+    errorKey: errorKey || null,
+    normalizedCode: normalized || null,
+    reasons: Array.isArray(gate.reasons) ? gate.reasons.slice() : [gate.code],
+  };
+}
+
+function validateCoupon(code, _subtotal, input) {
+  const extra = input && typeof input === "object" ? input : {};
   const normalized = normalizeCouponCode(code);
-  if (!normalized) {
-    return { valid: false, discount: 0, errorKey: "checkout.couponEmpty" };
-  }
-
-  const dbCoupon = lookupDbCoupon(normalized);
-  if (dbCoupon) {
-    const result = computeDiscount({ ...dbCoupon, code: normalized }, subtotal);
-    if (!result.valid) return result;
-    return { ...result, normalizedCode: normalized, source: "sqlite" };
-  }
-
-  const fallback = FALLBACK_COUPONS[normalized];
-  if (!fallback) {
-    return { valid: false, discount: 0, errorKey: "checkout.couponInvalid" };
-  }
-
-  const result = computeDiscount({ ...fallback, code: normalized }, subtotal);
-  if (!result.valid) return result;
-  return { ...result, normalizedCode: normalized, source: "fallback" };
+  const errorKey = normalized ? null : "checkout.couponEmpty";
+  const gate = planCoupon({
+    ...extra,
+    code: normalized,
+    idempotencyKey: extra.idempotencyKey || `legacy-coupon:${normalized}:${extra.customerId || ""}:${extra.cartId || ""}`,
+  });
+  const gateClosed = gate.ok !== true
+    || gate.applied !== true
+    || gate.status === "UNKNOWN"
+    || gate.status === "BLOCKED"
+    || gate.status === "FAILED"
+    || gate.code === "TIMEOUT"
+    || gate.code === "NETWORK_ERROR";
+  if (gateClosed) return closedCoupon(gate, normalized, errorKey);
+  return closedCoupon(gate, normalized, errorKey);
 }
 
 function listCouponsAdmin() {

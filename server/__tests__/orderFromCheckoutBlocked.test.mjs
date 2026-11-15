@@ -27,8 +27,12 @@ describe("checkout does not become an order without a verified cost and payment"
       orderType: "DRY_RUN",
     });
     expect(order.orderCreated).toBe(false);
-    expect(order.code).toBe("SHIPPING_RATE_UNVERIFIED");
+    expect(order.code).toBe("CUSTOMER_UNVERIFIED");
     expect(order.reasons).toEqual(expect.arrayContaining([
+      "CUSTOMER_UNVERIFIED",
+      "CUSTOMER_APPROVAL_REQUIRED",
+      "PRODUCT_UNVERIFIED",
+      "COUNTRY_UNVERIFIED",
       "SHIPPING_RATE_UNVERIFIED",
       "MARKETPLACE_FEE_UNVERIFIED",
       "PAYMENT_FEE_UNVERIFIED",
@@ -50,9 +54,10 @@ describe("checkout does not become an order without a verified cost and payment"
       payment: { status: "AUTHORIZED" },
       orderType: "DRY_RUN",
     });
-    expect(order.code).toBe("SHIPPING_RATE_UNVERIFIED");
+    expect(order.code).toBe("CUSTOMER_UNVERIFIED");
     expect(order.orderCreated).toBe(false);
     expect(order.shipping).toBeNull();
+    expect(order.reasons).toContain("SHIPPING_RATE_UNVERIFIED");
   });
 
   it("does not let a commercial checkout through while sales are closed", () => {
@@ -80,7 +85,8 @@ describe("checkout does not become an order without a verified cost and payment"
       checkout: { id: "chk-fee", transport, totals: { subtotal: 10, tax: 1.9, currency: "EUR" } },
       orderType: "DRY_RUN",
     });
-    expect(marketplace.code).toBe("MARKETPLACE_FEE_UNVERIFIED");
+    expect(marketplace.code).toBe("CUSTOMER_UNVERIFIED");
+    expect(marketplace.reasons).toContain("MARKETPLACE_FEE_UNVERIFIED");
     expect(marketplace.orderCreated).toBe(false);
 
     const paymentFee = orderService.createOrderFromCheckout({
@@ -92,7 +98,8 @@ describe("checkout does not become an order without a verified cost and payment"
       },
       orderType: "DRY_RUN",
     });
-    expect(paymentFee.code).toBe("PAYMENT_FEE_UNVERIFIED");
+    expect(paymentFee.code).toBe("CUSTOMER_UNVERIFIED");
+    expect(paymentFee.reasons).toContain("PAYMENT_FEE_UNVERIFIED");
 
     const fx = orderService.createOrderFromCheckout({
       checkout: {
@@ -104,7 +111,8 @@ describe("checkout does not become an order without a verified cost and payment"
       },
       orderType: "DRY_RUN",
     });
-    expect(fx.code).toBe("VAT_UNVERIFIED");
+    expect(fx.code).toBe("CUSTOMER_UNVERIFIED");
+    expect(fx.reasons).toContain("VAT_UNVERIFIED");
     expect(fx.reasons).toContain("FX_UNVERIFIED");
     expect(fx.reasons).toContain("SUPPLIER_COST_UNVERIFIED");
     expect(fx.reasons).toContain("STOCK_UNVERIFIED");
@@ -132,23 +140,20 @@ describe("checkout does not become an order without a verified cost and payment"
     });
     expect(mock.code).toBe("MOCK_NOT_COMMERCIAL");
 
-    const { db } = require("../lib/db");
     const checkoutId = `chk-dup-${Date.now()}`;
-    db.prepare("INSERT INTO commerce_orders (id, checkout_id, order_type) VALUES (?, ?, ?)").run(
-      `ord-dup-${Date.now()}`,
-      checkoutId,
-      "DRY_RUN",
-    );
-    const before = db.prepare("SELECT COUNT(*) n FROM commerce_orders WHERE checkout_id = ?").get(checkoutId).n;
+    const first = orderService.createOrderFromCheckout({
+      checkout: { id: checkoutId, totals: { shipping: 4.99, subtotal: 10, tax: 1, total: 15.99, currency: "EUR" } },
+      payment: { captured: true, live: true, verified: true },
+      orderType: "DRY_RUN",
+    });
     const duplicate = orderService.createOrderFromCheckout({
       checkout: { id: checkoutId, totals: { shipping: 4.99, subtotal: 10, tax: 1, total: 15.99, currency: "EUR" } },
       payment: { captured: true, live: true, verified: true },
       orderType: "DRY_RUN",
     });
-    const after = db.prepare("SELECT COUNT(*) n FROM commerce_orders WHERE checkout_id = ?").get(checkoutId).n;
+    expect(first.orderCreated).toBe(false);
     expect(duplicate.code).toBe("DUPLICATE_ORDER");
     expect(duplicate.orderCreated).toBe(false);
-    expect(after).toBe(before);
 
     const intent = paymentService.createPaymentIntent({ amount: 10, currency: "USDC", dryRun: true });
     expect(intent.code).toBe("REJECTED_CRYPTO_POLICY");

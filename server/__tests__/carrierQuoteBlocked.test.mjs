@@ -97,4 +97,35 @@ describe("carrier rates and addresses stay blocked without a live service", () =
     expect(coverage.code).toBe("LIVE_CONNECTION_ABSENT");
     expect(JSON.stringify(coverage)).not.toContain("10115");
   });
+
+  it("does not price another country with a Germany-scoped synthetic tariff", () => {
+    const { selectTransportCost } = require("../lib/commerce/pricingPolicy.js");
+    const { quoteCost } = require("../lib/logistics/v5/costEngine.js");
+    const france = selectTransportCost({
+      origin: "DE-WH-1",
+      country: "FR",
+      zone: "FR-75001",
+      weightKg: 2,
+      dimensions: { lengthCm: 20, widthCm: 20, heightCm: 10 },
+      rates: [{ carrier: "DHL", service: "standard", amount: 6.4, verified: true, suitable: true, countries: ["DE"] }],
+    });
+    expect(france.shippingCost).toBeNull();
+    expect(france.commercialTariff).toBe(false);
+    expect(france.compared).toEqual([]);
+    const missing = selectTransportCost({
+      origin: "DE-WH-1",
+      country: "PL",
+      zone: "PL-00-001",
+      weightKg: 2,
+      dimensions: { lengthCm: 20, widthCm: 20, heightCm: 10 },
+      rates: [{ carrier: "DHL", service: "standard", amount: 6.4, verified: true, suitable: true }],
+    });
+    expect(missing.shippingCost).toBeNull();
+    expect(missing.compared).toEqual([]);
+    const cost = quoteCost({ country: "FR", weightKg: 2, liveRate: true });
+    expect(cost.total).toBe("UNKNOWN");
+    expect(cost.liveRate).toBe(false);
+    expect(cost.estimateIsNotPrice).toBe(true);
+    expect(cost.callerLiveRateIgnored).toBe(true);
+  });
 });

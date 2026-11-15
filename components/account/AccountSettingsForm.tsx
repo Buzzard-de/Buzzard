@@ -7,21 +7,26 @@ import { useLocale } from "@/lib/i18n/context";
 export default function AccountSettingsForm() {
   const { t } = useLocale();
   const [marketing, setMarketing] = useState(false);
+  const [emailStatus, setEmailStatus] = useState("UNKNOWN");
+  const [whatsappStatus, setWhatsappStatus] = useState("UNKNOWN");
   const [transactional, setTransactional] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     import("@/lib/account/client").then(({ fetchAccountMe }) =>
       fetchAccountMe().then((me) => {
-        setMarketing(Boolean(me.preferences.marketing));
-        setTransactional(me.preferences.transactional !== false);
+        const verifiedGrant = me.granted === true && me.consentVerified === true && me.emailPermission === "GRANTED";
+        setMarketing(verifiedGrant);
+        setEmailStatus(me.emailPermission || "UNKNOWN");
+        setWhatsappStatus(me.whatsappPermission || "UNKNOWN");
+        setTransactional(me.preferences?.transactional !== false);
       })
     );
   }, []);
 
   async function savePreferences(e: FormEvent) {
     e.preventDefault();
-    await updateAccountPreferences({ marketing, transactional });
+    await updateAccountPreferences({ transactional });
     setMessage(t("account.saved"));
   }
 
@@ -36,7 +41,8 @@ export default function AccountSettingsForm() {
       <form className="account-panel account-form" onSubmit={savePreferences}>
         <h2>{t("account.notifications")}</h2>
         <label className="checkout-checkbox"><input type="checkbox" checked={transactional} onChange={(e) => setTransactional(e.target.checked)} /> {t("account.transactionalEmails")}</label>
-        <label className="checkout-checkbox"><input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} /> {t("account.marketingEmails")}</label>
+        <label className="checkout-checkbox"><input type="checkbox" checked={marketing} disabled readOnly /> {t("account.marketingEmails")} {emailStatus}</label>
+        <p>WhatsApp {whatsappStatus}</p>
         <button type="submit" className="shop-btn-primary">{t("account.save")}</button>
       </form>
       <section className="account-panel">

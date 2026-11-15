@@ -1,4 +1,5 @@
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { getPersistenceInfo } = require("./dbPaths");
 
@@ -4229,6 +4230,102 @@ function resetE2eFixtureInventory() {
   `).run();
 }
 
+const CONSENT_LEDGER_SCHEMA = `
+CREATE TABLE IF NOT EXISTS marketing_consent_decisions (
+  sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+  decision_id TEXT NOT NULL UNIQUE,
+  customer_id TEXT NOT NULL,
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'push', 'marketing_tracking')),
+  consent_status TEXT NOT NULL CHECK (consent_status IN ('GRANTED', 'WITHDRAWN')),
+  idempotency_key TEXT NOT NULL UNIQUE,
+  payload_hash TEXT NOT NULL,
+  source TEXT NOT NULL,
+  explicit_grant INTEGER NOT NULL CHECK (explicit_grant IN (0, 1)),
+  consent_verified INTEGER NOT NULL CHECK (consent_verified IN (0, 1)),
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS marketing_consent_state (
+  customer_id TEXT NOT NULL,
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'push', 'marketing_tracking')),
+  consent_status TEXT NOT NULL CHECK (consent_status IN ('GRANTED', 'WITHDRAWN')),
+  decision_id TEXT NOT NULL,
+  source TEXT NOT NULL,
+  sequence INTEGER NOT NULL,
+  explicit_grant INTEGER NOT NULL CHECK (explicit_grant IN (0, 1)),
+  consent_verified INTEGER NOT NULL CHECK (consent_verified IN (0, 1)),
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (customer_id, channel)
+);
+`;
+
+function isEphemeralConsentPath(candidate) {
+  const resolved = path.resolve(candidate);
+  const roots = [path.resolve("/tmp"), path.resolve("/var/tmp"), path.resolve("/private/tmp"), path.resolve(os.tmpdir())];
+  return roots.some((root) => resolved === root || resolved.startsWith(`${root}${path.sep}`));
+}
+
+function assertConsentLedgerPath(candidate, options = {}) {
+  if (typeof candidate !== "string" || !candidate.trim() || candidate.includes("\0")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const isolatedFixture = options.isolatedFixture === true && process.env.VITEST === "true";
+  const resolved = path.resolve(candidate.trim());
+  const base = path.basename(resolved);
+  if (isProtected(resolved) || base.startsWith("buzzard_guardian") || base.toLowerCase().includes("pusat")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isEphemeralConsentPath(resolved) && !isolatedFixture) throw refusal("DATA_PATH_REFUSED");
+  if (!fs.existsSync(resolved)) return resolved;
+  let real = resolved;
+  try {
+    real = fs.realpathSync(resolved);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isProtected(real) || path.basename(real).toLowerCase().includes("pusat") || sameCommerceFile(real)) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isEphemeralConsentPath(real) && !isolatedFixture) throw refusal("DATA_PATH_REFUSED");
+  return real;
+}
+
+function openIsolatedFixtureDatabase(dbPath) {
+  if (process.env.VITEST !== "true") throw refusal("DATA_PATH_REFUSED");
+  if (typeof dbPath !== "string" || !dbPath.trim() || dbPath.includes("\0")) throw refusal("DATA_PATH_REFUSED");
+  const resolved = path.resolve(dbPath.trim());
+  if (isProtected(resolved) || path.basename(resolved).toLowerCase().includes("pusat")) throw refusal("DATA_PATH_REFUSED");
+  if (!isEphemeralConsentPath(resolved)) throw refusal("DATA_PATH_REFUSED");
+  if (fs.existsSync(resolved)) {
+    const listed = fs.lstatSync(resolved);
+    if (listed.isSymbolicLink() || !listed.isFile()) throw refusal("DATA_PATH_REFUSED");
+  }
+  const Database = require("better-sqlite3");
+  releaseHandle();
+  handle = new Database(resolved);
+  activePath = resolved;
+  activeMode = "ISOLATED_FIXTURE";
+  return { ok: true, path: resolved, productionReady: false, salesOpen: false, egress: "DENY" };
+}
+
+function closeIsolatedFixtureDatabase() {
+  if (activeMode !== "ISOLATED_FIXTURE") return { ok: false, closed: false, productionReady: false };
+  releaseHandle();
+  return { ok: true, closed: true, productionReady: false };
+}
+
+function migrateMarketingConsentLedger(externalDb, options = {}) {
+  if (!externalDb || typeof externalDb.exec !== "function" || externalDb === db) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const name = typeof externalDb.name === "string" ? externalDb.name : "";
+  if (name === ":memory:") throw refusal("DATA_PATH_REFUSED");
+  if (!name) throw refusal("DATA_PATH_REFUSED");
+  assertConsentLedgerPath(name, options);
+  externalDb.exec(CONSENT_LEDGER_SCHEMA);
+  return { ok: true, applied: true, productionReady: false, target: "isolated" };
+}
+
 function applyMigrations() {
   migrateCatalogSeo();
   migrateLocalizationFeeds();
@@ -4343,6 +4440,11 @@ module.exports = {
     return activeMode;
   },
   initializeDatabase,
+  openIsolatedFixtureDatabase,
+  closeIsolatedFixtureDatabase,
   getDatabaseHealth,
   getPersistenceInfo: publicPersistence,
+  CONSENT_LEDGER_SCHEMA,
+  assertConsentLedgerPath,
+  migrateMarketingConsentLedger,
 };

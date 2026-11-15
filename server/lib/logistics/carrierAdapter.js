@@ -29,7 +29,7 @@ function createLabel(req = {}) {
   return adapter.createLabel(req);
 }
 
-function simulateTrack({ status = "IN_TRANSIT", carrier } = {}) {
+function simulateTrack({ status = null, carrier } = {}) {
   const adapter = carrier ? getAdapter(carrier) : null;
   if (!adapter) {
     return {

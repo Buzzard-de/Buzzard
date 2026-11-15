@@ -18,8 +18,9 @@ function quoteCost({ carrierId, country, weightKg, liveRate } = {}) {
     extras: "UNKNOWN",
     vat: "UNKNOWN",
     total: "UNKNOWN",
-    liveRate: liveRate === true,
-    estimateIsNotPrice: liveRate !== true,
+    liveRate: false,
+    estimateIsNotPrice: true,
+    callerLiveRateIgnored: liveRate === true,
     invoiceVariance: "UNKNOWN",
   };
 }

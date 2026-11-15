@@ -139,6 +139,7 @@ function assertCommercialCheckout({ quote, shipping } = {}) {
       code: "SHIPPING_RATE_UNVERIFIED",
       status: "SHIPPING_RATE_UNVERIFIED",
       commercialEligibility: "BLOCKED",
+      checkoutAllowed: false,
       orderCreated: false,
       paymentAuthorized: false,
       salesEnabled,

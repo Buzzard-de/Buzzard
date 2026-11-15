@@ -22,12 +22,25 @@ describe("calculateCheckoutQuote does not turn a missing subtotal into zero", ()
   it("keeps sales closed and separates missing, explicit zero, invalid, and valid amounts", () => {
     expect(isSalesEnabled()).toBe(false);
 
-    for (const subtotal of [undefined, null, "", "   ", "UNKNOWN"]) {
+    for (const subtotal of [undefined, null, "", "   ", "UNKNOWN", "unknown"]) {
       const quote = calculateCheckoutQuote({ subtotal, countryCode: "DE", currency: "EUR" });
       refused(quote);
       expect(quote.code).toBe("SUBTOTAL_UNKNOWN");
       expect(quote.status).toBe("UNKNOWN");
       expect(quote.subtotal).toBeNull();
+      expect(quote.refunded).toBe(false);
+      expect(quote.customerRefund).toBeNull();
+      expect(quote.supplierReimbursement).toBeNull();
+      expect(quote.invoiceIssued).toBe(false);
+      expect(quote.payoutCreated).toBe(false);
+    }
+
+    for (const body of [null, undefined, [], "12.50"]) {
+      const quote = calculateCheckoutQuote(body);
+      refused(quote);
+      expect(quote.code).toBe("SUBTOTAL_UNKNOWN");
+      expect(quote.subtotal).toBeNull();
+      expect(quote.refunded).toBe(false);
     }
 
     const omitted = calculateCheckoutQuote({ countryCode: "DE" });
@@ -65,6 +78,9 @@ describe("calculateCheckoutQuote does not turn a missing subtotal into zero", ()
     refused(valid);
     expect(valid.code).toBe("SALES_CLOSED");
     expect(valid.subtotal).toBe(12.5);
+    expect(valid.refunded).toBe(false);
+    expect(valid.customerRefund).toBeNull();
+    expect(valid.supplierReimbursement).toBeNull();
 
     const validText = calculateCheckoutQuote({ subtotal: "12.50", countryCode: "DE", currency: "EUR" });
     refused(validText);

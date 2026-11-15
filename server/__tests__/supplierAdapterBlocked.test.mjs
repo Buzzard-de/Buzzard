@@ -3,6 +3,12 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { BaseSupplierAdapter } = require("../lib/supplier/baseAdapter.js");
+const { ApiSupplierAdapter } = require("../lib/supplier/apiSupplierAdapter.js");
+const { XmlSupplierAdapter } = require("../lib/supplier/xmlSupplierAdapter.js");
+const { CsvSupplierAdapter } = require("../lib/supplier/csvSupplierAdapter.js");
+const { ManualSupplierAdapter } = require("../lib/supplier/manualSupplierAdapter.js");
+const legacyMock = require("../lib/adapters/mockSupplierAdapter.js");
+const legacyRegistry = require("../lib/adapters/supplierAdapter.js");
 const { MockSupplierAdapter } = require("../lib/supplier/mockAdapter.js");
 const { getAdapter } = require("../lib/supplier/adapterRegistry.js");
 const { evaluateOffer } = require("../lib/commerce/pricingPolicy.js");
@@ -125,5 +131,73 @@ describe("supplier adapters stay blocked without a live account", () => {
     expect(priced.code).toBe("SUPPLIER_COST_UNVERIFIED");
     expect(priced.supplierCost).toBeNull();
     expect(priced.cost).toBeNull();
+  });
+
+  it("keeps API, XML, CSV, and manual rows unverified and does not buy stock first", async () => {
+    const adapters = [
+      new ApiSupplierAdapter(),
+      new XmlSupplierAdapter(),
+      new CsvSupplierAdapter(),
+      new ManualSupplierAdapter(),
+    ];
+    for (const adapter of adapters) {
+      const health = await adapter.healthCheck();
+      expect(health.ok).toBe(false);
+      expect(health.live).toBe(false);
+      expect(health.code).toBe("MISSING_CREDENTIALS");
+      const products = await adapter.fetchProductsDryRun();
+      expect(products.price).toBeNull();
+      expect(products.stock).toBeNull();
+      expect(products.purchased).toBe(false);
+      expect(products.records.every((row) => row.stock == null && row.commercialUse === false)).toBe(true);
+    }
+    const manual = new ManualSupplierAdapter().ingest(
+      { sku: "MAN-1", price: 12, stock: 4, currency: "euro", leadTimeDays: "", countries: ["DE"] },
+      "FR"
+    );
+    expect(manual.code).toBe("MANUAL_NOT_COMMERCIAL");
+    expect(manual.price).toBeNull();
+    expect(manual.stock).toBeNull();
+    expect(manual.offer.currency).toBe("UNKNOWN");
+    expect(manual.offer.leadTimeDays).toBe("UNKNOWN");
+    expect(manual.offer.countryScope).toBe("OUT_OF_SCOPE");
+    expect(manual.purchased).toBe(false);
+
+    const catalog = await legacyMock.fetchCatalog();
+    expect(catalog.ok).toBe(false);
+    expect(catalog.records[0].stock).toBeNull();
+    expect(catalog.records[0].supplier_price).toBeNull();
+    const xml = legacyMock.parseXmlFeed("<item><sku>X</sku><name>Part</name><stock></stock></item>");
+    expect(xml.ok).toBe(false);
+    expect(xml.records[0].stock).toBeNull();
+    expect(xml.records[0].currency).toBe("UNKNOWN");
+    expect(xml.records[0].supplier_price).toBeNull();
+    const unknown = await legacyRegistry.fetchCatalog("not-a-supplier");
+    expect(unknown.code).toBe("SUPPLIER_UNKNOWN");
+    expect(unknown.stock).toBeNull();
+
+    const choice = inspectFeeds({
+      destination: "FR",
+      feeds: [
+        { supplier: "de-only", sku: "A", qty: 9, price: 4, currency: "EUR", countries: ["DE"], mock: true, updatedAt: Date.now() },
+        { supplier: "fr-synthetic", sku: "B", qty: 2, price: 3, currency: "EUR", countries: ["FR"], leadTimeDays: 2, mock: true, updatedAt: Date.now() },
+      ],
+    });
+    expect(choice.chosen).toBeNull();
+    expect(choice.purchased).toBe(false);
+    expect(choice.reserved).toBe(false);
+    expect(choice.code).toBe("ORDER_UNVERIFIED");
+    expect(choice.candidates.map((row) => row.countryScope)).toEqual(["OUT_OF_SCOPE", "IN_SCOPE"]);
+    expect(choice.candidates.every((row) => row.price == null && row.stock == null && row.commercialUse === false)).toBe(true);
+    const { buyStock } = require("../lib/buzzardNative/core/specialists/stockEngine.js");
+    expect(buyStock().code).toBe("HUMAN_GATE_REQUIRED");
+    expect(buyStock().reason).toBe("ORDER_UNVERIFIED");
+    expect(buyStock().purchased).toBe(false);
+    expect(buyStock({ customerOrderVerified: true })).toMatchObject({
+      ok: false,
+      purchased: false,
+      reserved: false,
+      code: "LIVE_CONNECTION_ABSENT",
+    });
   });
 });

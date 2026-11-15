@@ -128,6 +128,10 @@ export async function fetchAccountMe(): Promise<{
   preferences: AccountPreferences;
   addressCount: number;
   wishlistCount: number;
+  granted?: boolean;
+  consentVerified?: boolean;
+  emailPermission?: string;
+  whatsappPermission?: string;
 }> {
   if (isSqliteStoreEnabled()) {
     const profile = await fetchSqliteProfile();

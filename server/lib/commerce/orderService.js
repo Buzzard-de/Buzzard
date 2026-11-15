@@ -73,13 +73,31 @@ function moneyPresent(value) {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 
+const localOrders = new Map();
+
 function existingOrderForCheckout(checkoutId) {
   if (!checkoutId) return null;
-  try {
-    return db.prepare("SELECT id FROM commerce_orders WHERE checkout_id = ?").get(checkoutId) || null;
-  } catch {
-    return null;
-  }
+  return localOrders.get(checkoutId) || null;
+}
+
+function rememberLocalOrder(checkout, reasons) {
+  const existing = existingOrderForCheckout(checkout.id);
+  if (existing) return existing;
+  const record = {
+    id: `local-${checkout.id || localOrders.size + 1}`,
+    checkoutId: checkout.id || null,
+    status: "PENDING",
+    orderCreated: false,
+    synthetic: true,
+    commercial: false,
+    purchased: false,
+    reserved: false,
+    live: false,
+    customerApproved: checkout.customerApproved === true,
+    reasons: reasons.slice(),
+  };
+  if (checkout.id) localOrders.set(checkout.id, record);
+  return record;
 }
 
 function orderBlockReasons(checkout, payment, salesOpen) {
@@ -95,6 +113,12 @@ function orderBlockReasons(checkout, payment, salesOpen) {
     const asset = decideAsset({ currency, assetType, instrument });
     if (!asset.ok) reasons.push(asset.code);
   }
+  if (!checkout.customerId) reasons.push("CUSTOMER_UNVERIFIED");
+  if (checkout.customerApproved !== true) reasons.push("CUSTOMER_APPROVAL_REQUIRED");
+  const items = Array.isArray(checkout.items) ? checkout.items : Array.isArray(checkout.lines) ? checkout.lines : [];
+  if (!items.some((item) => item && (item.sku || item.productId))) reasons.push("PRODUCT_UNVERIFIED");
+  const country = checkout.country || checkout.countryCode || checkout.transport?.country;
+  if (!country) reasons.push("COUNTRY_UNVERIFIED");
   const transport = selectTransportCost(checkout.transport || {});
   if (transport.ok !== true || transport.live === true) reasons.push("SHIPPING_RATE_UNVERIFIED");
   if (!moneyPresent(checkout.marketplaceFee ?? totals.marketplaceFee)) reasons.push("MARKETPLACE_FEE_UNVERIFIED");
@@ -119,11 +143,84 @@ function createOrderFromCheckout({ checkout = {}, payment = {}, orderType, req }
     return { ...block, ...refuseOrder(block.code || "SALES_CLOSED", block.status || 403), blocked: true };
   }
 
-  if (existingOrderForCheckout(checkout.id)) return refuseOrder("DUPLICATE_ORDER");
+  if (existingOrderForCheckout(checkout.id)) {
+    return { ...refuseOrder("DUPLICATE_ORDER"), duplicate: true, orderCreated: false };
+  }
   const totals = checkout.totals || {};
   const reasons = orderBlockReasons(checkout, payment, salesOpen);
-  if (reasons.length) return refuseOrder(reasons[0], reasons[0] === "SALES_CLOSED" ? 403 : 409, reasons);
-  return refuseOrder("ORDER_UNVERIFIED", 409, ["ORDER_UNVERIFIED", "STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED"]);
+  const localOrder = rememberLocalOrder(checkout, reasons);
+  if (reasons.length) {
+    return {
+      ...refuseOrder(reasons[0], reasons[0] === "SALES_CLOSED" ? 403 : 409, reasons),
+      localOrder,
+    };
+  }
+  return {
+    ...refuseOrder("ORDER_UNVERIFIED", 409, ["ORDER_UNVERIFIED", "STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED"]),
+    localOrder,
+  };
+}
+
+function localOrderRecord(orderId) {
+  for (const record of localOrders.values()) {
+    if (record.id === orderId) return record;
+  }
+  return null;
+}
+
+function moveLocalOrder(orderId, toStatus) {
+  const record = localOrderRecord(orderId);
+  if (!record) return { ok: false, error: "order_not_found", code: "ORDER_UNKNOWN", status: 404, orderCreated: false };
+  if (!canTransitionOrder(record.status, toStatus)) {
+    return {
+      ok: false,
+      error: "illegal_order_transition",
+      code: "ILLEGAL_TRANSITION",
+      from: record.status,
+      to: toStatus,
+      status: 409,
+      orderStatus: record.status,
+      orderCreated: false,
+      purchased: false,
+      reserved: false,
+    };
+  }
+  if (toStatus === ORDER_STATUS.PAID || toStatus === ORDER_STATUS.SHIPPED || toStatus === ORDER_STATUS.DELIVERED || toStatus === ORDER_STATUS.REFUNDED) {
+    return {
+      ok: false,
+      error: "LIVE_TRANSITION_BLOCKED",
+      code: "LIVE_TRANSITION_BLOCKED",
+      from: record.status,
+      to: toStatus,
+      status: 403,
+      orderStatus: record.status,
+      orderCreated: false,
+      purchased: false,
+      reserved: false,
+      live: false,
+    };
+  }
+  record.status = toStatus;
+  record.purchased = false;
+  record.reserved = false;
+  return {
+    ok: false,
+    code: toStatus === ORDER_STATUS.CANCELLED ? "ORDER_CANCELLED" : "ORDER_FAILED",
+    orderStatus: record.status,
+    orderCreated: false,
+    purchased: false,
+    reserved: false,
+    live: false,
+    synthetic: true,
+  };
+}
+
+function cancelLocalOrder(orderId) {
+  return moveLocalOrder(orderId, ORDER_STATUS.CANCELLED);
+}
+
+function failLocalOrder(orderId) {
+  return moveLocalOrder(orderId, ORDER_STATUS.FAILED);
 }
 
 function getOrder(orderId, ctx = {}) {
@@ -165,10 +262,25 @@ function transitionOrderStatus(orderId, toStatus) {
   return getOrder(orderId);
 }
 
-function submitSupplierOrder(orderId, { req } = {}) {
+function submitSupplierOrder(orderId, options = {}) {
+  const req = options.req;
+  const customerOrderVerified = options.customerOrderVerified === true && options.customerApproved === true;
+  if (!customerOrderVerified) {
+    return {
+      ok: false,
+      error: "ORDER_UNVERIFIED",
+      code: "ORDER_UNVERIFIED",
+      status: 403,
+      orderId: orderId || null,
+      supplierOrderCreated: false,
+      purchased: false,
+      reserved: false,
+      live: false,
+    };
+  }
   const block = assertCanSubmitSupplierOrder({ req });
   if (block) {
-    return { ...block, supplierOrderCreated: false };
+    return { ...block, supplierOrderCreated: false, purchased: false, reserved: false, live: false };
   }
 
   const order = getOrder(orderId);
@@ -220,8 +332,8 @@ function auditCommerceAction(action, actor, metadata = {}) {
 function planLogisticsDryRun(orderLike = {}) {
   const { runDryRun } = require("../logistics/v5/operationsPlane");
   return runDryRun({
-    destination: orderLike.destination || orderLike.country || "DE",
-    originCountry: orderLike.originCountry || "DE",
+    destination: orderLike.destination || orderLike.country || "UNKNOWN",
+    originCountry: orderLike.originCountry || "UNKNOWN",
     postalCode: orderLike.postalCode,
     weightKg: orderLike.weightKg,
     productClass: orderLike.productClass,
@@ -232,6 +344,8 @@ function planLogisticsDryRun(orderLike = {}) {
 
 module.exports = {
   createOrderFromCheckout,
+  cancelLocalOrder,
+  failLocalOrder,
   getOrder,
   transitionOrderStatus,
   submitSupplierOrder,

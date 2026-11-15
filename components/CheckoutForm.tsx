@@ -31,6 +31,7 @@ import { isCheckoutEnabled, shouldUseCommerceCore } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
+import { getDeliveryEstimate } from "@/lib/market/delivery";
 import { shouldUseCustomerCheckoutApi } from "@/lib/customerCheckout/runtime";
 import {
   fetchCustomerCheckoutQuote,
@@ -58,7 +59,8 @@ function stepIndex(step: CheckoutStep): number {
 export default function CheckoutForm() {
   const router = useRouter();
   const { t } = useLocale();
-  const { countryCode, deliveryDays } = useMarket();
+  const { countryCode } = useMarket();
+  const deliveryEstimate = getDeliveryEstimate(countryCode);
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, vatAmount, total } = useCart();
   const idempotencyRef = useRef<string | null>(null);
@@ -580,7 +582,7 @@ export default function CheckoutForm() {
             <section className="checkout-section">
               <h2>{t("checkout.step.shipping_method")}</h2>
               <p className="checkout-delivery-estimate">
-                {t("checkout.deliveryEstimate").replace("{estimate}", deliveryDays)}
+                {t("checkout.deliveryEstimate").replace("{estimate}", deliveryEstimate)}
               </p>
               <div className="checkout-option-list">
                 {shippingOptions.map((method) => (
@@ -600,8 +602,8 @@ export default function CheckoutForm() {
                       </strong>
                       <small>
                         {useCustomerCheckoutApi && apiShippingMethods.length > 0
-                          ? `${method.baseCost == null ? "UNKNOWN" : formatPrice(method.baseCost)} · ${deliveryDays}`
-                          : `${t(method.descriptionKey)} · ${deliveryDays}`}
+                          ? `${method.baseCost == null ? "UNKNOWN" : formatPrice(method.baseCost)} · ${deliveryEstimate}`
+                          : `${t(method.descriptionKey)} · ${deliveryEstimate}`}
                       </small>
                     </span>
                     <em>

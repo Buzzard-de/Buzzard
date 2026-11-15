@@ -92,7 +92,7 @@ describe("voice loopback and whatsapp inbound", () => {
     const payload = JSON.stringify({ from: "49111", text: "status" });
     const secret = "w".repeat(32);
     const header = createHmac("sha256", secret).update(payload).digest("hex");
-    const inbound = verifyInbound({ payload, header, secret });
+    const inbound = verifyInbound({ payload, header, secret, timestamp: Date.now() });
     expect(inbound.ok).toBe(true);
     expect(inbound.sent).toBe(false);
     expect(inbound.outbound.sent).toBe(false);

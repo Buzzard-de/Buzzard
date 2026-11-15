@@ -3657,6 +3657,24 @@ function migrateCoreFoundationPart6() {
   db.prepare(`UPDATE pim_core_attribute_schemas SET category_id = 'cat-02' WHERE category_id = 'cosmetics'`).run();
   db.prepare(`UPDATE pim_core_products SET ean = '5901234123457', gtin = '5901234123457' WHERE sku = 'BZ-CORE-DEMO-001'`).run();
   db.prepare(`UPDATE pim_core_products SET visibility = 'HIDDEN' WHERE id = 'pim_prod_demo001'`).run();
+  if (process.env.BUZZARD_E2E_DB === "1") {
+    db.prepare(`
+      INSERT OR IGNORE INTO pim_core_products(
+        id, sku, title, short_description, description, price, stock, status, visibility, quality_score
+      ) VALUES (?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      "pim_prod_e2e_visible",
+      "BZ-E2E-VISIBLE-001",
+      "Synthetic shelf item",
+      "Playwright catalog fixture",
+      "Synthetic storefront item. Not a customer record.",
+      29.99,
+      20,
+      "READY",
+      "PUBLIC",
+      80
+    );
+  }
   db.prepare(`
     UPDATE pim_core_products SET seo_json = ?
     WHERE id = 'pim_prod_demo001'

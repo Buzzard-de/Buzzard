@@ -14,6 +14,7 @@ const { SHARED } = require("../security/egressPolicy");
 const { runIsolatedDisasterDrill, runCorruptBackupDrill } = require("../survival/isolatedDisasterDrill");
 const { analyze } = require("../buzzardNative/sinan/repoAnalysis");
 const { snapshot, STREAMS } = require("./special16");
+const { runDevAutomation } = require("./devAutomation");
 const { verifyOfficialRequest } = require("../privacy/authorityGate");
 const { discloseIdentity } = require("../privacy/legalDisclosure");
 const { enqueueCountryReport, submitFiling } = require("../commerce/taxConnect");
@@ -154,10 +155,17 @@ function executeStream(id) {
       };
     }
     case 14: {
+      const dev = runDevAutomation();
       return {
-        ok: true,
+        ok: dev.ok === true && dev.hostedFactory === false && dev.cursorIsNot247Factory === true,
         live: false,
-        evidence: { sessionNotFactory: true, cursorIsNot247Factory: true },
+        evidence: {
+          sessionNotFactory: true,
+          cursorIsNot247Factory: true,
+          hostedFactory: false,
+          steps: dev.audit.map((row) => row.step),
+          code: dev.code,
+        },
       };
     }
     case 15: {

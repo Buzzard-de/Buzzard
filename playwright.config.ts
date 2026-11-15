@@ -29,13 +29,13 @@ export default defineConfig({
     {
       name: "api",
       testMatch:
-        /commerce-(storefront|security)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+        /commerce-(storefront|security|readiness)\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "chromium-desktop",
       testMatch:
-        /customer-journey|admin\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+        /customer-journey|admin(?:-pim-core)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {

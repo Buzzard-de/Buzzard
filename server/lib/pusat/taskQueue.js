@@ -13,7 +13,54 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
   const idempotency = new Map();
   const deadLetters = [];
   const audit = [];
-  const workers = { healthy: true, inFlight: 0, maxConcurrent, live: false };
+  const roster = new Map();
+  const HEARTBEAT_TTL_MS = 15_000;
+  const workers = { inFlight: 0, maxConcurrent, live: false };
+
+  function workerSnapshot(at = now()) {
+    const rows = [...roster.values()].map((row) => {
+      const expired = at - row.lastHeartbeat > HEARTBEAT_TTL_MS || row.status === "CRASHED";
+      return { ...row, expired };
+    });
+    const online = rows.filter((row) => row.status === "ONLINE" && !row.expired);
+    const stale = rows.filter((row) => row.expired || row.status === "STALE" || row.status === "CRASHED");
+    return {
+      healthy: online.length > 0 && stale.length === 0,
+      live: false,
+      inFlight: workers.inFlight,
+      maxConcurrent: workers.maxConcurrent,
+      registered: rows.length,
+      online: online.length,
+      stale: stale.length,
+      identities: rows.map((row) => row.identity),
+      heartbeats: rows.reduce((sum, row) => sum + row.heartbeatCount, 0),
+    };
+  }
+
+  function registerWorker({ workerId = "local-session", identity = workerId } = {}) {
+    const at = now();
+    roster.set(workerId, {
+      workerId,
+      identity,
+      registeredAt: at,
+      lastHeartbeat: at,
+      status: "ONLINE",
+      heartbeatCount: 1,
+      ownedTask: null,
+    });
+    return { ok: true, workers: workerSnapshot(at) };
+  }
+
+  function heartbeat({ workerId = "local-session", at = now() } = {}) {
+    const row = roster.get(workerId);
+    if (!row) return { ok: false, code: "WORKER_UNKNOWN" };
+    row.lastHeartbeat = at;
+    row.status = "ONLINE";
+    row.heartbeatCount += 1;
+    return { ok: true, workers: workerSnapshot(at) };
+  }
+
+  registerWorker({ workerId: "local-session", identity: "in-process" });
 
   function auditPush(event) {
     audit.push({ ...event, at: new Date(now()).toISOString() });
@@ -70,7 +117,8 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
   }
 
   function tick() {
-    if (!workers.healthy) return { ok: false, code: "WORKER_UNHEALTHY" };
+    heartbeat({ workerId: "local-session" });
+    if (!workerSnapshot().healthy) return { ok: false, code: "WORKER_UNHEALTHY" };
     const ready = [...tasks.values()]
       .filter((t) => t.state === "QUEUED" && depsMet(t))
       .sort((a, b) => PRIORITY.indexOf(a.priority) - PRIORITY.indexOf(b.priority));
@@ -139,6 +187,9 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
   return {
     enqueue,
     tick,
+    registerWorker,
+    heartbeat,
+    workerSnapshot,
     fail,
     timeout,
     recover,
@@ -147,7 +198,7 @@ function createTaskQueue({ now = () => Date.now(), maxConcurrent = 4 } = {}) {
     snapshot: () => ({
       tasks: [...tasks.values()].map((t) => ({ ...t })),
       deadLetters: [...deadLetters],
-      workers: { ...workers },
+      workers: workerSnapshot(),
       audit: [...audit],
       live: false,
     }),

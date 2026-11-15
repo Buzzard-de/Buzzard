@@ -31,6 +31,7 @@ import { catalog as eu } from "./locales/eu";
 import { catalog as gl } from "./locales/gl";
 import { catalog as sv } from "./locales/sv";
 import { catalog as ga } from "./locales/ga";
+import { machineCatalogs } from "./locales/machineFill";
 
 export type { TranslationTree };
 
@@ -79,10 +80,13 @@ const rawCatalogs: Record<string, TranslationTree> = {
   ga,
 };
 
+/** Authored catalogues only. Missing keys are not copied from English. */
+export const authoredCatalogs: Record<string, TranslationTree> = rawCatalogs;
+
 const catalogs: Record<string, TranslationTree> = Object.fromEntries(
   LANGUAGE_CODES.map((code) => {
     if (code === "de") return [code, rawCatalogs.de];
-    return [code, deepFill(rawCatalogs[code] || {}, rawCatalogs.en)];
+    return [code, deepFill(rawCatalogs[code] || {}, machineCatalogs[code] || {})];
   })
 );
 const FALLBACK_LOCALE: BuzzardLocale = "de";

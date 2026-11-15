@@ -3,6 +3,10 @@
  * Not live commerce. Dropshipping: no stock buy without order + human gate.
  */
 const crypto = require("crypto");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const { createRequire } = require("module");
 const { calculate, applyCustomerRefund, MIN_NET } = require("../finance/unifiedPricing");
 const { buyStock } = require("./engineRegistry");
 const { paymentStatus, initiateTransfer } = require("../finance/bankingAdapter");
@@ -10,18 +14,103 @@ const { getAdapter } = require("../logistics/carrierContract");
 const { screen } = require("../compliance/sanctionsAdapter");
 const { split } = require("../finance/taxReserves");
 const { draftEmail } = require("../customer/banuDesk");
+const { assertNotGuardian } = require("../pusat/durableTaskQueue");
 
-function createStore() {
-  const orders = new Map();
-  return {
-    put(order) {
-      orders.set(order.orderId, order);
-      return order;
-    },
-    get(id) {
-      return orders.get(id) || null;
-    },
-  };
+function loadSqlite() {
+  const root = path.join(__dirname, "..", "..", "..");
+  try {
+    return createRequire(path.join(root, "server", "package.json"))("better-sqlite3");
+  } catch {
+    return require("better-sqlite3");
+  }
+}
+
+function createStore({ dbPath } = {}) {
+  const resolved = dbPath || path.join(os.tmpdir(), `buzzard-iso-${crypto.randomBytes(4).toString("hex")}.sqlite`);
+  assertNotGuardian(resolved);
+  fs.mkdirSync(path.dirname(resolved), { recursive: true });
+  const Database = loadSqlite();
+  const db = new Database(resolved);
+  db.pragma("busy_timeout = 8000");
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS iso_orders (
+      order_id TEXT PRIMARY KEY,
+      product_id TEXT,
+      supplier_id TEXT,
+      customer_id TEXT,
+      scenario TEXT,
+      live INTEGER NOT NULL,
+      payment_json TEXT,
+      shipment_json TEXT,
+      refund_json TEXT,
+      receivable_json TEXT,
+      ledger_json TEXT,
+      body_json TEXT NOT NULL,
+      idempotency_key TEXT UNIQUE,
+      updated_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS iso_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id TEXT NOT NULL,
+      event TEXT NOT NULL,
+      at TEXT NOT NULL
+    );
+  `);
+
+  function put(order) {
+    const now = new Date().toISOString();
+    const write = db.transaction(() => {
+      db.prepare(
+        `INSERT INTO iso_orders (
+           order_id, product_id, supplier_id, customer_id, scenario, live,
+           payment_json, shipment_json, refund_json, receivable_json, ledger_json,
+           body_json, idempotency_key, updated_at
+         ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+         ON CONFLICT(order_id) DO UPDATE SET
+           product_id = excluded.product_id,
+           supplier_id = excluded.supplier_id,
+           customer_id = excluded.customer_id,
+           scenario = excluded.scenario,
+           live = excluded.live,
+           payment_json = excluded.payment_json,
+           shipment_json = excluded.shipment_json,
+           refund_json = excluded.refund_json,
+           receivable_json = excluded.receivable_json,
+           ledger_json = excluded.ledger_json,
+           body_json = excluded.body_json,
+           updated_at = excluded.updated_at`
+      ).run(
+        order.orderId,
+        order.productId || null,
+        order.supplierId || null,
+        order.customerId || null,
+        order.scenario || null,
+        order.live ? 1 : 0,
+        JSON.stringify(order.stages?.payment || null),
+        JSON.stringify(order.stages?.fulfillment || order.stages?.shipping || null),
+        JSON.stringify(order.stages?.refunds || null),
+        JSON.stringify(order.stages?.supplierReceivable || null),
+        JSON.stringify(order.ledger || []),
+        JSON.stringify(order),
+        order.orderId,
+        now
+      );
+      db.prepare(`INSERT INTO iso_audit (order_id, event, at) VALUES (?,?,?)`).run(order.orderId, "PUT", now);
+    });
+    write();
+    return order;
+  }
+
+  function get(id) {
+    const row = db.prepare(`SELECT body_json FROM iso_orders WHERE order_id = ?`).get(id);
+    return row ? JSON.parse(row.body_json) : null;
+  }
+
+  function close() {
+    db.close();
+  }
+
+  return { put, get, close, dbPath: resolved, durable: true, inMemory: false };
 }
 
 function baseOrder({ orderId, scenario }) {

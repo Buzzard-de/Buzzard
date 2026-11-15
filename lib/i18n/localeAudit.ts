@@ -1,4 +1,5 @@
-import { catalogs, FALLBACK_LOCALE } from "./translations";
+import { authoredCatalogs, catalogs, FALLBACK_LOCALE } from "./translations";
+import { machineCatalogs } from "./locales/machineFill";
 import { LANGUAGE_CODES } from "./languages";
 
 export type LocaleAuditRow = {
@@ -8,8 +9,11 @@ export type LocaleAuditRow = {
   placeholderMismatches: string[];
   mixedLanguageKeys: string[];
   emptyKeys: string[];
-  keyComplete: boolean;
+  nativeKeys: string[];
   machineGeneratedKeys: string[];
+  fallbackKeys: string[];
+  humanReviewedKeys: string[];
+  keyComplete: boolean;
   humanReviewed: false;
   rtl: boolean;
   complete: false;
@@ -39,30 +43,42 @@ export function auditLocales(): {
   keyCompleteAll: boolean;
   complete: false;
   machineTranslationAccepted: false;
+  nativeStrings: number;
+  machineGeneratedStrings: number;
+  fallbackStrings: number;
+  missingStrings: number;
+  mixedLanguageStrings: number;
+  humanReviewedStrings: number;
 } {
-  const de = flatten(catalogs.de);
+  const de = flatten(authoredCatalogs.de);
+  const en = flatten(authoredCatalogs.en);
   const deKeys = Object.keys(de).sort();
   const rows: LocaleAuditRow[] = LANGUAGE_CODES.map((locale) => {
-    const cat = flatten(catalogs[locale] || catalogs[FALLBACK_LOCALE]);
+    const authored = flatten(authoredCatalogs[locale] || {});
+    const machine = flatten(machineCatalogs[locale] || {});
+    const cat = flatten(catalogs[locale] || {});
     const keys = Object.keys(cat);
-    const missingKeys = deKeys.filter((k) => !(k in cat));
+    const missingKeys = deKeys.filter((k) => !(k in cat) || String(cat[k]).trim() === "");
     const extraKeys = keys.filter((k) => !(k in de));
     const placeholderMismatches = deKeys.filter((k) => {
       if (!(k in cat)) return false;
       return placeholders(de[k]).join() !== placeholders(cat[k]).join();
     });
     const emptyKeys = deKeys.filter((k) => k in cat && String(cat[k]).trim() === "");
-    const mixedLanguageKeys =
-      locale === "de"
-        ? []
-        : deKeys.filter((k) => {
-            const a = de[k];
-            const b = cat[k];
-            if (!b || a !== b) return false;
-            if (a.length < 16) return false;
-            if (/Buzzard|Trusted Shops|€/.test(a)) return false;
-            return /[äöüÄÖÜß]/.test(a);
-          });
+    const nativeKeys = deKeys.filter((k) => k in authored && String(authored[k]).trim() !== "");
+    const machineGeneratedKeys = deKeys.filter((k) => !(k in authored) && k in machine && String(machine[k]).trim() !== "");
+    const fallbackKeys = deKeys.filter((k) => !(k in cat) || String(cat[k]).trim() === "");
+    const mixedLanguageKeys = deKeys.filter((k) => {
+      const value = cat[k];
+      if (!value) return false;
+      if (locale !== "de" && value === de[k] && value.length >= 16 && !/Buzzard|Trusted Shops|€/.test(value) && /[äöüÄÖÜß]/.test(value)) {
+        return true;
+      }
+      if (locale !== "en" && locale !== "de" && value === en[k] && value.length >= 16 && /[A-Za-z]/.test(value) && !/Buzzard|Trusted Shops|€|\{/.test(value)) {
+        return true;
+      }
+      return false;
+    });
     const keyComplete = missingKeys.length === 0 && emptyKeys.length === 0 && placeholderMismatches.length === 0;
     return {
       locale,
@@ -71,14 +87,18 @@ export function auditLocales(): {
       placeholderMismatches,
       mixedLanguageKeys,
       emptyKeys,
+      nativeKeys,
+      machineGeneratedKeys,
+      fallbackKeys,
+      humanReviewedKeys: [],
       keyComplete,
-      machineGeneratedKeys: [],
       humanReviewed: false,
       rtl: locale === "ar",
       complete: false,
       verified: false,
     };
   });
+  const sum = (pick: (row: LocaleAuditRow) => string[]) => rows.reduce((total, row) => total + pick(row).length, 0);
   return {
     listed: LANGUAGE_CODES.length,
     fallback: FALLBACK_LOCALE,
@@ -86,5 +106,11 @@ export function auditLocales(): {
     keyCompleteAll: rows.every((r) => r.keyComplete),
     complete: false,
     machineTranslationAccepted: false,
+    nativeStrings: sum((row) => row.nativeKeys),
+    machineGeneratedStrings: sum((row) => row.machineGeneratedKeys),
+    fallbackStrings: sum((row) => row.fallbackKeys),
+    missingStrings: sum((row) => row.missingKeys),
+    mixedLanguageStrings: sum((row) => row.mixedLanguageKeys),
+    humanReviewedStrings: 0,
   };
 }

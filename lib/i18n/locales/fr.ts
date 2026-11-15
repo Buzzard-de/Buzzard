@@ -217,7 +217,7 @@ export const catalog: TranslationTree = {
       dashboardLead: "Bonjour {name}, bienvenue dans votre espace client.",
       viewOrders: "Voir les commandes",
       manageAddresses: "Gérer les adresses",
-      support: "Support & contact",
+      support: "Assistance et contact",
       supportTitle: "Centre d'assistance",
       supportLead: "Créez des demandes d'assistance et suivez vos envois.",
       supportNew: "Nouvelle demande",

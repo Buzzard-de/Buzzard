@@ -1,12 +1,8 @@
 /**
  * Part 15 — Explicit catalog publish (visibility only — NOT sales activation).
  */
-const productCore = require("./productCore");
 const productValidation = require("./productValidation");
-const categoryEngine = require("./categoryEngine");
 const { isDemoOrTestProduct } = require("./demoProductGuard");
-const { assertProductionSafety } = require("./productionSafetyGate");
-const { isProductVisibleOnStorefront } = require("../storefront/storefrontVisibility");
 const categoryVisibility = require("../categoryVisibility");
 const { PRODUCT_STATUS, VALIDATION_STATUS } = require("../../core/productConstants");
 const { STOREFRONT_VISIBILITY } = require("../../core/storefrontConstants");
@@ -65,69 +61,48 @@ function canPublishProduct(product) {
   return { ok: true, status: null, validation };
 }
 
-function publishProduct(sku, { actorId = "pim-publish", visibility = STOREFRONT_VISIBILITY.CATALOG } = {}) {
-  assertProductionSafety();
-
-  const product = productCore.getProduct(sku);
-  const check = canPublishProduct(product);
-  if (!check.ok) {
-    return { success: false, sku, ...check };
-  }
-
-  if (check.status === PUBLISH_STATUS.ALREADY_PUBLISHED) {
-    return { success: true, sku, status: PUBLISH_STATUS.ALREADY_PUBLISHED, product };
-  }
-
-  let current = product;
-
-  if (current.status === PRODUCT_STATUS.IMPORTED) {
-    current = productCore.transitionStatus(current.id, PRODUCT_STATUS.VALIDATING, {
-      source: "ADMIN",
-      actorId,
-    });
-  }
-  if (current.status === PRODUCT_STATUS.VALIDATING) {
-    current = productCore.transitionStatus(current.id, PRODUCT_STATUS.READY, {
-      source: "ADMIN",
-      actorId,
-    });
-  } else if (current.status !== PRODUCT_STATUS.READY && current.status !== PRODUCT_STATUS.ACTIVE) {
+function closedPublish(sku, dryRun) {
+  if (isDemoOrTestProduct({ sku })) {
     return {
       success: false,
+      ok: false,
+      dryRun,
       sku,
-      status: PUBLISH_STATUS.STATUS_BLOCKED,
-      reason: `Cannot publish from status ${current.status}`,
+      status: PUBLISH_STATUS.SKIPPED_DEMO,
+      reason: "Demo/test product",
+      wouldPublish: false,
+      published: false,
+      sellable: false,
+      live: false,
+      productionReady: false,
+      salesWouldChange: false,
+      paymentsWouldChange: false,
     };
   }
-
-  current = productCore.updateProduct(
-    current.id,
-    { visibility },
-    { source: "ADMIN", actorId }
-  );
-
-  const visible = isProductVisibleOnStorefront(current);
   return {
-    success: visible,
+    success: false,
+    ok: false,
+    dryRun,
     sku,
-    status: visible ? PUBLISH_STATUS.PUBLISHED : PUBLISH_STATUS.VALIDATION_FAILED,
-    product: current,
-    salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
-    catalogOnly: true,
-  };
-}
-
-function publishDryRun(sku) {
-  const product = productCore.getProduct(sku);
-  const check = canPublishProduct(product);
-  return {
-    dryRun: true,
-    sku,
-    wouldPublish: check.ok && check.status !== PUBLISH_STATUS.ALREADY_PUBLISHED,
-    ...check,
+    status: "SALES_CLOSED",
+    code: "SALES_CLOSED",
+    reason: "Catalog publish is closed",
+    wouldPublish: false,
+    published: false,
+    sellable: false,
+    live: false,
+    productionReady: false,
     salesWouldChange: false,
     paymentsWouldChange: false,
   };
+}
+
+function publishProduct(sku) {
+  return closedPublish(sku, false);
+}
+
+function publishDryRun(sku) {
+  return closedPublish(sku, true);
 }
 
 module.exports = {

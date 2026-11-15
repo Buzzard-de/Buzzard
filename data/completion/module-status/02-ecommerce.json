@@ -1,0 +1,12 @@
+{
+  "id": "ecommerce",
+  "phase": 2,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "existing_but_incomplete",
+  "sales": "CLOSED",
+  "orderCreated": false,
+  "orderCode": "SALES_CLOSED",
+  "evidence": "storefrontCatalogAdapter.placeOrder and banuDesk.handle",
+  "missing": ["a real checkout path while sales stay closed", "live stock reservation"],
+  "liveVerified": false
+}

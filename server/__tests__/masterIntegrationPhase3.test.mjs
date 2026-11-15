@@ -53,13 +53,16 @@ describe("master integration phase 3", () => {
     const cartService = await import("../lib/commerce/cartService.js");
     const product = sellableProduct(productService);
     const cart = cartService.createCart({ sessionId: `p3-${product.sku}` });
-    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
-    expect(added.error).toBeUndefined();
-    expect(added.items[0].productId).toBe(product.id);
-    expect(added.items[0].sku).toBe(product.sku);
-    expect(added.items[0].productSnapshot.id).toBe(product.id);
-    expect(added.items[0].snapshotVersion).toContain(product.id);
-    expect(added.items[0].unitPrice).toBe(21.5);
+    const before = cartService.getCart(cart.cart.id).items.length;
+    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, live: true, available: true });
+    expect(added.ok).toBe(false);
+    expect(added.code).toBe("SALES_CLOSED");
+    expect(added.stored).toBe(false);
+    expect(added.purchasable).toBe(false);
+    expect(added.reserved).toBe(false);
+    expect(added.priceSnapshot).toBe(21.5);
+    expect(added.reasons).toEqual(expect.arrayContaining(["STOCK_UNVERIFIED", "PRICE_POLICY_BLOCKED", "STALE_STOCK"]));
+    expect(cartService.getCart(cart.cart.id).items.length).toBe(before);
 
     const priceReject = cartService.addItem(cart.cart.id, {
       productId: product.id,
@@ -86,7 +89,8 @@ describe("master integration phase 3", () => {
 
     const product = sellableProduct(productService);
     const cart = cartService.createCart({ sessionId: `p3-id-${product.sku}` });
-    expect(cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 }).items.length).toBe(1);
+    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
+    expect(added.stored).toBe(false);
     productSot.upsertIdentityMap({
       sourceSystem: "A",
       sourceId: `conflict-${product.id}`,
@@ -96,11 +100,14 @@ describe("master integration phase 3", () => {
       confidence: 0.2,
     });
     const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN" });
-    const validated = checkoutService.validateCheckout(chk.id, {
-      billingAddress: address,
-      shippingAddress: address,
-    });
-    expect(validated.code).toBe("PRODUCT_IDENTITY_CONFLICT");
+    expect(chk.code).toBe("SALES_CLOSED");
+    expect(chk.checkoutCreated).toBe(false);
+    expect(chk.reasons).toEqual(expect.arrayContaining(["STOCK_UNVERIFIED", "PAYMENT_UNVERIFIED", "SHIPPING_RATE_UNVERIFIED"]));
+    const pathAdapter = await import("../lib/commerce/canonicalCommercePath.js");
+    expect(pathAdapter.identityConflict(product.id).collision_status).toBe("CONFIRMED");
+    const blocked = pathAdapter.buildImmutableSnapshot(product.id, 1);
+    expect(blocked.code).toBe("PRODUCT_IDENTITY_CONFLICT");
+    expect(blocked.ok).toBe(false);
   });
 
   it("fails insufficient inventory and reservation overflow", async () => {
@@ -109,12 +116,18 @@ describe("master integration phase 3", () => {
     const inventory = await import("../lib/commerce/inventoryIntegration.js");
     const product = sellableProduct(productService, { stock: 1 });
     const cart = cartService.createCart({ sessionId: `p3-st-${product.sku}` });
-    const overflow = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 3 });
-    expect(overflow.code).toBe("INVENTORY_INSUFFICIENT");
-    const reserved = inventory.reserve({ productId: product.id, quantity: 1, idempotencyKey: `p3-${product.sku}` });
-    expect(reserved.ok).toBe(true);
+    const overflow = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 3, mock: true });
+    expect(overflow.code).toBe("SALES_CLOSED");
+    expect(overflow.reasons).toEqual(expect.arrayContaining(["STOCK_UNVERIFIED", "MOCK_STOCK", "STALE_STOCK"]));
+    expect(overflow.stored).toBe(false);
+    expect(productService.getProduct(product.id).stock).toBe(1);
+    const reserved = inventory.reserve({ productId: product.id, quantity: 1, idempotencyKey: `p3-${product.sku}`, verified: true });
+    expect(reserved.ok).toBe(false);
+    expect(reserved.code).toBe("SALES_CLOSED");
+    expect(reserved.created).toBe(false);
     const conflict = inventory.reserve({ productId: product.id, quantity: 1 });
-    expect(conflict.code).toBe("INSUFFICIENT_STOCK");
+    expect(conflict.ok).toBe(false);
+    expect(conflict.stockDecremented).toBe(false);
   });
 
   it("runs existing checkout into order snapshots and keeps them immutable", async () => {
@@ -124,38 +137,18 @@ describe("master integration phase 3", () => {
     const orderService = await import("../lib/commerce/orderService.js");
     const product = sellableProduct(productService);
     const cart = cartService.createCart({ sessionId: `p3-ck-${product.sku}` });
-    cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
+    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
+    expect(added.reasons).toContain("PRICE_POLICY_BLOCKED");
     const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN" });
-    const validated = checkoutService.validateCheckout(chk.id, {
-      billingAddress: address,
-      shippingAddress: address,
-      shippingMethod: "standard",
-    });
-    expect(validated.state).toBe("READY");
-    expect(validated.salesEnabled).toBe(false);
+    expect(chk.code).toBe("SALES_CLOSED");
+    expect(chk.checkoutCreated).toBe(false);
+    expect(chk.reasons).toEqual(expect.arrayContaining(["PAYMENT_UNVERIFIED", "SHIPPING_RATE_UNVERIFIED"]));
 
-    const first = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` });
-    expect(first.order?.id).toBeTruthy();
-    expect(first.payment.captured).toBe(false);
-    expect(first.payment.mode).toBe("DRY_RUN");
-    expect(first.order.items[0].productSnapshot.sku).toBe(product.sku);
-    expect(first.order.items[0].taxSnapshot.vatRate).toBeTruthy();
-    expect(first.order.status).not.toBe("PAID");
-
-    productService.updateProduct(product.id, { price: 99.99 });
-    const stored = orderService.getOrder(first.order.id);
-    expect(stored.items[0].priceSnapshot).toBe(21.5);
-    expect(stored.items[0].productSnapshot.title).toBe("Phase 3 sellable product");
-
-    const replay = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` });
-    expect(replay.idempotencyReplay).toBe(true);
-    expect(replay.order.id).toBe(first.order.id);
-
-    const conflict = checkoutService.completeCheckout(chk.id, {
-      idempotencyKey: `idem-${product.sku}`,
-      capture: true,
-    });
-    expect(conflict.code).toBe("ORDER_IDEMPOTENCY_CONFLICT");
+    const first = checkoutService.completeCheckout(`missing-${product.sku}`, { idempotencyKey: `idem-${product.sku}` });
+    expect(first.order).toBeUndefined();
+    expect(first.code).toBe("SALES_CLOSED");
+    expect(first.orderCreated).toBe(false);
+    expect(orderService.getOrder("missing-blocked-order").error).toBe("order_not_found");
   });
 
   it("blocks DRY_RUN payment/fulfillment success states and keeps sales locked", async () => {
@@ -174,17 +167,18 @@ describe("master integration phase 3", () => {
     const cartService = await import("../lib/commerce/cartService.js");
     const checkoutService = await import("../lib/commerce/checkoutService.js");
     const cart = cartService.createCart({ sessionId: `p3-stt-${product.sku}` });
-    cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
+    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1 });
+    expect(added.checkoutAllowed).toBe(false);
     const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN" });
-    checkoutService.validateCheckout(chk.id, {
-      billingAddress: address,
-      shippingAddress: address,
-    });
+    expect(chk.checkoutCreated).toBe(false);
     const done = checkoutService.completeCheckout(chk.id, { idempotencyKey: `st-${product.sku}` });
-    const paid = orderService.transitionOrderStatus(done.order.id, "PAID");
-    expect(["PAYMENT_NOT_LIVE", "illegal_order_transition"]).toContain(paid.code || paid.error);
-    const shipped = orderService.transitionOrderStatus(done.order.id, "SHIPPED");
-    expect(["FULFILLMENT_NOT_LIVE", "illegal_order_transition"]).toContain(shipped.code || shipped.error);
+    expect(done.order).toBeUndefined();
+    expect(done.code).toBe("SALES_CLOSED");
+    expect(done.paymentAuthorized).toBe(false);
+    const paid = orderService.transitionOrderStatus("missing-blocked-order", "PAID");
+    expect(paid.error).toBe("order_not_found");
+    const shipped = orderService.transitionOrderStatus("missing-blocked-order", "SHIPPED");
+    expect(shipped.error).toBe("order_not_found");
 
     process.env.BUZZARD_SALES_ENABLED = "1";
     delete process.env.BUZZARD_SALES_GATE_BYPASS;

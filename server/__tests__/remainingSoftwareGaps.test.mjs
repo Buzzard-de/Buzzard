@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 const require = createRequire(import.meta.url);
 const { dispatch, AGENT_KINDS } = require("../lib/buzzardNative/core/specialistDispatch.js");
 const { verifyDispatch, TASK_KINDS } = require("../lib/pusat/dispatchVerify.js");
-const { CARRIER_IDS, getAdapter, profileOf } = require("../lib/logistics/carrierContract.js");
+const { CARRIER_IDS, getAdapter, profileOf, runProtocolFixture } = require("../lib/logistics/carrierContract.js");
 const { createWhatsappSandbox } = require("../lib/comms/whatsappSandbox.js");
 const { createStore, runIsolatedOrder } = require("../lib/commerce/isolatedOrder.js");
 const { createDurableTaskQueue } = require("../lib/pusat/durableTaskQueue.js");
@@ -50,11 +50,11 @@ describe("dispatch verification policies", () => {
     expect(price.audit.evidence).toContain("net");
     const gated = verifyDispatch({ kind: "PHONE_LIVE_CALL", result: dispatch({ agentId: "zeynep_hanim", kind: "PHONE_LIVE_CALL" }) });
     expect(gated.code).toBe("HUMAN_GATE_REQUIRED");
-    const buy = verifyDispatch({
-      kind: "STOCK_BUY",
-      result: dispatch({ agentId: "stock_ai", kind: "STOCK_BUY", input: { humanApproved: true } }),
-    });
-    expect(buy.code).toBe("INDEPENDENT_OK");
+    const attempt = dispatch({ agentId: "stock_ai", kind: "STOCK_BUY", input: { humanApproved: true } });
+    expect(attempt.ok).toBe(false);
+    expect(attempt.result.purchased).toBe(false);
+    const buy = verifyDispatch({ kind: "STOCK_BUY", result: attempt });
+    expect(buy.code).toBe("PURCHASE_BLOCKED");
     expect(dispatch({ agentId: "stock_ai", kind: "STOCK_BUY" }).code).toBe("HUMAN_GATE_REQUIRED");
   });
 });
@@ -66,7 +66,20 @@ describe("provider carrier contracts", () => {
     const post = getAdapter("POST_DE");
     const local = getAdapter("LocalCourier");
     expect(dhl.protocol).not.toBe(ups.protocol);
-    expect(dhl.trackShipment({ status: "transit" }).status).toBe("IN_TRANSIT");
+    const tracked = dhl.trackShipment({ status: "transit" });
+    expect(tracked.status).toBe("IN_TRANSIT");
+    expect(tracked.ok).toBe(false);
+    expect(tracked.live).toBe(false);
+    expect(tracked.events).toEqual([]);
+    expect(tracked.trackingNumber).toBeNull();
+    expect(tracked.resultStatus).toBe("BLOCKED_EXTERNAL");
+    expect(dhl.validateRequest().ok).toBe(false);
+    expect(dhl.validateRequest().code).toBe("MISSING_ADDRESS");
+    const shaped = dhl.validateRequest({ address: { postalCode: "10115" } });
+    expect(shaped.ok).toBe(false);
+    expect(shaped.code).toBe("LIVE_CONNECTION_REQUIRED");
+    expect(shaped.validatedAddress).toBeNull();
+    expect(dhl.createShipment({ orderId: "x", address: { postalCode: "10115" } }).code).toBe("HUMAN_GATE_REQUIRED");
     expect(ups.trackShipment({ status: "I" }).status).toBe("IN_TRANSIT");
     expect(ups.trackShipment({ status: "M" }).status).not.toBe(dhl.trackShipment({ status: "failure" }).status);
     expect(dhl.trackShipment({ status: "LOST" }).status).toBe("LOST");
@@ -84,6 +97,38 @@ describe("provider carrier contracts", () => {
     expect(dhl.createShipment({ address: { postalCode: "10115" }, forceFailure: true }).code).toBe("DHL_ROUTING_REJECTED");
     const protocols = new Set(CARRIER_IDS.map((id) => profileOf(id).protocol));
     expect(protocols.size).toBe(CARRIER_IDS.length);
+  });
+
+  it("does not treat a protocol fixture or a stored key as a shipment or a tariff", () => {
+    const previous = process.env.DHL_API_KEY;
+    process.env.DHL_API_KEY = "stored-not-a-shipment";
+    try {
+      for (const id of CARRIER_IDS) {
+        const fixture = runProtocolFixture(id, { apiKey: process.env.DHL_API_KEY });
+        expect(fixture.ok).toBe(false);
+        expect(fixture.shipmentCreated).toBe(false);
+        expect(fixture.liveTariff).toBe(false);
+        expect(fixture.shippingCost).toBeNull();
+        expect(fixture.trackingNumber).toBeNull();
+        expect(fixture.credentialsPresent).toBe(true);
+        expect(fixture.credentialsAccepted).toBe(false);
+      }
+      const created = getAdapter("DHL").createShipment({
+        orderId: "x",
+        address: { postalCode: "10115" },
+        apiKey: process.env.DHL_API_KEY,
+      });
+      expect(created.ok).toBe(false);
+      expect(created.shipmentCreated).toBe(false);
+      expect(created.liveTariff).toBe(false);
+      expect(created.credentialsAccepted).toBe(false);
+      expect(created.fixture.ok).toBe(false);
+      expect(created.fixture.code).toBe("FIXTURE_NOT_A_SHIPMENT");
+      expect(runProtocolFixture("NOT-A-CARRIER").code).toBe("CARRIER_UNKNOWN");
+    } finally {
+      if (previous == null) delete process.env.DHL_API_KEY;
+      else process.env.DHL_API_KEY = previous;
+    }
   });
 });
 

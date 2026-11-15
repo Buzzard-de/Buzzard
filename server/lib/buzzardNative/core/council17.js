@@ -20,7 +20,7 @@ function runCouncil17({ actorId = "sinan_bey" } = {}) {
   const router = createRouter();
   const t = router.create({ title: "daily ops", fromId: "pusat", kind: "OPS_REVIEW" });
   for (const id of ["stock_ai", "category_ai", "pricing_ai", "seo_ai", "banu_hanim", "sales_analysis_ai", "zeynep_hanim"]) {
-    router.assign({ taskId: t.task.id, agentId: id });
+    router.assign({ taskId: t.task.id, agentId: id, fromId: "pusat" });
   }
   const ran = router.runAssigned(t.task.id);
   const mem = createMultiMemory();

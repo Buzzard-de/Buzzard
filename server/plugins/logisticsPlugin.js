@@ -86,59 +86,18 @@ module.exports = {
     app.patch("/api/admin/logistics/shipments/:id", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "logistics.write")) return;
-      const allowedStatuses = new Set([
-        "pending",
-        "preparing",
-        "handed_to_carrier",
-        "in_transit",
-        "out_for_delivery",
-        "delivered",
-        "exception",
-        "returned",
-      ]);
-      const { trackingNumber, carrier, status } = req.body || {};
-      const patch = {};
-      if (trackingNumber) patch.trackingNumber = String(trackingNumber).trim();
-      if (carrier) patch.carrier = String(carrier).trim();
-      if (status) {
-        if (!allowedStatuses.has(status)) {
-          return res.status(400).json({ success: false, errorKey: "logistics.shipment.invalidStatus" });
-        }
-        patch.status = status;
-      }
-      if (Object.keys(patch).length === 0) {
-        return res.status(400).json({ success: false, errorKey: "logistics.shipment.invalidPatch" });
-      }
-      const shipment = fulfillmentStore.updateShipment(req.params.id, patch);
-      if (!shipment) return res.status(404).json({ success: false, errorKey: "logistics.shipment.notFound" });
-      audit(req, {
-        action: "shipment_update",
-        entityType: "shipment",
-        entityId: shipment.id,
-        field: Object.keys(patch).join(","),
-        oldValue: null,
-        newValue: JSON.stringify(patch),
+      return res.status(409).json({
+        success: false,
+        ok: false,
+        live: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        code: "CARRIER_STATUS_UNVERIFIED",
+        trackingNumber: null,
+        events: [],
+        delivered: false,
+        errorKey: "logistics.shipment.unverified",
       });
-      if (patch.status === "delivered") {
-        try {
-          const automationEngine = require("../lib/automationEngine");
-          const order = readOrders().find((o) => o.orderNumber === shipment.orderNumber);
-          automationEngine.emit(
-            "order_delivered",
-            {
-              orderNumber: shipment.orderNumber,
-              email: order?.customer?.email,
-              shipmentId: shipment.id,
-              language: "de",
-              marketingConsent: true,
-            },
-            { idempotencyKey: `delivered:${shipment.id}` }
-          );
-        } catch {
-          /* non-blocking */
-        }
-      }
-      return res.json({ success: true, shipment });
     });
 
     app.get("/api/admin/logistics/supplier-orders", (req, res) => {
@@ -161,40 +120,13 @@ module.exports = {
     app.patch("/api/admin/logistics/returns/:id", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "logistics.write")) return;
-      const allowed = new Set(["requested", "approved", "rejected", "received", "refunded", "closed"]);
-      const status = req.body?.status;
-      if (!allowed.has(status)) {
-        return res.status(400).json({ success: false, errorKey: "logistics.return.invalidStatus" });
-      }
-      const entry = fulfillmentStore.updateReturnRequest(req.params.id, { status });
-      if (!entry) return res.status(404).json({ success: false, errorKey: "logistics.return.notFound" });
-      audit(req, {
-        action: "return_status",
-        entityType: "return",
-        entityId: entry.id,
-        field: "status",
-        oldValue: null,
-        newValue: status,
+      return res.status(409).json({
+        success: false,
+        code: "RETURN_UNVERIFIED",
+        updated: false,
+        refunded: false,
+        customerNotified: false,
       });
-      if (status === "refunded") {
-        try {
-          const automationEngine = require("../lib/automationEngine");
-          const order = readOrders().find((o) => o.orderNumber === entry.orderNumber);
-          automationEngine.emit(
-            "refund",
-            {
-              orderNumber: entry.orderNumber,
-              email: order?.customer?.email,
-              returnId: entry.id,
-              language: "de",
-            },
-            { idempotencyKey: `refund:${entry.id}` }
-          );
-        } catch {
-          /* non-blocking */
-        }
-      }
-      return res.json({ success: true, returnRequest: entry });
     });
 
     app.get("/api/account/orders/:orderNumber/shipments", (req, res) => {
@@ -223,28 +155,8 @@ module.exports = {
       if (!Array.isArray(items) || items.length === 0 || !reason?.trim()) {
         return res.status(400).json({ success: false, errorKey: "logistics.return.invalidRequest" });
       }
-      const entry = fulfillmentStore.createReturnRequest({
-        orderNumber: order.orderNumber,
-        customerId: session.customerId,
-        items,
-        reason: String(reason).trim().slice(0, 500),
-      });
-      try {
-        const automationEngine = require("../lib/automationEngine");
-        automationEngine.emit(
-          "return_request",
-          {
-            orderNumber: order.orderNumber,
-            email: order.customer?.email,
-            returnId: entry.id,
-            language: "de",
-          },
-          { idempotencyKey: entry.id }
-        );
-      } catch {
-        /* non-blocking */
-      }
-      return res.status(201).json({ success: true, returnRequest: entry });
+      fulfillmentStore.createReturnRequest();
+      return res.status(409).json({ success: false, code: "RETURN_UNVERIFIED", stored: false, customerNotified: false });
     });
   },
 };

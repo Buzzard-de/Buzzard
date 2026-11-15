@@ -140,7 +140,10 @@
     "mobile.emptyHint": "Essayez une autre recherche ou revenez d'un niveau.",
     "mobile.trustFast": "Livraison rapide",
     "mobile.trustReturn": "Retours faciles",
-    "mobile.trustPay": "Paiement sécurisé"
+    "mobile.trustPay": "Paiement sécurisé",
+    "catalog.pageTitle": "Produits et assortiment",
+    "catalog.pageLead": "Un large choix dans toutes les catégories — parcourez en ligne et envoyez une demande sans engagement.",
+    "catalog.liveAttached": "{count} entrées de catalogue depuis l'interface"
   },
   "nl": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -283,7 +286,10 @@
     "mobile.emptyHint": "Probeer een andere zoekopdracht of ga een niveau terug.",
     "mobile.trustFast": "Snelle levering",
     "mobile.trustReturn": "Eenvoudig retourneren",
-    "mobile.trustPay": "Veilig betalen"
+    "mobile.trustPay": "Veilig betalen",
+    "catalog.pageTitle": "Producten en assortiment",
+    "catalog.pageLead": "Een ruime keuze in alle categorieën — bekijk online en stuur een vrijblijvende aanvraag.",
+    "catalog.liveAttached": "{count} catalogusitems via de interface"
   },
   "bg": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -426,7 +432,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Продукти и асортимент",
+    "catalog.pageLead": "Богат избор във всички категории — разгледайте онлайн и изпратете необвързващо запитване.",
+    "catalog.liveAttached": "{count} каталожни записа от интерфейса"
   },
   "hr": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -569,7 +578,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Proizvodi i asortiman",
+    "catalog.pageLead": "Širok izbor u svim kategorijama — pregledajte online i pošaljite neobvezujući upit.",
+    "catalog.liveAttached": "{count} kataloških zapisa iz sučelja"
   },
   "el": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -712,7 +724,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Προϊόντα και συλλογή",
+    "catalog.pageLead": "Μεγάλη επιλογή σε όλες τις κατηγορίες — περιηγηθείτε online και στείλτε μη δεσμευτικό αίτημα.",
+    "catalog.liveAttached": "{count} εγγραφές καταλόγου από τη διεπαφή"
   },
   "cs": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -855,7 +870,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkty a sortiment",
+    "catalog.pageLead": "Široký výběr ve všech kategoriích — prohlížejte online a pošlete nezávaznou poptávku.",
+    "catalog.liveAttached": "{count} katalogových záznamů z rozhraní"
   },
   "da": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -998,7 +1016,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkter og sortiment",
+    "catalog.pageLead": "Et bredt udvalg i alle kategorier — se online og send en uforpligtende forespørgsel.",
+    "catalog.liveAttached": "{count} katalogposter fra grænsefladen"
   },
   "et": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1141,7 +1162,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Tooted ja valik",
+    "catalog.pageLead": "Lai valik kõigis kategooriates — sirvige veebis ja saatke mittesiduv päring.",
+    "catalog.liveAttached": "{count} kataloogikirjet liidesest"
   },
   "fi": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1284,7 +1308,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Tuotteet ja valikoima",
+    "catalog.pageLead": "Laaja valikoima kaikissa luokissa — selaa verkossa ja lähetä sitomaton kysely.",
+    "catalog.liveAttached": "{count} luettelomerkintää rajapinnasta"
   },
   "hu": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1427,7 +1454,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Termékek és választék",
+    "catalog.pageLead": "Széles választék minden kategóriában — böngésszen online, és küldjön nem kötelező érvényű érdeklődést.",
+    "catalog.liveAttached": "{count} katalógusbejegyzés a felületről"
   },
   "it": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1570,7 +1600,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Consegna veloce",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Prodotti e assortimento",
+    "catalog.pageLead": "Ampia scelta in tutte le categorie — sfoglia online e invia una richiesta non vincolante.",
+    "catalog.liveAttached": "{count} voci di catalogo dall'interfaccia"
   },
   "lv": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1713,7 +1746,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkti un sortiments",
+    "catalog.pageLead": "Plaša izvēle visās kategorijās — pārlūkojiet tiešsaistē un nosūtiet nesaistošu pieprasījumu.",
+    "catalog.liveAttached": "{count} kataloga ieraksti no saskarnes"
   },
   "lt": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1856,7 +1892,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produktai ir asortimentas",
+    "catalog.pageLead": "Platus pasirinkimas visose kategorijose — naršykite internete ir siųskite neįpareigojančią užklausą.",
+    "catalog.liveAttached": "{count} katalogo įrašai iš sąsajos"
   },
   "lb": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -1999,7 +2038,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkter a Sortiment",
+    "catalog.pageLead": "Eng grouss Auswiel an alle Kategorien — kuckt online a schéckt eng net verbindlech Ufro.",
+    "catalog.liveAttached": "{count} Katalogantrëg vun der Schnëttstell"
   },
   "mt": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2142,7 +2184,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Prodotti u assortiment",
+    "catalog.pageLead": "Għażla wiesgħa fil-kategoriji kollha — ibbrawżja online u ibgħat talba mhux vinkolanti.",
+    "catalog.liveAttached": "{count} entrati tal-katalogu mill-interface"
   },
   "pl": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2285,7 +2330,10 @@
     "mobile.emptyHint": "Spróbuj innego wyszukiwania lub wróć poziom wyżej.",
     "mobile.trustFast": "Szybka dostawa",
     "mobile.trustReturn": "Łatwy zwrot",
-    "mobile.trustPay": "Bezpieczna płatność"
+    "mobile.trustPay": "Bezpieczna płatność",
+    "catalog.pageTitle": "Produkty i asortyment",
+    "catalog.pageLead": "Szeroki wybór we wszystkich kategoriach — przeglądaj online i wyślij niezobowiązujące zapytanie.",
+    "catalog.liveAttached": "{count} wpisów katalogu z interfejsu"
   },
   "pt": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2428,7 +2476,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produtos e sortido",
+    "catalog.pageLead": "Ampla escolha em todas as categorias — consulte online e envie um pedido sem compromisso.",
+    "catalog.liveAttached": "{count} entradas de catálogo da interface"
   },
   "ro": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2571,7 +2622,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produse și sortiment",
+    "catalog.pageLead": "Selecție largă în toate categoriile — răsfoiți online și trimiteți o cerere neobligatorie.",
+    "catalog.liveAttached": "{count} intrări de catalog din interfață"
   },
   "sk": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2714,7 +2768,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkty a sortiment",
+    "catalog.pageLead": "Široký výber vo všetkých kategóriách — prezrite si online a pošlite nezáväzný dopyt.",
+    "catalog.liveAttached": "{count} katalógových záznamov z rozhrania"
   },
   "sl": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -2857,7 +2914,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Izdelki in asortima",
+    "catalog.pageLead": "Široka izbira v vseh kategorijah — prebrskajte na spletu in pošljite neobvezujoče povpraševanje.",
+    "catalog.liveAttached": "{count} kataloških vnosov iz vmesnika"
   },
   "es": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -3000,7 +3060,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Productos y surtido",
+    "catalog.pageLead": "Amplia selección en todas las categorías — consulte en línea y envíe una solicitud sin compromiso.",
+    "catalog.liveAttached": "{count} entradas de catálogo desde la interfaz"
   },
   "ca": {
     "header.tagline": "QUALITÉ. PERFORMANCE. CONFIANCE.",
@@ -3143,7 +3206,10 @@
     "mobile.emptyHint": "Essayez une autre recherche ou revenez d'un niveau.",
     "mobile.trustFast": "Livraison rapide",
     "mobile.trustReturn": "Retours faciles",
-    "mobile.trustPay": "Paiement sécurisé"
+    "mobile.trustPay": "Paiement sécurisé",
+    "catalog.pageTitle": "Productes i assortiment",
+    "catalog.pageLead": "Àmplia selecció a totes les categories — consulteu en línia i envieu una sol·licitud sense compromís.",
+    "catalog.liveAttached": "{count} entrades de catàleg des de la interfície"
   },
   "eu": {
     "header.tagline": "QUALITÉ. PERFORMANCE. CONFIANCE.",
@@ -3286,7 +3352,10 @@
     "mobile.emptyHint": "Essayez une autre recherche ou revenez d'un niveau.",
     "mobile.trustFast": "Livraison rapide",
     "mobile.trustReturn": "Retours faciles",
-    "mobile.trustPay": "Paiement sécurisé"
+    "mobile.trustPay": "Paiement sécurisé",
+    "catalog.pageTitle": "Produktuak eta sorta",
+    "catalog.pageLead": "Aukera zabala kategoria guztietan — arakatu sarean eta bidali konpromisorik gabeko eskaera.",
+    "catalog.liveAttached": "Interfazetik {count} katalogo-sarrera"
   },
   "gl": {
     "header.tagline": "QUALITÉ. PERFORMANCE. CONFIANCE.",
@@ -3429,7 +3498,10 @@
     "mobile.emptyHint": "Essayez une autre recherche ou revenez d'un niveau.",
     "mobile.trustFast": "Livraison rapide",
     "mobile.trustReturn": "Retours faciles",
-    "mobile.trustPay": "Paiement sécurisé"
+    "mobile.trustPay": "Paiement sécurisé",
+    "catalog.pageTitle": "Produtos e sortido",
+    "catalog.pageLead": "Amplia escolla en todas as categorías — consulte en liña e envíe unha solicitude sen compromiso.",
+    "catalog.liveAttached": "{count} entradas de catálogo desde a interface"
   },
   "sv": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -3572,7 +3644,10 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Produkter och sortiment",
+    "catalog.pageLead": "Ett brett urval i alla kategorier — bläddra online och skicka en icke-bindande förfrågan.",
+    "catalog.liveAttached": "{count} katalogposter från gränssnittet"
   },
   "ga": {
     "header.tagline": "QUALITY. PERFORMANCE. TRUST.",
@@ -3715,6 +3790,24 @@
     "mobile.emptyHint": "Try another search or go back one level.",
     "mobile.trustFast": "Fast delivery",
     "mobile.trustReturn": "Easy returns",
-    "mobile.trustPay": "Secure payment"
+    "mobile.trustPay": "Secure payment",
+    "catalog.pageTitle": "Táirgí agus rogha",
+    "catalog.pageLead": "Rogha leathan i ngach catagóir — brabhsáil ar líne agus seol iarratas neamhcheangailteach.",
+    "catalog.liveAttached": "{count} iontráil chatalóige ón gcomhéadan"
+  },
+  "en": {
+    "catalog.pageTitle": "Products and range",
+    "catalog.pageLead": "A wide choice in every category — browse online and send a non-binding enquiry.",
+    "catalog.liveAttached": "{count} catalogue entries from the interface"
+  },
+  "tr": {
+    "catalog.pageTitle": "Ürünler ve çeşitler",
+    "catalog.pageLead": "Tüm kategorilerde geniş seçim — çevrimiçi inceleyin ve bağlayıcı olmayan bir talep gönderin.",
+    "catalog.liveAttached": "Arayüzden {count} katalog kaydı"
+  },
+  "ar": {
+    "catalog.pageTitle": "المنتجات والتشكيلة",
+    "catalog.pageLead": "اختيار واسع في كل الفئات — تصفح عبر الإنترنت وأرسل طلبًا غير ملزم.",
+    "catalog.liveAttached": "{count} سجل من الواجهة"
   }
 }

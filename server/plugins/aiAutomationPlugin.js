@@ -612,43 +612,18 @@ module.exports = {
 
     app.post("/api/cart/abandoned", (req, res) => {
       const body = req.body || {};
-      if (!body.email || !Array.isArray(body.lines) || body.lines.length === 0) {
-        return res.status(400).json({ success: false, errorKey: "automation.abandoned.invalid" });
+      if (!Array.isArray(body.lines) || body.lines.length === 0) {
+        return res.status(400).json({ success: false, errorKey: "automation.abandoned.invalid", notified: false, customerNotified: false });
       }
-      const carts = readCarts();
-      const existing = carts.find((c) => c.email === body.email.toLowerCase() && c.status === "open");
-      const entry = {
-        id: existing?.id || crypto.randomUUID(),
-        email: String(body.email).trim().toLowerCase(),
-        lines: body.lines,
-        locale: body.locale || "de",
-        marketingConsent: body.marketingConsent !== false,
-        unsubscribed: Boolean(body.unsubscribed),
-        status: "open",
-        updatedAt: new Date().toISOString(),
-        createdAt: existing?.createdAt || new Date().toISOString(),
-      };
-      const next = carts.filter((c) => c.id !== entry.id);
-      next.push(entry);
-      writeCarts(next);
-
-      const delayHours = Number(process.env.BUZZARD_ABANDONED_CART_DELAY_HOURS || 24);
-      const shouldNotify = !existing || Date.now() - new Date(existing.updatedAt).getTime() > delayHours * 3600 * 1000;
-      if (shouldNotify) {
-        automationEngine.emit(
-          "abandoned_cart",
-          {
-            email: entry.email,
-            cartId: entry.id,
-            language: entry.locale,
-            marketingConsent: entry.marketingConsent,
-            unsubscribed: entry.unsubscribed,
-          },
-          { idempotencyKey: entry.id }
-        );
-      }
-
-      return res.json({ success: true, cartId: entry.id, notified: shouldNotify });
+      return res.status(403).json({
+        success: false,
+        notified: false,
+        customerNotified: false,
+        queued: false,
+        cartStored: false,
+        marketingPermission: "BLOCKED",
+        code: "CONSENT_UNVERIFIED",
+      });
     });
 
     app.get("/api/admin/automation/events", (req, res) => {

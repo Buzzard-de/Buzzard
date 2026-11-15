@@ -64,7 +64,14 @@ module.exports = {
 
     app.post("/api/admin/logistics-fulfillment/shipments/quote", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = logisticsFulfillment.quoteShipment(req.body || {});
+      const body = req.body || {};
+      const result = logisticsFulfillment.quoteShipment({
+        origin: body.origin,
+        country: body.country,
+        zone: body.zone || body.deliveryZone,
+        weightKg: body.weightKg,
+        dimensions: body.dimensions,
+      });
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.json(result.quote);
     });

@@ -3,8 +3,36 @@
 // Secrets must remain server-side only.
 
 const PUBLIC_BASE = (process.env.PUBLIC_BASE_URL || "https://buzzard24.de").replace(/\/$/, "");
+const { isSalesEnabled } = require("./salesMode");
+
+function closedPayment(provider, extra = {}) {
+  return {
+    provider,
+    status: "SALES_CLOSED",
+    live: false,
+    paymentAuthorized: false,
+    realMoneyMovement: false,
+    checkoutUrl: null,
+    approvalUrl: null,
+    ...extra,
+  };
+}
+
+function blockedExternal(fields) {
+  return {
+    status: "BLOCKED_EXTERNAL",
+    live: false,
+    shipmentCreated: false,
+    paymentAuthorized: false,
+    orderCreated: false,
+    purchased: false,
+    invented: false,
+    ...fields,
+  };
+}
 
 async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", successUrl, cancelUrl }) {
+  if (!isSalesEnabled()) return closedPayment("stripe", { orderId, amount, currency });
   const secret = process.env.STRIPE_SECRET_KEY;
   if (!secret) {
     return {
@@ -72,6 +100,7 @@ async function createStripeCheckoutSession({ orderId, amount, currency = "EUR", 
 }
 
 async function createPayPalOrder({ orderId, amount, currency = "EUR" }) {
+  if (!isSalesEnabled()) return closedPayment("paypal", { orderId, amount, currency });
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
@@ -201,93 +230,51 @@ const payments = {
       approvalUrl: null,
     };
   },
-  klarna: async ({ orderId, amount, currency }) => ({
+  klarna: async ({ orderId, amount, currency }) => blockedExternal({
     provider: "klarna",
-    status:
-      process.env.KLARNA_USERNAME && process.env.KLARNA_PASSWORD ? "configured" : "adapter_ready",
+    credentialsPresent: Boolean(process.env.KLARNA_USERNAME && process.env.KLARNA_PASSWORD),
     orderId,
     amount,
     currency,
+    checkoutUrl: null,
   }),
 };
 
+function carrierResult(provider, credentialsPresent, input) {
+  return blockedExternal({
+    provider,
+    credentialsPresent,
+    orderNumber: input.orderNumber,
+    countryCode: input.countryCode,
+    weightKg: input.weightKg,
+    address: input.address,
+    trackingNumber: null,
+    labelUrl: null,
+  });
+}
+
 const carriers = {
-  dhl: async ({ orderNumber, countryCode, weightKg, address }) => ({
-    provider: "DHL",
-    status: process.env.DHL_API_KEY ? "configured" : "adapter_ready",
-    orderNumber,
-    countryCode,
-    weightKg,
-    address,
-    trackingNumber: null,
-    labelUrl: null,
-  }),
-  dpd: async ({ orderNumber, countryCode, weightKg, address }) => ({
-    provider: "DPD",
-    status: process.env.DPD_API_KEY ? "configured" : "adapter_ready",
-    orderNumber,
-    countryCode,
-    weightKg,
-    address,
-    trackingNumber: null,
-    labelUrl: null,
-  }),
-  gls: async ({ orderNumber, countryCode, weightKg, address }) => ({
-    provider: "GLS",
-    status: process.env.GLS_API_KEY ? "configured" : "adapter_ready",
-    orderNumber,
-    countryCode,
-    weightKg,
-    address,
-    trackingNumber: null,
-    labelUrl: null,
-  }),
-  ups: async ({ orderNumber, countryCode, weightKg, address }) => ({
-    provider: "UPS",
-    status:
-      process.env.UPS_CLIENT_ID && process.env.UPS_CLIENT_SECRET ? "configured" : "adapter_ready",
-    orderNumber,
-    countryCode,
-    weightKg,
-    address,
-    trackingNumber: null,
-    labelUrl: null,
-  }),
+  dhl: async (input) => carrierResult("DHL", Boolean(process.env.DHL_API_KEY), input),
+  dpd: async (input) => carrierResult("DPD", Boolean(process.env.DPD_API_KEY), input),
+  gls: async (input) => carrierResult("GLS", Boolean(process.env.GLS_API_KEY), input),
+  ups: async (input) => carrierResult("UPS", Boolean(process.env.UPS_CLIENT_ID && process.env.UPS_CLIENT_SECRET), input),
+  hermes: async (input) => carrierResult("HERMES", Boolean(process.env.HERMES_API_KEY), input),
 };
 
 async function calculateTax({ countryCode, netAmount, shipping = 0 }) {
   return calculateTaxSync(countryCode, netAmount, shipping);
 }
 
-function calculateTaxSync(countryCode, netAmount, shipping = 0) {
-  if (process.env.TAX_PROVIDER_API_KEY && process.env.TAX_PROVIDER_URL) {
-    return {
-      countryCode,
-      rate: null,
-      tax: null,
-      source: "provider_required",
-      status: "tax_provider_configured",
-    };
-  }
-
-  const indicativeRates = {
-    DE: 0.19,
-    FR: 0.2,
-    NL: 0.21,
-    PL: 0.23,
-    ES: 0.21,
-    IT: 0.22,
-    GB: 0.2,
-    CH: 0.081,
-    TR: 0.2,
-  };
-  const rate = indicativeRates[countryCode] ?? 0.19;
-  const taxable = Number(netAmount || 0) + Number(shipping || 0);
+function calculateTaxSync(countryCode) {
   return {
-    countryCode,
-    rate,
-    tax: Number((taxable * rate).toFixed(2)),
-    source: "placeholder",
+    ok: false,
+    countryCode: countryCode || null,
+    rate: null,
+    tax: null,
+    status: "VAT_UNVERIFIED",
+    official: false,
+    invented: false,
+    source: "unverified",
   };
 }
 
@@ -304,7 +291,9 @@ async function importSupplierFeed({ supplier, format, payload }) {
     supplier,
     format,
     payloadSize: payload ? JSON.stringify(payload).length : 0,
-    status: process.env.SUPPLIER_API_KEY ? "configured" : "adapter_ready",
+    status: "BLOCKED_EXTERNAL",
+    live: false,
+    purchased: false,
     importedProducts: 0,
     warning: "Supplier credentials and field mapping required",
   };
@@ -315,7 +304,8 @@ async function checkTecDocCompatibility({ vehicle, productSku }) {
     productSku,
     vehicle,
     compatible: null,
-    status: process.env.TECDOC_API_KEY ? "configured" : "license_and_api_required",
+    live: false,
+    status: "BLOCKED_EXTERNAL",
   };
 }
 
@@ -328,7 +318,9 @@ async function forwardDropshipOrder({ supplier, order, req } = {}) {
   return {
     supplier,
     orderNumber: order?.orderNumber,
-    status: process.env.SUPPLIER_API_KEY ? "configured" : "adapter_ready",
+    status: "BLOCKED_EXTERNAL",
+    live: false,
+    purchased: false,
     supplierOrderId: null,
   };
 }
@@ -336,6 +328,9 @@ async function forwardDropshipOrder({ supplier, order, req } = {}) {
 function getIntegrationStatus() {
   return {
     version: "0.5.1",
+    live: false,
+    paymentReady: false,
+    shipmentReady: false,
     salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
     payments: {
       stripe: Boolean(process.env.STRIPE_SECRET_KEY),

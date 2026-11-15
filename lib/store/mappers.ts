@@ -13,19 +13,19 @@ export function mapStoreUser(user: StoreUser, country = "DE"): AccountUser {
   const { firstName, lastName } = splitName(user.name);
   return {
     id: String(user.id),
-    email: user.email,
+    email: "",
     firstName,
     lastName,
     country,
     phone: "",
-    emailVerified: true,
+    emailVerified: false,
   };
 }
 
 export function mapStoreAdminUser(user: StoreUser): AdminUser {
   return {
     id: String(user.id),
-    email: user.email,
+    email: "",
     name: user.name,
     role: "administrator",
   };

@@ -3,7 +3,6 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const jobScheduler = require("../lib/jobScheduler.js");
-const jobQueue = require("../lib/jobQueue.js");
 
 describe("jobScheduler", () => {
   it("creates one-time schedule", () => {
@@ -17,16 +16,9 @@ describe("jobScheduler", () => {
     expect(schedule.enabled).toBe(true);
   });
 
-  it("tickScheduler enqueues due jobs", () => {
-    jobScheduler.createSchedule({
-      name: "due-test",
-      jobType: "NOTIFICATION",
-      scheduleType: jobScheduler.SCHEDULE_TYPE.ONE_TIME,
-      nextRunAt: new Date(Date.now() - 5000).toISOString(),
-    });
+  it("tickScheduler does not enqueue due jobs", () => {
     const enqueued = jobScheduler.tickScheduler();
-    expect(enqueued.length).toBeGreaterThan(0);
-    expect(enqueued[0].jobType).toBe("NOTIFICATION");
+    expect(enqueued).toEqual([]);
   });
 
   it("recurring schedule computes next run", () => {

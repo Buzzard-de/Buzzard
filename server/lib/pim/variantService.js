@@ -14,7 +14,7 @@ function addVariant(productId, { sku, axis, value, ean, priceDelta, stock }) {
   db.prepare(`
     INSERT INTO pim_core_variants(id, product_id, sku, axis, value, ean, price_delta, stock)
     VALUES (?,?,?,?,?,?,?,?)
-  `).run(id, productId, sku, axis, value, ean || null, priceDelta || 0, stock || 0);
+  `).run(id, productId, sku, axis, value, ean || null, priceDelta || 0, stock == null || stock === "" ? null : Number(stock));
   return db.prepare("SELECT * FROM pim_core_variants WHERE id = ?").get(id);
 }
 

@@ -30,6 +30,9 @@
  * });
  */
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
+const { createRequire } = require("module");
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 const MAX_KEY_LENGTH = 256;
 const MAX_OPERATION_LENGTH = 128;
@@ -46,6 +49,49 @@ function assertDb(db) {
   if (typeof db.prepare !== "function" && typeof db.exec !== "function") {
     throw new Error("IdempotencyService requires a SQLite-compatible database");
   }
+}
+function refuse(message, code) {
+  const err = new Error(message);
+  err.code = code;
+  throw err;
+}
+function loadSqlite() {
+  const root = path.join(__dirname, "..", "..", "..");
+  try {
+    return createRequire(path.join(root, "server", "package.json"))("better-sqlite3");
+  } catch {
+    return require("better-sqlite3");
+  }
+}
+function fileIdentity(file) {
+  const resolved = path.resolve(String(file));
+  try {
+    return fs.realpathSync(resolved);
+  } catch {
+    return resolved;
+  }
+}
+function assertIsolatedDatabase(db, commercePath) {
+  assertDb(db);
+  const name = typeof db.name === "string" ? db.name.trim() : "";
+  if (!name || name === ":memory:") return;
+  const { assertNotGuardian } = require("./durableTaskQueue");
+  const resolved = assertNotGuardian(name);
+  if (commercePath && fileIdentity(resolved) === fileIdentity(commercePath)) {
+    refuse("PUSAT_DB_MATCHES_COMMERCE", "DATA_PATH_REFUSED");
+  }
+}
+function openIdempotencyDatabase({ dbPath, commercePath } = {}) {
+  const { assertNotGuardian } = require("./durableTaskQueue");
+  const resolved = assertNotGuardian(dbPath);
+  if (commercePath && fileIdentity(resolved) === fileIdentity(commercePath)) {
+    refuse("PUSAT_DB_MATCHES_COMMERCE", "DATA_PATH_REFUSED");
+  }
+  if (!fs.existsSync(path.dirname(resolved))) {
+    refuse("ORCH_DB_PATH_UNVERIFIED", "DATA_PATH_REFUSED");
+  }
+  const Database = loadSqlite();
+  return new Database(resolved);
 }
 function nowIso() {
   return new Date().toISOString();
@@ -279,9 +325,10 @@ function createIdempotencyService(
   {
     ttlMs = DEFAULT_TTL_MS,
     retryFailed = true,
+    commercePath = null,
   } = {}
 ) {
-  assertDb(db);
+  assertIsolatedDatabase(db, commercePath);
   if (!Number.isSafeInteger(ttlMs) || ttlMs <= 0) {
     throw new Error("ttlMs must be a positive integer");
   }
@@ -491,6 +538,7 @@ function createIdempotencyService(
 }
 module.exports = {
   createIdempotencyService,
+  openIdempotencyDatabase,
   STATUS,
   DEFAULT_TTL_MS,
 };

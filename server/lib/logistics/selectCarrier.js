@@ -11,7 +11,7 @@ function recommend({
   destination,
   origin,
   postalCode,
-  weightKg = 1,
+  weightKg = null,
   volumetricKg,
   preferSpeed = false,
 } = {}) {
@@ -34,7 +34,7 @@ function recommend({
     priceInvented: false,
     legacyMockQuote: {
       ...quote,
-      priceInvented: true,
+      priceInvented: false,
       notForAutoselect: true,
       note: "Numeric AB27 planning mock. Not a contracted rate and not used for autoselect.",
     },

@@ -1,7 +1,7 @@
 import { getProductById } from "@/lib/products/service";
 import type { ProductVariant } from "@/lib/products/types";
 import { validateCoupon } from "./coupons";
-import { calculateShippingCostForLines, freeShippingRemaining } from "./shipping";
+import { calculateShippingCostForLines } from "./shipping";
 import type { CheckoutCartLineInput, OrderLineQuote, OrderQuote } from "./types";
 
 export function buildVariantLabel(variants: ProductVariant[], variantIds: string[]): string {
@@ -28,8 +28,6 @@ export function resolveLinePricing(
   if (stock < qty) return null;
 
   const lineTotal = Math.round(unitPrice * qty * 100) / 100;
-  const vatRate = product.vatRate;
-  const vatAmount = Math.round((lineTotal - lineTotal / (1 + vatRate / 100)) * 100) / 100;
 
   return {
     productId: product.id,
@@ -40,8 +38,9 @@ export function resolveLinePricing(
     qty,
     unitPrice,
     lineTotal,
-    vatRate,
-    vatAmount,
+    vatRate: null,
+    vatAmount: null,
+    vatVerified: false,
     imageKey: product.imageKey,
   };
 }
@@ -61,30 +60,23 @@ export function calculateOrderQuote(
   }
 
   const subtotal = resolved.reduce((sum, line) => sum + line.lineTotal, 0);
-  const coupon = validateCoupon(couponCode, subtotal);
-  const discount = coupon.valid ? coupon.discount : 0;
-  const discountedSubtotal = Math.max(0, subtotal - discount);
-  const shipping = calculateShippingCostForLines(
-    discountedSubtotal,
-    shippingMethodId,
-    countryCode,
-    lines
-  );
-  const vatAmount =
-    Math.round(resolved.reduce((sum, line) => sum + line.vatAmount, 0) * 100) / 100;
-  const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
+  const arithmetic = validateCoupon(couponCode, subtotal);
+  const shipping = calculateShippingCostForLines();
 
   return {
     currency: "EUR",
     lines: resolved,
     subtotal,
     shipping,
-    discount,
-    vatAmount,
-    total,
-    freeShippingRemaining: freeShippingRemaining(discountedSubtotal, countryCode),
+    discount: null,
+    couponApplied: false,
+    couponStatus: arithmetic.couponStatus,
+    vatAmount: null,
+    vatVerified: false,
+    total: null,
+    freeShippingRemaining: null,
+    commercialEligibility: "BLOCKED",
     shippingMethodId,
-    couponCode: coupon.valid ? coupon.normalizedCode : undefined,
   };
 }
 

@@ -134,12 +134,13 @@ const PROFILES = Object.freeze({
 });
 
 function normalizeStatus(raw) {
-  const u = String(raw || "").toUpperCase();
+  const u = String(raw ?? "").trim().toUpperCase();
+  if (!u) return "UNKNOWN";
   if (STATUSES.includes(u)) return u;
   if (u.includes("LOST")) return "LOST";
   if (u.includes("DELAY")) return "DELAYED";
   if (u.includes("RETURN")) return "RETURNING";
-  return "CREATED";
+  return "UNKNOWN";
 }
 
 function mapStatus(profile, raw) {
@@ -154,9 +155,48 @@ function hmac(secret, payload) {
   return crypto.createHmac("sha256", secret).update(String(payload)).digest("hex");
 }
 
+const STORED_KEY_ENV = Object.freeze([
+  "DHL_API_KEY",
+  "DPD_API_KEY",
+  "GLS_API_KEY",
+  "UPS_CLIENT_ID",
+  "UPS_CLIENT_SECRET",
+  "HERMES_API_KEY",
+  "STRIPE_SECRET_KEY",
+  "PAYPAL_CLIENT_SECRET",
+]);
+
+function storedKeyPresent(req = {}) {
+  const supplied = [req.apiKey, req.apiSecret, req.token, req.secret].some((value) => String(value || "").trim() !== "");
+  return supplied || STORED_KEY_ENV.some((name) => String(process.env[name] || "").trim() !== "");
+}
+
+function protocolFixtureResult(profile, credentialsPresent) {
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "FIXTURE_NOT_A_SHIPMENT",
+    protocol: profile.protocol,
+    requestShape: profile.fixture.request,
+    sampleResponse: profile.fixture.response,
+    shipmentCreated: false,
+    liveShipment: false,
+    liveTariff: false,
+    shippingCost: null,
+    trackingNumber: null,
+    label: false,
+    credentialsPresent: credentialsPresent === true,
+    credentialsAccepted: false,
+  };
+}
+
 function validateRequest(profile, req = {}) {
   const address = req.address;
-  if (!address) return { ok: true, skipped: true, protocol: profile.protocol };
+  if (!address) {
+    return { ok: false, live: false, mock: false, status: "BLOCKED_EXTERNAL", code: "MISSING_ADDRESS", skipped: true, protocol: profile.protocol };
+  }
   for (const field of profile.required) {
     if (address[field] == null || address[field] === "") {
       return { ok: false, code: profile.missingCode, protocol: profile.protocol, field };
@@ -172,7 +212,16 @@ function validateRequest(profile, req = {}) {
   if (req.forceFailure === true) {
     return { ok: false, code: profile.failure, protocol: profile.protocol };
   }
-  return { ok: true, protocol: profile.protocol };
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "LIVE_CONNECTION_REQUIRED",
+    shapeAccepted: true,
+    validatedAddress: null,
+    protocol: profile.protocol,
+  };
 }
 
 function makeAdapter(id) {
@@ -190,7 +239,7 @@ function makeAdapter(id) {
     },
     createShipment(req = {}) {
       const validation = validateRequest(profile, req);
-      if (!validation.ok) {
+      if (!validation.ok && validation.shapeAccepted !== true) {
         return {
           ok: false,
           code: validation.code,
@@ -201,31 +250,47 @@ function makeAdapter(id) {
           orderId: req.orderId || null,
         };
       }
+      const credentialsPresent = storedKeyPresent(req);
       return {
         ok: false,
         code: "HUMAN_GATE_REQUIRED",
         liveShipment: false,
+        liveTariff: false,
+        shipmentCreated: false,
+        trackingNumber: null,
+        shippingCost: null,
         label: false,
+        credentialsPresent,
+        credentialsAccepted: false,
         carrier: id,
         protocol: profile.protocol,
         orderId: req.orderId || null,
-        fixture: profile.fixture.response,
+        fixture: protocolFixtureResult(profile, credentialsPresent),
       };
     },
     createLabel() {
       return { ok: false, code: "HUMAN_GATE_REQUIRED", liveShipment: false, carrier: id, protocol: profile.protocol };
     },
-    trackShipment({ status = "IN_TRANSIT" } = {}) {
-      const mapped = mapStatus(profile, status);
+    trackShipment({ status = null } = {}) {
+      const supplied = status == null || String(status).trim() === "" ? null : status;
+      const mapped = supplied == null ? "UNKNOWN" : mapStatus(profile, supplied);
       return {
-        ok: true,
+        ok: false,
         live: false,
+        mock: false,
+        blocked: true,
+        resultStatus: "BLOCKED_EXTERNAL",
+        code: "LIVE_CONNECTION_ABSENT",
         liveShipment: false,
+        shipmentCreated: false,
+        trackingNumber: null,
         carrier: id,
         protocol: profile.protocol,
         status: mapped,
-        providerStatus: String(status),
-        events: [{ status: mapped, at: new Date().toISOString(), protocol: profile.protocol }],
+        providerStatus: supplied == null ? null : String(supplied),
+        events: [],
+        delivered: false,
+        deliveryConfirmed: false,
       };
     },
     normalizeStatus: (raw) => mapStatus(profile, raw),
@@ -245,10 +310,31 @@ function makeAdapter(id) {
       if (expected !== header) return { ok: false, code: "INVALID_HMAC", hmacIsSignature: false, protocol: profile.protocol };
       if (seen.has(String(payload))) return { ok: false, code: "REPLAY", hmacIsSignature: false, protocol: profile.protocol };
       seen.add(String(payload));
-      return { ok: true, hmacIsSignature: false, live: false, carrier: id, protocol: profile.protocol };
+      return {
+        ok: false,
+        signatureMatched: true,
+        hmacIsSignature: false,
+        live: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        code: "CARRIER_WEBHOOK_UNVERIFIED",
+        shipmentCreated: false,
+        trackingNumber: null,
+        carrier: id,
+        protocol: profile.protocol,
+      };
     },
     reconcileShipment() {
-      return { ok: true, matched: 0, live: false, carrier: id, protocol: profile.protocol };
+      return {
+        ok: false,
+        matched: null,
+        live: false,
+        mock: false,
+        status: "BLOCKED_EXTERNAL",
+        code: "LIVE_CONNECTION_ABSENT",
+        carrier: id,
+        protocol: profile.protocol,
+      };
     },
   };
 }
@@ -260,6 +346,22 @@ const ADAPTERS = Object.fromEntries(CARRIER_IDS.map((id) => [id, makeAdapter(id)
 
 function getAdapter(id) {
   return ADAPTERS[id] || null;
+}
+
+function runProtocolFixture(id, req = {}) {
+  const profile = PROFILES[id];
+  if (!profile) {
+    return {
+      ok: false,
+      code: "CARRIER_UNKNOWN",
+      shipmentCreated: false,
+      liveTariff: false,
+      shippingCost: null,
+      trackingNumber: null,
+      credentialsAccepted: false,
+    };
+  }
+  return protocolFixtureResult(profile, storedKeyPresent(req));
 }
 
 function profileOf(id) {
@@ -286,6 +388,7 @@ module.exports = {
   normalizeStatus,
   mapStatus,
   getAdapter,
+  runProtocolFixture,
   profileOf,
   snapshot,
   makeAdapter,

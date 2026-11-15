@@ -2,35 +2,82 @@
  * Part 10 — Server-authoritative coupon validation for Commerce Core
  */
 const { validateCoupon, normalizeCouponCode } = require("../coupons");
+const { decideCouponAuthority } = require("./couponAuthorityGate");
 const { validateDiscount } = require("./commerceValidation");
 const { logSecurityEvent } = require("../securityLog");
 
-function resolveCouponDiscount(couponCode, subtotal) {
-  if (!couponCode || !String(couponCode).trim()) {
-    return { ok: true, discount: 0, couponCode: null, normalizedCode: null };
-  }
-
-  const result = validateCoupon(couponCode, subtotal);
-  if (!result.valid) {
-    return {
-      ok: false,
-      error: result.errorKey || "checkout.couponInvalid",
-      status: 400,
-      discount: 0,
-    };
-  }
-
-  const discountCheck = validateDiscount(result.discount, subtotal);
-  if (!discountCheck.ok) {
-    return { ok: false, error: discountCheck.code, status: 400, discount: 0 };
-  }
-
+function commercialSeparation(input = {}) {
   return {
-    ok: true,
-    discount: discountCheck.discount,
-    couponCode: result.normalizedCode,
-    normalizedCode: result.normalizedCode,
-    source: result.source || "server",
+    commercialApplied: false,
+    commercialAuthority: false,
+    couponVerified: false,
+    applied: false,
+    callerFlagIgnored: true,
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    orderCreated: false,
+    paymentCreated: false,
+    callerFlagsSeen: ["valid", "verified", "active", "approved", "live"].filter((key) => input[key] !== undefined),
+  };
+}
+
+function resolveCouponDiscount(couponCode, subtotal, input = {}) {
+  const request = input && typeof input === "object" ? input : {};
+  const normalized = normalizeCouponCode(couponCode);
+  const legacyKey = `m21:${request.idempotencyKey || normalized || "empty"}`;
+  const legacy = validateCoupon(couponCode, subtotal, {
+    ...request,
+    idempotencyKey: legacyKey,
+  });
+  const authority = decideCouponAuthority({
+    ...request,
+    code: normalized,
+    authorityKey: `m22:${request.authorityKey || request.idempotencyKey || normalized || "empty"}`,
+  });
+  const gatesAuthorize = legacy.valid === true
+    && legacy.ok === true
+    && authority.ok === true
+    && authority.authorized === true
+    && authority.applied === true
+    && authority.status !== "UNKNOWN"
+    && authority.status !== "BLOCKED"
+    && authority.status !== "FAILED"
+    && authority.code !== "TIMEOUT"
+    && authority.code !== "NETWORK_ERROR";
+  const arithmetic = gatesAuthorize ? validateDiscount(legacy.discount, subtotal) : null;
+  const arithmeticOk = arithmetic?.ok === true;
+  return {
+    ...commercialSeparation(request),
+    ok: false,
+    authorized: false,
+    arithmeticOnly: false,
+    arithmeticOk: false,
+    commercialAuthority: false,
+    couponVerified: false,
+    applied: false,
+    discount: null,
+    arithmeticDiscount: arithmeticOk ? arithmetic.discount : null,
+    total: null,
+    commercialTotal: null,
+    discountedSubtotal: null,
+    taxBase: null,
+    orderCreated: false,
+    paymentCreated: false,
+    code: authority.code,
+    status: authority.status,
+    couponStatus: authority.status,
+    gateCode: authority.gateCode || legacy.code || null,
+    authorityCode: authority.code,
+    legacyCode: legacy.code || null,
+    legacyStatus: legacy.status || null,
+    error: legacy.errorKey || authority.code,
+    reasons: Array.isArray(authority.reasons) ? authority.reasons.slice() : [authority.code],
+    couponCode: normalized || null,
+    normalizedCode: normalized || null,
+    callerGateIgnored: request.gateResult != null || authority.callerGateIgnored === true,
+    callerFlagIgnored: true,
+    productionReady: false,
   };
 }
 
@@ -75,8 +122,8 @@ function validateCouponRequest(body = {}, subtotal, ctx = {}) {
     return { ok: false, error: "coupon_tampering", status: 400 };
   }
 
-  const resolved = resolveCouponDiscount(requestedCode, subtotal);
-  const serverDiscount = resolved.ok ? resolved.discount : 0;
+  const resolved = resolveCouponDiscount(requestedCode, subtotal, body);
+  const serverDiscount = resolved.arithmeticOnly ? resolved.arithmeticDiscount : 0;
   const tamper = rejectClientCouponFields(body, serverDiscount);
   if (!tamper.ok) {
     logCouponTampering(ctx.req, {
@@ -85,11 +132,39 @@ function validateCouponRequest(body = {}, subtotal, ctx = {}) {
       serverDiscount,
       clientDiscount: body.discount ?? body.clientDiscount ?? body.couponDiscount,
     });
-    return { ok: false, error: tamper.code, status: 400, message: tamper.message };
+    return {
+      ok: false,
+      error: tamper.code,
+      status: 400,
+      message: tamper.message,
+      discount: null,
+      commercialApplied: false,
+      applied: false,
+      couponVerified: false,
+      callerFlagIgnored: true,
+    };
   }
-  if (!resolved.ok) return resolved;
 
-  return resolved;
+  return {
+    ok: false,
+    error: resolved.code || "COUPON_UNVERIFIED",
+    code: resolved.code || "COUPON_UNVERIFIED",
+    status: resolved.code === "SALES_CLOSED" ? 403 : 409,
+    couponStatus: resolved.couponStatus || "BLOCKED",
+    discount: null,
+    arithmeticDiscount: resolved.arithmeticOnly ? resolved.arithmeticDiscount : null,
+    arithmeticOk: resolved.arithmeticOnly === true,
+    commercialApplied: false,
+    commercialAuthority: false,
+    applied: false,
+    couponVerified: false,
+    callerFlagIgnored: true,
+    discountedSubtotal: null,
+    taxBase: null,
+    commercialTotal: null,
+    orderCreated: false,
+    reasons: resolved.reasons,
+  };
 }
 
 module.exports = {

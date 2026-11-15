@@ -1,0 +1,224 @@
+{
+  "schema": "buzzard.storefront-nextjs-final.v1",
+  "recordedAt": "2026-11-11T15:28:14Z",
+  "recordedAtBerlin": "2026-11-11T16:28:14+01:00",
+  "phase": "STOREFRONT_FINALIZATION_AND_INTEGRITY_AUDIT",
+  "storefrontPhase": "PARTIAL",
+  "nextProjectPhase": "NOT_STARTED",
+  "liveVerified": false,
+  "humanTranslationReview": false,
+  "statuses": {
+    "CODE_COMPLETE": true,
+    "TEST_COMPLETE": true,
+    "SEO_LOCALIZATION_COMPLETE": true,
+    "PIM_ARCHITECTURE_READY": true,
+    "PIM_LIVE_DATA_BLOCKED": true,
+    "CATEGORY_ENGINE_COMPLETE": true,
+    "TAXONOMY_DATA_REQUIRED": true,
+    "SECURITY_VERIFIED": "LOCAL_TESTS_ONLY",
+    "BUILD_COMPLETE": true,
+    "LIVE_VERIFIED": false,
+    "humanReviewed": false
+  },
+  "protection": {
+    "releaseCandidate": "abb3eb70bc82a7112e1d507b8fe671ba1a789577",
+    "releaseCandidateAncestor": true,
+    "worktreeHead": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+    "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+    "originalWorkspace": "6fd86fae9dd8c18abc21d33c5ac6bff8694a69c8",
+    "backup": "34d4792420ebfa25c48052e1c65d8cfd2615370b",
+    "devDbMtime": 1794331370,
+    "devDbSha256": "416f163a105efa648722cc011fbe2b02590bee8cd7de68017fc2d444a048973b",
+    "devDbUnchanged": true,
+    "localBuzzardDbCreated": false,
+    "egress": "DENY",
+    "egressBytesMatchWorkspace": true,
+    "sales": "CLOSED",
+    "realPayments": "DISABLED",
+    "realOrders": "DISABLED",
+    "realSupplierPurchases": "DISABLED",
+    "realShipments": "DISABLED",
+    "productionDeployment": "DISABLED",
+    "gitCommit": "NOT_DONE",
+    "pullRequest501": "UNCHANGED"
+  },
+  "completed": [
+    "Locale-aware product SEO uses the existing 30-locale registry",
+    "Verified German source titles stay SOURCE_DE and UNREVIEWED",
+    "Present catalog translations in en, tr, and ar are shown as UNREVIEWED_CATALOG",
+    "Missing translations fall back to the neutral title Buzzard and do not reuse the German title",
+    "Static export routes exist only for present snapshot translations",
+    "Canonical URLs and hreflang links are unique and limited to present locales",
+    "Arabic product HTML is lang=ar dir=rtl",
+    "Read-only PIM adapter reports PIM_ARCHITECTURE_READY and PIM_LIVE_DATA_BLOCKED",
+    "Product list, search, category, and detail stay on the isolated snapshot when the public flag is on"
+  ],
+  "pending": [
+    "Human review of machine-draft and catalog translations",
+    "Official subcategory rows and non-German category names",
+    "Database-backed PIM reader"
+  ],
+  "blockers": [
+    "PIM_IMPORT_OPENS_DEV_DB",
+    "TAXONOMY_DATA_REQUIRED",
+    "HUMAN_REVIEW_REQUIRED"
+  ],
+  "filesCreated": [
+    "app/[locale]/katalog/urun/[id]/page.tsx",
+    "app/katalog/page.tsx",
+    "app/katalog/urun/[id]/page.tsx",
+    "components/storefront/IsolatedCatalogBrowser.tsx",
+    "components/storefront/IsolatedCatalogSection.tsx",
+    "components/storefront/ProductsPageIntro.tsx",
+    "data/completion/storefront-nextjs-final-checkpoint.json",
+    "data/storefront/isolated-public-snapshot.json",
+    "lib/i18n/storefrontStrings.test.ts",
+    "lib/storefront/isolatedSnapshot.ts",
+    "lib/storefront/productSeo.test.ts",
+    "lib/storefront/productSeo.ts",
+    "server/__tests__/storefrontNext.test.mjs",
+    "server/lib/commerce/categoryHierarchy.js",
+    "server/lib/commerce/pimReadOnlyAdapter.js",
+    "server/lib/commerce/storefrontCatalogAdapter.js",
+    "server/lib/commerce/storefrontChrome.js"
+  ],
+  "filesModified": [
+    "app/products/page.tsx",
+    "components/ProductDetailLoader.tsx",
+    "components/ProductList.tsx",
+    "components/ShopProviders.tsx",
+    "data/i18n/ui-gap-fills.json",
+    "lib/i18n/locales/de.ts",
+    "lib/i18n/translations.ts",
+    "lib/storefront/runtime.ts",
+    "server/lib/commerce/storefrontView.js",
+    "styles/shop.css",
+    "vitest.config.ts"
+  ],
+  "seo": {
+    "registry": "lib/i18n/supported-locales.json",
+    "locales": 30,
+    "representative": [
+      "de",
+      "en",
+      "tr",
+      "ar",
+      "fr",
+      "nl",
+      "pl",
+      "es"
+    ],
+    "synPadPresent": [
+      "de",
+      "en",
+      "tr",
+      "ar"
+    ],
+    "synToolPresent": [
+      "de",
+      "en"
+    ],
+    "missingTitle": "Buzzard",
+    "hreflangDuplicateCanonicals": false,
+    "arabicDir": "rtl",
+    "machineTranslations": "UNREVIEWED",
+    "exportedRoutes": [
+      "/katalog/urun/syn-pad/",
+      "/katalog/urun/syn-tool/",
+      "/en/katalog/urun/syn-pad/",
+      "/en/katalog/urun/syn-tool/",
+      "/tr/katalog/urun/syn-pad/",
+      "/ar/katalog/urun/syn-pad/"
+    ]
+  },
+  "pim": {
+    "architecture": "PIM_ARCHITECTURE_READY",
+    "liveData": "PIM_LIVE_DATA_BLOCKED",
+    "reason": "The server PIM reader imports the development database module",
+    "openedDevDb": false,
+    "source": "isolated public snapshot",
+    "liveClaim": false
+  },
+  "categories": {
+    "officialCodes": 50,
+    "bz20": "RETIRED",
+    "cycles": 0,
+    "orphans": 0,
+    "officialChildren": 0,
+    "engine": "CATEGORY_ENGINE_COMPLETE",
+    "names": "TAXONOMY_DATA_REQUIRED"
+  },
+  "tests": {
+    "nodePassed": 31,
+    "nodeFailed": 0,
+    "nodeSkipped": 0,
+    "vitestFiles": 128,
+    "vitestPassed": 1065,
+    "vitestFailed": 0,
+    "vitestSkipped": 0,
+    "playwrightPassed": 84,
+    "playwrightSkipped": 23,
+    "playwrightFailed": 0,
+    "playwrightSkipReasons": {
+      "adminAndStorefrontBridge": "NEXT_PUBLIC_BUZZARD_API_URL is unset; 15 tests skip themselves",
+      "viewportFilters": "8 tests skip when the Playwright project viewport is outside the case"
+    },
+    "tsc": "PASSED",
+    "nextBuild": "PASSED",
+    "nextBuildElapsedSeconds": 34,
+    "nextCompileSeconds": 5.5,
+    "focusedBrowser": "PASSED",
+    "historicalEvidencePreserved": {
+      "integrationChecks": 23,
+      "workflowChecks": 16,
+      "isolatedCatalogChecks": 4,
+      "nextjsChecks": 4
+    }
+  },
+  "performanceLocalNotProduction": {
+    "samples": 50,
+    "listAvgMs": 1.07,
+    "searchAvgMs": 1.002,
+    "categoryAvgMs": 0.933,
+    "detailAvgMs": 1.008,
+    "seoRouteGenerationAvgMs": 0.005,
+    "heapMb": 6.81,
+    "buildElapsedSeconds": 34
+  },
+  "security": {
+    "xss": "locale injection rejected as LOCALE_REJECTED",
+    "sqlInjection": "snapshot adapter has no SQL",
+    "pathTraversal": "ids come from the snapshot, not a filesystem path",
+    "supplierCost": "hidden; 12.34 absent",
+    "secrets": "not exported",
+    "sales": "CLOSED",
+    "fiatOnly": "preserved by existing policy tests",
+    "checkout": "not created",
+    "externalNetwork": "none added"
+  },
+  "gaps": {
+    "A_CODE_EXECUTABLE": [],
+    "B_HUMAN_REVIEW_REQUIRED": [
+      "Machine-draft UI strings and catalog translations remain UNREVIEWED"
+    ],
+    "C_OFFICIAL_DATA_REQUIRED": [
+      "Official subcategory rows and non-German category names"
+    ],
+    "D_EXTERNAL_DEPENDENCY_REQUIRED": [
+      "Admin and storefront-bridge Playwright cases need NEXT_PUBLIC_BUZZARD_API_URL"
+    ],
+    "E_LIVE_INTEGRATION_REQUIRED": [
+      "PIM database reader",
+      "sales",
+      "payments",
+      "orders",
+      "supplier purchases",
+      "shipments"
+    ]
+  },
+  "liveIntegrationCount": 0,
+  "databaseStatus": "UNCHANGED",
+  "releaseStatus": "PROTECTED_NOT_DEPLOYED",
+  "egressStatus": "DENY",
+  "salesStatus": "CLOSED"
+}

@@ -82,12 +82,16 @@ describe("Buzzard 10-agent council", () => {
       goodsNet: 100,
       kind: "B2C",
     });
-    expect(vat.ok).toBe(true);
-    expect(vat.rate).toBe(20);
+    expect(vat.ok).toBe(false);
+    expect(vat.code).toBe("VAT_UNVERIFIED");
+    expect(vat.rate).toBeNull();
+    expect(vat.vat).toBeNull();
+    expect(vat.official).toBe(false);
+    expect(vat.verified).toBe(false);
     expect(vat.liveLegal).toBe(false);
     expect(vat.filingReady).toBe(false);
     expect(vat.definitive).toBe(false);
-    expect(vat.ossCandidate).toBe(true);
+    expect(vat.ossCandidate).toBe(false);
     expect(vat.liveOss).toBe(false);
     expect(calculateVat({ actorId: "nedim_bey", deliveryCountry: "FR" }).status).toBe("UNKNOWN");
     expect(calculateVat({ actorId: "nedim_bey", deliveryCountry: "XX", goodsNet: 1 }).status).toBe("UNKNOWN");
@@ -99,13 +103,25 @@ describe("Buzzard 10-agent council", () => {
       incomeCountry: "FR",
       gross: 100,
       vat: 20,
+      refund: 0,
+      commission: 0,
+      logistics: 0,
       supplierCost: 20,
     });
     expect(fr.reserveRate).toBe(0.25);
     expect(fr.emergencyReserve).toBe((100 - 20 - 20) * 0.25);
     expect(fr.reserveIsNotTax).toBe(true);
     expect(fr.autoTransfer).toBe(false);
-    const de = netIncomeReport({ actorId: "nedim_bey", incomeCountry: "DE", gross: 100, vat: 19, supplierCost: 0 });
+    const de = netIncomeReport({
+      actorId: "nedim_bey",
+      incomeCountry: "DE",
+      gross: 100,
+      vat: 19,
+      refund: 0,
+      commission: 0,
+      logistics: 0,
+      supplierCost: 0,
+    });
     expect(de.reserveRate).toBe(0);
     expect(netIncomeReport({ actorId: "nedim_bey", incomeCountry: "FR", gross: null }).status).toBe("UNKNOWN");
   });

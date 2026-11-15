@@ -1,8 +1,25 @@
 /**
- * Part 5 — Mock supplier adapter for pipeline testing.
+ * Synthetic supplier fixture. The rows are not commercial stock or a supplier price.
  */
 const { BaseSupplierAdapter } = require("./baseAdapter");
 const { SUPPLIER_CAPABILITIES, DATA_FORMAT } = require("../../core/jobConstants");
+
+const FIXTURE = Object.freeze({
+  sku: "MOCK-001",
+  ean: "4006381333931",
+  name: "Mock Oil Filter",
+  brand: "MockBrand",
+  category: "automotive",
+  fixturePrice: 19.99,
+  fixtureStock: 42,
+  price: null,
+  stock: null,
+  supplierCost: null,
+  images: ["https://example.com/mock.jpg"],
+  mock: true,
+  live: false,
+  commercialUse: false,
+});
 
 class MockSupplierAdapter extends BaseSupplierAdapter {
   constructor() {
@@ -10,6 +27,7 @@ class MockSupplierAdapter extends BaseSupplierAdapter {
       id: "mock",
       name: "Mock Supplier",
       format: DATA_FORMAT.JSON,
+      mock: true,
       capabilities: [
         SUPPLIER_CAPABILITIES.AUTHENTICATE,
         SUPPLIER_CAPABILITIES.PRODUCTS,
@@ -22,41 +40,47 @@ class MockSupplierAdapter extends BaseSupplierAdapter {
     });
   }
 
-  async fetchProducts() {
-    return [
-      {
-        sku: "MOCK-001",
-        ean: "4006381333931",
-        name: "Mock Oil Filter",
-        brand: "MockBrand",
-        category: "automotive",
-        price: 19.99,
-        stock: 42,
-        images: ["https://example.com/mock.jpg"],
-      },
-    ];
+  async fetchProducts(req = {}) {
+    const blocked = this.blocked(req, { records: [{ ...FIXTURE }] });
+    return blocked;
   }
 
-  async healthCheck() {
-    return { ok: true, latencyMs: 5 };
+  async fetchPrices(req = {}) {
+    return this.blocked(req, { records: [{ sku: FIXTURE.sku, price: null, fixturePrice: FIXTURE.fixturePrice, mock: true }] });
   }
 
-  normalizeProduct(raw) {
+  async healthCheck(req = {}) {
+    return this.blocked(req);
+  }
+
+  normalizeProduct(raw = {}) {
+    if (!raw.sku || typeof raw.sku !== "string") {
+      return super.normalizeProduct(raw);
+    }
     return {
       sku: raw.sku,
-      ean: raw.ean,
-      gtin: raw.ean,
-      name: raw.name,
-      brand: raw.brand,
-      categoryId: raw.category,
-      price: raw.price,
-      stock: raw.stock,
+      ean: raw.ean || null,
+      gtin: raw.ean || null,
+      name: raw.name || null,
+      brand: raw.brand || null,
+      categoryId: raw.category || null,
       images: raw.images || [],
       supplierId: this.id,
-      availability: raw.stock > 0 ? "in_stock" : "out_of_stock",
+      availability: "UNKNOWN",
+      ok: false,
+      live: false,
+      mock: true,
+      status: "BLOCKED_EXTERNAL",
+      commercialEligibility: "BLOCKED",
+      price: null,
+      stock: null,
+      supplierCost: null,
+      fixturePrice: raw.fixturePrice ?? null,
+      fixtureStock: raw.fixtureStock ?? null,
+      commercialUse: false,
       raw,
     };
   }
 }
 
-module.exports = { MockSupplierAdapter };
+module.exports = { MockSupplierAdapter, FIXTURE };

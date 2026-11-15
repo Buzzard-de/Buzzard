@@ -59,7 +59,7 @@ describe("17-agent official names and alias compatibility", () => {
   it("3-4 task assignment and routing keep requested alias and native id", () => {
     const router = createRouter();
     const t = router.create({ title: "alias-route", fromId: "pusat" });
-    const assigned = router.assign({ taskId: t.task.id, agentId: "customs_ai" });
+    const assigned = router.assign({ taskId: t.task.id, agentId: "customs_ai", fromId: "pusat" });
     expect(assigned.ok).toBe(true);
     expect(assigned.requestedId).toBe("customs_ai");
     expect(assigned.nativeId).toBe("tuncay_bey");
@@ -68,8 +68,8 @@ describe("17-agent official names and alias compatibility", () => {
     const ran = router.runAssigned(t.task.id);
     expect(ran.task.assignees).toEqual(["tuncay_bey"]);
     expect(ran.completed).toBe(false);
-    expect(router.assign({ taskId: t.task.id, agentId: "not_an_agent" }).code).toBe("UNKNOWN_AGENT");
-    expect(router.assign({ taskId: t.task.id, agentId: "nesrin_hanim" }).code).toBe("NOT_NATIVE_SEED");
+    expect(router.assign({ taskId: t.task.id, agentId: "not_an_agent", fromId: "pusat" }).code).toBe("UNKNOWN_AGENT");
+    expect(router.assign({ taskId: t.task.id, agentId: "nesrin_hanim", fromId: "pusat" }).code).toBe("NOT_NATIVE_SEED");
   });
 
   it("5 permission checks via alias do not expand gates", () => {

@@ -122,7 +122,7 @@ function createProduct(body = {}) {
         Number(body.sellingPrice ?? body.selling_price ?? 0),
         body.currency || "EUR",
         body.taxClass || body.tax_class || "standard",
-        Number(body.stockQty ?? body.stock_qty ?? 0),
+        null,
         Number(body.weightKg ?? body.weight_kg ?? 0),
         body.supplierId || body.supplier_id || "",
         body.supplierSku || body.supplier_sku || "",
@@ -258,7 +258,7 @@ function createVariant(sku, body = {}) {
         body.barcode || "",
         JSON.stringify(body.options || {}),
         Number(body.sellingPrice ?? body.selling_price ?? 0),
-        Number(body.stockQty ?? body.stock_qty ?? 0)
+        null
       );
 
     return {

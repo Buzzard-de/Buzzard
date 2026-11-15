@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { db } = require("./db");
+const { decideMarketingConsent, persistWithdrawal, persistGrant, projectMarketingConsent } = require("./commerce/marketingConsentGate");
 
 function isEnabled() {
   return process.env.BUZZARD_CRM_LOYALTY !== "0" && process.env.BUZZARD_DB_ENABLED !== "0";
@@ -17,66 +18,188 @@ function cartKey(userId) {
   return crypto.createHash("sha1").update(`${String(userId)}|buzzard`).digest("hex");
 }
 
-function addPoints(userId, points, reason, reference = "") {
-  const delta = Number(points);
-  db.prepare("INSERT INTO loyalty_ledger(user_id, points, reason, reference) VALUES(?,?,?,?)").run(
-    userId,
-    delta,
-    reason || "",
-    reference || ""
-  );
+function addPoints() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
+}
 
-  const current =
-    db.prepare("SELECT points, lifetime_points FROM loyalty_accounts WHERE user_id = ?").get(userId) ||
-    {};
-  const nextPoints = Number(current.points || 0) + delta;
-  const nextLifetime = Number(current.lifetime_points || 0) + Math.max(0, delta);
-  const tier = loyaltyTier(nextLifetime);
-
-  db.prepare(
-    `INSERT INTO loyalty_accounts(user_id, points, lifetime_points, tier)
-     VALUES(?,?,?,?)
-     ON CONFLICT(user_id) DO UPDATE SET
-       points = excluded.points,
-       lifetime_points = excluded.lifetime_points,
-       tier = excluded.tier,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(userId, nextPoints, nextLifetime, tier);
-
-  return db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId);
+function presentCrmProfile(row, userId) {
+  const consent = projectMarketingConsent(userId);
+  const profile = {
+    user_id: row && row.user_id != null ? row.user_id : userId,
+    phone: row && row.phone ? String(row.phone) : "",
+    country_code: row && row.country_code ? String(row.country_code) : "",
+    language: row && row.language ? String(row.language) : "",
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    whatsappPermission: consent.whatsappPermission,
+    marketingPermission: consent.marketingPermission,
+    granted: false,
+    consentVerified: false,
+  };
+  return { profile, loyalty: null, ...consent };
 }
 
 function getCrmProfile(userId) {
-  const profile = db.prepare("SELECT * FROM crm_profiles WHERE user_id = ?").get(userId) || null;
-  const loyalty =
-    db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) ||
-    { points: 0, lifetime_points: 0, tier: "Bronze" };
-  return { profile, loyalty };
+  let row = null;
+  let loyalty = { points: 0, lifetime_points: 0, tier: "Bronze" };
+  try {
+    row = db.prepare("SELECT user_id, phone, country_code, language FROM crm_profiles WHERE user_id = ?").get(userId) || null;
+    loyalty = db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) || loyalty;
+  } catch (error) {
+    if (!error || error.code !== "DATABASE_NOT_INITIALIZED") throw error;
+  }
+  return { ...presentCrmProfile(row, userId), loyalty };
+}
+
+function storeCrmContact(userId, request) {
+  const fields = [];
+  const values = [];
+  if (Object.prototype.hasOwnProperty.call(request, "language")) {
+    fields.push("language = ?");
+    values.push(String(request.language || "").trim().slice(0, 32));
+  }
+  if (Object.prototype.hasOwnProperty.call(request, "phone")) {
+    fields.push("phone = ?");
+    values.push(String(request.phone || "").slice(0, 32));
+  }
+  if (Object.prototype.hasOwnProperty.call(request, "countryCode")) {
+    fields.push("country_code = ?");
+    values.push(String(request.countryCode || "").trim().slice(0, 8).toUpperCase());
+  }
+  if (!fields.length) return { contactStored: false, contactCode: "UNCHANGED" };
+  try {
+    const result = db.prepare(
+      `UPDATE crm_profiles SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?`
+    ).run(...values, Number(userId));
+    return { contactStored: Number(result && result.changes) > 0, contactCode: Number(result && result.changes) > 0 ? "CONTACT_STORED" : "CONTACT_ABSENT" };
+  } catch (error) {
+    return { contactStored: false, contactCode: error && error.code === "DATABASE_NOT_INITIALIZED" ? "DATABASE_NOT_INITIALIZED" : "CONTACT_NOT_STORED" };
+  }
+}
+
+function explicitTrue(value) {
+  return value === true || value === 1 || value === "1" || value === "true";
+}
+
+function explicitFalse(value) {
+  return value === false || value === 0 || value === "0" || value === "false";
+}
+
+function crmConsentIntents(body = {}) {
+  const blanketGrant = explicitTrue(body.ok)
+    || explicitTrue(body.authorized)
+    || explicitTrue(body.granted)
+    || body.status === 200
+    || explicitTrue(body.consent)
+    || explicitTrue(body.approved)
+    || explicitTrue(body.verified);
+  const blanketWithdraw = body.withdraw === true || body.unsubscribe === true;
+  const spec = {
+    email: { grant: explicitTrue(body.marketingEmail), withdraw: explicitFalse(body.marketingEmail) },
+    sms: { grant: explicitTrue(body.marketingSms), withdraw: explicitFalse(body.marketingSms) },
+    push: { grant: explicitTrue(body.marketingPush) || explicitTrue(body.pushOptIn), withdraw: explicitFalse(body.marketingPush) || explicitFalse(body.pushOptIn) },
+  };
+  const intents = { blanketWithdraw };
+  for (const channel of ["email", "sms", "push"]) {
+    const withdraw = blanketWithdraw || spec[channel].withdraw;
+    intents[channel] = { grant: !withdraw && (blanketGrant || spec[channel].grant), withdraw };
+  }
+  return intents;
+}
+
+function crmConsentDecision(customerId, channel, body, action) {
+  const grant = action === "grant";
+  return decideMarketingConsent({
+    customerId: String(customerId),
+    channel,
+    action,
+    withdraw: !grant,
+    consent: grant,
+    source: grant ? (body.consentSource || body.source || "") : (body.consentSource || body.source || "customer-opt-out"),
+    scope: grant ? (body.consentScope || body.scope || "") : (body.consentScope || body.scope || `marketing-${channel}`),
+    consentedAt: grant ? (body.consentAt || body.consentedAt || "") : (body.consentAt || body.consentedAt || "2026-11-15T00:00:00.000Z"),
+    timeout: body.timeout === true,
+    networkError: body.networkError === true,
+    idempotencyKey: `${body.idempotencyKey || customerId}:${channel}:${action}:crm`,
+  });
+}
+
+function crmConsentResult(id, decisions, persisted, contact = {}) {
+  const consent = projectMarketingConsent(id);
+  const failed = decisions.find((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR");
+  const withdrawn = decisions.some((decision) => decision.code === "CONSENT_WITHDRAWN" || decision.code === "DUPLICATE_CONSENT");
+  const durable = persisted === true;
+  const marketingPermission = consent.marketingPermission === "CLOSED"
+    ? "CLOSED"
+    : consent.marketingPermission === "WITHDRAWN" || withdrawn
+      ? "WITHDRAWN"
+      : decisions.length > 0
+        ? "BLOCKED"
+        : consent.marketingPermission;
+  return {
+    ok: false,
+    code: failed ? failed.code : durable ? "WITHDRAWN" : withdrawn ? "WITHDRAWN_NOT_PERSISTED" : "CONSENT_UNVERIFIED",
+    gateCode: failed ? failed.code : withdrawn ? "CONSENT_WITHDRAWN" : "CONSENT_UNVERIFIED",
+    marketingPermission,
+    stored: durable,
+    persisted: durable,
+    granted: false,
+    withdrawn,
+    consentVerified: false,
+    consentSource: "UNKNOWN",
+    notificationSent: false,
+    customerNotified: false,
+    callerFlagIgnored: true,
+    marketingSendsOpen: false,
+    productionReady: false,
+    emailPermission: consent.emailPermission,
+    smsPermission: consent.smsPermission,
+    pushPermission: consent.pushPermission,
+    whatsappPermission: consent.whatsappPermission,
+    contactStored: contact.contactStored === true,
+    contactCode: contact.contactCode || "UNCHANGED",
+  };
 }
 
 function upsertCrmProfile(userId, body = {}) {
-  db.prepare(
-    `INSERT INTO crm_profiles(
-       user_id, phone, country_code, language, marketing_email, marketing_sms, marketing_whatsapp
-     ) VALUES(?,?,?,?,?,?,?)
-     ON CONFLICT(user_id) DO UPDATE SET
-       phone = excluded.phone,
-       country_code = excluded.country_code,
-       language = excluded.language,
-       marketing_email = excluded.marketing_email,
-       marketing_sms = excluded.marketing_sms,
-       marketing_whatsapp = excluded.marketing_whatsapp,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(
-    userId,
-    body.phone || "",
-    (body.countryCode || "DE").toUpperCase(),
-    body.language || "de-DE",
-    body.marketingEmail ? 1 : 0,
-    body.marketingSms ? 1 : 0,
-    body.marketingWhatsapp ? 1 : 0
-  );
-  return { ok: true };
+  const request = body && typeof body === "object" ? body : {};
+  const id = String(userId ?? "").trim();
+  if (!/^[1-9]\d{0,17}$/.test(id)) {
+    decideMarketingConsent({
+      customerId: "",
+      channel: "email",
+      action: "grant",
+      idempotencyKey: `crm-missing:${id || "none"}:email:grant`,
+    });
+    return { ok: false, code: "UNKNOWN", marketingPermission: "UNKNOWN", stored: false, granted: false, consentVerified: false, notificationSent: false };
+  }
+  const intents = crmConsentIntents(request);
+  const decisions = [];
+  for (const channel of ["email", "sms", "push"]) {
+    if (intents[channel].withdraw) decisions.push(crmConsentDecision(id, channel, request, "withdraw"));
+    else if (intents[channel].grant) {
+      const decision = crmConsentDecision(id, channel, request, "grant");
+      decisions.push(decision);
+      persistGrant(decision);
+    }
+  }
+  const contact = storeCrmContact(id, request);
+  const withdrawals = decisions.filter((decision) => intents[decision.channel]?.withdraw === true && (decision.code === "CONSENT_WITHDRAWN" || decision.code === "DUPLICATE_CONSENT"));
+  const failedClosed = decisions.some((decision) => decision.code === "TIMEOUT" || decision.code === "NETWORK_ERROR" || decision.status === "FAILED");
+  if (withdrawals.length === 0 || failedClosed) return crmConsentResult(id, decisions, false, contact);
+  const results = withdrawals.map((decision) => persistWithdrawal({
+    customerId: id,
+    channel: decision.channel,
+    idempotencyKey: `${request.idempotencyKey || id}:${decision.channel}:withdraw:crm`,
+    source: "crm-opt-out",
+  }));
+  const persisted = results.length > 0 && results.every((item) => item && item.persisted === true);
+  return crmConsentResult(id, decisions, persisted, contact);
 }
 
 function getLoyaltyDashboard(userId) {
@@ -90,58 +213,93 @@ function getLoyaltyDashboard(userId) {
   return { account, ledger, rewards };
 }
 
-function earnPoints(userId, body = {}) {
-  const points = Math.max(0, Math.floor(Number(body.points || 0)));
-  if (!points) return { error: "Positive points required", status: 400 };
-  const account = addPoints(userId, points, body.reason || "manual", body.reference || "");
-  return account;
-}
-
-function redeemReward(userId, rewardId) {
-  const reward = db.prepare("SELECT * FROM rewards WHERE id = ? AND active = 1").get(rewardId);
-  const account =
-    db.prepare("SELECT * FROM loyalty_accounts WHERE user_id = ?").get(userId) || { points: 0 };
-  if (!reward) return { error: "Reward not found", status: 404 };
-  if (Number(account.points || 0) < reward.points_cost) {
-    return { error: "Not enough points", status: 400 };
+function earnPoints() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
   }
-
-  addPoints(userId, -reward.points_cost, "reward redemption", reward.code);
-  const code = `BZ-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
-  db.prepare(
-    "INSERT INTO offers(user_id, title, code, discount_type, discount_value) VALUES(?,?,?,?,?)"
-  ).run(userId, reward.title, code, reward.discount_type, reward.discount_value);
-
-  return { ok: true, code, reward };
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, pointsApplied: false, balance: null, callerFlagIgnored: true };
 }
 
-function trackAbandonedCart(userId, body = {}) {
-  const key = cartKey(userId);
-  db.prepare(
-    `INSERT INTO abandoned_carts(user_id, cart_key, subtotal, currency, item_count, last_seen_at)
-     VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)
-     ON CONFLICT(cart_key) DO UPDATE SET
-       subtotal = excluded.subtotal,
-       currency = excluded.currency,
-       item_count = excluded.item_count,
-       last_seen_at = CURRENT_TIMESTAMP,
-       status = 'open'`
-  ).run(
-    userId,
-    key,
-    Number(body.subtotal || 0),
-    body.currency || "EUR",
-    Number(body.itemCount || 0)
-  );
-  return { ok: true, cartKey: key };
+function redeemReward() {
+  const { isSalesEnabled } = require("./salesMode");
+  if (!isSalesEnabled()) {
+    return { ok: false, error: "SALES_CLOSED", code: "SALES_CLOSED", status: 403, stored: false, redeemed: false, couponIssued: false, balanceChanged: false, callerFlagIgnored: true };
+  }
+  return { ok: false, error: "ORDER_UNVERIFIED", code: "ORDER_UNVERIFIED", status: 409, stored: false, redeemed: false, couponIssued: false, balanceChanged: false, callerFlagIgnored: true };
 }
 
-function markCartRecovered(userId) {
-  const key = cartKey(userId);
-  db.prepare(
-    "UPDATE abandoned_carts SET status = 'recovered', recovered_at = CURRENT_TIMESTAMP WHERE cart_key = ?"
-  ).run(key);
-  return { ok: true };
+function trackAbandonedCart() {
+  return { ok: false, code: "CONSENT_UNVERIFIED", marketingPermission: "BLOCKED", stored: false, cartStored: false, notified: false, customerNotified: false };
+}
+
+function markCartRecovered(userId, body = {}) {
+  const request = body && typeof body === "object" ? body : {};
+  const channel = String(request.channel || "email").toLowerCase();
+  const customerId = request.customerId != null && String(request.customerId).trim()
+    ? String(request.customerId).trim()
+    : String(userId ?? "").trim();
+  const send = require("./notificationEngine").canSend({
+    customerId,
+    cartCustomerId: request.cartCustomerId != null ? String(request.cartCustomerId) : customerId,
+    cartId: request.cartId || request.cartKey || "",
+    channel,
+    cartStatus: request.cartStatus,
+    orderStatus: request.orderStatus,
+    orderId: request.orderId,
+    abandonedAt: request.abandonedAt,
+    timeout: request.timeout === true,
+    networkError: request.networkError === true,
+    mock: request.mock === true,
+    synthetic: request.synthetic === true,
+    source: request.source,
+    action: request.action,
+    idempotencyKey: request.idempotencyKey || `cart-recovered:${customerId}:${request.cartId || request.cartKey || ""}:${channel}`,
+  }, "abandoned_cart");
+  const marketingPermission = channel === "sms"
+    ? send.smsPermission
+    : channel === "push"
+      ? send.pushPermission
+      : send.emailPermission;
+  return {
+    ok: false,
+    error: send.code,
+    code: send.code,
+    status: send.status,
+    recovered: false,
+    converted: false,
+    purchased: false,
+    paid: false,
+    completed: false,
+    sale: false,
+    saleRecorded: false,
+    orderCreated: false,
+    paymentCreated: false,
+    revenue: null,
+    couponIssued: false,
+    pointsApplied: false,
+    balanceChanged: false,
+    campaignCreated: false,
+    notificationSent: false,
+    customerNotified: false,
+    queued: false,
+    sent: false,
+    messageSent: false,
+    emailSent: false,
+    smsSent: false,
+    pushSent: false,
+    marketingPermission: marketingPermission || "UNKNOWN",
+    emailPermission: send.emailPermission,
+    smsPermission: send.smsPermission,
+    pushPermission: send.pushPermission,
+    consentVerified: false,
+    callerFlagIgnored: true,
+    callerPermissionIgnored: request.permission === true || request.ok === true || request.status === 200 || request.authorized === true,
+    idempotent: true,
+    duplicate: send.duplicate === true,
+    reasons: send.reasons,
+    ignored: true,
+  };
 }
 
 function listUserOffers(userId) {
@@ -150,20 +308,8 @@ function listUserOffers(userId) {
     .all(userId);
 }
 
-function queueRecoveryCampaigns(channel = "email") {
-  const carts = db
-    .prepare(
-      "SELECT * FROM abandoned_carts WHERE status = 'open' AND datetime(last_seen_at) < datetime('now', '-24 hours')"
-    )
-    .all();
-  const insert = db.prepare(
-    "INSERT INTO recovery_campaigns(abandoned_cart_id, channel, scheduled_at) VALUES(?,?,datetime('now'))"
-  );
-  const tx = db.transaction(() => {
-    for (const cart of carts) insert.run(cart.id, channel);
-  });
-  tx();
-  return { queued: carts.length };
+function queueRecoveryCampaigns() {
+  return { ok: false, queued: 0, stored: false, customerNotified: false, notificationSent: false, code: "CONSENT_UNVERIFIED", marketingPermission: "BLOCKED" };
 }
 
 function listSegmentsAdmin() {
@@ -172,8 +318,18 @@ function listSegmentsAdmin() {
 
 function listAbandonedCartsAdmin() {
   return db
-    .prepare("SELECT * FROM abandoned_carts ORDER BY last_seen_at DESC LIMIT 200")
-    .all();
+    .prepare("SELECT id, user_id, status, item_count, last_seen_at FROM abandoned_carts ORDER BY last_seen_at DESC LIMIT 200")
+    .all()
+    .map((row) => ({
+      id: row.id,
+      status: row.status,
+      itemCount: row.item_count,
+      sale: false,
+      converted: false,
+      revenue: null,
+      orderCreated: false,
+      recoveredIsSale: false,
+    }));
 }
 
 function listOffersAdmin() {
@@ -197,7 +353,12 @@ function getCrmLoyaltyStatus() {
       segments: db.prepare("SELECT COUNT(*) n FROM customer_segments").get().n,
       offers: db.prepare("SELECT COUNT(*) n FROM offers WHERE status = 'active'").get().n,
       abandonedCarts: db.prepare("SELECT COUNT(*) n FROM abandoned_carts WHERE status = 'open'").get().n,
+      recoveredCarts: db.prepare("SELECT COUNT(*) n FROM abandoned_carts WHERE status = 'recovered'").get().n,
       recoveryCampaigns: db.prepare("SELECT COUNT(*) n FROM recovery_campaigns").get().n,
+      salesFromRecovered: null,
+      revenue: null,
+      conversionCount: null,
+      recoveredIsSale: false,
     },
   };
 }
@@ -205,6 +366,7 @@ function getCrmLoyaltyStatus() {
 module.exports = {
   isEnabled,
   getCrmProfile,
+  presentCrmProfile,
   upsertCrmProfile,
   getLoyaltyDashboard,
   earnPoints,

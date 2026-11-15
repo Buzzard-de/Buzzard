@@ -74,22 +74,35 @@ function computeLineTotal(price, quantity) {
   return roundMoney(Number(price) * Number(quantity));
 }
 
-function computeOrderTotals({ items = [], shipping = 0, taxRate = 19, discount = 0, currency = "EUR" }) {
+function readComponent(value) {
+  if (value == null || value === "") return { present: false, value: null };
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return { invalid: true, value: null };
+  if (!/^\d+(\.\d{1,2})?$/.test(String(value))) return { invalid: true, value: null };
+  return { present: true, value: roundMoney(value) };
+}
+
+function computeOrderTotals({ items = [], shipping, taxRate, currency = "EUR" } = {}) {
   const subtotal = roundMoney(items.reduce((sum, item) => sum + computeLineTotal(item.priceSnapshot, item.quantity), 0));
-  const discountAmt = roundMoney(Math.min(Number(discount) || 0, subtotal));
-  const taxBase = roundMoney(Math.max(0, subtotal - discountAmt));
-  const shippingAmt = roundMoney(Math.max(0, Number(shipping) || 0));
-  const tax = roundMoney((taxBase * Number(taxRate)) / 100);
-  const total = roundMoney(taxBase + tax + shippingAmt);
+  const ship = readComponent(shipping);
+  const rate = readComponent(taxRate);
+  const shippingAmt = ship.present ? ship.value : null;
+  const tax = rate.present ? roundMoney((subtotal * rate.value) / 100) : null;
+  const total = shippingAmt == null || tax == null ? null : roundMoney(subtotal + tax + shippingAmt);
 
   return {
+    ok: ship.invalid || rate.invalid ? false : total != null,
+    code: ship.invalid || rate.invalid ? "INVALID_AMOUNT" : total == null ? "AMOUNT_UNKNOWN" : "TOTALS_COMPUTED",
     subtotal,
-    discount: discountAmt,
+    discount: null,
+    discountApplied: false,
+    couponStatus: "BLOCKED",
+    taxBase: subtotal,
     shipping: shippingAmt,
     tax,
-    taxRate: Number(taxRate),
+    taxRate: rate.present ? rate.value : null,
     total,
     currency,
+    totalsVerified: total != null,
   };
 }
 

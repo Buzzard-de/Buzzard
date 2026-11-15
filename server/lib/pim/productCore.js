@@ -44,6 +44,11 @@ function mapProduct(row) {
     price: row.price,
     currency: row.currency || "EUR",
     stock: row.stock,
+    stockVerified: false,
+    purchasable: false,
+    saleable: null,
+    commercialStock: "UNKNOWN",
+    stockAuthority: row.stock == null ? "UNKNOWN" : "FIXTURE",
     supplier: row.supplier_id,
     status: row.status,
     visibility: row.visibility,
@@ -107,6 +112,13 @@ function getProduct(idOrSku) {
   return attachRelations(mapProduct(row));
 }
 
+function stockFixture(input = {}) {
+  const mock = input.mock === true || input.demo === true || input.synthetic === true || input.source === "mock" || input.source === "DEMO";
+  if (mock || input.stock == null || input.stock === "") return null;
+  const qty = Number(input.stock);
+  return Number.isFinite(qty) ? qty : null;
+}
+
 function createProduct(input, { source = "ADMIN", actorId } = {}) {
   const sku = String(input.sku || "").trim();
   if (!sku) throw new Error("SKU required");
@@ -137,12 +149,17 @@ function createProduct(input, { source = "ADMIN", actorId } = {}) {
     JSON.stringify(input.attributes || {}),
     Number(input.price) || 0,
     input.currency || "EUR",
-    Number(input.stock) || 0,
+    stockFixture(input),
     input.supplier || input.supplierId || null,
     input.status || PRODUCT_STATUS.DRAFT,
     input.visibility || "HIDDEN",
     JSON.stringify(input.seo || {}),
-    JSON.stringify(input.metadata || {})
+    JSON.stringify({
+      ...(input.metadata || {}),
+      stockVerified: false,
+      stockAuthority: stockFixture(input) == null ? "UNKNOWN" : "FIXTURE",
+      mock: input.mock === true || input.demo === true || input.source === "mock" || input.source === "DEMO" || input.metadata?.mock === true,
+    })
   );
 
   const product = getProduct(id);
@@ -198,7 +215,6 @@ function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
     pimCategoryId: "pim_category_id",
     price: "price",
     currency: "currency",
-    stock: "stock",
     supplier: "supplier_id",
     visibility: "visibility",
   };

@@ -204,7 +204,7 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
               {showPrices() ? (
                 <>
                   <p>{t("product.freeShippingFrom").replace("{amount}", formatPrice(FREE_SHIPPING_THRESHOLD))}</p>
-                  <p>Versandkosten: {formatPrice(getShippingCost(activePrice * qty))}</p>
+                  <p>Versandkosten: {getShippingCost(activePrice * qty) == null ? "UNKNOWN" : formatPrice(getShippingCost(activePrice * qty) as number)}</p>
                 </>
               ) : null}
               <p>{isCheckoutEnabled() ? t("product.trustCheckout") : t("catalog.inquiryHint")}</p>

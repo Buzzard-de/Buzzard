@@ -1,0 +1,16 @@
+{
+  "schema": "buzzard.external-dependencies.v1",
+  "recordedAt": "2026-11-11T17:08:00+01:00",
+  "items": [
+    { "id": "fx-rates", "status": "BLOCKED_EXTERNAL", "evidence": "quoteRate returns FX_RATE_UNKNOWN and invented false" },
+    { "id": "eu-institution-registers", "status": "BLOCKED_EXTERNAL", "evidence": "registryComplete returns EU27_REGISTRY_INCOMPLETE for all 27 countries" },
+    { "id": "vat-reduced-and-filing", "status": "BLOCKED_EXTERNAL", "evidence": "AB27 snapshot is standard-rate only, verificationStatus UNVERIFIED, filing UNKNOWN" },
+    { "id": "supplier-api-credentials", "status": "BLOCKED_EXTERNAL", "evidence": "no live supplier order was executed" },
+    { "id": "carrier-api-credentials", "status": "BLOCKED_EXTERNAL", "evidence": "voice and carrier live flags are false; no shipment label" },
+    { "id": "payment-provider", "status": "BLOCKED_APPROVAL", "evidence": "PAYMENT_ACTIVATE stays WAITING_APPROVAL" },
+    { "id": "marketplace-accounts", "status": "BLOCKED_EXTERNAL", "evidence": "marketplace engine live false and oauth false" },
+    { "id": "sip-stt-tts", "status": "BLOCKED_EXTERNAL", "evidence": "assessVoice status BLOCKED, liveCalls false" },
+    { "id": "pim-live-database", "status": "BLOCKED_APPROVAL", "evidence": "protected buzzard.db was not opened; isolated snapshot only" },
+    { "id": "human-linguistic-review", "status": "BLOCKED_APPROVAL", "evidence": "machine translations remain UNREVIEWED" }
+  ]
+}

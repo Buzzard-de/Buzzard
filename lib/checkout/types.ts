@@ -55,8 +55,9 @@ export interface OrderLineQuote {
   qty: number;
   unitPrice: number;
   lineTotal: number;
-  vatRate: number;
-  vatAmount: number;
+  vatRate: number | null;
+  vatAmount: number | null;
+  vatVerified: false;
   imageKey?: string;
 }
 
@@ -64,11 +65,15 @@ export interface OrderQuote {
   currency: string;
   lines: OrderLineQuote[];
   subtotal: number;
-  shipping: number;
-  discount: number;
-  vatAmount: number;
-  total: number;
-  freeShippingRemaining: number;
+  shipping: number | null;
+  discount: number | null;
+  couponApplied?: false;
+  couponStatus?: "BLOCKED" | "UNKNOWN";
+  vatAmount: number | null;
+  vatVerified: false;
+  total: number | null;
+  freeShippingRemaining: number | null;
+  commercialEligibility: "BLOCKED";
   shippingMethodId: string;
   couponCode?: string;
 }
@@ -77,6 +82,6 @@ export interface ShippingMethodOption {
   id: string;
   labelKey: string;
   descriptionKey: string;
-  baseCost: number;
+  baseCost: number | null;
   etaDays: string;
 }

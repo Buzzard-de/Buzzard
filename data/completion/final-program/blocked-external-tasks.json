@@ -1,0 +1,31 @@
+{
+  "schema": "buzzard.final-program.blocked-external.v1",
+  "recordedAt": "2026-11-11T19:22:00+01:00",
+  "items": [
+    {
+      "id": "FIN-M6-FX",
+      "needed": "A sourced foreign-exchange rate for each non-identity fiat pair.",
+      "prepared": "quoteRate returns FX_RATE_UNKNOWN and invented false. No numeric substitute is stored."
+    },
+    {
+      "id": "FIN-M6-VAT",
+      "needed": "A verified VAT source and a human decision before any filing.",
+      "prepared": "The checkout tax provider returns VAT_UNVERIFIED. The German snapshot rate is display-only and unofficial."
+    },
+    {
+      "id": "FIN-M5-EU27",
+      "needed": "Official institution registers for all 27 countries.",
+      "prepared": "The local register reports EU27_REGISTRY_INCOMPLETE and does not certify missing entities."
+    },
+    {
+      "id": "FIN-M9-VOICE",
+      "needed": "STT, TTS, and SIP providers plus approved voice assets.",
+      "prepared": "Local voice assessment stays BLOCKED and does not place a call."
+    },
+    {
+      "id": "FIN-M10-LIVE",
+      "needed": "Bank, marketplace, supplier, and carrier accounts.",
+      "prepared": "Live flags stay false. No listing, payment, or shipment is sent."
+    }
+  ]
+}

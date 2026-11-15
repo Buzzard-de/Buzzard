@@ -4,7 +4,10 @@ export interface CountryOption {
   code: string;
   labelKey: string;
   name: string;
-  vatRate: number;
+  vatRate: null;
+  vatOfficial: false;
+  vatVerified: false;
+  vatSource: "UNKNOWN";
   zipPattern: RegExp;
 }
 
@@ -29,48 +32,28 @@ const ZIP_PATTERNS: Record<string, RegExp> = {
   CZ: /^\d{3}\s?\d{2}$/,
   HU: /^\d{4}$/,
   RO: /^\d{6}$/,
+  BG: /^\d{4}$/,
+  HR: /^HR-\d{5}$/i,
+  CY: /^CY-\d{4}$/i,
+  EE: /^\d{5}$/,
+  GR: /^\d{3}\s?\d{2}$/,
+  LV: /^LV-\d{4}$/i,
+  LT: /^LT-\d{5}$/i,
+  LU: /^L-\d{4}$/i,
+  MT: /^[A-Z]{3}\s?\d{4}$/i,
+  SK: /^\d{3}\s?\d{2}$/,
+  SI: /^\d{4}$/,
 };
 
-const VAT_RATES: Record<string, number> = {
-  DE: 19,
-  AT: 20,
-  CH: 8.1,
-  NL: 21,
-  BE: 21,
-  FR: 20,
-  IT: 22,
-  PL: 23,
-  TR: 20,
-  GB: 20,
-  ES: 21,
-  PT: 23,
-  IE: 23,
-  SE: 25,
-  NO: 25,
-  DK: 25,
-  FI: 25.5,
-  CZ: 21,
-  HU: 27,
-  RO: 19,
-  GR: 24,
-  LU: 17,
-  BG: 20,
-  HR: 25,
-  SI: 22,
-  SK: 20,
-  EE: 22,
-  LV: 21,
-  LT: 21,
-  CY: 19,
-  MT: 18,
-};
-
-/** Europe + Balkans storefront countries from multicountry starter data. */
+/** Europe + Balkans storefront countries. VAT stays unknown until an official source is verified. */
 export const CHECKOUT_COUNTRIES: CountryOption[] = getDeliverableMarketCountries().map((country) => ({
   code: country.code,
   labelKey: `country.${country.code}`,
   name: country.name,
-  vatRate: VAT_RATES[country.code] ?? 19,
+  vatRate: null,
+  vatOfficial: false,
+  vatVerified: false,
+  vatSource: "UNKNOWN",
   zipPattern: ZIP_PATTERNS[country.code] ?? /^[\w\s-]{3,12}$/i,
 }));
 

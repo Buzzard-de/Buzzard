@@ -9,7 +9,9 @@ function toPublicProduct(product) {
     categoryId: product.category_id,
     categoryIds: product.category_ids || [product.category_id],
     price: product.price?.amount,
-    stockStatus: product.stock_status || (product.stock > 0 ? "in_stock" : "out_of_stock"),
+    stockStatus: "UNKNOWN",
+    stockVerified: false,
+    purchasable: false,
     url: `/produkt/${(product.seo?.slug || product.id).replace(/^\/+|\/+$/g, "")}/`,
     imageKey: product.attributes?.image_key,
   };

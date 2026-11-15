@@ -56,44 +56,46 @@ module.exports = {
     app.get("/api/customer/profile", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const profile = customerCheckout.getCustomerProfile(req.user.sub);
-      if (!profile) return res.status(404).json({ error: "User not found" });
-      return res.json(profile);
+      if (!profile) return res.status(404).json({ error: "UNKNOWN", email: null, phone: null });
+      return res.json({ ...profile, email: null, phone: null, shippingVerified: false, delivered: false });
     });
 
     app.post("/api/customer/addresses", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.createAddress(req.user.sub, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.address);
+      return res.status(200).json({ ...result, shippingVerified: false, delivered: false, customerNotified: false });
     });
 
     app.patch("/api/customer/addresses/:id", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.updateAddress(req.user.sub, req.params.id, req.body || {});
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result.address);
+      return res.status(200).json({ ...result, shippingVerified: false, delivered: false, customerNotified: false });
     });
 
     app.delete("/api/customer/addresses/:id", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(customerCheckout.deleteAddress(req.user.sub, req.params.id));
+      const result = customerCheckout.deleteAddress(req.user.sub, req.params.id);
+      return res.status(200).json({ ...result, ok: false, shipmentCancelled: false, customerNotified: false });
     });
 
     app.post("/api/customer/wishlist/:productId", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(customerCheckout.addWishlistItem(req.user.sub, req.params.productId));
+      const result = customerCheckout.addWishlistItem(req.user.sub, req.params.productId);
+      return res.status(200).json({ ...result, ok: false, reserved: false, orderCreated: false });
     });
 
     app.delete("/api/customer/wishlist/:productId", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(customerCheckout.removeWishlistItem(req.user.sub, req.params.productId));
+      const result = customerCheckout.removeWishlistItem(req.user.sub, req.params.productId);
+      return res.status(200).json({ ...result, ok: false, reserved: false, orderCreated: false });
     });
 
     app.post("/api/customer/reviews", (req, res) => {
       if (!requireCustomer(req, res)) return;
       const result = customerCheckout.createReview(req.user.sub, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result);
+      return res.status(result.status || 200).json({ ...result, published: false, verifiedPurchase: false, customerNotified: false });
     });
 
     app.get("/api/customer/products/:id/reviews", (req, res) => {
@@ -118,7 +120,9 @@ module.exports = {
     });
 
     app.post("/api/customer/checkout/quote", (req, res) => {
-      return res.json(customerCheckout.calculateCheckoutQuote(req.body || {}));
+      const result = customerCheckout.calculateCheckoutQuote(req.body || {});
+      if (result.ok === false) return res.status(result.code === "SALES_CLOSED" ? 403 : 409).json(result);
+      return res.json(result);
     });
 
     app.get("/api/customer/notifications", (req, res) => {
@@ -128,7 +132,8 @@ module.exports = {
 
     app.post("/api/customer/notifications/:id/read", (req, res) => {
       if (!requireCustomer(req, res)) return;
-      return res.json(customerCheckout.markNotificationRead(req.user.sub, req.params.id));
+      const result = customerCheckout.markNotificationRead(req.user.sub, req.params.id);
+      return res.status(200).json({ ...result, ok: false, read: false, customerNotified: false, delivery: "BLOCKED_EXTERNAL" });
     });
 
     app.get("/api/admin/customer-checkout/status", (req, res) => {
@@ -143,9 +148,8 @@ module.exports = {
 
     app.patch("/api/admin/customer-checkout/reviews/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(
-        customerCheckout.updateReviewStatus(req.params.id, req.body?.status)
-      );
+      const result = customerCheckout.updateReviewStatus(req.params.id, req.body?.status, req.body || {});
+      return res.status(result.status || 403).json({ ...result, published: false, verifiedPurchase: false, customerNotified: false });
     });
 
     app.get("/api/admin/customer-checkout/coupons", (req, res) => {

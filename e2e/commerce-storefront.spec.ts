@@ -30,13 +30,15 @@ test.describe("Storefront Commerce Bridge Part 9", () => {
     const addRes = await request.post(`${API}/api/commerce/cart/${cartBody.cart.id}/items`, {
       data: { productId, quantity: 1 },
     });
-    expect(addRes.ok()).toBeTruthy();
+    expect(addRes.ok()).toBeFalsy();
     const addBody = await addRes.json();
-    expect(addBody.items?.length).toBeGreaterThan(0);
-    expect(addBody.items[0].priceSnapshot).toBeGreaterThan(0);
+    expect(addBody.errorKey).toBe("SALES_CLOSED");
+    expect(addBody.stored).toBe(false);
+    expect(addBody.purchased).toBe(false);
+    expect(addBody.checkoutAllowed).toBe(false);
   });
 
-  test("READINESS_TEST order via API (storefront backend path)", async ({ request }) => {
+  test("READINESS_TEST checkout stays blocked without a verified price", async ({ request }) => {
     const catalog = await request.get(`${API}/api/catalog/products?limit=1`);
     const productId = (await catalog.json()).items?.[0]?.id;
     const cart = await request.post(`${API}/api/commerce/cart`, {
@@ -50,18 +52,12 @@ test.describe("Storefront Commerce Bridge Part 9", () => {
     const start = await request.post(`${API}/api/commerce/checkout/start`, {
       data: { cartId, orderType: "READINESS_TEST" },
     });
-    const checkoutId = (await start.json()).checkout.id;
-    const addr = { line1: "E2E 1", city: "Berlin", postalCode: "10115", country: "DE" };
-    await request.post(`${API}/api/commerce/checkout/${checkoutId}/validate`, {
-      data: { billingAddress: addr, shippingAddress: addr },
-    });
-    const complete = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
-      data: { orderType: "READINESS_TEST" },
-      headers: { "Idempotency-Key": `e2e-complete-${Date.now()}` },
-    });
-    const result = await complete.json();
-    expect(complete.ok()).toBeTruthy();
-    expect(result.order?.orderType).toBe("READINESS_TEST");
-    expect(result.payment?.realMoneyMovement).toBe(false);
+    const started = await start.json();
+    expect(start.status()).toBe(403);
+    expect(started.errorKey).toBe("SALES_CLOSED");
+    expect(started.checkoutCreated).toBe(false);
+    expect(started.orderCreated).toBe(false);
+    expect(started.paymentAuthorized).toBe(false);
+    expect(started.checkout).toBeUndefined();
   });
 });

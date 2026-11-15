@@ -128,12 +128,8 @@ function saveSession(session) {
   writeSessions(sessions);
 }
 
-function findOrder(orderNumber, email) {
-  if (!orderNumber || !email) return null;
-  const normalizedEmail = String(email).trim().toLowerCase();
-  return readOrders().find(
-    (o) => o.orderNumber === String(orderNumber).trim() && o.customer?.email === normalizedEmail
-  );
+function findOrder() {
+  return null;
 }
 
 function formatOrderStatus(order, locale) {
@@ -144,7 +140,7 @@ function formatOrderStatus(order, locale) {
     ar: { paid: "مدفوع", processing: "قيد المعالجة", shipped: "تم الشحن", delivered: "تم التسليم" },
   };
   const labels = statusMap[locale] || statusMap.de;
-  const status = order.status || "paid";
+  const status = order.status || "UNKNOWN";
   const label = labels[status] || status;
   let text = `${order.orderNumber}: ${label}`;
   if (order.trackingNumber) {
@@ -195,7 +191,8 @@ function handleMessage(input) {
     return { ok: false, errorKey: "ai.chat.emptyMessage" };
   }
 
-  session.messages.push({ role: "user", content: userMessage, at: new Date().toISOString() });
+  const storedMessage = userMessage.replace(/[^\s@]+@[^\s@]+\.[^\s@]+/g, "[redacted]");
+  session.messages.push({ role: "user", content: storedMessage, at: new Date().toISOString() });
   const intent = detectIntent(userMessage);
   let reply = "";
   let escalate = false;
@@ -207,27 +204,18 @@ function handleMessage(input) {
       reply = responseText("greeting", locale);
       break;
     case "shipping":
-      reply = responseText("shipping", locale);
+      reply = salesEnabled()
+        ? responseText("shipping", locale)
+        : "Shipping status is UNKNOWN. No shipment was created.";
       break;
     case "returns":
-      reply = responseText("returns", locale);
+      reply = salesEnabled()
+        ? responseText("returns", locale)
+        : "Return status is UNKNOWN. No return was created.";
       break;
     case "order": {
-      const { orderNumber, email } = extractOrderQuery(userMessage);
-      const lookupEmail = email || input.customerEmail;
-      if (orderNumber && lookupEmail) {
-        order = findOrder(orderNumber, lookupEmail);
-        if (order) {
-          reply = formatOrderStatus(order, locale);
-        } else {
-          reply = responseText("orderNotFound", locale);
-          escalate = true;
-        }
-      } else {
-        reply =
-          responseText("orderNeedDetails", locale) ||
-          "Please provide your order number and the email used for the order.";
-      }
+      reply = "Order status is UNKNOWN. No order was confirmed.";
+      escalate = true;
       break;
     }
     case "product": {
@@ -266,14 +254,11 @@ function handleMessage(input) {
     intent,
     escalate,
     products,
-    order: order
-      ? {
-          orderNumber: order.orderNumber,
-          status: order.status,
-          trackingNumber: order.trackingNumber || null,
-          trackingCarrier: order.trackingCarrier || null,
-        }
-      : null,
+    order: null,
+    sent: false,
+    customerNotified: false,
+    delivery: "BLOCKED_EXTERNAL",
+    verifiedPurchase: false,
     rtl: locale === "ar",
   };
 }

@@ -1,0 +1,17 @@
+{
+  "id": "eu27",
+  "phase": 5,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "blocked_by_external_dependency",
+  "countryCodes": 27,
+  "registry": "EU27_REGISTRY_INCOMPLETE",
+  "incompleteCountries": 27,
+  "vatSnapshot": "UNVERIFIED",
+  "reducedRates": "NOT_IN_SNAPSHOT",
+  "filingDeadlines": "UNKNOWN",
+  "deSeparateFromEu26Reserve": true,
+  "eu26NetIncomeReserveRate": 0.25,
+  "taxSubmission": false,
+  "evidence": "registryComplete, vatEngine.netIncomeReport, ab27Tax snapshot",
+  "liveVerified": false
+}

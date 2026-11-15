@@ -22,7 +22,10 @@ function rankOffers(store, query = {}) {
         supplierPrice: offer.supplierPrice,
         currency: offer.currency || "EUR",
       });
-      const shipping = Number(offer.shippingCost || 0);
+      const suppliedShipping = require("../commerce/pricingPolicy").readSuppliedShipping(offer.shippingCost);
+      const shipping = suppliedShipping.amount;
+      const supplierAmount = Number.isFinite(Number(offer.supplierPrice)) && Number(offer.supplierPrice) > 0 ? Number(offer.supplierPrice) : null;
+      const landed = shipping == null || supplierAmount == null ? null : Math.round((supplierAmount + shipping) * 100) / 100;
       let score = 0;
       if (compatibility?.state === "VERIFIED_COMPATIBLE") score += 100;
       else if (compatibility?.state === "VERIFIED_INCOMPATIBLE") score -= 200;
@@ -37,7 +40,10 @@ function rankOffers(store, query = {}) {
         supplierHeadquartersCountry: supplier.headquartersCountry || supplier.country || null,
         salePreview: priced,
         minNetProfitEur: priced.minNetProfitEur,
-        landedCost: Number(offer.supplierPrice || 0) + shipping,
+        shippingCost: shipping,
+        shippingStatus: suppliedShipping.status,
+        commercialEligibility: suppliedShipping.commercialEligibility,
+        landedCost: landed,
         inferredWarehouseFromHq: false,
         purchaseExecuted: false,
         marketUndercutApplied: false,

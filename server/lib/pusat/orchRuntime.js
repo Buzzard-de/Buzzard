@@ -9,9 +9,18 @@ const { assertNotGuardian } = require("./durableTaskQueue");
 const instances = new Map();
 
 function resolveDbPath(dbPath) {
-  const resolved = dbPath || process.env.PUSAT_ORCH_DB || path.join(os.tmpdir(), "buzzard-pusat-orch.sqlite");
-  assertNotGuardian(resolved);
-  return resolved;
+  let selected;
+  if (dbPath == null || (typeof dbPath === "string" && !dbPath.trim())) {
+    const fromEnv = typeof process.env.PUSAT_ORCH_DB === "string" ? process.env.PUSAT_ORCH_DB.trim() : "";
+    selected = fromEnv || path.join(os.tmpdir(), "buzzard-pusat-orch.sqlite");
+  } else if (typeof dbPath === "string") {
+    selected = dbPath.trim();
+  } else {
+    const err = new Error("ORCH_DB_PATH_UNVERIFIED");
+    err.code = "DATA_PATH_REFUSED";
+    throw err;
+  }
+  return assertNotGuardian(selected);
 }
 
 function getOrchestrator({ dbPath } = {}) {

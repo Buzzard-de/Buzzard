@@ -20,7 +20,7 @@ export function getMarketEngineAdminOverview(): MarketEngineAdminRow[] {
     countryName: market.nativeCountryName,
     languages: formatLanguageList(market.countryCode),
     currency: market.currency,
-    vatRate: `${Math.round(market.vat.standardRate * 1000) / 10}%`,
+    vatRate: market.vat.standardRate == null ? "UNKNOWN" : `${Math.round(market.vat.standardRate * 1000) / 10}% UNVERIFIED`,
     shippingRegion: getShippingRegion(market.countryCode),
     paymentCapabilities: getMarketPaymentCapabilities(market.countryCode).join(", "),
     marketplaces: getMarketplaces(market.countryCode).map((m) => m.name).join(" / ") || "—",

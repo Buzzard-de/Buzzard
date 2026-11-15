@@ -83,7 +83,8 @@ async function runPipeline(raw, { dryRun = true, supplierId = "mock", importJobI
     category: raw.category,
     brand: raw.brand,
     price: raw.price,
-    stock: raw.stock,
+    stock: null,
+    stockVerified: false,
     attributes: raw.attributes || {},
     images: raw.images || [],
   };

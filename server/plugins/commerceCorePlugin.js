@@ -16,7 +16,7 @@ const readinessRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, key
 function attachAdmin(req, res) {
   const session = requireAuth(req, res);
   if (!session) return null;
-  req.adminUser = { userId: session.userId, email: session.email, role: session.role };
+  req.adminUser = { userId: session.userId, email: null, role: session.role };
   return session;
 }
 
@@ -103,7 +103,15 @@ module.exports = {
         req,
       });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
-      res.json({ success: true, ...result });
+      res.json({
+        ...result,
+        success: false,
+        saleOpened: false,
+        purchased: false,
+        orderCreated: false,
+        paymentCreated: false,
+        reservationCreated: false,
+      });
     });
 
     app.post("/api/commerce/cart/:id/clear", (req, res) => {
@@ -111,7 +119,19 @@ module.exports = {
       const body = parseBody(req);
       const result = commerce.cartService.clearCart(req.params.id, { customerId: body.customerId, req });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
-      res.json({ success: true, ...result });
+      res.json({
+        ...result,
+        success: false,
+        localRowsCleared: true,
+        saleOpened: false,
+        purchased: false,
+        checkoutCompleted: false,
+        orderCreated: false,
+        paymentCreated: false,
+        reservationCreated: false,
+        refundCreated: false,
+        shipmentCreated: false,
+      });
     });
 
     app.post("/api/commerce/cart/:id/validate", (req, res) => {
@@ -144,11 +164,7 @@ module.exports = {
         if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error });
         return res.json({ success: true, ...result });
       }
-      const subtotal = Number(body.subtotal) || 0;
-      const commerceCouponService = require("../lib/commerce/commerceCouponService");
-      const validated = commerceCouponService.validateCouponRequest(body, subtotal, { req });
-      if (!validated.ok) return res.status(validated.status || 400).json({ success: false, errorKey: validated.error });
-      res.json({ success: true, ok: true, ...validated });
+      return res.status(403).json({ success: false, ok: false, errorKey: "SALES_CLOSED", code: "SALES_CLOSED", applied: false, discount: null });
     });
 
     app.post("/api/commerce/cart/:id/coupon", (req, res) => {
@@ -167,7 +183,15 @@ module.exports = {
         req,
       });
       if (result.error) return res.status(result.status || 400).json({ success: false, errorKey: result.error, ...result });
-      res.json({ success: true, ...result });
+      res.json({
+        ...result,
+        success: false,
+        localFieldCleared: true,
+        commercialDiscountApplied: false,
+        orderCreated: false,
+        paymentCreated: false,
+        refundCreated: false,
+      });
     });
 
     app.get("/api/commerce/shipping/methods", (_req, res) => {
@@ -249,9 +273,10 @@ module.exports = {
             idempotencyKey: body.idempotencyKey || `attempt-${Date.now()}`,
           }, { req });
 
+      const blocked = Boolean(completed.error || completed.blocked || checkout.error);
       res.json({
-        success: true,
-        blocked: Boolean(completed.error || completed.blocked || checkout.error),
+        success: false,
+        blocked,
         phase: checkout.error ? "start" : completed.error ? "complete" : "done",
         code: checkout.error || completed.error || completed.code,
         validated: validated.error ? { error: validated.error } : { state: validated.state },

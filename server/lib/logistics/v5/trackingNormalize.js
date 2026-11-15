@@ -29,11 +29,29 @@ function normalizeCarrierEvent(raw = {}) {
   const mapped = MAP[key];
   return {
     buzzardStatus: mapped || "UNKNOWN",
-    raw: raw.code || "UNKNOWN",
+    raw: raw.code || raw.status || "UNKNOWN",
     at: raw.at || "UNKNOWN",
     live: false,
-    customerVisible: mapped ? mapped : "NO_VERIFIED_TRACKING",
+    delivered: false,
+    deliveryConfirmed: false,
+    customerVisible: "NO_VERIFIED_TRACKING",
   };
 }
 
-module.exports = { BUZZARD_EVENTS, normalizeCarrierEvent };
+function projectTrackingHistory(events = []) {
+  const history = (Array.isArray(events) ? events : []).map((event) => normalizeCarrierEvent(event));
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    events: [],
+    history,
+    trackingNumber: null,
+    delivered: false,
+    deliveryConfirmed: false,
+    shipmentCreated: false,
+    customerVisible: "NO_VERIFIED_TRACKING",
+  };
+}
+
+module.exports = { BUZZARD_EVENTS, normalizeCarrierEvent, projectTrackingHistory };

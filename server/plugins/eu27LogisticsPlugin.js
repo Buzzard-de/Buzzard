@@ -25,8 +25,8 @@ module.exports = {
         success: true,
         live: false,
         result: runDryRun({
-          destination: body.destination || "DE",
-          originCountry: body.originCountry || "DE",
+          destination: body.destination || "UNKNOWN",
+          originCountry: body.originCountry || "UNKNOWN",
           postalCode: body.postalCode,
           weightKg: body.weightKg,
           productClass: body.productClass,

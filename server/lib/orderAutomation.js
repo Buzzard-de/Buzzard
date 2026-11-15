@@ -13,7 +13,32 @@ function defaultCarrier() {
   return process.env.DEFAULT_CARRIER || "dhl";
 }
 
+const CLAIMED_EVENT_STATUSES = new Set([
+  "sent",
+  "delivered",
+  "paid",
+  "confirmed",
+  "submitted",
+  "shipped",
+  "refunded",
+  "queued",
+  "delivery_confirmed",
+  "submitted_confirmed",
+  "succeeded",
+  "captured",
+]);
+
 function recordEvent(type, orderNumber, provider, status, payload = {}) {
+  const reported = status == null ? "" : String(status).trim().toLowerCase();
+  if (!reported || CLAIMED_EVENT_STATUSES.has(reported)) {
+    return {
+      ok: false,
+      stored: false,
+      code: reported ? "EVENT_UNVERIFIED" : "UNKNOWN",
+      reportedStatus: reported || null,
+      live: false,
+    };
+  }
   const eventKey = crypto
     .createHash("sha256")
     .update(JSON.stringify({ type, orderNumber, provider, status, payload }))
@@ -22,7 +47,7 @@ function recordEvent(type, orderNumber, provider, status, payload = {}) {
     INSERT OR IGNORE INTO integration_events(event_key, type, order_number, provider, status, payload)
     VALUES(?,?,?,?,?,?)
   `).run(eventKey, type, orderNumber || null, provider || null, status, JSON.stringify(payload));
-  return eventKey;
+  return { ok: true, stored: true, eventKey, claimed: false, live: false };
 }
 
 function queueJob(type, orderNumber, payload = {}) {
@@ -38,88 +63,81 @@ function ensureFlow(orderNumber) {
 }
 
 function queueOrderCreated(orderNumber) {
-  if (!isEnabled() || !orderNumber) return { ok: false, reason: "disabled" };
-  ensureFlow(orderNumber);
-  queueJob("payment", orderNumber, { provider: defaultPaymentProvider() });
-  queueJob("fulfillment", orderNumber, { carrier: defaultCarrier() });
-  recordEvent("order_created", orderNumber, "internal", "queued", {});
-  return { ok: true, orderNumber, status: "automation_queued" };
+  return {
+    ok: false,
+    code: "SALES_CLOSED",
+    orderNumber: orderNumber || null,
+    queued: false,
+    paymentAuthorized: false,
+    shipmentCreated: false,
+    live: false,
+  };
 }
 
 function handlePaymentWebhook(body = {}) {
-  const { provider = "stripe", eventId, type, orderNumber, status } = body;
+  const { provider = null, eventId, orderNumber, status } = body;
   if (!eventId || !orderNumber) {
     return { ok: false, error: "eventId and orderNumber required", status: 400 };
   }
 
-  const eventKey = `payment:${eventId}`;
-  const existing = db.prepare("SELECT id FROM integration_events WHERE event_key = ?").get(eventKey);
-  if (existing) return { ok: true, idempotent: true };
-
-  db.prepare(`
-    INSERT INTO integration_events(event_key, type, order_number, provider, status, payload)
-    VALUES(?,?,?,?,?,?)
-  `).run(
-    eventKey,
-    "payment_webhook",
-    orderNumber,
+  return {
+    ok: false,
+    error: "PAYMENT_UNVERIFIED",
+    code: "PAYMENT_UNVERIFIED",
+    status: 409,
     provider,
-    status || "received",
-    JSON.stringify({ eventId, type })
-  );
-
-  ensureFlow(orderNumber);
-
-  if (status === "paid") {
-    db.prepare(`
-      UPDATE order_flow
-      SET payment_status = 'paid', updated_at = CURRENT_TIMESTAMP
-      WHERE order_number = ?
-    `).run(orderNumber);
-    queueJob("fulfillment", orderNumber, {});
-  } else if (status === "failed") {
-    db.prepare(`
-      UPDATE order_flow
-      SET payment_status = 'failed', last_error = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE order_number = ?
-    `).run("Payment failed", orderNumber);
-  }
-
-  return { ok: true };
+    orderNumber,
+    eventId,
+    reportedStatus: status || null,
+    captured: false,
+    idempotent: false,
+    live: false,
+  };
 }
 
-function recordShipmentCreated({ orderNumber, carrier = "dhl", trackingNumber = null }) {
-  ensureFlow(orderNumber);
-  db.prepare(`
-    UPDATE order_flow
-    SET shipping_status = 'shipped', tracking_number = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE order_number = ?
-  `).run(trackingNumber, orderNumber);
-  recordEvent("shipment_created", orderNumber, carrier, "shipped", { trackingNumber });
-  return { ok: true };
+function recordShipmentCreated({ orderNumber } = {}) {
+  return {
+    ok: false,
+    live: false,
+    mock: false,
+    blocked: true,
+    status: "BLOCKED_EXTERNAL",
+    code: "SHIPMENT_NOT_CREATED",
+    trackingNumber: null,
+    events: [],
+    delivered: false,
+    shipped: false,
+    orderNumber: orderNumber || null,
+  };
 }
 
-function recordSupplierResult({ orderNumber, supplier, status, supplierOrderId = null }) {
-  ensureFlow(orderNumber);
-  const accepted = status === "accepted";
-  db.prepare(`
-    UPDATE order_flow
-    SET supplier_status = ?, fulfillment_status = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE order_number = ?
-  `).run(accepted ? "accepted" : status || "failed", accepted ? "processing" : "failed", orderNumber);
-  recordEvent("supplier_forwarded", orderNumber, supplier, status, { supplierOrderId });
-  return { ok: true };
+function recordSupplierResult({ orderNumber } = {}) {
+  return {
+    ok: false,
+    code: "SUPPLIER_NOT_LIVE",
+    orderNumber: orderNumber || null,
+    supplierOrderCreated: false,
+    purchased: false,
+    confirmed: false,
+    submissionStatus: "BLOCKED_EXTERNAL",
+    live: false,
+  };
 }
 
 function retryJob(id) {
   const job = db.prepare("SELECT * FROM automation_jobs WHERE id = ?").get(id);
-  if (!job) return { ok: false, error: "Job not found", status: 404 };
-  db.prepare(`
-    UPDATE automation_jobs
-    SET status = 'queued', attempts = attempts + 1, next_run_at = datetime('now'), last_error = NULL
-    WHERE id = ?
-  `).run(job.id);
-  return { ok: true };
+  if (!job) return { ok: false, error: "Job not found", status: 404, recovered: false, requeued: false };
+  return {
+    ok: false,
+    error: "RETRY_NOT_CONFIRMED",
+    code: "RETRY_NOT_CONFIRMED",
+    status: 409,
+    recovered: false,
+    requeued: false,
+    sent: false,
+    live: false,
+    jobId: job.id,
+  };
 }
 
 function listJobs(limit = 200) {

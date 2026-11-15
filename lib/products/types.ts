@@ -26,11 +26,12 @@ export interface ProductDocument {
 }
 
 export interface ProductShipping {
-  weight_kg: number;
-  length_cm: number;
-  width_cm: number;
-  height_cm: number;
-  class: string;
+  weight_kg: number | null;
+  length_cm: number | null;
+  width_cm: number | null;
+  height_cm: number | null;
+  class: string | null;
+  status?: "UNKNOWN";
 }
 
 export interface ProductSeo {
@@ -130,7 +131,7 @@ export interface PublicProduct {
   variants: ProductVariant[];
   price: number;
   compareAtPrice?: number;
-  vatRate: number;
+  vatRate: number | null;
   stock: number;
   stockStatus: StockStatus;
   shipping: ProductShipping;

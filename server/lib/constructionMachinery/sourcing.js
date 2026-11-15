@@ -38,23 +38,25 @@ function rankOffers(store, query = {}) {
     const inventory = inventoryStatus(offer);
     const priced = pricing.calculateSalePrice({
       supplierPrice: offer.supplierPrice,
-      markupPercent: query.markupPercent ?? 38,
-      minimumMarginPercent: query.minimumMarginPercent ?? 12,
+      category: query.category,
       currency: offer.currency || "EUR",
     });
     const marginOk = pricing.meetsMinimumMargin({
       salePrice: priced.amount,
       purchasePrice: offer.supplierPrice,
-      minimumMarginPercent: query.minimumMarginPercent ?? 12,
     });
-    const shipping = Number(offer.shippingCost || 0);
-    const landed = Number(offer.supplierPrice || 0) + shipping;
+    const suppliedShipping = require("../commerce/pricingPolicy").readSuppliedShipping(offer.shippingCost);
+    const shipping = suppliedShipping.amount;
+    const supplierAmount = Number.isFinite(Number(offer.supplierPrice)) && Number(offer.supplierPrice) > 0 ? Number(offer.supplierPrice) : null;
+    const landed = shipping == null || supplierAmount == null ? null : Math.round((supplierAmount + shipping) * 100) / 100;
     const factors = {
       compatibilityState: compatibility?.state || "NOT_EVALUATED",
       inventoryTrust: inventory.trust,
       verifiedStock: inventory.verifiedStock,
       acquisitionCost: offer.supplierPrice ?? null,
       shippingCost: shipping,
+      shippingStatus: suppliedShipping.status,
+      commercialEligibility: suppliedShipping.commercialEligibility,
       landedCost: landed,
       leadTimeDays: offer.leadTimeDays ?? null,
       salePreview: priced,

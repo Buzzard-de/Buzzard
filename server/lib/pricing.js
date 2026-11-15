@@ -1,25 +1,35 @@
+const { CATEGORY_MARGINS, resolveCategoryMargin, MIN_NET_PROFIT_EUR, roundMoney } = require("./commerce/pricingPolicy");
+
 function calculateSalePrice({
   supplierPrice,
-  markupPercent = 38,
-  minimumMarginPercent = 12,
+  category,
   currency = "EUR",
-}) {
-  const purchase = Number(supplierPrice) || 0;
-  if (purchase <= 0) return { amount: 0, currency };
-
-  let sale = purchase * (1 + markupPercent / 100);
-  const minSale = purchase * (1 + minimumMarginPercent / 100);
-  if (sale < minSale) sale = minSale;
-
-  return { amount: Math.round(sale * 100) / 100, currency };
+  markupPercent,
+} = {}) {
+  if (supplierPrice == null || supplierPrice === "" || !Number.isFinite(Number(supplierPrice)) || Number(supplierPrice) <= 0) {
+    return { amount: null, currency, code: "MISSING_SUPPLIER_COST", commercialPolicy: "pricingPolicy" };
+  }
+  const purchase = Number(supplierPrice);
+  const rule = resolveCategoryMargin(category);
+  let amount = roundMoney(purchase / (1 - rule.margin));
+  if (roundMoney(amount - purchase) + 1e-9 < MIN_NET_PROFIT_EUR) {
+    amount = roundMoney(purchase + MIN_NET_PROFIT_EUR);
+  }
+  const supplied = Number(markupPercent);
+  const marginOverrideIgnored =
+    markupPercent != null && Number.isFinite(supplied) && Math.abs(supplied - rule.margin * 100) > 1e-6;
+  return {
+    amount,
+    currency,
+    targetMargin: rule.margin,
+    marginRule: rule.rule,
+    marginOverrideIgnored,
+    commercialPolicy: "pricingPolicy",
+  };
 }
 
-function applySafetyStock(stock, safetyStock = 0) {
-  const available = Math.max(0, Number(stock) - Number(safetyStock));
-  let stockStatus = "in_stock";
-  if (available <= 0) stockStatus = "out_of_stock";
-  else if (available < 10) stockStatus = "low_stock";
-  return { stock: available, stock_status: stockStatus };
+function applySafetyStock() {
+  return { stock: null, stock_status: "UNKNOWN", stockVerified: false, purchasable: false };
 }
 
 function validatePrice(price, options = {}) {
@@ -41,7 +51,7 @@ function marginPercent(salePrice, purchasePrice) {
   return Math.round(((sale - purchase) / sale) * 10000) / 100;
 }
 
-function meetsMinimumMargin({ salePrice, purchasePrice, minimumMarginPercent = 12 }) {
+function meetsMinimumMargin({ salePrice, purchasePrice, minimumMarginPercent = CATEGORY_MARGINS.other * 100 }) {
   return marginPercent(salePrice, purchasePrice) >= minimumMarginPercent;
 }
 

@@ -1,33 +1,52 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { defaultConsent, readConsent, saveConsent } from "@/lib/marketing/consent";
+import { readConsent, saveConsent } from "@/lib/marketing/consent";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function ConsentBanner() {
   const { t } = useLocale();
   const [visible, setVisible] = useState(false);
   const [analytics, setAnalytics] = useState(false);
-  const [marketing, setMarketing] = useState(false);
+  const [trackingStatus, setTrackingStatus] = useState("BLOCKED");
 
   useEffect(() => {
-    setVisible(!readConsent());
+    const current = readConsent();
+    setVisible(!current);
+    if (current?.marketing_tracking) setTrackingStatus(current.marketing_tracking === "UNKNOWN" ? "BLOCKED" : current.marketing_tracking);
   }, []);
 
   if (!visible) return null;
 
   function acceptAll() {
-    saveConsent({ analytics: true, marketing: true });
+    const current = readConsent();
+    if (current?.marketing_tracking === "WITHDRAWN" && current.trackingWithdrawal) {
+      saveConsent({
+        analytics: true,
+        marketing: false,
+        marketingTracking: "WITHDRAWN",
+        trackingWithdrawal: current.trackingWithdrawal,
+      });
+      setTrackingStatus("WITHDRAWN");
+    } else {
+      saveConsent({ analytics: true, marketing: false, marketingTracking: "BLOCKED" });
+      setTrackingStatus("BLOCKED");
+    }
     setVisible(false);
   }
 
   function acceptSelected() {
-    saveConsent({ analytics, marketing });
+    saveConsent({
+      analytics,
+      marketing: false,
+      marketingTracking: trackingStatus === "WITHDRAWN" ? "WITHDRAWN" : "BLOCKED",
+    });
     setVisible(false);
   }
 
   function rejectOptional() {
-    saveConsent(defaultConsent());
+    const saved = saveConsent({ analytics: false, marketing: false, marketingTracking: "WITHDRAWN" });
+    setTrackingStatus(saved.marketing_tracking);
     setVisible(false);
   }
 
@@ -44,8 +63,7 @@ export default function ConsentBanner() {
             {t("consent.analytics")}
           </label>
           <label>
-            <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
-            {t("consent.marketing")}
+            <input type="checkbox" checked={false} disabled readOnly /> {t("consent.marketing")} marketing_tracking {trackingStatus}
           </label>
         </div>
         <div className="consent-actions">

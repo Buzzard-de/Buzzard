@@ -42,7 +42,7 @@ export function onlineStoreSchema() {
     url: SITE_URL,
     logo: `${SITE_URL}/logo/logo.png`,
     image: `${SITE_URL}/logo/logo.png`,
-    inLanguage: ["de-DE", "en", "tr", "ar"],
+    inLanguage: [...SUPPORTED_LOCALES],
     areaServed: {
       "@type": "Country",
       name: "Germany",
@@ -57,7 +57,7 @@ export function websiteSchema() {
     name: SEO_DEFAULTS.siteName,
     alternateName: SEO_DEFAULTS.alternateNames,
     url: SITE_URL,
-    inLanguage: ["de-DE", "en", "tr", "ar"],
+    inLanguage: [...SUPPORTED_LOCALES],
     potentialAction: {
       "@type": "SearchAction",
       target: `${SITE_URL}/products/?q={search_term_string}`,

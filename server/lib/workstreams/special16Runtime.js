@@ -38,12 +38,17 @@ function executeStream(id) {
       };
     }
     case 2: {
-      const shipment = createShipment();
-      const track = simulateTrack({ status: "LOST" });
+      const missing = createShipment();
+      const shipment = createShipment({ carrier: "DHL", address: { postalCode: "10115" } });
+      const track = simulateTrack({ status: "LOST", carrier: "DHL" });
       return {
-        ok: shipment.code === "HUMAN_GATE_REQUIRED" && track.status === "LOST",
+        ok: missing.code === "CARRIER_UNKNOWN"
+          && shipment.code === "HUMAN_GATE_REQUIRED"
+          && track.status === "LOST"
+          && track.ok === false
+          && track.events.length === 0,
         live: false,
-        evidence: { gated: shipment.code, lost: track.status },
+        evidence: { missing: missing.code, gated: shipment.code, lost: track.status },
         blocker: "BLOCKED_APPROVAL carrier accounts",
       };
     }

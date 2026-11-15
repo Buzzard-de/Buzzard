@@ -65,7 +65,7 @@ function resetEsat() {
   activated = false;
 }
 
-function record({ type, severity = "LOW", action = "RECORD", details = {}, actor = "system" } = {}) {
+function record({ type, severity = "LOW", action = "RECORD", details = {}, actor = "system", memoryOnly = false } = {}) {
   const event = {
     id: `esat_${crypto.randomBytes(6).toString("hex")}`,
     type,
@@ -77,31 +77,12 @@ function record({ type, severity = "LOW", action = "RECORD", details = {}, actor
   };
   events.unshift(event);
   if (events.length > 400) events.pop();
-  persist(event);
+  if (!memoryOnly) persist(event);
   return event;
 }
 
-function persist(event) {
-  try {
-    const { db } = require("../db");
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS esat_security_events (
-        id TEXT PRIMARY KEY,
-        type TEXT NOT NULL,
-        severity TEXT NOT NULL,
-        action TEXT NOT NULL,
-        actor TEXT,
-        details_json TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      )
-    `);
-    db.prepare(
-      `INSERT OR IGNORE INTO esat_security_events (id, type, severity, action, actor, details_json, created_at)
-       VALUES (?,?,?,?,?,?,?)`
-    ).run(event.id, event.type, event.severity, event.action, event.actor, JSON.stringify(event.details), event.at);
-  } catch {
-    /* memory remains the live path if sqlite is busy or missing */
-  }
+function persist() {
+  return { ok: false, stored: false, memory: true, code: "ESAT_COMMERCE_PERSIST_BLOCKED" };
 }
 
 function redact(details) {
@@ -112,11 +93,11 @@ function redact(details) {
   return copy;
 }
 
-function inspect({ type, details = {}, actor = "system" } = {}) {
+function inspect({ type, details = {}, actor = "system", memoryOnly = false } = {}) {
   const isolate = ISOLATE_TYPES.includes(type);
   const severity = isolate ? "HIGH" : "MEDIUM";
   const action = isolate ? "ISOLATE_AND_HOLD" : "WATCH";
-  const event = record({ type, severity, action, details, actor });
+  const event = record({ type, severity, action, details, actor, memoryOnly });
   return {
     ok: !isolate,
     allowed: !isolate,
@@ -211,7 +192,16 @@ function watchException({ type, severity, source } = {}) {
 function activate() {
   if (!activated) {
     activated = true;
-    record({ type: "ESAT_ACTIVE", severity: "INFO", action: "WATCH", details: { hooks: HOOKS }, actor: ID });
+    events.unshift({
+      id: `esat_${crypto.randomBytes(6).toString("hex")}`,
+      type: "ESAT_ACTIVE",
+      severity: "INFO",
+      action: "WATCH",
+      actor: ID,
+      details: redact({ hooks: HOOKS }),
+      at: new Date().toISOString(),
+    });
+    if (events.length > 400) events.pop();
   }
   return status();
 }

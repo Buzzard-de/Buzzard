@@ -1,5 +1,7 @@
 /**
  * Part 17 — Deterministic price engine (no auto-publish, no invented supplier data).
+ * The category floor comes from the commercial pricing policy.
+ * Omitted shipping, fees, or tax are missing. They are not treated as zero.
  */
 function roundMoney(amount) {
   return Math.round(Number(amount) * 100) / 100;
@@ -7,11 +9,9 @@ function roundMoney(amount) {
 
 function calculateSellingPrice({
   supplierNetPrice,
-  shippingCost = 0,
-  fees = 0,
-  taxRate = 0,
-  targetMargin = 0.3,
-  minimumMargin = 0.12,
+  shippingCost,
+  fees,
+  taxRate,
 } = {}) {
   const net = Number(supplierNetPrice);
   if (!Number.isFinite(net) || net <= 0) {
@@ -19,56 +19,47 @@ function calculateSellingPrice({
       ok: false,
       code: "INVALID_SUPPLIER_PRICE",
       blockingReasons: ["SUPPLIER_PRICE_MISSING_OR_INVALID"],
+      sellingPrice: null,
+      autoPublish: false,
+      invented: false,
     };
   }
-
-  const shipping = Number(shippingCost) || 0;
-  const feeAmount = Number(fees) || 0;
-  const tax = Number(taxRate) || 0;
-
-  if (shipping < 0 || feeAmount < 0 || tax < 0) {
-    return { ok: false, code: "INVALID_COST_INPUT" };
-  }
-
-  const costBasis = net + shipping + feeAmount;
-  const margin = Number(targetMargin);
-  const minMargin = Number(minimumMargin);
-
-  if (!Number.isFinite(margin) || margin <= 0 || margin >= 1) {
-    return { ok: false, code: "INVALID_TARGET_MARGIN" };
-  }
-
-  let sellingPrice = costBasis / (1 - margin);
-  if (tax > 0) {
-    sellingPrice = sellingPrice * (1 + tax);
-  }
-
-  sellingPrice = roundMoney(sellingPrice);
-  const marginAmount = roundMoney(sellingPrice - costBasis);
-  const marginPercent = sellingPrice > 0 ? roundMoney((marginAmount / sellingPrice) * 100) : 0;
-
-  if (marginPercent / 100 < minMargin) {
+  if (shippingCost == null || shippingCost === "" || fees == null || fees === "" || taxRate == null || taxRate === "") {
     return {
       ok: false,
-      code: "MARGIN_BELOW_MINIMUM",
-      costBasis: roundMoney(costBasis),
-      marginPercent,
-      minimumMargin: minMargin * 100,
+      status: "BLOCKED",
+      code: "MISSING_COST",
+      sellingPrice: null,
+      autoPublish: false,
+      invented: false,
     };
+  }
+
+  const shipping = Number(shippingCost);
+  const feeAmount = Number(fees);
+  const tax = Number(taxRate);
+
+  if (!Number.isFinite(shipping) || !Number.isFinite(feeAmount) || !Number.isFinite(tax) || shipping < 0 || feeAmount < 0 || tax < 0) {
+    return { ok: false, code: "INVALID_COST_INPUT", sellingPrice: null, autoPublish: false, invented: false };
   }
 
   return {
-    ok: true,
-    supplierNetPrice: roundMoney(net),
-    shippingCost: roundMoney(shipping),
-    fees: roundMoney(feeAmount),
-    taxRate: tax,
-    costBasis: roundMoney(costBasis),
-    sellingPrice,
-    margin: marginAmount,
-    marginPercent,
+    ok: false,
+    live: false,
+    status: "UNKNOWN",
+    code: "SUPPLIER_COST_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    supplierNetPrice: null,
+    shippingCost: null,
+    fees: null,
+    taxRate: null,
+    costBasis: null,
+    sellingPrice: null,
+    margin: null,
+    marginPercent: null,
     autoPublish: false,
-    note: "Calculated price is not auto-published — manual review required",
+    invented: false,
+    note: "A numeric supplier net is not a verified supplier cost",
   };
 }
 

@@ -1,0 +1,32 @@
+{
+  "schema": "buzzard.final-program.security.v1",
+  "recordedAt": "2026-11-11T20:57:05+01:00",
+  "egress": "DENY",
+  "egressSha256": "b63cdadbd8e58e2e57e6b5d7c9a0c2f92c3bb6cf3904e6aa3a77cd0d02bff442",
+  "sales": "CLOSED",
+  "protectedDatabaseOpened": false,
+  "cardStored": false,
+  "paymentCaptured": false,
+  "shipmentCreated": false,
+  "stockPurchased": false,
+  "customerExported": false,
+  "criticalAuthorizationBypassFoundThisSession": false,
+  "p0ReRunThisSession": true,
+  "protectedDatabase": {
+    "mtime": 1794331370,
+    "size": 2326528,
+    "inode": 9040253,
+    "opened": false
+  },
+  "revocationClearRequiresHuman": true,
+  "playwrightEgress": {
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+  },
+  "pythonEgress": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  }
+}

@@ -56,7 +56,6 @@ function createSession(customer) {
   const token = createToken();
   const session = {
     customerId: customer.id,
-    email: customer.email,
     firstName: customer.firstName,
     lastName: customer.lastName,
     expiresAt: Date.now() + SESSION_TTL_MS,
@@ -66,15 +65,15 @@ function createSession(customer) {
   return { token, user: publicUser(customer) };
 }
 
-function publicUser(customer) {
+function publicUser(customer = {}) {
   return {
     id: customer.id,
-    email: customer.email,
-    firstName: customer.firstName,
-    lastName: customer.lastName,
-    country: customer.country,
-    phone: customer.phone || "",
-    emailVerified: customer.emailVerified || false,
+    email: null,
+    firstName: customer.firstName || "",
+    lastName: customer.lastName || "",
+    country: customer.country || null,
+    phone: null,
+    emailVerified: false,
   };
 }
 
@@ -87,7 +86,6 @@ function login(email, password, verifyPasswordFn, req) {
       type: "customer_login_rate_limited",
       success: false,
       ip,
-      email: key,
       path: "/api/account/login",
     });
     return { success: false, errorKey: "account.auth.rateLimited" };
@@ -99,7 +97,6 @@ function login(email, password, verifyPasswordFn, req) {
       type: "customer_login_failed",
       success: false,
       ip,
-      email: key,
       path: "/api/account/login",
     });
     return { success: false, errorKey: "account.auth.invalid" };
@@ -116,7 +113,6 @@ function login(email, password, verifyPasswordFn, req) {
     success: true,
     ip,
     userId: customer.id,
-    email: customer.email,
     path: "/api/account/login",
   });
   return { success: true, ...session };
@@ -169,25 +165,12 @@ function requireCustomer(req, res) {
   return session;
 }
 
-function createResetToken(customerId, req) {
-  if (resetRateLimit(req, { key: customerId })) {
-    return { limited: true };
-  }
-  const token = createToken();
-  const tokens = readJson(resetFile, []).filter((entry) => entry.expiresAt > Date.now());
-  tokens.push({ token, customerId, expiresAt: Date.now() + RESET_TTL_MS, createdAt: new Date().toISOString() });
-  writeJson(resetFile, tokens);
-  return { token };
+function createResetToken() {
+  return { ok: false, token: null, sent: false, customerNotified: false, limited: false };
 }
 
-function consumeResetToken(token) {
-  const tokens = readJson(resetFile, []);
-  const idx = tokens.findIndex((entry) => entry.token === token && entry.expiresAt > Date.now());
-  if (idx < 0) return null;
-  const entry = tokens[idx];
-  tokens.splice(idx, 1);
-  writeJson(resetFile, tokens);
-  return entry.customerId;
+function consumeResetToken() {
+  return null;
 }
 
 module.exports = {

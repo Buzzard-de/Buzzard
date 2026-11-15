@@ -108,14 +108,30 @@ describe("Part 17 — catalog, price, stock", () => {
     const a = priceEngine.calculateSellingPrice({ supplierNetPrice: 100, targetMargin: 0.3 });
     const b = priceEngine.calculateSellingPrice({ supplierNetPrice: 100, targetMargin: 0.3 });
     expect(a.sellingPrice).toBe(b.sellingPrice);
+    expect(a.sellingPrice).toBeNull();
+    expect(a.ok).toBe(false);
+    expect(a.status).toBe("BLOCKED");
+    expect(a.code).toBe("MISSING_COST");
     expect(a.autoPublish).toBe(false);
+    const quoted = priceEngine.calculateSellingPrice({ supplierNetPrice: 100, shippingCost: 5, fees: 2, taxRate: 0.19, targetMargin: 0.3 });
+    expect(quoted.ok).toBe(false);
+    expect(quoted.sellingPrice).toBeNull();
+    expect(quoted.code).toBe("SUPPLIER_COST_UNVERIFIED");
   });
 
   it("11. stock engine derives statuses", () => {
     const stockEngine = require("../lib/operations/stockEngine.js");
-    expect(stockEngine.deriveStockStatus(10).status).toBe("IN_STOCK");
-    expect(stockEngine.deriveStockStatus(0).status).toBe("OUT_OF_STOCK");
+    expect(stockEngine.deriveStockStatus(10).status).toBe("UNKNOWN");
+    expect(stockEngine.deriveStockStatus(10).reportedStatus).toBe("IN_STOCK");
+    expect(stockEngine.deriveStockStatus(10).purchasable).toBe(false);
+    expect(stockEngine.deriveStockStatus(0).status).toBe("UNKNOWN");
+    expect(stockEngine.deriveStockStatus(0).reportedStatus).toBe("OUT_OF_STOCK");
     expect(stockEngine.deriveStockStatus(-1).blocked).toBe(true);
+    const recorded = stockEngine.evaluateStockRecord({ stock: 10, source: "unverified" });
+    expect(recorded.status).toBe("UNKNOWN");
+    expect(recorded.sellable).toBe(false);
+    expect(recorded.quantity).toBeNull();
+    expect(recorded.live).toBe(false);
   });
 });
 

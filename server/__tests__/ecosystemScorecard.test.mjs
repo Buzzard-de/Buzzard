@@ -54,6 +54,9 @@ describe("ecosystem remaining-gap closure", () => {
 
   it("authorizes sandbox payments and refuses capture", () => {
     const hold = sandboxAuthorize({ amount: 10 });
+    expect(hold.ok).toBe(false);
+    expect(hold.id).toBeNull();
+    expect(hold.code).toBe("PAYMENT_UNVERIFIED");
     expect(hold.captured).toBe(false);
     expect(hold.live).toBe(false);
     expect(capture(hold.id).code).toBe("SALES_LOCKED");

@@ -33,46 +33,88 @@ const MOCK_CATALOG = [
 
 const capabilities = ["catalog", "stock", "price", "order_prep", "xml"];
 
+function closed(extra = {}) {
+  return {
+    ok: false,
+    live: false,
+    mock: true,
+    status: "BLOCKED_EXTERNAL",
+    code: "MOCK_NOT_COMMERCIAL",
+    commercialEligibility: "BLOCKED",
+    price: null,
+    stock: null,
+    supplierCost: null,
+    purchased: false,
+    reserved: false,
+    ...extra,
+  };
+}
+
+function fixtureRecord(row) {
+  return {
+    supplier_sku: row.supplier_sku,
+    name: row.name,
+    brand: row.brand,
+    supplier_price: null,
+    stock: null,
+    currency: "UNKNOWN",
+    fixturePrice: row.supplier_price,
+    fixtureStock: row.stock,
+    commercialUse: false,
+    verified: false,
+    mock: true,
+  };
+}
+
 async function fetchCatalog(options = {}) {
   const limit = Math.min(Number(options.limit) || 50, MOCK_CATALOG.length);
-  return {
-    ok: true,
-    mock: true,
-    records: MOCK_CATALOG.slice(0, limit),
+  return closed({
+    records: MOCK_CATALOG.slice(0, limit).map(fixtureRecord),
     total: MOCK_CATALOG.length,
-    fetchedAt: new Date().toISOString(),
-  };
+    fetchedAt: null,
+  });
 }
 
 async function fetchStock(options = {}) {
   const skus = options.skus || MOCK_CATALOG.map((r) => r.supplier_sku);
   const records = MOCK_CATALOG.filter((r) => skus.includes(r.supplier_sku)).map((r) => ({
     supplier_sku: r.supplier_sku,
-    stock: r.stock,
-    updated_at: new Date().toISOString(),
+    stock: null,
+    fixtureStock: r.stock,
+    updated_at: null,
+    verified: false,
+    commercialUse: false,
   }));
-  return { ok: true, mock: true, records };
+  return closed({ records });
 }
 
 async function fetchPrices(options = {}) {
   const skus = options.skus || MOCK_CATALOG.map((r) => r.supplier_sku);
   const records = MOCK_CATALOG.filter((r) => skus.includes(r.supplier_sku)).map((r) => ({
     supplier_sku: r.supplier_sku,
-    supplier_price: r.supplier_price,
-    updated_at: new Date().toISOString(),
+    supplier_price: null,
+    fixturePrice: r.supplier_price,
+    currency: "UNKNOWN",
+    updated_at: null,
+    verified: false,
+    commercialUse: false,
   }));
-  return { ok: true, mock: true, records };
+  return closed({ records });
 }
 
-async function prepareOrder(orderPayload, options = {}) {
+async function prepareOrder() {
   return {
-    ok: true,
+    ok: false,
     mock: true,
-    dryRun: options.dryRun !== false,
-    status: "prepared_not_sent",
-    supplierOrderNumber: `MOCK-PREP-${Date.now()}`,
-    message: "Order preparation only — no real supplier dispatch (catalog mode).",
-    payload: orderPayload,
+    dryRun: true,
+    sent: false,
+    accepted: false,
+    submitted: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "SUPPLIER_NOT_LIVE",
+    supplierOrderNumber: null,
+    supplierResponse: null,
+    message: "No supplier order is created from a local adapter call.",
   };
 }
 
@@ -83,18 +125,26 @@ function parseXmlFeed(xmlText) {
   while ((match = itemRegex.exec(xmlText || ""))) {
     const block = match[1];
     const get = (tag) => {
-      const m = block.match(new RegExp(`<${tag}>([^<]*)</${tag}>`, "i"));
-      return m ? m[1].trim() : "";
+      const found = block.match(new RegExp(`<${tag}>([^<]*)</${tag}>`, "i"));
+      return found ? found[1].trim() : null;
     };
+    const priceText = get("price");
+    const stockText = get("stock");
+    const currency = get("currency");
     records.push({
-      supplier_sku: get("sku"),
-      name: get("name"),
-      supplier_price: { amount: Number(get("price")) || 0, currency: get("currency") || "EUR" },
-      stock: Number(get("stock")) || 0,
-      brand: get("brand"),
+      supplier_sku: get("sku") || "UNKNOWN",
+      name: get("name") || "UNKNOWN",
+      supplier_price: null,
+      fixturePrice: priceText == null || !Number.isFinite(Number(priceText)) ? null : Number(priceText),
+      currency: currency && /^[A-Z]{3}$/.test(currency) ? currency : "UNKNOWN",
+      stock: null,
+      fixtureStock: stockText == null || !Number.isFinite(Number(stockText)) ? null : Number(stockText),
+      brand: get("brand") || "UNKNOWN",
+      commercialUse: false,
+      verified: false,
     });
   }
-  return { ok: true, mock: true, records, format: "xml" };
+  return closed({ records, format: "xml" });
 }
 
 module.exports = {

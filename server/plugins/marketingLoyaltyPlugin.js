@@ -77,23 +77,52 @@ module.exports = {
 
     app.post("/api/marketing-loyalty/referrals/create", (req, res) => {
       const result = marketingLoyalty.createReferral(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.referral);
+      return res.status(result.status || 403).json({ ...result, ok: false, created: false, rewardPoints: null });
     });
 
     app.post("/api/marketing-loyalty/referrals/complete", (req, res) => {
       const result = marketingLoyalty.completeReferral(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 403).json({
+        ...result,
+        ok: false,
+        earned: false,
+        completed: false,
+        rewardPoints: null,
+      });
+    });
+
+    app.post("/api/marketing-loyalty/referrals/cancel", (req, res) => {
+      const result = marketingLoyalty.cancelReferral(req.body || {});
+      return res.status(result.status || 403).json({
+        ...result,
+        ok: false,
+        reversed: false,
+        rewardReversed: false,
+        balanceChanged: false,
+        negativeBalance: false,
+      });
     });
 
     app.put("/api/marketing-loyalty/preferences/:customerId", (req, res) => {
       const result = marketingLoyalty.updatePreferences(req.params.customerId, req.body || {});
-      return res.json(result.preferences);
+      const status = result.withdrawn === true ? 200 : result.status || 403;
+      return res.status(status).json({
+        ...result,
+        granted: false,
+        consentVerified: false,
+        notificationSent: false,
+        customerNotified: false,
+      });
     });
 
     app.get("/api/marketing-loyalty/preferences/:customerId", (req, res) => {
-      return res.json(marketingLoyalty.getPreferences(req.params.customerId));
+      const result = marketingLoyalty.getPreferences(req.params.customerId);
+      return res.json({
+        ...result,
+        granted: false,
+        consentVerified: false,
+        notificationSent: false,
+      });
     });
 
     app.get("/api/marketing-loyalty/:customerId", (req, res) => {

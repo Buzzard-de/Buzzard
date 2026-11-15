@@ -1,15 +1,21 @@
 const fs = require("fs");
 const path = require("path");
-const crypto = require("crypto");
-const { getTrackingUrl } = require("./carriers");
 
-const dataDir = path.join(__dirname, "..", "data");
-const fulfillmentsFile = path.join(dataDir, "fulfillments.json");
-const supplierOrdersFile = path.join(dataDir, "supplier-orders.json");
-const shipmentsFile = path.join(dataDir, "shipments.json");
-const returnsFile = path.join(dataDir, "return-requests.json");
+function dataFiles() {
+  const dataDir = process.env.BUZZARD_FULFILLMENT_DIR
+    ? path.resolve(process.env.BUZZARD_FULFILLMENT_DIR)
+    : path.join(__dirname, "..", "data");
+  return {
+    dataDir,
+    fulfillmentsFile: path.join(dataDir, "fulfillments.json"),
+    supplierOrdersFile: path.join(dataDir, "supplier-orders.json"),
+    shipmentsFile: path.join(dataDir, "shipments.json"),
+    returnsFile: path.join(dataDir, "return-requests.json"),
+  };
+}
 
 function ensureDataDir() {
+  const { dataDir } = dataFiles();
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 }
 
@@ -29,141 +35,76 @@ function writeJson(file, data) {
 }
 
 function readFulfillments() {
-  return readJson(fulfillmentsFile);
+  return readJson(dataFiles().fulfillmentsFile);
 }
 
 function writeFulfillments(items) {
-  writeJson(fulfillmentsFile, items);
+  writeJson(dataFiles().fulfillmentsFile, items);
 }
 
 function readSupplierOrders() {
-  return readJson(supplierOrdersFile);
+  return readJson(dataFiles().supplierOrdersFile);
 }
 
 function writeSupplierOrders(items) {
-  writeJson(supplierOrdersFile, items);
+  writeJson(dataFiles().supplierOrdersFile, items);
 }
 
 function readShipments() {
-  return readJson(shipmentsFile);
+  return readJson(dataFiles().shipmentsFile);
 }
 
 function writeShipments(items) {
-  writeJson(shipmentsFile, items);
+  writeJson(dataFiles().shipmentsFile, items);
 }
 
 function readReturns() {
-  return readJson(returnsFile);
+  return readJson(dataFiles().returnsFile);
 }
 
 function writeReturns(items) {
-  writeJson(returnsFile, items);
+  writeJson(dataFiles().returnsFile, items);
 }
 
-function createFulfillment({ orderNumber, supplierId, model, lines }) {
-  const items = readFulfillments();
-  const fulfillment = {
-    id: `ful-${crypto.randomUUID()}`,
-    orderNumber,
-    supplierId,
-    model,
-    status: "pending",
-    lines,
-    supplierOrderId: null,
-    error: null,
-    retryCount: 0,
-    idempotencyKey: `${orderNumber}:${supplierId}`,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  items.push(fulfillment);
-  writeFulfillments(items);
-  return fulfillment;
+function directRefusal(code) {
+  return { ok: false, code, stored: false, created: false, updated: false, live: false, status: 409 };
 }
 
-function updateFulfillment(id, patch) {
-  const items = readFulfillments();
-  const idx = items.findIndex((f) => f.id === id);
-  if (idx < 0) return null;
-  items[idx] = { ...items[idx], ...patch, updatedAt: new Date().toISOString() };
-  writeFulfillments(items);
-  return items[idx];
+function createFulfillment() {
+  return directRefusal(require("./salesMode").isSalesEnabled() ? "STOCK_UNVERIFIED" : "SALES_CLOSED");
+}
+
+function updateFulfillment() {
+  return directRefusal("FULFILLMENT_NOT_LIVE");
 }
 
 function findFulfillmentByIdempotency(key) {
   return readFulfillments().find((f) => f.idempotencyKey === key);
 }
 
-function createSupplierOrder({ orderNumber, supplierId, lines, shippingAddress, idempotencyKey }) {
-  const existing = readSupplierOrders().find((o) => o.idempotencyKey === idempotencyKey);
-  if (existing) return existing;
+function createSupplierOrder() {
+  return directRefusal(require("./salesMode").isSalesEnabled() ? "SUPPLIER_NOT_LIVE" : "SALES_CLOSED");
+}
 
-  const order = {
-    id: `so-${crypto.randomUUID()}`,
-    buzzardOrderNumber: orderNumber,
-    supplierId,
-    lines,
-    shippingAddress,
-    status: "pending",
-    supplierResponse: null,
+function updateSupplierOrder() {
+  return directRefusal("SUPPLIER_NOT_LIVE");
+}
+
+function createShipment() {
+  return directRefusal(require("./salesMode").isSalesEnabled() ? "SHIPPING_RATE_UNVERIFIED" : "SALES_CLOSED");
+}
+
+function updateShipment(_id, patch = {}) {
+  const claimed = String(patch.status || "");
+  return {
+    ok: false,
+    code: claimed === "delivered" ? "DELIVERY_UNCONFIRMED" : "SHIPMENT_NOT_CREATED",
     trackingNumber: null,
-    trackingCarrier: null,
-    error: null,
-    retryCount: 0,
-    idempotencyKey,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    delivered: false,
+    shipped: false,
+    live: false,
+    updated: false,
   };
-  const items = readSupplierOrders();
-  items.push(order);
-  writeSupplierOrders(items);
-  return order;
-}
-
-function updateSupplierOrder(id, patch) {
-  const items = readSupplierOrders();
-  const idx = items.findIndex((o) => o.id === id);
-  if (idx < 0) return null;
-  items[idx] = { ...items[idx], ...patch, updatedAt: new Date().toISOString() };
-  writeSupplierOrders(items);
-  return items[idx];
-}
-
-function createShipment({ orderNumber, fulfillmentId, supplierId, lines, carrier = "DHL" }) {
-  const items = readShipments();
-  const shipment = {
-    id: `shp-${crypto.randomUUID()}`,
-    orderNumber,
-    fulfillmentId,
-    supplierId,
-    carrier,
-    trackingNumber: null,
-    trackingUrl: null,
-    status: "pending",
-    lines,
-    events: [{ status: "pending", at: new Date().toISOString(), message: "Fulfillment created" }],
-    updatedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-  };
-  items.push(shipment);
-  writeShipments(items);
-  return shipment;
-}
-
-function updateShipment(id, patch) {
-  const items = readShipments();
-  const idx = items.findIndex((s) => s.id === id);
-  if (idx < 0) return null;
-  const next = { ...items[idx], ...patch, updatedAt: new Date().toISOString() };
-  if (patch.trackingNumber) {
-    next.trackingUrl = getTrackingUrl(next.carrier, patch.trackingNumber);
-  }
-  if (patch.status) {
-    next.events = [...(items[idx].events || []), { status: patch.status, at: new Date().toISOString() }];
-  }
-  items[idx] = next;
-  writeShipments(items);
-  return items[idx];
 }
 
 function listShipmentsForOrder(orderNumber) {
@@ -175,30 +116,12 @@ function sanitizeShipment(shipment) {
   return safe;
 }
 
-function createReturnRequest({ orderNumber, customerId, items, reason }) {
-  const all = readReturns();
-  const entry = {
-    id: `ret-${crypto.randomUUID()}`,
-    orderNumber,
-    customerId,
-    items,
-    reason,
-    status: "requested",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  all.push(entry);
-  writeReturns(all);
-  return entry;
+function createReturnRequest() {
+  return directRefusal("RETURN_UNVERIFIED");
 }
 
-function updateReturnRequest(id, patch) {
-  const all = readReturns();
-  const idx = all.findIndex((r) => r.id === id);
-  if (idx < 0) return null;
-  all[idx] = { ...all[idx], ...patch, updatedAt: new Date().toISOString() };
-  writeReturns(all);
-  return all[idx];
+function updateReturnRequest() {
+  return directRefusal("RETURN_UNVERIFIED");
 }
 
 module.exports = {

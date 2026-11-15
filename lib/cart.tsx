@@ -15,7 +15,7 @@ import {
   calculateOrderQuote,
   cartLinesToInput,
 } from "@/lib/checkout";
-import { calculateShippingCostForLines, freeShippingRemaining } from "@/lib/checkout/shipping";
+import { calculateShippingCostForLines } from "@/lib/checkout/shipping";
 import { validateCoupon } from "@/lib/checkout/coupons";
 import {
   cartCount,
@@ -85,11 +85,11 @@ interface CartContextValue {
   items: CartLineItem[];
   count: number;
   subtotal: number;
-  shipping: number;
+  shipping: number | null;
   discount: number;
-  vatAmount: number;
-  total: number;
-  freeShippingRemaining: number;
+  vatAmount: number | null;
+  total: number | null;
+  freeShippingRemaining: number | null;
   couponCode: string;
   couponErrorKey: string | null;
   ready: boolean;
@@ -121,7 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [syncing, setSyncing] = useState(false);
   const [lastErrorKey, setLastErrorKey] = useState<string | null>(null);
   const [serverSubtotal, setServerSubtotal] = useState<number | null>(null);
-  const [serverDiscount, setServerDiscount] = useState<number>(0);
+  const [, setServerDiscount] = useState<number>(0);
   const addingRef = useRef(false);
 
   const persistLocal = useCallback((next: CartLineItem[]) => {
@@ -186,33 +186,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totals = useMemo(() => {
     const subtotal = commerceMode && serverSubtotal !== null ? serverSubtotal : cartSubtotal(items);
-    const coupon =
-      commerceMode && serverSubtotal !== null
-        ? { valid: serverDiscount > 0 || Boolean(couponCode), discount: serverDiscount, normalizedCode: couponCode }
-        : validateCoupon(couponCode, subtotal);
-    const discount = coupon.valid ? coupon.discount : 0;
-    const discounted = Math.max(0, subtotal - discount);
+    validateCoupon(couponCode, subtotal);
+    const discount = 0;
     const lineInputs = items.map((item) => ({
       productId: item.productId,
       variantIds: item.variantIds,
       qty: item.qty,
     }));
-    const shipping = calculateShippingCostForLines(discounted, "standard", countryCode, lineInputs);
+    const shipping = calculateShippingCostForLines();
     const quote = calculateOrderQuote(
       cartLinesToInput(lineInputs),
       "standard",
-      coupon.valid ? coupon.normalizedCode : undefined,
+      undefined,
       countryCode
     );
     return {
       subtotal,
       shipping,
       discount,
-      vatAmount: quote?.vatAmount ?? 0,
-      total: quote?.total ?? discounted + shipping,
-      freeShippingRemaining: freeShippingRemaining(discounted, countryCode),
+      vatAmount: quote?.vatAmount ?? null,
+      total: quote?.total ?? null,
+      freeShippingRemaining: null,
     };
-  }, [items, couponCode, countryCode, commerceMode, serverSubtotal, serverDiscount]);
+  }, [items, couponCode, countryCode, commerceMode, serverSubtotal]);
 
   useEffect(() => {
     if (!ready || !shouldUseCrmLoyaltyApi() || !getAccountToken()) return;
@@ -363,16 +359,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setCouponErrorKey(null);
           const result = await commerceApplyCoupon(normalized, customerId);
           setSyncing(false);
-          if (!result.ok) {
-            setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
-            return;
-          }
-          setServerDiscount(result.discount);
-          setCouponCode(result.couponCode || normalized);
-          writeCoupon(result.couponCode || normalized);
-          dispatchCartUpdated();
+          setCouponErrorKey(result.errorKey ?? "SALES_CLOSED");
         })();
-        return true;
+        return false;
       }
 
       const result = validateCoupon(normalized, cartSubtotal(readCart()));
@@ -380,11 +369,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCouponErrorKey(result.errorKey ?? "checkout.couponInvalid");
         return false;
       }
-      writeCoupon(result.normalizedCode || normalized);
-      setCouponCode(result.normalizedCode || normalized);
-      setCouponErrorKey(null);
-      dispatchCartUpdated();
-      return true;
+      setCouponErrorKey("SALES_CLOSED");
+      return false;
     },
     [commerceMode, customerId]
   );

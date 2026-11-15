@@ -3,7 +3,6 @@
  */
 const crypto = require("crypto");
 const { db } = require("./db");
-const jobQueue = require("./jobQueue");
 const { SCHEDULE_TYPE, JOB_PRIORITY } = require("../core/jobConstants");
 
 function newId() {
@@ -112,40 +111,8 @@ function disableSchedule(id) {
   return getSchedule(id);
 }
 
-function tickScheduler(now = new Date()) {
-  const due = db.prepare(`
-    SELECT * FROM core_scheduled_jobs
-    WHERE enabled = 1 AND next_run_at <= ?
-    ORDER BY next_run_at ASC LIMIT 10
-  `).all(now.toISOString());
-
-  const enqueued = [];
-  for (const row of due) {
-    const schedule = mapRow(row);
-    const job = jobQueue.enqueueJob({
-      jobType: schedule.jobType,
-      payload: { ...schedule.payload, scheduleName: schedule.name },
-      priority: schedule.priority,
-      maxRetries: schedule.maxRetries,
-      scheduleId: schedule.id,
-      createdBy: schedule.createdBy,
-    });
-    enqueued.push(job);
-
-    if (schedule.scheduleType === SCHEDULE_TYPE.ONE_TIME) {
-      db.prepare(`
-        UPDATE core_scheduled_jobs SET enabled = 0, last_run_at = ?, run_count = run_count + 1,
-        updated_at = CURRENT_TIMESTAMP WHERE id = ?
-      `).run(now.toISOString(), schedule.id);
-    } else {
-      const next = computeNextRun(schedule, now);
-      db.prepare(`
-        UPDATE core_scheduled_jobs SET next_run_at = ?, last_run_at = ?, run_count = run_count + 1,
-        updated_at = CURRENT_TIMESTAMP WHERE id = ?
-      `).run(next, now.toISOString(), schedule.id);
-    }
-  }
-  return enqueued;
+function tickScheduler() {
+  return [];
 }
 
 module.exports = {

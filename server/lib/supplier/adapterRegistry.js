@@ -1,4 +1,5 @@
 const { MockSupplierAdapter } = require("./mockAdapter");
+const { UnknownSupplierAdapter } = require("./baseAdapter");
 
 const adapters = new Map();
 
@@ -7,13 +8,9 @@ function registerAdapter(adapter) {
 }
 
 function getAdapter(id) {
-  if (!adapters.has(id)) {
-    if (id === "mock" || !id) {
-      registerAdapter(new MockSupplierAdapter());
-    }
-  }
-  const adapter = adapters.get(id || "mock");
-  if (!adapter) throw new Error(`Unknown supplier adapter: ${id}`);
+  if (id === "mock" && !adapters.has("mock")) registerAdapter(new MockSupplierAdapter());
+  const adapter = adapters.get(id);
+  if (!adapter) return new UnknownSupplierAdapter(id || null);
   return adapter;
 }
 

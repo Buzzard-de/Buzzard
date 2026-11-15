@@ -12,7 +12,7 @@ function emptyProduct(overrides = {}) {
     images: [],
     price: null,
     currency: "EUR",
-    stock: 0,
+    stock: null,
     availability: "unknown",
     supplierId: null,
     raw: null,

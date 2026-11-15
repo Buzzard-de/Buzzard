@@ -2,8 +2,19 @@ const fs = require("fs");
 const path = require("path");
 const { CATEGORY_VISIBILITY, READINESS_STATUS } = require("../core/constants");
 
-const dataDir = path.join(__dirname, "..", "..", "data");
-const visibilityFile = path.join(dataDir, "buzzard_category_visibility.json");
+function storePaths() {
+  const dataDir = process.env.BUZZARD_VISIBILITY_DIR
+    ? path.resolve(process.env.BUZZARD_VISIBILITY_DIR)
+    : path.join(__dirname, "..", "..", "data");
+  return {
+    dataDir,
+    visibilityFile: path.join(dataDir, "buzzard_category_visibility.json"),
+  };
+}
+
+function taxonomyFile() {
+  return path.join(__dirname, "..", "..", "data", "buzzard_categories.json");
+}
 
 const CUSTOMER_VISIBLE = new Set([
   CATEGORY_VISIBILITY.ACTIVE,
@@ -11,11 +22,13 @@ const CUSTOMER_VISIBLE = new Set([
 ]);
 
 function ensureDataDir() {
+  const { dataDir } = storePaths();
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 }
 
 function readStore() {
   ensureDataDir();
+  const { visibilityFile } = storePaths();
   if (!fs.existsSync(visibilityFile)) {
     return { version: "1.0.0", categories: {} };
   }
@@ -28,7 +41,52 @@ function readStore() {
 
 function writeStore(store) {
   ensureDataDir();
+  const { visibilityFile } = storePaths();
   fs.writeFileSync(visibilityFile, JSON.stringify(store, null, 2), "utf8");
+}
+
+let knownCategoryCache = null;
+let knownCategoryStamp = "";
+
+function collectCategoryIds(nodes, into) {
+  for (const node of nodes || []) {
+    if (node && typeof node.id === "string" && node.id) into.add(node.id);
+    if (node?.children) collectCategoryIds(node.children, into);
+  }
+}
+
+function knownCategoryIds() {
+  const file = taxonomyFile();
+  let stamp = "";
+  try {
+    const stat = fs.statSync(file);
+    stamp = `${stat.mtimeMs}:${stat.size}`;
+  } catch {
+    return new Set();
+  }
+  if (knownCategoryCache && knownCategoryStamp === stamp) return knownCategoryCache;
+  const doc = JSON.parse(fs.readFileSync(file, "utf8"));
+  const ids = new Set();
+  collectCategoryIds(doc.categories || doc.main_categories || [], ids);
+  knownCategoryCache = ids;
+  knownCategoryStamp = stamp;
+  return ids;
+}
+
+function visibilityError(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+}
+
+function applyReadiness(previous, status) {
+  const readiness = {
+    ...defaultReadiness(),
+    ...(previous || {}),
+  };
+  if (process.env.BUZZARD_SALES_ENABLED !== "1") readiness.payment = READINESS_STATUS.BLOCKED;
+  readiness.overall = computeOverallReadiness(readiness, status);
+  return readiness;
 }
 
 function defaultReadiness() {
@@ -93,23 +151,18 @@ function getCategoryStatus(categoryId) {
   };
 }
 
-function setCategoryStatus(categoryId, status, { updatedBy, readiness } = {}) {
-  const allowed = Object.values(CATEGORY_VISIBILITY);
-  if (!allowed.includes(status)) {
-    throw new Error(`Invalid category status: ${status}`);
+function setCategoryStatus(categoryId, status, { updatedBy } = {}) {
+  if (!Object.values(CATEGORY_VISIBILITY).includes(status)) {
+    throw visibilityError("CATEGORY_VISIBILITY_INVALID", "Invalid category visibility");
+  }
+  if (!knownCategoryIds().has(categoryId)) {
+    throw visibilityError("CATEGORY_NOT_FOUND", "Unknown category");
   }
   const store = readStore();
   const prev = store.categories[categoryId] || {};
   store.categories[categoryId] = {
     status,
-    readiness: {
-      ...defaultReadiness(),
-      ...(readiness || prev.readiness || {}),
-      overall: computeOverallReadiness(
-        { ...defaultReadiness(), ...(readiness || prev.readiness || {}) },
-        status
-      ),
-    },
+    readiness: applyReadiness(prev.readiness, status),
     updatedBy: updatedBy || null,
     updatedAt: new Date().toISOString(),
   };

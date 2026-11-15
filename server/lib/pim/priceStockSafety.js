@@ -1,6 +1,7 @@
 /**
  * Part 16 — Price and stock safety validation (no invented supplier prices).
  */
+const { resolveCategoryMargin } = require("../commerce/pricingPolicy");
 const VALID_CURRENCIES = new Set(["EUR", "USD", "GBP", "CHF", "PLN", "CZK"]);
 
 function validateCurrency(currency) {
@@ -30,7 +31,7 @@ function validateRetailPrice(price) {
 }
 
 function validateStock(stock) {
-  if (stock == null || stock === "") return { ok: true, warning: "STOCK_UNKNOWN", value: 0 };
+  if (stock == null || stock === "") return { ok: true, warning: "STOCK_UNKNOWN", value: null, stockVerified: false };
   const qty = Number(stock);
   if (!Number.isFinite(qty)) return { ok: false, code: "STOCK_INVALID" };
   if (qty < 0) return { ok: false, code: "STOCK_INVALID" };
@@ -38,17 +39,24 @@ function validateStock(stock) {
   return { ok: true, value: Math.floor(qty) };
 }
 
-function validateMargin(purchasePrice, retailPrice, { minimumMargin = 0.12 } = {}) {
+function validateMargin(purchasePrice, retailPrice, options = {}) {
   const purchase = Number(purchasePrice);
   const retail = Number(retailPrice);
+  const categoryMargin = resolveCategoryMargin(options.category);
   if (!Number.isFinite(purchase) || !Number.isFinite(retail) || retail <= 0) {
-    return { ok: true, warning: "MARGIN_NOT_COMPUTED" };
+    return { ok: true, warning: "MARGIN_NOT_COMPUTED", marginRule: categoryMargin.rule };
   }
   const margin = (retail - purchase) / retail;
-  if (margin < minimumMargin) {
-    return { ok: false, code: "MARGIN_BELOW_MINIMUM", margin: Number(margin.toFixed(4)) };
+  if (margin + 1e-9 < categoryMargin.margin) {
+    return {
+      ok: false,
+      code: "MARGIN_BELOW_MINIMUM",
+      margin: Number(margin.toFixed(4)),
+      minimumMargin: categoryMargin.margin,
+      marginRule: categoryMargin.rule,
+    };
   }
-  return { ok: true, margin: Number(margin.toFixed(4)) };
+  return { ok: true, margin: Number(margin.toFixed(4)), minimumMargin: categoryMargin.margin, marginRule: categoryMargin.rule };
 }
 
 function validatePriceStockRecord(record, options = {}) {
@@ -78,8 +86,10 @@ function validatePriceStockRecord(record, options = {}) {
       purchasePrice: purchaseCheck.value ?? null,
       retailPrice: retailCheck.value ?? null,
       currency: currencyCheck.value || record.currency || "EUR",
-      stock: stockCheck.value ?? 0,
-      stockStatus: (stockCheck.value ?? 0) > 0 ? "in_stock" : "out_of_stock",
+      stock: null,
+      reportedStock: stockCheck.value ?? null,
+      stockStatus: "UNKNOWN",
+      stockVerified: false,
     },
   };
 }

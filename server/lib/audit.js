@@ -28,7 +28,7 @@ function logAudit({ userId, userEmail, action, entityType, entityId, field, oldV
   entries.push({
     id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     userId,
-    userEmail,
+    userEmail: null,
     action,
     entityType,
     entityId,
@@ -41,7 +41,7 @@ function logAudit({ userId, userEmail, action, entityType, entityId, field, oldV
 }
 
 function listAudit(limit = 100) {
-  return readLog().slice(-limit).reverse();
+  return readLog().slice(-limit).reverse().map((row) => ({ ...row, userEmail: null }));
 }
 
 module.exports = { logAudit, listAudit };

@@ -32,10 +32,10 @@ export default function ShopProviders({ children }: { children: React.ReactNode 
               <GlobalStructuredData />
               <StorefrontApiBanner />
               <LanguageBackground />
+              <ConsentBanner />
               {children}
               <LocaleHead />
               <PageViewTracker />
-              <ConsentBanner />
               <AiChatWidget />
               <MarketingScripts />
               <MegaMenuOverlay />

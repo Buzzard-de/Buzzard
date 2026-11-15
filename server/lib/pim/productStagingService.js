@@ -148,7 +148,7 @@ function promoteToPimCore(stagingId, { actorId, dryRun = true } = {}) {
     category: n.buzzardCategory || n.supplierCategory,
     brand: n.brand,
     price: n.retailPrice || n.purchasePrice,
-    stock: n.stock ?? 0,
+    stock: null,
     supplier: record.sourceSupplierCode,
     images: n.images || [],
     metadata: {
@@ -165,7 +165,13 @@ function promoteToPimCore(stagingId, { actorId, dryRun = true } = {}) {
       dryRun: true,
       wouldCreate: payload,
       stagingId,
+      productCreated: false,
+      published: false,
     };
+  }
+
+  if (!require("../salesMode").isSalesEnabled()) {
+    return { ok: false, dryRun: false, code: "SALES_CLOSED", stored: false, productCreated: false, published: false, stagingId };
   }
 
   assertProductionSafety();

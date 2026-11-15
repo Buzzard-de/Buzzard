@@ -564,6 +564,9 @@ export const catalog: TranslationTree = {
     inquiryCta: "Anfrage senden",
     cartNotice:
       "Katalogmodus — kein Online-Checkout. Legen Sie Artikel in den Warenkorb und senden Sie uns Ihre Anfrage.",
+    pageTitle: "Produkte & Sortiment",
+    pageLead: "Große Auswahl in allen Kategorien — online durchstöbern und unverbindlich anfragen.",
+    liveAttached: "{count} Katalogeinträge aus der Schnittstelle",
   },
   contactForm: {
     nameLabel: "Ihr Name",

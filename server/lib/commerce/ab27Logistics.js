@@ -93,27 +93,35 @@ function screenTrade({ origin = "DE", destination, goodsCode, value = 0, persist
   };
 }
 
-function quoteLane({ destination, weightKg = 1 } = {}) {
+function quoteLane({ destination } = {}) {
   const dest = String(destination || "").toUpperCase();
   const destKey = dest === "GR" ? "EL" : dest;
   if (!COUNTRY_RULES[destKey]) {
-    return { ok: false, code: "UNKNOWN_DESTINATION", blocked: true };
+    return {
+      ok: false,
+      code: "UNKNOWN_DESTINATION",
+      blocked: true,
+      shippingCost: null,
+      commercialEligibility: "BLOCKED",
+      liveCarrier: false,
+    };
   }
-  const base = destKey === "DE" ? 4.9 : 8.9;
-  const estimate = Math.round((base + Number(weightKg) * 1.2) * 100) / 100;
   return {
-    ok: true,
+    ok: false,
     destination: destKey,
-    currency: "EUR",
-    shippingEstimate: estimate,
+    currency: null,
+    shippingEstimate: null,
+    shippingCost: null,
+    shippingPrice: "UNKNOWN",
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
     dryRun: true,
     liveCarrier: false,
-    priceInvented: true,
+    integration: "BLOCKED",
+    priceInvented: false,
+    inventedPriceDiscarded: true,
     estimateIsNotPrice: true,
     notForAutoselect: true,
-    transitDays: COUNTRY_RULES[destKey].typicalTransitDays,
-    transitDaysInvented: true,
-    returnsWindowDays: COUNTRY_RULES[destKey].returnsWindowDays,
   };
 }
 
@@ -141,26 +149,33 @@ function compareCarriers({ destination, weightKg = 1, preferSpeed = false } = {}
   if (!row) return { ok: false, code: "UNKNOWN_DESTINATION" };
   const options = ["DHL", "UPS", row.DPD ? "DPD" : null, row.GLS ? "GLS" : null, row.HERMES ? "HERMES" : null]
     .filter(Boolean)
-    .map((carrier, index) => {
-      const days = preferSpeed && carrier === "DHL" ? 1 : 2 + index;
-      const cost = Math.round((6 + weightKg * (carrier === "UPS" ? 1.8 : 1.2) + index) * 100) / 100;
-      return { carrier, costEur: cost, transitDays: days, liveRate: false, insurance: "optional" };
-    });
-  const selected = preferSpeed
-    ? options.reduce((a, b) => (a.transitDays <= b.transitDays ? a : b))
-    : options.reduce((a, b) => (a.costEur <= b.costEur ? a : b));
+    .map((carrier) => ({
+      carrier,
+      costEur: null,
+      transitDays: null,
+      liveRate: false,
+      integration: "BLOCKED",
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+    }));
   return {
-    ok: true,
+    ok: false,
     destination: destKey,
     options,
-    selected,
-    selectionReason: preferSpeed ? "speed_then_cost" : "cost_then_coverage",
+    selected: null,
+    selectionReason: null,
+    preferSpeedIgnored: preferSpeed === true,
     liveCarrier: false,
     sandbox: false,
     mock: true,
-    priceInvented: true,
+    priceInvented: false,
+    inventedPriceDiscarded: true,
     estimateIsNotPrice: true,
     notForAutoselect: true,
+    shippingCost: null,
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    integration: "BLOCKED",
   };
 }
 

@@ -27,6 +27,23 @@ describe("Server Market Engine Registry", () => {
     expect(marketEngine.validateMarketRequest("XX").valid).toBe(false);
   });
 
+  it("does not invent a 20 percent rate for a market without an overlay", () => {
+    expect(marketEngine.getMarket("XX")).toBeNull();
+    const ctx = marketEngine.getVatContext({
+      sellerCountry: "XX",
+      buyerCountry: "XX",
+      customerType: "B2C",
+    });
+    expect(ctx.rate).toBeNull();
+    expect(ctx.rate).not.toBe(0.2);
+    expect(ctx.rate).not.toBe(0.19);
+    const de = marketEngine.getMarket("DE").vat;
+    expect(de.official).toBe(false);
+    expect(de.verified).toBe(false);
+    expect(de.source).toBe("UNVERIFIED_LOCAL_SNAPSHOT");
+    expect(de.standardRate).not.toBe(0.2);
+  });
+
   it("B2B intra-EU reverse charge on server", () => {
     const ctx = marketEngine.getVatContext({
       sellerCountry: "DE",

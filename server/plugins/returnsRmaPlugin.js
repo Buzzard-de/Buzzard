@@ -64,7 +64,7 @@ module.exports = {
       const body = {
         ...(req.body || {}),
         customerId: session.customerId,
-        customerEmail: session.email,
+        customerEmail: null,
       };
       const result = returnsRma.createReturn(body);
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
@@ -155,7 +155,8 @@ module.exports = {
 
     app.post("/api/admin/returns-rma/returns/:id/note", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      return res.json(returnsRma.addReturnNote(req.params.id, req.body || {}));
+      const result = returnsRma.addReturnNote();
+      return res.status(result.status || 409).json({ ok: false, error: result.error, code: result.code, stored: false });
     });
   },
 };

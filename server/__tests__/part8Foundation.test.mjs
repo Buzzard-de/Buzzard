@@ -95,11 +95,9 @@ describe("cartService", () => {
     expect(price.priceSnapshot).toBeGreaterThan(0);
 
     const updated = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_cart" });
-    if (updated.error === "insufficient_stock") {
-      expect(updated.dryRun).toBe(true);
-    } else {
-      expect(updated.items?.length || updated.cart?.items?.length).toBeGreaterThan(0);
-    }
+    expect(updated.code).toBe("SALES_CLOSED");
+    expect(updated.stored).toBe(false);
+    expect(updated.purchased).toBe(false);
   });
 });
 
@@ -109,13 +107,14 @@ describe("checkoutService state machine", () => {
     const cartService = require("../lib/commerce/cartService.js");
     const product = ensureVisibleProduct();
     const cart = cartService.createCart({ sessionId: "state-test", customerId: "cust_vitest_chk" });
-    cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_chk" });
+    const added = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_chk" });
+    expect(added.stored).toBe(false);
 
     const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN", customerId: "cust_vitest_chk" });
-    expect(chk.id || chk.checkout?.id).toBeTruthy();
-    const checkoutId = chk.id || chk.checkout?.id;
-    const bad = checkoutService.transitionCheckout(checkoutId, "COMPLETED");
-    expect(bad.error).toBe("illegal_state_transition");
+    expect(chk.code).toBe("SALES_CLOSED");
+    expect(chk.checkoutCreated).toBe(false);
+    const bad = checkoutService.transitionCheckout("missing-checkout", "COMPLETED");
+    expect(bad.error).toBe("checkout_not_found");
   });
 });
 
@@ -224,6 +223,7 @@ describe("webhookFoundation", () => {
       signature: "x",
       secret: "secret",
     });
+    expect(result.accepted).toBe(false);
     expect(result.orderCreated).toBe(false);
     expect(result.paymentCreated).toBe(false);
   });

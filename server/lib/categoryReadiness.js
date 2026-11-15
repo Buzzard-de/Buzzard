@@ -48,7 +48,8 @@ function checkStock(categoryId) {
     JOIN categories c ON p.category_id = c.id
     WHERE LOWER(c.name) LIKE ? OR CAST(c.id AS TEXT) = ?
   `).get(`%${categoryId}%`, categoryId);
-  if ((row.total || 0) > 0) return { status: CHECK_STATUS.PASS, detail: `stock=${row.total}` };
+  if (row.total == null) return { status: CHECK_STATUS.UNKNOWN, detail: "MISSING_STOCK" };
+  if (row.total > 0) return { status: CHECK_STATUS.PASS, detail: `stock=${row.total}` };
   return { status: CHECK_STATUS.WARNING, detail: "Zero stock" };
 }
 
@@ -56,8 +57,12 @@ async function checkSupplier() {
   try {
     const adapter = getAdapter("mock");
     const health = await adapter.healthCheck();
-    if (health.ok) return { status: CHECK_STATUS.PASS, detail: "Mock supplier OK" };
-    return { status: CHECK_STATUS.FAIL, detail: health.error || "Supplier down" };
+    return {
+      status: CHECK_STATUS.FAIL,
+      detail: health.status || "BLOCKED_EXTERNAL",
+      live: false,
+      mock: health.mock === true,
+    };
   } catch (err) {
     return { status: CHECK_STATUS.UNKNOWN, detail: err.message };
   }

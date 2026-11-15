@@ -281,7 +281,8 @@ describe("import and sourcing", () => {
     expect(ranked.items[0].warehouse.inferredFromSupplierCountry).toBe(false);
     const tiny = previewSalePrice({ supplierPrice: 1, markupPercent: 0, minimumMarginPercent: 0 });
     expect(tiny.netProfit).toBeGreaterThanOrEqual(MIN_NET_PROFIT_EUR);
-    expect(pricing.calculateSalePrice({ supplierPrice: 100 }).amount).toBe(138);
+    const policyPrice = Math.round((100 / (1 - 0.07)) * 100) / 100;
+    expect(pricing.calculateSalePrice({ supplierPrice: 100, markupPercent: 38 }).amount).toBe(policyPrice);
   });
 });
 
@@ -295,5 +296,26 @@ describe("authorization and safety", () => {
     expect(process.env.BUZZARD_PRODUCT_SOT_ACTIVE === "1").toBe(false);
     expect(process.env.BUZZARD_LIVE_PAYMENTS === "1").toBe(false);
     expect(require("../lib/salesMode").isSalesEnabled()).toBe(false);
+  });
+});
+
+describe("offer ranking", () => {
+  it("does not score a missing shipping amount as a zero landed cost", () => {
+    const { rankOffers } = require("../lib/agriculturalMachinery/sourcing");
+    const store = {
+      offers: new Map([
+        ["missing", { id: "missing", partId: "p", supplierId: "s", supplierPrice: 100, shippingCost: null, currency: "EUR" }],
+        ["known", { id: "known", partId: "p", supplierId: "s", supplierPrice: 100, shippingCost: 20, currency: "EUR" }],
+      ]),
+      suppliers: new Map(),
+      warehouses: new Map(),
+    };
+    const ranked = rankOffers(store, { partId: "p", skipCompatibility: true });
+    const missing = ranked.items.find((row) => row.offerId === "missing");
+    const known = ranked.items.find((row) => row.offerId === "known");
+    expect(missing.factors.landedCost).toBeNull();
+    expect(missing.factors.shippingCost).toBeNull();
+    expect(known.factors.landedCost).toBe(120);
+    expect(known.score).toBeGreaterThan(missing.score);
   });
 });

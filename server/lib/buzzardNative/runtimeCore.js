@@ -14,6 +14,7 @@ const { createMotionEngine } = require("./engines/motion");
 const { createRealtimeEngine } = require("./engines/realtime");
 const { evaluateEgress } = require("../security/egressPolicy");
 const { ids: registeredAgents } = require("./core/identityRegistry");
+const { redact } = require("../privacyRedact");
 
 const ACTORS = Object.freeze(["sinan_bey", "pusat", "esat_bey", "dogu_bey", ...registeredAgents().filter((id) => !["sinan_bey", "pusat", "esat_bey", "dogu_bey"].includes(id))]);
 
@@ -24,10 +25,17 @@ function createNativeRuntime({ maxJobs = 8 } = {}) {
   const audit = [];
   const models = [];
   const context = new Map();
+  const seenPublish = new Map();
   let jobs = 0;
 
   function log(kind, payload) {
-    const row = { id: `nai_${crypto.randomBytes(4).toString("hex")}`, kind, at: new Date().toISOString(), payload };
+    const row = {
+      id: `nai_${crypto.randomBytes(4).toString("hex")}`,
+      kind,
+      at: new Date().toISOString(),
+      payload: redact(payload),
+      result: payload && payload.result ? payload.result : "UNKNOWN",
+    };
     audit.push(row);
     return row;
   }
@@ -74,23 +82,87 @@ function createNativeRuntime({ maxJobs = 8 } = {}) {
     };
   }
 
-  function publish({ fromId, toId, topic, body, taskId, classification = "public", clearance = "shared" }) {
+  function publish(input = {}) {
+    const {
+      fromId,
+      toId,
+      topic,
+      body,
+      taskId,
+      classification = "public",
+      clearance = "shared",
+    } = input;
+    const key = input.idempotencyKey || taskId || null;
+    if (key && seenPublish.has(key)) {
+      return {
+        ok: false,
+        status: "UNKNOWN",
+        code: "DUPLICATE_EVENT",
+        duplicate: true,
+        queued: false,
+        sent: false,
+        deliveryConfirmed: false,
+        customerNotified: false,
+        live: false,
+        commercial: false,
+        message: null,
+      };
+    }
+    let status = "UNKNOWN";
+    let code = "IN_PROCESS_NOT_DELIVERY";
+    if (input.timeout === true || input.forceTimeout === true) {
+      status = "FAILED";
+      code = "TIMEOUT";
+    } else if (input.networkError === true) {
+      status = "FAILED";
+      code = "NETWORK_ERROR";
+    } else if (input.mock === true || input.demo === true) {
+      status = "BLOCKED_EXTERNAL";
+      code = "MOCK_NOT_LIVE";
+    } else if (["shipment", "tracking", "delivery", "notification", "email", "sms", "whatsapp", "refund", "order"].includes(String(topic || ""))) {
+      status = "BLOCKED_EXTERNAL";
+      code = "PROVIDER_NOT_LIVE";
+    }
     const msg = {
       fromEngine: fromId,
       toEngine: toId,
       fromId,
       toId,
       topic,
-      body,
+      body: redact(body),
       taskId: taskId || `t_${crypto.randomBytes(3).toString("hex")}`,
       at: new Date().toISOString(),
       clearance,
       classification,
-      result: "queued",
+      result: status,
+      customerNotified: false,
     };
     bus.push(msg);
-    log("bus.publish", { fromId, toId, topic, taskId: msg.taskId, classification });
-    return { ok: true, queued: true, live: false, message: msg };
+    if (key) seenPublish.set(key, code);
+    log("bus.publish", {
+      fromId,
+      toId,
+      topic,
+      taskId: msg.taskId,
+      classification,
+      result: "blocked",
+      code,
+      status,
+    });
+    return {
+      ok: false,
+      status,
+      code,
+      queued: false,
+      sent: false,
+      deliveryConfirmed: false,
+      customerNotified: false,
+      live: false,
+      mock: input.mock === true || input.demo === true,
+      commercial: false,
+      callerFlagIgnored: Boolean(input.sent === true || input.delivered === true || input.acknowledged === true || input.live === true),
+      message: msg,
+    };
   }
 
   function enqueue({ engineId, actorId, payload }) {
@@ -107,10 +179,19 @@ function createNativeRuntime({ maxJobs = 8 } = {}) {
         return { ok: false, code: "EGRESS_DENIED", egress: eg };
       }
     }
-    const task = { id: `nq_${crypto.randomBytes(4).toString("hex")}`, engineId, actorId, payload, status: "queued" };
+    const task = {
+      id: `nq_${crypto.randomBytes(4).toString("hex")}`,
+      engineId,
+      actorId,
+      payload: redact(payload),
+      status: "queued",
+      customerNotified: false,
+      sent: false,
+      live: false,
+    };
     queue.push(task);
-    log("queue.enqueue", { id: task.id, engineId });
-    return { ok: true, task };
+    log("queue.enqueue", { id: task.id, engineId, result: "UNKNOWN" });
+    return { ok: true, task, customerNotified: false, sent: false, live: false, commercial: false };
   }
 
   function runNext() {

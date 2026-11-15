@@ -11,7 +11,17 @@ function createRealtimeEngine() {
     executeImpl(input) {
       const op = input.op || "message";
       if (op === "message") {
-        return { op, delivered: true, transport: "in_process", encryptedFlag: false, liveMedia: false };
+        return {
+          op,
+          delivered: false,
+          status: "UNKNOWN",
+          code: "IN_PROCESS_NOT_DELIVERY",
+          transport: "in_process",
+          encryptedFlag: false,
+          liveMedia: false,
+          customerNotified: false,
+          sent: false,
+        };
       }
       if (op === "room") {
         const room = signaling.createRoom({ participants: input.participants || ["sinan_bey", "pusat"] });

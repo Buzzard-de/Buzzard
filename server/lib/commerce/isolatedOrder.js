@@ -141,9 +141,12 @@ function runIsolatedOrder({ scenario = "happy", store = createStore(), orderId }
   const id = orderId || `SYN-${crypto.randomBytes(4).toString("hex")}`;
   if (scenario === "duplicate_order") {
     const first = runIsolatedOrder({ scenario: "happy", store, orderId: id || "SYN-DUP" });
-    first.events = [{ ok: true, orderId: first.orderId, live: false }, { ok: false, code: "DUPLICATE_ORDER" }];
-    first.scenario = "duplicate_order";
-    return first;
+    const stored = store.get(first.orderId) || first;
+    stored.events = [{ ok: true, orderId: first.orderId, live: false }, { ok: false, code: "DUPLICATE_ORDER", moneyMoved: false }];
+    stored.scenario = "duplicate_order";
+    stored.duplicate = true;
+    stored.live = false;
+    return store.put(stored);
   }
 
   const order = baseOrder({ orderId: id, scenario });
@@ -220,19 +223,27 @@ function runIsolatedOrder({ scenario = "happy", store = createStore(), orderId }
   order.stages.notify = { sent: note.sent === true, channel: "email_draft" };
   order.stages.returns = { opened: scenario.includes("refund"), live: false };
   if (scenario === "partial_refund") {
-    const after = applyCustomerRefund({ estimatedProfit: 12, refund: 3 });
-    post(order, "CUSTOMER_REFUND", 3, "partial");
+    const after = applyCustomerRefund({
+      estimatedProfit: 12,
+      refund: 3,
+      orderId: id,
+      customerId: order.customerId,
+    });
     order.stages.refunds = after;
     order.actualProfit = after.actualProfit;
-    order.stages.supplierReceivable = { amount: 0, assumed: false };
-    order.events.push({ step: "refund", ...after });
+    order.stages.supplierReceivable = { amount: null, assumed: false, verified: false };
+    order.events.push({ step: "refund", refunded: after.refunded, code: after.code });
   } else if (scenario === "supplier_refuses_reimbursement") {
-    post(order, "CUSTOMER_REFUND", 5, "full");
-    post(order, "SUPPLIER_CREDIT", 0, "refused");
-    order.stages.supplierReceivable = { amount: 0, assumed: false };
-    order.events.push({ step: "supplier_credit", assumed: false, amount: 0 });
+    const refused = applyCustomerRefund({
+      estimatedProfit: 12,
+      orderId: id,
+      customerId: order.customerId,
+      supplierReimbursement: null,
+    });
+    order.stages.refunds = refused;
+    order.stages.supplierReceivable = { amount: null, assumed: false, verified: false };
+    order.events.push({ step: "supplier_credit", assumed: false, amount: null, verified: false });
   } else if (scenario === "financial_mismatch") {
-    post(order, "CUSTOMER_REFUND", 5, "refund");
     post(order, "SUPPLIER_CREDIT", 5, "assumed");
   }
   const sanctions = screen({ origin: "DE", destination: "FR", product: "pad", endUser: "retail" });

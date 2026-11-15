@@ -41,8 +41,8 @@ function runMatrix({
     locale: "de",
   });
   const refundGate = refund();
-  const afterRefund = applyCustomerRefund({ estimatedProfit: price.estimatedProfit || 0, refund: 2 });
-  const tax = split({ netProfit: afterRefund.actualProfit || 0, taxEstimate: 1, country });
+  const afterRefund = applyCustomerRefund({ estimatedProfit: price.estimatedProfit, refund: 2 });
+  const tax = split({ netProfit: Number.isFinite(price.net) ? price.net : undefined, taxEstimate: 1, country });
   const pay = initiateTransfer();
 
   return {

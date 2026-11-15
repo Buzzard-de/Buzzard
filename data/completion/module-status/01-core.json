@@ -1,0 +1,11 @@
+{
+  "id": "core",
+  "phase": 1,
+  "status": "VERIFIED_PARTIAL",
+  "classification": "existing_but_incomplete",
+  "engines": 11,
+  "anyLive": false,
+  "evidence": "engineRegistry.snapshot and ten-module queue restart test",
+  "missing": ["production health endpoint proof", "measured queue latency", "measured memory use"],
+  "liveVerified": false
+}

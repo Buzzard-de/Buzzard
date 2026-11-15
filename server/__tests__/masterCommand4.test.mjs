@@ -50,7 +50,9 @@ describe("master command 4 special-16", () => {
     expect(carrierMatrix()).toHaveLength(27);
     const quote = compareCarriers({ destination: "FR", weightKg: 2, preferSpeed: true });
     expect(quote.liveCarrier).toBe(false);
-    expect(quote.selected.carrier).toBeTruthy();
+    expect(quote.selected).toBeNull();
+    expect(quote.commercialEligibility).toBe("BLOCKED");
+    expect(quote.shippingCost).toBeNull();
     expect(quoteLane({ destination: "XX" }).blocked).toBe(true);
   });
 

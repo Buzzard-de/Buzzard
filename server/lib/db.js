@@ -1,17 +1,267 @@
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
-const Database = require("better-sqlite3");
-const { resolveDbPath, ensureDbDirectory, getPersistenceInfo } = require("./dbPaths");
+const { getPersistenceInfo } = require("./dbPaths");
 
-const dataDir = path.join(__dirname, "..", "data");
-fs.mkdirSync(dataDir, { recursive: true });
+const COMMERCE_DB = path.resolve(__dirname, "..", "data", "buzzard.db");
 
-const dbPath = ensureDbDirectory(resolveDbPath());
-const db = new Database(dbPath);
-db.pragma("busy_timeout = 8000");
-db.pragma("foreign_keys = ON");
+const READ_ONLY = Symbol("buzzard.db.READ_ONLY");
+const WRITE_ENABLED = Symbol("buzzard.db.WRITE_ENABLED");
+const MODE_NAME = new Map([
+  [READ_ONLY, "READ_ONLY"],
+  [WRITE_ENABLED, "WRITE_ENABLED"],
+]);
 
-db.exec(`
+let handle = null;
+let activePath = null;
+let activeMode = "UNINITIALIZED";
+
+function refusal(code) {
+  const err = new Error(code);
+  err.code = code;
+  return err;
+}
+
+function salesAllowsInitialization() {
+  try {
+    return require("./salesMode").isSalesEnabled() === true;
+  } catch {
+    return false;
+  }
+}
+
+function isProtected(candidate) {
+  if (typeof candidate !== "string" || !candidate.trim() || candidate.includes("\0")) return true;
+  const resolved = path.resolve(candidate.trim());
+  const base = path.basename(resolved);
+  if (!base || base === "buzzard.db" || base.startsWith("buzzard_guardian")) return true;
+  const marker = `${path.sep}server${path.sep}data`;
+  if (resolved.endsWith(marker) || resolved.includes(`${marker}${path.sep}`)) return true;
+  return false;
+}
+
+function sameCommerceFile(candidate) {
+  if (!fs.existsSync(COMMERCE_DB) || !fs.existsSync(candidate)) return false;
+  try {
+    const left = fs.realpathSync(candidate);
+    const right = fs.realpathSync(COMMERCE_DB);
+    if (left === right) return true;
+    const leftStat = fs.statSync(left);
+    const rightStat = fs.statSync(right);
+    return leftStat.ino === rightStat.ino && leftStat.dev === rightStat.dev;
+  } catch {
+    return true;
+  }
+}
+
+function canonicalizeMissing(resolved) {
+  const parent = path.dirname(resolved);
+  const base = path.basename(resolved);
+  let parentListed;
+  try {
+    parentListed = fs.lstatSync(parent);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (!parentListed.isDirectory() && !parentListed.isSymbolicLink()) throw refusal("DATA_PATH_REFUSED");
+  let parentReal;
+  try {
+    parentReal = fs.realpathSync(parent);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (!fs.statSync(parentReal).isDirectory()) throw refusal("DATA_PATH_REFUSED");
+  const canonical = path.join(parentReal, base);
+  if (isProtected(canonical) || isProtected(parentReal) || sameCommerceFile(canonical)) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  return canonical;
+}
+
+function canonicalizeRequested(requested) {
+  if (typeof requested !== "string" || !requested.trim() || requested.includes("\0")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const resolved = path.resolve(requested.trim());
+  if (isProtected(resolved)) throw refusal("DATA_PATH_REFUSED");
+  let listed;
+  try {
+    listed = fs.lstatSync(resolved);
+  } catch (err) {
+    if (!err || err.code !== "ENOENT") throw refusal("DATA_PATH_REFUSED");
+    return canonicalizeMissing(resolved);
+  }
+  if (listed.isSymbolicLink()) {
+    let target;
+    try {
+      target = fs.realpathSync(resolved);
+    } catch {
+      throw refusal("DATA_PATH_REFUSED");
+    }
+    if (isProtected(target) || sameCommerceFile(target)) throw refusal("DATA_PATH_REFUSED");
+    if (!fs.statSync(target).isFile()) throw refusal("DATA_PATH_REFUSED");
+    return target;
+  }
+  if (!listed.isFile()) throw refusal("DATA_PATH_REFUSED");
+  let canonical;
+  try {
+    canonical = fs.realpathSync(resolved);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isProtected(canonical) || sameCommerceFile(canonical)) throw refusal("DATA_PATH_REFUSED");
+  return canonical;
+}
+
+function releaseHandle() {
+  const current = handle;
+  handle = null;
+  activePath = null;
+  activeMode = "UNINITIALIZED";
+  if (current && typeof current.close === "function") {
+    try {
+      current.close();
+    } catch {
+      /* a refused path must not keep the previous connection */
+    }
+  }
+}
+
+function isWriteSql(sql) {
+  const stripped = String(sql)
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/--[^\n]*/g, " ")
+    .replace(/'(?:''|[^'])*'/g, "''")
+    .replace(/"(?:[^"]|"")*"/g, '""');
+  return /\b(?:insert|update|delete|alter|drop|create|replace|attach|detach|reindex|vacuum|analyze)\b/i.test(stripped)
+    || /\bbegin\s+(?:immediate|exclusive)\b/i.test(stripped)
+    || /\bpragma\s+[A-Za-z_][A-Za-z0-9_]*\s*=/i.test(stripped);
+}
+
+function rejectReadOnlyWrite(sql) {
+  if (activeMode === "READ_ONLY" && isWriteSql(sql)) throw refusal("DATABASE_READ_ONLY");
+}
+
+function notInitialized() {
+  const err = new Error("DATABASE_NOT_INITIALIZED");
+  err.code = "DATABASE_NOT_INITIALIZED";
+  throw err;
+}
+
+const db = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      if (typeof prop === "symbol" || prop === "then") return undefined;
+      if (!handle) {
+        if (prop === "name") return null;
+        if (prop === "open" || prop === "readonly" || prop === "memory" || prop === "inTransaction") return false;
+        return () => notInitialized();
+      }
+      const value = handle[prop];
+      if (activeMode === "READ_ONLY") {
+        if (prop === "prepare") {
+          return (sql, ...args) => {
+            rejectReadOnlyWrite(sql);
+            return handle.prepare(sql, ...args);
+          };
+        }
+        if (prop === "exec") {
+          return (sql) => {
+            rejectReadOnlyWrite(sql);
+            return handle.exec(sql);
+          };
+        }
+        if (prop === "pragma") {
+          return (source, pragmaOptions) => {
+            rejectReadOnlyWrite(`PRAGMA ${source}`);
+            return handle.pragma(source, pragmaOptions);
+          };
+        }
+        if (prop === "backup" || prop === "function" || prop === "aggregate" || prop === "table" || prop === "loadExtension") {
+          return () => {
+            throw refusal("DATABASE_READ_ONLY");
+          };
+        }
+      }
+      return typeof value === "function" ? value.bind(handle) : value;
+    },
+  },
+);
+
+function initializationResult(canonical, reused) {
+  return {
+    ok: true,
+    path: canonical,
+    mode: activeMode,
+    reused,
+    persisted: activeMode === "WRITE_ENABLED",
+    queryOnly: activeMode === "READ_ONLY",
+  };
+}
+
+function initializeDatabase(options = {}) {
+  const settings = options && typeof options === "object" ? options : null;
+  if (!settings || !Object.prototype.hasOwnProperty.call(settings, "mode")) {
+    releaseHandle();
+    throw refusal("DATABASE_MODE_REFUSED");
+  }
+  const modeName = MODE_NAME.get(settings.mode);
+  if (!modeName) {
+    releaseHandle();
+    throw refusal("DATABASE_MODE_REFUSED");
+  }
+  const requested = Object.prototype.hasOwnProperty.call(settings, "dbPath")
+    ? settings.dbPath
+    : process.env.BUZZARD_DB_PATH;
+  if (modeName === "WRITE_ENABLED" && !salesAllowsInitialization()) {
+    releaseHandle();
+    throw refusal("SALES_CLOSED");
+  }
+  let canonical;
+  try {
+    canonical = canonicalizeRequested(requested);
+  } catch (err) {
+    releaseHandle();
+    throw err;
+  }
+  if (modeName === "READ_ONLY" && !fs.existsSync(canonical)) {
+    releaseHandle();
+    throw refusal("DATABASE_FILE_REQUIRED");
+  }
+  if (handle && activePath === canonical && activeMode === modeName) {
+    return initializationResult(canonical, true);
+  }
+  releaseHandle();
+  const Database = require("better-sqlite3");
+  try {
+    if (modeName === "READ_ONLY") {
+      handle = new Database(canonical, { readonly: true, fileMustExist: true });
+      handle.pragma("query_only = ON");
+      const flag = handle.pragma("query_only", { simple: true });
+      if (Number(flag) !== 1) throw refusal("DATABASE_READ_ONLY_UNAVAILABLE");
+      activePath = canonical;
+      activeMode = "READ_ONLY";
+    } else {
+      handle = new Database(canonical);
+      activePath = canonical;
+      activeMode = "WRITE_ENABLED";
+      applyBaseSchema();
+      applyMigrations();
+      seed();
+      resetE2eFixtureInventory();
+    }
+  } catch (err) {
+    releaseHandle();
+    throw err;
+  }
+  return initializationResult(canonical, false);
+}
+
+function applyBaseSchema() {
+  db.pragma("busy_timeout = 8000");
+  db.pragma("foreign_keys = ON");
+  db.exec(`
 CREATE TABLE IF NOT EXISTS users (
  id INTEGER PRIMARY KEY AUTOINCREMENT,
  email TEXT UNIQUE NOT NULL,
@@ -242,6 +492,7 @@ CREATE TABLE IF NOT EXISTS tax_rates (
  rate REAL NOT NULL
 );
 `);
+}
 
 function slugify(value) {
   return String(value || "")
@@ -264,7 +515,7 @@ function migrateCatalogSeo() {
   ensureColumn("categories", "active", "INTEGER NOT NULL DEFAULT 1");
   ensureColumn("products", "slug", "TEXT");
   ensureColumn("products", "supplier_cost_eur", "REAL DEFAULT 0");
-  ensureColumn("products", "margin_floor", "REAL DEFAULT 0.12");
+  ensureColumn("products", "margin_floor", "REAL DEFAULT 0.07");
   ensureColumn("products", "image_url", "TEXT DEFAULT ''");
   ensureColumn("products", "seo_title", "TEXT DEFAULT ''");
   ensureColumn("products", "seo_description", "TEXT DEFAULT ''");
@@ -296,7 +547,6 @@ function migrateCatalogSeo() {
   `);
 }
 
-migrateCatalogSeo();
 
 const DEFAULT_LOCALES = [
   ["de-DE", "Deutsch", "EUR", "DE"],
@@ -355,12 +605,7 @@ function migrateLocalizationFeeds() {
 
   const shippingCount = db.prepare("SELECT COUNT(*) n FROM shipping_rates").get().n;
   if (shippingCount === 0) {
-    const insertShipping = db.prepare(
-      "INSERT INTO shipping_rates(country_code, method, price, free_from) VALUES(?,?,?,?)"
-    );
-    insertShipping.run("DE", "standard", 4.99, 49);
-    insertShipping.run("GB", "standard", 6.99, 59);
-    insertShipping.run("TR", "standard", 5.99, 49);
+    void shippingCount;
   }
 
   const translationCount = db.prepare("SELECT COUNT(*) n FROM product_translations").get().n;
@@ -408,7 +653,6 @@ function migrateLocalizationFeeds() {
   }
 }
 
-migrateLocalizationFeeds();
 
 function migrateCustomerCheckout() {
   ensureColumn("addresses", "phone", "TEXT DEFAULT ''");
@@ -483,24 +727,10 @@ function migrateCustomerCheckout() {
 
   const methodCount = db.prepare("SELECT COUNT(*) n FROM shipping_methods").get().n;
   if (methodCount === 0) {
-    const insertMethod = db.prepare(
-      "INSERT INTO shipping_methods(country_code, code, name, price, free_from) VALUES(?,?,?,?,?)"
-    );
-    [
-      ["DE", "standard", "DHL Standard", 4.99, 79],
-      ["DE", "express", "Express", 9.99, 149],
-      ["FR", "standard", "Standard", 8.99, 99],
-      ["NL", "standard", "Standard", 7.99, 99],
-      ["PL", "standard", "Standard", 29.99, 449],
-      ["GB", "standard", "Standard", 9.99, 99],
-      ["TR", "standard", "Standard", 5.99, 49],
-      ["RS", "standard", "Standard", 6.99, 59],
-      ["BA", "standard", "Standard", 6.99, 59],
-    ].forEach((row) => insertMethod.run(...row));
+    void methodCount;
   }
 }
 
-migrateCustomerCheckout();
 
 function migrateCustomerSupport() {
   ensureColumn("notifications", "channel", "TEXT DEFAULT 'in_app'");
@@ -558,7 +788,6 @@ function migrateCustomerSupport() {
   }
 }
 
-migrateCustomerSupport();
 
 function migrateCrmLoyalty() {
   db.exec(`
@@ -671,7 +900,6 @@ function migrateCrmLoyalty() {
   }
 }
 
-migrateCrmLoyalty();
 
 function migrateAnalyticsDashboard() {
   db.exec(`
@@ -755,7 +983,6 @@ function migrateAnalyticsDashboard() {
   }
 }
 
-migrateAnalyticsDashboard();
 
 function migrateMarketingCenter() {
   db.exec(`
@@ -890,7 +1117,6 @@ function migrateMarketingCenter() {
   }
 }
 
-migrateMarketingCenter();
 
 function migrateMarketplaceHub() {
   db.exec(`
@@ -1014,7 +1240,6 @@ function migrateMarketplaceHub() {
   }
 }
 
-migrateMarketplaceHub();
 
 function migrateSupplierHubV16() {
   [
@@ -1119,7 +1344,6 @@ function migrateSupplierHubV16() {
   }
 }
 
-migrateSupplierHubV16();
 
 function migrateLogisticsFulfillmentV17() {
   db.exec(`
@@ -1213,15 +1437,10 @@ function migrateLogisticsFulfillmentV17() {
       )
       VALUES(?,?,?,?,?,?,?,?)
     `);
-    insertService.run(ids.DHL, "standard", "DHL Paket Standard", 31.5, 4.99, 1, 3, "DE,AT,BE,NL,FR");
-    insertService.run(ids.DHL, "express", "DHL Express", 31.5, 11.99, 1, 2, "DE,AT,BE,NL,FR");
-    insertService.run(ids.DPD, "standard", "DPD Classic", 31.5, 5.49, 2, 4, "DE,AT,BE,NL,FR,PL");
-    insertService.run(ids.GLS, "standard", "GLS Standard", 40, 5.29, 2, 4, "DE,AT,BE,NL,FR,PL,CZ");
-    insertService.run(ids.UPS, "standard", "UPS Standard", 70, 8.99, 2, 5, "DE,FR,NL,BE,PL,IT,ES");
+    void ids;
   }
 }
 
-migrateLogisticsFulfillmentV17();
 
 function migrateWmsInventoryV18() {
   db.exec(`
@@ -1342,7 +1561,6 @@ function migrateWmsInventoryV18() {
   }
 }
 
-migrateWmsInventoryV18();
 
 function migratePimCatalogV19() {
   db.exec(`
@@ -1515,7 +1733,6 @@ function migratePimCatalogV19() {
   }
 }
 
-migratePimCatalogV19();
 
 function migrateIdentitySecurityV20() {
   [
@@ -1604,7 +1821,6 @@ function migrateIdentitySecurityV20() {
   db.prepare("UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR updated_at = ''").run();
 }
 
-migrateIdentitySecurityV20();
 
 function migratePaymentsFinanceV21() {
   db.exec(`
@@ -1734,7 +1950,6 @@ function migratePaymentsFinanceV21() {
   }
 }
 
-migratePaymentsFinanceV21();
 
 function migrateOrderManagementV22() {
   db.exec(`
@@ -1819,29 +2034,10 @@ function migrateOrderManagementV22() {
 
   const orderCount = db.prepare("SELECT COUNT(*) n FROM oms_orders").get().n;
   if (orderCount === 0) {
-    const result = db
-      .prepare(`
-        INSERT INTO oms_orders(
-          order_number, customer_id, customer_email, channel, currency,
-          subtotal, shipping_total, tax_total, grand_total, payment_status, order_status
-        )
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
-      `)
-      .run("BZ-2026-DEMO01", 1, "demo@example.com", "web", "EUR", 79.8, 4.99, 13.55, 84.79, "paid", "confirmed");
-
-    db.prepare(`
-      INSERT INTO oms_order_items(order_id, product_sku, title, quantity, unit_price, tax_rate, reserved_quantity)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "BZ-OIL-5W30", "Premium Motoröl 5W-30", 2, 39.9, 19, 2);
-
-    db.prepare(`
-      INSERT INTO oms_order_events(order_id, event_type, old_status, new_status, message)
-      VALUES(?,?,?,?,?)
-    `).run(result.lastInsertRowid, "order_created", null, "confirmed", "Demo order created");
+    void orderCount;
   }
 }
 
-migrateOrderManagementV22();
 
 function migrateCartCheckoutV23() {
   db.exec(`
@@ -1925,27 +2121,10 @@ function migrateCartCheckoutV23() {
 
   const shippingCount = db.prepare("SELECT COUNT(*) n FROM cc_shipping_rates").get().n;
   if (shippingCount === 0) {
-    const insert = db.prepare(`
-      INSERT INTO cc_shipping_rates(country, code, name, price, min_days, max_days)
-      VALUES(?,?,?,?,?,?)
-    `);
-    for (const [country, price] of [
-      ["DE", 4.99],
-      ["AT", 8.99],
-      ["BE", 9.49],
-      ["NL", 9.49],
-      ["FR", 9.99],
-      ["PL", 10.99],
-      ["IT", 12.99],
-      ["ES", 13.99],
-    ]) {
-      insert.run(country, "standard", "Standard Delivery", price, 2, 5);
-    }
-    insert.run("DE", "express", "Express Delivery", 11.99, 1, 2);
+    void shippingCount;
   }
 }
 
-migrateCartCheckoutV23();
 
 function migrateCrmCustomerServiceV24() {
   db.exec(`
@@ -2057,7 +2236,6 @@ function migrateCrmCustomerServiceV24() {
   }
 }
 
-migrateCrmCustomerServiceV24();
 
 function migrateReturnsRmaV25() {
   db.exec(`
@@ -2170,7 +2348,6 @@ function migrateReturnsRmaV25() {
   }
 }
 
-migrateReturnsRmaV25();
 
 function migrateMarketingLoyaltyV26() {
   db.exec(`
@@ -2285,7 +2462,6 @@ function migrateMarketingLoyaltyV26() {
   }
 }
 
-migrateMarketingLoyaltyV26();
 
 function migrateReviewsRatingsV27() {
   db.exec(`
@@ -2390,7 +2566,6 @@ function migrateReviewsRatingsV27() {
   }
 }
 
-migrateReviewsRatingsV27();
 
 function migrateAiCenterV28() {
   db.exec(`
@@ -2461,7 +2636,6 @@ function migrateAiCenterV28() {
   }
 }
 
-migrateAiCenterV28();
 
 function migrateAdvancedSearchV29() {
   db.exec(`
@@ -2574,7 +2748,6 @@ function migrateAdvancedSearchV29() {
   }
 }
 
-migrateAdvancedSearchV29();
 
 function migrateProductCatalogPimV30() {
   db.exec(`
@@ -2766,7 +2939,6 @@ function migrateProductCatalogPimV30() {
   }
 }
 
-migrateProductCatalogPimV30();
 
 function migrateSupplierIntegrationHubV31() {
   db.exec(`
@@ -2900,14 +3072,10 @@ function migrateSupplierIntegrationHubV31() {
       VALUES(?,?,?,?,?)
     `).run(result.lastInsertRowid, "SUP-5W30", "BZ-OIL-5W30", "4008177104722", "Castrol");
 
-    db.prepare(`
-      INSERT INTO supih_shipping_methods(supplier_id, code, name, carrier, service, price, estimated_days)
-      VALUES(?,?,?,?,?,?,?)
-    `).run(result.lastInsertRowid, "DE-DHL", "Standard DHL", "DHL", "Standard", 4.99, 2);
+    void result;
   }
 }
 
-migrateSupplierIntegrationHubV31();
 function migrateOrderManagementV32() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS oms32_records(
@@ -2943,7 +3111,6 @@ function migrateOrderManagementV32() {
   }
 }
 
-migrateOrderManagementV32();
 
 
 function migrateFulfillmentV33() {
@@ -2981,7 +3148,6 @@ function migrateFulfillmentV33() {
   }
 }
 
-migrateFulfillmentV33();
 
 
 function migrateLogisticsV34() {
@@ -3019,7 +3185,6 @@ function migrateLogisticsV34() {
   }
 }
 
-migrateLogisticsV34();
 
 
 function migrateMarketplaceV35() {
@@ -3057,7 +3222,6 @@ function migrateMarketplaceV35() {
   }
 }
 
-migrateMarketplaceV35();
 
 
 function migratePaymentsV36() {
@@ -3095,7 +3259,6 @@ function migratePaymentsV36() {
   }
 }
 
-migratePaymentsV36();
 
 
 function migrateInternationalV37() {
@@ -3133,7 +3296,6 @@ function migrateInternationalV37() {
   }
 }
 
-migrateInternationalV37();
 
 
 function migrateSecurityV38() {
@@ -3171,7 +3333,6 @@ function migrateSecurityV38() {
   }
 }
 
-migrateSecurityV38();
 
 
 function migrateAnalyticsV39() {
@@ -3209,7 +3370,6 @@ function migrateAnalyticsV39() {
   }
 }
 
-migrateAnalyticsV39();
 
 
 function migrateMasterAdminV40() {
@@ -3247,7 +3407,6 @@ function migrateMasterAdminV40() {
   }
 }
 
-migrateMasterAdminV40();
 
 function migrateCoreFoundationPart2() {
   db.exec(`
@@ -3879,16 +4038,6 @@ function migrateCoreFoundationPart17() {
   }
 }
 
-migrateCoreFoundationPart2();
-migrateCoreFoundationPart5();
-migrateCoreFoundationPart6();
-migrateCoreFoundationPart8();
-migrateCoreFoundationPart10();
-migrateCoreFoundationPart16();
-migrateCoreFoundationPart17();
-migrateMasterIntegrationFoundation();
-migrateMasterIntegrationPhase2();
-migrateMasterIntegrationPhase3();
 
 function migrateMasterIntegrationFoundation() {
   db.exec(`
@@ -4081,52 +4230,221 @@ function resetE2eFixtureInventory() {
   `).run();
 }
 
-seed();
-resetE2eFixtureInventory();
+const CONSENT_LEDGER_SCHEMA = `
+CREATE TABLE IF NOT EXISTS marketing_consent_decisions (
+  sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+  decision_id TEXT NOT NULL UNIQUE,
+  customer_id TEXT NOT NULL,
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'push', 'marketing_tracking')),
+  consent_status TEXT NOT NULL CHECK (consent_status IN ('GRANTED', 'WITHDRAWN')),
+  idempotency_key TEXT NOT NULL UNIQUE,
+  payload_hash TEXT NOT NULL,
+  source TEXT NOT NULL,
+  explicit_grant INTEGER NOT NULL CHECK (explicit_grant IN (0, 1)),
+  consent_verified INTEGER NOT NULL CHECK (consent_verified IN (0, 1)),
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS marketing_consent_state (
+  customer_id TEXT NOT NULL,
+  channel TEXT NOT NULL CHECK (channel IN ('email', 'sms', 'push', 'marketing_tracking')),
+  consent_status TEXT NOT NULL CHECK (consent_status IN ('GRANTED', 'WITHDRAWN')),
+  decision_id TEXT NOT NULL,
+  source TEXT NOT NULL,
+  sequence INTEGER NOT NULL,
+  explicit_grant INTEGER NOT NULL CHECK (explicit_grant IN (0, 1)),
+  consent_verified INTEGER NOT NULL CHECK (consent_verified IN (0, 1)),
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (customer_id, channel)
+);
+`;
+
+function isEphemeralConsentPath(candidate) {
+  const resolved = path.resolve(candidate);
+  const roots = [path.resolve("/tmp"), path.resolve("/var/tmp"), path.resolve("/private/tmp"), path.resolve(os.tmpdir())];
+  return roots.some((root) => resolved === root || resolved.startsWith(`${root}${path.sep}`));
+}
+
+function assertConsentLedgerPath(candidate, options = {}) {
+  if (typeof candidate !== "string" || !candidate.trim() || candidate.includes("\0")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const isolatedFixture = options.isolatedFixture === true && process.env.VITEST === "true";
+  const resolved = path.resolve(candidate.trim());
+  const base = path.basename(resolved);
+  if (isProtected(resolved) || base.startsWith("buzzard_guardian") || base.toLowerCase().includes("pusat")) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isEphemeralConsentPath(resolved) && !isolatedFixture) throw refusal("DATA_PATH_REFUSED");
+  if (!fs.existsSync(resolved)) return resolved;
+  let real = resolved;
+  try {
+    real = fs.realpathSync(resolved);
+  } catch {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isProtected(real) || path.basename(real).toLowerCase().includes("pusat") || sameCommerceFile(real)) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  if (isEphemeralConsentPath(real) && !isolatedFixture) throw refusal("DATA_PATH_REFUSED");
+  return real;
+}
+
+function openIsolatedFixtureDatabase(dbPath) {
+  if (process.env.VITEST !== "true") throw refusal("DATA_PATH_REFUSED");
+  if (typeof dbPath !== "string" || !dbPath.trim() || dbPath.includes("\0")) throw refusal("DATA_PATH_REFUSED");
+  const resolved = path.resolve(dbPath.trim());
+  if (isProtected(resolved) || path.basename(resolved).toLowerCase().includes("pusat")) throw refusal("DATA_PATH_REFUSED");
+  if (!isEphemeralConsentPath(resolved)) throw refusal("DATA_PATH_REFUSED");
+  if (fs.existsSync(resolved)) {
+    const listed = fs.lstatSync(resolved);
+    if (listed.isSymbolicLink() || !listed.isFile()) throw refusal("DATA_PATH_REFUSED");
+  }
+  const Database = require("better-sqlite3");
+  releaseHandle();
+  handle = new Database(resolved);
+  activePath = resolved;
+  activeMode = "ISOLATED_FIXTURE";
+  return { ok: true, path: resolved, productionReady: false, salesOpen: false, egress: "DENY" };
+}
+
+function closeIsolatedFixtureDatabase() {
+  if (activeMode !== "ISOLATED_FIXTURE") return { ok: false, closed: false, productionReady: false };
+  releaseHandle();
+  return { ok: true, closed: true, productionReady: false };
+}
+
+function migrateMarketingConsentLedger(externalDb, options = {}) {
+  if (!externalDb || typeof externalDb.exec !== "function" || externalDb === db) {
+    throw refusal("DATA_PATH_REFUSED");
+  }
+  const name = typeof externalDb.name === "string" ? externalDb.name : "";
+  if (name === ":memory:") throw refusal("DATA_PATH_REFUSED");
+  if (!name) throw refusal("DATA_PATH_REFUSED");
+  assertConsentLedgerPath(name, options);
+  externalDb.exec(CONSENT_LEDGER_SCHEMA);
+  return { ok: true, applied: true, productionReady: false, target: "isolated" };
+}
+
+function applyMigrations() {
+  migrateCatalogSeo();
+  migrateLocalizationFeeds();
+  migrateCustomerCheckout();
+  migrateCustomerSupport();
+  migrateCrmLoyalty();
+  migrateAnalyticsDashboard();
+  migrateMarketingCenter();
+  migrateMarketplaceHub();
+  migrateSupplierHubV16();
+  migrateLogisticsFulfillmentV17();
+  migrateWmsInventoryV18();
+  migratePimCatalogV19();
+  migrateIdentitySecurityV20();
+  migratePaymentsFinanceV21();
+  migrateOrderManagementV22();
+  migrateCartCheckoutV23();
+  migrateCrmCustomerServiceV24();
+  migrateReturnsRmaV25();
+  migrateMarketingLoyaltyV26();
+  migrateReviewsRatingsV27();
+  migrateAiCenterV28();
+  migrateAdvancedSearchV29();
+  migrateProductCatalogPimV30();
+  migrateSupplierIntegrationHubV31();
+  migrateOrderManagementV32();
+  migrateFulfillmentV33();
+  migrateLogisticsV34();
+  migrateMarketplaceV35();
+  migratePaymentsV36();
+  migrateInternationalV37();
+  migrateSecurityV38();
+  migrateAnalyticsV39();
+  migrateMasterAdminV40();
+  migrateCoreFoundationPart2();
+  migrateCoreFoundationPart5();
+  migrateCoreFoundationPart6();
+  migrateCoreFoundationPart8();
+  migrateCoreFoundationPart10();
+  migrateCoreFoundationPart16();
+  migrateCoreFoundationPart17();
+  migrateMasterIntegrationFoundation();
+  migrateMasterIntegrationPhase2();
+  migrateMasterIntegrationPhase3();
+}
+
+function publicPersistence() {
+  if (!activePath) {
+    return {
+      initialized: false,
+      path: null,
+      accessMode: "UNINITIALIZED",
+      queryOnly: false,
+      persistent: false,
+    };
+  }
+  const info = getPersistenceInfo(activePath);
+  return {
+    initialized: true,
+    path: activePath,
+    accessMode: activeMode,
+    queryOnly: activeMode === "READ_ONLY",
+    storageMode: info.mode,
+    persistent: Boolean(info.persistent),
+    ephemeralRisk: info.ephemeralRisk,
+    syncHint: info.syncHint,
+  };
+}
 
 function getDatabaseHealth() {
+  const base = {
+    enabled: activeMode === "WRITE_ENABLED",
+    readable: activeMode === "READ_ONLY" || activeMode === "WRITE_ENABLED",
+    initialized: activeMode !== "UNINITIALIZED",
+    opened: Boolean(handle && activePath),
+    mode: activeMode,
+    queryOnly: activeMode === "READ_ONLY",
+    path: activePath,
+    version: "0.3.0",
+    salesOpen: salesAllowsInitialization(),
+    egressAllowed: false,
+    productionReady: false,
+  };
+  if (!handle || !activePath) {
+    return { ...base, code: "DATABASE_NOT_INITIALIZED", path: null };
+  }
   try {
     const users = db.prepare("SELECT COUNT(*) n FROM users").get().n;
     const products = db.prepare("SELECT COUNT(*) n FROM products").get().n;
     const orders = db.prepare("SELECT COUNT(*) n FROM orders").get().n;
-    const persistence = getPersistenceInfo(dbPath);
-    return {
-      enabled: true,
-      path: dbPath,
-      version: "0.3.0",
-      users,
-      products,
-      orders,
-      persistence: {
-        mode: persistence.mode,
-        persistent: persistence.persistent,
-        ephemeralRisk: persistence.ephemeralRisk,
-        backupDir: persistence.backupDir,
-        renderDisk: persistence.renderDisk,
-        syncHint: persistence.syncHint,
-      },
-    };
+    return { ...base, users, products, orders, persistence: publicPersistence() };
   } catch (error) {
-    const persistence = getPersistenceInfo(dbPath);
-    return {
-      enabled: true,
-      path: dbPath,
-      version: "0.3.0",
-      error: error.message,
-      persistence: {
-        mode: persistence.mode,
-        persistent: persistence.persistent,
-        ephemeralRisk: persistence.ephemeralRisk,
-        renderDisk: persistence.renderDisk,
-        syncHint: persistence.syncHint,
-      },
-    };
+    return { ...base, error: error.message, persistence: publicPersistence() };
   }
 }
 
 module.exports = {
   db,
-  dbPath,
+  DatabaseMode: {
+    READ_ONLY,
+    WRITE_ENABLED,
+  },
+  DatabaseState: {
+    UNINITIALIZED: "UNINITIALIZED",
+    READ_ONLY: "READ_ONLY",
+    WRITE_ENABLED: "WRITE_ENABLED",
+  },
+  get dbPath() {
+    return activePath;
+  },
+  get databaseMode() {
+    return activeMode;
+  },
+  initializeDatabase,
+  openIsolatedFixtureDatabase,
+  closeIsolatedFixtureDatabase,
   getDatabaseHealth,
-  getPersistenceInfo: () => getPersistenceInfo(dbPath),
+  getPersistenceInfo: publicPersistence,
+  CONSENT_LEDGER_SCHEMA,
+  assertConsentLedgerPath,
+  migrateMarketingConsentLedger,
 };

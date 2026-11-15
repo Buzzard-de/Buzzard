@@ -1,10 +1,9 @@
 /**
  * Part 8 — Payment provider abstraction (Mock default; Stripe/PayPal OFF)
  */
-const crypto = require("crypto");
 const { assertCanProcessPayment } = require("./commerceGuards");
 const { getEffectiveFlags } = require("./commerceFeatureFlags");
-const { PAYMENT_STATUS } = require("../../core/commerceConstants");
+const { decideAsset } = require("../banking/eu27/fiatPolicy");
 
 class PaymentProvider {
   constructor(code) {
@@ -29,21 +28,45 @@ class MockPaymentProvider extends PaymentProvider {
   authorize({ amount, currency, metadata = {} }) {
     return {
       provider: "mock",
-      status: PAYMENT_STATUS.AUTHORIZED,
-      reference: `mock_${crypto.randomBytes(6).toString("hex")}`,
+      ok: false,
+      status: "BLOCKED_EXTERNAL",
+      code: "PAYMENT_UNVERIFIED",
+      reference: null,
       amount,
-      currency,
+      currency: currency || null,
       realMoneyMovement: false,
+      paymentAuthorized: false,
+      captured: false,
+      live: false,
+      mock: true,
       metadata,
     };
   }
 
   capture(intent) {
-    return { ...intent, status: PAYMENT_STATUS.CAPTURED, realMoneyMovement: false };
+    return {
+      ...intent,
+      ok: false,
+      status: "BLOCKED_EXTERNAL",
+      code: "PAYMENT_NOT_LIVE",
+      captured: false,
+      live: false,
+      mock: true,
+      realMoneyMovement: false,
+    };
   }
 
   refund(intent) {
-    return { ...intent, status: PAYMENT_STATUS.REFUNDED, realMoneyMovement: false };
+    return {
+      ...intent,
+      ok: false,
+      status: "BLOCKED_EXTERNAL",
+      code: "REFUND_UNVERIFIED",
+      refunded: false,
+      live: false,
+      mock: true,
+      realMoneyMovement: false,
+    };
   }
 }
 
@@ -72,10 +95,25 @@ function resolveProvider() {
   return new MockPaymentProvider();
 }
 
-function createPaymentIntent({ amount, currency = "EUR", customerId, idempotencyKey, req, metadata = {}, dryRun = false } = {}) {
+function createPaymentIntent({ amount, currency, customerId, idempotencyKey, req, metadata = {}, dryRun = false, assetType, instrument } = {}) {
+  const asset = decideAsset({ currency, assetType: assetType || metadata.assetType, instrument: instrument || metadata.instrument });
+  if (!asset.ok) {
+    return {
+      ok: false,
+      error: asset.code,
+      code: asset.code,
+      status: 409,
+      captured: false,
+      paymentAuthorized: false,
+      live: false,
+      realMoneyMovement: false,
+      mockOnly: true,
+      dryRun: Boolean(dryRun),
+    };
+  }
   if (!dryRun) {
     const block = assertCanProcessPayment({ req });
-    if (block) return block;
+    if (block) return { ...block, captured: false, paymentAuthorized: false, live: false, realMoneyMovement: false };
   }
 
   const provider = dryRun ? new MockPaymentProvider() : resolveProvider();
@@ -83,9 +121,16 @@ function createPaymentIntent({ amount, currency = "EUR", customerId, idempotency
 
   return {
     ...result,
+    ok: false,
+    status: "BLOCKED_EXTERNAL",
+    code: "PAYMENT_UNVERIFIED",
+    paymentAuthorized: false,
+    captured: false,
+    live: false,
+    reference: null,
     paymentEnabled: getEffectiveFlags().paymentEnabled,
-    mockOnly: dryRun || getEffectiveFlags().mockPaymentOnly,
-    dryRun: Boolean(dryRun),
+    mockOnly: true,
+    dryRun: true,
   };
 }
 
@@ -105,9 +150,27 @@ function getProviderHealth() {
 }
 
 function authorizePayment(input = {}) {
+  const intent = createPaymentIntent({ ...input, dryRun: true });
+  const live = process.env.BUZZARD_PAYMENT_LIVE === "1" && require("../salesMode").isSalesEnabled();
+  if (!live || intent.dryRun === true || intent.mockOnly === true) {
+    return {
+      ...intent,
+      ok: false,
+      error: "PAYMENT_UNVERIFIED",
+      code: "PAYMENT_UNVERIFIED",
+      status: 409,
+      captured: false,
+      paymentAuthorized: false,
+      live: false,
+      realMoneyMovement: false,
+      mode: "DRY_RUN",
+    };
+  }
   return {
-    ...createPaymentIntent({ ...input, dryRun: true }),
+    ...intent,
     captured: false,
+    paymentAuthorized: false,
+    live: false,
     mode: "DRY_RUN",
   };
 }
@@ -129,15 +192,30 @@ function capturePayment() {
     status: 403,
     captured: false,
     realMoneyMovement: false,
-    paymentStatus: PAYMENT_STATUS.AUTHORIZED,
+    paymentStatus: null,
+    live: false,
     ...label(MODE.DISABLED),
+  };
+}
+
+function refundPayment() {
+  return {
+    ok: false,
+    error: "REFUND_UNVERIFIED",
+    code: "REFUND_UNVERIFIED",
+    status: 409,
+    refunded: false,
+    captured: false,
+    live: false,
+    realMoneyMovement: false,
+    mock: false,
   };
 }
 
 function cancelPayment(intent = {}) {
   return {
     ...intent,
-    status: PAYMENT_STATUS.FAILED,
+    status: "FAILED",
     cancelled: true,
     realMoneyMovement: false,
     captured: false,
@@ -165,6 +243,7 @@ module.exports = {
   createPaymentIntent,
   authorizePayment,
   capturePayment,
+  refundPayment,
   cancelPayment,
   getProviderHealth,
   sanitizePaymentPayload,

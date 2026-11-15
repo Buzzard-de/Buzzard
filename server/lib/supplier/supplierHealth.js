@@ -99,7 +99,10 @@ function evaluateSupplierHealth(supplierId) {
     blocked > 0 ? "NOT_READY" : def.credentialsConfigured ? "CONDITION" : "READY";
 
   return {
-    ok: true,
+    ok: false,
+    live: false,
+    status: "BLOCKED_EXTERNAL",
+    commercialEligibility: "BLOCKED",
     supplierId,
     name: def.name,
     format: def.format,

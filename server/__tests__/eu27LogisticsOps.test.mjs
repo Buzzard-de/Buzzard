@@ -36,7 +36,9 @@ describe("EU27 logistics operations plane (MC14 continuation)", () => {
   });
 
   it("legacy AB27 numeric quote is marked invented; recommend uses v5 selected=null", () => {
-    expect(compareCarriers({ destination: "DE" }).priceInvented).toBe(true);
+    expect(compareCarriers({ destination: "DE" }).commercialEligibility).toBe("BLOCKED");
+    expect(compareCarriers({ destination: "DE" }).shippingCost).toBeNull();
+    expect(compareCarriers({ destination: "DE" }).selected).toBeNull();
     const rec = recommend({ destination: "DE", origin: "DE", postalCode: "10115" });
     expect(rec.selected).toBeNull();
     expect(rec.legacyMockQuote.notForAutoselect).toBe(true);

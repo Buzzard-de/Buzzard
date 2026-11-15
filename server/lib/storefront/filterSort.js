@@ -41,7 +41,7 @@ function filterProducts(items, filters = {}) {
   }
 
   if (filters.inStock === "1" || filters.inStock === true) {
-    result = result.filter((p) => p.stock > 0);
+    result = [];
   }
 
   if (filters.availability) {
@@ -79,7 +79,6 @@ function buildFilterFacets(items) {
   const brands = new Map();
   let minPrice = Infinity;
   let maxPrice = 0;
-  let inStockCount = 0;
 
   for (const p of items) {
     if (p.brand?.name) {
@@ -87,7 +86,6 @@ function buildFilterFacets(items) {
     }
     if (p.price < minPrice) minPrice = p.price;
     if (p.price > maxPrice) maxPrice = p.price;
-    if (p.stock > 0) inStockCount += 1;
   }
 
   return {
@@ -96,7 +94,8 @@ function buildFilterFacets(items) {
       min: Number.isFinite(minPrice) ? minPrice : 0,
       max: maxPrice,
     },
-    inStockCount,
+    inStockCount: null,
+    stockVerified: false,
   };
 }
 

@@ -7,8 +7,10 @@ const { db } = require("../db");
 
 async function runPipeline({ supplierId = "mock", dryRun = true } = {}) {
   const adapter = getAdapter(supplierId);
-  await adapter.authenticate();
-  const rawProducts = await adapter.fetchProducts();
+  const auth = await adapter.authenticate();
+  const fetched = await adapter.fetchProducts();
+  const rawProducts = Array.isArray(fetched) ? fetched : fetched.records || [];
+  const blocked = !fetched || fetched.ok !== true || fetched.live !== true;
   const existing = new Set(
     db.prepare("SELECT sku FROM products").all().map((r) => r.sku)
   );
@@ -41,14 +43,21 @@ async function runPipeline({ supplierId = "mock", dryRun = true } = {}) {
   }
 
   return {
+    ok: false,
+    live: false,
+    mock: fetched.mock === true || auth.mock === true,
+    status: fetched.status || auth.status || "BLOCKED_EXTERNAL",
+    code: fetched.code || auth.code,
+    commercialEligibility: "BLOCKED",
     supplierId,
     dryRun,
-    imported: dryRun ? 0 : normalized.length,
-    validated: normalized.length,
+    imported: 0,
+    validated: blocked ? normalized.length : 0,
     duplicates: duplicates.length,
     errors: errors.length,
     products: normalized,
-    note: dryRun ? "Dry run — catalog not modified" : "Foundation only",
+    purchased: false,
+    note: "Supplier rows are not a live catalog import",
   };
 }
 

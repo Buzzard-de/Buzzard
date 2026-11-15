@@ -1,0 +1,11 @@
+{
+  "id": "security",
+  "status": "CODE_COMPLETE",
+  "test": "TEST_COMPLETE",
+  "integration": "INTEGRATION_COMPLETE",
+  "security": "SECURITY_VERIFIED",
+  "egress": "EXTERNAL_AI_EGRESS_DENIED",
+  "policyChange": "AI_POLICY_CHANGE_DENIED",
+  "liveVerified": false,
+  "productionReady": false
+}

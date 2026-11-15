@@ -127,6 +127,22 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "sync.run")) return;
       const dryRun = req.body?.dryRun !== false;
+      if (!dryRun) {
+        return res.status(403).json({
+          success: false,
+          errorCode: "LEGACY_STOREFRONT_SYNC_BLOCKED",
+          queued: false,
+          executed: false,
+          salesOpen: false,
+          egressAllowed: false,
+          productionReady: false,
+          purchased: false,
+          moneyMoved: false,
+          refunded: false,
+          shipmentCreated: false,
+          orderChanged: false,
+        });
+      }
       const result = syncStatus.runSync({ dryRun });
       if (!dryRun) catalogCache.invalidate("catalog|");
       res.json({ success: true, ...result });

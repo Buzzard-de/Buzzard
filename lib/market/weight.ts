@@ -1,17 +1,15 @@
 import { getProductById } from "@/lib/products/service";
 import type { CheckoutCartLineInput } from "@/lib/checkout/types";
 
-const DEFAULT_ITEM_WEIGHT_KG = 0.5;
-
 export function calculateLinesWeightKg(
   lines: Array<Pick<CheckoutCartLineInput, "productId" | "qty">>
-): number {
+): number | null {
   let total = 0;
   for (const line of lines) {
     const product = getProductById(line.productId);
-    if (!product) continue;
-    const weight = product.shipping?.weight_kg ?? DEFAULT_ITEM_WEIGHT_KG;
+    const weight = product?.shipping?.weight_kg;
+    if (weight == null || !(weight > 0)) return null;
     total += weight * line.qty;
   }
-  return Math.max(DEFAULT_ITEM_WEIGHT_KG, Math.round(total * 100) / 100);
+  return lines.length === 0 ? null : Math.round(total * 100) / 100;
 }

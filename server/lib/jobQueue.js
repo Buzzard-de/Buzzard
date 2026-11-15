@@ -53,6 +53,12 @@ function mapRow(row) {
   };
 }
 
+function rejectLegacyQueueWrite(code = "LEGACY_JOB_ENQUEUE_BLOCKED") {
+  const err = new Error(code);
+  err.code = code;
+  throw err;
+}
+
 function enqueueJob({
   jobType,
   payload,
@@ -64,6 +70,7 @@ function enqueueJob({
   idempotencyKey,
   correlationId,
 }) {
+  rejectLegacyQueueWrite();
   if (idempotencyKey) {
     const jobIdempotency = require("./operations/jobIdempotency");
     const begin = jobIdempotency.beginOperation({
@@ -143,6 +150,7 @@ function countJobsByStatus() {
 }
 
 function updateJob(id, fields) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   const sets = ["updated_at = CURRENT_TIMESTAMP"];
   const params = [];
   if (fields.status !== undefined) {
@@ -195,6 +203,7 @@ function updateJob(id, fields) {
 }
 
 function releaseStaleLocks(now = new Date()) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   const iso = now.toISOString();
   const stale = db.prepare(`
     SELECT id FROM core_background_jobs
@@ -215,6 +224,7 @@ function releaseStaleLocks(now = new Date()) {
 }
 
 function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   releaseStaleLocks();
   const now = new Date();
   const lockExpires = new Date(now.getTime() + lockTtlMs).toISOString();
@@ -250,6 +260,7 @@ function claimNextJob(workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
 }
 
 function cancelJob(id) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   const job = getJob(id);
   if (!job) return null;
   if ([JOB_STATUS.COMPLETED, JOB_STATUS.CANCELLED].includes(job.status)) return job;
@@ -257,6 +268,7 @@ function cancelJob(id) {
 }
 
 function retryJob(id) {
+  rejectLegacyQueueWrite();
   const job = getJob(id);
   if (!job) return null;
   if (![JOB_STATUS.FAILED, JOB_STATUS.DEAD_LETTER, JOB_STATUS.RETRYING].includes(job.status)) {
@@ -273,6 +285,7 @@ function retryJob(id) {
 }
 
 function markDeadLetter(id, error, failureKind) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   return updateJob(id, {
     status: JOB_STATUS.DEAD_LETTER,
     error,
@@ -281,6 +294,7 @@ function markDeadLetter(id, error, failureKind) {
 }
 
 function extendLock(id, workerId, lockTtlMs = DEFAULT_LOCK_TTL_MS) {
+  rejectLegacyQueueWrite("LEGACY_JOB_MUTATION_BLOCKED");
   const lockExpires = new Date(Date.now() + lockTtlMs).toISOString();
   const result = db.prepare(`
     UPDATE core_background_jobs SET lock_expires_at = ?, updated_at = CURRENT_TIMESTAMP

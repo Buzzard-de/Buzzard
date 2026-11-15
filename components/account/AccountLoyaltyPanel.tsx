@@ -24,7 +24,9 @@ export default function AccountLoyaltyPanel() {
   const [offers, setOffers] = useState<CustomerOffer[]>([]);
   const [marketingEmail, setMarketingEmail] = useState(false);
   const [marketingSms, setMarketingSms] = useState(false);
-  const [marketingWhatsapp, setMarketingWhatsapp] = useState(false);
+  const [emailStatus, setEmailStatus] = useState("UNKNOWN");
+  const [smsStatus, setSmsStatus] = useState("UNKNOWN");
+  const [whatsappStatus, setWhatsappStatus] = useState("UNKNOWN");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
@@ -42,11 +44,13 @@ export default function AccountLoyaltyPanel() {
     setLedger(loyaltyData.ledger);
     setRewards(loyaltyData.rewards);
     setOffers(offerRows);
-    if (profileData.profile) {
-      setMarketingEmail(Boolean(profileData.profile.marketing_email));
-      setMarketingSms(Boolean(profileData.profile.marketing_sms));
-      setMarketingWhatsapp(Boolean(profileData.profile.marketing_whatsapp));
-    }
+    const consent = profileData.profile || {};
+    const verifiedGrant = consent.granted === true && consent.consentVerified === true;
+    setMarketingEmail(verifiedGrant && consent.emailPermission === "GRANTED");
+    setMarketingSms(verifiedGrant && consent.smsPermission === "GRANTED");
+    setEmailStatus(consent.emailPermission || "UNKNOWN");
+    setSmsStatus(consent.smsPermission || "UNKNOWN");
+    setWhatsappStatus(consent.whatsappPermission || "UNKNOWN");
   }, []);
 
   useEffect(() => {
@@ -64,7 +68,7 @@ export default function AccountLoyaltyPanel() {
     setBusy(true);
     setError("");
     try {
-      await saveCrmProfile({ marketingEmail, marketingSms, marketingWhatsapp });
+      await saveCrmProfile({});
       setNotice(t("account.saved"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "crmLoyalty.requestFailed");
@@ -189,28 +193,14 @@ export default function AccountLoyaltyPanel() {
       <form className="account-panel account-form" onSubmit={handleSavePrefs}>
         <h2>{t("account.loyaltyConsent")}</h2>
         <label className="checkout-checkbox">
-          <input
-            type="checkbox"
-            checked={marketingEmail}
-            onChange={(e) => setMarketingEmail(e.target.checked)}
-          />{" "}
-          {t("account.marketingEmails")}
+          <input type="checkbox" checked={marketingEmail} disabled readOnly />{" "}
+          {t("account.marketingEmails")} {emailStatus}
         </label>
         <label className="checkout-checkbox">
-          <input
-            type="checkbox"
-            checked={marketingSms}
-            onChange={(e) => setMarketingSms(e.target.checked)}
-          />{" "}
-          SMS
+          <input type="checkbox" checked={marketingSms} disabled readOnly /> SMS {smsStatus}
         </label>
         <label className="checkout-checkbox">
-          <input
-            type="checkbox"
-            checked={marketingWhatsapp}
-            onChange={(e) => setMarketingWhatsapp(e.target.checked)}
-          />{" "}
-          WhatsApp
+          <input type="checkbox" checked={false} disabled readOnly /> WhatsApp {whatsappStatus}
         </label>
         <button type="submit" className="shop-btn-primary" disabled={busy}>
           {t("account.save")}

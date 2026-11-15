@@ -84,13 +84,17 @@ function dryRun({ network = "DHL", destination, action = "quote" } = {}) {
     return { ok: false, code: "LIVE_SHIPMENT_BLOCKED", live: false, dryRun: true, action };
   }
   return {
-    ok: true,
+    ok: false,
     dryRun: true,
     live: false,
     network,
     destination: destKey,
     action,
-    status: "BLOCKED",
+    status: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    shippingCost: null,
+    integration: "BLOCKED",
+    rate: null,
   };
 }
 

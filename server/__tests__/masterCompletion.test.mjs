@@ -40,6 +40,8 @@ describe("master completion gates", () => {
       paymentFee: 0.3,
       returnReserve: 0.5,
       categoryMargin: 0.12,
+      vatAmount: 0,
+      vatVerified: true,
     });
     expect(poor.ok).toBe(false);
     expect(poor.reasons).toContain("MIN_NET_PROFIT");
@@ -52,8 +54,11 @@ describe("master completion gates", () => {
       paymentFee: 0.3,
       returnReserve: 0.5,
       categoryMargin: 0.12,
+      vatAmount: 0,
+      vatVerified: true,
     });
     expect(ok.profit).toBeGreaterThanOrEqual(MIN_NET_PROFIT_EUR);
+    expect(ok.marginOverrideIgnored).toBe(true);
     expect(ok.livePriceWrite).toBe(false);
     expect(applyPriceChange({ productId: "x", amount: 1, actorType: "AI" }).code).toBe("AI_PRICE_WRITE_DENIED");
     expect(quotePrice({ supplierCost: 10 }).recommendationOnly).toBe(true);

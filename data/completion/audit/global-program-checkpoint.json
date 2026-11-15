@@ -1,0 +1,38 @@
+{
+  "schema": "buzzard.global-program-checkpoint.v1",
+  "recordedAt": "2026-11-11T16:03:00+01:00",
+  "repository": "/tmp/buzzard-eu27",
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "headMoved": false,
+  "commitPerformed": false,
+  "pushPerformed": false,
+  "mergePerformed": false,
+  "pullRequest501Modified": false,
+  "protectedDatabase": {
+    "path": "/workspace/server/data/buzzard.db",
+    "mtime": 1794331370,
+    "size": 2326528,
+    "inode": 9040253,
+    "openedSqlite": false
+  },
+  "egress": {
+    "default": "DENY",
+    "sha256": "b63cdadbd8e58e2e57e6b5d7c9a0c2f92c3bb6cf3904e6aa3a77cd0d02bff442",
+    "previousSha256": "afbef26e52e18015645566058a5f2a596fc1438bcc322f9540cca53aeb334edb",
+    "matchesWorkspacePolicy": true,
+    "modified": true
+  },
+  "salesEnabled": false,
+  "salesEnv": "",
+  "invariants": {
+    "EGRESS": "DENY",
+    "SALES": "CLOSED",
+    "REAL_PAYMENT": "DISABLED",
+    "REAL_ORDER": "DISABLED",
+    "STOCK_PURCHASE": "DISABLED",
+    "SHIPMENT": "DISABLED",
+    "PRODUCTION_DEPLOYMENT": "DISABLED"
+  },
+  "existingUserChangesPreserved": true
+}

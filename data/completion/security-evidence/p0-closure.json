@@ -1,0 +1,36 @@
+{
+  "schema": "buzzard.p0-closure.v1",
+  "recordedAt": "2026-11-11T17:08:00+01:00",
+  "status": "VERIFIED_PARTIAL",
+  "criticalAuthorizationBypass": false,
+  "keywordDetectionRemoved": true,
+  "defaultDeny": true,
+  "callerLowRiskOverridesClassification": false,
+  "revocationImmediate": true,
+  "grantExpandsPermissions": false,
+  "approvalExecutesFinancialAction": false,
+  "actionsHeld": [
+    "STOCK_BUY",
+    "DATA_EXPORT",
+    "SUPPLIER_PAY",
+    "SECURITY_POLICY_CHANGE",
+    "CUSTOMER_REFUND",
+    "PAYMENT_ACTIVATE",
+    "SHIPMENT_CREATE",
+    "DEPLOYMENT",
+    "POLICY_CHANGE",
+    "UNKNOWN_ACTION"
+  ],
+  "tests": {
+    "runner": "node --test",
+    "file": "server/__tests__/p0Remediation.test.mjs",
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "remaining": [
+    "A human or operator can still decide a held approval. That decision does not buy stock or move money.",
+    "CREATE_REPORTS is on all 17 seed profiles.",
+    "Unregistered actions are held rather than rejected without a record."
+  ]
+}

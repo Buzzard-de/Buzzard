@@ -2,106 +2,130 @@
  * Inventory projection on canonical Product D.
  * Shadow reservations only — does not mutate pim_core_products.stock or call suppliers.
  */
-const crypto = require("crypto");
 const { db } = require("../db");
 const productService = require("../productService");
-const events = require("../eventBus");
-const exceptions = require("../exceptionBus");
-const { applySafetyStock } = require("../pricing");
 const { MODE, label } = require("../integrationMode");
+const { isSalesEnabled } = require("../salesMode");
+
+function refusal(code, reasons, extra = {}) {
+  return {
+    ok: false,
+    code,
+    error: code,
+    reasons,
+    status: code === "SALES_CLOSED" ? 403 : 409,
+    reserved: false,
+    created: false,
+    purchased: false,
+    stockDecremented: false,
+    supplierConfirmed: false,
+    live: false,
+    callerFlagIgnored: true,
+    ...label(MODE.DRY_RUN),
+    ...extra,
+  };
+}
 
 function getInventory(productId) {
   const product = productService.getProduct(productId);
-  if (!product) return { error: "product_not_found", status: 404 };
-  const reserved = db
-    .prepare(
-      "SELECT COALESCE(SUM(quantity),0) n FROM inventory_sot_reservations WHERE product_id = ? AND status = 'RESERVED'"
-    )
-    .get(product.id).n;
-  const available = Math.max(0, Number(product.stock) || 0);
-  const safetyStock = Number(product.metadata?.safetyStock || 0);
-  const saleable = Math.max(0, available - reserved - safetyStock);
-  const safety = applySafetyStock(available, safetyStock);
+  if (!product) return { error: "product_not_found", status: 404, saleable: null, purchasable: false, stockVerified: false };
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("STOCK_UNVERIFIED");
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  reasons.push("STALE_STOCK");
+  const fixture = product.stock == null || product.stock === "" ? null : Number(product.stock);
+  const fixtureStock = Number.isFinite(fixture) ? fixture : null;
+  if (fixtureStock == null) reasons.push("UNKNOWN_STOCK", "QTY_UNKNOWN");
+  else reasons.push("INVENTORY_SOURCE_CONFLICT", "FALSE_SALEABLE");
+  if (product.metadata?.mock === true || product.metadata?.source === "mock" || product.metadata?.source === "DEMO") {
+    reasons.push("MOCK_STOCK");
+  }
   return {
+    ok: false,
+    code: reasons[0] || "STOCK_UNVERIFIED",
     productId: product.id,
     sku: product.sku,
-    available,
-    reserved,
-    committed: 0,
-    incoming: 0,
-    safetyStock,
-    saleable,
-    stockStatus: safety.stock_status,
-    known: product.stock != null,
+    available: null,
+    reserved: null,
+    committed: null,
+    incoming: null,
+    safetyStock: null,
+    saleable: null,
+    fixtureStock,
+    fixtureOnly: fixtureStock != null,
+    commercialQty: "UNKNOWN",
+    stockStatus: "UNKNOWN",
+    known: false,
     saleableIfUnknown: false,
+    stockVerified: false,
+    supplierConfirmed: false,
+    purchasable: false,
+    observedAt: null,
+    reasons,
+    callerFlagIgnored: true,
     ...label(MODE.DRY_RUN),
   };
 }
 
-function reserve({ productId, quantity, correlationId = null, idempotencyKey = null } = {}) {
-  const qty = Number(quantity);
-  if (!Number.isFinite(qty) || qty <= 0) {
-    return { ok: false, error: "invalid_quantity", status: 400, ...label(MODE.DRY_RUN) };
+function reserve(input = {}) {
+  const reasons = [];
+  if (!isSalesEnabled()) reasons.push("SALES_CLOSED");
+  reasons.push("ORDER_UNVERIFIED");
+  reasons.push("STOCK_UNVERIFIED");
+  reasons.push("SUPPLIER_COST_UNVERIFIED");
+  const observed = input.stockObservedAt || input.observedAt;
+  if (!observed || Number.isNaN(Date.parse(String(observed)))) reasons.push("STALE_STOCK");
+  if (input.mock === true || input.demo === true || input.source === "mock" || input.source === "DEMO") {
+    reasons.push("MOCK_STOCK");
   }
-
-  if (idempotencyKey) {
-    const existing = db
-      .prepare("SELECT * FROM inventory_sot_reservations WHERE idempotency_key = ?")
-      .get(idempotencyKey);
-    if (existing) return { ok: true, duplicate: true, reservation: existing, ...label(MODE.DRY_RUN) };
+  const key = input.idempotencyKey || null;
+  const orderKey = input.orderId || input.correlationId || null;
+  const existing = key
+    ? db.prepare("SELECT id FROM inventory_sot_reservations WHERE idempotency_key = ?").get(key)
+    : orderKey
+      ? db.prepare("SELECT id FROM inventory_sot_reservations WHERE correlation_id = ?").get(orderKey)
+      : null;
+  if (existing) {
+    return refusal("DUPLICATE_RESERVATION", reasons.concat("DUPLICATE_RESERVATION"), { duplicate: true });
   }
-
-  const tx = db.transaction(() => {
-    const inv = getInventory(productId);
-    if (inv.error) return { ok: false, code: "PRODUCT_NOT_FOUND", ...inv, ...label(MODE.DRY_RUN) };
-    if (inv.saleable < qty) {
-      exceptions.emit({
-        type: exceptions.TYPES.INVENTORY_INSUFFICIENT,
-        severity: "HIGH",
-        source: "inventoryIntegration",
-        entity: "product",
-        entityId: inv.productId,
-        correlationId,
-        message: "Reservation exceeds saleable quantity",
-        context: { requested: qty, saleable: inv.saleable },
-        retryable: true,
-      });
-      return {
-        ok: false,
-        code: "INSUFFICIENT_STOCK",
-        error: "insufficient_saleable",
-        saleable: inv.saleable,
-        status: 409,
-        ...label(MODE.DRY_RUN),
-      };
-    }
-    const id = `rsv_${crypto.randomBytes(6).toString("hex")}`;
-    db.prepare(
-      `
-      INSERT INTO inventory_sot_reservations(
-        id, product_id, sku, quantity, status, correlation_id, idempotency_key
-      ) VALUES (?,?,?,?, 'RESERVED', ?, ?)
-    `
-    ).run(id, inv.productId, inv.sku, qty, correlationId, idempotencyKey);
-    const after = getInventory(inv.productId);
-    events.emit({
-      type: events.TYPES.InventoryUpdated,
-      aggregateId: inv.productId,
-      aggregateType: "inventory",
-      correlationId,
-      payload: { productId: inv.productId, reserved: after.reserved, saleable: after.saleable },
-    });
-    return { ok: true, reservationId: id, inventory: after, ...label(MODE.DRY_RUN) };
-  });
-
-  return tx();
+  return refusal(reasons[0] || "STOCK_UNVERIFIED", reasons);
 }
 
 function release(reservationId) {
   const row = db.prepare("SELECT * FROM inventory_sot_reservations WHERE id = ?").get(reservationId);
-  if (!row) return { ok: false, error: "not_found", status: 404 };
+  if (!row) {
+    return { ok: false, code: "RESERVATION_NOT_FOUND", released: false, purchased: false, stockDecremented: false, status: 404 };
+  }
+  if (row.status !== "RESERVED") {
+    return { ok: false, code: "RESERVATION_NOT_ACTIVE", released: false, purchased: false, stockDecremented: false, status: 409 };
+  }
   db.prepare("UPDATE inventory_sot_reservations SET status = 'RELEASED' WHERE id = ?").run(reservationId);
-  return { ok: true, inventory: getInventory(row.product_id), ...label(MODE.DRY_RUN) };
+  return {
+    ok: false,
+    code: "RESERVATION_RELEASED",
+    released: true,
+    purchased: false,
+    supplierConfirmed: false,
+    stockDecremented: false,
+    live: false,
+    inventory: getInventory(row.product_id),
+  };
 }
 
-module.exports = { getInventory, reserve, release };
+function expireReservations() {
+  return {
+    ok: false,
+    code: "RESERVATION_EXPIRY_UNVERIFIED",
+    expired: 0,
+    released: false,
+    purchased: false,
+    live: false,
+  };
+}
+
+function decrementStock() {
+  return refusal("STOCK_UNVERIFIED", ["SALES_CLOSED", "STOCK_UNVERIFIED"], { decremented: false });
+}
+
+module.exports = { getInventory, reserve, release, expireReservations, decrementStock };

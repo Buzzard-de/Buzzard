@@ -30,6 +30,7 @@ function loadSharedPolicy() {
 
 const SHARED = loadSharedPolicy();
 const ALLOWLIST = Object.freeze(SHARED.allowlist);
+const DENIED_HOSTS = Object.freeze(Array.isArray(SHARED.deniedHosts) ? SHARED.deniedHosts : ["buzzard24.de"]);
 const FORBIDDEN_AI_HOSTS = Object.freeze(SHARED.forbiddenAiHosts);
 const FORBIDDEN_AI_SUFFIXES = Object.freeze(SHARED.forbiddenAiSuffixes);
 const PAYMENT_HOST_SUFFIXES = Object.freeze(SHARED.paymentHostSuffixes);
@@ -70,13 +71,21 @@ function isPaymentHost(host) {
   return PAYMENT_HOST_SUFFIXES.some((suffix) => h === suffix.replace(/^\./, "") || h.endsWith(suffix.startsWith(".") ? suffix : `.${suffix}`));
 }
 
+function isDeniedHost(host) {
+  const h = String(host || "").toLowerCase();
+  return DENIED_HOSTS.some((name) => {
+    const denied = String(name || "").toLowerCase();
+    return denied && (h === denied || h.endsWith(`.${denied}`));
+  });
+}
+
 function extraHosts() {
   return String(process.env.BUZZARD_EGRESS_EXTRA_HOSTS || "")
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean)
     .filter((h) => !h.includes("*") && !h.includes("?") && !h.startsWith("."))
-    .filter((h) => !isForbiddenAiHost(h) && !isPaymentHost(h) && !isIpLiteral(h));
+    .filter((h) => !isForbiddenAiHost(h) && !isPaymentHost(h) && !isDeniedHost(h) && !isIpLiteral(h));
 }
 
 function isRebindLookalike(host) {
@@ -166,6 +175,16 @@ function evaluateEgress({ destinationUrl, payload = {} } = {}) {
       note: "Stripe/PayPal stay closed until Süleyman Bey approves live payments.",
     };
   }
+  if (isDeniedHost(host)) {
+    return {
+      ok: false,
+      allowed: false,
+      code: "EGRESS_DENIED",
+      host,
+      classification,
+      note: "This host is denied for every payload, including HTTPS and customer data.",
+    };
+  }
   const allowlisted = ALLOWLIST.includes(host) || extraHosts().includes(host.toLowerCase());
   const sensitive = CLASSIFIED.includes(classification);
   if (sensitive && !allowlisted) {
@@ -208,6 +227,7 @@ function inventoryDependencies() {
 module.exports = {
   FAIL_CLOSED,
   ALLOWLIST,
+  DENIED_HOSTS,
   FORBIDDEN_AI_HOSTS,
   CLASSIFIED,
   classify,

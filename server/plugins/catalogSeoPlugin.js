@@ -1,6 +1,7 @@
 const { extractToken, verifyToken } = require("../lib/dbAuth");
 const { extractToken: extractAdminToken, getSession } = require("../lib/auth");
 const catalogSeo = require("../lib/catalogSeo");
+const { CATEGORY_MARGINS } = require("../lib/commerce/pricingPolicy");
 const { rejectLegacyProductWrite } = require("../lib/productSotHttp");
 
 function requireAnyAdmin(req, res) {
@@ -105,7 +106,7 @@ module.exports = {
 
     app.post("/api/admin/catalog/products/bulk-price", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const margin = req.body?.margin ?? process.env.DEFAULT_MARGIN ?? 0.3;
+      const margin = req.body?.margin ?? CATEGORY_MARGINS.other;
       return res.json(catalogSeo.bulkUpdatePrices(margin));
     });
 

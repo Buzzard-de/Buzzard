@@ -134,7 +134,10 @@ describe("autonomous continuation 2026-11-09", () => {
     expect(q.supplierReimbursementAssumed).toBe(false);
     const after = applyCustomerRefund({ estimatedProfit: q.estimatedProfit, refund: 1 });
     expect(after.supplierReimbursementAssumed).toBe(false);
-    expect(after.actualProfit).toBeLessThan(after.estimatedProfit);
+    expect(after.supplierReimbursement).toBeNull();
+    expect(after.customerRefund).toBeNull();
+    expect(after.actualProfit).toBeNull();
+    expect(after.refunded).toBe(false);
   });
 
   it("synthetic recon is not production restore", () => {

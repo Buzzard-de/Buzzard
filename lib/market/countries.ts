@@ -14,7 +14,6 @@ export const LANGUAGE_ONLY_COUNTRY_CODES = new Set<string>();
 type OverlayEntry = {
   flag?: string;
   taxRate?: number;
-  deliveryDays?: string;
   rtl?: boolean;
   taxModel?: string;
   languageName?: string;
@@ -41,7 +40,7 @@ export function toMarketCountry(market: MarketConfig): MarketCountry {
     locale: market.locales[0] ?? market.source.locale,
     taxModel: extra.taxModel ?? market.vat.taxModel,
     taxRate: extra.taxRate ?? market.vat.standardRate,
-    deliveryDays: extra.deliveryDays ?? "2–5",
+    deliveryDays: "UNKNOWN",
     rtl: extra.rtl ?? market.textDirection === "rtl",
   };
 }

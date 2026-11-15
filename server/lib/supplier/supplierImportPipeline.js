@@ -24,7 +24,8 @@ function normalizeRecordFields(raw) {
     supplier_category: raw.supplier_category || raw.category,
     buzzard_category: raw.buzzard_category,
     supplier_price: raw.supplier_price || (raw.price != null ? { amount: raw.price, currency: raw.currency || "EUR" } : null),
-    stock: raw.stock,
+    stock: null,
+    stockVerified: false,
     images: raw.images || [],
     attributes: raw.attributes || [],
   };
@@ -140,9 +141,13 @@ async function runSupplierImportPipeline(supplierId, options = {}) {
   });
 
   return {
-    ok: true,
+    ok: false,
     dryRun: true,
     live: false,
+    mock: false,
+    status: "BLOCKED_EXTERNAL",
+    commercialEligibility: "BLOCKED",
+    purchased: false,
     correlationId,
     supplierId,
     stages,
@@ -173,7 +178,7 @@ async function validateSupplierRecords(supplierId, records = [], options = {}) {
       quality: { status: quality.status, score: quality.score, blockingReasons: quality.blockingReasons },
     });
   }
-  return { ok: true, dryRun: true, supplierId, results };
+  return { ok: false, dryRun: true, live: false, status: "BLOCKED_EXTERNAL", commercialEligibility: "BLOCKED", supplierId, results };
 }
 
 module.exports = {

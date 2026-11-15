@@ -129,6 +129,21 @@ describe("International Market Engine — VAT context", () => {
     const ctx = getVatContext({ sellerCountry: "TR", buyerCountry: "DE", customerType: "B2C" });
     expect(ctx.rate).toBe(getMarketVat("DE").standardRate);
   });
+
+  it("does not invent a 20 percent rate when the market has no overlay", () => {
+    const missing = getMarketVat("XX");
+    expect(missing.standardRate).toBeNull();
+    expect(missing.official).toBe(false);
+    expect(missing.verified).toBe(false);
+    expect(missing.source).toBe("UNKNOWN");
+    const ctx = getVatContext({ sellerCountry: "XX", buyerCountry: "XX", customerType: "B2C" });
+    expect(ctx.rate).toBeNull();
+    expect(ctx.rate).not.toBe(0.2);
+    const shown = calculateDisplayPrice({ amount: 100, currency: "EUR", locale: "de-DE" }, { countryCode: "XX" });
+    expect(shown.vatAmount).toBeNull();
+    expect(shown.formattedVat).toBe("UNKNOWN");
+    expect(shown.grossPrice).toBe(100);
+  });
 });
 
 describe("International Market Engine — shipping region", () => {
@@ -247,7 +262,8 @@ describe("International Market Engine — price engine", () => {
       { amount: 19.99, currency: "EUR", priceIncludesVat: true },
       { countryCode: "DE", customerType: "B2C" }
     );
-    expect(result.netPrice + result.vatAmount).toBeCloseTo(19.99, 2);
+    expect(result.vatAmount).not.toBeNull();
+    expect(result.netPrice + (result.vatAmount ?? 0)).toBeCloseTo(19.99, 2);
     expect(result.grossPrice).toBe(19.99);
   });
 

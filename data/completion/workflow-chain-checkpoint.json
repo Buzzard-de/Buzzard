@@ -1,0 +1,152 @@
+{
+  "schema": "buzzard.workflow-chain.v1",
+  "recordedAt": "2026-11-10T19:56:02.187Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "liveVerified": false,
+  "priorChecksPreserved": 23,
+  "softwareCompleted": 16,
+  "softwareTasks": 16,
+  "integrationCompletion": 1,
+  "performance": {
+    "quotes": 200,
+    "elapsedMs": 0.31,
+    "productionLoad": false
+  },
+  "tasks": [
+    {
+      "id": "MIN_NET_BLOCKS_DRAFT",
+      "module": "pricing",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "BAD_PRICE_REJECTED",
+      "module": "pricing",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SUPPLIER_TIMEOUT_KEEPS_QTY",
+      "module": "supplier",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "MISSING_QTY_UNKNOWN",
+      "module": "inventory",
+      "dependencies": [
+        "SUPPLIER_TIMEOUT_KEEPS_QTY"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "OUT_OF_ORDER_CARRIER",
+      "module": "tracking",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "CONCURRENT_SAME_ORDER",
+      "module": "order",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "PAYMENT_SILENCE",
+      "module": "payment",
+      "dependencies": [
+        "CONCURRENT_SAME_ORDER"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "HOSTILE_ORDER_ID",
+      "module": "order",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "QUEUE_CRASH_RESUME",
+      "module": "pusat",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "AGENT_MEMORY_WALL",
+      "module": "council",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "AGENT_CRASH_ISOLATED",
+      "module": "council",
+      "dependencies": [
+        "AGENT_MEMORY_WALL"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "MISSING_LOCALE",
+      "module": "seo",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SECURITY_EVENT_KEEPS_DENY",
+      "module": "security",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "CANCEL_TO_JOURNAL",
+      "module": "refund",
+      "dependencies": [
+        "MIN_NET_BLOCKS_DRAFT"
+      ],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "ORDER_FILE_ROUNDTRIP",
+      "module": "backup",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "LOCAL_QUOTE_CAPACITY",
+      "module": "pricing",
+      "dependencies": [],
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    }
+  ],
+  "blocked": [
+    {
+      "id": "LIVE_PAYMENT",
+      "status": "HUMAN_APPROVAL_REQUIRED"
+    },
+    {
+      "id": "LIVE_CARRIER_TRACK",
+      "status": "EXTERNAL_DEPENDENCY_BLOCKED"
+    },
+    {
+      "id": "OFFSITE_BACKUP",
+      "status": "HUMAN_APPROVAL_REQUIRED"
+    }
+  ]
+}

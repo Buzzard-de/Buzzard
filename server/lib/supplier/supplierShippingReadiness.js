@@ -11,14 +11,17 @@ function evaluateShippingReadiness(supplierId) {
   }
 
   const flow = [
-    { step: "supplier", status: SUPPLIER_READINESS_STATUS.PASS, detail: def.id },
+    { step: "supplier", status: SUPPLIER_READINESS_STATUS.BLOCKED, detail: "LIVE_CONNECTION_ABSENT" },
     { step: "order", status: SUPPLIER_READINESS_STATUS.BLOCKED, detail: "supplierOrdersBlocked" },
     { step: "shipment", status: SUPPLIER_READINESS_STATUS.BLOCKED, detail: "no_live_shipment_calls" },
     { step: "tracking", status: SUPPLIER_READINESS_STATUS.CONDITION, detail: "architecture_ready" },
   ];
 
   return {
-    ok: true,
+    ok: false,
+    live: false,
+    status: "BLOCKED_EXTERNAL",
+    commercialEligibility: "BLOCKED",
     supplierId,
     diagnosticOnly: true,
     autoActivate: false,

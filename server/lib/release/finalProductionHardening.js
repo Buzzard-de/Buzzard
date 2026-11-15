@@ -41,6 +41,19 @@ function gate(name, status, detail, extras = {}) {
   return { name, status, detail, ...extras };
 }
 
+function workerMonitoringReadiness(workers) {
+  const report = workers && typeof workers === "object" ? workers : {};
+  const status = typeof report.status === "string" && report.status.trim() ? report.status.trim() : "UNKNOWN";
+  const runtimeVerified = report.runtimeVerified === true;
+  const healthy = report.healthy === true;
+  const verifiedRunning = healthy && runtimeVerified && status === "RUNNING";
+  const healthyLabel = report.healthy === true || report.healthy === false ? report.healthy : "missing";
+  return {
+    status: verifiedRunning ? FINAL_GATE_STATUS.PASS : FINAL_GATE_STATUS.CONDITION,
+    detail: `worker=${status} runtimeVerified=${runtimeVerified} healthy=${healthyLabel}`,
+  };
+}
+
 function mapReadinessStatus(status) {
   if (status === READINESS_GATE_STATUS.PASS || status === "PASS" || status === "READY") {
     return FINAL_GATE_STATUS.PASS;
@@ -190,6 +203,7 @@ async function evaluateFinalProductionHardening({ adminDetail = false } = {}) {
   const authGate = securityGates.find((g) => g.gate === "AUTHENTICATION");
   const authzGate = securityGates.find((g) => g.gate === "AUTHORIZATION");
   const apiGate = securityGates.find((g) => g.gate === "API_PROTECTION");
+  const workerGate = workerMonitoringReadiness(monitoring.components?.workers);
 
   const gates = [
     gate(
@@ -274,10 +288,8 @@ async function evaluateFinalProductionHardening({ adminDetail = false } = {}) {
     ),
     gate(
       FINAL_HARDENING_GATE.WORKER_READINESS,
-      monitoring.components?.workers?.status === "RUNNING" || monitoring.components?.workers?.healthy !== false
-        ? FINAL_GATE_STATUS.PASS
-        : FINAL_GATE_STATUS.CONDITION,
-      `worker=${monitoring.components?.workers?.status || "unknown"}`,
+      workerGate.status,
+      workerGate.detail,
       {
         failedJobs: (operations.jobs?.FAILED || 0) + (operations.jobs?.PERMANENTLY_FAILED || 0),
       }

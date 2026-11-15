@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// The web server sets this only for its own child processes. The test worker
+// reads it separately, so the local isolated API must be visible here too.
+if (!process.env.NEXT_PUBLIC_BUZZARD_API_URL) {
+  process.env.NEXT_PUBLIC_BUZZARD_API_URL = "http://localhost:3001";
+}
+
 const VIEWPORTS = {
   desktop1280: { width: 1280, height: 720 },
   desktop1440: { width: 1440, height: 900 },

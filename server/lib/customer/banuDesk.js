@@ -18,9 +18,9 @@ function classify(text = "") {
   const t = String(text).toLowerCase();
   if (t.includes("refund") || t.includes("erstatt")) return "refund_status";
   if (t.includes("return") || t.includes("retoure")) return "return_status";
+  if (t.includes("complaint") || t.includes("beschwer")) return "complaint";
   if (t.includes("track") || t.includes("sendung")) return "tracking";
   if (t.includes("order") || t.includes("bestell")) return "order_status";
-  if (t.includes("complaint") || t.includes("beschwer")) return "complaint";
   return "faq";
 }
 

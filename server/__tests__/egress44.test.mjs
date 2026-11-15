@@ -37,7 +37,9 @@ describe("egress 4.4 multilayer", () => {
 
   it("loads the shared policy used by Node and Python", () => {
     expect(SHARED.default).toBe("DENY");
-    expect(SHARED.allowlist).toContain("buzzard24.de");
+    expect(SHARED.default).toBe("DENY");
+    expect(SHARED.allowlist).not.toContain("buzzard24.de");
+    expect(SHARED.deniedHosts).toContain("buzzard24.de");
     expect(SHARED.forbiddenAiHosts).toContain("api.openai.com");
     const py = readFileSync(path.join(process.cwd(), "intelligence/security/egress_policy.py"), "utf8");
     expect(py).toMatch(/egress_policy\.v1\.json/);
@@ -68,10 +70,34 @@ describe("egress 4.4 multilayer", () => {
 
   it("blocks a rebind after DNS flips to metadata", async () => {
     setDnsLookup(async () => [{ address: "169.254.169.254" }]);
-    const hop = await guardedFetch("https://buzzard24.de/rebind", {}, { ping: true });
+    const hop = await guardedFetch("https://buzzard-api.onrender.com/rebind", {}, { ping: true });
     expect(hop.blocked).toBe(true);
     expect(hop.reachedNetwork).toBe(false);
     expect(hop.decision.code).toBe("RESOLVED_IP_DENIED");
+  });
+
+  it("does not resolve or fetch a denied storefront host", async () => {
+    const original = globalThis.fetch;
+    let fetched = false;
+    let lookedUp = false;
+    globalThis.fetch = async () => {
+      fetched = true;
+      throw new Error("fetch must not run");
+    };
+    setDnsLookup(async () => {
+      lookedUp = true;
+      return [{ address: "203.0.113.8" }];
+    });
+    try {
+      const hop = await guardedFetch("https://buzzard24.de/rebind", {}, { customerId: "customer-test" });
+      expect(hop.blocked).toBe(true);
+      expect(hop.reachedNetwork).toBe(false);
+      expect(hop.decision.code).toBe("EGRESS_DENIED");
+      expect(fetched).toBe(false);
+      expect(lookedUp).toBe(false);
+    } finally {
+      globalThis.fetch = original;
+    }
   });
 
   it("keeps CSP free of telemetry hosts when marketing IDs are empty", () => {

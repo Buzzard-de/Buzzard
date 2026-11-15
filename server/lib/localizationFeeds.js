@@ -32,12 +32,20 @@ function getCountryConfig(countryCode) {
   const locale = db.prepare("SELECT * FROM locales WHERE country_code = ? LIMIT 1").get(country);
   const tax = db.prepare("SELECT rate FROM tax_rates WHERE country_code = ?").get(country);
   const shipping = db
-    .prepare("SELECT * FROM shipping_rates WHERE country_code = ? ORDER BY price")
-    .all(country);
+    .prepare("SELECT country_code, method FROM shipping_rates WHERE country_code = ? ORDER BY method")
+    .all(country)
+    .map((row) => ({
+      ...row,
+      price: null,
+      status: "SHIPPING_RATE_UNVERIFIED",
+      commercialEligibility: "BLOCKED",
+      live: false,
+    }));
   return {
     country,
     locale: locale || null,
     taxRate: tax?.rate ?? null,
+    taxOfficial: false,
     shipping,
   };
 }
@@ -181,8 +189,7 @@ function buildGoogleMerchantFeed(filters = {}) {
   const items = products
     .map((product) => {
       const priced = applyPriceOverride(product, locale);
-      const availability = product.stock > 0 ? "in_stock" : "out_of_stock";
-      return `<item><g:id>${escapeXml(product.sku)}</g:id><g:title>${escapeXml(priced.name)}</g:title><g:description>${escapeXml(priced.description)}</g:description><g:link>${base}/produkt/${escapeXml(priced.slug)}/?lang=${escapeXml(locale)}</g:link><g:availability>${availability}</g:availability><g:price>${Number(priced.price).toFixed(2)} ${currency}</g:price><g:condition>new</g:condition><g:shipping><g:country>${country}</g:country></g:shipping></item>`;
+      return `<item><g:id>${escapeXml(product.sku)}</g:id><g:title>${escapeXml(priced.name)}</g:title><g:description>${escapeXml(priced.description)}</g:description><g:link>${base}/produkt/${escapeXml(priced.slug)}/?lang=${escapeXml(locale)}</g:link><g:price>${Number(priced.price).toFixed(2)} ${currency}</g:price><g:condition>new</g:condition><g:shipping><g:country>${country}</g:country></g:shipping></item>`;
     })
     .join("");
 
@@ -249,19 +256,15 @@ function upsertPriceOverride(productId, body = {}) {
   return { ok: true, currency: resolvedCurrency, price: Number(price) };
 }
 
-function upsertShippingRate(body = {}) {
-  const { countryCode, method = "standard", price, freeFrom = 0 } = body;
-  if (!countryCode || price === undefined) {
-    return { error: "countryCode and price required", status: 400 };
-  }
-
-  db.prepare(`
-    INSERT INTO shipping_rates(country_code, method, price, free_from)
-    VALUES(?,?,?,?)
-    ON CONFLICT(country_code, method) DO UPDATE SET price = excluded.price, free_from = excluded.free_from
-  `).run(String(countryCode).toUpperCase(), method, Number(price), Number(freeFrom));
-
-  return { ok: true };
+function upsertShippingRate() {
+  return {
+    ok: false,
+    stored: false,
+    status: "SHIPPING_RATE_UNVERIFIED",
+    code: "SHIPPING_RATE_UNVERIFIED",
+    commercialEligibility: "BLOCKED",
+    invented: false,
+  };
 }
 
 function getLocalizationFeedsStatus() {

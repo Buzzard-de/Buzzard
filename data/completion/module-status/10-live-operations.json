@@ -1,0 +1,12 @@
+{
+  "id": "live_operations",
+  "phase": 10,
+  "status": "BLOCKED_EXTERNAL",
+  "approval": "BLOCKED_APPROVAL",
+  "classification": "blocked_by_external_dependency",
+  "marketplacesActivated": false,
+  "bankingExecuted": false,
+  "customerEmailSent": false,
+  "evidence": "tenModuleProgram live_operations implementation BLOCKED",
+  "liveVerified": false
+}

@@ -1,0 +1,85 @@
+{
+  "schema": "buzzard.integration-pass.v1",
+  "recordedAt": "2026-11-10T19:42:10.313Z",
+  "cursorRunsContinuously": false,
+  "independentWorker": false,
+  "liveVerified": false,
+  "productionReady": false,
+  "softwareCompleted": 12,
+  "softwareTasks": 12,
+  "integrationCompletion": 1,
+  "tasks": [
+    {
+      "id": "IDEMPOTENT_ORDER",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "PRICE_HOLD",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SUPPLIER_STOCK_LOSS",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "PAYMENT_FAILURE",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "REFUND_SEPARATE_FROM_SUPPLIER",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "ANOMALY_SUPPLIER_CREDIT",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "LOCALE_SWITCH",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "UNAUTHORIZED_AGENT",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "CARRIER_STATUS_CHANGE",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "MARKET_VAT",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "RESTART",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    },
+    {
+      "id": "SECURITY_LAYERS",
+      "ok": true,
+      "status": "TEST_COMPLETE",
+      "liveVerified": false
+    }
+  ]
+}

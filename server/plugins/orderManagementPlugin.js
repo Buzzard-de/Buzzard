@@ -102,22 +102,19 @@ module.exports = {
     app.post("/api/admin/order-management/orders/:id/split", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.splitOrder(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json(result.order);
+      return res.status(result.status || 403).json({ ...result, ok: false, orderCreated: false });
     });
 
     app.post("/api/admin/order-management/orders/:id/fulfillment-link", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.addFulfillmentLink(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.status(201).json(result.link);
+      return res.status(result.status || 403).json({ ...result, ok: false, linked: false, shipmentCreated: false });
     });
 
     app.post("/api/admin/order-management/orders/:id/note", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = orderManagement.addOrderNote(req.params.id, req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error });
-      return res.json(result);
+      return res.status(result.status || 403).json({ ...result, ok: false, noteSaved: false });
     });
   },
 };

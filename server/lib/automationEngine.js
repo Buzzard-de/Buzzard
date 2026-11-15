@@ -62,7 +62,6 @@ function buildIdempotencyKey(eventType, payload, explicitKey) {
   const parts = [
     payload.orderNumber,
     payload.customerId,
-    payload.email,
     payload.productId,
     payload.shipmentId,
     payload.returnId,
@@ -88,42 +87,36 @@ function emit(eventType, payload = {}, options = {}) {
   }
 
   const idempotencyKey = buildIdempotencyKey(eventType, payload, options.idempotencyKey);
-  if (wasDelivered(idempotencyKey) && options.idempotent !== false) {
-    return { ok: true, duplicate: true, idempotencyKey };
-  }
-
-  const event = {
-    id: crypto.randomUUID(),
+  const notice = notificationEngine.handleAutomationEvent({
+    id: idempotencyKey,
     type: eventType,
-    payload,
+    payload: {
+      language: payload.language || payload.locale || null,
+      channel: payload.channel || "email",
+      orderNumber: payload.orderNumber || null,
+      marketingConsent: payload.marketingConsent === true,
+      unsubscribed: payload.unsubscribed === true,
+      mock: payload.mock === true,
+      timeout: payload.timeout === true,
+      networkError: payload.networkError === true,
+    },
     idempotencyKey,
-    createdAt: new Date().toISOString(),
-    status: "pending",
+  });
+  return {
+    ok: false,
+    sent: false,
+    queued: false,
+    duplicate: notice.duplicate === true || (wasDelivered(idempotencyKey) && options.idempotent !== false),
+    idempotencyKey,
+    customerNotified: false,
+    live: false,
+    event: {
+      id: idempotencyKey,
+      type: eventType,
+      status: notice.status || "UNKNOWN",
+      notification: notice,
+    },
   };
-
-  const events = readEvents();
-  events.push(event);
-  writeEvents(events.slice(-2000));
-
-  try {
-    const notificationResult = notificationEngine.handleAutomationEvent(event);
-    event.status = "processed";
-    event.processedAt = new Date().toISOString();
-    event.notification = notificationResult;
-    markDelivered(idempotencyKey, event.id);
-  } catch (err) {
-    event.status = "failed";
-    event.error = String(err.message || err);
-  }
-
-  const updated = readEvents();
-  const idx = updated.findIndex((e) => e.id === event.id);
-  if (idx >= 0) {
-    updated[idx] = event;
-    writeEvents(updated.slice(-2000));
-  }
-
-  return { ok: true, event, duplicate: false };
 }
 
 function listEvents(filters = {}) {

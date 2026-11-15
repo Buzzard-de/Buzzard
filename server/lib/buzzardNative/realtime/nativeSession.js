@@ -22,7 +22,15 @@ function createSessionHub() {
     const buf = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes || []);
     const sha256 = crypto.createHash("sha256").update(buf).digest("hex");
     s.packets.push({ actorId, sha256, n: buf.length, at: Date.now() });
-    return { ok: true, packets: s.packets.length, liveMedia: false, transport: "in_process_buffer" };
+    return {
+      ok: true,
+      packets: s.packets.length,
+      liveMedia: false,
+      transport: "in_process_buffer",
+      delivered: false,
+      sent: false,
+      customerNotified: false,
+    };
   }
 
   function close({ sessionId, actorId }) {

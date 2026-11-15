@@ -1,4 +1,4 @@
-const { estimateVat, getStandardVat } = require("../../../commerce/ab27Tax");
+const { getStandardVat } = require("../../../commerce/ab27Tax");
 const { getCountry, NET_INCOME_RESERVE_RATE } = require("./countryRegistry");
 const { usable } = require("./sourceRegistry");
 const { check } = require("../permissionEngine");
@@ -17,35 +17,29 @@ function calculateVat({ actorId = "nedim_bey", sellerCountry, customerCountry, d
   if (goodsNet == null || Number.isNaN(Number(goodsNet))) {
     return { ok: false, code: "MISSING_AMOUNT", status: "UNKNOWN", definitive: false };
   }
-  const rate = getStandardVat(dest.iso);
-  if (rate == null) return { ok: false, code: "VAT_UNKNOWN", status: "UNKNOWN", definitive: false };
-  const est = estimateVat({ country: dest.iso, netAmount: goodsNet });
-  const oss =
-    kind === "B2C" &&
-    sellerCountry &&
-    customerCountry &&
-    sellerCountry !== customerCountry &&
-    dest.ossIossApplicability.oss;
   return {
-    ok: true,
+    ok: false,
+    code: dest.vatOfficial === true && dest.vatVerified === true ? "VAT_UNKNOWN" : "VAT_UNVERIFIED",
+    status: dest.vatSource === "UNKNOWN" ? "UNKNOWN" : "UNVERIFIED",
+    official: false,
+    verified: false,
     actorId,
-    kind,
-    sellerCountry,
-    customerCountry,
+    sellerCountry: sellerCountry || null,
+    customerCountry: customerCountry || null,
     deliveryCountry: dest.iso,
-    rate: est.rate,
-    net: est.net,
-    vat: est.vat,
-    gross: est.gross,
-    ossCandidate: Boolean(oss),
+    rate: null,
+    net: null,
+    vat: null,
+    gross: null,
+    ossCandidate: false,
     iossCandidate: false,
     liveOss: false,
     source: src.source,
     verificationStatus: dest.verificationStatus,
     liveLegal: false,
     filingReady: false,
-    definitive: dest.verificationStatus !== "UNVERIFIED",
-    note: "UNVERIFIED snapshot — not a filed return",
+    definitive: false,
+    invented: false,
   };
 }
 
@@ -59,24 +53,30 @@ function germanyPolicy() {
   return {
     country: "DE",
     vatStandard: getStandardVat("DE"),
+    vatOfficial: false,
+    vatVerified: false,
+    tax: null,
     separateFromEu26Reserve: true,
     liveLegal: false,
+    filingReady: false,
   };
 }
 
-function netIncomeReport({ actorId = "nedim_bey", incomeCountry, gross, vat, refund = 0, commission = 0, logistics = 0, supplierCost = 0 } = {}) {
+function netIncomeReport({ actorId = "nedim_bey", incomeCountry, gross, vat, refund, commission, logistics, supplierCost } = {}) {
   if (!check(actorId, "TAX_REPORT").ok) return { ok: false, code: "PERMISSION_DENIED" };
+  const country = getCountry(incomeCountry);
   const inputs = { gross, vat, refund, commission, logistics, supplierCost };
-  if (Object.values(inputs).some((v) => v == null || Number.isNaN(Number(v)))) {
-    return { ok: false, code: "MISSING_AMOUNT", status: "UNKNOWN", definitive: false };
+  if (!country || Object.values(inputs).some((v) => v == null || Number.isNaN(Number(v)))) {
+    return { ok: false, code: country ? "MISSING_AMOUNT" : "COUNTRY_UNKNOWN", status: "UNKNOWN", definitive: false, invented: false };
   }
   const net = Number(gross) - Number(vat) - Number(commission) - Number(logistics) - Number(supplierCost) + Number(refund);
-  const eu26 = incomeCountry && incomeCountry !== "DE";
-  const reserveRate = eu26 ? NET_INCOME_RESERVE_RATE : 0;
+  const germany = country.iso === "DE";
+  const reserveRate = germany ? 0 : NET_INCOME_RESERVE_RATE;
   const reserve = net > 0 ? net * reserveRate : 0;
   return {
     ok: true,
     incomeCountry,
+    separateFromEu26Reserve: germany,
     gross: Number(gross),
     vat: Number(vat),
     refund: Number(refund),

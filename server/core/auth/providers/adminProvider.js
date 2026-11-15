@@ -13,11 +13,11 @@ module.exports = {
       return {
         realm: "admin",
         userId: session.userId,
-        email: session.email,
+        email: null,
         name: session.name,
         role: session.role,
         token,
-        session,
+        session: { ...session, email: null, ip: null, userAgent: null },
       };
     }
     if (token) {
@@ -28,8 +28,8 @@ module.exports = {
           return {
             realm: "admin",
             userId: user.sub,
-            email: user.email,
-            name: user.name || user.email,
+            email: null,
+            name: user.name || null,
             role: user.role === "admin" ? "administrator" : user.role,
             token,
             session: user,

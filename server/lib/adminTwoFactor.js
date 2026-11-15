@@ -1,11 +1,20 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { generateSecret, verifyTotp, buildOtpAuthUri } = require("./totp");
+const { verifyTotp } = require("./totp");
 
 const dataDir = path.join(__dirname, "..", "data");
-const storeFile = path.join(dataDir, "admin-2fa.json");
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
+
+function storePath() {
+  return process.env.BUZZARD_ADMIN_2FA_PATH
+    ? path.resolve(process.env.BUZZARD_ADMIN_2FA_PATH)
+    : path.join(dataDir, "admin-2fa.json");
+}
+
+function userKey(userId) {
+  return `user:${String(userId)}`;
+}
 
 const challenges = new Map();
 const pendingSetup = new Map();
@@ -16,36 +25,65 @@ function ensureDataDir() {
 
 function readStore() {
   ensureDataDir();
-  if (!fs.existsSync(storeFile)) return {};
+  const file = storePath();
+  if (!fs.existsSync(file)) return {};
   try {
-    return JSON.parse(fs.readFileSync(storeFile, "utf8") || "{}");
+    const parsed = JSON.parse(fs.readFileSync(file, "utf8") || "{}");
+    const { store, changed } = migrateStore(parsed);
+    if (changed) writeStore(store);
+    return store;
   } catch {
     return {};
   }
 }
 
 function writeStore(store) {
-  ensureDataDir();
-  fs.writeFileSync(storeFile, JSON.stringify(store, null, 2), "utf8");
+  fs.mkdirSync(path.dirname(storePath()), { recursive: true });
+  fs.writeFileSync(storePath(), JSON.stringify(store, null, 2), "utf8");
 }
 
-function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
+function migrateStore(store) {
+  let changed = false;
+  const next = {};
+  for (const [key, value] of Object.entries(store || {})) {
+    const record = value && typeof value === "object" ? value : {};
+    if (key.startsWith("retired:")) {
+      next[key] = { enabled: false, secret: null, userId: null, email: null };
+      if (record.secret || record.email || record.enabled) changed = true;
+      continue;
+    }
+    if (key.startsWith("user:") && record.userId && !String(record.userId).includes("@")) {
+      next[key] = { ...record, userId: String(record.userId), email: null };
+      if (record.email) changed = true;
+      continue;
+    }
+    if (record.userId && !String(record.userId).includes("@")) {
+      next[userKey(record.userId)] = { ...record, userId: String(record.userId), email: null };
+      changed = true;
+      continue;
+    }
+    const retiredId = crypto.createHash("sha256").update(`retired:${key}`).digest("hex").slice(0, 16);
+    next[`retired:${retiredId}`] = { enabled: false, secret: null, userId: null, email: null };
+    changed = true;
+  }
+  return { store: next, changed };
 }
 
-function getConfig(email) {
+function getConfig(userId) {
+  if (userId == null || String(userId).includes("@")) return null;
   const store = readStore();
-  return store[normalizeEmail(email)] || null;
+  return store[userKey(userId)] || null;
 }
 
-function isEnabled(email) {
-  const config = getConfig(email);
+function isEnabled(userId) {
+  const config = getConfig(userId);
   return Boolean(config?.enabled && config?.secret);
 }
 
-function saveConfig(email, config) {
+function saveConfig(userId, config) {
+  if (userId == null || String(userId).includes("@")) return;
   const store = readStore();
-  store[normalizeEmail(email)] = config;
+  store[userKey(userId)] = { ...config, userId: String(userId), email: null };
   writeStore(store);
 }
 
@@ -53,7 +91,6 @@ function createChallenge(user) {
   const token = crypto.randomBytes(24).toString("hex");
   challenges.set(token, {
     userId: user.id,
-    email: user.email,
     name: user.name,
     role: user.role,
     expiresAt: Date.now() + CHALLENGE_TTL_MS,
@@ -61,60 +98,73 @@ function createChallenge(user) {
   return token;
 }
 
-function consumeChallenge(token) {
+function readLiveChallenge(token) {
   const challenge = challenges.get(token);
   if (!challenge) return null;
   if (challenge.expiresAt <= Date.now()) {
     challenges.delete(token);
     return null;
   }
-  challenges.delete(token);
   return challenge;
 }
 
-function beginSetup(email) {
-  const secret = generateSecret();
-  const normalized = normalizeEmail(email);
-  pendingSetup.set(normalized, { secret, expiresAt: Date.now() + 10 * 60 * 1000 });
+function consumeChallenge(token) {
+  const challenge = readLiveChallenge(token);
+  if (!challenge) return null;
+  challenges.delete(token);
+  return { userId: challenge.userId, name: challenge.name, role: challenge.role, email: null };
+}
+
+function acceptChallenge(token, code) {
+  const challenge = readLiveChallenge(token);
+  if (!challenge) return { ok: false, reason: "expired", email: null };
+  challenges.delete(token);
+  if (!verifyLoginCode(challenge.userId, code)) return { ok: false, reason: "code", email: null };
   return {
-    secret,
-    otpauthUri: buildOtpAuthUri({ secret, email: normalized }),
+    ok: true,
+    userId: challenge.userId,
+    email: null,
+    name: challenge.name,
+    role: challenge.role,
   };
 }
 
-function completeSetup(email, code) {
-  const normalized = normalizeEmail(email);
-  const pending = pendingSetup.get(normalized);
-  if (!pending || pending.expiresAt <= Date.now()) {
-    pendingSetup.delete(normalized);
-    return { ok: false, errorKey: "admin.2fa.setupExpired" };
-  }
-  if (!verifyTotp(pending.secret, code)) {
-    return { ok: false, errorKey: "admin.2fa.invalidCode" };
-  }
-  saveConfig(normalized, { secret: pending.secret, enabled: true, enabledAt: new Date().toISOString() });
-  pendingSetup.delete(normalized);
-  return { ok: true };
+function cancelChallenge(token) {
+  return challenges.delete(token);
 }
 
-function disable(email, code) {
-  const normalized = normalizeEmail(email);
-  const config = getConfig(normalized);
-  if (!config?.enabled || !verifyTotp(config.secret, code)) {
-    return { ok: false, errorKey: "admin.2fa.invalidCode" };
-  }
-  saveConfig(normalized, { secret: null, enabled: false, disabledAt: new Date().toISOString() });
-  return { ok: true };
+function beginSetup() {
+  return { ok: false, secret: null, otpauthUri: null, enabled: false, email: null, code: "TOKEN_UNVERIFIED" };
 }
 
-function verifyLoginCode(email, code) {
-  const config = getConfig(email);
+function completeSetup() {
+  return { ok: false, enabled: false, email: null, code: "TOKEN_UNVERIFIED" };
+}
+
+function disable(userId, code) {
+  const config = getConfig(userId);
+  const matches = Boolean(config?.enabled && config?.secret && verifyTotp(config.secret, code));
+  if (matches) {
+    saveConfig(userId, { secret: null, enabled: false, disabledAt: new Date().toISOString() });
+  }
+  return {
+    ok: false,
+    cleared: matches,
+    enabled: matches ? false : Boolean(config?.enabled),
+    email: null,
+    secret: null,
+    code: matches ? "LOCAL_ONLY" : "TOKEN_UNVERIFIED",
+  };
+}
+
+function verifyLoginCode(userId, code) {
+  const config = getConfig(userId);
   if (!config?.enabled || !config.secret) return false;
   return verifyTotp(config.secret, code);
 }
 
-function getStatus(email) {
-  const config = getConfig(email);
+function getStatus(userId) {
+  const config = getConfig(userId);
   return {
     enabled: Boolean(config?.enabled),
     enabledAt: config?.enabledAt || null,
@@ -125,6 +175,8 @@ module.exports = {
   isEnabled,
   createChallenge,
   consumeChallenge,
+  acceptChallenge,
+  cancelChallenge,
   beginSetup,
   completeSetup,
   disable,

@@ -1,0 +1,21 @@
+{
+  "schema": "buzzard.final-program.progress.v1",
+  "recordedAt": "2026-11-15T13:03:00+01:00",
+  "paused": true,
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "128cbc06a8d7b345cea2de2f847fd0ae1de3016f",
+  "committed": false,
+  "currentTask": "FIN-M28-REVIEW-AUTHORITY",
+  "completedThisSession": [
+    "FIN-M33-EU27-POSTCODE",
+    "FIN-M34-DELIVERY-ESTIMATE",
+    "FIN-X-JOURNEY",
+    "FIN-M10-CARRIER-STATUS"
+  ],
+  "counts": {
+    "VERIFIED_PARTIAL": 10,
+    "VERIFIED_COMPLETE": 38,
+    "BLOCKED_EXTERNAL": 3
+  },
+  "note": "Recorded on 15 Nov 2026 at 13:03 Europe/Berlin. FIN-M28-REVIEW-AUTHORITY technical gate is verified. VERIFIED_COMPLETE is 38. A live purchase ledger and review publication authority remain owner actions. productionReady stays false. SALES stays closed."
+}

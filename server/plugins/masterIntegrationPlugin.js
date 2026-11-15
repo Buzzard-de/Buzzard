@@ -86,12 +86,33 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePermission(req, res, "products.read")) return;
       const body = req.body || {};
+      if (body.action === "ESAT_INSPECT") {
+        return res.status(403).json({
+          success: false,
+          errorCode: "LEGACY_ESAT_INSPECT_WRITE_BLOCKED",
+          queued: false,
+          executed: false,
+          salesOpen: false,
+          egressAllowed: false,
+          productionReady: false,
+          purchased: false,
+          moneyMoved: false,
+          refunded: false,
+          shipmentCreated: false,
+          orderChanged: false,
+        });
+      }
       const idempotencyKey = body.idempotencyKey || req.headers["idempotency-key"] || null;
+      const payload = body.payload && typeof body.payload === "object" && !Array.isArray(body.payload)
+        ? { ...body.payload }
+        : {};
+      delete payload.deciderId;
       try {
         const outcome = await pusat.dispatch({
           action: body.action,
-          payload: body.payload || {},
+          payload,
           actorId: req.adminUser?.email || req.adminUser?.userId,
+          sessionRole: req.adminUser?.role || null,
           correlationId: req.correlationId || body.correlationId,
           idempotencyKey,
         });

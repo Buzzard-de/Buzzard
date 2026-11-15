@@ -96,12 +96,12 @@ async function checkSuppliers() {
     const h = await adapter.healthCheck();
     const ms = Date.now() - start;
     upsertHealth("suppliers", {
-      status: h.ok ? INTEGRATION_HEALTH.CONNECTED : INTEGRATION_HEALTH.DEGRADED,
+      status: h.ok === true && h.live === true ? INTEGRATION_HEALTH.CONNECTED : INTEGRATION_HEALTH.DISCONNECTED,
       responseTimeMs: ms,
-      lastSuccessAt: h.ok ? new Date().toISOString() : null,
-      lastFailureAt: h.ok ? null : new Date().toISOString(),
-      lastError: h.error || null,
-      errorCount: h.ok ? 0 : 1,
+      lastSuccessAt: null,
+      lastFailureAt: new Date().toISOString(),
+      lastError: h.code || h.status || "BLOCKED_EXTERNAL",
+      errorCount: 1,
     });
   } catch (err) {
     upsertHealth("suppliers", {

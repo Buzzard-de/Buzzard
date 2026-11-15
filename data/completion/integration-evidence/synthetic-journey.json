@@ -1,0 +1,23 @@
+{
+  "schema": "buzzard.synthetic-journey.v1",
+  "recordedAt": "2026-11-11T17:05:00+01:00",
+  "live": false,
+  "orderCreated": false,
+  "moneyMoved": false,
+  "shipmentCreated": false,
+  "supplierPurchased": false,
+  "steps": [
+    { "step": "customer", "function": "banuDesk.handle", "status": "BLOCKED", "sent": false },
+    { "step": "search", "function": "pimReadOnlyAdapter.list", "status": "VERIFIED_PARTIAL", "openedDevDb": false },
+    { "step": "detail", "function": "pimReadOnlyAdapter.product", "status": "VERIFIED_PARTIAL", "price": "UNKNOWN" },
+    { "step": "price", "function": "pricingPolicy.evaluateOffer", "status": "VERIFIED_PARTIAL", "minNetProfitEur": 0.5 },
+    { "step": "inventory", "function": "workflowChain supplier snapshot", "status": "UNKNOWN", "code": "QTY_UNKNOWN" },
+    { "step": "order", "function": "storefrontCatalogAdapter.placeOrder", "status": "BLOCKED", "code": "SALES_CLOSED" },
+    { "step": "payment", "function": "fiatPolicy.decideAsset", "status": "BLOCKED_APPROVAL", "crypto": "REJECTED_CRYPTO_POLICY" },
+    { "step": "supplier", "function": "engineRegistry.buyStock", "status": "BLOCKED_APPROVAL", "code": "HUMAN_GATE_REQUIRED" },
+    { "step": "shipment", "function": "returnsEngine.startReturn", "status": "BLOCKED", "labelIssued": false },
+    { "step": "notification", "function": "notifyStub.notifyCustomer", "status": "BLOCKED", "sent": false },
+    { "step": "refund", "function": "unifiedPricing.applyCustomerRefund", "status": "BLOCKED", "moneyMoved": false }
+  ],
+  "tests": ["server/__tests__/tenModuleProgram.test.mjs", "server/__tests__/globalProgram.test.mjs"]
+}

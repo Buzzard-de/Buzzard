@@ -3,6 +3,11 @@ import { fetchStorefrontProduct, fetchStorefrontProducts } from "./client";
 import { mapStorefrontToPublic } from "./map";
 import type { PublicProduct } from "@/lib/products/types";
 
+/** Isolated catalog is opt-in. Both flags must be set; the default stays on the existing reader. */
+export function isIsolatedCatalogEnabled(): boolean {
+  return process.env.BUZZARD_ISOLATED_CATALOG === "1" && process.env.NEXT_PUBLIC_BUZZARD_ISOLATED_CATALOG === "1";
+}
+
 export function isPimStorefrontEnabled(): boolean {
   if (process.env.NEXT_PUBLIC_PIM_STOREFRONT === "0") return false;
   if (process.env.NEXT_PUBLIC_PIM_STOREFRONT === "1") return isApiConfigured();

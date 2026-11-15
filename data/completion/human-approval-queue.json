@@ -1,0 +1,24 @@
+{
+  "schema": "buzzard.human-approval-requirements.v1",
+  "recordedAt": "2026-11-11T17:08:00+01:00",
+  "executed": false,
+  "deciders": ["human", "operator"],
+  "aiDeciderResult": "PERMISSION_DENIED",
+  "requiredActions": [
+    "STOCK_BUY",
+    "DATA_EXPORT",
+    "SUPPLIER_PAY",
+    "SECURITY_POLICY_CHANGE",
+    "CUSTOMER_REFUND",
+    "PAYMENT_ACTIVATE",
+    "SHIPMENT_CREATE",
+    "DEPLOYMENT",
+    "POLICY_CHANGE",
+    "UNKNOWN_ACTION",
+    "SALES_ACTIVATE",
+    "BANK_TRANSFER",
+    "TAX_PAY",
+    "TAX_FILE_RETURN"
+  ],
+  "note": "Holding an approval records a decision. It does not create an order, payment, purchase, or shipment."
+}

@@ -13,7 +13,7 @@ export function mapCommerceItemToCartLine(item: CommerceCartItem): CartLineItem 
     variantIds: item.variantId ? [item.variantId] : [],
     variantLabel: item.variantId ? String(item.metadata?.variantLabel || item.variantId) : "",
     imageKey: typeof item.metadata?.imageKey === "string" ? item.metadata.imageKey : "default",
-    vatRate: 19,
+    vatRate: null,
   };
 }
 

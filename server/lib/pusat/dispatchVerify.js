@@ -168,14 +168,16 @@ const POLICIES = {
   },
   STOCK_READ(result, inner) {
     const acceptance = ["feed_snapshot", "warehouse_off", "supplier_api_off"];
-    const ok = inner.ok === true && inner.buzzardWarehouse === false && inner.liveSupplierApi === false && Array.isArray(inner.stale);
+    const ok = inner.ok === false && inner.sellable === false && inner.chosen == null && inner.buzzardWarehouse === false && inner.liveSupplierApi === false && Array.isArray(inner.stale);
     return ok ? pass("STOCK_READ", acceptance, ["stale"]) : fail("NOT_VERIFIED", "STOCK_READ", acceptance, []);
   },
   STOCK_BUY(result, inner) {
-    const acceptance = ["not_purchased", "dry_run_only", "human_approved"];
-    if (inner.purchased === true) return fail("STOCK_PURCHASE_REJECTED", "STOCK_BUY", acceptance, ["purchased"]);
-    if (result.ok === true && result.humanApproved === true && inner.purchased === false && inner.dryRun === true) {
-      return pass("STOCK_BUY", acceptance, ["dryRun"]);
+    const acceptance = ["not_purchased", "purchase_blocked"];
+    if (inner.purchased === true || (result.ok === true && inner.purchased === false)) {
+      return fail("STOCK_PURCHASE_REJECTED", "STOCK_BUY", acceptance, ["purchased"]);
+    }
+    if (result.code === "PURCHASE_BLOCKED" || inner.code === "PURCHASE_BLOCKED") {
+      return fail("PURCHASE_BLOCKED", "STOCK_BUY", acceptance, ["purchase_blocked"]);
     }
     if (result.code === "HUMAN_GATE_REQUIRED" || inner.code === "HUMAN_GATE_REQUIRED") {
       return fail("HUMAN_GATE_REQUIRED", "STOCK_BUY", acceptance, ["human_gate"]);

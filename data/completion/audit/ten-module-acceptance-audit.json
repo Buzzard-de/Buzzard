@@ -1,0 +1,175 @@
+{
+  "schema": "buzzard.ten-module-acceptance-audit.v1",
+  "recordedAt": "2026-11-11T15:41:22Z",
+  "recordedAtBerlin": "2026-11-11T16:41:22+01:00",
+  "mode": "AUDIT_ONLY",
+  "applicationCodeModified": false,
+  "branch": "cursor/buzzard-eu27-fiat-engine-4be7",
+  "head": "607f42b6027d7a0c933d61034d00c87dc4d55c12",
+  "protection": {
+    "egress": "DENY",
+    "egressBytesMatchWorkspace": true,
+    "salesEnv": "BUZZARD_SALES_ENABLED=0",
+    "sales": "CLOSED",
+    "devDbMtime": 1794331370,
+    "devDbSha256": "416f163a105efa648722cc011fbe2b02590bee8cd7de68017fc2d444a048973b",
+    "devDbOpened": false,
+    "commit": "NOT_DONE",
+    "pullRequest501": "UNCHANGED"
+  },
+  "testCommand": "node --test server/__tests__/tenModuleProgram.test.mjs",
+  "testResult": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 152.4,
+    "independentOfCheckpoint": false,
+    "note": "The test calls runProgram and asserts fields that runProgram itself writes. The database mtime and file-descriptor checks are independent."
+  },
+  "importProbe": {
+    "loadedModules": 81,
+    "dbJsLoaded": false,
+    "orderServiceLoaded": false,
+    "checkoutServiceLoaded": false,
+    "coreEngineChainLoaded": false,
+    "signalingLoaded": false,
+    "carrierContractLoaded": true,
+    "importOpensTempSqlite": "/tmp/buzzard-wa-default-<pid>.sqlite",
+    "importSource": "server/lib/comms/whatsappSandbox.js default sandbox, reached through workflowChain.js and banuDesk.js"
+  },
+  "falsePositiveClaims": [
+    "TEST_COMPLETE is a literal on all ten module objects.",
+    "INTEGRATION_COMPLETE is awarded when journey.steps are ok, including steps whose ok flag is a literal.",
+    "SECURITY_VERIFIED is a literal on core and security after three checks.",
+    "PERFORMANCE_TESTED is a literal on core. The timer covers snapshot search and one fixture quote.",
+    "Customer, notification, returns, and order-created flags are object literals.",
+    "openedDevDb and egressDefault in the contract report are literals. The file-descriptor check and the policy file are the separate evidence.",
+    "inventedCatalogPrice is a literal false. The same function then prices a 20 EUR fixture.",
+    "buyStock always returns HUMAN_GATE_REQUIRED and does not consult the approval center.",
+    "crashIsolation throws and catches Error in the same function, then calls dispatch again.",
+    "assessVoice sets webrtcCode true without creating a signaling room. signaling.js is not loaded.",
+    "Live operations receives INTEGRATION_COMPLETE and TEST_COMPLETE from constants.",
+    "evaluateOffer.salesEnabled is a constant false, separate from isSalesEnabled()."
+  ],
+  "matrix": [
+    {
+      "module": "core",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE", "SECURITY_VERIFIED", "PERFORMANCE_TESTED"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["Eleven-row engine registry", "Isolated queue enqueue, duplicate key, restart read"],
+      "partial": ["Registry rows are metadata", "Crash check is an in-function throw"],
+      "missing": ["Observability, retry, and the database-backed commerce chain are outside this contract"],
+      "security": "Path guard refuses a file named buzzard.db. Import still opens a temp WhatsApp sqlite.",
+      "external": [],
+      "approval": []
+    },
+    {
+      "module": "ecommerce",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["Snapshot search for brems", "Fixture quote", "Refund math with supplier reimbursement 0"],
+      "partial": ["Customer, order, notification, and returns steps are literals"],
+      "missing": ["Order, checkout, and returns services are not loaded"],
+      "security": "orderCreated false is assigned, not returned by an order service.",
+      "external": [],
+      "approval": ["SALES_ACTIVATE", "PAYMENT_ACTIVATE"]
+    },
+    {
+      "module": "council",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["17 seed ids", "Personal memory denial", "STOCK_BUY stays WAITING_APPROVAL", "Cross-identity voice assignment refused"],
+      "partial": ["Low-risk actions outside NEVER_AUTO are auto-approved"],
+      "missing": ["One agent runtime failure is not what crashIsolation measures"],
+      "security": "Pusat enqueue skips the ASSIGN_TASK permission check.",
+      "external": [],
+      "approval": ["STOCK_BUY", "DEPLOY", "SECURITY_POLICY_CHANGE", "DATA_EXPORT"]
+    },
+    {
+      "module": "catalog",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["Snapshot price UNKNOWN", "Supplier cost absent from the mapped card", "50-category file, subcategory status TAXONOMY_DATA_REQUIRED"],
+      "partial": ["The traversal check looks up a snapshot key"],
+      "missing": ["Live PIM reader", "Official subcategory rows", "This test does not render SEO or responsive pages"],
+      "security": "pimReadOnlyAdapter.js requires fs and path only.",
+      "external": ["PIM_LIVE_DATA_BLOCKED"],
+      "approval": ["Translation review"]
+    },
+    {
+      "module": "eu27",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["27 country codes", "registryComplete is EU27_REGISTRY_INCOMPLETE for all 27", "Overlay rates DE 0.19 and FR 0.20 are read from the existing file"],
+      "partial": ["Customs, sanctions, holidays, and local payment methods are not called"],
+      "missing": ["Official institution rows for every register slot"],
+      "security": "No live connector is marked verified by registryComplete.",
+      "external": ["Official national registers"],
+      "approval": ["LIVE_CONNECTOR"]
+    },
+    {
+      "module": "pricing",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["EUR accepted", "BTC ETH USDT USDC rejected", "CBDC and digital_euro rejected", "Unknown asset rejected", "EUR/PLN rate null", "Minimum net 0.50"],
+      "partial": ["The 20 EUR quote is a fixture", "categoryMargin 0.12 is an argument, not a loaded category table"],
+      "missing": ["A sourced cross-currency rate"],
+      "security": "AI fiat-policy change is denied even when humanApproval is true on that call.",
+      "external": ["Sourced FX"],
+      "approval": ["FIAT_POLICY_CHANGE", "LIVE_PAYMENT"]
+    },
+    {
+      "module": "logistics",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["Timeout keeps quantity 4", "Empty payload stays UNKNOWN", "Delivered-before-pickup is ignored", "buyStock returns HUMAN_GATE_REQUIRED"],
+      "partial": ["supplierSnapshot and buyStock do not call a supplier adapter", "carrierContract.js loads and is not used by the journey"],
+      "missing": ["Synthetic feed through the carrier adapters", "A shipment record"],
+      "security": "bought and live stay false in these functions.",
+      "external": ["Carrier credentials", "Supplier order channels"],
+      "approval": ["STOCK_BUY", "SUPPLIER_PAY"]
+    },
+    {
+      "module": "security",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE", "SECURITY_VERIFIED"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["https://api.openai.com/v1/models denied", "Policy file default DENY", "One bound idempotency key containing SQL text still inserts"],
+      "partial": ["Locale miss is a missing snapshot key", "CSRF, session, rate-limit, and SSRF suites were not executed in this audit"],
+      "missing": ["A full defensive execution of the existing security suites"],
+      "security": "Egress deny for that host is real. SECURITY_VERIFIED as a module-wide claim is not earned by these three checks.",
+      "external": [],
+      "approval": ["SECURITY_POLICY_CHANGE"]
+    },
+    {
+      "module": "voice",
+      "claimed": ["CODE_COMPLETE", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "VERIFIED_PARTIAL",
+      "verified": ["Six named identities exist", "cloneAuthorized false", "Cross-identity voice assignment refused", "assessVoice.liveCalls false"],
+      "partial": ["webrtcCode true is a constant", "signaling.js is not loaded"],
+      "missing": ["STT", "TTS", "SIP", "TURN/STUN", "lip sync", "3D body"],
+      "security": "No phone call is placed by assessVoice.",
+      "external": ["BUZZARD_SIP_URI", "BUZZARD_SIP_USER", "BUZZARD_SIP_PASSWORD", "BUZZARD_STT_ENDPOINT", "BUZZARD_TTS_ENDPOINT"],
+      "approval": ["PHONE_LIVE_CALL", "OFFICIAL_CHARACTER_CHANGE"]
+    },
+    {
+      "module": "live_operations",
+      "claimed": ["CODE_READY", "TEST_COMPLETE", "INTEGRATION_COMPLETE"],
+      "readiness": "BLOCKED_APPROVAL",
+      "verified": ["The contract sets liveVerified false and productionReady false"],
+      "partial": ["No banking, tax, monitoring, or marketplace call is made for this module"],
+      "missing": ["An operations workflow"],
+      "security": "Live connection remains behind human approval and missing providers.",
+      "external": ["Banks", "carriers", "suppliers", "tax systems"],
+      "approval": ["DEPLOY", "LIVE_CONNECTOR", "BANK_TRANSFER", "PAYMENT_ACTIVATE"]
+    }
+  ],
+  "remainingWork": [
+    "Replace literal customer, order, notification, and returns steps with the existing closed engines.",
+    "Stop writing TEST_COMPLETE, INTEGRATION_COMPLETE, SECURITY_VERIFIED, and PERFORMANCE_TESTED inside the producer.",
+    "Make the acceptance test recompute fiat, memory, and registry results instead of trusting the producer flags.",
+    "Remove the import-time WhatsApp sqlite opened through the workflowChain require chain.",
+    "Point the logistics step at the existing carrier adapters without creating a shipment.",
+    "Obtain official EU27 register rows before any registry-complete claim.",
+    "Keep live PIM, voice media, payments, supplier purchases, and shipments blocked."
+  ]
+}

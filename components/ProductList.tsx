@@ -36,6 +36,8 @@ import {
   loadPimStorefrontProducts,
   mergeStorefrontProducts,
 } from "@/lib/storefront/runtime";
+import { getIsolatedSnapshot, isolatedCatalogActive } from "@/lib/storefront/isolatedSnapshot";
+import IsolatedCatalogBrowser from "@/components/storefront/IsolatedCatalogBrowser";
 import type { PublicProduct } from "@/lib/products/types";
 
 const PAGE_SIZE = 12;
@@ -77,6 +79,11 @@ export default function ProductList({ categorySlug }: ProductListProps) {
   } | null>(null);
 
   useEffect(() => {
+    if (isolatedCatalogActive()) {
+      setCatalogLoading(false);
+      setPimResult(null);
+      return;
+    }
     if (isPimStorefrontEnabled()) {
       let cancelled = false;
       setCatalogLoading(true);
@@ -212,6 +219,19 @@ export default function ProductList({ categorySlug }: ProductListProps) {
     setTimeout(() => setAddedId(null), 1800);
   }
 
+  if (isolatedCatalogActive()) {
+    const snapshot = getIsolatedSnapshot();
+    return (
+      <IsolatedCatalogBrowser
+        mode="list"
+        selected={snapshot.selected}
+        sales={snapshot.sales}
+        locales={snapshot.locales}
+        itemsByLocale={snapshot.itemsByLocale}
+      />
+    );
+  }
+
   return (
     <div className="products-main">
       <div className="buzzard-desktop-chrome">
@@ -251,19 +271,19 @@ export default function ProductList({ categorySlug }: ProductListProps) {
 
       {(isLiveLocalizationEnabled() || isLiveCatalogEnabled()) && !isPimStorefrontEnabled() && !catalogLoading && catalogProducts.length > 0 && (
         <p className="admin-note">
-          {catalogProducts.length} Live-Produkt(e) aus der Buzzard API
-          {isLiveLocalizationEnabled() ? ` (${countryCode}, ${currency})` : ""} eingebunden.
+          {t("catalog.liveAttached").replace("{count}", String(catalogProducts.length))}
+          {isLiveLocalizationEnabled() ? ` (${countryCode}, ${currency})` : ""}
         </p>
       )}
 
       <div className="buzzard-desktop-chrome">
       <div className="products-toolbar">
         <p className="products-result-count">
-          {catalogLoading ? "Produkte werden geladen…" : `${result.total} Produkt${result.total === 1 ? "" : "e"} gefunden`}
+          {catalogLoading ? t("mobile.loadingProducts") : t("mobile.productCount").replace("{count}", String(result.total))}
         </p>
         <label className="products-sort">
-          Sortieren
-          <select
+          {t("search.sortLabel")}
+          <select aria-label={t("search.sortLabel")}
             value={sort}
             onChange={(e) => {
               const params = new URLSearchParams(searchParams.toString());
@@ -273,15 +293,15 @@ export default function ProductList({ categorySlug }: ProductListProps) {
               router.push(qs ? `${pathname}?${qs}` : pathname);
             }}
           >
-            <option value="default">Standard</option>
-            <option value="name-asc">Name A–Z</option>
+            <option value="default">{t("mobile.sortDefault")}</option>
+            <option value="name-asc">{t("search.sortName")}</option>
             {showPrices() ? (
               <>
-                <option value="price-asc">Preis aufsteigend</option>
-                <option value="price-desc">Preis absteigend</option>
+                <option value="price-asc">{t("search.sortPriceAsc")}</option>
+                <option value="price-desc">{t("search.sortPriceDesc")}</option>
               </>
             ) : null}
-            <option value="bestseller">Bestseller</option>
+            <option value="bestseller">{t("mobile.sortBestseller")}</option>
           </select>
         </label>
       </div>

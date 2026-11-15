@@ -19,11 +19,50 @@ describe("egress 4.2 supplier and SSRF locks", () => {
     delete process.env.ALL_PROXY;
   });
 
-  it("allows only https allowlisted hosts on port 443", () => {
-    expect(evaluateEgress({ destinationUrl: "https://buzzard24.de/api" }).allowed).toBe(true);
+  it("denies buzzard24.de for https, customer data, and every alias", async () => {
+    expect(evaluateEgress({ destinationUrl: "https://buzzard24.de/api" }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://buzzard24.de/api" }).code).toBe("EGRESS_DENIED");
+    expect(
+      evaluateEgress({ destinationUrl: "https://buzzard24.de/api", payload: { email: "customer@example.test" } }).code,
+    ).toBe("EGRESS_DENIED");
+    expect(
+      evaluateEgress({ destinationUrl: "https://buzzard24.de/api", payload: { customerId: "customer-test" } }).allowed,
+    ).toBe(false);
     expect(evaluateEgress({ destinationUrl: "http://buzzard24.de/api" }).code).toBe("HTTPS_REQUIRED");
     expect(evaluateEgress({ destinationUrl: "https://buzzard24.de:8443/api" }).code).toBe("PORT_DENIED");
     expect(evaluateEgress({ destinationUrl: "https://user:pass@buzzard24.de/" }).code).toBe("URL_USERINFO_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://www.buzzard24.de/" }).code).toBe("EGRESS_DENIED");
+    expect(evaluateEgress({ destinationUrl: "https://shop.buzzard24.de/" }).allowed).toBe(false);
+    expect(evaluateEgress({ destinationUrl: "https://example.com/" }).code).toBe("HOST_NOT_ALLOWLISTED");
+    process.env.BUZZARD_EGRESS_EXTRA_HOSTS = "buzzard24.de";
+    expect(evaluateEgress({ destinationUrl: "https://buzzard24.de/" }).allowed).toBe(false);
+
+    const original = globalThis.fetch;
+    let fetched = false;
+    let lookedUp = false;
+    globalThis.fetch = async () => {
+      fetched = true;
+      throw new Error("fetch must not run");
+    };
+    setDnsLookup(async () => {
+      lookedUp = true;
+      return [{ address: "203.0.113.10" }];
+    });
+    try {
+      const hop = await guardedFetch(
+        "https://buzzard24.de/out",
+        {},
+        { email: "customer@example.test", customerId: "customer-test" },
+      );
+      expect(hop.blocked).toBe(true);
+      expect(hop.reachedNetwork).toBe(false);
+      expect(hop.decision.allowed).toBe(false);
+      expect(hop.decision.code).toBe("EGRESS_DENIED");
+      expect(fetched).toBe(false);
+      expect(lookedUp).toBe(false);
+    } finally {
+      globalThis.fetch = original;
+    }
   });
 
   it("denies loopback, private, link-local, metadata, and IP literals", () => {
@@ -54,7 +93,7 @@ describe("egress 4.2 supplier and SSRF locks", () => {
     };
     setDnsLookup(async () => [{ address: "203.0.113.10" }]);
     try {
-      const hop = await guardedFetch("https://buzzard24.de/out", {}, { ping: true });
+      const hop = await guardedFetch("https://buzzard-api.onrender.com/out", {}, { ping: true });
       expect(hop.blocked).toBe(true);
       expect(hop.followedRedirect).toBe(false);
       expect(hop.decision.code).toBe("REDIRECT_DENIED");

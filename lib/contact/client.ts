@@ -1,4 +1,5 @@
 import { apiBaseUrl, isApiConfigured } from "@/lib/api/config";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 export interface ContactPayload {
   name: string;
@@ -17,7 +18,7 @@ export async function submitContact(
   }
 
   const base = apiBaseUrl();
-  const res = await fetch(`${base}/api/contact`, {
+  const res = await browserFetch(`${base}/api/contact`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

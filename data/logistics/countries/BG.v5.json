@@ -1,0 +1,24 @@
+{
+  "iso": "BG",
+  "nra": "Communications Regulation Commission",
+  "register": {
+    "records": 218,
+    "uniqueLegal": null,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "crc_annual_2025_unique_operators",
+    "source": "crc-annual-post-2025",
+    "note": "218 licensed/registered at end 2025; 87 actually provided services. 205 NPU registrations. Named UPS table is a subset."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "BG",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 12,
+  "postcodeCoverage": "UNKNOWN"
+}

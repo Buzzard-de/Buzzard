@@ -15,6 +15,7 @@ import {
   setStoredCommerceCartId,
 } from "@/lib/commerce/runtime";
 import type { CommerceAddress } from "@/lib/commerce/types";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 function apiBase(): string {
   return (process.env.NEXT_PUBLIC_BUZZARD_API_URL || "").replace(/\/$/, "");
@@ -57,7 +58,7 @@ async function request<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, { ...init, headers });
+    res = await browserFetch(`${base}${path}`, { ...init, headers });
   } catch {
     throw new CommerceClientError("commerce.networkError", "commerce.networkError", 0);
   }

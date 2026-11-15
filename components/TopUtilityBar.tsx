@@ -1,13 +1,13 @@
 "use client";
 
 import { useLocale } from "@/lib/i18n/context";
-import { getCategoryCountLabelDe } from "@/lib/site/catalog-stats";
+import { getMainCategoryCount } from "@/lib/site/catalog-stats";
 import { isSalesEnabled } from "@/lib/shop/mode";
 
 export default function TopUtilityBar() {
   const { t } = useLocale();
   const salesOn = isSalesEnabled();
-  const categoryLabel = `${getCategoryCountLabelDe()} · Online-Katalog`;
+  const categoryLabel = t("topBar.catalogCategories").replace("{count}", String(getMainCategoryCount()));
 
   return (
     <div className="top-bar" role="region" aria-label="Shop-Informationen">

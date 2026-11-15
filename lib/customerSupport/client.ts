@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { getAccountToken } from "@/lib/account/client";
 import type {
   CustomerSupportStatus,
@@ -26,7 +27,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("customerSupport.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -42,7 +43,7 @@ export function isCustomerSupportApiConfigured(): boolean {
 export async function fetchCustomerSupportStatus(): Promise<CustomerSupportStatus> {
   const base = apiBase();
   if (!base) throw new Error("customerSupport.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("customerSupport.requestFailed");
   const data = (await res.json()) as { customerSupport?: CustomerSupportStatus };
   if (!data.customerSupport?.enabled) throw new Error("customerSupport.disabled");

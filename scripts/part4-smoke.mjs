@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { filterNavGroupsForRole, canAccessNavSlug } from "../lib/admin/navPermissions.mjs";
 import { ADMIN_NAV_GROUPS } from "../lib/admin/nav.config.mjs";
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,7 +28,7 @@ async function test(name, fn) {
 }
 
 async function fetchJson(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
+  const res = await smokeFetch(`${API}${path}`, {
     ...options,
     headers: {
       Accept: "application/json",

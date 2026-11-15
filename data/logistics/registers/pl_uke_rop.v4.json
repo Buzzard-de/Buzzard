@@ -1,0 +1,1417 @@
+{
+  "source": "https://bip.uke.gov.pl/rop/rejestr-operatorow-pocztowych/",
+  "fetched": "2026-11-06",
+  "registerRows": 234,
+  "uniqueLegalNames": 234,
+  "rows": [
+    {
+      "registerNumber": "B-00018",
+      "legalName": "\"NEL-DYSTRYBUCJA\" Sp. z o.o.",
+      "companyRegister": "KRS 0000121572",
+      "nip": "679-25-62-514"
+    },
+    {
+      "registerNumber": "B-00029",
+      "legalName": "MDZ Express Magdalena Majda-Dziewiątkowska",
+      "companyRegister": "EDG 30162",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00032",
+      "legalName": "Sprinter Sp. z o.o.",
+      "companyRegister": "KRS 0000541232",
+      "nip": "521-368-59-87"
+    },
+    {
+      "registerNumber": "B-00044",
+      "legalName": "UPS Polska Sp. z o.o.",
+      "companyRegister": "KRS 0000036680",
+      "nip": "PL 522-10-04-200"
+    },
+    {
+      "registerNumber": "B-00046",
+      "legalName": "General Logistics Systems Poland Sp. z o.o.",
+      "companyRegister": "KRS 0000005009",
+      "nip": "785-15-61-831"
+    },
+    {
+      "registerNumber": "B-00050",
+      "legalName": "RGW Express Sp. z o.o.",
+      "companyRegister": "KRS 0000060812",
+      "nip": "522-010-41-29"
+    },
+    {
+      "registerNumber": "B-00051",
+      "legalName": "Agap Sp. z o.o.",
+      "companyRegister": "KRS 0000025138",
+      "nip": "527-23-29-716"
+    },
+    {
+      "registerNumber": "B-00054",
+      "legalName": "DPD Polska Sp. z o.o.",
+      "companyRegister": "KRS 0000028368",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00055",
+      "legalName": "Lande Sp z o.o.",
+      "companyRegister": "KRS 0000032267",
+      "nip": "945-19-47-953"
+    },
+    {
+      "registerNumber": "B-00056",
+      "legalName": "Riders Express Sp. z o.o.",
+      "companyRegister": "KRS 0000129085",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00057",
+      "legalName": "ARROWS SERVICE s.c. Marcin Ratigowski, Tomasz Witkowski",
+      "companyRegister": "EDG 21833; EDG 268891",
+      "nip": "536-16-11-058"
+    },
+    {
+      "registerNumber": "B-00061",
+      "legalName": "DHL Express (Poland)  Sp. z o.o.",
+      "companyRegister": "KRS 0000047237",
+      "nip": "527-00-22-391"
+    },
+    {
+      "registerNumber": "B-00068",
+      "legalName": "Viktorio Witold Wrzosek",
+      "companyRegister": "EDG 3660/T",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00073",
+      "legalName": "RAFFO Rafał Bącalski",
+      "companyRegister": "CEIDG",
+      "nip": "113-040-70-31"
+    },
+    {
+      "registerNumber": "B-00076",
+      "legalName": "World Courier (Poland) Sp. z o.o",
+      "companyRegister": "KRS 0000093333",
+      "nip": "526-22-26-920"
+    },
+    {
+      "registerNumber": "B-00078",
+      "legalName": "FEDEX EXPRESS POLAND Sp. z o.o.",
+      "companyRegister": "KRS 0000357766",
+      "nip": "634-275-06-06"
+    },
+    {
+      "registerNumber": "B-00087",
+      "legalName": "POLAMER Sp. z o.o.",
+      "companyRegister": "KRS 0000213164",
+      "nip": "796-26-36-207"
+    },
+    {
+      "registerNumber": "B-00095",
+      "legalName": "DOMA SERVICES Antoni Wnękowicz",
+      "companyRegister": "EDG 3816",
+      "nip": "735-001-28-81"
+    },
+    {
+      "registerNumber": "B-00101",
+      "legalName": "Agencja Turystyczna \"TRANS-LECH\" Lech Senda",
+      "companyRegister": "EDG 6100",
+      "nip": "844-108-92-23"
+    },
+    {
+      "registerNumber": "B-00106",
+      "legalName": "\"POCZTA POLSKA SPÓŁKA AKCYJNA\"",
+      "companyRegister": "KRS 0000334972",
+      "nip": "525-000-73-13"
+    },
+    {
+      "registerNumber": "B-00075",
+      "legalName": "COSICO Piotr Kozłowski",
+      "companyRegister": "EDG 5460",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00092",
+      "legalName": "Energo-Tok Sp. z o.o.",
+      "companyRegister": "KRS 0000012314",
+      "nip": ""
+    },
+    {
+      "registerNumber": "B-00119",
+      "legalName": "PAF Operator Pocztowy Sp. z o.o.",
+      "companyRegister": "KRS 0000220120",
+      "nip": "542-289-51-57"
+    },
+    {
+      "registerNumber": "B-00127",
+      "legalName": "QURIERS Tomasz Gać",
+      "companyRegister": "EDG 57887",
+      "nip": "9820270499"
+    },
+    {
+      "registerNumber": "B-00146",
+      "legalName": "GONIEC ROWEROWY Melchior Czerniak",
+      "companyRegister": "EDG P/042288/06",
+      "nip": "955-187-18-47"
+    },
+    {
+      "registerNumber": "B-00149",
+      "legalName": "Polskie Centrum Doręczeniowe \"PETEROX\" Piotr Symonowicz",
+      "companyRegister": "EDG 20167",
+      "nip": "771-252-03-89"
+    },
+    {
+      "registerNumber": "B-00164",
+      "legalName": "Kancelaria Expert Obsługa Prawna i Rzeczoznawcza Artur Król",
+      "companyRegister": "EDG 048608",
+      "nip": "948-104-28-43"
+    },
+    {
+      "registerNumber": "B-00183",
+      "legalName": "MEEST POLSKA Sp. z o.o.",
+      "companyRegister": "KRS 0000259760",
+      "nip": "872-226-72-31"
+    },
+    {
+      "registerNumber": "B-00187",
+      "legalName": "\"ABC-SERVICE\" Sp. z o.o.",
+      "companyRegister": "KRS 0000145258",
+      "nip": "898-001-21-91"
+    },
+    {
+      "registerNumber": "B-00188",
+      "legalName": "Polfrank Energetyk Sp. z o.o.",
+      "companyRegister": "KRS 0000159073",
+      "nip": "725-15-00-442"
+    },
+    {
+      "registerNumber": "B-00190",
+      "legalName": "I.D. MARKETING S.A.",
+      "companyRegister": "KRS 0000302348",
+      "nip": "521-26-60-235"
+    },
+    {
+      "registerNumber": "B-00201",
+      "legalName": "Usługi Transportowe \"Priorytet\" s.c. J.Tondera, S. Wywrocka",
+      "companyRegister": "EDG 108650 / EDG 411353",
+      "nip": "113-247-69-93"
+    },
+    {
+      "registerNumber": "B-00206",
+      "legalName": "MIG Sp. z o.o.",
+      "companyRegister": "KRS 0000112487",
+      "nip": "945-19-13-983"
+    },
+    {
+      "registerNumber": "B-00210",
+      "legalName": "TAKSIM-POL Sp. z o.o.",
+      "companyRegister": "KRS 0000035392",
+      "nip": "524-000-65-42"
+    },
+    {
+      "registerNumber": "B-00214",
+      "legalName": "BUSINESS PACK SERVICE Arkadiusz Jarząb",
+      "companyRegister": "EDG 73777",
+      "nip": "957-057-56-01"
+    },
+    {
+      "registerNumber": "B-00223",
+      "legalName": "SKOCZEK TEAM Sornat Krzysztof",
+      "companyRegister": "EDG 191804",
+      "nip": "898-187-68-70"
+    },
+    {
+      "registerNumber": "B-00227",
+      "legalName": "P.W. SIKORSCY Sikorska Urszula",
+      "companyRegister": "EDG 4014",
+      "nip": "924-169-71-31"
+    },
+    {
+      "registerNumber": "B-00242",
+      "legalName": "4 PRINT Sp. z o.o.",
+      "companyRegister": "KRS 0000293411",
+      "nip": "118-192-90-35"
+    },
+    {
+      "registerNumber": "B-00243",
+      "legalName": "SKAN TRANSPORT Sp. z o.o.",
+      "companyRegister": "KRS 0000226275",
+      "nip": "529-169-75-62"
+    },
+    {
+      "registerNumber": "B-00244",
+      "legalName": "Lubelska Spółdzielnia Socjalna \"KOZIOŁEK\"",
+      "companyRegister": "KRS 0000282990",
+      "nip": "946-252-29-67"
+    },
+    {
+      "registerNumber": "B-00256",
+      "legalName": "BTL EXPRESS Wojciech Schmidt",
+      "companyRegister": "EDG 435/2005",
+      "nip": "813-235-92-16"
+    },
+    {
+      "registerNumber": "B-00267",
+      "legalName": "ORLEN Paczka Sp. z o.o.",
+      "companyRegister": "KRS 0001142880",
+      "nip": "5243023989"
+    },
+    {
+      "registerNumber": "B-00273",
+      "legalName": "Pol-Invest Sp. z o.o.",
+      "companyRegister": "KRS 0000148173",
+      "nip": "839-27-27-875"
+    },
+    {
+      "registerNumber": "B-00287",
+      "legalName": "SEKTOR Sp. z o.o.",
+      "companyRegister": "KRS 0000174943",
+      "nip": "585-136-12-61"
+    },
+    {
+      "registerNumber": "B-00288",
+      "legalName": "Przesyłki Kurierskie Józef Dziemdziora",
+      "companyRegister": "EDG 1122",
+      "nip": "928-121-47-71"
+    },
+    {
+      "registerNumber": "B-00300",
+      "legalName": "MALFOYCORP Sp. z o.o.",
+      "companyRegister": "KRS 0000330144",
+      "nip": "7010182785"
+    },
+    {
+      "registerNumber": "B-00301",
+      "legalName": "MARATON s.c. Piotr Stochmiał, Maciej Stochmiał",
+      "companyRegister": "EDG 2262/2008; EDG 015947",
+      "nip": "784-241-05-41"
+    },
+    {
+      "registerNumber": "B-00302",
+      "legalName": "INTERCOL Sp. z o.o.",
+      "companyRegister": "KRS 0000305564",
+      "nip": "626-295-07-05"
+    },
+    {
+      "registerNumber": "B-00308",
+      "legalName": "Spółdzielnia Socjalna \"Zawiercie\"",
+      "companyRegister": "KRS 0000267803",
+      "nip": "6492195483"
+    },
+    {
+      "registerNumber": "B-00313",
+      "legalName": "EMD Marcin Dubowski",
+      "companyRegister": "EDG 74131",
+      "nip": "542-243-01-74"
+    },
+    {
+      "registerNumber": "B-00329",
+      "legalName": "New Service Sp.  z o.o.",
+      "companyRegister": "KRS 0000229445",
+      "nip": "958-148-45-75"
+    },
+    {
+      "registerNumber": "B-00344",
+      "legalName": "Firma Handlowo-Usługowa Radosław Palpuchowski",
+      "companyRegister": "EDG 12099/2009",
+      "nip": "666-178-50-30"
+    },
+    {
+      "registerNumber": "B-00359",
+      "legalName": "GEIS PARCEL PL Sp. z o.o.",
+      "companyRegister": "KRS 0000326471",
+      "nip": "959-18-56-995"
+    },
+    {
+      "registerNumber": "B-00362",
+      "legalName": "INTERNATIONAL COURIER SERVICE D.P. POLSKA Sp. z o.o.",
+      "companyRegister": "KRS 0000357583",
+      "nip": "701-02-34-884"
+    },
+    {
+      "registerNumber": "B-00364",
+      "legalName": "SKY POST AND LOGISTIC Sp. z o.o.",
+      "companyRegister": "KRS 0000350738",
+      "nip": "547-211-77-23"
+    },
+    {
+      "registerNumber": "B-00381",
+      "legalName": "OMEGA 5 Sp. z o.o.",
+      "companyRegister": "KRS 0000203792",
+      "nip": "526-030-65-95"
+    },
+    {
+      "registerNumber": "B-00385",
+      "legalName": "AIRTRANS H. WATOŁA SPÓŁKA JAWNA",
+      "companyRegister": "KRS 0000904809",
+      "nip": "645-23-84-640"
+    },
+    {
+      "registerNumber": "B-00391",
+      "legalName": "LASERJET SPEDITION Sp. z o.o.",
+      "companyRegister": "KRS 0000897270",
+      "nip": "534-235-93-62"
+    },
+    {
+      "registerNumber": "B-00397",
+      "legalName": "RAF-POL Rafał Janicki",
+      "companyRegister": "EDG 150992",
+      "nip": "584-149-43-16"
+    },
+    {
+      "registerNumber": "B-00409",
+      "legalName": "SPEEDMAIL Spółka z ograniczoną odpowiedzialnością",
+      "companyRegister": "KRS 0000392389",
+      "nip": "771-286-76-44"
+    },
+    {
+      "registerNumber": "B-00416",
+      "legalName": "Zakład Produkcyjno-Handlowy \"WODEX\" Sp. z o.o.",
+      "companyRegister": "KRS 0000096517",
+      "nip": "865-20-20-926"
+    },
+    {
+      "registerNumber": "B-00420",
+      "legalName": "Miejskie Przesyłki Doręczeniowe Krzysztof Pietrzak",
+      "companyRegister": "EDG 1177/2006",
+      "nip": "774-163-82-31"
+    },
+    {
+      "registerNumber": "B-00424",
+      "legalName": "Gdańska Spółdzielnia Socjalna",
+      "companyRegister": "KRS 0000388146",
+      "nip": "584-27-16-919"
+    },
+    {
+      "registerNumber": "B-00431",
+      "legalName": "WAWA OPERATOR Janusz Szklarczyk",
+      "companyRegister": "CEIDG",
+      "nip": "113-010-69-21"
+    },
+    {
+      "registerNumber": "B-00432",
+      "legalName": "CARGOPLAN Sp. z o.o.",
+      "companyRegister": "KRS 0000403010",
+      "nip": "521-36-23-213"
+    },
+    {
+      "registerNumber": "B-00436",
+      "legalName": "Universum - BLC Sp. z o.o.",
+      "companyRegister": "KRS 0000168557",
+      "nip": "958-13-42-125"
+    },
+    {
+      "registerNumber": "B-00446",
+      "legalName": "PostMaster Sp. z o.o. w Likwidacji",
+      "companyRegister": "KRS 0000396855",
+      "nip": "6772363674"
+    },
+    {
+      "registerNumber": "B-00458",
+      "legalName": "CTRL system Sp. z o.o.",
+      "companyRegister": "KRS 0000251686",
+      "nip": "679-288-02-08"
+    },
+    {
+      "registerNumber": "B-00459",
+      "legalName": "DES Dariusz Siwik",
+      "companyRegister": "CEIDG",
+      "nip": "584-102-41-02"
+    },
+    {
+      "registerNumber": "B-00464",
+      "legalName": "Qrier For Business - Alicja Cichosz",
+      "companyRegister": "CEIDG",
+      "nip": "123-011-27-08"
+    },
+    {
+      "registerNumber": "B-00468",
+      "legalName": "Fundacja Społecznie Bezpieczni",
+      "companyRegister": "KRS 0000344392",
+      "nip": "583-309-00-30"
+    },
+    {
+      "registerNumber": "B-00479",
+      "legalName": "TRAFFICA - Geneja, Sierański Sp.j.",
+      "companyRegister": "KRS 0000152598",
+      "nip": "526-24-00-714"
+    },
+    {
+      "registerNumber": "B-00481",
+      "legalName": "R. Kusiak Alfa Post Spółka Komandytowa",
+      "companyRegister": "KRS 0000306856",
+      "nip": "5272639888"
+    },
+    {
+      "registerNumber": "B-00488",
+      "legalName": "PointPack S.A.",
+      "companyRegister": "KRS 0000418228",
+      "nip": "5291799498"
+    },
+    {
+      "registerNumber": "B-00490",
+      "legalName": "Global Express Sp. z o.o.",
+      "companyRegister": "KRS 0000460817",
+      "nip": "5223006166"
+    },
+    {
+      "registerNumber": "B-00503",
+      "legalName": "AVISTRANS Sp. z o.o.",
+      "companyRegister": "KRS 0000241220",
+      "nip": "6692196576"
+    },
+    {
+      "registerNumber": "B-00508",
+      "legalName": "PAKERSI Kamil Kik",
+      "companyRegister": "CEIDG",
+      "nip": "887-177-90-77"
+    },
+    {
+      "registerNumber": "B-00516",
+      "legalName": "BackOffice Outsourcing Sp. z o.o.",
+      "companyRegister": "KRS 0000470010",
+      "nip": "113-286-75-70"
+    },
+    {
+      "registerNumber": "B-00517",
+      "legalName": "Spółdzielnia Socjalna \"LUBICZANKA\"",
+      "companyRegister": "KRS 0000489764",
+      "nip": "879-267-22-50"
+    },
+    {
+      "registerNumber": "B-00526",
+      "legalName": "CITYSPEED.PL Łukasz Pawłowski",
+      "companyRegister": "CEIDG",
+      "nip": "611-243-51-08"
+    },
+    {
+      "registerNumber": "B-00531",
+      "legalName": "AVANTI Sp. z o.o.",
+      "companyRegister": "KRS 0000511642",
+      "nip": "792-229-03-69"
+    },
+    {
+      "registerNumber": "B-00533",
+      "legalName": "Spółdzielnia Socjalna \"RAZEM\"",
+      "companyRegister": "KRS 0000496699",
+      "nip": "839-317-43-78"
+    },
+    {
+      "registerNumber": "B-00541",
+      "legalName": "TOPLOGISTIC Sebastian Sas",
+      "companyRegister": "CEIDG",
+      "nip": "618-161-27-66"
+    },
+    {
+      "registerNumber": "B-00548",
+      "legalName": "POSTMASTER NL Sp. z o. o. S. K. A. w Likwidacji",
+      "companyRegister": "KRS 0000488681",
+      "nip": "6751492722"
+    },
+    {
+      "registerNumber": "B-00555",
+      "legalName": "Post International EU spółka z ograniczoną odpowiedzialnością",
+      "companyRegister": "KRS 0000544594",
+      "nip": "873-325-45-16"
+    },
+    {
+      "registerNumber": "B-00556",
+      "legalName": "PMR COMPANY Piotr Jan Rakowski",
+      "companyRegister": "CEIDG",
+      "nip": "5251015088"
+    },
+    {
+      "registerNumber": "B-00558",
+      "legalName": "JAG LOGISTIC Sp. z o.o.",
+      "companyRegister": "KRS 0000544255",
+      "nip": "9542753249"
+    },
+    {
+      "registerNumber": "B-00560",
+      "legalName": "1. F.H. MISZ-MASZ Magdalena Zalewska 2. STRZAŁKA Przesyłki Kurierskie Magdalena Zalewska",
+      "companyRegister": "CEIDG",
+      "nip": "7191507534"
+    },
+    {
+      "registerNumber": "B-00562",
+      "legalName": "InPost Sp. z o.o.",
+      "companyRegister": "KRS 0000543759",
+      "nip": "679-310-80-59"
+    },
+    {
+      "registerNumber": "B-00566",
+      "legalName": "INTERBIT Sp. z o.o.",
+      "companyRegister": "KRS 0000141081",
+      "nip": "521-00-86-542"
+    },
+    {
+      "registerNumber": "B-00568",
+      "legalName": "LOGMASTER Sp. z o.o. Sp.k.",
+      "companyRegister": "KRS 0000373929",
+      "nip": "1250020257"
+    },
+    {
+      "registerNumber": "B-00571",
+      "legalName": "SKM Szybki Kurier Miejski Andrzej Wysoczyński",
+      "companyRegister": "CEIDG",
+      "nip": "5222468611"
+    },
+    {
+      "registerNumber": "B-00578",
+      "legalName": "Welt Express.pol Sp. z o.o.",
+      "companyRegister": "KRS 0000573430",
+      "nip": "1182112402"
+    },
+    {
+      "registerNumber": "B-00580",
+      "legalName": "Marketing, Publishing and Fulfilment Sp. z o.o.",
+      "companyRegister": "KRS 0000559305",
+      "nip": "5272737088"
+    },
+    {
+      "registerNumber": "B-00583",
+      "legalName": "IPS Express Sp. z o.o.",
+      "companyRegister": "KRS 0000588811",
+      "nip": "8722412213"
+    },
+    {
+      "registerNumber": "B-00591",
+      "legalName": "FADEX Sp. z o.o.",
+      "companyRegister": "KRS 0000564856",
+      "nip": "897-181-03-90"
+    },
+    {
+      "registerNumber": "B-00592",
+      "legalName": "MB Roman Wojtczak",
+      "companyRegister": "CEIDG",
+      "nip": "599-250-22-90"
+    },
+    {
+      "registerNumber": "B-00593",
+      "legalName": "Sompoleńska Spółdzielnia Socjalna \"Nasza Przyszłość\"",
+      "companyRegister": "KRS 0000619828",
+      "nip": "665-300-23-90"
+    },
+    {
+      "registerNumber": "B-00611",
+      "legalName": "VARSTADT RAVEN CARRIERS Rafał Maliszewski",
+      "companyRegister": "CEIDG",
+      "nip": "876-203-06-18"
+    },
+    {
+      "registerNumber": "B-00614",
+      "legalName": "INVENTO Krystian Wojtasik",
+      "companyRegister": "CEIDG",
+      "nip": "629-221-19-41"
+    },
+    {
+      "registerNumber": "B-00617",
+      "legalName": "DHL eCommerce (Poland) Sp. z o.o.",
+      "companyRegister": "KRS 0000631916",
+      "nip": "9512417713"
+    },
+    {
+      "registerNumber": "B-00623",
+      "legalName": "POLSPED PACZKA Iwona Koszewiak-Prorok",
+      "companyRegister": "CEIDG",
+      "nip": "522-110-30-95"
+    },
+    {
+      "registerNumber": "B-00625",
+      "legalName": "Alfa Agencja Celna Sp. z o.o.",
+      "companyRegister": "KRS: 0000206237",
+      "nip": "958-14-66-815"
+    },
+    {
+      "registerNumber": "B-00626",
+      "legalName": "Fundacja To i Co",
+      "companyRegister": "KRS 0000501771",
+      "nip": "593-259-66-89"
+    },
+    {
+      "registerNumber": "B-00632",
+      "legalName": "1. Marzena Kubacka-Christ - BIURO RACHUNKOWE TEMPUS 2. Marzena Kubacka-Christ - TEMPUS 3. TEMPUS SPEDYCJA",
+      "companyRegister": "CEIDG",
+      "nip": "648-223-08-41"
+    },
+    {
+      "registerNumber": "B-00634",
+      "legalName": "S EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0000680128",
+      "nip": "527-280-99-88"
+    },
+    {
+      "registerNumber": "B-00638",
+      "legalName": "WMH Sp. z o.o. Sp. k.",
+      "companyRegister": "KRS 0000665404",
+      "nip": "524-282-29-61"
+    },
+    {
+      "registerNumber": "B-00640",
+      "legalName": "IKA Logistic Sp. z o.o.",
+      "companyRegister": "KRS 0000456427",
+      "nip": "522-300-49-77"
+    },
+    {
+      "registerNumber": "B-00641",
+      "legalName": "Firma Handlowa Wiesława Bożek",
+      "companyRegister": "CEIDG",
+      "nip": "832-000-26-19"
+    },
+    {
+      "registerNumber": "B-00642",
+      "legalName": "\"KAREX  PACZKA\" Sp. z o.o.",
+      "companyRegister": "KRS 0001089708",
+      "nip": "5730209525"
+    },
+    {
+      "registerNumber": "B-00647",
+      "legalName": "MIPIN Sp. z o.o.",
+      "companyRegister": "KRS 0000698526",
+      "nip": "618-216-49-04"
+    },
+    {
+      "registerNumber": "B-00651",
+      "legalName": "NEO EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0000663880",
+      "nip": "813-373-80-16"
+    },
+    {
+      "registerNumber": "B-00653",
+      "legalName": "HYPERHUB Sp. z o.o.",
+      "companyRegister": "KRS 0000335239",
+      "nip": "839-310-26-63"
+    },
+    {
+      "registerNumber": "B-00654",
+      "legalName": "ADRIAN CZAPLA",
+      "companyRegister": "CEIDG",
+      "nip": "825-208-05-63"
+    },
+    {
+      "registerNumber": "B-00656",
+      "legalName": "Tax Free Club Sp. z o.o.",
+      "companyRegister": "KRS 0000731738",
+      "nip": "701-082-21-96"
+    },
+    {
+      "registerNumber": "B-00657",
+      "legalName": "P.P.H.U. \"MIRMAR\" Małgorzata Jodłowska",
+      "companyRegister": "CEIDG",
+      "nip": "838-100-47-36"
+    },
+    {
+      "registerNumber": "B-00663",
+      "legalName": "CRAFT - WOJCIECH ADAMCZYK",
+      "companyRegister": "CEIDG",
+      "nip": "758-172-98-57"
+    },
+    {
+      "registerNumber": "B-00664",
+      "legalName": "\"FRESH TRADE\" Sp. z o.o. Sp. k.",
+      "companyRegister": "KRS 0000822269",
+      "nip": "951-229-00-46"
+    },
+    {
+      "registerNumber": "B-00668",
+      "legalName": "EGS Sp. z o.o.",
+      "companyRegister": "KRS 0000595974",
+      "nip": "701-053-63-49"
+    },
+    {
+      "registerNumber": "B-00670",
+      "legalName": "EMDE MIROSŁAW DOMAŃSKI",
+      "companyRegister": "CEIDG",
+      "nip": "599-264-11-00"
+    },
+    {
+      "registerNumber": "B-00671",
+      "legalName": "HortNet Karol Piekarski",
+      "companyRegister": "CEIDG",
+      "nip": "532-109-98-61"
+    },
+    {
+      "registerNumber": "B-00673",
+      "legalName": "UKRAINE EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0000613853",
+      "nip": "543-218-33-23"
+    },
+    {
+      "registerNumber": "B-00675",
+      "legalName": "FAST PRO Sp. z o.o.",
+      "companyRegister": "KRS 0000453228",
+      "nip": "5252548473"
+    },
+    {
+      "registerNumber": "B-00677",
+      "legalName": "GLOBAL24 Sp. z o.o. sp. k.",
+      "companyRegister": "KRS 0000717810",
+      "nip": "8961574901"
+    },
+    {
+      "registerNumber": "B-00679",
+      "legalName": "MEEST INTERNATIONAL Sp. z o.o.",
+      "companyRegister": "KRS 0000583179",
+      "nip": "701-051-59-91"
+    },
+    {
+      "registerNumber": "B-00680",
+      "legalName": "SPÓŁDZIELNIA SOCJALNA \"HECA\"",
+      "companyRegister": "KRS 0000787352",
+      "nip": "957-111-60-19"
+    },
+    {
+      "registerNumber": "B-00683",
+      "legalName": "BESTEXPRESS I MIECZYSŁAW BOGUTA",
+      "companyRegister": "CEIDG",
+      "nip": "951-109-05-98"
+    },
+    {
+      "registerNumber": "B-00685",
+      "legalName": "DSV AIR & SEA Sp. z o.o.",
+      "companyRegister": "KRS 0000220643",
+      "nip": "522-274-30-81"
+    },
+    {
+      "registerNumber": "B-00686",
+      "legalName": "DSV ROAD Sp. z o.o.",
+      "companyRegister": "KRS 0000010314",
+      "nip": "113-001-79-33"
+    },
+    {
+      "registerNumber": "B-00688",
+      "legalName": "TAKTECH Sp. z o.o.",
+      "companyRegister": "KRS 0000736426",
+      "nip": "5423317209"
+    },
+    {
+      "registerNumber": "B-00690",
+      "legalName": "GOLD OFFICE BOX Sp. z o.o.",
+      "companyRegister": "KRS 0000815905",
+      "nip": "951-249-45-99"
+    },
+    {
+      "registerNumber": "B-00691",
+      "legalName": "P.H.U. KAMA Małgorzata Durska",
+      "companyRegister": "CEIDG",
+      "nip": "666-193-89-01"
+    },
+    {
+      "registerNumber": "B-00694",
+      "legalName": "ALLEGRO Sp. z o.o.",
+      "companyRegister": "KRS 0000635012",
+      "nip": "525-267-47-98"
+    },
+    {
+      "registerNumber": "B-00695",
+      "legalName": "SMART POINTS Sp. z o.o.",
+      "companyRegister": "KRS 0000807076",
+      "nip": "894-314-64-54"
+    },
+    {
+      "registerNumber": "B-00701",
+      "legalName": "SP EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0000855034",
+      "nip": "897-188-19-64"
+    },
+    {
+      "registerNumber": "B-00704",
+      "legalName": "ASEAN-DEVELOPMENT Sp. z o.o.",
+      "companyRegister": "KRS 0000285352",
+      "nip": "123-114-47-74"
+    },
+    {
+      "registerNumber": "B-00706",
+      "legalName": "SUKCES Sp. z o.o.",
+      "companyRegister": "KRS 0000020866",
+      "nip": "563-194-18-32"
+    },
+    {
+      "registerNumber": "B-00709",
+      "legalName": "ALSPRINT Agnieszka Lipowy",
+      "companyRegister": "CEIDG",
+      "nip": "697-192-68-03"
+    },
+    {
+      "registerNumber": "B-00711",
+      "legalName": "GREEN CAB TAXI Sp. z o.o.",
+      "companyRegister": "KRS 0000426565",
+      "nip": "675-147-74-73"
+    },
+    {
+      "registerNumber": "B-00712",
+      "legalName": "PUBLIC DATA Sp. z o.o.",
+      "companyRegister": "KRS 0000730560",
+      "nip": "525-274-93-61"
+    },
+    {
+      "registerNumber": "B-00713",
+      "legalName": "AZ-MEDIA Sp. z o.o.",
+      "companyRegister": "KRS 0000757337",
+      "nip": "606-010-57-57"
+    },
+    {
+      "registerNumber": "B-00714",
+      "legalName": "SPEEDPOST Sp. z o.o.",
+      "companyRegister": "KRS 0000805475",
+      "nip": "796-299-29-13"
+    },
+    {
+      "registerNumber": "B-00717",
+      "legalName": "CROSSWIN COURIER & MORE Sp. z o.o.",
+      "companyRegister": "KRS 0000878993",
+      "nip": "646-298-67-25"
+    },
+    {
+      "registerNumber": "B-00718",
+      "legalName": "BAU Edyta Okrągła",
+      "companyRegister": "CEIDG",
+      "nip": "846-145-39-10"
+    },
+    {
+      "registerNumber": "B-00719",
+      "legalName": "JET DP Sp. z o.o.",
+      "companyRegister": "KRS 0000558156",
+      "nip": "1231298508"
+    },
+    {
+      "registerNumber": "B-00720",
+      "legalName": "Artimas Sp. z o.o.",
+      "companyRegister": "KRS 0000347426",
+      "nip": "7010223248"
+    },
+    {
+      "registerNumber": "B-00721",
+      "legalName": "ELKURIEROS Sp. z o.o.",
+      "companyRegister": "KRS 0000880115",
+      "nip": "7282849855"
+    },
+    {
+      "registerNumber": "B-00724",
+      "legalName": "EMOLE Sp. z o.o.",
+      "companyRegister": "KRS 0000877463",
+      "nip": "5272946633"
+    },
+    {
+      "registerNumber": "B-00729",
+      "legalName": "LIA Transport Sp. z o.o.",
+      "companyRegister": "KRS 0000583991",
+      "nip": "6783157091"
+    },
+    {
+      "registerNumber": "B-00738",
+      "legalName": "KOLBASOB Sp. z o.o.",
+      "companyRegister": "KRS 0000903503",
+      "nip": "1133034346"
+    },
+    {
+      "registerNumber": "B-00741",
+      "legalName": "Jarosław Sobotka Usługi Transportowe J.A Eurobus",
+      "companyRegister": "CEIDG",
+      "nip": "5691239863"
+    },
+    {
+      "registerNumber": "B-00743",
+      "legalName": "SPÓŁDZIELNIA SOCJALNA \"ZIELONA KORONA\"",
+      "companyRegister": "KRS 0000935940",
+      "nip": "8722434611"
+    },
+    {
+      "registerNumber": "B-00745",
+      "legalName": "SELECTRO Sp. z o.o.",
+      "companyRegister": "KRS 0000396646",
+      "nip": "1231261907"
+    },
+    {
+      "registerNumber": "B-00746",
+      "legalName": "Business Courier Mikołaj Kaczmarek",
+      "companyRegister": "CEIDG",
+      "nip": "5213280724"
+    },
+    {
+      "registerNumber": "B-00749",
+      "legalName": "NOVA POST POLAND Sp. z o.o.",
+      "companyRegister": "KRS 0000611957",
+      "nip": "5272765848"
+    },
+    {
+      "registerNumber": "B-00750",
+      "legalName": "MLT LOGISTICS Sp. z o.o.",
+      "companyRegister": "KRS 0000823465",
+      "nip": "6372209283"
+    },
+    {
+      "registerNumber": "B-00756",
+      "legalName": "BAREKAM POLAND Sp. z o.o.",
+      "companyRegister": "KRS 0001000181",
+      "nip": "1133076356"
+    },
+    {
+      "registerNumber": "B-00757",
+      "legalName": "SPÓŁDZIELNIA SOCJALNA KASZUBSKA OSTOJA",
+      "companyRegister": "KRS 0000715368",
+      "nip": "5892039289"
+    },
+    {
+      "registerNumber": "B-00758",
+      "legalName": "PEGAS EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0001014304",
+      "nip": "5273037631"
+    },
+    {
+      "registerNumber": "B-00759",
+      "legalName": "MAREK MURAWSKI M CONSULTING",
+      "companyRegister": "CEIDG",
+      "nip": "5241274463"
+    },
+    {
+      "registerNumber": "B-00760",
+      "legalName": "Letter Sp. z o.o.",
+      "companyRegister": "KRS 0001018097",
+      "nip": "8121926255"
+    },
+    {
+      "registerNumber": "B-00761",
+      "legalName": "MGRS Małgorzata Rymarz",
+      "companyRegister": "CEIDG",
+      "nip": "9220000946"
+    },
+    {
+      "registerNumber": "B-00762",
+      "legalName": "GENERALNY PARTNER LOGISTYCZNY \"TERMINUS\" s.c.",
+      "companyRegister": "CEIDG",
+      "nip": "5423223282"
+    },
+    {
+      "registerNumber": "B-00763",
+      "legalName": "PICKPACK S.A.",
+      "companyRegister": "KRS 0000695599",
+      "nip": "9522168281"
+    },
+    {
+      "registerNumber": "B-00764",
+      "legalName": "GPPL Sp. z o.o.",
+      "companyRegister": "KRS 0001017113",
+      "nip": "1133084887"
+    },
+    {
+      "registerNumber": "B-00765",
+      "legalName": "International Courier Service Warehouse Sp.zo.o.",
+      "companyRegister": "KRS 0001043446",
+      "nip": "7123457462"
+    },
+    {
+      "registerNumber": "B-00766",
+      "legalName": "GOODS YARD Sp. z o.o.",
+      "companyRegister": "KRS 0001043331",
+      "nip": "7123457410"
+    },
+    {
+      "registerNumber": "B-00767",
+      "legalName": "HANDMADE-HUB EU Sp. z o.o.",
+      "companyRegister": "KRS 0001020205",
+      "nip": "5252944482"
+    },
+    {
+      "registerNumber": "B-00768",
+      "legalName": "STRAIGHT FORWARD EU Sp. z o.o.",
+      "companyRegister": "KRS 0000997648",
+      "nip": "5252928218"
+    },
+    {
+      "registerNumber": "B-00769",
+      "legalName": "Starlight Consulting Paweł Olkowski",
+      "companyRegister": "CEIDG",
+      "nip": "5252354119"
+    },
+    {
+      "registerNumber": "B-00770",
+      "legalName": "KRIS-GARDEN KRZYSZTOF LASZCZAK",
+      "companyRegister": "CEiDG",
+      "nip": "7532234073"
+    },
+    {
+      "registerNumber": "B-00771",
+      "legalName": "IVAN KYSIL IVANCOM",
+      "companyRegister": "CEIDG",
+      "nip": "9452232009"
+    },
+    {
+      "registerNumber": "B-00772",
+      "legalName": "SUPERGLOBAL Sp. z o.o.",
+      "companyRegister": "KRS 0001056965",
+      "nip": "6112828434"
+    },
+    {
+      "registerNumber": "B-00773",
+      "legalName": "M Express Sp. z o.o.",
+      "companyRegister": "KRS 0001063815",
+      "nip": "7123463304"
+    },
+    {
+      "registerNumber": "B-00774",
+      "legalName": "4S Sp. z o.o.",
+      "companyRegister": "KRS 0001063854",
+      "nip": "1231542747"
+    },
+    {
+      "registerNumber": "B-00775",
+      "legalName": "FREIGHTFORWARDINGGROUP Sp. z o.o.",
+      "companyRegister": "KRS 0000645529",
+      "nip": "1231328681"
+    },
+    {
+      "registerNumber": "B-00777",
+      "legalName": "S EXPRESS S Sp. z o.o.",
+      "companyRegister": "KRS 0001059045",
+      "nip": "5252973012"
+    },
+    {
+      "registerNumber": "B-00778",
+      "legalName": "Infornet.eu Sp. z o.o.",
+      "companyRegister": "KRS 0000360975",
+      "nip": "6222739499"
+    },
+    {
+      "registerNumber": "B-00783",
+      "legalName": "MEEST POST Sp. z o.o.",
+      "companyRegister": "KRS 0001027880",
+      "nip": "5252949574"
+    },
+    {
+      "registerNumber": "B-00784",
+      "legalName": "POST TRANSFER Sp. z o.o.",
+      "companyRegister": "KRS 0001089810",
+      "nip": "9462737395"
+    },
+    {
+      "registerNumber": "B-00785",
+      "legalName": "DELIVER Sebastian Świątkowski",
+      "companyRegister": "CEIDG",
+      "nip": "6931548370"
+    },
+    {
+      "registerNumber": "B-00786",
+      "legalName": "INTERSHIP SYSTEMY Sp. z o.o.",
+      "companyRegister": "KRS 0001056474",
+      "nip": "6793275981"
+    },
+    {
+      "registerNumber": "B-00787",
+      "legalName": "PDP LOGISTICS Sp. z o.o.",
+      "companyRegister": "KRS 0001028289",
+      "nip": "5372616131"
+    },
+    {
+      "registerNumber": "B-00788",
+      "legalName": "RAFFO COURIER SERVICE Sp. z o.o.",
+      "companyRegister": "KRS 0001033857",
+      "nip": "5342663982"
+    },
+    {
+      "registerNumber": "B-00789",
+      "legalName": "Jet Eu Sp. z o.o.",
+      "companyRegister": "KRS 0000986941",
+      "nip": "5252919225"
+    },
+    {
+      "registerNumber": "B-00790",
+      "legalName": "Global Kurier Marta Dobrowolska",
+      "companyRegister": "CEIDG",
+      "nip": "9570890099"
+    },
+    {
+      "registerNumber": "B-00791",
+      "legalName": "FAST­DELIVERY COURIER PAULINA KAŁAN",
+      "companyRegister": "CEIDG",
+      "nip": "1181630655"
+    },
+    {
+      "registerNumber": "B-00794",
+      "legalName": "Przedsiębiorstwo Spedycyjno-Transportowe AVISTRANS Łukasz Skorupa",
+      "companyRegister": "CEIDG",
+      "nip": "6861588512"
+    },
+    {
+      "registerNumber": "B-00795",
+      "legalName": "Kurier Miejski  Sp. z o.o.",
+      "companyRegister": "KRS 0000909951",
+      "nip": "8943170205"
+    },
+    {
+      "registerNumber": "B-00796",
+      "legalName": "NEO EXPRESS POLAND Sp. z o.o.",
+      "companyRegister": "KRS 0000988087",
+      "nip": "8133883474"
+    },
+    {
+      "registerNumber": "B-00797",
+      "legalName": "AMB plus / Business Courier Łukasz Jaroń",
+      "companyRegister": "CEIDG",
+      "nip": "5342288573"
+    },
+    {
+      "registerNumber": "B-00798",
+      "legalName": "bartosz miraszewski i syn transport",
+      "companyRegister": "CEIDG",
+      "nip": "8751368199"
+    },
+    {
+      "registerNumber": "B-00799",
+      "legalName": "REGO BARTOSZ SZREDER-WIDŁAK",
+      "companyRegister": "CEIDG",
+      "nip": "5542261455"
+    },
+    {
+      "registerNumber": "B-00800",
+      "legalName": "PAKERSI - PRZESYŁKI KURIERSKIE Sp. z o.o.",
+      "companyRegister": "KRS 0001105583",
+      "nip": "8971937937"
+    },
+    {
+      "registerNumber": "B-00801",
+      "legalName": "AC KOZAK GROUP Sp. z o.o.",
+      "companyRegister": "KRS 0001052679",
+      "nip": "6762649268"
+    },
+    {
+      "registerNumber": "B-00802",
+      "legalName": "ORLE GROUP Sp. z o.o.",
+      "companyRegister": "KRS 0001156515",
+      "nip": "1133159390"
+    },
+    {
+      "registerNumber": "B-00803",
+      "legalName": "DOMA SERVICES Sp. z o.o.",
+      "companyRegister": "KRS 0000183254",
+      "nip": "5342245931"
+    },
+    {
+      "registerNumber": "B-00804",
+      "legalName": "ZOVO.PL Sp. z o.o.",
+      "companyRegister": "KRS 0001153438",
+      "nip": "5423495566"
+    },
+    {
+      "registerNumber": "B-00805",
+      "legalName": "TRADE&CO Sp. z o.o.",
+      "companyRegister": "KRS 0001016916",
+      "nip": "9662173276"
+    },
+    {
+      "registerNumber": "B-00806",
+      "legalName": "SKLADEX Sp. z o.o.",
+      "companyRegister": "KRS: 0001169780",
+      "nip": "7123492441"
+    },
+    {
+      "registerNumber": "B-00807",
+      "legalName": "IZIDROP Sp. z o.o.",
+      "companyRegister": "KRS 0001053250",
+      "nip": "5273071272"
+    },
+    {
+      "registerNumber": "B-00808",
+      "legalName": "Ilona Dygas",
+      "companyRegister": "CEIDG",
+      "nip": "7582163145"
+    },
+    {
+      "registerNumber": "B-00809",
+      "legalName": "TSM DELIVERY Sp. z o.o.",
+      "companyRegister": "KRS 0001170636",
+      "nip": "7011258792"
+    },
+    {
+      "registerNumber": "B-00810",
+      "legalName": "Smart Move Piotr Ludian",
+      "companyRegister": "CEIDG",
+      "nip": "8652540867"
+    },
+    {
+      "registerNumber": "B-00811",
+      "legalName": "DT Partners Sp. z o.o.",
+      "companyRegister": "KRS 0000892251",
+      "nip": "9512517225"
+    },
+    {
+      "registerNumber": "B-00812",
+      "legalName": "FORUM Sp. z o.o.",
+      "companyRegister": "KRS 0000081508",
+      "nip": "1130089996"
+    },
+    {
+      "registerNumber": "B-00813",
+      "legalName": "Verge Andrzej Chaniewski",
+      "companyRegister": "CEIDG",
+      "nip": "5421251535"
+    },
+    {
+      "registerNumber": "B-00814",
+      "legalName": "OLEH KOVAL",
+      "companyRegister": "CEIDG",
+      "nip": "1251797769"
+    },
+    {
+      "registerNumber": "B-00815",
+      "legalName": "POLISH PARCEL SERVICE COURIER Sp. z o.o.",
+      "companyRegister": "KRS 0001213593",
+      "nip": "5243059591"
+    },
+    {
+      "registerNumber": "B-00816",
+      "legalName": "JAGODA MOMOTKO",
+      "companyRegister": "CEIDG",
+      "nip": "7322110927"
+    },
+    {
+      "registerNumber": "B-00818",
+      "legalName": "\"No Limit\" Sp. z o.o.",
+      "companyRegister": "KRS 0000128397",
+      "nip": "5241066960"
+    },
+    {
+      "registerNumber": "B-00819",
+      "legalName": "Stefan Cargo Sp. z o.o.",
+      "companyRegister": "KRS 0001158259",
+      "nip": "7282894790"
+    },
+    {
+      "registerNumber": "B-00820",
+      "legalName": "DPA TRANS Sp. z o.o.",
+      "companyRegister": "KRS 0000477952",
+      "nip": "1231280224"
+    },
+    {
+      "registerNumber": "B-00821",
+      "legalName": "RADICO Sp. z o.o.",
+      "companyRegister": "KRS 0000656070",
+      "nip": "5252691816"
+    },
+    {
+      "registerNumber": "B-00822",
+      "legalName": "Familijo Sp. z o.o.",
+      "companyRegister": "KRS 0001036010",
+      "nip": "6343023736"
+    },
+    {
+      "registerNumber": "B-00823",
+      "legalName": "\"GO-EST\" Sp. z o.o.",
+      "companyRegister": "KRS 0000298719",
+      "nip": "5252420796"
+    },
+    {
+      "registerNumber": "B-00824",
+      "legalName": "RTL POLSKA Sp. z o.o.",
+      "companyRegister": "KRS 0000278207",
+      "nip": "5272540003"
+    },
+    {
+      "registerNumber": "B-00825",
+      "legalName": "ALIBI DIRECT Jakub Hebdowski",
+      "companyRegister": "CEIDG",
+      "nip": "8641724730"
+    },
+    {
+      "registerNumber": "B-00826",
+      "legalName": "F.P.H.U. SŁONNE Andrzej Podsobiński",
+      "companyRegister": "CEIDG",
+      "nip": "6881249138"
+    },
+    {
+      "registerNumber": "B-00827",
+      "legalName": "ALFA TRANS LOGISTIC Sp. z o.o.",
+      "companyRegister": "KRS 0000843983",
+      "nip": "7312069152"
+    },
+    {
+      "registerNumber": "B-00828",
+      "legalName": "DOST LOGISTICS POLAND Sp. z o.o.",
+      "companyRegister": "KRS 0001024672",
+      "nip": "5273047196"
+    },
+    {
+      "registerNumber": "B-00829",
+      "legalName": "olzalogistic.com, s.r.o.",
+      "companyRegister": "C 55992",
+      "nip": "CZ 01503057"
+    },
+    {
+      "registerNumber": "B-00830",
+      "legalName": "LEADER POST Sp. z o.o.",
+      "companyRegister": "KRS 0001256742",
+      "nip": "7123516271"
+    },
+    {
+      "registerNumber": "B-00831",
+      "legalName": "VEGATRUCK sp. z o.o.",
+      "companyRegister": "KRS 0001114274",
+      "nip": "9522258009"
+    },
+    {
+      "registerNumber": "B-00832",
+      "legalName": "GLOBAL QLINES Sp. z o.o.",
+      "companyRegister": "KRS 0001255814",
+      "nip": "6793371727"
+    },
+    {
+      "registerNumber": "B-00833",
+      "legalName": "BUSINESS COURIER BC Sp. z o.o.",
+      "companyRegister": "KRS 0001253524",
+      "nip": "7011322679"
+    },
+    {
+      "registerNumber": "B-00834",
+      "legalName": "FS EXPRESS Sp. z o.o.",
+      "companyRegister": "KRS 0001256134",
+      "nip": "5273228756"
+    },
+    {
+      "registerNumber": "B-00835",
+      "legalName": "PL ASCO LOGISTICS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ",
+      "companyRegister": "KRS 0001259774",
+      "nip": "7011327062"
+    },
+    {
+      "registerNumber": "B-00836",
+      "legalName": "FLOTA VIKINGA Sp. z o.o.",
+      "companyRegister": "KRS 0001026524",
+      "nip": "5423465803"
+    },
+    {
+      "registerNumber": "B-00837",
+      "legalName": "Michał Kasperczyk Agencja Promocyjno-Reklamowa NOL-TYCHY",
+      "companyRegister": "CEIDG",
+      "nip": "6462591501"
+    },
+    {
+      "registerNumber": "B-00838",
+      "legalName": "N35T Sp. z o.o.",
+      "companyRegister": "KRS 0001152937",
+      "nip": "8982316831"
+    },
+    {
+      "registerNumber": "B-00839",
+      "legalName": "BRAMCEL Sp. z o.o.",
+      "companyRegister": "KRS 0001265492",
+      "nip": "5223382679"
+    },
+    {
+      "registerNumber": "B-00840",
+      "legalName": "MeSo MATEUSZ SOPNIEWSKI",
+      "companyRegister": "CEIDG",
+      "nip": "6482802183"
+    },
+    {
+      "registerNumber": "B-00841",
+      "legalName": "WARKOV GROUP Sp. z o.o.",
+      "companyRegister": "KRS 0001194125",
+      "nip": "5214132931"
+    }
+  ],
+  "schema": "buzzard.register-extract.v4",
+  "iso": "PL",
+  "regulator": "UKE",
+  "fetchedAt": "2026-11-06",
+  "scope": "Rejestr operatorów pocztowych BIP; register rows including sole traders; not all last-mile"
+}

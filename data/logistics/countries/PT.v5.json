@@ -1,0 +1,24 @@
+{
+  "iso": "PT",
+  "nra": "ANACOM",
+  "register": {
+    "records": null,
+    "uniqueLegal": null,
+    "status": "DATA_INCOMPLETE",
+    "method": "anacom_403_digital_portal_no_bulk",
+    "source": "anacom-403-persists",
+    "note": "HTTP 403 on alphabetical list. Digital portal exists. Unique postal-only count unknown."
+  },
+  "verification": "DATA_INCOMPLETE",
+  "researchStatus": {
+    "iso": "PT",
+    "status": "SOURCE_FOUND",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "DATA_INCOMPLETE"
+  },
+  "completeVerified": false,
+  "namedCount": 16,
+  "postcodeCoverage": "UNKNOWN"
+}

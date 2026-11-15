@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   LocalizationCountryConfig,
   LocalizationFeedsStatus,
@@ -25,7 +26,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("localizationFeeds.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -41,7 +42,7 @@ export function isLocalizationFeedsApiConfigured(): boolean {
 export async function fetchLocalizationFeedsStatus(): Promise<LocalizationFeedsStatus> {
   const base = apiBase();
   if (!base) throw new Error("localizationFeeds.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("localizationFeeds.requestFailed");
   const data = (await res.json()) as { localizationFeeds?: LocalizationFeedsStatus };
   if (!data.localizationFeeds?.enabled) throw new Error("localizationFeeds.disabled");
@@ -73,7 +74,7 @@ export async function fetchLocalizedCatalog(filters?: {
   if (filters?.q) url.searchParams.set("q", filters.q);
   if (filters?.category) url.searchParams.set("category", filters.category);
   if (filters?.vehicleId) url.searchParams.set("vehicleId", String(filters.vehicleId));
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
+  const res = await browserFetch(url.toString(), { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("localizationFeeds.requestFailed");
   return (await res.json()) as LocalizedCatalogProduct[];
 }
@@ -86,7 +87,7 @@ export async function fetchLocalizedProductBySlug(
   if (!base) throw new Error("localizationFeeds.apiUnavailable");
   const url = new URL(`${base}/api/localization/products/slug/${encodeURIComponent(slug)}`);
   url.searchParams.set("locale", locale);
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
+  const res = await browserFetch(url.toString(), { headers: { Accept: "application/json" } });
   const data = (await res.json()) as LocalizedCatalogProduct & { error?: string };
   if (!res.ok) throw new Error(data.error || "localizationFeeds.requestFailed");
   return data;

@@ -20,7 +20,14 @@ describe("storefrontVisibility", () => {
     const { isProductVisibleOnStorefront } = require("../lib/storefront/storefrontVisibility.js");
     const productCore = require("../lib/pim/productCore.js");
     const demo = productCore.getProduct("pim_prod_demo001");
-    expect(isProductVisibleOnStorefront(demo, { skipValidation: true })).toBe(true);
+    expect(demo?.sku).toBe("BZ-CORE-DEMO-001");
+    expect(isProductVisibleOnStorefront(demo, { skipValidation: true })).toBe(false);
+    expect(
+      isProductVisibleOnStorefront(
+        { status: "READY", visibility: "PUBLIC", title: "Synthetic pad", sku: "SYN-PAD-VISIBLE", category: "cat-05" },
+        { skipValidation: true }
+      )
+    ).toBe(true);
   });
 });
 
@@ -48,8 +55,15 @@ describe("catalogReadService", () => {
 
   it("gets product by slug", () => {
     const catalogReadService = require("../lib/storefront/catalogReadService.js");
-    const product = catalogReadService.getProductById("universal-demo-product");
-    expect(product?.sku).toBe("BZ-CORE-DEMO-001");
+    const listed = catalogReadService.listProducts({ page: 1, limit: 10 });
+    expect(listed.catalogMode).toBe(true);
+    const demoPublic = catalogReadService.getProductById("universal-demo-product");
+    expect(demoPublic).toBeNull();
+    if (listed.items[0]) {
+      const product = catalogReadService.getProductById(listed.items[0].id || listed.items[0].slug);
+      expect(product).toBeTruthy();
+      expect(product.buyNowEnabled).not.toBe(true);
+    }
   });
 });
 

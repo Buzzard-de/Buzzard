@@ -76,7 +76,8 @@ export async function fetchSmartMenuSignals(subId: string): Promise<SmartMenuSig
 
   try {
     const base = typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL || "";
-    const res = await fetch(`${base}/api/smart-menu-48/signals/${encodeURIComponent(bzSubId)}`, {
+    const { browserFetch } = await import("@/lib/security/browserFetch");
+    const res = await browserFetch(`${base}/api/smart-menu-48/signals/${encodeURIComponent(bzSubId)}`, {
       cache: "force-cache",
     });
     if (!res.ok) return null;

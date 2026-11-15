@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   CreateCampaignInput,
   MarketingCampaign,
@@ -25,7 +26,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("marketingCenter.apiUnavailable");
-  const res = await fetch(`${base}${path}`, { ...init, headers: { ...adminHeaders(), ...(init?.headers || {}) } });
+  const res = await browserFetch(`${base}${path}`, { ...init, headers: { ...adminHeaders(), ...(init?.headers || {}) } });
   const data = (await res.json()) as T & { error?: string };
   if (!res.ok) throw new Error(data.error || "marketingCenter.requestFailed");
   return data;
@@ -38,7 +39,7 @@ export function isMarketingCenterApiConfigured(): boolean {
 export async function fetchMarketingCenterStatus(): Promise<MarketingCenterStatus> {
   const base = apiBase();
   if (!base) throw new Error("marketingCenter.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("marketingCenter.requestFailed");
   const data = (await res.json()) as { marketingCenter?: MarketingCenterStatus };
   if (!data.marketingCenter?.enabled) throw new Error("marketingCenter.disabled");
@@ -94,7 +95,7 @@ export async function trackMarketingCenterEvent(body: {
   const base = apiBase();
   if (!base) return;
   try {
-    await fetch(`${base}/api/marketing-center/events`, {
+    await browserFetch(`${base}/api/marketing-center/events`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),
@@ -114,7 +115,7 @@ export async function recordMarketingConversion(body: {
   const base = apiBase();
   if (!base) return;
   try {
-    await fetch(`${base}/api/marketing-center/conversion`, {
+    await browserFetch(`${base}/api/marketing-center/conversion`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(body),

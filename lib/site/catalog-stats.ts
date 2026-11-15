@@ -1,8 +1,13 @@
-import { getMainCategories } from "@/lib/categories/service";
+import { getNavigableMainCategories } from "@/lib/categories/service";
+import { getMasterCategoryCount } from "@/lib/categories/master";
 
-/** Number of top-level menu categories (dynamic from taxonomy). */
+/** Navigable L1 + hubs (not the approved 50-master list). */
 export function getMainCategoryCount(): number {
-  return getMainCategories().length;
+  return getNavigableMainCategories().length;
+}
+
+export function getApprovedMasterCategoryCount(): number {
+  return getMasterCategoryCount();
 }
 
 /** German label for homepage / top bar, e.g. "53 Kategorien". */

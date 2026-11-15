@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   CartCheckoutCartRow,
   CartCheckoutCoupon,
@@ -24,7 +25,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("cartCheckout.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -40,7 +41,7 @@ export function isCartCheckoutApiConfigured(): boolean {
 export async function fetchCartCheckoutStatus(): Promise<CartCheckoutStatus> {
   const base = apiBase();
   if (!base) throw new Error("cartCheckout.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("cartCheckout.requestFailed");
   const data = (await res.json()) as { cartCheckout?: CartCheckoutStatus };
   if (!data.cartCheckout?.enabled) throw new Error("cartCheckout.disabled");

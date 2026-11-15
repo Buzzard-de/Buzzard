@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { AiCenterOverview, AiCenterStatus, AiChatResponse, AiJobRow } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("aiCenter.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -33,7 +34,7 @@ export function isAiCenterApiConfigured(): boolean {
 export async function fetchAiCenterStatus(): Promise<AiCenterStatus> {
   const base = apiBase();
   if (!base) throw new Error("aiCenter.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("aiCenter.requestFailed");
   const data = (await res.json()) as { aiCenter?: AiCenterStatus };
   if (!data.aiCenter?.enabled) throw new Error("aiCenter.disabled");
@@ -51,7 +52,7 @@ export async function fetchAiJobs(): Promise<AiJobRow[]> {
 export async function sendAiCenterChat(message: string, language = "de"): Promise<AiChatResponse> {
   const base = apiBase();
   if (!base) throw new Error("aiCenter.apiUnavailable");
-  const res = await fetch(`${base}/api/ai-center/chat`, {
+  const res = await browserFetch(`${base}/api/ai-center/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ message, language }),

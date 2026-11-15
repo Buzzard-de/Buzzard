@@ -3,7 +3,7 @@
  */
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 
 const DEFAULT_BACKUP_DIR = process.env.BUZZARD_BACKUP_DIR || "/var/data/backups";
 const RETENTION_DAYS = Number(process.env.BUZZARD_BACKUP_RETENTION_DAYS) || 14;
@@ -98,9 +98,10 @@ function runBackup({ applyRetentionPolicy = true } = {}) {
   const script = path.join(__dirname, "..", "..", "scripts", "db-backup.mjs");
   let result;
   try {
-    const output = execSync(`node "${script}"`, {
+    const output = execFileSync(process.execPath, [script], {
       env: { ...process.env, BUZZARD_BACKUP_DIR: backupDir },
       encoding: "utf8",
+      timeout: 120000,
     });
     result = JSON.parse(output.trim().split("\n").pop());
   } catch (err) {
@@ -112,9 +113,22 @@ function runBackup({ applyRetentionPolicy = true } = {}) {
     retention = applyRetention(backupDir);
   }
 
+  let areaSnapshot = null;
+  try {
+    const { snapshotLocalAreas } = require("./survival/copies32110");
+    const workRoot = path.join(backupDir, "areas-32110");
+    areaSnapshot = snapshotLocalAreas({
+      repoRoot: path.join(__dirname, "..", ".."),
+      workRoot,
+    });
+  } catch (err) {
+    areaSnapshot = { ok: false, error: err.message };
+  }
+
   return {
     ok: result.ok === true,
     backup: result,
+    areaSnapshot,
     retention,
     path: backupDir,
   };
@@ -132,7 +146,10 @@ function getBackupReadiness() {
     retentionDays: RETENTION_DAYS,
     minKeep: RETENTION_MIN_COUNT,
     schedulerEnv: process.env.BUZZARD_BACKUP_CRON || null,
-    recommendation: "Schedule `node scripts/db-backup.mjs` via Render cron or BUZZARD_BACKUP_CRON when persistent disk is active.",
+    offsiteConfigured: Boolean(process.env.BUZZARD_OFFSITE_BACKUP_DIR),
+    scheme: "3-2-1-1-0-local",
+    lock: require("./survival/backupLock").assessBackupLock(),
+    recommendation: "Schedule `node scripts/db-backup.mjs` via Render cron. Offsite stays BLOCKED until BUZZARD_OFFSITE_BACKUP_DIR is a separate host.",
   };
 }
 

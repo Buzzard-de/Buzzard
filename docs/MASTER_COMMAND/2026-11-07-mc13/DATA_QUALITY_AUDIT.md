@@ -1,0 +1,53 @@
+{
+  "v9Baseline": {
+    "namedEntities": 1602,
+    "uniqueLegalKeys": 1465,
+    "registerLayerSum": 17453,
+    "activityVerified": 31,
+    "parcelServiceIndependentlyVerified": 0,
+    "postcodeCoverageVerifiedCountries": 0,
+    "apiDocumentationEntries": 16,
+    "sandboxTests": 0
+  },
+  "independentCounts": {
+    "parcel_service_true": 0,
+    "last_mile_true": 0,
+    "own_fleet_true": 0,
+    "subcontractor_true": 0,
+    "sandbox_true": 0,
+    "live_true": 0
+  },
+  "qualityMetrics": {
+    "registerLayerRecordCount": 17453,
+    "namedEntityCount": 1602,
+    "uniqueLegalEntityCount": 1465,
+    "activeBusinessVerifiedCount": 31,
+    "parcelServiceVerifiedCount": 0,
+    "lastMileVerifiedCount": 0,
+    "ownFleetVerifiedCount": 0,
+    "subcontractorNetworkVerifiedCount": 0,
+    "nationalPostalOperatorCount": 27,
+    "privateNationalCarrierClassCount": 75,
+    "regionalCarrierClassCount": 4,
+    "localCourierClassCount": 10,
+    "internationalBrandCountryOperationCount": 64,
+    "lockerNetworkCount": 14,
+    "pudoNetworkCount": 6,
+    "postcodeCoverageVerifiedCountryCount": 0,
+    "apiDocumentationCount": 16,
+    "mockTestSuccessCount": "SEE_TEST_RESULTS",
+    "sandboxTestSuccessCount": 0,
+    "contractRequiredCount": 16,
+    "liveUsableCarrierCount": 0,
+    "note": "Class-row counts are not verified last-mile companies. UNKNOWN is not coerced to zero except verified-evidence zeros.",
+    "mockTestedAdapters": 3,
+    "sandboxReady": 0,
+    "sandboxVerified": 0,
+    "adapterDesignReady": 16,
+    "newLegalEntitiesMc13": 0,
+    "newLocalRegionalVerifiedMc13": 0,
+    "localRegionalClassRows": 17
+  },
+  "newLegalEntitiesMc13": 0,
+  "localRegionalClassRows": 17
+}

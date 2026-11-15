@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { COMPANY_LEGAL_NAME, getCompanyAddressSingleLine } from "@/lib/site/company";
 import { CONTACT_EMAIL } from "@/lib/site/contact";
 
@@ -32,7 +33,7 @@ export default function WiderrufFormTemplate() {
       </div>
       <p>
         Sie können das ausgefüllte Formular per E-Mail oder Post senden. Bis zum Verkaufsstart können Sie uns
-        vorab über das <a href="/hilfe/#kontakt">Kontaktformular</a> erreichen.
+        vorab über das <Link href="/hilfe/#kontakt">Kontaktformular</Link> erreichen.
       </p>
     </section>
   );

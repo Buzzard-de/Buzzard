@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { StorefrontListResult, StorefrontProduct } from "./types";
 
 function apiBase(): string {
@@ -7,9 +8,8 @@ function apiBase(): string {
 async function fetchJson<T>(path: string): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("storefront.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     headers: { Accept: "application/json" },
-    next: { revalidate: 60 },
   });
   const data = (await res.json()) as T & { success?: boolean };
   if (!res.ok) throw new Error("storefront.requestFailed");

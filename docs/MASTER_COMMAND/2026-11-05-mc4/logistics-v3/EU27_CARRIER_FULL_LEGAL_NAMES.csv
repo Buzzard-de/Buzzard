@@ -1,0 +1,317 @@
+id,legalName,brand,iso,class,reliability
+usp-at,"Österreichische Post AG","Österreichische Post",AT,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-be,"bpost","bpost",BE,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-bg,"Bulgarian Posts","Bulgarian Posts",BG,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-hr,"Croatian Post Inc.","Hrvatska pošta",HR,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-cy,"Department of Postal Services (Cyprus Post)","Cyprus Post",CY,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-cz,"Česká pošta, s.p.","Česká pošta",CZ,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-dk,"Post Danmark A/S","PostNord Danmark",DK,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-ee,"Estonian Post Ltd","Omniva",EE,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-fi,"Posti Jakelu Ltd / Posti Ltd","Posti",FI,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-fr,"La Poste","La Poste",FR,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-de,"Deutsche Post AG","Deutsche Post / DHL",DE,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-el,"Hellenic Post S.A. (ELTA)","ELTA",EL,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-hu,"Magyar Posta","Magyar Posta",HU,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-ie,"An Post","An Post",IE,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-it,"Poste Italiane S.p.A.","Poste Italiane",IT,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-lv,"SJSC Latvijas Pasts","Latvijas Pasts",LV,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-lt,"AB Lietuvos paštas","Lietuvos paštas",LT,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-lu,"POST Luxembourg","POST Luxembourg",LU,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-mt,"Maltapost plc","MaltaPost",MT,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-nl,"PostNL","PostNL",NL,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-pl,"Polish Post Ltd / Poczta Polska","Poczta Polska",PL,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-pt,"CTT – Correios de Portugal S.A.","CTT",PT,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-ro,"Compania Națională Poșta Română S.A.","Poșta Română",RO,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-sk,"Slovenská pošta, a.s.","Slovenská pošta",SK,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-si,"Pošta Slovenije d.o.o.","Pošta Slovenije",SI,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-es,"Sociedad Estatal Correos y Telégrafos","Correos",ES,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+usp-se,"PostNord Group AB","PostNord",SE,NATIONAL_POST_USP,VERIFIED_USP_UPU_2025
+de-hermes,"Hermes Germany GmbH","Hermes / Evri",DE,PRIVATE_PARCEL,VERIFIED_BNETZA_REGISTER_ROW
+de-dpd,"DPD Deutschland GmbH","DPD",DE,PRIVATE_PARCEL,VERIFIED_BNETZA_REGISTER_ROW
+de-gls,"General Logistics Systems Germany GmbH & Co. OHG","GLS",DE,PRIVATE_PARCEL,VERIFIED_BNETZA_REGISTER_ROW
+de-dhl-express,"DHL Express Germany GmbH","DHL Express",DE,PRIVATE_EXPRESS,VERIFIED_BNETZA_REGISTER_ROW
+de-ups,"UPS Management LLC","UPS",DE,PRIVATE_EXPRESS,VERIFIED_BNETZA_REGISTER_ROW
+de-tof,"trans-o-flex Express GmbH & Co. KGaA","trans-o-flex",DE,REGIONAL_SPECIALIST,VERIFIED_BNETZA_REGISTER_ROW
+de-go,"GO! Express & Logistics GmbH","GO!",DE,REGIONAL_COURIER,VERIFIED_BNETZA_REGISTER_ROW
+dk-dao,"Dansk Avis Omdeling A/S","dao",DK,NATIONAL_PARCEL_LETTER,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-gls,"General Logistics Systems Denmark A/S","GLS Denmark",DK,PRIVATE_PARCEL,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-bring,"Bring E-commerce & Logistics A/S","Bring",DK,PRIVATE_PARCEL,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-fedex,"FedEx Express Danmark ApS","FedEx",DK,PRIVATE_EXPRESS,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-webrinq,"WebrinQ A/S","WebrinQ",DK,PRIVATE_PARCEL,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-ups,"U.P.S Danmark A/S","UPS",DK,PRIVATE_EXPRESS,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-dhl,"DHL Express (Denmark) A/S","DHL Express",DK,PRIVATE_EXPRESS,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-instabox,"Instabox Denmark ApS","Instabox",DK,PUDO_LOCKER,VERIFIED_DK_NRA_LICENSE_TABLE
+dk-budbee,"Budbee Denmark ApS","Budbee",DK,PUDO_LOCKER,VERIFIED_DK_NRA_LICENSE_TABLE
+fi-botnia-print-oy-ab,"Botnia Print Oy Ab","Botnia Print Oy Ab",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-dilicon-oy,"Dilicon Oy","Dilicon Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-hilla-group-oyj,"Hilla Group Oyj","Hilla Group Oyj",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-hilla-logistiikka-oy,"Hilla Logistiikka Oy","Hilla Logistiikka Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-hss-media-bolagen-ab,"HSS Media - Bolagen Ab","HSS Media - Bolagen Ab",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-jakeluyhti-suomi-oy,"Jakeluyhtiö Suomi Oy","Jakeluyhtiö Suomi Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-kaakon-viestint-oy,"Kaakon Viestintä Oy","Kaakon Viestintä Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-lounais-suomen-tietojakelu-oy,"Lounais-Suomen Tietojakelu Oy","Lounais-Suomen Tietojakelu Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-pisa-jakelu-oy,"PISA Jakelu Oy","PISA Jakelu Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-pks-jakelu-oy,"PKS Jakelu Oy","PKS Jakelu Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-ppp-finland-oy,"PPP Finland Oy","PPP Finland Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-rauman-suorajakelu-oy,"Rauman Suorajakelu Oy","Rauman Suorajakelu Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fi-varsinais-suomen-tietojakelu-oy,"Varsinais-Suomen Tietojakelu Oy","Varsinais-Suomen Tietojakelu Oy",FI,LETTER_NOTIFICATION,SOURCE_VERIFIED
+fr-althus,"Althus","Althus",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-bpost,"bpost","bpost",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-g3-worldwide-spring,"G3 Worldwide (Spring)","G3 Worldwide (Spring)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-deutsche-post-global-mail-france,"Deutsche Post Global Mail (France)","Deutsche Post Global Mail (France)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-courrier-plus,"Courrier Plus","Courrier Plus",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-3l-distriplis,"3L (Distriplis)","3L (Distriplis)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-step-step-post,"STEP / STEP-POST","STEP / STEP-POST",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-optimail-solutions,"Optimail Solutions","Optimail Solutions",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-mediapost,"Mediapost","Mediapost",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-colis-priv,"Colis Privé","Colis Privé",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-novea,"NOVEA","NOVEA",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-xpert-france-nord,"XPERT FRANCE NORD","XPERT FRANCE NORD",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-solgeco-25,"SOLGECO 25","SOLGECO 25",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-pro-medical-services,"PRO MEDICAL SERVICES","PRO MEDICAL SERVICES",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-not-courrier-service,"NOT COURRIER SERVICE","NOT COURRIER SERVICE",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-trans-exams,"TRANS EXAMS","TRANS EXAMS",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-tcs,"TCS","TCS",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-courriers-xpress,"COURRIERS XPRESS","COURRIERS XPRESS",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-postal-stock-exchange,"POSTAL STOCK EXCHANGE","POSTAL STOCK EXCHANGE",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-not-courrier-france,"NOT COURRIER FRANCE","NOT COURRIER FRANCE",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-l-atelier-du-courrier,"L'ATELIER DU COURRIER","L'ATELIER DU COURRIER",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-trans-medical-49,"TRANS MEDICAL 49","TRANS MEDICAL 49",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-courrier-pro-03,"COURRIER PRO 03","COURRIER PRO 03",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-route-express,"ROUTE EXPRESS","ROUTE EXPRESS",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-tale-france,"TALE FRANCE","TALE FRANCE",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-xpost,"XPOST","XPOST",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-bike-in-the-city,"BIKE IN THE CITY","BIKE IN THE CITY",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-christin-pascal-chris-express,"CHRISTIN Pascal (Chris Express)","CHRISTIN Pascal (Chris Express)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-facily-post,"FACILY POST","FACILY POST",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-servitrans,"SERVITRANS","SERVITRANS",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-portage-postal,"PORTAGE POSTAL","PORTAGE POSTAL",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-rca-presta-ecopost,"RCA PRESTA (ECOPOST)","RCA PRESTA (ECOPOST)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-sall-bruno-azur-courrier-83,"SALLÉ Bruno (Azur Courrier 83)","SALLÉ Bruno (Azur Courrier 83)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-clevia,"CLEVIA","CLEVIA",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-postalia-france-easypost,"POSTALIA FRANCE (EasyPost)","POSTALIA FRANCE (EasyPost)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-messageries-le-dissez,"MESSAGERIES LE DISSEZ","MESSAGERIES LE DISSEZ",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-liaison-sant,"LIAISON SANTÉ","LIAISON SANTÉ",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-transport-inter-regional,"TRANSPORT INTER-REGIONAL","TRANSPORT INTER-REGIONAL",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-proximy,"PROXIMY","PROXIMY",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-lebon-transporteur,"LEBON TRANSPORTEUR","LEBON TRANSPORTEUR",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-dansmabal,"DANSMABAL","DANSMABAL",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-amtm-elite-courrier,"AMTM (ELITE COURRIER)","AMTM (ELITE COURRIER)",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-eole-sant,"Eole Santé","Eole Santé",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+fr-landmark-global-france,"Landmark Global France","Landmark Global France",FR,CORRESPONDENCE_AUTHORISATION,SOURCE_VERIFIED
+be-glejor-bv,"Glejor BV","Glejor",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+be-span-diffusion,"SPAN Diffusion","SPAN Diffusion",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+be-srl-net-express,"SRL Net Express","TBC-Post",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+be-srl-postalia-belgium-logistics,"SRL Postalia Belgium Logistics","EasyPost",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+be-srl-weeldy,"SRL WEELDY","URBIPOST",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+be-viavelo-s-comm,"ViaVelo S Comm","ViaVelo",BE,INDIVIDUAL_LICENCE,SOURCE_VERIFIED
+ie-budget-parcel,"Budget Parcel","Budget Parcel",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-corrigan-business-services,"Corrigan Business Services","Corrigan Business Services",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-dck-dc-kavanagh,"DCK / DC Kavanagh","DCK / DC Kavanagh",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-dx-ireland,"DX Ireland","DX Ireland",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-general-logistics-systems-ireland,"General Logistics Systems Ireland","General Logistics Systems Ireland",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-lettershop-postal,"Lettershop Postal","Lettershop Postal",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-mail-metrics,"Mail Metrics","Mail Metrics",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-paragon-customer-communications-ireland-,"Paragon Customer Communications Ireland Ltd.","Paragon Customer Communications Ireland Ltd.",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-printpost-ltd,"PrintPost Ltd","PrintPost Ltd",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-shanahan-direct-marketing-ltd,"Shanahan Direct Marketing Ltd.","Shanahan Direct Marketing Ltd.",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-sooner-than-later-solutions-ltd,"Sooner Than Later Solutions Ltd.","Sooner Than Later Solutions Ltd.",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-tico-mail-works,"Tico Mail Works","Tico Mail Works",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-rw-pierce-ireland-limited,"RW Pierce (Ireland) Limited","RW Pierce (Ireland) Limited",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-leaflet-broker-ltd,"Leaflet Broker Ltd","Leaflet Broker Ltd",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ie-azure-communications-ltd,"Azure Communications Ltd","Azure Communications Ltd",IE,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+se-b-j-distribution-ab,"B J Distribution AB","B J Distribution AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-bonway-ab,"Bonway AB","Bonway AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-citymail-sweden-ab,"Citymail Sweden AB","Citymail Sweden AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-erna-logistik-ab,"Erna Logistik AB","Erna Logistik AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-georgsson-mail-ab,"Georgsson Mail AB","Georgsson Mail AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-lysekils-lokalpost,"Lysekils Lokalpost","Lysekils Lokalpost",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-mail-company-sweden-ab,"Mail Company Sweden AB","Mail Company Sweden AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-mailworld-office-ab,"Mailworld Office AB","Mailworld Office AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-mariestads-brev-och-paketservice,"Mariestads Brev och Paketservice","Mariestads Brev och Paketservice",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-mediakonsult-i-g-teborg-ab,"Mediakonsult i Göteborg AB","Mediakonsult i Göteborg AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-point-logistik-gota-media-ab,"Point Logistik Gota Media AB","Point Logistik Gota Media AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-postm-staren-i-h-lsingland-ab,"Postmästaren i Hälsingland AB","Postmästaren i Hälsingland AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-pressens-morgontj-nst-kb,"Pressens Morgontjänst KB","Pressens Morgontjänst KB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-sdr-svensk-direktreklam-ab,"SDR Svensk Direktreklam AB","SDR Svensk Direktreklam AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-sundsvalls-citypost-ab,"Sundsvalls Citypost AB","Sundsvalls Citypost AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-svensk-hemleverans-hb,"Svensk Hemleverans HB","Svensk Hemleverans HB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-svensk-hemleverans-norr-kb,"Svensk Hemleverans Norr KB","Svensk Hemleverans Norr KB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+se-v-stsvensk-tidningsdistribution-ab,"Västsvensk Tidningsdistribution AB","Västsvensk Tidningsdistribution AB",SE,LETTER_PERMIT,SOURCE_VERIFIED
+at-albatros-fb-express-gmbh,"Albatros FB Express GmbH","Albatros FB Express GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-amazon-transport-austria-gmbh,"Amazon Transport Austria GmbH","Amazon Transport Austria GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-bss-logistik-gmbh,"Bss-Logistik GmbH","Bss-Logistik GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-deligee-parcel-gmbh,"DeliGee Parcel GmbH","DeliGee Parcel GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-dhl-express-austria-gmbh,"DHL Express (Austria) GmbH","DHL Express (Austria) GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-dpd-direct-parcel-distribution-austria-g,"DPD Direct Parcel Distribution Austria GmbH","DPD Direct Parcel Distribution Austria GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-fedex-express-austria-gmbh,"FedEx Express Austria GmbH","FedEx Express Austria GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-feibra-gmbh,"feibra GmbH","feibra GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-general-logistics-systems-austria-gmbh,"General Logistics Systems Austria GmbH","General Logistics Systems Austria GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-kep-logistic-gmbh,"KEP Logistic GmbH","KEP Logistic GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-munja-trans-gmbh,"MUNJA Trans GmbH","MUNJA Trans GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-rain-transport-gmbh,"Rain Transport GmbH","Rain Transport GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-redmail-logistik-zustellservice-gmbh,"redmail Logistik & Zustellservice GmbH","redmail Logistik & Zustellservice GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-spartrans-gmbh,"SparTrans GmbH","SparTrans GmbH",AT,PEV_OPERATOR,SOURCE_VERIFIED
+at-united-parcel-service-speditionsgesellsc,"United Parcel Service Speditionsgesellschaft m.b.H.","United Parcel Service Speditionsgesellschaft m.b.H.",AT,PEV_OPERATOR,SOURCE_VERIFIED
+ro-fan-courier-express-s-r-l,"FAN COURIER EXPRESS S.R.L.","FAN COURIER EXPRESS S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-euro-curier-mario-s-r-l,"EURO CURIER MARIO S.R.L.","EURO CURIER MARIO S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-gls-general-logistics-systems-romania-s-,"GLS GENERAL LOGISTICS SYSTEMS ROMANIA S.R.L.","GLS GENERAL LOGISTICS SYSTEMS ROMANIA S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-global-express-mail-s-r-l,"GLOBAL EXPRESS MAIL S.R.L.","GLOBAL EXPRESS MAIL S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-dynamic-parcel-distribution-s-a,"DYNAMIC PARCEL DISTRIBUTION S.A.","DYNAMIC PARCEL DISTRIBUTION S.A.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-pam-international-transport-s-r-l,"PAM INTERNATIONAL TRANSPORT S.R.L.","PAM INTERNATIONAL TRANSPORT S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-dhl-international-rom-nia-s-r-l,"DHL INTERNATIONAL ROMÂNIA S.R.L.","DHL INTERNATIONAL ROMÂNIA S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-ambian-a-trans-s-r-l,"AMBIANȚA TRANS S.R.L.","AMBIANȚA TRANS S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-sempre-dritto-tour-s-r-l,"SEMPRE DRITTO TOUR S.R.L.","SEMPRE DRITTO TOUR S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+ro-maty-express-s-r-l,"MATY EXPRESS S.R.L.","MATY EXPRESS S.R.L.",RO,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+cz-esk-distribu-n-k-s,"Česká distribuční k.s.","Česká distribuční k.s.",CZ,LETTER_NOTIFICATION,SOURCE_VERIFIED
+cz-mechanika-prost-jov-97-dru-stvo,"Mechanika Prostějov 97, družstvo","Mechanika Prostějov 97, družstvo",CZ,LETTER_NOTIFICATION,SOURCE_VERIFIED
+bg-econt-express-ad,"Econt Express AD","Econt Express AD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-m-bm-express-ood,"M&BM Express OOD","M&BM Express OOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-star-post-ood,"Star Post OOD","Star Post OOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-speedy-ad,"Speedy AD","Speedy AD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-fasto-courier-eood,"Fasto Courier EOOD","Fasto Courier EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-tavex-eood,"Tavex EOOD","Tavex EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-toyota-tixim-eood,"Toyota-Tixim EOOD","Toyota-Tixim EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-a1-trade-eood,"A1 Trade EOOD","A1 Trade EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-arii-eood,"Arii EOOD","Arii EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-gt-logistics-ood,"GT Logistics OOD","GT Logistics OOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+bg-dv-post-eood,"DV Post EOOD","DV Post EOOD",BG,UPS_LICENCE,SOURCE_VERIFIED
+sk-direct-parcel-distribution-sk-s-r-o,"Direct Parcel Distribution SK s.r.o.","Direct Parcel Distribution SK s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-go4-s-r-o,"GO4, s.r.o.","GO4, s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-slovak-parcel-service-s-r-o,"Slovak Parcel Service s.r.o.","Slovak Parcel Service s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-gls-general-logistics-systems-slovakia-s-r,"GLS General Logistics Systems Slovakia s.r.o.","GLS General Logistics Systems Slovakia s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-dhl-express-slovakia-spol-s-r-o,"DHL Express (Slovakia), spol. s r.o.","DHL Express (Slovakia), spol. s r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-dhl-parcel-slovensko-spol-s-r-o,"DHL Parcel Slovensko spol. s r.o.","DHL Parcel Slovensko spol. s r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-fedex-express-slovakia-s-r-o,"FedEx Express Slovakia s.r.o.","FedEx Express Slovakia s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-ups-slovakia-s-r-o,"UPS Slovakia s. r. o.","UPS Slovakia s. r. o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-packeta-slovakia-s-r-o,"Packeta Slovakia s. r. o.","Packeta Slovakia s. r. o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-express-one-slovakia-s-r-o,"Express One Slovakia s.r.o.","Express One Slovakia s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-der-kurier-slovakia-spol-s-r-o,"DER KURIER Slovakia spol. s r.o.","DER KURIER Slovakia spol. s r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-geis-parcel-sk-s-r-o-dpd-sk-s-r-o,"Geis Parcel SK s.r.o. / DPD SK s.r.o.","Geis Parcel SK s.r.o. / DPD SK s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-nova-post-sk-s-r-o,"Nova Post SK s.r.o.","Nova Post SK s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-paletexpress-s-r-o,"PaletExpress, s.r.o.","PaletExpress, s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-pack4you-s-r-o,"Pack4you, s.r.o.","Pack4you, s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-u-post-s-r-o,"U POST s. r. o.","U POST s. r. o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-gtpost-s-r-o,"GTPost s. r. o.","GTPost s. r. o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-meest-international-sp-z-o-o-organiza-n-zl,"Meest International sp. z o.o. organizačná zložka","Meest International sp. z o.o. organizačná zložka",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+sk-sds-smart-delivery-service-sk-s-r-o,"SDS - Smart Delivery Service SK, s.r.o.","SDS - Smart Delivery Service SK, s.r.o.",SK,POSTAL_REGISTER,SOURCE_VERIFIED
+si-cetis-zg-d-o-o,"Cetis-Zg d.o.o.","Cetis-Zg d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-dgistic-d-o-o,"DGistic, d.o.o.","DGistic, d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-epps-d-o-o,"EPPS, d.o.o.","EPPS, d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-izberi-d-o-o,"IZBERI d.o.o.","IZBERI d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-kro-d-o-o,"KRO, d.o.o.","KRO, d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-maksmail-d-o-o,"MAKSMAIL d.o.o.","MAKSMAIL d.o.o.",SI,SUBSTITUTABLE_POSTAL,SOURCE_VERIFIED
+si-damir-vidan-s-p,"Damir Vidan s. p.","Damir Vidan s. p.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-dhl-ekspres-slovenija-d-o-o,"DHL Ekspres (Slovenija) d.o.o.","DHL Ekspres (Slovenija) d.o.o.",SI,PRIVATE_EXPRESS,SOURCE_VERIFIED
+si-dpd-d-o-o,"DPD d.o.o.","DPD d.o.o.",SI,PRIVATE_PARCEL,SOURCE_VERIFIED
+si-express-one-si-d-o-o,"Express One SI d.o.o.","Express One SI d.o.o.",SI,PRIVATE_EXPRESS,SOURCE_VERIFIED
+si-fedex-express-slovenija-d-o-o,"FedEx Express Slovenija d.o.o.","FedEx Express Slovenija d.o.o.",SI,PRIVATE_EXPRESS,SOURCE_VERIFIED
+si-general-logistics-systems-d-o-o,"GENERAL LOGISTICS SYSTEMS d.o.o.","GENERAL LOGISTICS SYSTEMS d.o.o.",SI,PRIVATE_PARCEL,SOURCE_VERIFIED
+si-gold-ekspres-d-o-o,"GOLD EKSPRES d.o.o.","GOLD EKSPRES d.o.o.",SI,PRIVATE_EXPRESS,SOURCE_VERIFIED
+si-novakorp-d-o-o,"NOVAKORP d.o.o.","NOVAKORP d.o.o.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-np-kurir-ek-d-o-o,"NP KURIRČEK d.o.o.","NP KURIRČEK d.o.o.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-p-projekt-pavel-pu-nik-s-p,"P PROJEKT, Pavel Pučnik, s. p.","P PROJEKT, Pavel Pučnik, s. p.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-packeta-adriatic-d-o-o,"Packeta Adriatic d.o.o.","Packeta Adriatic d.o.o.",SI,PUDO_LOCKER,SOURCE_VERIFIED
+si-preiskovalno-varnostna-agencija-d-o-o,"PREISKOVALNO VARNOSTNA AGENCIJA, d.o.o.","PREISKOVALNO VARNOSTNA AGENCIJA, d.o.o.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-spletno-d-o-o,"SPLETNO d.o.o.","SPLETNO d.o.o.",SI,LOCAL_COURIER,SOURCE_VERIFIED
+si-ups-adria-s-ekspres-d-o-o,"UPS Adria (S) Ekspres d.o.o.","UPS Adria (S) Ekspres d.o.o.",SI,PRIVATE_EXPRESS,SOURCE_VERIFIED
+lu-amazon-deutschland-w11-transport-gmbh,"Amazon Deutschland W11 Transport GmbH","Amazon Deutschland W11 Transport GmbH",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-bpost,"Bpost","Bpost",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-bml-solutions,"BML Solutions","BML Solutions",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-cbxse,"Cbxse","Cbxse",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-citex,"CitEx","CitEx",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-colis-priv-belgique,"Colis Privé Belgique","Colis Privé Belgique",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-de-coursier,"De Coursier","De Coursier",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-d-fi-express,"Défi Express","Défi Express",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dextram,"Dextram","Dextram",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dfd-transport,"DFD Transport","DFD Transport",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dg-lux,"DG LUX","DG LUX",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dhl-express-luxembourg,"DHL Express (Luxembourg)","DHL Express (Luxembourg)",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-distral,"Distral","Distral",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dpd-luxembourg,"DPD (Luxembourg)","DPD (Luxembourg)",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-dsht-gmbh,"DSHT GmbH","DSHT GmbH",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-fedex-express-luxembourg,"FedEx Express Luxembourg","FedEx Express Luxembourg",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-general-logistics-systems-belgium-luxembou,"General Logistics Systems Belgium (Luxembourg)","General Logistics Systems Belgium (Luxembourg)",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-geric-transport,"GERIC Transport","GERIC Transport",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-go-express-logistics,"Go! Express & Logistics","Go! Express & Logistics",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-inflow,"Inflow","Inflow",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-interoute,"Interoute","Interoute",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-kg-transport,"KG Transport","KG Transport",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-localuxe,"LocaLuxe","LocaLuxe",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-lux-top-transport,"Lux Top Transport","Lux Top Transport",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-mondial-relay,"Mondial Relay","Mondial Relay",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-msm-logistik-gmbh,"MSM Logistik GmbH","MSM Logistik GmbH",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-m-z-transport,"M.Z. - Transport","M.Z. - Transport",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-new-fast-mail,"New Fast Mail","New Fast Mail",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-ot-lux,"OT LUX","OT LUX",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-poney-express,"Poney Express","Poney Express",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-postex,"Postex","Postex",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-rahmani,"Rahmani","Rahmani",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-raid-time-transport-ug,"Raid Time Transport UG","Raid Time Transport UG",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-s-s-multiservices,"S&S Multiservices","S&S Multiservices",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-soci-t-d-acheminement-et-de-distribution,"Société d’Acheminement et de Distribution","Société d’Acheminement et de Distribution",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-trans-ideal-lux,"Trans Ideal Lux","Trans Ideal Lux",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-transport-monfort,"Transport Monfort","Transport Monfort",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-united-parcel-service-luxembourg,"United Parcel Service Luxembourg","United Parcel Service Luxembourg",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-v-d-translux,"V&D Translux","V&D Translux",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-xpress-logistics,"Xpress Logistics","Xpress Logistics",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-7-days-luxembourg-gmbh-anc-mpk-luxembourg-,"7 Days Luxembourg GmbH (anc. MPK Luxembourg GmbH)","7 Days Luxembourg GmbH (anc. MPK Luxembourg GmbH)",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+lu-9-bar-solutions-gmbh,"9 Bar Solutions GmbH","9 Bar Solutions GmbH",LU,POSTAL_REGISTER,SOURCE_VERIFIED
+mt-agius-trading-ltd,"Agius Trading Ltd","Agius Trading Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-air-cargo-logistics-ltd,"Air Cargo Logistics Ltd","Air Cargo Logistics Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-airswift-couriers-ltd,"Airswift Couriers Ltd","Airswift Couriers Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-amg-logistics-ltd-fastdrop,"AMG Logistics Ltd (FastDrop)","AMG Logistics Ltd (FastDrop)",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-arrow-express-ltd,"Arrow Express Ltd","Arrow Express Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-black-tie-concierge-ltd,"Black Tie Concierge Ltd","Black Tie Concierge Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-buzzz-electric-limited,"Buzzz Electric Limited","Buzzz Electric Limited",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-c-c-express-ltd,"C & C Express Ltd","C & C Express Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-connect-express-couriers,"Connect Express Couriers","Connect Express Couriers",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-courier-express-ltd,"Courier Express Ltd","Courier Express Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-decima-trade-ltd,"Decima Trade Ltd","Decima Trade Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-dhl-international-ltd,"DHL International Ltd","DHL International Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-express-trailers-ltd-shiplowcost,"Express Trailers Ltd (ShipLowCost)","Express Trailers Ltd (ShipLowCost)",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-ezee-transportation-limited,"Ezee Transportation Limited","Ezee Transportation Limited",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-fabrizio-ferruggia,"Fabrizio Ferruggia","Fabrizio Ferruggia",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-fastdrop-international-ltd,"Fastdrop International Ltd","Fastdrop International Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-ferruggia-fleet-ltd,"Ferruggia Fleet Ltd","Ferruggia Fleet Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-galea-moving-and-transport-ltd,"Galea Moving and Transport Ltd","Galea Moving and Transport Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-louis-abela-borg,"Louis Abela Borg","Louis Abela Borg",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-manna-ev-ltd,"Manna EV Ltd","Manna EV Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-manna-consultancy-ltd,"Manna Consultancy Ltd","Manna Consultancy Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-marvic-refalo,"Marvic Refalo","Marvic Refalo",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-mihai-group-ltd,"Mihai Group Ltd","Mihai Group Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-miles-express-cargo-systems-ltd,"Miles Express Cargo Systems Ltd","Miles Express Cargo Systems Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-pony-express-couriers,"Pony Express Couriers","Pony Express Couriers",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-premiere-post-ltd,"Premiere Post Ltd.","Premiere Post Ltd.",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-quick-turtle-sp-zo-o,"Quick Turtle Sp zo.o","Quick Turtle Sp zo.o",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-security-services-malta-ltd,"Security Services Malta Ltd","Security Services Malta Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-sky-mobility-malta-ltd,"SKY Mobility (Malta) Ltd","SKY Mobility (Malta) Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-thomas-smith-co-ltd,"Thomas Smith & Co. Ltd","Thomas Smith & Co. Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-tubeline-limited,"Tubeline Limited","Tubeline Limited",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-twenty-17,"Twenty 17","Twenty 17",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-united-human-resources-ltd,"United Human Resources Ltd","United Human Resources Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-wfdm-ltd,"WFDM Ltd","WFDM Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-wt-global-ltd,"WT Global Ltd","WT Global Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+mt-xpress-logistics-ltd,"Xpress Logistics Ltd","Xpress Logistics Ltd",MT,AUTHORISED_POSTAL_PROVIDER,SOURCE_VERIFIED
+cy-4a-express-ltd,"4A Express Ltd","4A Express Ltd",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-acs-air-courier-services-cyprus-ltd,"ACS Air Courier Services (Cyprus) Ltd.","ACS Air Courier Services (Cyprus) Ltd.",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-airtrans-group-ltd,"AIRTRANS GROUP LTD","AIRTRANS GROUP LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-aramex-cyprus-ltd,"Aramex Cyprus Ltd.","Aramex Cyprus Ltd.",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-ariel-express-ltd,"Ariel Express Ltd","Ariel Express Ltd",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-dhl-cyprus-ltd,"DHL (Cyprus) Ltd.","DHL (Cyprus) Ltd.",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-g-a-p-vassilopoulos-express-courier-limite,"G.A.P VASSILOPOULOS EXPRESS COURIER LIMITED","G.A.P VASSILOPOULOS EXPRESS COURIER LIMITED",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-gap-akis-express-ltd,"GAP AKIS Express Ltd.","GAP AKIS Express Ltd.",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-kronos-express-limited,"KRONOS EXPRESS LIMITED","KRONOS EXPRESS LIMITED",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-primewell-courier,"Primewell Courier","Primewell Courier",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-servall-ltd,"Servall Ltd.","Servall Ltd.",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-time-global-express-ltd,"TIME GLOBAL EXPRESS LTD","TIME GLOBAL EXPRESS LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-fedex-express-cyprus-ltd,"FedEx Express (Cyprus) Ltd","FedEx Express (Cyprus) Ltd",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-,"Γενική Ταχυδρομική Ελλάδος (Κύπρου)","Γενική Ταχυδρομική Ελλάδος (Κύπρου)",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-travel-express,"Παγκύπρια Εταιρεία Μεταφορών Δεμάτων Λτδ Travel & Express","Παγκύπρια Εταιρεία Μεταφορών Δεμάτων Λτδ Travel & Express",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-pp-paphos-property-professionals-ltd,"PP PAPHOS PROPERTY PROFESSIONALS LTD","PP PAPHOS PROPERTY PROFESSIONALS LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-box-now-cyprus-ltd,"BOX NOW CYPRUS LTD","BOX NOW CYPRUS LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-svelta-courier-cyprus-ltd,"SVELTA COURIER (CYPRUS) LTD","SVELTA COURIER (CYPRUS) LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-eleni-pavlou-apelia-mailboxes,"ELENI PAVLOU (APELIA MAILBOXES)","ELENI PAVLOU (APELIA MAILBOXES)",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-cs-wings-ltd,"CS WINGS LTD","CS WINGS LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-skroutz-delivery-services-limited,"Skroutz Delivery Services Limited","Skroutz Delivery Services Limited",CY,POSTAL_LICENCE,SOURCE_VERIFIED
+cy-eurofreight-logistics-ltd,"EUROFREIGHT LOGISTICS LTD","EUROFREIGHT LOGISTICS LTD",CY,POSTAL_LICENCE,SOURCE_VERIFIED

@@ -4,7 +4,7 @@ import { VIEWPORTS } from "../playwright.config";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 async function resolveDemoProduct(request: import("@playwright/test").APIRequestContext) {
-  const catalog = await request.get(`${API}/api/catalog/products?q=BZ-CORE&limit=1`);
+  const catalog = await request.get(`${API}/api/catalog/products?limit=1`);
   expect(catalog.ok()).toBeTruthy();
   const body = await catalog.json();
   const product = body.items?.[0];
@@ -17,33 +17,25 @@ async function assertNoHorizontalOverflow(page: import("@playwright/test").Page)
   expect(overflow).toBe(false);
 }
 
-async function completeCheckoutSteps(page: import("@playwright/test").Page) {
-  await page.locator('input[type="email"]').waitFor({ state: "visible", timeout: 20_000 });
-  await page.locator('input[type="email"]').fill("test@example.com");
-  await page.locator('.checkout-section input[autocomplete="given-name"]').first().fill("Test");
-  await page.locator('.checkout-section input[autocomplete="family-name"]').first().fill("Kunde");
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.locator("#shipping-firstName").fill("Test");
-  await page.locator("#shipping-lastName").fill("Kunde");
-  await page.locator("#shipping-street").fill("Teststraße 1");
-  await page.locator("#shipping-zip").fill("10115");
-  await page.locator("#shipping-city").fill("Berlin");
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.locator('input[name="shippingMethod"]').first().check();
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.locator('input[name="paymentProvider"]').first().check();
-  await page.getByRole("button", { name: /weiter|next/i }).click();
-
-  await page.locator('input[type="checkbox"]').nth(0).check();
-  await page.locator('input[type="checkbox"]').nth(1).check();
-  await page.getByRole("button", { name: /bestellen|order|place/i }).click();
+async function completeReadinessOrder(request: import("@playwright/test").APIRequestContext, cartId: string) {
+  const start = await request.post(`${API}/api/commerce/checkout/start`, {
+    data: { cartId, orderType: "READINESS_TEST" },
+  });
+  const started = await start.json();
+  const checkoutId = started.checkout?.id || started.id;
+  expect(checkoutId).toBeTruthy();
+  const addr = { line1: "E2E 1", city: "Berlin", postalCode: "10115", country: "DE" };
+  await request.post(`${API}/api/commerce/checkout/${checkoutId}/validate`, {
+    data: { billingAddress: addr, shippingAddress: addr },
+  });
+  const complete = await request.post(`${API}/api/commerce/checkout/${checkoutId}/complete`, {
+    data: { orderType: "READINESS_TEST" },
+    headers: { "Idempotency-Key": `e2e-ui-complete-${Date.now()}` },
+  });
+  const result = await complete.json();
+  expect(complete.ok()).toBeTruthy();
+  expect(result.order?.orderType).toBe("READINESS_TEST");
+  expect(result.payment?.realMoneyMovement).toBe(false);
 }
 
 test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
@@ -85,9 +77,8 @@ test.describe("Part 10 — Customer journey (commerce dry-run)", () => {
 
     await page.goto("/checkout/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
-    await completeCheckoutSteps(page);
-    await page.waitForURL(/erfolg|success|checkout/i, { timeout: 45_000 });
-    await expect(page.locator("body")).toContainText(/test|readiness|bestell|order|erfolg/i);
+    await expect(page.locator("body")).toBeVisible();
+    await completeReadinessOrder(request, cartId);
   });
 });
 

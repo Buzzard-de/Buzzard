@@ -1,0 +1,24 @@
+{
+  "iso": "PL",
+  "nra": "UKE",
+  "register": {
+    "records": 234,
+    "uniqueLegal": 234,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "uke_bip_pages_1_12",
+    "source": "uke-rejestr-operatorow-pocztowych",
+    "note": "234 unique B-numbers B-00018–B-00841 fetched 2026-11-06. Includes sole traders and letter operators. dane.gov.pl dataset 1065 not imported (page fetch empty)."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "PL",
+    "status": "LEGAL_ENTITIES_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 235,
+  "postcodeCoverage": "UNKNOWN"
+}

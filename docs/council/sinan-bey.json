@@ -1,0 +1,18 @@
+{
+  "id": "sinan_bey",
+  "name": "Sinan Bey",
+  "gender": "male",
+  "honorific": "Bey",
+  "namedAfter": "Mimar Sinan (Koca Sinan)",
+  "role": "software_architect",
+  "avatar": "/council/sinan-bey.png",
+  "avatarSource": "user-provided second photograph, 2026-11-07",
+  "alwaysOnProcess": false,
+  "sessionMember": true,
+  "replacesEsat": false,
+  "replacesDogu": false,
+  "chairsMeetings": false,
+  "commercialCommit": false,
+  "canEnableSales": false,
+  "liveShipment": false
+}

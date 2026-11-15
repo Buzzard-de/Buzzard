@@ -21,6 +21,7 @@ describe("Part 12 P1 production hardening", () => {
   it("dbPaths centralizes database path", async () => {
     const dbPaths = await import("../lib/dbPaths.js");
     expect(dbPaths.resolveDbPath()).toMatch(/\.db$/);
+    expect(dbPaths.resolveDbPath()).not.toBe(dbPaths.defaultDbPath);
     expect(dbPaths.getPersistenceInfo().mode).toBeTruthy();
   });
 

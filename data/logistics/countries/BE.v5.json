@@ -1,0 +1,24 @@
+{
+  "iso": "BE",
+  "nra": "BIPT / IBPT",
+  "register": {
+    "records": 7,
+    "uniqueLegal": 7,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "bipt_individual_licence_table_2025_12_22",
+    "source": "bipt-licences-2025-12-22",
+    "note": "Correspondence USO individual licences. 1 inactive. Parcel networks not this table."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "BE",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 7,
+  "postcodeCoverage": "UNKNOWN"
+}

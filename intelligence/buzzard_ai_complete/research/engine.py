@@ -2,7 +2,15 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 from datetime import datetime, timezone
 import hashlib
-import urllib.request
+import sys
+from pathlib import Path
+
+def _guarded_urlopen(url: str, timeout: int, headers: dict):
+    root = next((p for p in Path(__file__).resolve().parents if (p / "security" / "guarded_fetch.py").exists()), None)
+    if root and str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from security.guarded_fetch import guarded_urlopen  # noqa: WPS433
+    return guarded_urlopen(url, timeout=timeout, headers=headers)
 
 @dataclass
 class ResearchResult:
@@ -27,15 +35,14 @@ class ResearchEngine:
         if not url.startswith(("http://","https://")):
             return {"error":"Only http/https URLs are allowed"}
         try:
-            req=urllib.request.Request(url, headers={"User-Agent":"BuzzardAI/1.0"})
-            with urllib.request.urlopen(req, timeout=self.timeout) as r:
+            with _guarded_urlopen(url, self.timeout, {"User-Agent": "BuzzardAI/1.0"}) as r:
                 raw=r.read(1_000_000)
                 content_type=r.headers.get("Content-Type","")
             text=raw.decode("utf-8", errors="replace")
             return {"url":url,"status":"COMPLETED","content_type":content_type,
                     "content":text,"content_hash":self.fingerprint(text)}
         except Exception as exc:
-            return {"url":url,"status":"FAILED","error":str(exc)}
+            return {"url":url,"status":"FAILED","error":str(exc), "egressDenied": type(exc).__name__ == "EgressDenied"}
 
     @staticmethod
     def fingerprint(text: str) -> str:

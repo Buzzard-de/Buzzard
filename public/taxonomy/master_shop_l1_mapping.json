@@ -291,6 +291,24 @@
       "master_code": "bz.47",
       "sync_name": true,
       "note": "Auto-expanded from master taxonomy 48"
+    },
+    {
+      "shop_id": "cat-54",
+      "master_code": "bz.01",
+      "sync_name": false,
+      "note": "Hub extension from main: Reifen und Felgen. Does not delete bz.* or cat-01–53."
+    },
+    {
+      "shop_id": "cat-55",
+      "master_code": "bz.04",
+      "sync_name": false,
+      "note": "Hub extension from main: Baumaschinen und Ersatzteile."
+    },
+    {
+      "shop_id": "cat-56",
+      "master_code": "bz.37",
+      "sync_name": false,
+      "note": "Hub extension from main: Nutztierhaltung & Viehzucht."
     }
   ]
 }

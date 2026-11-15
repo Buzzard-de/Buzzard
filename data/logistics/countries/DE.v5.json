@@ -1,0 +1,24 @@
+{
+  "iso": "DE",
+  "nra": "Bundesnetzagentur (BNetzA)",
+  "register": {
+    "records": 7183,
+    "uniqueLegal": null,
+    "status": "PARTIAL_REGISTER_FETCH",
+    "method": "unique_stammnummer_on_fetched_listing",
+    "source": "bnetza-anbieterverzeichnis",
+    "note": "Stammnummer rows, not active nationwide parcel companies. Landing count blank."
+  },
+  "verification": "PARTIAL_REGISTER_FETCH",
+  "researchStatus": {
+    "iso": "DE",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIAL_REGISTER_FETCH"
+  },
+  "completeVerified": false,
+  "namedCount": 8,
+  "postcodeCoverage": "UNKNOWN"
+}

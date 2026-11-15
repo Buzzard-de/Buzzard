@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { apiBaseUrl } from "@/lib/api/config";
 import type { SmartMenuSignals } from "@/lib/smartMenu/bridge";
 import { shopSubIdToBzSubId } from "@/lib/smartMenu/bridge";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 export function useSmartMenuSignals(subId: string | undefined): SmartMenuSignals | null {
   const [signals, setSignals] = useState<SmartMenuSignals | null>(null);
@@ -26,7 +27,7 @@ export function useSmartMenuSignals(subId: string | undefined): SmartMenuSignals
 
     async function load() {
       try {
-        const res = await fetch(
+        const res = await browserFetch(
           `${base}/api/smart-menu-48/signals/${encodeURIComponent(resolvedBzSubId)}`
         );
         if (!res.ok) return;

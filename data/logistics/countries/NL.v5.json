@@ -1,0 +1,27 @@
+{
+  "iso": "NL",
+  "nra": "ACM",
+  "register": {
+    "records": 105,
+    "uniqueLegal": 105,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "acm_csv_post_and_pakket_unique_kvk",
+    "source": "acm-registraties-csv",
+    "note": "105 unique KVK after excluding telecom. 93 postvervoer + 19 pakket (overlap). Mixed CSV had 2622 rows. Pakket category ≠ activityVerified last-mile.",
+    "postvervoer": 93,
+    "pakket": 19,
+    "mixedCsvRows": 2622
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "NL",
+    "status": "LEGAL_ENTITIES_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 106,
+  "postcodeCoverage": "UNKNOWN"
+}

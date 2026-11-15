@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getAdminToken } from "@/lib/admin/client";
 import { apiBaseUrl } from "@/lib/api/config";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 interface SubmissionRow {
   id: number;
@@ -23,7 +24,7 @@ export default function AdminContactSubmissionsPanel() {
     if (!base) throw new Error("API nicht konfiguriert");
 
     const token = getAdminToken();
-    const res = await fetch(`${base}/api/submissions`, {
+    const res = await browserFetch(`${base}/api/submissions`, {
       headers: {
         Accept: "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

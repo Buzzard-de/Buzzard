@@ -8,6 +8,7 @@
  *   BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/p1-smoke.mjs
  */
 
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 const results = [];
@@ -28,7 +29,7 @@ async function check(name, fn) {
 }
 
 async function fetchJson(path, options = {}) {
-  const res = await fetch(`${API}${path}`, options);
+  const res = await smokeFetch(`${API}${path}`, options);
   const text = await res.text();
   let body;
   try {
@@ -71,7 +72,7 @@ async function main() {
   });
 
   await check("checkout blocked without auth", async () => {
-    const res = await fetch(`${API}/api/orders`, {
+    const res = await smokeFetch(`${API}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ items: [{ sku: "TEST", quantity: 1, unit_price: 1 }] }),
@@ -90,7 +91,7 @@ async function main() {
   });
 
   await check("Google merchant feed XML", async () => {
-    const res = await fetch(`${API}/api/localization/feed/google.xml`);
+    const res = await smokeFetch(`${API}/api/localization/feed/google.xml`);
     const text = await res.text();
     const ok = res.ok && text.includes("<rss") || text.includes("<?xml");
     return { ok, detail: `status=${res.status}` };

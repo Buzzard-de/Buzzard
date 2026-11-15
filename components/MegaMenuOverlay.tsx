@@ -69,7 +69,7 @@ export default function MegaMenuOverlay() {
               </>
             ) : (
               <section className="mega-panel mega-panel-placeholder">
-                <p>Wählen Sie eine Hauptkategorie, um Unterkategorien anzuzeigen.</p>
+                <p>{t("megaMenu.pickMain")}</p>
               </section>
             )}
           </div>

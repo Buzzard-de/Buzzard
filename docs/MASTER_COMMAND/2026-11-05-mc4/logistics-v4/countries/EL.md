@@ -1,0 +1,98 @@
+# Yunanistan (EL)
+
+**NRA:** EETT — undefined  
+**Register records:** 804  
+**Unique legal (register):** 795  
+**Verification:** PARTIALLY_VERIFIED  
+**Method:** eett_eregistry_api_v2_all_212_pages  
+**Note:** 804 POST_* licences / 795 unique companies. 794 general + 10 special. Active licence is not a last-mile parcel census. GR aliased as EL.  
+
+Named rows in v4 DB for this country: 796  
+activityVerified: 0  
+Postal-code coverage: UNKNOWN  
+
+## Named legal titles (first 80)
+
+- Hellenic Post S.A. (ELTA) (`usp-el`) NATIONAL_POST_USP 
+- "ΜΩΡΕΑΣ" ΚΑΝΕΛΛΟΠΟΥΛΟΣ-ΚΑΝΙΣΤΡΑΣ ΕΠΕ ΜΕΤΑΦΟΡΩΝ ΚΑΙ ΠΡΑΚΤΟΡΕΥΣΕΩΝ (`el-eett-afaf6dff-0caa-47e5-997f-f874351fd4af`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ABOUT COURIER I.K.E. (`el-eett-57241854-037a-4d89-a64b-103950c9df3e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ACROMAC Ε Ε (`el-eett-0818078c-d205-4f92-a1a0-e00aa13fc7f4`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ACS ΤΑΧΥΔΡΟΜΙΚΕΣ ΥΠΗΡΕΣΙΕΣ  ΑΝΩΝΥΜΗ ΕΜΠΟΡΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-30c69c69-efef-42cd-aafe-774708235355`) EETT_POST_SPECIAL LEGAL_NAME_VERIFIED
+- AERO AEROS ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (`el-eett-82012753-1083-41ac-b8a0-b50b6f984f79`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AF EXPRESS ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΙΑ (`el-eett-5e55e6c0-c42f-43e5-8d54-cc036efa9467`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AG EXPRESS COURIER (`el-eett-49017c5d-f286-46aa-8bc7-61bb46d4081b`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AGA LOGISTICS ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (`el-eett-d9a5a2f1-9921-4e90-b34e-1c5c64cf9c9e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- Agnew Analog IKE (`el-eett-06473cab-480c-49c5-9a81-0a6cee9c7462`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AGROEL    ΜΟΝ/ΠΗ ΙΚΕ. (`el-eett-0e302cbc-17e4-4b72-a9a2-3ef8a93afcb2`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ALL OVER COURIER ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (`el-eett-e4703d22-ed3d-428d-a692-ab700de698d7`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ANT - ΒΛΑΧΟΓΙΩΡΓΗΣ (`el-eett-50e7885b-3e79-4325-9f6e-df04e9d0d1a7`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- APOSTELLO ΕΕ (`el-eett-c796d5a8-e05c-4ccb-8b1f-ced9c27932e1`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ARAMEX GREECE ΙΚΕ (`el-eett-dd5f7893-06a5-4647-9bba-47cc01ab04c6`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ART IN RED - EXPRESS COURIER MON. I.K.E. (`el-eett-1a2ba894-d77e-4ffb-96f4-7b0fec2f115c`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ASAP COURIERS ΜΟΝΟΠΡΟΣΩΠΗ Α.Ε. (`el-eett-4d9fc083-a473-4764-9347-e899dbcb3d7e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AT-LOGISTCIS M.A.M.E (`el-eett-ad2bc71f-84d1-41b9-9e1b-970555e18998`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ATI TRANS Ε.Π.Ε (`el-eett-49ba7281-c44a-481f-b230-e5569ff23df6`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AUTO SPOT ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-eb388dd9-ee90-46a4-b475-80006c1c33b0`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- AZCARS OE (`el-eett-8acac48b-1907-40a7-aed3-edc798c99d06`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- B SPOT  Μ ΙΚΕ (`el-eett-df9fac43-9e7f-41f5-89c0-d5292482baa9`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BELEHAS E.E (`el-eett-86baa635-a491-46eb-9d94-e9a7b761c895`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BIRDLAND ΣΥΝΕΡΓΑΤΙΚΗ ΔΙΑΦΗΜΙΣΤΙΚΗ ΠΟΛΙΤΙΣΤΙΚΗ (`el-eett-c0c07d4f-36d2-4791-afd1-65f39d651716`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BIZ COURIER & LOGISTICS ΑΝΩΝΥΜΗ ΕΤΑΙΡΙΑ (`el-eett-30a526f1-ef88-4b59-aa30-1fcb8d0066ca`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BOKAS COURIER SERVICES E.E. (`el-eett-ab399664-bed8-4163-b253-9d4db60b9040`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BOLT COURIER Ο.Ε. (`el-eett-97a50969-d3ee-4a6a-91af-93a0f15ef7e1`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BOX NOW Α.Ε. (`el-eett-7dc8f53a-df12-4602-9b2b-3cd7402c9b9e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BOX365 I.K.E. (`el-eett-5962a851-09b1-4ab1-9391-0233381716e3`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BS TRADE ENTERPRISE ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-5d563783-4551-42db-b38e-d7d353bfbe98`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- BSK LOGISTICS EE (`el-eett-d0992db7-ab58-426d-a6b9-2fdf65abc442`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CARGO GROUP LOGISTICS Ε.Π.Ε (`el-eett-2ffcb6bd-67bb-446e-81e6-eb7e7f914e8a`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CARMATES IKE (`el-eett-90408439-1d09-479a-85c3-fbc9f5673fda`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CC-LIT A.E. ΑΠΟΘΗΚΕΥΣΗΣ ΚΑΙ ΔΙΑΝΟΜΩΝ (`el-eett-94a5a9a5-ad77-47b7-837b-afd1c6e76e3c`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CITIZEN GROUP ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (`el-eett-b48b3ea9-3ac7-4f0d-8a77-20731c2c3c70`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CLEVER SERVICES ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ ΑΝΑΠΤΥΞΗΣ ΔΙΚΤΥΟΥ ΔΙΑΝΟΜΗΣ (`el-eett-465ba0be-a5c7-402d-b55e-ca202bbc4187`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CLICKCLICKCUSTOM ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (`el-eett-3fecd031-820b-4752-85f2-577aeb6e5004`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- COLONIS COURIER ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-39c5003f-5d1b-48b5-89aa-016636b3c513`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- COMET ΕΛΛΑΣ ΜΟΝΟΠΡΟΣΩΠΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-52d40183-de88-447b-ace2-9f99fade17d0`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- COMET ΤΑΧΥΜΕΤΑΦΟΡΙΚΗ ΚΑΙ ΕΜΠΟΡΙΚΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (`el-eett-dff052c9-05f8-4bde-9250-45502bc324a5`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- COURIER CENTER ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (`el-eett-967cfb48-1097-4081-b125-1b2d1fa7af2f`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- COURIER ΜΕΤΑΦΟΡΕΣ ΣΦΑΙΡΑ ΕΤΕΡΟΡΡΥΘΜΗ ΕΤΑΙΡΙΑ (`el-eett-918b6bff-6cc6-4899-9bcb-ed0b098d655a`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- CPD CARGO & ΣΙΑ ΕΕ (`el-eett-8f56ce5e-da6d-45b7-9509-9850cc3313f7`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- D2D COURIER SERVICES ΝΑΤΣΙΟΣ Μ. ΙΩΑΝΝΗΣ (`el-eett-af8d6280-088a-4b31-b35b-77e361dbc284`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DAILY SERVICES Ι Κ Ε (`el-eett-3358b8dd-b275-44ea-9069-1584d2fc1fa5`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DailyCourier.gr IKE (`el-eett-6675b0b8-ce10-48b3-921c-adc7baf414f6`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DAM COURIER SERVICES ΜΟΝΟΠΡΟΣΩΠΗ Ι.Κ.Ε. (`el-eett-f24ac560-0ac4-4f45-842c-dc95cda8749e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DEC COURIER Ε.Ε. (`el-eett-90e253cc-3397-4915-8499-78e8d0fed0dd`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DHL EXPRESS (ΕΛΛΑΣ) ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΤΑΧΥΜΕΤΑΦΟΡΩΝ (`el-eett-c592623f-794d-4a7a-84e2-c0d4327c8267`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DIXONS SOUTH-EAST EUROPE ΑΝΩΝΥΜΗ ΕΜΠΟΡΙΚΗ ΚΑΙ ΒΙΟΜΗΧΑΝΙΚΗ ΕΤΑΙΡΕΙΑ ΗΛΕΚΤΡΙΚΩΝ ΠΛΗΡΟΦΟΡΙΚΗΣ, ΤΗΛΕΠΙΚΟΙΝΩΝΙΩΝ ΚΑΙ ΑΣΦΑΛΙΣΤΙΚΩΝ ΔΙΑΜΕΣΟΛΑΒΗΤΩΝ (`el-eett-9192191b-05f8-464a-9947-3328cfbac20b`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DKL GREECE EXPRESS ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (`el-eett-5275b67c-0f45-4805-8776-7b0023ab1ce4`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DM LOGISTICS ΒΕΝΤΟΥΡΗ - ΜΕΡΤΥΡΗ ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-c86293bd-48af-42c3-8ed0-a12fec814d75`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DOS SANTOS RODRIGUES  ANTONIO CELSO (`el-eett-6b0f1d71-c94f-4189-8506-372be320815a`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- DRITAN CEKA (`el-eett-f0265f18-5253-4699-88ff-69422b7bccf1`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- E-BILL E.E. (`el-eett-4e0726ff-cd34-44aa-a198-1882039c42e3`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- E-METAFORES ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (`el-eett-68128e9d-84d5-4ab8-907f-e1095fe705cb`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- EASY MAIL ΤΑΧΥΜΕΤΑΦΟΡΩΝ ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (`el-eett-df588613-05f3-4f9b-aa1a-2d07e54178a3`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- eftase (`el-eett-54e70c2f-f0af-4acb-9755-0765749e94d2`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- ERMIS ΤΑΧΥΜΕΤΑΦΟΡΕΣ ΕΓΓΡΑΦΩΝ ΚΑΙ ΔΕΜΑΤΩΝ Α.Ε. (`el-eett-a17ca1e2-e758-4f1d-b996-068542fcc8fe`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- EUROFREIGHT HELLAS ΜΟΝΟΠΡΟΣΩΠΗ ΕΤΑΙΡΕΙΑ ΠΕΡΙΟΡΙΣΜΕΝΗΣ ΕΥΘΥΝΗΣ (`el-eett-81501c80-7fa3-41a8-9ee6-dc8032b2a802`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- EUROTRAFFIC DISTRIBUTION SERVICES AE (`el-eett-c47c3297-1b8a-4458-afaf-4eb6d489e5b0`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- EXPRESS ΤΑΧΥΔΡΟΜΙΚΗ ΕΕ (`el-eett-46cd21bf-e87c-48eb-ad42-bac179368e92`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FAST TRACE E.E. (`el-eett-aacff646-769c-4e5e-b591-006e637e9729`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FedEx Express Greece Μονοπρόσωπη Εταιρεία  Περιορισμένης Ευθύνης (`el-eett-9703914b-0290-4433-8273-5fcc74a61f02`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FEREMU Ι Κ Ε (`el-eett-313a065d-4018-4078-8d81-560e6dec223b`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FLY EXPRESS LOGISTICS Ε Ε (`el-eett-f2ab6f47-093b-4123-96a3-d06ddebdaad6`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FMOVERS Ε.Ε (`el-eett-267f1e08-3208-4b1f-ab08-4b2d8cd59cbf`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FREEDOM LOGISTICS AND TRANSPORTATION SERVICES ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ (`el-eett-f1296d62-d86e-4248-86df-5a94edcfb722`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- FRONT LINE EXPRESS OE (`el-eett-ed94e232-b080-4d04-a8a6-413fd946f8a8`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- G J COMPANY Ε Ε (`el-eett-fe3adbab-6727-48ba-b44f-fe5f876627ac`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GANAS OSS ΣΥΜΒΟΥΛΕΥΤΙΚΕΣ ΥΠΗΡΕΣΙΕΣ Ιδιωτική κεφαλαιουχική Εταιρεία (`el-eett-8bed88eb-d25c-4095-897d-82f94a3ebd9e`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- Georgiadis Konstantinos (`el-eett-7a7dcbc8-b2e1-414c-9532-d80eed43ac45`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GL COURIER OE (`el-eett-86ec40ae-1e96-4015-9c8d-64f06844c8c9`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GM TRANSMED ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ (`el-eett-d187b117-80a4-4147-b893-1e0295233a42`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GNDS ΙΚΕ (`el-eett-8e853d1c-93fd-45b7-9a36-ae765ae5d6b5`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GO DELIVERY ΜΟΝΟΠΡΟΣΩΠΗ ΑΝΩΝΥΜΗ ΕΤΑΙΡΕΙΑ ΥΠΗΡΕΣΙΩΝ ΔΙΑΝΟΜΗΣ (`el-eett-440a08d7-83dc-4a58-a266-d3de422992df`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GOLDEN FIRST LINE ΙΔΙΩΤΙΚΗ ΚΕΦΑΛΑΙΟΥΧΙΚΗ ΕΤΑΙΡΕΙΑ (`el-eett-e50df7e0-0676-4b0b-8afc-71be129be3e2`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GOLDEN FROST ΕΕ (`el-eett-5ca1ce13-f96c-4309-95b1-a4ba5897ad58`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- GREEN AND GO ΜΟΝΟΠΡΟΣΩΠΗ Ι Κ Ε (`el-eett-26184383-4e99-4f82-a779-6c072b174f7d`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+- Green Your Freight Μονοπρόσωπη Ιδιωτική Κεφαλαιουχική Εταιρία (`el-eett-f1b03219-4a2b-4b9f-a31b-bbb1bc979f20`) EETT_POST_GENERAL LEGAL_NAME_VERIFIED
+
+… +716 more in master JSON.
+

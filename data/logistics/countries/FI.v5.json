@@ -1,0 +1,24 @@
+{
+  "iso": "FI",
+  "nra": "Traficom",
+  "register": {
+    "records": 14,
+    "uniqueLegal": 14,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "traficom_letter_notification_page_2026_08",
+    "source": "traficom-postitoimintarekisteri-2026-08",
+    "note": "Letter notifications only. Parcel operators such as Matkahuolto are out of scope of this register."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "FI",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 14,
+  "postcodeCoverage": "UNKNOWN"
+}

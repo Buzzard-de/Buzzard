@@ -69,8 +69,11 @@ class ProductionGuard:
 
   def _fetch_json(self, url: str) -> tuple[Optional[Dict[str, Any]], Optional[str]]:
     try:
-      req = urllib.request.Request(url, headers={"Accept": "application/json"})
-      with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as res:
+      if str(INTELLIGENCE) not in sys.path:
+        sys.path.insert(0, str(INTELLIGENCE))
+      from security.guarded_fetch import guarded_urlopen
+
+      with guarded_urlopen(url, timeout=HTTP_TIMEOUT, headers={"Accept": "application/json"}) as res:
         body = res.read().decode("utf-8")
         return json.loads(body) if body else {}, None
     except urllib.error.HTTPError as e:
@@ -332,13 +335,17 @@ class ProductionGuard:
 
   def check_checkout_blocked(self) -> None:
     try:
-      req = urllib.request.Request(
+      if str(INTELLIGENCE) not in sys.path:
+        sys.path.insert(0, str(INTELLIGENCE))
+      from security.guarded_fetch import guarded_urlopen
+
+      with guarded_urlopen(
         f"{self.api_url}/api/orders",
-        data=json.dumps({"items": [{"sku": "TEST", "quantity": 1, "unit_price": 1}]}).encode(),
+        timeout=HTTP_TIMEOUT,
         headers={"Content-Type": "application/json"},
+        data=json.dumps({"items": [{"sku": "TEST", "quantity": 1, "unit_price": 1}]}).encode(),
         method="POST",
-      )
-      with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as res:
+      ) as res:
         if res.status < 400:
           self.add(CheckResult(
             "fail_safe.checkout", "Checkout/orders blocked without auth",
@@ -369,8 +376,11 @@ class ProductionGuard:
 
   def check_site_reachable(self) -> None:
     try:
-      req = urllib.request.Request(self.site_url, method="GET")
-      with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as res:
+      if str(INTELLIGENCE) not in sys.path:
+        sys.path.insert(0, str(INTELLIGENCE))
+      from security.guarded_fetch import guarded_urlopen
+
+      with guarded_urlopen(self.site_url, timeout=HTTP_TIMEOUT, method="GET") as res:
         ok = 200 <= res.status < 400
         self.add(CheckResult(
           "site.reachable", f"Storefront {self.site_url}",

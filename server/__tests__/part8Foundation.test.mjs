@@ -57,24 +57,48 @@ describe("commerceValidation", () => {
   });
 });
 
+function ensureVisibleProduct() {
+  const productService = require("../lib/productService.js");
+  const catalogReadService = require("../lib/storefront/catalogReadService.js");
+  const catalogCache = require("../lib/storefront/catalogCache.js");
+  catalogCache.invalidate();
+  const existing = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
+  if (existing) return existing;
+  productService.createProduct({
+    sku: `P8S-${crypto.randomBytes(3).toString("hex")}`,
+    title: "Phase 8 shelf item",
+    description: "Canonical commerce path test product.",
+    price: 21.5,
+    stock: 10,
+    visibility: "PUBLIC",
+    status: "READY",
+  });
+  catalogCache.invalidate();
+  const created = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
+  if (!created) throw new Error("isolated catalog product was not visible");
+  return created;
+}
+
 describe("cartService", () => {
   it("creates cart and resolves authoritative price", () => {
     const cartService = require("../lib/commerce/cartService.js");
-    const productCore = require("../lib/pim/productCore.js");
-    const demo = productCore.listProducts({ limit: 5 }).find((p) => p.sku === "BZ-CORE-DEMO-001");
-    expect(demo).toBeTruthy();
+    const product = ensureVisibleProduct();
+    expect(product).toBeTruthy();
 
-    const cart = cartService.createCart({ sessionId: `vitest-${crypto.randomBytes(3).toString("hex")}` });
+    const cart = cartService.createCart({
+      sessionId: `vitest-${crypto.randomBytes(3).toString("hex")}`,
+      customerId: "cust_vitest_cart",
+    });
     expect(cart.cart?.id).toBeTruthy();
 
-    const price = cartService.resolveAuthoritativePrice(demo.id);
+    const price = cartService.resolveAuthoritativePrice(product.id);
     expect(price.priceSnapshot).toBeGreaterThan(0);
 
-    const updated = cartService.addItem(cart.cart.id, { productId: demo.id, quantity: 1 });
+    const updated = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_cart" });
     if (updated.error === "insufficient_stock") {
       expect(updated.dryRun).toBe(true);
     } else {
-      expect(updated.items?.length).toBeGreaterThan(0);
+      expect(updated.items?.length || updated.cart?.items?.length).toBeGreaterThan(0);
     }
   });
 });
@@ -83,14 +107,14 @@ describe("checkoutService state machine", () => {
   it("blocks illegal transitions", () => {
     const checkoutService = require("../lib/commerce/checkoutService.js");
     const cartService = require("../lib/commerce/cartService.js");
-    const productCore = require("../lib/pim/productCore.js");
-    const demo = productCore.listProducts({ limit: 5 }).find((p) => p.sku === "BZ-CORE-DEMO-001");
-    const cart = cartService.createCart({ sessionId: "state-test" });
-    cartService.addItem(cart.cart.id, { productId: demo.id, quantity: 1 });
+    const product = ensureVisibleProduct();
+    const cart = cartService.createCart({ sessionId: "state-test", customerId: "cust_vitest_chk" });
+    cartService.addItem(cart.cart.id, { productId: product.id, quantity: 1, customerId: "cust_vitest_chk" });
 
-    const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN" });
-    expect(chk.id).toBeTruthy();
-    const bad = checkoutService.transitionCheckout(chk.id, "COMPLETED");
+    const chk = checkoutService.startCheckout({ cartId: cart.cart.id, orderType: "DRY_RUN", customerId: "cust_vitest_chk" });
+    expect(chk.id || chk.checkout?.id).toBeTruthy();
+    const checkoutId = chk.id || chk.checkout?.id;
+    const bad = checkoutService.transitionCheckout(checkoutId, "COMPLETED");
     expect(bad.error).toBe("illegal_state_transition");
   });
 });

@@ -1,0 +1,38 @@
+[
+  {
+    "carrierId": "dhl-parcel-de",
+    "brand": "DHL Parcel",
+    "country": "DE",
+    "apiLevel": 2,
+    "apiType": "REST",
+    "sandbox_status": "CONTRACT_REQUIRED",
+    "contract_status": "NONE",
+    "docs": "https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2",
+    "liveVerified": false,
+    "sandboxVerified": false
+  },
+  {
+    "carrierId": "gls-shipit",
+    "brand": "GLS",
+    "country": "MULTI",
+    "apiLevel": 2,
+    "apiType": "REST",
+    "sandbox_status": "CONTRACT_REQUIRED",
+    "contract_status": "NONE",
+    "docs": "https://shipit.gls-group.com/documentation/webservices/5_2_5/WS-REST-API/rest_web_service_requests_samples.html",
+    "liveVerified": false,
+    "sandboxVerified": false
+  },
+  {
+    "carrierId": "ups-developer",
+    "brand": "UPS",
+    "country": "MULTI",
+    "apiLevel": 2,
+    "apiType": "REST",
+    "sandbox_status": "CONTRACT_REQUIRED",
+    "contract_status": "NONE",
+    "docs": "https://developer.ups.com/api/reference/shipping",
+    "liveVerified": false,
+    "sandboxVerified": false
+  }
+]

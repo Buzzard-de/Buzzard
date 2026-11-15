@@ -9,13 +9,19 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { adminLogin, adminLogout, fetchAdminMe, getAdminToken } from "./client";
+import { adminLogin, adminLogout, clearAdminToken, fetchAdminMe, getAdminToken } from "./client";
+import type { AdminLoginResult } from "./securityTypes";
 import type { AdminUser } from "./types";
 
 interface AdminAuthContextValue {
   user: AdminUser | null;
   ready: boolean;
-  login: (email: string, password: string, totpCode?: string, challengeToken?: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    totpCode?: string,
+    challengeToken?: string
+  ) => Promise<AdminLoginResult>;
   logout: () => Promise<void>;
 }
 
@@ -36,6 +42,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         const me = await fetchAdminMe();
         if (active) setUser(me);
       } catch {
+        clearAdminToken();
         if (active) setUser(null);
       } finally {
         if (active) setReady(true);
@@ -48,10 +55,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string, totpCode?: string, challengeToken?: string) => {
     const result = await adminLogin(email, password, totpCode, challengeToken);
-    if (result.requires2FA) {
-      throw new Error("admin.auth.requires2FA");
-    }
-    setUser(result.user);
+    if (!result.requires2FA && result.user) setUser(result.user);
+    return result;
   }, []);
 
   const logout = useCallback(async () => {

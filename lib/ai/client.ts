@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { AiChatResponse, AiRecommendation, AutomationEvent, AutomationStats } from "./types";
 
 function apiBase(): string {
@@ -13,7 +14,7 @@ export async function sendAiChatMessage(input: {
 }): Promise<AiChatResponse> {
   const base = apiBase();
   if (!base) throw new Error("ai.apiUnavailable");
-  const res = await fetch(`${base}/api/ai/chat`, {
+  const res = await browserFetch(`${base}/api/ai/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(input),
@@ -36,7 +37,7 @@ export async function fetchAiRecommendations(params: {
   if (params.q) qs.set("q", params.q);
   if (params.categoryId) qs.set("categoryId", params.categoryId);
   if (params.limit) qs.set("limit", String(params.limit));
-  const res = await fetch(`${base}/api/ai/recommendations?${qs.toString()}`);
+  const res = await browserFetch(`${base}/api/ai/recommendations?${qs.toString()}`);
   if (!res.ok) return [];
   const data = (await res.json()) as { success: boolean; items: AiRecommendation[] };
   return data.items || [];
@@ -50,7 +51,7 @@ export async function trackAbandonedCart(input: {
 }): Promise<void> {
   const base = apiBase();
   if (!base) return;
-  await fetch(`${base}/api/cart/abandoned`, {
+  await browserFetch(`${base}/api/cart/abandoned`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
@@ -63,7 +64,7 @@ export async function fetchAutomationEvents(token: string, limit = 50): Promise<
 }> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
-  const res = await fetch(`${base}/api/admin/automation/events?limit=${limit}`, {
+  const res = await browserFetch(`${base}/api/admin/automation/events?limit=${limit}`, {
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${token}`,

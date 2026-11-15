@@ -1,0 +1,24 @@
+{
+  "iso": "LV",
+  "nra": "SPRK",
+  "register": {
+    "records": 61,
+    "uniqueLegal": 61,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "sprk_active_merchants_end_2025",
+    "source": "sprk-pasta-2025",
+    "note": "61 active postal merchants end 2025. Six locker/parcel operators named. Remaining names in Power BI / unpublished table. 1869 lockers."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "LV",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 7,
+  "postcodeCoverage": "UNKNOWN"
+}

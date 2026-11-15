@@ -6,6 +6,7 @@
  * Usage:
  *   BUZZARD_API_URL=https://buzzard-api.onrender.com node scripts/part12-live-smoke.mjs
  */
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 const API = (process.env.BUZZARD_API_URL || "").replace(/\/$/, "");
 
 if (!API) {
@@ -50,7 +51,7 @@ function markBlocked(msg) {
 }
 
 async function fetchJson(pathname, options = {}) {
-  const res = await fetch(`${API}${pathname}`, {
+  const res = await smokeFetch(`${API}${pathname}`, {
     ...options,
     headers: { Accept: "application/json", "Content-Type": "application/json", ...(options.headers || {}) },
   });

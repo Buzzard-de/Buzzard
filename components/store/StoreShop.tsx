@@ -16,6 +16,7 @@ import {
   type StoreProduct,
 } from "@/lib/store";
 import { formatPrice } from "@/lib/products";
+import { useLocale } from "@/lib/i18n/context";
 import "./store.css";
 
 type View = "shop" | "cart" | "success";
@@ -23,6 +24,7 @@ type View = "shop" | "cart" | "success";
 export default function StoreShop() {
   const { user, login, register, logout } = useAccount();
   const { countryCode, currency } = useMarket();
+  const { t } = useLocale();
   const [products, setProducts] = useState<StoreProduct[]>([]);
   const [categories, setCategories] = useState<StoreCategory[]>([]);
   const [category, setCategory] = useState("");
@@ -127,7 +129,7 @@ export default function StoreShop() {
           placeholder="Produkte suchen…"
         />
         <button type="button" onClick={() => (user ? setAuthMode(null) : setAuthMode("login"))}>
-          {user ? user.email : "Anmelden"}
+          {user ? user.email : t("header.login")}
         </button>
         <button type="button" onClick={() => setView("cart")}>
           Warenkorb ({cart.items.length})
@@ -160,7 +162,7 @@ export default function StoreShop() {
 
       {authMode && (
         <section className="store-panel store-auth">
-          <h2>{authMode === "login" ? "Anmelden" : "Konto erstellen"}</h2>
+          <h2>{authMode === "login" ? t("account.loginTitle") : t("account.registerTitle")}</h2>
           {authMode === "register" && (
             <input
               placeholder="Name"
@@ -182,7 +184,7 @@ export default function StoreShop() {
           <div className="store-auth-actions">
             {authMode === "login" ? (
               <button type="button" className="store-gold" onClick={handleLogin}>
-                Anmelden
+                {t("header.login")}
               </button>
             ) : (
               <button type="button" className="store-gold" onClick={handleRegister}>

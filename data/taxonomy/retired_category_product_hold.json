@@ -1,0 +1,8 @@
+{
+  "schema": "buzzard.retired-category-product-hold.v1",
+  "hold": "CATEGORY_RETIRED_HOLD",
+  "retired_shop_ids": ["cat-25", "cat-46", "cat-43"],
+  "auto_remap": false,
+  "products": [],
+  "note": "No catalog products were auto-assigned. Unmatched SKUs stay on hold. Production DB untouched. Order history is not rewritten."
+}

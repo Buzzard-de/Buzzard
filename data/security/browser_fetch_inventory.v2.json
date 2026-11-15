@@ -1,0 +1,22 @@
+{
+  "schema": "buzzard.browser-fetch-inventory.v2",
+  "note": "Same-origin Buzzard API is not automatically safe. Remaining raw fetch callers are authenticated admin/module clients; wrapping them all at once was deferred to avoid breaking admin flows.",
+  "wrapped_in_browserFetch": [
+    "lib/ai/client.ts",
+    "lib/contact/client.ts",
+    "lib/account/client.ts",
+    "lib/admin/client.ts",
+    "lib/commerce/client.ts",
+    "lib/store/client.ts",
+    "lib/storefront/client.ts",
+    "components/MegaMenuSearch.tsx",
+    "lib/smartMenu/bridge.ts",
+    "lib/smartMenu/useSmartMenuSignals.ts"
+  ],
+  "remaining_raw_fetch": "See lib/**/client.ts module clients (~48 files). Targets are /api/* relative or NEXT_PUBLIC_BUZZARD_API_URL. No user-controlled host construction found in sampled files.",
+  "risks": [
+    "Admin tokens in sessionStorage",
+    "CSRF depends on same-site + bearer, not cookie-only double-submit",
+    "SSR storefront fetch now goes through evaluateBrowserConnect"
+  ]
+}

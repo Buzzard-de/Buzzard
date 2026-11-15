@@ -1,0 +1,24 @@
+{
+  "iso": "AT",
+  "nra": "RTR",
+  "register": {
+    "records": 16,
+    "uniqueLegal": 16,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "rtr_pev_named_list_2026_02_16",
+    "source": "rtr-pev-2026-02-16",
+    "note": "16 named PEV reporters. Full §25 Anzeige list not downloaded. Do not use 138."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "AT",
+    "status": "CARRIER_NAMES_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 31,
+  "postcodeCoverage": "UNKNOWN"
+}

@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "consistent": true,
+  "productionTouched": false,
+  "productionDrVerified": false,
+  "measuredRestoreMs": 15,
+  "drillMs": 36,
+  "wallMs": 51,
+  "offsite": {
+    "configured": false,
+    "status": "OFFSITE_UNCONFIGURED"
+  },
+  "immutableIsChmodOnly": true,
+  "worm": "BLOCKED",
+  "drill": {
+    "status": "ISOLATED_RESTORE_TESTED",
+    "productionDrVerified": false,
+    "productionTouched": false,
+    "measuredMs": 36,
+    "measuredNote": "Lab synthetic SQLite only. Not production RTO.",
+    "offsite": {
+      "configured": false,
+      "status": "OFFSITE_UNCONFIGURED"
+    },
+    "worm": "BLOCKED",
+    "integrityBefore": "ok",
+    "integrityAfter": "ok",
+    "flows": {
+      "productCreated": true,
+      "stockQty": 10,
+      "orderCancelled": true,
+      "paidFlag": true,
+      "returnJournal": true,
+      "supplierName": "Synthetic Supplier GmbH",
+      "taxReserveRate": 0.25,
+      "taxPosted": true,
+      "taxPayDenied": true,
+      "pusatOpen": true,
+      "aiMemoryRestored": true,
+      "auditPresent": true
+    },
+    "workRoot": "/tmp/buzzard-dr-drill-vmokZ5"
+  },
+  "note": "Isolated temp DB fixture. Not production restore. chmod 444 is not WORM."
+}

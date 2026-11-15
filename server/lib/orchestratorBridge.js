@@ -23,14 +23,23 @@ async function fetchOrchestrator(path, options = {}) {
   const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
 
   try {
-    const res = await fetch(`${base}${path}`, {
-      ...options,
-      signal: controller.signal,
-      headers: {
-        Accept: "application/json",
-        ...(options.headers || {}),
+    const { guardedFetch } = require("./security/egressGuard");
+    const gated = await guardedFetch(
+      `${base}${path}`,
+      {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          Accept: "application/json",
+          ...(options.headers || {}),
+        },
       },
-    });
+      { ping: true }
+    );
+    if (gated.blocked) {
+      return { ok: false, status: "EGRESS_DENIED", error: gated.decision.code, reachedNetwork: false };
+    }
+    const res = gated.response;
     const text = await res.text();
     let body;
     try {

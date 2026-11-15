@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   WmsInventoryRow,
   WmsInventoryStatus,
@@ -23,7 +24,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("wmsInventory.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -39,7 +40,7 @@ export function isWmsInventoryApiConfigured(): boolean {
 export async function fetchWmsInventoryStatus(): Promise<WmsInventoryStatus> {
   const base = apiBase();
   if (!base) throw new Error("wmsInventory.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("wmsInventory.requestFailed");
   const data = (await res.json()) as { wmsInventory?: WmsInventoryStatus };
   if (!data.wmsInventory?.enabled) throw new Error("wmsInventory.disabled");

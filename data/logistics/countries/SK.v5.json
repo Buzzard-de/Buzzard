@@ -1,0 +1,24 @@
+{
+  "iso": "SK",
+  "nra": "Regulatory Authority for Electronic and Postal Services",
+  "register": {
+    "records": 47,
+    "uniqueLegal": null,
+    "status": "PARTIALLY_VERIFIED",
+    "method": "last_sequential_number_on_teleoff_pdf",
+    "source": "teleoff-register-postovych-podnikov",
+    "note": "Last sequential number 47 including expired/revoked rows. Unique active legal not completed."
+  },
+  "verification": "PARTIALLY_VERIFIED",
+  "researchStatus": {
+    "iso": "SK",
+    "status": "PARTIALLY_VERIFIED",
+    "completeVerified": false,
+    "postcodeCoverageVerified": false,
+    "sandboxVerified": false,
+    "register": "PARTIALLY_VERIFIED"
+  },
+  "completeVerified": false,
+  "namedCount": 20,
+  "postcodeCoverage": "UNKNOWN"
+}

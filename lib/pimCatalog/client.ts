@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   PimBrand,
   PimCatalogStatus,
@@ -25,7 +26,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("pimCatalog.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -41,7 +42,7 @@ export function isPimCatalogApiConfigured(): boolean {
 export async function fetchPimCatalogStatus(): Promise<PimCatalogStatus> {
   const base = apiBase();
   if (!base) throw new Error("pimCatalog.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("pimCatalog.requestFailed");
   const data = (await res.json()) as { pimCatalog?: PimCatalogStatus };
   if (!data.pimCatalog?.enabled) throw new Error("pimCatalog.disabled");
@@ -51,7 +52,7 @@ export async function fetchPimCatalogStatus(): Promise<PimCatalogStatus> {
 export async function fetchPimCategories(): Promise<PimCategory[]> {
   const base = apiBase();
   if (!base) return [];
-  const res = await fetch(`${base}/api/pim-catalog/categories`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/pim-catalog/categories`, { headers: { Accept: "application/json" } });
   if (!res.ok) return [];
   return (await res.json()) as PimCategory[];
 }
@@ -59,7 +60,7 @@ export async function fetchPimCategories(): Promise<PimCategory[]> {
 export async function fetchPimBrands(): Promise<PimBrand[]> {
   const base = apiBase();
   if (!base) return [];
-  const res = await fetch(`${base}/api/pim-catalog/brands`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/pim-catalog/brands`, { headers: { Accept: "application/json" } });
   if (!res.ok) return [];
   return (await res.json()) as PimBrand[];
 }
@@ -71,7 +72,7 @@ export async function fetchPimProducts(search?: string, status?: string): Promis
   if (search) params.set("search", search);
   if (status) params.set("status", status);
   const qs = params.toString();
-  const res = await fetch(`${base}/api/pim-catalog/products${qs ? `?${qs}` : ""}`, {
+  const res = await browserFetch(`${base}/api/pim-catalog/products${qs ? `?${qs}` : ""}`, {
     headers: { Accept: "application/json" },
   });
   if (!res.ok) return [];
@@ -81,7 +82,7 @@ export async function fetchPimProducts(search?: string, status?: string): Promis
 export async function fetchPimProductDetail(sku: string): Promise<PimProductDetail | null> {
   const base = apiBase();
   if (!base) return null;
-  const res = await fetch(`${base}/api/pim-catalog/products/${encodeURIComponent(sku)}`, {
+  const res = await browserFetch(`${base}/api/pim-catalog/products/${encodeURIComponent(sku)}`, {
     headers: { Accept: "application/json" },
   });
   if (!res.ok) return null;

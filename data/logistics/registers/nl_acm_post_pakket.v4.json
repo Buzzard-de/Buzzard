@@ -1,0 +1,861 @@
+{
+  "schema": "buzzard.register-extract.v4",
+  "iso": "NL",
+  "regulator": "ACM",
+  "source": "https://www.acm.nl/sites/default/files/registers/registraties_csv.zip",
+  "sourcePage": "https://www.acm.nl/nl/onderwerpen/telecommunicatie/telecommunicatiewet/registers",
+  "fetchedAt": "2026-11-06",
+  "scope": "postvervoerdiensten_and_pakketbezorgdiensten_only_telecom_excluded",
+  "postvervoerdiensten": 93,
+  "pakketbezorgdiensten": 19,
+  "uniqueKvk": 105,
+  "rows": [
+    {
+      "legalName": "FRL-Post B.V.",
+      "kvk": "01065143",
+      "place": "LEEUWARDEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Caparis N.V.",
+      "kvk": "01094699",
+      "place": "DRACHTEN",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "EMCO-Groep",
+      "kvk": "01173884",
+      "place": "EMMEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Logistiek Centrum Zwiggelaar",
+      "kvk": "04069651",
+      "place": "EMMEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Altied op Tied",
+      "kvk": "04083062",
+      "place": "WESTERBORK",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Cycloon Fietskoeriers B.V.",
+      "kvk": "05084496",
+      "place": "ZWOLLE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Stadspost Enter",
+      "kvk": "06062232",
+      "place": "ENTER",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Universal Mail United Kingdom Limited",
+      "kvk": "06518122",
+      "place": "LONDON E1W 1YW",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "SBPost B.V.",
+      "kvk": "08141471",
+      "place": "EERBEEK",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Polinder Transport",
+      "kvk": "08143762",
+      "place": "KAMPEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "SMN Sneltransport Midden Nederland B.V.",
+      "kvk": "08186542",
+      "place": "APELDOORN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "APtrans",
+      "kvk": "08226821",
+      "place": "IJSSELMUIDEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Post Service Verspreidingen B.V.",
+      "kvk": "09088186",
+      "place": "WAGENINGEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "C. Bouwmans Post & Mail Helmond / Deurne",
+      "kvk": "17036851",
+      "place": "DEURNE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "VGL-Services",
+      "kvk": "17178749",
+      "place": "BLADEL",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "depostBode B.V.",
+      "kvk": "17182940",
+      "place": "OSS",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "De Postontzorger B.V.",
+      "kvk": "17254218",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Diamant-groep",
+      "kvk": "17257648",
+      "place": "TILBURG",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Gemeenschappelijke Regeling Werkvoorzieningsschap Regio Eindhoven (GRWRE), Ergon",
+      "kvk": "17262324",
+      "place": "EINDHOVEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Afvalstoffendienst 's-Hertogenbosch",
+      "kvk": "17278704",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Stadspost Oisterwijk",
+      "kvk": "18033965",
+      "place": "MOERGESTEL",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Gemeenschappelijke Regeling WVS",
+      "kvk": "20160803",
+      "place": "ROOSENDAAL",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Gico Post",
+      "kvk": "20169964",
+      "place": "CHAAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Mail Service Zeeland",
+      "kvk": "22055698",
+      "place": "OVEZANDE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "V.o.f. Ger Lageweg",
+      "kvk": "23083739",
+      "place": "PUTTERSHOEK",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "NB Promotions B.V.",
+      "kvk": "24196515",
+      "place": "ROTTERDAM",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Koninklijke PostNL B.V.",
+      "kvk": "27124700",
+      "place": "'S-GRAVENHAGE",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "G3 Worldwide Mail N.V.",
+      "kvk": "27190356",
+      "place": "'S-GRAVENHAGE",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "DZB Leiden, Le Pooleweg 6",
+      "kvk": "27364192",
+      "place": "LEIDEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Gemeente Delft - Stadswinkel Delft",
+      "kvk": "27374588",
+      "place": "DELFT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "JBM Koeriers B.V.",
+      "kvk": "28038410",
+      "place": "ZOETERWOUDE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Streekpost Leiderdorp",
+      "kvk": "28075850",
+      "place": "LEIDERDORP",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Provalu N.V.",
+      "kvk": "28096388",
+      "place": "VOORHOUT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Netwerk VSP B.V.",
+      "kvk": "30051041",
+      "place": "UTRECHT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Falk Courier B.V.",
+      "kvk": "30126902",
+      "place": "SOEST",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "De Fietskoerier Utrecht",
+      "kvk": "30192778",
+      "place": "UTRECHT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Gemeenschappelijke Regeling Avres",
+      "kvk": "30254252",
+      "place": "GIESSENBURG",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "DV Post Services",
+      "kvk": "32105384",
+      "place": "HILVERSUM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Skynet Worldwide Express B.V.",
+      "kvk": "33161354",
+      "place": "AMSTERDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "RM (Netherlands) 1 B.V.",
+      "kvk": "33304566",
+      "place": "WADDINXVEEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Comprador Groep B.V.",
+      "kvk": "34079768",
+      "place": "WADDINXVEEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Dutch Post B.V.",
+      "kvk": "34190575",
+      "place": "WADDINXVEEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "PostNL Pakketten Benelux B.V.",
+      "kvk": "34337145",
+      "place": "'S-GRAVENHAGE",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Spaarne Werkt",
+      "kvk": "34340686",
+      "place": "CRUQUIUS",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Intrapost B.V.",
+      "kvk": "37073184",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Probedrijven N.V.",
+      "kvk": "37087652",
+      "place": "SCHAGEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "WerkSaam Westfriesland",
+      "kvk": "37148710",
+      "place": "BOVENKARSPEL",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Zaffier",
+      "kvk": "37153583",
+      "place": "ALKMAAR",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Almere Stadspost",
+      "kvk": "39082492",
+      "place": "DELFT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Stichting Pantar Amsterdam",
+      "kvk": "41215351",
+      "place": "DIEMEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Beson Distributie B.V.",
+      "kvk": "50042440",
+      "place": "AMSTERDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "MV-post",
+      "kvk": "52060411",
+      "place": "RAAMSDONKSVEER",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "LOVAGEM",
+      "kvk": "52069044",
+      "place": "TOLLEBEEK",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Meeuwsen & van der Horst Transport",
+      "kvk": "54606721",
+      "place": "MEPPEL",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Cycloon Post B.V.",
+      "kvk": "55218105",
+      "place": "ZWOLLE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "MSG Post en Koeriers B.V.",
+      "kvk": "55418104",
+      "place": "ENSCHEDE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "De Vos Diensten Enschede B.V.",
+      "kvk": "56884486",
+      "place": "ENSCHEDE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "DGM Logistiek",
+      "kvk": "57161763",
+      "place": "HEIJNINGEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Oostzaanse Postdienst",
+      "kvk": "57607397",
+      "place": "OOSTZAAN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "iWerk",
+      "kvk": "58014004",
+      "place": "ASSEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Stadspost Eemsmond Expres",
+      "kvk": "59340150",
+      "place": "FARMSUM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Smartpost B.V.",
+      "kvk": "59702249",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "M.C. Postverwerking",
+      "kvk": "60318694",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Postbode B.V.",
+      "kvk": "61179264",
+      "place": "DORDRECHT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Haverkamp Facilitair B.V.",
+      "kvk": "61866865",
+      "place": "ENSCHEDE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Tour de Ville Fietskoeriers B.V.",
+      "kvk": "62151762",
+      "place": "EINDHOVEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "NH Post Holding B.V.",
+      "kvk": "62809229",
+      "place": "DEN HELDER",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Stroomopwaarts MVS",
+      "kvk": "62911872",
+      "place": "SCHIEDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Bringme Nederland",
+      "kvk": "64007375",
+      "place": "BREDA",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "PriPost B.V.",
+      "kvk": "65007956",
+      "place": "'S-GRAVENHAGE",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "UW Holding B.V.",
+      "kvk": "65113217",
+      "place": "UTRECHT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "De Postman B.V.",
+      "kvk": "65807456",
+      "place": "'S-HERTOGENBOSCH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Vinted Go B.V.",
+      "kvk": "66323673",
+      "place": "AMSTERDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "SMN Post Noord Holland B.V.",
+      "kvk": "66762294",
+      "place": "BEEKBERGEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "A9 transport & logistics B.V.",
+      "kvk": "69493634",
+      "place": "LIJNDEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Werkom",
+      "kvk": "69966192",
+      "place": "PURMEREND",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "gemeente Het Hogeland",
+      "kvk": "73550728",
+      "place": "WINSUM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Legal Mail Services B.V.",
+      "kvk": "76189694",
+      "place": "BARENDRECHT",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Postmedia B.V.",
+      "kvk": "77037669",
+      "place": "HEEMSKERK",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Fietskoerier Deventer B.V.",
+      "kvk": "78024714",
+      "place": "DEVENTER",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "A&D Post B.V.",
+      "kvk": "78030986",
+      "place": "HOUTEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Bryan de Kraker Sales",
+      "kvk": "80507689",
+      "place": "SITTARD",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Geen Stress Consumer Services B.V.",
+      "kvk": "83136649",
+      "place": "AMSTERDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Ampere Operations B.V.",
+      "kvk": "84526955",
+      "place": "UTRECHT",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Falkpost Limburg B.V.",
+      "kvk": "85114642",
+      "place": "NUTH",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Postdiensten GroeneHart",
+      "kvk": "85696854",
+      "place": "GOUDA",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Quiq Post B.V.",
+      "kvk": "86443607",
+      "place": "ZAANDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Business Post Hoogeveen B.V.",
+      "kvk": "89460049",
+      "place": "HOOGEVEEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Nova Post Netherlands B.V.",
+      "kvk": "91986982",
+      "place": "AMSTERDAM",
+      "categories": [
+        "PARCEL",
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Breakaway Koeriers",
+      "kvk": "92121640",
+      "place": "GRONINGEN",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Fietskoerier Haarlem",
+      "kvk": "92509282",
+      "place": "HAARLEM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "Nederlandse Enveloppendienst",
+      "kvk": "95115706",
+      "place": "AMSTERDAM",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "OTW Transport B.V.",
+      "kvk": "95869123",
+      "place": "ERMELO",
+      "categories": [
+        "POST"
+      ]
+    },
+    {
+      "legalName": "DPD (Nederland) B.V.",
+      "kvk": "09118128",
+      "place": "OIRSCHOT",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "Dynalogic BeNeLux B.V.",
+      "kvk": "14076617",
+      "place": "NUTH",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "Leen Menken Foodservice Logistics B.V.",
+      "kvk": "27118743",
+      "place": "ZOETERMEER",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "DHL eCommerce (Services) B.V.",
+      "kvk": "30076835",
+      "place": "UTRECHT",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "DHL eCommerce (Netherlands) B.V.",
+      "kvk": "30076845",
+      "place": "UTRECHT",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "DHL Express (Netherlands) B.V.",
+      "kvk": "34052070",
+      "place": "SCHIPHOL",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "United Parcel Service Nederland B.V.",
+      "kvk": "34089270",
+      "place": "HOOFDDORP",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "General Logistics Systems Netherlands B.V.",
+      "kvk": "34129769",
+      "place": "UTRECHT",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "Fietskoeriers.nl B.V.",
+      "kvk": "63141809",
+      "place": "ZWOLLE",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "FedEx Express Netherlands B.V.",
+      "kvk": "69176523",
+      "place": "HOOFDDORP",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "Mondial Relay",
+      "kvk": "76326187",
+      "place": "VIANEN",
+      "categories": [
+        "PARCEL"
+      ]
+    },
+    {
+      "legalName": "JINGDONG LOGISTICS (NETHERLANDS) B.V.",
+      "kvk": "77977963",
+      "place": "VENRAY",
+      "categories": [
+        "PARCEL"
+      ]
+    }
+  ]
+}

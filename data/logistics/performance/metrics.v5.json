@@ -1,0 +1,9 @@
+{
+  "firstDeliverySuccess": "UNKNOWN",
+  "averageTransitDays": "UNKNOWN",
+  "delayRate": "UNKNOWN",
+  "lossRate": "UNKNOWN",
+  "damageRate": "UNKNOWN",
+  "returnDuration": "UNKNOWN",
+  "trackingUpdateFrequency": "UNKNOWN"
+}

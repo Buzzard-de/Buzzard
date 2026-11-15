@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { getAccountToken } from "@/lib/account/client";
 import type {
   CustomerCheckoutDraft,
@@ -28,7 +29,7 @@ function authHeaders(): HeadersInit {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("customerCheckout.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...authHeaders(), ...init?.headers },
   });
@@ -44,7 +45,7 @@ export function isCustomerCheckoutApiConfigured(): boolean {
 export async function fetchCustomerCheckoutStatus(): Promise<CustomerCheckoutStatus> {
   const base = apiBase();
   if (!base) throw new Error("customerCheckout.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("customerCheckout.requestFailed");
   const data = (await res.json()) as { customerCheckout?: CustomerCheckoutStatus };
   if (!data.customerCheckout?.enabled) throw new Error("customerCheckout.disabled");

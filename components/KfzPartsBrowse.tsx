@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   getKfzMains,
@@ -5,13 +7,16 @@ import {
   getShopL2Href,
   type KfzMainCategory,
 } from "@/lib/categories/kfzTree";
+import { useLocale } from "@/lib/i18n/context";
 
 interface KfzPartsBrowseProps {
   compact?: boolean;
 }
 
 export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps) {
+  const { t } = useLocale();
   const mains = getKfzMains();
+  const subcategoryTotal = mains.reduce((sum, m) => sum + m.subcategory_count, 0);
 
   return (
     <section className="subpage-content kfz-parts-browse">
@@ -19,7 +24,7 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
         <h2>KFZ-Teilebaum</h2>
         <p>
           {mains.length} technische Hauptsysteme mit{" "}
-          {mains.reduce((sum, m) => sum + m.subcategory_count, 0)} Unterkategorien
+          {t("category.subcount").replace("{count}", String(subcategoryTotal))}
           {mains[0]?.l3_count !== undefined && (
             <> und {mains.reduce((sum, m) => sum + (m.l3_count ?? 0), 0)} L3-Produktgruppen</>
           )}{" "}
@@ -44,6 +49,7 @@ export default function KfzPartsBrowse({ compact = false }: KfzPartsBrowseProps)
 }
 
 function KfzMainCard({ main }: { main: KfzMainCategory }) {
+  const { t } = useLocale();
   const shopHref = getShopL2Href(main);
 
   return (
@@ -53,7 +59,7 @@ function KfzMainCard({ main }: { main: KfzMainCategory }) {
         {main.name_de}
       </Link>
       <p className="kfz-parts-meta">
-        {main.subcategory_count} Unterkategorien
+        {t("category.subcount").replace("{count}", String(main.subcategory_count))}
         {main.l3_count ? ` · ${main.l3_count} L3` : ""}
         {shopHref && (
           <>

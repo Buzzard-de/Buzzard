@@ -1,6 +1,6 @@
 import os
 
-import requests
+from security.guarded_fetch import guarded_post
 
 
 class AmazonCreatorsClient:
@@ -27,7 +27,7 @@ class AmazonCreatorsClient:
     def access_token(self):
         if not self.configured():
             raise RuntimeError("NOT_CONFIGURED: Amazon Creators API credentials fehlen.")
-        response = requests.post(
+        response = guarded_post(
             self.TOKEN_URL,
             data={
                 "grant_type": "refresh_token",
@@ -42,7 +42,7 @@ class AmazonCreatorsClient:
 
     def search(self, keywords):
         token = self.access_token()
-        response = requests.post(
+        response = guarded_post(
             f"{self.API}/catalog/v1/searchItems",
             headers={
                 "Authorization": f"Bearer {token}",

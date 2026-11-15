@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { browserFetch } from "@/lib/security/browserFetch";
 
 const TOKEN_KEY = "buzzard_admin_token";
 
@@ -29,7 +30,7 @@ export default function AdminSeoPanel() {
   async function loadRedirects() {
     const base = apiBase();
     if (!base) return;
-    const res = await fetch(`${base}/api/admin/seo/redirects`, { headers: authHeaders() });
+    const res = await browserFetch(`${base}/api/admin/seo/redirects`, { headers: authHeaders() });
     if (!res.ok) return;
     const data = await res.json();
     setRedirects(data.redirects || []);
@@ -42,7 +43,7 @@ export default function AdminSeoPanel() {
   async function saveRedirect() {
     const base = apiBase();
     if (!base || !from || !to) return;
-    await fetch(`${base}/api/admin/seo/redirects`, {
+    await browserFetch(`${base}/api/admin/seo/redirects`, {
       method: "POST",
       headers: authHeaders(),
       body: JSON.stringify({ from, to, permanent: true }),
@@ -56,7 +57,7 @@ export default function AdminSeoPanel() {
   async function saveProductSeo() {
     const base = apiBase();
     if (!base || !productId) return;
-    await fetch(`${base}/api/admin/seo/overrides/products/${encodeURIComponent(productId)}`, {
+    await browserFetch(`${base}/api/admin/seo/overrides/products/${encodeURIComponent(productId)}`, {
       method: "PUT",
       headers: authHeaders(),
       body: JSON.stringify({ title: seoTitle, description: seoDescription }),

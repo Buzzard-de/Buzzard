@@ -1,0 +1,1028 @@
+/**
+ * Pusat runtime foundation — Buzzard-owned, flag-gated.
+ * Default OFF. No domain invention. No money/supplier writes.
+ */
+const crypto = require("crypto");
+const { MODE, label } = require("../integrationMode");
+const productService = require("../productService");
+const inventory = require("../commerce/inventoryIntegration");
+const pricing = require("../commerce/pricingIntegration");
+const { db } = require("../db");
+const { isSotActive, getStatus: getProductSotStatus } = require("../productSot");
+const { createIdempotencyService } = require("./idempotencyService");
+const { roster } = require("./council");
+const { createDurable } = require("./durable");
+const { TOPICS } = require("./doguResearch");
+
+let pusatIdempotency = null;
+
+function getIdempotencyService() {
+  if (!pusatIdempotency) {
+    pusatIdempotency = createIdempotencyService(db);
+  }
+  return pusatIdempotency;
+}
+
+const ACTIONS = Object.freeze({
+  GET_PRODUCT: "GET_PRODUCT",
+  GET_INVENTORY: "GET_INVENTORY",
+  GET_PRICE: "GET_PRICE",
+  GET_ORDER_STATUS: "GET_ORDER_STATUS",
+  GET_SOT_STATUS: "GET_SOT_STATUS",
+  GET_SALES_GATE: "GET_SALES_GATE",
+  GET_EXCEPTIONS: "GET_EXCEPTIONS",
+  PING: "PING",
+  GET_COUNCIL: "GET_COUNCIL",
+  OPEN_MEETING: "OPEN_MEETING",
+  REPORT_MEETING: "REPORT_MEETING",
+  CLOSE_MEETING: "CLOSE_MEETING",
+  MEMORY_PUT: "MEMORY_PUT",
+  MEMORY_GET: "MEMORY_GET",
+  RESEARCH_REQUEST: "RESEARCH_REQUEST",
+  RESEARCH_COMPLETE: "RESEARCH_COMPLETE",
+  LIST_TRADE_HOLDS: "LIST_TRADE_HOLDS",
+  SCREEN_TRADE: "SCREEN_TRADE",
+  ESAT_STATUS: "ESAT_STATUS",
+  ESAT_RECENT: "ESAT_RECENT",
+  ESAT_INSPECT: "ESAT_INSPECT",
+  SINAN_PROFILE: "SINAN_PROFILE",
+  SINAN_ASSIGN: "SINAN_ASSIGN",
+  SINAN_ACCEPT: "SINAN_ACCEPT",
+  SINAN_REPORT: "SINAN_REPORT",
+  SINAN_ANALYZE: "SINAN_ANALYZE",
+  SINAN_RESEARCH: "SINAN_RESEARCH",
+  SINAN_GATE: "SINAN_GATE",
+  SINAN_VOICE: "SINAN_VOICE",
+  SINAN_REVIEW: "SINAN_REVIEW",
+  SINAN_ARCHITECTURE: "SINAN_ARCHITECTURE",
+  SINAN_SECURITY_REVIEW: "SINAN_SECURITY_REVIEW",
+  SINAN_TEST: "SINAN_TEST",
+  SINAN_STATUS: "SINAN_STATUS",
+  SINAN_TRAIN_PLAN: "SINAN_TRAIN_PLAN",
+  SINAN_MODEL_STATUS: "SINAN_MODEL_STATUS",
+  SINAN_TOY_TRAIN: "SINAN_TOY_TRAIN",
+  SINAN_TRANSFORMER_STATUS: "SINAN_TRANSFORMER_STATUS",
+  SINAN_MODEL_EVALUATE: "SINAN_MODEL_EVALUATE",
+  SINAN_TOKENIZER_TEST: "SINAN_TOKENIZER_TEST",
+  SINAN_TRAIN_RUN: "SINAN_TRAIN_RUN",
+  SINAN_MODEL_COMPARE: "SINAN_MODEL_COMPARE",
+  SINAN_HARDWARE_REPORT: "SINAN_HARDWARE_REPORT",
+  SINAN_PHASE5_REPORT: "SINAN_PHASE5_REPORT",
+  SINAN_PHASE6_STATUS: "SINAN_PHASE6_STATUS",
+  SINAN_MODEL_TRAIN_PLAN: "SINAN_MODEL_TRAIN_PLAN",
+  SINAN_MODEL_TRAIN_RUN: "SINAN_MODEL_TRAIN_RUN",
+  SINAN_REASONING_TEST: "SINAN_REASONING_TEST",
+  SINAN_VOICE_STATUS: "SINAN_VOICE_STATUS",
+  SINAN_VOICE_ANALYZE: "SINAN_VOICE_ANALYZE",
+  SINAN_VOICE_PROFILE: "SINAN_VOICE_PROFILE",
+  SINAN_VOICE_TEST: "SINAN_VOICE_TEST",
+  SINAN_VOICE_GENERATE: "SINAN_VOICE_GENERATE",
+  SINAN_VOICE_QUALITY: "SINAN_VOICE_QUALITY",
+  SINAN_VOICE_VERSION: "SINAN_VOICE_VERSION",
+  NATIVE_AI_STATUS: "NATIVE_AI_STATUS",
+  NATIVE_AI_ENGINE_STATUS: "NATIVE_AI_ENGINE_STATUS",
+  NATIVE_AI_ENGINE_HEALTH: "NATIVE_AI_ENGINE_HEALTH",
+  NATIVE_AI_ENGINE_TEST: "NATIVE_AI_ENGINE_TEST",
+  NATIVE_AI_ENGINE_REPORT: "NATIVE_AI_ENGINE_REPORT",
+  SINAN_PHASE7_REPORT: "SINAN_PHASE7_REPORT",
+  SINAN_PHASE8_REPORT: "SINAN_PHASE8_REPORT",
+  SINAN_PHASE8_THINKING: "SINAN_PHASE8_THINKING",
+  SINAN_PHASE9_REPORT: "SINAN_PHASE9_REPORT",
+  SINAN_PHASE9_CHAIN: "SINAN_PHASE9_CHAIN",
+  SINAN_PHASE10_REPORT: "SINAN_PHASE10_REPORT",
+  SINAN_PHASE10_EVAL: "SINAN_PHASE10_EVAL",
+  SINAN_PHASE11_REPORT: "SINAN_PHASE11_REPORT",
+  SINAN_PHASE12_REPORT: "SINAN_PHASE12_REPORT",
+  SINAN_PHASE13_REPORT: "SINAN_PHASE13_REPORT",
+  SINAN_PHASE14_REPORT: "SINAN_PHASE14_REPORT",
+  SINAN_PHASE15_REPORT: "SINAN_PHASE15_REPORT",
+  SINAN_PHASE16_REPORT: "SINAN_PHASE16_REPORT",
+  SINAN_PHASE17_REPORT: "SINAN_PHASE17_REPORT",
+  SINAN_PHASE18_REPORT: "SINAN_PHASE18_REPORT",
+  SINAN_HUMAN_REMAINING: "SINAN_HUMAN_REMAINING",
+  SINAN_CLOSEOUT: "SINAN_CLOSEOUT",
+  MULTI_AGENT_FOUNDATION: "MULTI_AGENT_FOUNDATION",
+  TEN_AGENT_COUNCIL: "TEN_AGENT_COUNCIL",
+  SEVENTEEN_AGENT_COUNCIL: "SEVENTEEN_AGENT_COUNCIL",
+  PLATFORM_CONTINUATION_STATUS: "PLATFORM_CONTINUATION_STATUS",
+  ORCHESTRATE_STATUS: "ORCHESTRATE_STATUS",
+  ORCHESTRATE_TICK: "ORCHESTRATE_TICK",
+  ORCHESTRATE_APPROVE: "ORCHESTRATE_APPROVE",
+  INTEGRATED_PLATFORM_STATUS: "INTEGRATED_PLATFORM_STATUS",
+});
+
+const CONTROL_ACTIONS = Object.freeze([
+  ACTIONS.GET_COUNCIL,
+  ACTIONS.OPEN_MEETING,
+  ACTIONS.REPORT_MEETING,
+  ACTIONS.CLOSE_MEETING,
+  ACTIONS.MEMORY_PUT,
+  ACTIONS.MEMORY_GET,
+  ACTIONS.RESEARCH_REQUEST,
+  ACTIONS.RESEARCH_COMPLETE,
+  ACTIONS.LIST_TRADE_HOLDS,
+  ACTIONS.SCREEN_TRADE,
+  ACTIONS.ESAT_STATUS,
+  ACTIONS.ESAT_RECENT,
+  ACTIONS.ESAT_INSPECT,
+  ACTIONS.SINAN_PROFILE,
+  ACTIONS.SINAN_ASSIGN,
+  ACTIONS.SINAN_ACCEPT,
+  ACTIONS.SINAN_REPORT,
+  ACTIONS.SINAN_ANALYZE,
+  ACTIONS.SINAN_RESEARCH,
+  ACTIONS.SINAN_GATE,
+  ACTIONS.SINAN_VOICE,
+  ACTIONS.SINAN_REVIEW,
+  ACTIONS.SINAN_ARCHITECTURE,
+  ACTIONS.SINAN_SECURITY_REVIEW,
+  ACTIONS.SINAN_TEST,
+  ACTIONS.SINAN_STATUS,
+  ACTIONS.SINAN_TRAIN_PLAN,
+  ACTIONS.SINAN_MODEL_STATUS,
+  ACTIONS.SINAN_TOY_TRAIN,
+  ACTIONS.SINAN_TRANSFORMER_STATUS,
+  ACTIONS.SINAN_MODEL_EVALUATE,
+  ACTIONS.SINAN_TOKENIZER_TEST,
+  ACTIONS.SINAN_TRAIN_RUN,
+  ACTIONS.SINAN_MODEL_COMPARE,
+  ACTIONS.SINAN_HARDWARE_REPORT,
+  ACTIONS.SINAN_PHASE5_REPORT,
+  ACTIONS.SINAN_PHASE6_STATUS,
+  ACTIONS.SINAN_MODEL_TRAIN_PLAN,
+  ACTIONS.SINAN_MODEL_TRAIN_RUN,
+  ACTIONS.SINAN_REASONING_TEST,
+  ACTIONS.SINAN_VOICE_STATUS,
+  ACTIONS.SINAN_VOICE_ANALYZE,
+  ACTIONS.SINAN_VOICE_PROFILE,
+  ACTIONS.SINAN_VOICE_TEST,
+  ACTIONS.SINAN_VOICE_GENERATE,
+  ACTIONS.SINAN_VOICE_QUALITY,
+  ACTIONS.SINAN_VOICE_VERSION,
+  ACTIONS.NATIVE_AI_STATUS,
+  ACTIONS.NATIVE_AI_ENGINE_STATUS,
+  ACTIONS.NATIVE_AI_ENGINE_HEALTH,
+  ACTIONS.NATIVE_AI_ENGINE_TEST,
+  ACTIONS.NATIVE_AI_ENGINE_REPORT,
+  ACTIONS.SINAN_PHASE7_REPORT,
+  ACTIONS.SINAN_PHASE8_REPORT,
+  ACTIONS.SINAN_PHASE8_THINKING,
+  ACTIONS.SINAN_PHASE9_REPORT,
+  ACTIONS.SINAN_PHASE9_CHAIN,
+  ACTIONS.SINAN_PHASE10_REPORT,
+  ACTIONS.SINAN_PHASE10_EVAL,
+  ACTIONS.SINAN_PHASE11_REPORT,
+  ACTIONS.SINAN_PHASE12_REPORT,
+  ACTIONS.SINAN_PHASE13_REPORT,
+  ACTIONS.SINAN_PHASE14_REPORT,
+  ACTIONS.SINAN_PHASE15_REPORT,
+  ACTIONS.SINAN_PHASE16_REPORT,
+  ACTIONS.SINAN_PHASE17_REPORT,
+  ACTIONS.SINAN_PHASE18_REPORT,
+  ACTIONS.SINAN_HUMAN_REMAINING,
+  ACTIONS.SINAN_CLOSEOUT,
+  ACTIONS.MULTI_AGENT_FOUNDATION,
+  ACTIONS.TEN_AGENT_COUNCIL,
+  ACTIONS.SEVENTEEN_AGENT_COUNCIL,
+  ACTIONS.PLATFORM_CONTINUATION_STATUS,
+  ACTIONS.ORCHESTRATE_STATUS,
+  ACTIONS.ORCHESTRATE_TICK,
+  ACTIONS.ORCHESTRATE_APPROVE,
+  ACTIONS.INTEGRATED_PLATFORM_STATUS,
+]);
+
+let durable = null;
+function getDurable() {
+  if (!durable) durable = createDurable(db);
+  return durable;
+}
+
+let sinanAgent = null;
+function getSinanAgent() {
+  if (!sinanAgent) {
+    const { createSinanBeyAgent } = require("./sinanBeyAgent");
+    sinanAgent = createSinanBeyAgent({ db });
+  }
+  return sinanAgent;
+}
+
+const WRITE_ACTIONS = Object.freeze([
+  "SET_PRICE",
+  "SET_STOCK",
+  "CREATE_SUPPLIER_ORDER",
+  "ISSUE_REFUND",
+  "UPDATE_PRODUCT",
+  "CREATE_ORDER",
+  "CAPTURE_PAYMENT",
+  "CREATE_SHIPMENT",
+]);
+
+const SPECIALISTS = Object.freeze([
+  "price",
+  "stock",
+  "seo",
+  "customer",
+  "sales",
+  "category",
+  "supplier",
+  "marketplace",
+  "product",
+  "returns",
+  "customs",
+  "security",
+  "architecture",
+]);
+
+function isEnabled() {
+  return process.env.PUSAT_RUNTIME_ENABLED === "1";
+}
+
+function isHealthy() {
+  return isEnabled();
+}
+
+function health() {
+  return {
+    name: "pusat",
+    enabled: isEnabled(),
+    healthy: isHealthy(),
+    envHealthyFlag: process.env.PUSAT_RUNTIME_HEALTHY === "1",
+    ...label(isEnabled() ? MODE.DRY_RUN : MODE.DISABLED),
+    specialists: SPECIALISTS,
+    councilMembers: roster().length,
+    controlActions: CONTROL_ACTIONS,
+    writeActions: [],
+    deniedWrites: WRITE_ACTIONS,
+    productSot: getProductSotStatus(),
+  };
+}
+
+function executeEsat(action, payload, { actorId, correlationId }) {
+  const esat = require("../security/esatBey");
+  if (action === ACTIONS.ESAT_STATUS) {
+    return { ok: true, action, data: esat.status(), actorId, correlationId };
+  }
+  if (action === ACTIONS.ESAT_RECENT) {
+    return { ok: true, action, data: esat.recent(payload.limit), actorId, correlationId };
+  }
+  if (action === ACTIONS.ESAT_INSPECT) {
+    return { ok: true, action, data: esat.inspect({ ...payload, actor: actorId || "pusat" }), actorId, correlationId };
+  }
+  return null;
+}
+
+function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null } = {}) {
+  const esatResult = executeEsat(action, payload, { actorId, correlationId });
+  if (esatResult) return esatResult;
+
+  if (!isEnabled()) {
+    return {
+      ok: false,
+      code: "PUSAT_DISABLED",
+      action,
+      ...label(MODE.DISABLED),
+    };
+  }
+
+  const corr = correlationId || `pusat_${crypto.randomBytes(6).toString("hex")}`;
+
+  if (WRITE_ACTIONS.includes(action)) {
+    try {
+      const exceptions = require("../exceptionBus");
+      exceptions.emit({
+        type: exceptions.TYPES.PERMISSION_DENIED,
+        severity: "HIGH",
+        source: "pusat",
+        entity: "tool",
+        correlationId: corr,
+        message: `Pusat write denied: ${action}`,
+        retryable: false,
+      });
+    } catch {
+      /* audit best-effort */
+    }
+    return {
+      ok: false,
+      code: "PERMISSION_DENIED",
+      action,
+      actorId,
+      correlationId: corr,
+      ...label(MODE.DISABLED),
+    };
+  }
+
+  if (action === ACTIONS.PING) {
+    return { ok: true, action, correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_SOT_STATUS) {
+    return { ok: true, action, data: getProductSotStatus(), correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_SALES_GATE) {
+    const { evaluateSalesGate } = require("../salesSafetyGate");
+    return { ok: true, action, data: evaluateSalesGate(), correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_PRODUCT) {
+    const key = payload.id || payload.sku;
+    if (!key) {
+      return { ok: false, code: "INVALID_PAYLOAD", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    }
+    const product = productService.getProduct(key) || productService.getProductBySku(key);
+    if (!product) {
+      return {
+        ok: false,
+        code: "NOT_FOUND",
+        action,
+        correlationId: corr,
+        mappingStatus: "UNMAPPED",
+        sotActive: isSotActive(),
+        ...label(MODE.DRY_RUN),
+      };
+    }
+    return {
+      ok: true,
+      action,
+      data: {
+        id: product.id,
+        sku: product.sku,
+        title: product.title,
+        status: product.status,
+        visibility: product.visibility,
+        stock: product.stock,
+        price: product.price,
+      },
+      source: "D",
+      mappingStatus: "CANDIDATE",
+      sotActive: isSotActive(),
+      actorId,
+      correlationId: corr,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+
+  if (action === ACTIONS.GET_INVENTORY) {
+    const key = payload.id || payload.sku || payload.productId;
+    const inv = inventory.getInventory(key);
+    if (inv.error) {
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    }
+    return { ok: true, action, data: inv, source: "D", actorId, correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_PRICE) {
+    const key = payload.id || payload.sku || payload.productId;
+    const quote = pricing.quotePrice({ productId: key, supplierCost: payload.supplierCost });
+    if (!quote.productId) {
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    }
+    return { ok: true, action, data: quote, source: "D", actorId, correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_ORDER_STATUS) {
+    const key = payload.id || payload.orderId || payload.preparationId;
+    if (!key) {
+      return { ok: false, code: "INVALID_PAYLOAD", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    }
+    const prep = db.prepare("SELECT * FROM order_sot_preparations WHERE id = ?").get(key);
+    if (prep) {
+      return {
+        ok: true,
+        action,
+        data: { id: prep.id, status: prep.status, mode: prep.mode, sku: prep.sku },
+        correlationId: corr,
+        ...label(MODE.DRY_RUN),
+      };
+    }
+    const order = db.prepare("SELECT id, status, order_type FROM commerce_orders WHERE id = ?").get(key);
+    if (!order) {
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+    }
+    return { ok: true, action, data: order, correlationId: corr, ...label(MODE.DRY_RUN) };
+  }
+
+  if (action === ACTIONS.GET_EXCEPTIONS) {
+    const { list } = require("../exceptionBus");
+    return {
+      ok: true,
+      action,
+      data: list({ status: payload.status || "OPEN", limit: Number(payload.limit) || 20 }),
+      correlationId: corr,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+
+  if (CONTROL_ACTIONS.includes(action)) {
+    return executeControl(action, payload, { actorId, correlationId: corr });
+  }
+
+  return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId: corr, ...label(MODE.DISABLED) };
+}
+
+function executeControl(action, payload, { actorId, correlationId }) {
+  const store = getDurable();
+  if (action === ACTIONS.GET_COUNCIL) {
+    return { ok: true, action, data: roster(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.OPEN_MEETING) {
+    return { ok: true, action, data: store.openMeeting(payload), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.REPORT_MEETING) {
+    return {
+      ok: true,
+      action,
+      data: store.addMeetingEvent({
+        meetingId: payload.meetingId,
+        kind: "report",
+        speakerId: payload.speakerId || actorId,
+        payload,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.CLOSE_MEETING) {
+    return { ok: true, action, data: store.closeMeeting(payload.meetingId), correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.MEMORY_PUT) {
+    return {
+      ok: true,
+      action,
+      data: store.putMemory({
+        ownerId: payload.ownerId || actorId,
+        key: payload.key,
+        value: payload.value,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.MEMORY_GET) {
+    return {
+      ok: true,
+      action,
+      data: store.getMemory({
+        ownerId: payload.ownerId,
+        requesterId: payload.requesterId || actorId,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.RESEARCH_REQUEST) {
+    if (!TOPICS.includes(payload.topic)) {
+      return { ok: false, code: "UNKNOWN_TOPIC", action, correlationId, ...label(MODE.DRY_RUN) };
+    }
+    return {
+      ok: true,
+      action,
+      data: store.requestResearch({
+        fromId: payload.fromId || actorId,
+        topic: payload.topic,
+        question: payload.question,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.RESEARCH_COMPLETE) {
+    return {
+      ok: true,
+      action,
+      data: store.completeResearch({
+        requestId: payload.requestId,
+        findings: payload.findings,
+        sources: payload.sources,
+      }),
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.LIST_TRADE_HOLDS) {
+    return { ok: true, action, data: store.listHolds(), correlationId, ...label(MODE.DRY_RUN) };
+  }
+  const esatControl = executeEsat(action, payload, { actorId, correlationId });
+  if (esatControl) return { ...esatControl, ...label(MODE.DRY_RUN) };
+
+  if (action === ACTIONS.SINAN_PROFILE) {
+    return { ok: true, action, data: getSinanAgent().profile(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_ASSIGN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().assignFromPusat(payload.title),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ACCEPT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().acceptTask(payload.taskId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().reportToPusat(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ANALYZE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().analyze(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_RESEARCH) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().requestDoguResearch(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_GATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().requestHumanGate(payload.gate),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceAvatar(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REVIEW) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().review(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_ARCHITECTURE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().architecture(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_SECURITY_REVIEW) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().securityReview(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TEST) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().recordTest(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().statusBoard(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRAIN_PLAN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainPlan(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelStatus(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TOY_TRAIN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().runToyTrain(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRANSFORMER_STATUS) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().transformerStatus(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_EVALUATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelEvaluate(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TOKENIZER_TEST) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().tokenizerTest(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_TRAIN_RUN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainTransformerRun(payload, actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_MODEL_COMPARE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().modelCompare(payload),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_HARDWARE_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().hardwareReport(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_PHASE5_REPORT) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase5Report(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_PHASE6_STATUS) {
+    return { ok: true, action, data: getSinanAgent().phase6Status(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_MODEL_TRAIN_PLAN) {
+    return { ok: true, action, data: getSinanAgent().trainPlan(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_MODEL_TRAIN_RUN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().trainTransformerRun(payload, actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_REASONING_TEST) {
+    return { ok: true, action, data: getSinanAgent().reasoningTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_STATUS || action === ACTIONS.SINAN_VOICE_ANALYZE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceAnalyze(actorId),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE_PROFILE) {
+    return { ok: true, action, data: getSinanAgent().voiceProfile(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_TEST) {
+    return { ok: true, action, data: getSinanAgent().voiceTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_GENERATE) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().voiceGenerate({ ...payload, actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_VOICE_QUALITY) {
+    return { ok: true, action, data: getSinanAgent().voiceQuality(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_VOICE_VERSION) {
+    return { ok: true, action, data: getSinanAgent().voiceVersion(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_STATUS) {
+    return { ok: true, action, data: getSinanAgent().nativeStatus(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_STATUS) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineStatus(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_HEALTH) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineHealth(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_TEST) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineTest(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.NATIVE_AI_ENGINE_REPORT) {
+    return { ok: true, action, data: getSinanAgent().nativeEngineReport(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE7_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase7Report(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE8_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase8Report(), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE8_THINKING) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase8Thinking({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SINAN_PHASE9_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase9Report({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE10_REPORT) {
+    return { ok: true, action, data: getSinanAgent().phase10Report({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_PHASE10_EVAL) {
+    return { ok: true, action, data: getSinanAgent().phase10Eval({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_HUMAN_REMAINING) {
+    return { ok: true, action, data: getSinanAgent().humanRemaining({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.SINAN_CLOSEOUT) {
+    return { ok: true, action, data: getSinanAgent().closeout({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  if (action === ACTIONS.MULTI_AGENT_FOUNDATION) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().multiAgentFoundation({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SEVENTEEN_AGENT_COUNCIL) {
+    const { resolveAgentInput } = require("../buzzardNative/core/identityRegistry");
+    const inputIdentity = resolveAgentInput(actorId || "pusat");
+    return {
+      ok: true,
+      action,
+      data: {
+        ...getSinanAgent().seventeenAgentCouncil({ actorId }),
+        inputIdentity,
+      },
+      actorId,
+      requestedId: inputIdentity.requestedId,
+      nativeId: inputIdentity.ok ? inputIdentity.nativeId : null,
+      identitiesMerged: false,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.PLATFORM_CONTINUATION_STATUS) {
+    const { snapshot: engines } = require("../commerce/engineRegistry");
+    const { snapshot: banks } = require("../finance/bankingAdapter");
+    const { snapshot: streams } = require("../workstreams/special16");
+    const { executiveSize } = require("../buzzardNative/core/councilConfig");
+    const { inventory: locales } = require("../i18n/localeInventory");
+    const { SHARED } = require("../security/egressPolicy");
+    return {
+      ok: true,
+      action,
+      data: {
+        engines: engines(),
+        banks: banks(),
+        streams: streams(),
+        council: executiveSize(),
+        locales: locales(),
+        egressDefault: SHARED.default,
+        live: false,
+        productionReady: false,
+      },
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.INTEGRATED_PLATFORM_STATUS) {
+    const { integrate } = require("../platform/completionBus");
+    return {
+      ok: true,
+      action,
+      data: integrate(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_STATUS) {
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
+    return {
+      ok: true,
+      action,
+      data: orch.status(),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_TICK) {
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
+    if (payload.schedule) orch.schedule(payload.schedule);
+    const ran = payload.coordinate
+      ? orch.coordinateCouncil({ kind: payload.kind || "THINK" })
+      : orch.tick({ limit: payload.limit || 8 });
+    return {
+      ok: true,
+      action,
+      data: { ...ran, status: orch.status(), live: false, hostedFactory: false, dbPath: orch.queue.dbPath },
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.ORCHESTRATE_APPROVE) {
+    const { getOrchestrator } = require("./orchRuntime");
+    const orch = getOrchestrator({ dbPath: payload.dbPath });
+    const decided = orch.approvals.decide({
+      id: payload.approvalId,
+      approved: payload.approved !== false,
+      actorId: payload.deciderId || actorId,
+    });
+    return {
+      ok: decided.ok,
+      action,
+      data: decided,
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.TEN_AGENT_COUNCIL) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().tenAgentCouncil({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action.startsWith("SINAN_PHASE") && action.endsWith("_REPORT") && ACTIONS[action]) {
+    const n = action.replace("SINAN_PHASE", "").replace("_REPORT", "");
+    const fn = `phase${n}Report`;
+    if (typeof getSinanAgent()[fn] === "function") {
+      return { ok: true, action, data: getSinanAgent()[fn]({ actorId }), actorId, correlationId, ...label(MODE.DRY_RUN) };
+    }
+  }
+  if (action === ACTIONS.SINAN_PHASE9_CHAIN) {
+    return {
+      ok: true,
+      action,
+      data: getSinanAgent().phase9Chain({ actorId }),
+      actorId,
+      correlationId,
+      ...label(MODE.DRY_RUN),
+    };
+  }
+  if (action === ACTIONS.SCREEN_TRADE) {
+    const { screenTrade } = require("../commerce/ab27Logistics");
+    const result = screenTrade({
+      ...payload,
+      persistHold: (item) =>
+        store.holdTrade({
+          destination: payload.destination,
+          reason: item.reason,
+          payload: item.payload,
+        }),
+    });
+    return { ok: result.ok, action, data: result, correlationId, ...label(MODE.DRY_RUN) };
+  }
+  return { ok: false, code: "NOT_IMPLEMENTED", action, correlationId, ...label(MODE.DISABLED) };
+}
+
+/**
+ * Optional idempotent wrapper around read-only dispatch.
+ * Does not enable writes, sales, or exclusive SoT.
+ */
+async function dispatch({
+  action,
+  payload = {},
+  actorId = null,
+  correlationId = null,
+  idempotencyKey = null,
+} = {}) {
+  const run = () => executeReadOnly(action, payload, { actorId, correlationId });
+  if (!idempotencyKey) {
+    const result = run();
+    return { replayed: false, result };
+  }
+  const outcome = await getIdempotencyService().execute({
+    operation: "PUSAT_DISPATCH",
+    idempotencyKey,
+    payload: { action, payload },
+    correlationId,
+    actorId,
+    execute: async () => run(),
+  });
+  return {
+    replayed: Boolean(outcome.replayed),
+    result: outcome.result,
+    idempotency: {
+      status: outcome.status,
+      operation: outcome.operation,
+      idempotencyKey: outcome.idempotencyKey,
+    },
+  };
+}
+
+module.exports = {
+  ACTIONS,
+  WRITE_ACTIONS,
+  CONTROL_ACTIONS,
+  SPECIALISTS,
+  getDurable,
+  getSinanAgent,
+  isEnabled,
+  isHealthy,
+  health,
+  executeReadOnly,
+  dispatch,
+  getIdempotencyService,
+};

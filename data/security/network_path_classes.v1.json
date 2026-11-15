@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "policy": "DENY",
+  "note": "Classification from static audit. Not host-firewall proof.",
+  "paths": [
+    { "id": "guardedFetch", "class": "A", "gate": true, "file": "server/lib/security/egressGuard.js" },
+    { "id": "guarded_urlopen", "class": "A", "gate": true, "file": "intelligence/security/guarded_fetch.py" },
+    { "id": "browserFetch", "class": "A", "gate": true, "file": "lib/security/browserFetch.ts" },
+    { "id": "smoke_scripts_fetch", "class": "B", "gate": false, "file": "scripts/*.mjs", "note": "operator tools; localhost denied by policy" },
+    { "id": "archive_urlopen", "class": "D", "gate": false, "file": "intelligence/archive/buzzard_production_bridge_max_single.py" },
+    { "id": "npm_pip", "class": "B", "gate": false, "note": "install-time only" },
+    { "id": "job_explicit_urls", "class": "A", "gate": true, "file": "server/lib/jobEgressGate.js" }
+  ]
+}

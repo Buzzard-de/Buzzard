@@ -47,6 +47,15 @@ async function runPipeline(raw, { dryRun = true, supplierId = "mock", importJobI
     });
 
     if (stagingResult.blocked || dryRun || stagingResult.lifecycleStatus !== "VALIDATED") {
+      stages.push({
+        stage: "validation",
+        status: stagingResult.blocked ? "FAIL" : "SKIPPED",
+        dryRun: Boolean(dryRun),
+      });
+      logStage(importId, stagingResult.stagingId || null, "validation", dryRun ? "SKIPPED" : "FAIL", {
+        dryRun: Boolean(dryRun),
+        blockingReasons: stagingResult.blockingReasons,
+      });
       return {
         importJobId: importId,
         dryRun,

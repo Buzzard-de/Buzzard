@@ -2,6 +2,7 @@
 /**
  * Part 10 — Production hardening smoke tests
  */
+import { smokeFetch } from "./lib/smokeHttp.mjs";
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
 let passed = 0;
@@ -19,7 +20,7 @@ async function test(name, fn) {
 }
 
 async function fetchJson(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
+  const res = await smokeFetch(`${API}${path}`, {
     ...options,
     headers: {
       Accept: "application/json",
@@ -101,7 +102,7 @@ async function main() {
   });
 
   await test("Legacy deprecation headers on /api/cart", async () => {
-    const res = await fetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
+    const res = await smokeFetch(`${API}/api/cart`, { headers: { Accept: "application/json" } });
     const deprecated = res.headers.get("deprecation") || res.headers.get("x-buzzard-legacy-commerce");
     if (!deprecated) throw new Error("missing legacy deprecation marker");
   });

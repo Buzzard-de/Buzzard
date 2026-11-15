@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import { apiBaseUrl, isApiConfigured } from "./config";
 
 export interface IntelligenceBridgeStatus {
@@ -35,7 +36,7 @@ export async function fetchIntelligenceBridgeStatus(): Promise<IntelligenceBridg
   if (!isApiConfigured()) return null;
 
   try {
-    const response = await fetch(`${apiBaseUrl()}/api/intelligence/status`, {
+    const response = await browserFetch(`${apiBaseUrl()}/api/intelligence/status`, {
       headers: { Accept: "application/json" },
       cache: "no-store",
     });

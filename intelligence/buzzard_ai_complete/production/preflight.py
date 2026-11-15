@@ -6,12 +6,16 @@ import datetime
 import hashlib
 import json
 import os
+import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_REPORT_PATH = REPO_ROOT / "data/taxonomy/buzzard_production_preflight.json"
+_INTEL = REPO_ROOT / "intelligence"
+if str(_INTEL) not in sys.path:
+    sys.path.insert(0, str(_INTEL))
 
 REQUIRED_ENV = {
     "APP_ENV": "production",
@@ -109,18 +113,20 @@ class ProductionBridgePreflight:
         if not present(url):
             return False, "URL fehlt"
         try:
-            request = urllib.request.Request(
+            from security.guarded_fetch import EgressDenied, guarded_urlopen
+
+            with guarded_urlopen(
                 url,
-                method="GET",
+                timeout=timeout,
                 headers={"User-Agent": "Buzzard-Production-Preflight/1.0"},
-            )
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            ) as response:
                 status = getattr(response, "status", 200)
                 return 200 <= status < 500, f"HTTP {status}"
         except urllib.error.HTTPError as exc:
             return 200 <= exc.code < 500, f"HTTP {exc.code}"
         except Exception as exc:
-            return False, str(exc)
+            code = getattr(exc, "code", "")
+            return False, f"{exc}" if not code else f"EGRESS_DENIED:{code}"
 
     def check_legal_routes(self, base_url: str, check_urls: bool = True) -> list[dict]:
         base = base_url.rstrip("/")

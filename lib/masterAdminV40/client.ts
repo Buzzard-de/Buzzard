@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { MasterAdminV40Overview, MasterAdminV40Record, MasterAdminV40Status } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("masterAdminV40.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -29,7 +30,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
 export async function fetchMasterAdminV40Status(): Promise<MasterAdminV40Status> {
   const base = apiBase();
   if (!base) throw new Error("masterAdminV40.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("masterAdminV40.requestFailed");
   const data = (await res.json()) as { masterAdminV40?: MasterAdminV40Status };
   if (!data.masterAdminV40?.enabled) throw new Error("masterAdminV40.disabled");

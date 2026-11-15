@@ -1,3 +1,4 @@
+import { browserFetch } from "@/lib/security/browserFetch";
 import type { OrderManagementV32Overview, OrderManagementV32Record, OrderManagementV32Status } from "./types";
 
 function apiBase(): string {
@@ -17,7 +18,7 @@ function adminHeaders(): HeadersInit {
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("orderManagementV32.apiUnavailable");
-  const res = await fetch(`${base}${path}`, {
+  const res = await browserFetch(`${base}${path}`, {
     ...init,
     headers: { ...adminHeaders(), ...(init?.headers || {}) },
   });
@@ -29,7 +30,7 @@ async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
 export async function fetchOrderManagementV32Status(): Promise<OrderManagementV32Status> {
   const base = apiBase();
   if (!base) throw new Error("orderManagementV32.apiUnavailable");
-  const res = await fetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
+  const res = await browserFetch(`${base}/api/health`, { headers: { Accept: "application/json" } });
   if (!res.ok) throw new Error("orderManagementV32.requestFailed");
   const data = (await res.json()) as { orderManagementV32?: OrderManagementV32Status };
   if (!data.orderManagementV32?.enabled) throw new Error("orderManagementV32.disabled");

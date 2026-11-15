@@ -171,7 +171,9 @@ class AIGateway:
             ],
         }
 
-        response = requests.post(
+        from security.guarded_fetch import guarded_post
+
+        response = guarded_post(
             provider["base_url"],
             headers={
                 "Authorization": f"Bearer {api_key}",

@@ -1,0 +1,62 @@
+{
+  "voiceId": "sinan_bey_official_voice_v1",
+  "referenceRel": "public/council/sinan-bey-official-voice-v1.m4a",
+  "referenceSha256": "16d43e7d8b27a6520ee9e6bbc61e8c503bdc76f7b715fa4ad2b356a558df0e2d",
+  "container": {
+    "format": "m4a/aac",
+    "codec": "aac",
+    "sampleRateHz": 48000,
+    "channels": 2,
+    "bitDepth": null,
+    "bitDepthNote": "AAC compressed; bits_per_sample not PCM",
+    "durationSec": 24.042667,
+    "sizeBytes": 401218,
+    "bitRate": 133501,
+    "tool": "ffprobe"
+  },
+  "pcmPreview": {
+    "decoded": "16kHz_mono_wav_temporary_not_committed",
+    "peak": 0.3873,
+    "rms": 0.02784,
+    "durationSec": 23.9987
+  },
+  "f0Hz": {
+    "min": 61.54,
+    "max": 301.89,
+    "mean": 170.8,
+    "stdev": 59.76,
+    "unit": "Hz",
+    "searchWindowHz": [60, 300],
+    "voicedFrames": 1104,
+    "method": "autocorrelation_40ms_hop10ms_energy_gt_0.02",
+    "reliability": "mean_moderate; min_max_hit_search_bounds",
+    "invented": false
+  },
+  "formantsHz": {
+    "method": "256pt_dft_band_peak_40ms_hop_not_lpc",
+    "f1": 724.7,
+    "f2": 1359.6,
+    "f3": 2621.6,
+    "spectralCentroidHz": 2171.1,
+    "reliability": "coarse_band_peak",
+    "invented": false
+  },
+  "jitter": {
+    "local": 0.3515,
+    "method": "f0_stdev_over_mean_not_praat",
+    "reliability": "relative_only"
+  },
+  "shimmer": {
+    "local": 0.4951,
+    "method": "amp_stdev_over_mean_not_praat",
+    "reliability": "relative_only"
+  },
+  "hnr": {
+    "db": 45.97,
+    "method": "voiced_vs_unvoiced_energy_not_true_hnr",
+    "reliability": "not_comparable_to_praat"
+  },
+  "analyzedAt": "2026-11-08T14:12:00.000Z",
+  "phase10MetricsAt": "2026-11-08T17:08:00+01:00",
+  "zone": "Europe/Berlin"
+}

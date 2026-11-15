@@ -1,0 +1,39 @@
+# Sources
+
+- upu-designated-2025-02-15: UPU designated operators, position 15 February 2025 — https://www.upu.int/UPU/media/upu/PostalEntitiesFiles/statusOfPostalEntities/20250312dPRMAnListOfEntitiesEN.pdf
+- ec-ergp: European Commission ERGP page — https://single-market-economy.ec.europa.eu/sectors/postal-services/european-regulators-group-postal-services_en
+- ec-postal-statistics: EU Postal Survey statistics (latest published set referenced as 2022 on DG GROW page) — https://single-market-economy.ec.europa.eu/sectors/postal-services/statistics_en
+- bnetza-anbieterverzeichnis: Bundesnetzagentur Anbieterverzeichnis Post (fetched listing) — https://www.bundesnetzagentur.de/DE/Fachthemen/Post/Anbieterverzeichnis/PostAnbieterverzeichnis.html
+- trafikstyrelsen-2025-redegoerelse: Trafikstyrelsen redegørelse for 2025 om det danske postmarked — https://www.trafikstyrelsen.dk/publikationsliste/post-og-koerekort-publikationer/2026/jul/redegoerelse-for-2025-om-det-danske-postmarkeds-tilstand-og-udvikling
+- traficom-usp-posti: Traficom designated Posti Ltd as USP — https://traficom.fi/en/postal-services-and-delivery/provision-postal-services-and-development-postal-markets
+- traficom-postitoimintarekisteri-2026-08: Traficom postitoimintarekisteri (kirjelähetykset), päivitetty elokuussa 2026 — https://www.traficom.fi/fi/postitoiminta-ja-jakelu/postitoimintarekisteri
+- arcep-operateurs-2026-07-24: ARCEP opérateurs de services postaux autorisés, mis à jour le 24 juillet 2026 — https://www.arcep.fr/mes-demarches-et-services/acteurs-regules/operateurs-postaux/les-operateurs-de-services-postaux-autorises-par-larcep.html
+- pts-postoperatorer: PTS lista / Trafikanalys Postverksamhet 2025: 19 tillstånd — https://pts.se/tillstand-och-anmalan/post/postverksamhet/
+- bipt-licences-2025-12-22: IBPT communication 22 décembre 2025 licences individuelles — https://www.bipt.be/file/cc73d96153bbd5448a56f19d925d05b1379c7f21/fb4b9cce7648566741ad4ec4ccf92202c01ce658/communication-liste-prestataires-services-postaux-titulaires-licence-individuelle-2025.pdf
+- comreg-authorised-postal-providers: ComReg Register of Authorised Postal Providers (search extract; page 307 on direct fetch) — https://www.comreg.ie/industry/postal-regulation/authorised-postal-providers/authorised-postal-providers-register/
+- dhl-developer: DHL Parcel DE Shipping API docs — https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2
+- ups-developer: UPS Developer Portal — https://developer.ups.com/api/reference/shipping
+- gls-shipit: GLS ShipIT REST samples — https://shipit.gls-group.com/documentation/webservices/5_2_5/WS-REST-API/rest_web_service_requests_samples.html
+- rtr-pev-2026-02-16: RTR Liste der PEV-Betreiber, Stand 16. Februar 2026 — https://www.rtr.at/TKP/was_wir_tun/post/betreiberservice/liste_der_pev-betreiber.de.html
+- cnmc-sector-postal-2025: CNMC Informe anual del sector postal 2025, 21/07/2026 — https://www.cnmc.es/sites/default/files/6749773.pdf
+- es-registro-postal-2025-05-31: Registro general de empresas prestadoras de servicios postales, listado 31/05/2025 — https://www.transportes.gob.es/el-ministerio/servicios-postales/registro-general-de-empresas-prestadoras-de-servicios-postales
+- mimit-operatori-settembre-2026: MIMIT Elenco operatori postali LIC/AUG/AEI, aggiornamento 16 settembre 2026 — https://www.mimit.gov.it/images/stories/documenti/Elenco_operatori_postali_titolari_di_LIC-AUG-_AEI_Settembre_2026.pdf
+- ancom-furnizori-autorizati: ANCOM furnizori de servicii poștale autorizați (searchable; first page named) — https://www.ancom.ro/reglementare-ro/servicii-postale/furnizori-servicii-postale/furnizori-servicii-postale-autorizati/
+- ctu-evidence-2026-10-21: ČTÚ evidence provozovatelů poštovních služeb od 1.1.2024, aktualizace 21.10.2026 — https://ctu.gov.cz/vyhledavaci-databaze/evidence-provozovatelu-poskytujicich-nebo-zajistujicich-postovni-sluzby-od-2024
+- crc-annual-post-2025: CRC Annual Report Post 2025: 218 licensed/registered, 87 actually provided services — https://crc.bg/files/%D0%92%D0%9E%D0%9F/Annual%20Report%20Post%202025%20CRC_eng.pdf
+- teleoff-register-postovych-podnikov: Úrad SK Register poštových podnikov PDF (last sequential no. 47 observed) — https://www.teleoff.gov.sk/files/urad/odbory-oddelenia/odbor-regulacie-postovych-sluzieb/registracia-poskytovanie-postovych-sluzieb/register-postovych-podnikov/register-postovych-podnikov.pdf
+- akos-2024-annual: AKOS letno poročilo poštni trg 2024: 29 inscribed 31.12.2024 — https://www.akos-rs.si/fileadmin/user_upload/dokumenti/Posta/Novice_2024_in_2025/Letno_porocilo_o_stanju_na_trgu_postnih_storitev_za_leto_2024.pdf
+- hakom-2024-hina: HAKOM via HINA: 23 licensed operators end 2024 — https://www.hina.hr/news/11891401
+- ilr-stat-2025: ILR Les services postaux au Luxembourg, données 2025: 43 inscrits au 31.12.2025 — https://www.ilr.lu/wp-content/uploads/statistiques/ilr-pos-stat-rapport-statistique-2025.pdf
+- mca-postal-2026-09-02: MCA Register of Authorised Undertakings Postal, last updated 02/09/2026 — https://www.mca.org.mt/sites/default/files/pageattachments/2026.09.02%20Register%20-%20Postal.pdf
+- ocecpr-postal-records: OCECPR postal licence register (named extract) — https://ocecpr.ee.cy/en/postal-records
+- rtr-post-monitor-2024: RTR Post Monitor Jahresbericht 2024: 16 PEV reporters. 138 Anzeige figure not found in this report. — https://www.rtr.at/TKP/aktuelles/publikationen/publikationen/m/pm/RTR_Post_Monitor_Jahresbericht-2024.pdf
+- nmhh-posta-nyilvantartas: NMHH postai szolgáltatók nyilvántartása (Excel advertised, not imported) — https://nmhh.hu/posta/nyilvantartas
+- acm-registraties-csv: ACM registers CSV zip: postvervoerdiensten 93 + pakketbezorgdiensten 19 = 105 unique KVK (telecom excluded) — https://www.acm.nl/sites/default/files/registers/registraties_csv.zip
+- uke-rejestr-operatorow-pocztowych: UKE BIP Rejestr operatorów pocztowych, 12 pages, B-00018–B-00841, 234 unique register numbers — https://bip.uke.gov.pl/rop/rejestr-operatorow-pocztowych/
+- eett-eregistry-licenses-v2: EETT eRegistry GET /api/v2/licenses: 2111 mixed; 804 POST_* licences; 795 unique companies — https://eregistry.eett.gr/api/v2/licenses
+- ee-konkurentsiamet-postside-2025: Konkurentsiamet Postside aruanne 2025: 51 MTR postal providers; 50 courier registrations; 19 actually provided courier — https://www.konkurentsiamet.ee
+- sprk-pasta-2025: SPRK 2025 postal year: 61 active merchants; 1869 lockers; named parcel/locker operators — https://www.sprk.gov.lv/lv/jaunums/2025-gada-vairak-neka-pusi-no-visiem-sutijumiem-iedzivotaji-sanemusi-pakomatos
+- nmhh-csomagautomata-2026-q1: NMHH Q1 2026 locker and pickup point counts (Excel operator register still not imported) — https://nmhh.hu/cikk/249762/Csomagautomatak_es_kezbesitesi_pontok_megoszlasa_a_leginkabb_igenybe_vett_postai_szolgaltatoknal_2026_I_negyedev
+- rrt-teikejai-powerbi: RRT postal provider list is an embedded Power BI (names not bulk-extracted). Named USP-capable: AB Lietuvos paštas, UAB Omniva LT (15 Dec 2025 news). — https://rrt.lt/veiklos-sritys/pastas/pasto-paslauga/pasto-paslaugu-teikejai
+- anacom-lista-alfabetica: ANACOM alphabetical operator list (mixed electronic+postal). Direct fetch HTTP 403; named postal extract incomplete. — https://www.anacom.pt/render.jsp?categoryId=278775

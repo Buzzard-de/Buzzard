@@ -528,4 +528,56 @@ describe("FIN-M25 persistent consent ledger", () => {
     expect(refused.code).toBe("BACKUP_UNVERIFIED");
     expect(blocked.readAll()).toEqual([]);
   });
+
+  it("refuses a populated GRANTED update on the state row and leaves the withdrawal", () => {
+    const dbPath = fileIn("state-grant-update.sqlite");
+    const handle = openFixture(dbPath);
+    handles.push(handle);
+    const saved = handle.record(withdrawal("email", "state-withdraw"));
+    expect(saved.persisted).toBe(true);
+    expect(saved.code).toBe("WITHDRAWN");
+    handle.close();
+    handles.pop();
+
+    const Database = require("better-sqlite3");
+    const raw = new Database(dbPath);
+    try {
+      const before = raw.prepare(
+        `SELECT consent_status, explicit_grant, consent_verified, purpose, consent_text_version, policy_version,
+                locale, action_type, evidence_reference, evidence_hash
+         FROM marketing_consent_state WHERE customer_id = ? AND channel = ?`
+      ).get("ledger-customer", "email");
+      expect(before.consent_status).toBe("WITHDRAWN");
+      expect(before.explicit_grant).toBe(0);
+      expect(before.consent_verified).toBe(0);
+      expect(before.evidence_hash).toBeNull();
+      expect(() => raw.prepare(
+        `UPDATE marketing_consent_state
+         SET consent_status = 'GRANTED', explicit_grant = 1, consent_verified = 1,
+             purpose = ?, consent_text_version = ?, policy_version = ?, locale = ?,
+             action_type = ?, evidence_reference = ?, evidence_hash = ?
+         WHERE customer_id = ? AND channel = ?`
+      ).run(
+        "marketing", "text-1", "policy-1", "de", "grant", "evidence-1",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "ledger-customer", "email"
+      )).toThrow(/GRANT_REFUSED/);
+      const after = raw.prepare(
+        `SELECT consent_status, explicit_grant, consent_verified, purpose, evidence_hash
+         FROM marketing_consent_state WHERE customer_id = ? AND channel = ?`
+      ).get("ledger-customer", "email");
+      expect(after).toEqual({
+        consent_status: "WITHDRAWN",
+        explicit_grant: 0,
+        consent_verified: 0,
+        purpose: null,
+        evidence_hash: null,
+      });
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_state WHERE consent_status = 'GRANTED'").get().n).toBe(0);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_decisions WHERE consent_status = 'GRANTED'").get().n).toBe(0);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_decisions").get().n).toBe(1);
+    } finally {
+      raw.close();
+    }
+  });
 });

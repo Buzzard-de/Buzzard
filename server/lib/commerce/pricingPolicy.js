@@ -3,6 +3,11 @@
  */
 const MIN_NET_PROFIT_EUR = 0.5;
 const MARKET_UNDERCUT_EUR = 0.1;
+const CATEGORY_TARGET_MARGIN = Object.freeze({
+  automotive: 0.11,
+  drinks: 0.15,
+  other: 0.07,
+});
 
 function landedCost({
   supplierCost = 0,
@@ -49,4 +54,10 @@ function evaluateOffer({
   };
 }
 
-module.exports = { MIN_NET_PROFIT_EUR, MARKET_UNDERCUT_EUR, landedCost, evaluateOffer };
+module.exports = {
+  MIN_NET_PROFIT_EUR,
+  MARKET_UNDERCUT_EUR,
+  CATEGORY_TARGET_MARGIN,
+  landedCost,
+  evaluateOffer,
+};

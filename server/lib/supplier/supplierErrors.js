@@ -6,7 +6,7 @@ const {
   SUPPLIER_ERROR_CODE,
   RETRYABLE_ERRORS,
 } = require("../../core/supplierIntegrationConstants");
-const { redactSecrets } = require("./realSupplierConnector");
+const { redactSecrets } = require("./supplierRedact");
 
 function createSupplierError(code, { message, details = null, supplierId = null } = {}) {
   const normalized = Object.values(SUPPLIER_ERROR_CODE).includes(code)

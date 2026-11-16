@@ -10,7 +10,24 @@ const { createRequire } = require("module");
 const { assertConsentLedgerPath, migrateMarketingConsentLedger } = require("../db");
 
 const CHANNELS = new Set(["email", "sms", "push", "marketing_tracking"]);
+const EVIDENCE_FIELDS = [
+  "purpose",
+  "consent_text_version",
+  "policy_version",
+  "locale",
+  "action_type",
+  "evidence_reference",
+  "evidence_hash",
+];
 const HEADER = 44;
+
+function evidenceClear(row) {
+  return EVIDENCE_FIELDS.every((name) => row[name] == null);
+}
+
+function evidenceValues(row) {
+  return EVIDENCE_FIELDS.map((name) => (row[name] == null ? null : row[name]));
+}
 
 function loadSqlite() {
   const root = path.join(__dirname, "..", "..", "..");
@@ -91,6 +108,7 @@ function verifyBackupChain(payload) {
     if (!row || Number(row.sequence) !== index + 1) return "BACKUP_UNVERIFIED";
     if (!CHANNELS.has(row.channel) || row.consent_status !== "WITHDRAWN") return "BACKUP_UNVERIFIED";
     if (Number(row.explicit_grant) !== 0 || Number(row.consent_verified) !== 0) return "BACKUP_UNVERIFIED";
+    if (!evidenceClear(row)) return "BACKUP_UNVERIFIED";
     if (!row.decision_id || !row.customer_id || !row.idempotency_key || !row.payload_hash || !row.source) return "BACKUP_UNVERIFIED";
     if (keys.has(row.idempotency_key)) return "BACKUP_UNVERIFIED";
     keys.add(row.idempotency_key);
@@ -110,7 +128,8 @@ function verifyBackupChain(payload) {
     const decision = latest.get(`${row.customer_id}\0${row.channel}`);
     if (!decision) return "BACKUP_UNVERIFIED";
     if (row.consent_status !== "WITHDRAWN" || Number(row.sequence) !== Number(decision.sequence)) return "BACKUP_UNVERIFIED";
-    if (row.decision_id !== decision.decision_id || Number(row.explicit_grant) !== 0) return "BACKUP_UNVERIFIED";
+    if (row.decision_id !== decision.decision_id || Number(row.explicit_grant) !== 0 || Number(row.consent_verified) !== 0) return "BACKUP_UNVERIFIED";
+    if (!evidenceClear(row)) return "BACKUP_UNVERIFIED";
   }
   return "";
 }
@@ -175,6 +194,7 @@ function openConsentLedger(dbPath, options = {}) {
   }
 
   function writeImmediate(entry) {
+    if (entry.status === "GRANTED") return refused("GRANT_REFUSED");
     const run = connection.transaction(() => {
       const existing = prior(entry.idempotencyKey);
       if (existing) {
@@ -190,8 +210,8 @@ function openConsentLedger(dbPath, options = {}) {
         return refused("WITHDRAWN_HELD");
       }
       const decisionId = crypto.randomUUID();
-      const explicit = entry.status === "GRANTED" ? 1 : 0;
-      const verified = entry.status === "GRANTED" ? 1 : 0;
+      const explicit = 0;
+      const verified = 0;
       const inserted = connection.prepare(
         `INSERT INTO marketing_consent_decisions(
            decision_id, customer_id, channel, consent_status, idempotency_key, payload_hash, source,
@@ -311,11 +331,13 @@ function openConsentLedger(dbPath, options = {}) {
       maxSequence: maxSequence(),
       decisions: connection.prepare(
         `SELECT sequence, decision_id, customer_id, channel, consent_status, idempotency_key, payload_hash, source,
-                explicit_grant, consent_verified, created_at
+                explicit_grant, consent_verified, created_at, purpose, consent_text_version, policy_version, locale,
+                action_type, evidence_reference, evidence_hash
          FROM marketing_consent_decisions ORDER BY sequence`
       ).all(),
       state: connection.prepare(
-        `SELECT customer_id, channel, consent_status, decision_id, source, sequence, explicit_grant, consent_verified, created_at, updated_at
+        `SELECT customer_id, channel, consent_status, decision_id, source, sequence, explicit_grant, consent_verified, created_at, updated_at,
+                purpose, consent_text_version, policy_version, locale, action_type, evidence_reference, evidence_hash
          FROM marketing_consent_state ORDER BY sequence`
       ).all(),
     };
@@ -396,20 +418,26 @@ function openConsentLedger(dbPath, options = {}) {
       const insertDecision = connection.prepare(
         `INSERT OR IGNORE INTO marketing_consent_decisions(
            sequence, decision_id, customer_id, channel, consent_status, idempotency_key, payload_hash, source,
-           explicit_grant, consent_verified, created_at
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+           explicit_grant, consent_verified, created_at, purpose, consent_text_version, policy_version, locale,
+           action_type, evidence_reference, evidence_hash
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       );
       for (const row of payload.decisions || []) {
-        if (!CHANNELS.has(row.channel) || !["GRANTED", "WITHDRAWN"].includes(row.consent_status)) continue;
-        insertDecision.run(row.sequence, row.decision_id, row.customer_id, row.channel, row.consent_status, row.idempotency_key, row.payload_hash, row.source, row.explicit_grant, row.consent_verified, row.created_at);
+        if (!CHANNELS.has(row.channel) || row.consent_status !== "WITHDRAWN" || Number(row.explicit_grant) !== 0 || Number(row.consent_verified) !== 0 || !evidenceClear(row)) {
+          const error = new Error("GRANT_REFUSED");
+          error.code = "GRANT_REFUSED";
+          throw error;
+        }
+        insertDecision.run(row.sequence, row.decision_id, row.customer_id, row.channel, row.consent_status, row.idempotency_key, row.payload_hash, row.source, row.explicit_grant, row.consent_verified, row.created_at, ...evidenceValues(row));
       }
       const currentState = connection.prepare(
         "SELECT sequence, consent_status FROM marketing_consent_state WHERE customer_id = ? AND channel = ?"
       );
       const upsert = connection.prepare(
         `INSERT INTO marketing_consent_state(
-           customer_id, channel, consent_status, decision_id, source, sequence, explicit_grant, consent_verified, created_at, updated_at
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           customer_id, channel, consent_status, decision_id, source, sequence, explicit_grant, consent_verified, created_at, updated_at,
+           purpose, consent_text_version, policy_version, locale, action_type, evidence_reference, evidence_hash
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(customer_id, channel) DO UPDATE SET
            consent_status = excluded.consent_status,
            decision_id = excluded.decision_id,
@@ -417,21 +445,33 @@ function openConsentLedger(dbPath, options = {}) {
            sequence = excluded.sequence,
            explicit_grant = excluded.explicit_grant,
            consent_verified = excluded.consent_verified,
-           updated_at = excluded.updated_at
+           updated_at = excluded.updated_at,
+           purpose = excluded.purpose,
+           consent_text_version = excluded.consent_text_version,
+           policy_version = excluded.policy_version,
+           locale = excluded.locale,
+           action_type = excluded.action_type,
+           evidence_reference = excluded.evidence_reference,
+           evidence_hash = excluded.evidence_hash
          WHERE excluded.sequence >= marketing_consent_state.sequence
            AND NOT (marketing_consent_state.consent_status = 'WITHDRAWN' AND excluded.consent_status <> 'WITHDRAWN')`
       );
       for (const row of payload.state || []) {
-        if (!CHANNELS.has(row.channel) || !["GRANTED", "WITHDRAWN"].includes(row.consent_status)) continue;
+        if (!CHANNELS.has(row.channel) || row.consent_status !== "WITHDRAWN" || Number(row.explicit_grant) !== 0 || Number(row.consent_verified) !== 0 || !evidenceClear(row)) {
+          const error = new Error("GRANT_REFUSED");
+          error.code = "GRANT_REFUSED";
+          throw error;
+        }
         const current = currentState.get(row.customer_id, row.channel);
         if (current && current.consent_status === "WITHDRAWN" && Number(current.sequence) > Number(row.sequence)) continue;
-        upsert.run(row.customer_id, row.channel, row.consent_status, row.decision_id, row.source, row.sequence, row.explicit_grant, row.consent_verified, row.created_at, row.updated_at);
+        upsert.run(row.customer_id, row.channel, row.consent_status, row.decision_id, row.source, row.sequence, row.explicit_grant, row.consent_verified, row.created_at, row.updated_at, ...evidenceValues(row));
       }
     });
     try {
       apply.immediate();
-    } catch {
-      return { ok: false, restored: false, code: "CONSENT_STORE_UNAVAILABLE", productionReady: false };
+    } catch (error) {
+      const code = error && error.code === "GRANT_REFUSED" ? "GRANT_REFUSED" : "CONSENT_STORE_UNAVAILABLE";
+      return { ok: false, restored: false, code, productionReady: false };
     }
     return { ok: true, restored: true, code: "BACKUP_RESTORED", productionReady: false };
   }

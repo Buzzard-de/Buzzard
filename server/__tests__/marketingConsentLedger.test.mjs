@@ -394,4 +394,138 @@ describe("FIN-M25 persistent consent ledger", () => {
     }
     expect(handle.readCustomer("ledger-customer").push).toBe("UNKNOWN");
   });
+
+  it("keeps evidence columns null and refuses a populated grant", () => {
+    const dbPath = fileIn("evidence.sqlite");
+    const first = openFixture(dbPath);
+    handles.push(first);
+    const saved = first.record(withdrawal("email", "evidence-email"));
+    expect(saved.persisted).toBe(true);
+    expect(saved.granted).toBe(false);
+    expect(saved.productionReady).toBe(false);
+    const refused = first.record({ ...withdrawal("sms", "evidence-grant"), consentStatus: "GRANTED", explicitGrant: true, consentVerified: true });
+    expect(refused.persisted).toBe(false);
+    expect(refused.code).toBe("GRANT_REFUSED");
+    first.close();
+    handles.pop();
+
+    const Database = require("better-sqlite3");
+    const raw = new Database(dbPath);
+    try {
+      const decision = raw.prepare(
+        `SELECT sequence, decision_id, payload_hash, purpose, consent_text_version, policy_version, locale,
+                action_type, evidence_reference, evidence_hash
+         FROM marketing_consent_decisions`
+      ).get();
+      expect(decision.sequence).toBe(saved.sequence);
+      expect(decision.decision_id).toBe(saved.decisionId);
+      expect(decision.purpose).toBeNull();
+      expect(decision.consent_text_version).toBeNull();
+      expect(decision.policy_version).toBeNull();
+      expect(decision.locale).toBeNull();
+      expect(decision.action_type).toBeNull();
+      expect(decision.evidence_reference).toBeNull();
+      expect(decision.evidence_hash).toBeNull();
+      const again = openFixture(dbPath);
+      handles.push(again);
+      const reloaded = again.listDecisions();
+      expect(reloaded).toHaveLength(1);
+      expect(reloaded[0].sequence).toBe(saved.sequence);
+      expect(reloaded[0].decision_id).toBe(saved.decisionId);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_decisions WHERE consent_status = 'GRANTED'").get().n).toBe(0);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_audit").get().n).toBe(0);
+      expect(() => raw.prepare(
+        `INSERT INTO marketing_consent_decisions(
+           decision_id, customer_id, channel, consent_status, idempotency_key, payload_hash, source,
+           explicit_grant, consent_verified, created_at, purpose, consent_text_version, policy_version,
+           locale, action_type, evidence_reference, evidence_hash
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).run(
+        "raw-grant", "ledger-customer", "email", "GRANTED", "raw-grant", "hash", "customer-opt-out",
+        1, 1, "2026-11-16T00:00:00.000Z", "marketing", "text-1", "policy-1", "de", "grant", "evidence-1",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      )).toThrow(/GRANT_REFUSED/);
+      expect(again.readCustomer("ledger-customer").email).toBe("WITHDRAWN");
+      expect(() => raw.prepare("UPDATE marketing_consent_decisions SET source = 'rewritten'").run()).toThrow(/HISTORY_IMMUTABLE/);
+      expect(() => raw.prepare("DELETE FROM marketing_consent_decisions").run()).toThrow(/HISTORY_IMMUTABLE/);
+      expect(() => raw.prepare(
+        `INSERT INTO marketing_consent_audit(
+           event_type, customer_id, channel, result_code, created_at
+         ) VALUES ('GRANT_COMMIT', 'ledger-customer', 'email', 'GRANTED', '2026-11-16T00:00:00.000Z')`
+      ).run()).toThrow(/AUDIT_WRITE_CLOSED/);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_audit").get().n).toBe(0);
+      expect(raw.prepare("SELECT COUNT(*) AS n FROM marketing_consent_decisions").get().n).toBe(1);
+    } finally {
+      raw.close();
+    }
+    expect(fs.existsSync(path.join(__dirname, "..", "lib", "commerce", "consentGrantCore.js"))).toBe(false);
+  });
+
+  it("restores a version 1 withdrawal without evidence fields and rejects evidence on a withdrawal", () => {
+    const key = crypto.randomBytes(32);
+    const hash = createHash("sha256").update(JSON.stringify({
+      customerId: "legacy-customer",
+      channel: "email",
+      status: "WITHDRAWN",
+      source: "customer-opt-out",
+      idempotencyKey: "legacy-email",
+    })).digest("hex");
+    const legacy = {
+      maxSequence: 1,
+      decisions: [{
+        sequence: 1,
+        decision_id: "legacy-decision",
+        customer_id: "legacy-customer",
+        channel: "email",
+        consent_status: "WITHDRAWN",
+        idempotency_key: "legacy-email",
+        payload_hash: hash,
+        source: "customer-opt-out",
+        explicit_grant: 0,
+        consent_verified: 0,
+        created_at: "2026-11-15T00:00:00.000Z",
+      }],
+      state: [{
+        customer_id: "legacy-customer",
+        channel: "email",
+        consent_status: "WITHDRAWN",
+        decision_id: "legacy-decision",
+        source: "customer-opt-out",
+        sequence: 1,
+        explicit_grant: 0,
+        consent_verified: 0,
+        created_at: "2026-11-15T00:00:00.000Z",
+        updated_at: "2026-11-15T00:00:00.000Z",
+      }],
+    };
+    fs.writeFileSync(fileIn("legacy.bzc"), ledger.sealConsentBackup(legacy, key));
+    const restored = openFixture(fileIn("legacy.sqlite"));
+    handles.push(restored);
+    const result = restored.restoreEncrypted({ source: fileIn("legacy.bzc"), key });
+    expect(result.restored).toBe(true);
+    expect(restored.readCustomer("legacy-customer").email).toBe("WITHDRAWN");
+    restored.close();
+    handles.pop();
+    const Database = require("better-sqlite3");
+    const raw = new Database(fileIn("legacy.sqlite"));
+    try {
+      const row = raw.prepare("SELECT evidence_hash, purpose FROM marketing_consent_decisions").get();
+      expect(row.evidence_hash).toBeNull();
+      expect(row.purpose).toBeNull();
+    } finally {
+      raw.close();
+    }
+
+    const evidenced = {
+      ...legacy,
+      decisions: [{ ...legacy.decisions[0], evidence_hash: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }],
+    };
+    fs.writeFileSync(fileIn("evidenced.bzc"), ledger.sealConsentBackup(evidenced, key));
+    const blocked = openFixture(fileIn("evidenced.sqlite"));
+    handles.push(blocked);
+    const refused = blocked.restoreEncrypted({ source: fileIn("evidenced.bzc"), key });
+    expect(refused.restored).toBe(false);
+    expect(refused.code).toBe("BACKUP_UNVERIFIED");
+    expect(blocked.readAll()).toEqual([]);
+  });
 });

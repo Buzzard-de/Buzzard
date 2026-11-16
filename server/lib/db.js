@@ -4259,6 +4259,90 @@ CREATE TABLE IF NOT EXISTS marketing_consent_state (
 );
 `;
 
+const CONSENT_EVIDENCE_COLUMNS = [
+  "purpose",
+  "consent_text_version",
+  "policy_version",
+  "locale",
+  "action_type",
+  "evidence_reference",
+  "evidence_hash",
+];
+
+const CONSENT_LEDGER_GUARDS = `
+CREATE TRIGGER IF NOT EXISTS consent_decision_grant_insert
+BEFORE INSERT ON marketing_consent_decisions
+WHEN NEW.consent_status = 'GRANTED' OR NEW.explicit_grant = 1 OR NEW.consent_verified = 1
+BEGIN
+  SELECT RAISE(ABORT, 'GRANT_REFUSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_decision_grant_update
+BEFORE UPDATE ON marketing_consent_decisions
+WHEN NEW.consent_status = 'GRANTED' OR NEW.explicit_grant = 1 OR NEW.consent_verified = 1
+BEGIN
+  SELECT RAISE(ABORT, 'GRANT_REFUSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_state_grant_insert
+BEFORE INSERT ON marketing_consent_state
+WHEN NEW.consent_status = 'GRANTED' OR NEW.explicit_grant = 1 OR NEW.consent_verified = 1
+BEGIN
+  SELECT RAISE(ABORT, 'GRANT_REFUSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_state_grant_update
+BEFORE UPDATE ON marketing_consent_state
+WHEN NEW.consent_status = 'GRANTED' OR NEW.explicit_grant = 1 OR NEW.consent_verified = 1
+BEGIN
+  SELECT RAISE(ABORT, 'GRANT_REFUSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_decision_append_update
+BEFORE UPDATE ON marketing_consent_decisions
+BEGIN
+  SELECT RAISE(ABORT, 'HISTORY_IMMUTABLE');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_decision_append_delete
+BEFORE DELETE ON marketing_consent_decisions
+BEGIN
+  SELECT RAISE(ABORT, 'HISTORY_IMMUTABLE');
+END;
+CREATE TABLE IF NOT EXISTS marketing_consent_audit (
+  audit_sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_type TEXT NOT NULL,
+  customer_id TEXT NOT NULL,
+  channel TEXT NOT NULL,
+  decision_sequence INTEGER,
+  decision_id TEXT,
+  result_code TEXT NOT NULL,
+  evidence_hash TEXT,
+  idempotency_key TEXT,
+  created_at TEXT NOT NULL
+);
+CREATE TRIGGER IF NOT EXISTS consent_audit_insert_closed
+BEFORE INSERT ON marketing_consent_audit
+BEGIN
+  SELECT RAISE(ABORT, 'AUDIT_WRITE_CLOSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_audit_update_closed
+BEFORE UPDATE ON marketing_consent_audit
+BEGIN
+  SELECT RAISE(ABORT, 'AUDIT_WRITE_CLOSED');
+END;
+CREATE TRIGGER IF NOT EXISTS consent_audit_delete_closed
+BEFORE DELETE ON marketing_consent_audit
+BEGIN
+  SELECT RAISE(ABORT, 'AUDIT_WRITE_CLOSED');
+END;
+`;
+
+function addConsentEvidenceColumns(externalDb) {
+  for (const table of ["marketing_consent_decisions", "marketing_consent_state"]) {
+    const present = new Set(externalDb.prepare(`PRAGMA table_info(${table})`).all().map((row) => row.name));
+    for (const column of CONSENT_EVIDENCE_COLUMNS) {
+      if (present.has(column)) continue;
+      externalDb.exec(`ALTER TABLE ${table} ADD COLUMN ${column} TEXT`);
+    }
+  }
+}
+
 function isEphemeralConsentPath(candidate) {
   const resolved = path.resolve(candidate);
   const roots = [path.resolve("/tmp"), path.resolve("/var/tmp"), path.resolve("/private/tmp"), path.resolve(os.tmpdir())];
@@ -4323,6 +4407,8 @@ function migrateMarketingConsentLedger(externalDb, options = {}) {
   if (!name) throw refusal("DATA_PATH_REFUSED");
   assertConsentLedgerPath(name, options);
   externalDb.exec(CONSENT_LEDGER_SCHEMA);
+  externalDb.exec(CONSENT_LEDGER_GUARDS);
+  addConsentEvidenceColumns(externalDb);
   return { ok: true, applied: true, productionReady: false, target: "isolated" };
 }
 
@@ -4445,6 +4531,7 @@ module.exports = {
   getDatabaseHealth,
   getPersistenceInfo: publicPersistence,
   CONSENT_LEDGER_SCHEMA,
+  CONSENT_EVIDENCE_COLUMNS,
   assertConsentLedgerPath,
   migrateMarketingConsentLedger,
 };

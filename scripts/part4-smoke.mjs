@@ -122,13 +122,25 @@ async function main() {
       if (!res.ok || !Array.isArray(body.jobs)) throw new Error(`status ${res.status}`);
     });
 
-    await test("POST /api/admin/control-center/jobs enqueue", async () => {
+    await test("POST /api/admin/control-center/jobs waits for approval", async () => {
+      const { res, body } = await fetchJson("/api/admin/control-center/jobs", {
+        method: "POST",
+        headers: auth,
+        body: JSON.stringify({ jobType: "SYSTEM_HEALTH", priority: "LOW", payload: { test: true } }),
+      });
+      if (res.status !== 202 || body.pendingApproval !== true || body.job) {
+        throw new Error(`status ${res.status}`);
+      }
+      if (!body.approval?.id) throw new Error("missing approval");
+    });
+
+    await test("POST /api/admin/control-center/jobs rejects an unknown type", async () => {
       const { res, body } = await fetchJson("/api/admin/control-center/jobs", {
         method: "POST",
         headers: auth,
         body: JSON.stringify({ jobType: "part4_smoke_test", priority: "LOW", payload: { test: true } }),
       });
-      if (res.status !== 201 || !body.job?.id) throw new Error(`status ${res.status}`);
+      if (res.status !== 400 || body.code !== "JOB_TYPE_REJECTED") throw new Error(`status ${res.status}`);
     });
 
     await test("Security health includes rateLimitBackend", async () => {

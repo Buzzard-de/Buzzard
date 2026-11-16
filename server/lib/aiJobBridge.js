@@ -77,12 +77,20 @@ async function runAiJobSafely(job) {
 }
 
 function enqueueAiTaskAsJob(taskId, { priority, createdBy } = {}) {
-  const jobQueue = require("./jobQueue");
-  return jobQueue.enqueueJob({
-    jobType: "AI_TASK",
-    payload: { taskId },
-    priority,
-    createdBy,
+  const { admitBackgroundJob, productionDeps, JOB_SOURCES } = require("./controlCenterJobAdmission");
+  if (typeof taskId !== "string" || taskId.length === 0) {
+    return { ok: false, status: 400, code: "TASK_ID_REQUIRED", job: null };
+  }
+  return admitBackgroundJob({
+    body: {
+      jobType: "AI_TASK",
+      payload: { bridgeTaskId: taskId, dryRun: true },
+      priority,
+    },
+    actor: createdBy || "ai_bridge",
+    source: JOB_SOURCES.AI_BRIDGE,
+    deps: productionDeps(),
+    resourceId: taskId,
   });
 }
 

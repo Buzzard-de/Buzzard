@@ -17,16 +17,22 @@ describe("jobScheduler", () => {
     expect(schedule.enabled).toBe(true);
   });
 
-  it("tickScheduler enqueues due jobs", () => {
-    jobScheduler.createSchedule({
+  it("tickScheduler admits a due job and does not queue it", () => {
+    const before = jobQueue.countJobsByStatus().QUEUED || 0;
+    const schedule = jobScheduler.createSchedule({
       name: "due-test",
       jobType: "NOTIFICATION",
       scheduleType: jobScheduler.SCHEDULE_TYPE.ONE_TIME,
       nextRunAt: new Date(Date.now() - 5000).toISOString(),
+      createdBy: "synthetic-scheduler@example.test",
     });
-    const enqueued = jobScheduler.tickScheduler();
-    expect(enqueued.length).toBeGreaterThan(0);
-    expect(enqueued[0].jobType).toBe("NOTIFICATION");
+    const admitted = jobScheduler.tickScheduler();
+    const mine = admitted.find((row) => row.approval?.resourceId === schedule.id);
+    expect(mine?.pendingApproval).toBe(true);
+    expect(mine?.job).toBeNull();
+    expect(mine?.approval.metadata.origin).toBe("scheduler");
+    expect(mine?.approval.metadata.spec.jobType).toBe("NOTIFICATION");
+    expect(jobQueue.countJobsByStatus().QUEUED || 0).toBe(before);
   });
 
   it("recurring schedule computes next run", () => {

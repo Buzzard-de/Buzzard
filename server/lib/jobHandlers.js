@@ -14,6 +14,7 @@ const productValidation = require("./pim/productValidation");
 const productCore = require("./pim/productCore");
 const supplierMapping = require("./pim/supplierMapping");
 const { assertJobPayloadEgress } = require("./jobEgressGate");
+const { preHandlerDecision } = require("./controlCenterJobAdmission");
 
 async function handleProductSync(job) {
   return productSync.runPipeline(job.payload || {});
@@ -63,10 +64,21 @@ async function handleAiTask(job) {
 }
 
 async function handleNotification(job) {
+  const { decideNotification, callProvider } = require("./notificationAdmission");
+  const payload = job.payload || {};
+  const decision = decideNotification({
+    eventType: payload.eventType || payload.noticeType,
+    channel: payload.channel || "email",
+  });
   return {
     delivered: false,
-    channel: job.payload?.channel || "internal",
-    note: "Notification foundation — not sent in Part 5",
+    sent: false,
+    executed: false,
+    dryRun: true,
+    providerCalled: false,
+    provider: callProvider(),
+    code: decision.code,
+    channel: decision.channel,
   };
 }
 
@@ -76,13 +88,22 @@ async function handleSystemHealth(job) {
 }
 
 async function handleProductImport(job) {
-  const payload = job.payload || {};
-  return importPipeline.runPipeline(payload.raw || payload, {
-    dryRun: payload.dryRun !== false,
+  const payload = { ...(job.payload || {}), dryRun: true };
+  const result = await importPipeline.runPipeline(payload.raw || payload, {
+    dryRun: true,
     supplierId: payload.supplierId || "mock",
-    importJobId: payload.importJobId,
+    importJobId: job.id,
     actorId: job.createdBy,
+    coreJob: { ...job, payload },
+    getApproval: (id) => require("./controlCenter").getApproval(id),
   });
+  if (result && result.ok === false) {
+    const err = new Error(`JOB_APPROVAL_REQUIRED:${result.code}`);
+    err.code = result.code || "APPROVAL_REQUIRED";
+    err.failureKind = FAILURE_KIND.VALIDATION;
+    throw err;
+  }
+  return result;
 }
 
 async function handleProductValidate(job) {
@@ -181,6 +202,22 @@ function getHandler(jobType) {
 }
 
 async function executeJob(job) {
+  const decision = preHandlerDecision(
+    job,
+    (id) => require("./controlCenter").getApproval(id),
+    assertJobPayloadEgress
+  );
+  if (!decision.ok) {
+    const err = new Error(
+      decision.code === "JOB_EGRESS_DENIED"
+        ? `JOB_EGRESS_DENIED:${decision.egressCode || ""}`
+        : `JOB_APPROVAL_REQUIRED:${decision.code}`
+    );
+    err.code = decision.code;
+    err.failureKind = decision.code === "JOB_EGRESS_DENIED" ? FAILURE_KIND.NETWORK : FAILURE_KIND.VALIDATION;
+    if (decision.code === "JOB_EGRESS_DENIED") err.reachedNetwork = false;
+    throw err;
+  }
   const handler = getHandler(job.jobType);
   if (!handler) {
     const err = new Error(`No handler for job type: ${job.jobType}`);

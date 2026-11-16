@@ -26,11 +26,35 @@ function recordEvent(type, orderNumber, provider, status, payload = {}) {
 }
 
 function queueJob(type, orderNumber, payload = {}) {
+  const { admitPeripheralAutomation, peripheralDeps, PERIPHERAL_AUTOMATION_SOURCES } = require("./controlCenterJobAdmission");
+  const admitted = admitPeripheralAutomation({
+    source: PERIPHERAL_AUTOMATION_SOURCES.ORDER_AUTOMATION,
+    jobType: type,
+    actor: "order_automation",
+    subjectId: orderNumber,
+    deps: peripheralDeps(),
+  });
+  if (!admitted.ok) return admitted;
   const jobKey = `${type}:${orderNumber}`;
-  db.prepare(`
-    INSERT OR IGNORE INTO automation_jobs(job_key, type, order_number, payload, next_run_at)
-    VALUES(?,?,?,?, datetime('now'))
-  `).run(jobKey, type, orderNumber, JSON.stringify(payload));
+  const stored = JSON.stringify({
+    dryRun: true,
+    approvalId: admitted.approval.id,
+    jobId: admitted.jobId,
+    provider: payload.provider || null,
+    carrier: payload.carrier || null,
+  });
+  const inserted = db.prepare(`
+    INSERT OR IGNORE INTO automation_jobs(job_key, type, order_number, payload, status, next_run_at)
+    VALUES(?,?,?,?, 'APPROVAL_REQUIRED', NULL)
+  `).run(jobKey, type, orderNumber, stored);
+  if (inserted.changes === 0) {
+    db.prepare(`
+      UPDATE automation_jobs
+      SET status = 'APPROVAL_REQUIRED', next_run_at = NULL, last_error = 'APPROVAL_REQUIRED'
+      WHERE job_key = ? AND status = 'queued'
+    `).run(jobKey);
+  }
+  return admitted;
 }
 
 function ensureFlow(orderNumber) {
@@ -114,12 +138,35 @@ function recordSupplierResult({ orderNumber, supplier, status, supplierOrderId =
 function retryJob(id) {
   const job = db.prepare("SELECT * FROM automation_jobs WHERE id = ?").get(id);
   if (!job) return { ok: false, error: "Job not found", status: 404 };
+  const { assertPeripheralExecution, PERIPHERAL_AUTOMATION_SOURCES } = require("./controlCenterJobAdmission");
+  const controlCenter = require("./controlCenter");
+  let payload = {};
+  try {
+    payload = JSON.parse(job.payload || "{}");
+  } catch {
+    payload = {};
+  }
+  const approval = payload.approvalId ? controlCenter.getApproval(payload.approvalId) : null;
+  const gate = assertPeripheralExecution({
+    source: PERIPHERAL_AUTOMATION_SOURCES.ORDER_AUTOMATION,
+    jobType: job.type,
+    jobId: payload.jobId,
+    approval,
+  });
+  if (!gate.ok) {
+    db.prepare(`
+      UPDATE automation_jobs
+      SET status = 'refused', next_run_at = NULL, last_error = ?
+      WHERE id = ? AND status = 'queued'
+    `).run(gate.code, job.id);
+    return { ok: false, code: gate.code, executed: false, dryRun: true, status: 409 };
+  }
   db.prepare(`
     UPDATE automation_jobs
-    SET status = 'queued', attempts = attempts + 1, next_run_at = datetime('now'), last_error = NULL
+    SET status = 'dry_run', next_run_at = NULL, last_error = NULL
     WHERE id = ?
   `).run(job.id);
-  return { ok: true };
+  return { ok: true, executed: false, dryRun: true, status: "dry_run" };
 }
 
 function listJobs(limit = 200) {

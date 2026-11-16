@@ -90,21 +90,52 @@ function enqueueJob({
     priority: pri,
     maxRetries: maxRetries ?? DEFAULT_MAX_RETRIES,
     createdBy: createdBy || null,
+    dryRun: true,
   };
-  db.prepare(`
-    INSERT INTO core_background_jobs(
-      id, job_type, status, payload_json, retry_count, next_run_at, priority, schedule_id, idempotency_key, correlation_id, created_at
-    ) VALUES (?, ?, 'QUEUED', ?, 0, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-  `).run(
-    id,
-    jobType,
-    JSON.stringify(body),
-    nextRunAt || new Date().toISOString(),
-    pri,
-    scheduleId || null,
-    idempotencyKey ? require("./operations/jobIdempotency").hashKey(jobType, createdBy || "system", idempotencyKey) : null,
-    correlationId || null
-  );
+  const { evaluateRunnableInsert } = require("./controlCenterJobAdmission");
+  const controlCenter = require("./controlCenter");
+  const approval = body.approvalId ? controlCenter.getApproval(body.approvalId) : null;
+  const decision = evaluateRunnableInsert({ jobType, payload: body, approval });
+  if (!decision.ok) {
+    const err = new Error(decision.message);
+    err.code = decision.code;
+    throw err;
+  }
+  const insertRunnableJob = db.transaction(() => {
+    const current = controlCenter.getApproval(body.approvalId);
+    const again = evaluateRunnableInsert({ jobType, payload: body, approval: current });
+    if (!again.ok) {
+      const err = new Error(again.message);
+      err.code = again.code;
+      throw err;
+    }
+    db.prepare(`
+      INSERT INTO core_background_jobs(
+        id, job_type, status, payload_json, retry_count, next_run_at, priority, schedule_id, idempotency_key, correlation_id, created_at
+      ) VALUES (?, ?, 'QUEUED', ?, 0, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `).run(
+      id,
+      jobType,
+      JSON.stringify(body),
+      nextRunAt || new Date().toISOString(),
+      pri,
+      scheduleId || null,
+      idempotencyKey ? require("./operations/jobIdempotency").hashKey(jobType, createdBy || "system", idempotencyKey) : null,
+      correlationId || null
+    );
+    const meta = { ...(current.metadata || {}), jobId: id };
+    const updated = db.prepare(`
+      UPDATE core_approvals
+      SET metadata_json = ?
+      WHERE id = ? AND status = 'APPROVED' AND json_extract(metadata_json, '$.jobId') IS NULL
+    `).run(JSON.stringify(meta), current.id);
+    if (updated.changes !== 1) {
+      const err = new Error("This approval already released a job");
+      err.code = "APPROVAL_ALREADY_USED";
+      throw err;
+    }
+  });
+  insertRunnableJob();
 
   if (idempotencyKey) {
     const key = require("./operations/jobIdempotency").hashKey(jobType, createdBy || "system", idempotencyKey);
@@ -261,6 +292,14 @@ function retryJob(id) {
   if (!job) return null;
   if (![JOB_STATUS.FAILED, JOB_STATUS.DEAD_LETTER, JOB_STATUS.RETRYING].includes(job.status)) {
     throw new Error(`Cannot retry job in status ${job.status}`);
+  }
+  const { assertApprovedForExecution } = require("./controlCenterJobAdmission");
+  const controlCenter = require("./controlCenter");
+  const gate = assertApprovedForExecution(job, (approvalId) => controlCenter.getApproval(approvalId));
+  if (!gate.ok) {
+    const err = new Error("The job cannot return to the queue without its approval");
+    err.code = gate.code;
+    throw err;
   }
   db.prepare(`
     UPDATE core_background_jobs SET

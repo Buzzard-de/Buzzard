@@ -369,12 +369,22 @@ function updateTaskStatus(id, status, { error, result, actorType } = {}) {
   return mapTaskRow(db.prepare("SELECT * FROM core_ai_tasks WHERE id = ?").get(id));
 }
 
-function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel }) {
+function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel, metadata } = {}, options = {}) {
   const id = newId("appr");
+  const trustedMetadata = options.trustMetadata === true && metadata && typeof metadata === "object" ? metadata : {};
   db.prepare(`
-    INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING')
-  `).run(id, taskId || null, resourceType || null, resourceId || null, aiRecommendation || "", reason || "", riskLevel || RISK_LEVEL.MEDIUM);
+    INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status, metadata_json)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)
+  `).run(
+    id,
+    taskId || null,
+    resourceType || null,
+    resourceId || null,
+    aiRecommendation || "",
+    reason || "",
+    riskLevel || RISK_LEVEL.MEDIUM,
+    JSON.stringify(trustedMetadata)
+  );
 
   if (taskId) {
     updateTaskStatus(taskId, TASK_STATUS.WAITING_APPROVAL);

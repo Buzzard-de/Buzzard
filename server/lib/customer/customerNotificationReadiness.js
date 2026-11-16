@@ -21,34 +21,35 @@ function getNotificationReadiness() {
     notificationEngine: hasEngine,
     templateEvents,
     smtpConfigured,
-    deliveryMode: smtpConfigured ? "smtp_ready" : "queued_demo",
+    deliveryMode: "dry_run_only",
     wiredToCheckout: true,
     wiredToReturns: true,
     realEmailSendWhileSalesOff: false,
+    providerCalls: false,
     autoInventTemplates: false,
   };
 }
 
 function emitCheckoutNotification(order, ctx = {}) {
-  if (!order?.id) return { ok: false, reason: "missing_order" };
+  if (!order?.id) return { ok: false, reason: "missing_order", sent: false, providerCalled: false, dryRun: true };
   try {
     const automationEngine = require("../automationEngine");
-    automationEngine.emit(
-      "order_confirmation",
+    const result = automationEngine.emit(
+      "new_order",
       {
-        orderId: order.id,
+        orderNumber: order.orderNumber || order.id,
         customerId: order.customerId,
-        orderType: order.orderType,
-        dryRun: order.metadata?.dryRun !== false,
-        testOnly: order.orderType !== "COMMERCIAL",
-        total: order.total,
         language: ctx.language || "de",
       },
-      { idempotencyKey: `order_notify_${order.id}` }
+      {
+        idempotencyKey: `order_notify_${order.id}`,
+        isolate: ctx.isolate === true,
+        transaction: ctx.transaction,
+      }
     );
-    return { ok: true, queued: true };
+    return { ...result, queued: false, sent: false, providerCalled: false, dryRun: true };
   } catch (err) {
-    return { ok: false, reason: err.message };
+    return { ok: false, reason: err.message, sent: false, providerCalled: false, dryRun: true };
   }
 }
 

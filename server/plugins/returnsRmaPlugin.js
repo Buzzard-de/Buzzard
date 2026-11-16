@@ -86,7 +86,16 @@ module.exports = {
             customerId: session.customerId,
             testOnly: true,
           },
-          { idempotencyKey: `return_${result.return?.rma_number}` }
+          {
+            idempotencyKey: `return_${result.return?.rma_number}`,
+            transaction: {
+              trusted: true,
+              verified: true,
+              orderNumber: body.orderNumber || body.order_number,
+              source: "returns_rma",
+              status: "requested",
+            },
+          }
         );
       } catch {
         /* non-blocking */

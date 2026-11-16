@@ -262,7 +262,7 @@ try {
   if (process.env.NODE_ENV === "production") process.exit(1);
 }
 
-if (process.env.BUZZARD_WORKER_ENABLED !== "0") {
+if (process.env.BUZZARD_WORKER_ENABLED === "1") {
   const jobWorker = require("./lib/jobWorker");
   const jobScheduler = require("./lib/jobScheduler");
   jobWorker.setupGracefulShutdown();

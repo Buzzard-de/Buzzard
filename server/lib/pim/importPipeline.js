@@ -19,7 +19,29 @@ function logStage(importJobId, productId, stage, status, detail) {
   `).run(stageId(), importJobId, productId, stage, status, JSON.stringify(detail || {}));
 }
 
-async function runPipeline(raw, { dryRun = true, supplierId = "mock", importJobId, actorId, useStaging = true } = {}) {
+async function runPipeline(raw, options = {}) {
+  const { assertPipelineStart } = require("../controlCenterJobAdmission");
+  const gate = assertPipelineStart({
+    coreJob: options.coreJob,
+    approval: options.approval,
+    getApproval: options.getApproval,
+  });
+  if (!gate.ok) {
+    return {
+      ok: false,
+      executed: false,
+      dryRun: true,
+      code: gate.code,
+      stages: [],
+      product: null,
+      importJobId: null,
+    };
+  }
+  const dryRun = true;
+  const supplierId = options.supplierId || "mock";
+  const importJobId = options.importJobId;
+  const actorId = options.actorId;
+  const useStaging = options.useStaging !== false;
   const stages = [];
   const importId = importJobId || `imp_${Date.now()}`;
 

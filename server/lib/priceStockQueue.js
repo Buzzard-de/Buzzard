@@ -109,10 +109,12 @@ function enqueueJob(job) {
   const queue = readJson(queueFile, []);
   const row = {
     id: nextId("psq", queue),
-    status: "queued",
     attempts: 0,
     created_at: new Date().toISOString(),
     ...job,
+    status: "APPROVAL_REQUIRED",
+    dryRun: true,
+    executed: false,
   };
   queue.unshift(row);
   writeJson(queueFile, queue.slice(0, 2000));
@@ -129,38 +131,88 @@ function listAudit(limit = 100) {
   return readJson(auditFile, []).slice(0, limit);
 }
 
-function processNextJob(processor) {
+function processNextJob() {
+  const { assertPeripheralExecution, PERIPHERAL_AUTOMATION_SOURCES } = require("./controlCenterJobAdmission");
+  const controlCenter = require("./controlCenter");
   const queue = readJson(queueFile, []);
-  const idx = queue.findIndex((j) => j.status === "queued");
-  if (idx < 0) return { processed: false, reason: "queue_empty" };
-
+  const idx = queue.findIndex((job) => job.status === "queued" || job.status === "waiting_approval");
+  if (idx < 0) return { processed: false, reason: "queue_empty", executed: false };
   const job = queue[idx];
-  job.status = "processing";
-  job.attempts += 1;
-  writeJson(queueFile, queue);
-
-  try {
-    const result = processor(job);
-    job.status = result?.requiresApproval ? "waiting_approval" : "completed";
-    job.result = result;
-    job.finished_at = new Date().toISOString();
-    recordAudit({ type: job.job_type, product_id: job.product_id, job_id: job.id, result });
-  } catch (error) {
-    job.status = job.attempts >= 3 ? "failed" : "queued";
-    job.error = error.message;
-    recordAudit({ type: job.job_type, product_id: job.product_id, job_id: job.id, error: error.message });
+  const approval = job.approvalId ? controlCenter.getApproval(job.approvalId) : null;
+  const gate = assertPeripheralExecution({
+    source: PERIPHERAL_AUTOMATION_SOURCES.PRICE_STOCK,
+    jobType: job.job_type,
+    jobId: job.approvalJobId || null,
+    approval,
+  });
+  job.dryRun = true;
+  job.executed = false;
+  job.finished_at = new Date().toISOString();
+  if (!gate.ok) {
+    job.status = "refused";
+    job.error = gate.code;
+    queue[idx] = job;
+    writeJson(queueFile, queue);
+    return { processed: false, refused: true, executed: false, dryRun: true, code: gate.code, job };
   }
-
+  const consumed = job.approvalId ? require("./controlCenterJobAdmission").peripheralDeps().consumeApproval(job.approvalId) : false;
+  if (!consumed) {
+    job.status = "refused";
+    job.error = "APPROVAL_ALREADY_USED";
+    queue[idx] = job;
+    writeJson(queueFile, queue);
+    return { processed: false, refused: true, executed: false, dryRun: true, code: "APPROVAL_ALREADY_USED", job };
+  }
+  job.status = "dry_run";
+  job.error = null;
   queue[idx] = job;
   writeJson(queueFile, queue);
-  return { processed: true, job };
+  return { processed: true, executed: false, dryRun: true, job };
 }
 
-function applyPriceStockUpdate({ productId, supplierPrice, stock, supplier, previous = {} }) {
+function applyPriceStockUpdate({ productId, supplierPrice, stock, supplier, previous = {}, approval, approvalId, jobId, actor }) {
+  const { admitPeripheralAutomation, assertPeripheralExecution, peripheralDeps, PERIPHERAL_AUTOMATION_SOURCES } = require("./controlCenterJobAdmission");
+  let bound = approval || null;
+  if (!bound && approvalId) bound = require("./controlCenter").getApproval(approvalId);
+  if (!bound) {
+    const admitted = admitPeripheralAutomation({
+      source: PERIPHERAL_AUTOMATION_SOURCES.PRICE_STOCK,
+      jobType: "price_stock_apply",
+      actor: actor || "price_stock",
+      subjectId: productId == null ? null : String(productId),
+      deps: peripheralDeps(),
+    });
+    if (!admitted.ok) {
+      return { ok: false, code: admitted.code, applied: false, executed: false, dryRun: true, requiresApproval: true };
+    }
+    return {
+      ok: true,
+      pendingApproval: true,
+      requiresApproval: true,
+      applied: false,
+      executed: false,
+      dryRun: true,
+      approval: admitted.approval,
+      job: null,
+      jobId: admitted.jobId,
+    };
+  }
+  const gate = assertPeripheralExecution({
+    source: PERIPHERAL_AUTOMATION_SOURCES.PRICE_STOCK,
+    jobType: "price_stock_apply",
+    jobId,
+    approval: bound,
+  });
+  if (!gate.ok) {
+    return { ok: false, code: gate.code, applied: false, executed: false, dryRun: true, requiresApproval: true };
+  }
+  const consumed = peripheralDeps().consumeApproval(bound.id);
+  if (!consumed) {
+    return { ok: false, code: "APPROVAL_ALREADY_USED", applied: false, executed: false, dryRun: true, requiresApproval: true };
+  }
   const priceCheck = validateIncomingPrice(supplierPrice);
   if (!priceCheck.ok) {
-    recordAudit({ type: "price_rejected", product_id: productId, error: priceCheck.error });
-    return { ok: false, error: priceCheck.error };
+    return { ok: false, error: priceCheck.error, applied: false, executed: false, dryRun: true };
   }
 
   const salePrice = calculateSalePrice({
@@ -180,42 +232,17 @@ function applyPriceStockUpdate({ productId, supplierPrice, stock, supplier, prev
     stock_status: stockInfo.stock_status,
   };
 
-  if (anomaly.requiresApproval) {
-    const job = enqueueJob({
-      job_type: "price_change_large",
-      product_id: productId,
-      payload: update,
-      change_percent: anomaly.changePercent,
-      status: "waiting_approval",
-    });
-    recordAudit({
-      type: "price_change_alert",
-      product_id: productId,
-      old_amount: previous.supplier_price?.amount,
-      new_amount: priceCheck.value.amount,
-      change_percent: anomaly.changePercent,
-      job_id: job.id,
-    });
-    notifyGuardianPriceAnomaly(productId, previous.supplier_price?.amount, priceCheck.value.amount).catch(
-      () => {}
-    );
-    return { ok: true, update, requiresApproval: true, job, anomaly };
-  }
-
-  if (previous.stock != null && stockInfo.stock !== previous.stock) {
-    notifyGuardianStockAnomaly(productId, previous.stock, stockInfo.stock).catch(() => {});
-  }
-
-  recordAudit({
-    type: "price_stock_applied",
-    product_id: productId,
-    supplier_price: priceCheck.value.amount,
-    sale_price: salePrice.amount,
-    stock: stockInfo.stock,
-    stock_status: stockInfo.stock_status,
-  });
-
-  return { ok: true, update, requiresApproval: false, anomaly, warnings: priceCheck.warning ? [priceCheck.warning] : [] };
+  return {
+    ok: true,
+    pendingApproval: false,
+    requiresApproval: false,
+    applied: false,
+    executed: false,
+    dryRun: true,
+    update,
+    anomaly,
+    warnings: priceCheck.warning ? [priceCheck.warning] : [],
+  };
 }
 
 module.exports = {

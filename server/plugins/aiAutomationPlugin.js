@@ -622,7 +622,6 @@ module.exports = {
         email: String(body.email).trim().toLowerCase(),
         lines: body.lines,
         locale: body.locale || "de",
-        marketingConsent: body.marketingConsent !== false,
         unsubscribed: Boolean(body.unsubscribed),
         status: "open",
         updatedAt: new Date().toISOString(),
@@ -633,22 +632,28 @@ module.exports = {
       writeCarts(next);
 
       const delayHours = Number(process.env.BUZZARD_ABANDONED_CART_DELAY_HOURS || 24);
-      const shouldNotify = !existing || Date.now() - new Date(existing.updatedAt).getTime() > delayHours * 3600 * 1000;
-      if (shouldNotify) {
-        automationEngine.emit(
+      const shouldHold = !existing || Date.now() - new Date(existing.updatedAt).getTime() > delayHours * 3600 * 1000;
+      const notice = shouldHold
+        ? automationEngine.emit(
           "abandoned_cart",
           {
             email: entry.email,
             cartId: entry.id,
             language: entry.locale,
-            marketingConsent: entry.marketingConsent,
             unsubscribed: entry.unsubscribed,
           },
           { idempotencyKey: entry.id }
-        );
-      }
+        )
+        : null;
 
-      return res.json({ success: true, cartId: entry.id, notified: shouldNotify });
+      return res.json({
+        success: true,
+        cartId: entry.id,
+        notified: false,
+        sent: false,
+        dryRun: true,
+        notice: notice ? { code: notice.code, sent: false, dryRun: true, providerCalled: false } : null,
+      });
     });
 
     app.get("/api/admin/automation/events", (req, res) => {

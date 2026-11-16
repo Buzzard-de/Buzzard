@@ -117,83 +117,56 @@ function renderTemplate(eventType, locale, payload) {
   };
 }
 
-function requiresMarketingConsent(eventType) {
-  return new Set(["abandoned_cart", "review_request"]).has(eventType);
-}
-
-function canSend(payload, eventType) {
-  if (requiresMarketingConsent(eventType) && payload.marketingConsent === false) {
-    return { ok: false, reason: "marketing_consent_required" };
-  }
-  if (payload.unsubscribed) {
-    return { ok: false, reason: "unsubscribed" };
-  }
-  if (!payload.email) {
-    return { ok: false, reason: "no_recipient" };
-  }
-  return { ok: true };
-}
-
 function queueNotification(entry) {
-  const queue = readQueue();
-  queue.push({ ...entry, queuedAt: new Date().toISOString() });
-  writeQueue(queue);
-  return entry;
-}
-
-function dispatchEmail(entry) {
-  const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
-  if (!smtpConfigured) {
-    return { channel: "email", status: "queued_demo", demo: true };
-  }
-  return { channel: "email", status: "queued", smtp: true };
-}
-
-function handleAutomationEvent(event) {
-  const { type, payload = {} } = event;
-  const consentCheck = canSend(payload, type);
-  if (!consentCheck.ok) {
-    return { sent: false, reason: consentCheck.reason };
-  }
-
-  const locale = resolveLocale(payload.language || payload.locale || "de");
-  const rendered = renderTemplate(type, locale, payload);
-
-  const entry = {
-    id: event.id,
-    eventType: type,
-    channel: payload.channel || "email",
-    to: payload.email,
-    locale,
-    subject: rendered.subject,
-    body: rendered.body,
-    orderNumber: payload.orderNumber || null,
+  return {
+    ...entry,
+    queued: false,
+    sent: false,
+    executed: false,
+    dryRun: true,
+    providerCalled: false,
+    status: "held",
   };
+}
 
-  queueNotification(entry);
-  const dispatch = dispatchEmail(entry);
+function dispatchEmail() {
+  const { callProvider } = require("./notificationAdmission");
+  const provider = callProvider();
+  return { channel: "email", status: "held", smtp: false, demo: false, ...provider, providerCalled: false };
+}
 
-  if (type === "order_delivered" && payload.orderNumber && !payload.skipReview) {
-    setTimeout(() => {
-      try {
-        const automationEngine = require("./automationEngine");
-        automationEngine.emit(
-          "review_request",
-          {
-            email: payload.email,
-            orderNumber: payload.orderNumber,
-            language: locale,
-            marketingConsent: payload.marketingConsent,
-          },
-          { idempotencyKey: `review:${payload.orderNumber}` }
-        );
-      } catch {
-        /* ignore circular init during tests */
-      }
-    }, 0);
-  }
+function handleAutomationEvent(event, options = {}) {
+  const { decideNotification } = require("./notificationAdmission");
+  const payload = event?.payload || {};
+  const decision = decideNotification({
+    eventType: event?.type,
+    channel: options.channel || payload.channel || "email",
+    consent: options.consent,
+    transaction: options.transaction,
+    operational: options.operational,
+    approval: options.approval,
+    jobId: options.jobId,
+    aiInitiated: options.aiInitiated,
+  });
+  const locale = resolveLocale(payload.language || payload.locale || "de");
+  const rendered = decision.ok ? renderTemplate(event.type, locale, payload) : null;
+  return {
+    ...decision,
+    sent: false,
+    providerCalled: false,
+    dispatch: dispatchEmail(),
+    template: rendered?.subject || null,
+  };
+}
 
-  return { sent: true, ...dispatch, template: rendered.subject };
+function retryNotification(notice, options = {}) {
+  const { retryNotification: retry } = require("./notificationAdmission");
+  return retry(notice, options);
+}
+
+function scheduleNotification(notice, options = {}) {
+  const { scheduleNotification: schedule } = require("./notificationAdmission");
+  return schedule(notice, options);
 }
 
 function listNotifications(limit = 100) {
@@ -202,8 +175,11 @@ function listNotifications(limit = 100) {
 
 module.exports = {
   handleAutomationEvent,
+  retryNotification,
+  scheduleNotification,
   renderTemplate,
   listNotifications,
   queueNotification,
+  dispatchEmail,
   TEMPLATES,
 };

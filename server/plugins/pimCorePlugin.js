@@ -19,7 +19,13 @@ const productAudit = require("../lib/pim/productAudit");
 const qualityScore = require("../lib/pim/qualityScore");
 const bulkOperations = require("../lib/pim/bulkOperations");
 const productAiFoundation = require("../lib/pim/productAiFoundation");
-const jobQueue = require("../lib/jobQueue");
+const facadeAuth = require("../core/auth");
+const {
+  JOB_SOURCES,
+  admitBackgroundJob,
+  enforceControlCenterJobAccess,
+  productionDeps,
+} = require("../lib/controlCenterJobAdmission");
 const { JOB_TYPES_PIM } = require("../core/productConstants");
 
 function attachAdmin(req, res) {
@@ -149,51 +155,75 @@ module.exports = {
     });
 
     app.post("/api/admin/pim-core/import", async (req, res) => {
-      if (!attachAdmin(req, res)) return;
-      if (!requirePerm(req, res, "imports.run")) return;
-      const dryRun = req.body?.dryRun !== false;
+      if (!enforceControlCenterJobAccess({
+        requireAuth: facadeAuth.requireAuth,
+        requirePermission: facadeAuth.requirePermission,
+        req,
+        res,
+        permission: "imports.run",
+      })) return;
       try {
-        adminSafetyGate.requireAdminAction(dryRun ? "import" : "import_live", { req, body: req.body, dryRun });
+        adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: true });
       } catch (err) {
         return res.status(403).json({ success: false, error: err.code, message: err.message, details: err.details });
       }
-      const result = await importPipeline.runPipeline(req.body?.raw || req.body || {}, {
-        dryRun,
-        supplierId: req.body?.supplierId,
-        actorId: req.adminUser.email,
+      const { admitPeripheralAutomation, peripheralDeps, PERIPHERAL_AUTOMATION_SOURCES } = require("../lib/controlCenterJobAdmission");
+      const admitted = admitPeripheralAutomation({
+        source: PERIPHERAL_AUTOMATION_SOURCES.PIM_IMPORT,
+        jobType: "PRODUCT_IMPORT",
+        actor: req.adminUser?.email || "pim_import",
+        subjectId: req.body?.supplierId || "mock",
+        deps: peripheralDeps(),
       });
-      operationsAudit.recordFromRequest(req, {
-        action: AUDIT_ACTIONS.PRODUCT_IMPORT,
-        resource: "import",
-        resourceId: result.importJobId,
-        result: dryRun ? "dry_run" : "success",
-        metadata: { dryRun, stages: result.stages?.length },
-      });
-      if (!dryRun) {
-        logAuditFromRequest(req, { action: "pim.import", entityType: "import", entityId: result.importJobId });
+      if (!admitted.ok) {
+        return res.status(admitted.status).json({ success: false, code: admitted.code, message: admitted.message, executed: false, dryRun: true });
       }
-      res.json({ success: true, ...result });
+      res.status(202).json({
+        success: true,
+        pendingApproval: true,
+        executed: false,
+        dryRun: true,
+        approval: admitted.approval,
+        job: null,
+      });
     });
 
     app.post("/api/admin/pim-core/import/enqueue", (req, res) => {
-      if (!attachAdmin(req, res)) return;
-      if (!requirePerm(req, res, "imports.run")) return;
+      if (!enforceControlCenterJobAccess({
+        requireAuth: facadeAuth.requireAuth,
+        requirePermission: facadeAuth.requirePermission,
+        req,
+        res,
+        permission: "imports.run",
+      })) return;
       try {
-        adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: req.body?.dryRun !== false });
+        adminSafetyGate.requireAdminAction("import", { req, body: req.body, dryRun: true });
       } catch (err) {
         return res.status(403).json({ success: false, error: err.code, message: err.message });
       }
-      const job = jobQueue.enqueueJob({
-        jobType: JOB_TYPES_PIM.PRODUCT_IMPORT,
-        payload: { raw: req.body?.raw || req.body, dryRun: req.body?.dryRun !== false },
-        createdBy: req.adminUser.email,
-        idempotencyKey: req.body?.idempotencyKey || req.headers["idempotency-key"],
-        correlationId: req.correlationId,
-      });
-      if (job.duplicate) {
-        return res.status(200).json({ success: true, duplicate: true, ...job });
+      const payload = { dryRun: true };
+      if (req.body?.raw && typeof req.body.raw === "object" && !Array.isArray(req.body.raw)) {
+        payload.raw = req.body.raw;
       }
-      res.status(201).json({ success: true, job });
+      const result = admitBackgroundJob({
+        body: {
+          jobType: JOB_TYPES_PIM.PRODUCT_IMPORT,
+          payload,
+        },
+        actor: req.adminUser?.email,
+        source: JOB_SOURCES.PIM_IMPORT,
+        deps: productionDeps(),
+      });
+      if (!result.ok) {
+        return res.status(result.status).json({ success: false, code: result.code, message: result.message });
+      }
+      res.status(202).json({
+        success: true,
+        pendingApproval: true,
+        approval: result.approval,
+        task: result.task,
+        job: null,
+      });
     });
 
     app.get("/api/admin/pim-core/search", (req, res) => {

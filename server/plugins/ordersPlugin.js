@@ -384,10 +384,18 @@ module.exports = {
           email: order.customer.email,
           customerId: order.customerId,
           language: body.language || "de",
-          marketingConsent: body.marketingConsent !== false,
           total: quote.total,
         };
-        automationEngine.emit("new_order", automationPayload, { idempotencyKey: orderNumber });
+        automationEngine.emit("new_order", automationPayload, {
+          idempotencyKey: orderNumber,
+          transaction: {
+            trusted: true,
+            verified: true,
+            orderNumber,
+            source: "orders_plugin",
+            status: "created",
+          },
+        });
         automationEngine.emit("payment_confirmed", automationPayload, { idempotencyKey: `pay:${orderNumber}` });
       } catch {
         /* automation is non-blocking */

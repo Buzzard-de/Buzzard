@@ -103,12 +103,12 @@ module.exports = {
         stock,
         supplier,
         previous: product,
+        actor: req.adminUser?.email,
+        approvalId: req.body?.approvalId,
+        jobId: req.body?.jobId,
       });
-      if (!result.ok) return res.status(400).json({ success: false, ...result });
-      if (!result.requiresApproval) {
-        productStore.upsertProduct({ ...product, ...result.update });
-      }
-      return res.json({ success: true, ...result });
+      if (!result.ok) return res.status(result.status || 409).json({ success: false, applied: false, dryRun: true, ...result });
+      return res.status(result.pendingApproval ? 202 : 200).json({ success: true, applied: false, dryRun: true, ...result });
     });
 
     app.get("/api/admin/p1/ai/reviews", (req, res) => {

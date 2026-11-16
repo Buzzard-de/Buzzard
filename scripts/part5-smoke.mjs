@@ -70,7 +70,8 @@ async function main() {
       headers: auth,
       body: JSON.stringify({ jobType: "SYSTEM_HEALTH", priority: "LOW" }),
     });
-    if (res.status !== 201 || !body.job?.id) throw new Error(`status ${res.status}`);
+    if (res.status !== 202 || body.pendingApproval !== true || body.job) throw new Error(`status ${res.status}`);
+    if (!body.approval?.id) throw new Error("missing approval");
   });
 
   await test("POST sync/product dry run", async () => {
@@ -79,7 +80,8 @@ async function main() {
       headers: auth,
       body: JSON.stringify({ dryRun: true }),
     });
-    if (res.status !== 201 || !body.job?.id) throw new Error(`status ${res.status}`);
+    if (res.status !== 202 || body.pendingApproval !== true || body.job) throw new Error(`status ${res.status}`);
+    if (!body.approval?.id) throw new Error("missing approval");
   });
 
   await test("GET /api/admin/automation/schedules", async () => {

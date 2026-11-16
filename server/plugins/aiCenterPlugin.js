@@ -27,6 +27,13 @@ function requireAnyAdmin(req, res) {
   return null;
 }
 
+function sendAiResult(res, result) {
+  if (result.error) return res.status(result.status || 400).json({ error: result.error, providerCalled: false, executed: false, dryRun: true });
+  if (result.pendingApproval) return res.status(202).json(result);
+  if (result.code === "CLARIFICATION_REQUIRED") return res.status(409).json(result);
+  return res.status(200).json(result);
+}
+
 module.exports = {
   register(app) {
     if (!aiCenter.isEnabled()) {
@@ -47,40 +54,30 @@ module.exports = {
 
     app.post("/api/ai-center/chat", (req, res) => {
       try {
-        const result = aiCenter.chat(req.body || {});
-        if (result.error) return res.status(result.status || 400).json({ error: result.error });
-        return res.json(result);
+        return sendAiResult(res, aiCenter.chat(req.body || {}));
       } catch {
         return res.status(500).json({ error: "AI adapter error" });
       }
     });
 
     app.post("/api/ai-center/recommend", (req, res) => {
-      return res.json(aiCenter.recommend(req.body || {}));
+      return sendAiResult(res, aiCenter.recommend(req.body || {}));
     });
 
     app.post("/api/ai-center/product-copy", (req, res) => {
-      const result = aiCenter.generateProductCopy(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return sendAiResult(res, aiCenter.generateProductCopy(req.body || {}));
     });
 
     app.post("/api/ai-center/translate", (req, res) => {
-      const result = aiCenter.translate(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return sendAiResult(res, aiCenter.translate(req.body || {}));
     });
 
     app.post("/api/ai-center/review-sentiment", (req, res) => {
-      const result = aiCenter.analyzeReviewSentiment(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return sendAiResult(res, aiCenter.analyzeReviewSentiment(req.body || {}));
     });
 
     app.post("/api/ai-center/smart-search", (req, res) => {
-      const result = aiCenter.smartSearch(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.json(result);
+      return sendAiResult(res, aiCenter.smartSearch(req.body || {}));
     });
 
     app.post("/api/ai-center/jobs/:id/retry", (req, res) => {

@@ -3,7 +3,6 @@
  */
 const crypto = require("crypto");
 const { db } = require("./db");
-const jobQueue = require("./jobQueue");
 const { SCHEDULE_TYPE, JOB_PRIORITY } = require("../core/jobConstants");
 
 function newId() {
@@ -119,19 +118,47 @@ function tickScheduler(now = new Date()) {
     ORDER BY next_run_at ASC LIMIT 10
   `).all(now.toISOString());
 
-  const enqueued = [];
+  const { admitBackgroundJob, productionDeps, JOB_SOURCES } = require("./controlCenterJobAdmission");
+  const deps = productionDeps();
+  const admitted = [];
   for (const row of due) {
     const schedule = mapRow(row);
-    const job = jobQueue.enqueueJob({
-      jobType: schedule.jobType,
-      payload: { ...schedule.payload, scheduleName: schedule.name },
-      priority: schedule.priority,
-      maxRetries: schedule.maxRetries,
+    const pending = db.prepare(`
+      SELECT id FROM core_approvals
+      WHERE status = 'PENDING' AND resource_type = 'background_job' AND resource_id = ?
+    `).get(schedule.id);
+    if (pending) {
+      admitted.push({ pendingApproval: true, duplicate: true, approval: { id: pending.id }, job: null });
+      continue;
+    }
+    const result = admitBackgroundJob({
+      body: {
+        jobType: schedule.jobType,
+        payload: schedule.payload || {},
+        priority: schedule.priority,
+        maxRetries: schedule.maxRetries,
+      },
+      actor: schedule.createdBy || "scheduler",
+      source: JOB_SOURCES.SCHEDULER,
+      deps,
+      resourceId: schedule.id,
       scheduleId: schedule.id,
-      createdBy: schedule.createdBy,
     });
-    enqueued.push(job);
-
+    admitted.push(result);
+    if (!result.ok && schedule.scheduleType !== SCHEDULE_TYPE.ONE_TIME) {
+      const next = computeNextRun(schedule, now);
+      db.prepare(`
+        UPDATE core_scheduled_jobs SET next_run_at = ?, last_run_at = ?, run_count = run_count + 1,
+        updated_at = CURRENT_TIMESTAMP WHERE id = ?
+      `).run(next, now.toISOString(), schedule.id);
+      continue;
+    }
+    if (!result.ok) {
+      db.prepare(`
+        UPDATE core_scheduled_jobs SET enabled = 0, last_run_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
+      `).run(now.toISOString(), schedule.id);
+      continue;
+    }
     if (schedule.scheduleType === SCHEDULE_TYPE.ONE_TIME) {
       db.prepare(`
         UPDATE core_scheduled_jobs SET enabled = 0, last_run_at = ?, run_count = run_count + 1,
@@ -145,7 +172,7 @@ function tickScheduler(now = new Date()) {
       `).run(next, now.toISOString(), schedule.id);
     }
   }
-  return enqueued;
+  return admitted;
 }
 
 module.exports = {

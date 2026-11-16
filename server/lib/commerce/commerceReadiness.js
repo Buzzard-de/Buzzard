@@ -189,7 +189,7 @@ function getCommerceHealth() {
 
   let workerStatus = "unknown";
   try {
-    workerStatus = process.env.BUZZARD_WORKER_ENABLED === "0" ? "disabled" : "enabled";
+    workerStatus = process.env.BUZZARD_WORKER_ENABLED === "1" ? "enabled" : "disabled";
   } catch {
     workerStatus = "unknown";
   }

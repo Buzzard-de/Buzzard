@@ -55,7 +55,7 @@ function getWorkerHealth() {
       .prepare("SELECT COUNT(*) n FROM core_background_jobs WHERE status IN ('DEAD_LETTER','dead_letter')")
       .get().n;
     return {
-      enabled: process.env.BUZZARD_WORKER_ENABLED !== "0",
+      enabled: process.env.BUZZARD_WORKER_ENABLED === "1",
       status: state.status,
       workerId: state.workerId,
       jobsProcessed: state.jobsProcessed,

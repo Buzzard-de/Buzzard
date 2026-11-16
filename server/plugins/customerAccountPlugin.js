@@ -75,9 +75,17 @@ module.exports = {
             email: result.customer.email,
             customerId: result.customer.id,
             language: req.body.language || "de",
-            marketingConsent: Boolean(req.body.marketing),
           },
-          { idempotencyKey: result.customer.id }
+          {
+            idempotencyKey: result.customer.id,
+            transaction: {
+              trusted: true,
+              verified: true,
+              customerId: result.customer.id,
+              source: "customer_account",
+              status: "registered",
+            },
+          }
         );
       } catch {
         /* non-blocking */

@@ -130,9 +130,17 @@ module.exports = {
               email: order?.customer?.email,
               shipmentId: shipment.id,
               language: "de",
-              marketingConsent: true,
             },
-            { idempotencyKey: `delivered:${shipment.id}` }
+            {
+              idempotencyKey: `delivered:${shipment.id}`,
+              transaction: {
+                trusted: true,
+                verified: true,
+                orderNumber: shipment.orderNumber,
+                source: "logistics_plugin",
+                status: "delivered",
+              },
+            }
           );
         } catch {
           /* non-blocking */
@@ -188,7 +196,16 @@ module.exports = {
               returnId: entry.id,
               language: "de",
             },
-            { idempotencyKey: `refund:${entry.id}` }
+            {
+              idempotencyKey: `refund:${entry.id}`,
+              transaction: {
+                trusted: true,
+                verified: true,
+                orderNumber: entry.orderNumber,
+                source: "logistics_plugin",
+                status: "refunded",
+              },
+            }
           );
         } catch {
           /* non-blocking */
@@ -239,7 +256,16 @@ module.exports = {
             returnId: entry.id,
             language: "de",
           },
-          { idempotencyKey: entry.id }
+          {
+            idempotencyKey: entry.id,
+            transaction: {
+              trusted: true,
+              verified: true,
+              orderNumber: order.orderNumber,
+              source: "logistics_plugin",
+              status: "requested",
+            },
+          }
         );
       } catch {
         /* non-blocking */

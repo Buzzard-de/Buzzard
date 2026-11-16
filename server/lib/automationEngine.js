@@ -83,47 +83,90 @@ function markDelivered(idempotencyKey, eventId) {
 }
 
 function emit(eventType, payload = {}, options = {}) {
+  const admission = require("./notificationAdmission");
   if (!EVENT_TYPES.has(eventType)) {
-    return { ok: false, error: "unknown_event_type" };
+    return {
+      ok: false,
+      error: "unknown_event_type",
+      code: "UNKNOWN_EVENT",
+      sent: false,
+      executed: false,
+      dryRun: true,
+      providerCalled: false,
+    };
   }
 
-  const idempotencyKey = buildIdempotencyKey(eventType, payload, options.idempotencyKey);
-  if (wasDelivered(idempotencyKey) && options.idempotent !== false) {
-    return { ok: true, duplicate: true, idempotencyKey };
+  const channel = options.channel || payload.channel || "email";
+  let decision = admission.decideNotification({
+    eventType,
+    channel,
+    consent: options.consent,
+    transaction: options.transaction,
+    operational: options.operational,
+    approval: options.approval,
+    jobId: options.jobId,
+    aiInitiated: options.origin === "ai" || options.ai === true,
+  });
+  const shouldHold = decision.kind === "operational" && decision.code === "APPROVAL_REQUIRED" && (options.deps || options.bindApproval === true);
+  if (shouldHold && options.isolate === true && options.deps) {
+    decision = admission.holdOperationalNotice({
+      eventType,
+      channel,
+      operational: options.operational,
+      actor: options.actor || (options.origin === "ai" ? "ai_notification" : "automation_engine"),
+      subjectId: options.subjectId || payload.supplierId || payload.productId || null,
+      deps: options.deps,
+      aiInitiated: options.origin === "ai" || options.ai === true,
+      jobId: options.jobId,
+      approval: options.approval,
+    });
+  } else if (shouldHold && options.isolate !== true) {
+    const deps = options.deps || require("./controlCenterJobAdmission").peripheralDeps();
+    decision = admission.holdOperationalNotice({
+      eventType,
+      channel,
+      operational: options.operational,
+      actor: options.actor || (options.origin === "ai" ? "ai_notification" : "automation_engine"),
+      subjectId: options.subjectId || payload.supplierId || payload.productId || null,
+      deps,
+      aiInitiated: options.origin === "ai" || options.ai === true,
+      jobId: options.jobId,
+      approval: options.approval,
+    });
   }
 
   const event = {
     id: crypto.randomUUID(),
     type: eventType,
-    payload,
-    idempotencyKey,
+    idempotencyKey: buildIdempotencyKey(eventType, payload, options.idempotencyKey),
     createdAt: new Date().toISOString(),
-    status: "pending",
+    status: decision.pendingApproval ? "approval_required" : decision.ok ? "dry_run" : "refused",
+    code: decision.code,
+    kind: decision.kind,
+    channel: decision.channel,
+    dryRun: true,
+    sent: false,
+    executed: false,
+    providerCalled: false,
   };
-
-  const events = readEvents();
-  events.push(event);
-  writeEvents(events.slice(-2000));
-
-  try {
-    const notificationResult = notificationEngine.handleAutomationEvent(event);
-    event.status = "processed";
-    event.processedAt = new Date().toISOString();
-    event.notification = notificationResult;
-    markDelivered(idempotencyKey, event.id);
-  } catch (err) {
-    event.status = "failed";
-    event.error = String(err.message || err);
+  if (options.isolate === true) {
+    if (typeof options.record === "function") options.record(event);
+  } else {
+    const events = readEvents();
+    events.push(event);
+    writeEvents(events.slice(-2000));
   }
 
-  const updated = readEvents();
-  const idx = updated.findIndex((e) => e.id === event.id);
-  if (idx >= 0) {
-    updated[idx] = event;
-    writeEvents(updated.slice(-2000));
-  }
-
-  return { ok: true, event, duplicate: false };
+  return {
+    ok: Boolean(decision.ok || decision.pendingApproval),
+    duplicate: false,
+    event,
+    ...decision,
+    sent: false,
+    executed: false,
+    dryRun: true,
+    providerCalled: false,
+  };
 }
 
 function listEvents(filters = {}) {

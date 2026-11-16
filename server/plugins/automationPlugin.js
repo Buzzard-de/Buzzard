@@ -1,5 +1,12 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
+const facadeAuth = require("../core/auth");
+const {
+  JOB_SOURCES,
+  admitBackgroundJob,
+  enforceControlCenterJobAccess,
+  productionDeps,
+} = require("../lib/controlCenterJobAdmission");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const jobQueue = require("../lib/jobQueue");
 const jobWorker = require("../lib/jobWorker");
@@ -54,7 +61,12 @@ module.exports = {
       if (!requirePerm(req, res, "system.configure")) return;
       const action = req.params.action;
       let state;
-      if (action === "start") state = jobWorker.startWorker();
+      if (action === "start") {
+        state = jobWorker.startWorker();
+        if (state?.code === "WORKER_DISABLED") {
+          return res.status(403).json({ success: false, code: state.code, worker: state });
+        }
+      }
       else if (action === "pause") state = jobWorker.pauseWorker();
       else if (action === "resume") state = jobWorker.resumeWorker();
       else if (action === "stop") state = jobWorker.stopWorker();
@@ -121,20 +133,38 @@ module.exports = {
     });
 
     app.post("/api/admin/automation/jobs", (req, res) => {
-      if (!attachAdmin(req, res)) return;
-      if (!requirePerm(req, res, "system.configure")) return;
-      const job = jobQueue.enqueueJob({
-        jobType: req.body?.jobType || JOB_TYPES.SYSTEM_HEALTH,
-        payload: req.body?.payload || {},
-        priority: req.body?.priority,
-        createdBy: req.adminUser.email,
-      });
-      logAuditFromRequest(req, {
-        action: "job.enqueue",
-        entityType: "background_job",
-        entityId: job.id,
-      });
-      res.status(201).json({ success: true, job });
+      if (!enforceControlCenterJobAccess({
+        requireAuth: facadeAuth.requireAuth,
+        requirePermission: facadeAuth.requirePermission,
+        req,
+        res,
+      })) return;
+      try {
+        const result = admitBackgroundJob({
+          body: req.body,
+          actor: req.adminUser?.email,
+          source: JOB_SOURCES.AUTOMATION,
+          deps: productionDeps(),
+        });
+        if (!result.ok) {
+          return res.status(result.status).json({ success: false, code: result.code, message: result.message });
+        }
+        logAuditFromRequest(req, {
+          action: "job.admission",
+          entityType: "approval",
+          entityId: result.approval.id,
+          newValue: result.spec.jobType,
+        });
+        res.status(202).json({
+          success: true,
+          pendingApproval: true,
+          approval: result.approval,
+          task: result.task,
+          job: null,
+        });
+      } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+      }
     });
 
     app.get("/api/admin/automation/schedules", (req, res) => {
@@ -186,8 +216,13 @@ module.exports = {
     });
 
     app.post("/api/admin/automation/sync/:kind", (req, res) => {
-      if (!attachAdmin(req, res)) return;
-      if (!requirePerm(req, res, "sync.run")) return;
+      if (!enforceControlCenterJobAccess({
+        requireAuth: facadeAuth.requireAuth,
+        requirePermission: facadeAuth.requirePermission,
+        req,
+        res,
+        permission: "sync.run",
+      })) return;
       const kind = req.params.kind;
       const typeMap = {
         product: JOB_TYPES.PRODUCT_SYNC,
@@ -197,18 +232,36 @@ module.exports = {
       };
       const jobType = typeMap[kind];
       if (!jobType) return res.status(400).json({ success: false, errorKey: "sync.invalidKind" });
-      const job = jobQueue.enqueueJob({
-        jobType,
-        payload: { ...(req.body || {}), dryRun: true },
-        priority: req.body?.priority || "NORMAL",
-        createdBy: req.adminUser.email,
-      });
-      logAuditFromRequest(req, {
-        action: `sync.${kind}.enqueue`,
-        entityType: "background_job",
-        entityId: job.id,
-      });
-      res.status(201).json({ success: true, job });
+      try {
+        const result = admitBackgroundJob({
+          body: {
+            jobType,
+            payload: { ...(req.body || {}), dryRun: true },
+            priority: req.body?.priority || "NORMAL",
+          },
+          actor: req.adminUser?.email,
+          source: JOB_SOURCES.AUTOMATION_SYNC,
+          deps: productionDeps(),
+        });
+        if (!result.ok) {
+          return res.status(result.status).json({ success: false, code: result.code, message: result.message });
+        }
+        logAuditFromRequest(req, {
+          action: `sync.${kind}.admission`,
+          entityType: "approval",
+          entityId: result.approval.id,
+          newValue: jobType,
+        });
+        res.status(202).json({
+          success: true,
+          pendingApproval: true,
+          approval: result.approval,
+          task: result.task,
+          job: null,
+        });
+      } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+      }
     });
 
     app.get("/api/admin/automation/readiness/:categoryId", async (req, res) => {

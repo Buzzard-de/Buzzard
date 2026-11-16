@@ -46,9 +46,10 @@ describe("egress hardening without policy change", () => {
     expect(local.ok).toBe(true);
     await expect(
       executeJob({ id: "job_test", jobType: "part4_smoke_test", payload: { destinationUrl: "https://api.stripe.com/v1" } }),
-    ).rejects.toMatchObject({ code: "JOB_EGRESS_DENIED" });
-    const ok = await executeJob({ id: "job_ok", jobType: "part4_smoke_test", payload: { sku: "local" } });
-    expect(ok).toEqual({ ok: true });
+    ).rejects.toMatchObject({ code: "JOB_EXECUTION_REFUSED" });
+    await expect(
+      executeJob({ id: "job_ok", jobType: "part4_smoke_test", payload: { sku: "local", dryRun: true } }),
+    ).rejects.toMatchObject({ code: "APPROVAL_REQUIRED" });
   });
 
   it("subprocess inventory does not treat git/nvidia-smi as network; npm/pip blocked at runtime", () => {

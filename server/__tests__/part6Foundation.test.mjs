@@ -71,8 +71,10 @@ describe("importPipeline", () => {
       { sku: `DRY-${crypto.randomBytes(4).toString("hex")}`, title: "Dry Import", ean: "4006381333934" },
       { dryRun: true }
     );
+    expect(result.executed).toBe(false);
     expect(result.dryRun).toBe(true);
-    expect(result.stages.some((s) => s.stage === "validation")).toBe(true);
+    expect(result.code).toBe("APPROVAL_REQUIRED");
+    expect(result.stages).toEqual([]);
   });
 });
 

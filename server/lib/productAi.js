@@ -1,10 +1,9 @@
-/** Product AI enrichment + human review queue (P1-08). Demo adapter — no invented EANs/specs. */
+/** Product AI enrichment + human review queue (P1-08). Authority gate, no provider call. */
 
 const fs = require("fs");
 const path = require("path");
-const aiCenter = require("./aiCenter");
 const productValidator = require("./productValidator");
-const { fetchOrchestrator, isOrchestratorConfigured } = require("./orchestratorBridge");
+const { screenProductAi, holdCommercialAiAction } = require("./aiCenterAuthority");
 
 const reviewFile = path.join(__dirname, "..", "data", "ai-review-queue.json");
 
@@ -57,66 +56,43 @@ function updateReview(id, patch) {
   return queue[idx];
 }
 
-async function enrichProduct(input, options = {}) {
-  const language = options.language || "de";
-  const locales = options.locales || ["de", "en", "tr", "ar"];
-
-  const copy = aiCenter.aiAdapter({
-    task: "product_copy",
-    input: `${input.name || ""}\n${input.description || input.short_description || ""}`,
-    language,
+async function enrichProduct(input = {}, options = {}) {
+  const decision = screenProductAi({
+    name: input.name,
+    description: input.description || input.short_description,
+    action: input.action || options.action,
+    surface: "product_ai",
   });
-
-  const translations = {};
-  for (const locale of locales) {
-    if (locale === language) continue;
-    const translated = aiCenter.aiAdapter({ task: "translate", input: copy.description || input.description, language: locale });
-    translations[locale] = {
-      name: input.name,
-      short_description: translated.text?.slice(0, 240) || input.short_description,
-      description: translated.text || input.description,
-      source: "ai_demo",
-      confidence: 0.5,
-    };
-  }
-
-  const eanCheck = input.ean_gtin ? productValidator.validateEan(input.ean_gtin) : { ok: true, warning: "missing_ean" };
-
-  const result = {
-    title: copy.title || input.name,
-    description: copy.description || input.description,
-    i18n: { [language]: { name: input.name, description: copy.description }, ...translations },
-    ai_source: copy.provider || "adapter",
-    ai_confidence: 0.55,
-    demo: copy.demo === true,
-    warnings: [],
-  };
-
-  if (!eanCheck.ok) result.warnings.push(eanCheck.error);
-  if (eanCheck.warning) result.warnings.push(eanCheck.warning);
-
-  if (options.submitForReview !== false) {
-    enqueueReview({
-      type: "product_enrichment",
-      product_id: input.id || input.sku,
-      payload: result,
-      source: result.ai_source,
-      confidence: result.ai_confidence,
+  if (decision.commercial) {
+    const deps = options.deps || require("./controlCenterJobAdmission").peripheralDeps();
+    return holdCommercialAiAction({
+      surface: "product_ai",
+      text: decision.query,
+      action: input.action || options.action,
+      actor: "product_ai",
+      subjectId: input.id || input.sku || null,
+      deps,
     });
   }
-
-  if (isOrchestratorConfigured()) {
-    fetchOrchestrator("/tasks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        task_type: "product_enrichment",
-        payload: { product_id: input.id || input.sku, demo: true },
-        priority: "normal",
-      }),
-    }).catch(() => {});
-  }
-
+  const eanCheck = input.ean_gtin ? productValidator.validateEan(input.ean_gtin) : { ok: true, warning: "missing_ean" };
+  const result = {
+    ...decision,
+    title: input.name || null,
+    description: input.description || input.short_description || null,
+    i18n: {},
+    providerCalled: false,
+    executed: false,
+    dryRun: true,
+    demo: true,
+    orderStarted: false,
+    paymentStarted: false,
+    cancelStarted: false,
+    refundStarted: false,
+    purchaseStarted: false,
+    warnings: ["PROVIDER_DISABLED"],
+  };
+  if (!eanCheck.ok) result.warnings.push(eanCheck.error);
+  if (eanCheck.warning) result.warnings.push(eanCheck.warning);
   return result;
 }
 

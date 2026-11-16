@@ -13,6 +13,7 @@ const {
   DEFAULT_MAX_RETRIES,
   FAILURE_KIND,
 } = require("../core/jobConstants");
+const { NON_RETRYABLE_JOB_CODES } = require("./controlCenterJobAdmission");
 
 const WORKER_ID = `worker_${crypto.randomBytes(4).toString("hex")}`;
 let pollTimer = null;
@@ -114,6 +115,12 @@ async function processOneJob() {
 
     appendJobLog(job.id, err.message, { level: "ERROR", metadata: { failureKind, retry } });
 
+    if (NON_RETRYABLE_JOB_CODES.has(err.code)) {
+      jobQueue.markDeadLetter(job.id, err.message, FAILURE_KIND.VALIDATION);
+      jobQueue.updateJob(job.id, { executionMs });
+      return true;
+    }
+
     if (retry < maxRetries) {
       const delayMs = computeRetryDelay(retry);
       const nextRun = new Date(Date.now() + delayMs).toISOString();
@@ -146,6 +153,9 @@ async function tick() {
 }
 
 function startWorker({ pollIntervalMs = 3000 } = {}) {
+  if (process.env.BUZZARD_WORKER_ENABLED !== "1") {
+    return { status: WORKER_STATE.STOPPED, started: false, code: "WORKER_DISABLED", workerId: null, jobsProcessed: 0 };
+  }
   if (pollTimer) return getWorkerState();
   shuttingDown = false;
   setWorkerState({

@@ -92,7 +92,21 @@ function getSessionByToken(token) {
 
 function chat(body = {}) {
   const text = clean(body.message);
-  if (!text) return { error: "Message required", status: 400 };
+  const { decideAiAction } = require("./aiCenterAuthority");
+  const preview = decideAiAction({ surface: "support", text, action: body.action });
+  if (!text && !preview.commercial) return { error: "Message required", status: 400, providerCalled: false, executed: false, dryRun: true };
+  if (preview.commercial) {
+    const { holdCommercialAiAction } = require("./aiCenterAuthority");
+    const { peripheralDeps } = require("./controlCenterJobAdmission");
+    return holdCommercialAiAction({
+      surface: "support",
+      text,
+      action: body.action,
+      actor: "ai_center_support",
+      subjectId: body.orderNumber || body.order_number || null,
+      deps: peripheralDeps(),
+    });
+  }
 
   let session = body.sessionToken
     ? db.prepare("SELECT * FROM aictr_sessions WHERE session_token = ?").get(body.sessionToken)
@@ -109,13 +123,11 @@ function chat(body = {}) {
     VALUES(?,?,?,?)
   `).run(session.id, "user", intent, text);
 
-  const output = aiAdapter({ task: "support", input: text, language: session.language });
   db.prepare(`
     INSERT INTO aictr_messages(session_id, role, intent, content, model, prompt_version)
     VALUES(?,?,?,?,?,?)
-  `).run(session.id, "assistant", intent, output.answer, output.provider, "v1");
+  `).run(session.id, "assistant", intent, preview.answer, "none", "v1");
 
-  const handoff = output.needsHuman ? 1 : 0;
   db.prepare(`
     INSERT INTO aictr_audit(session_id, customer_id, action, intent, risk_level, human_handoff, metadata_json)
     VALUES(?,?,?,?,?,?,?)
@@ -124,123 +136,187 @@ function chat(body = {}) {
     session.customer_id,
     "chat",
     intent,
-    handoff ? "medium" : "low",
-    handoff,
-    JSON.stringify({ provider: output.provider })
+    "low",
+    0,
+    JSON.stringify({ providerCalled: false })
   );
 
   return {
+    ...preview,
     sessionToken: session.session_token,
     intent,
-    answer: output.answer,
-    humanHandoff: Boolean(handoff),
-    provider: output.provider,
+    humanHandoff: false,
   };
 }
 
 function recommend(body = {}) {
   const text = clean(body.query || body.context);
-  const output = aiAdapter({ task: "search", input: text, language: body.language || "de" });
+  const { decideAiAction, holdCommercialAiAction } = require("./aiCenterAuthority");
+  const decision = decideAiAction({ surface: "recommend", text, action: body.action });
+  if (!text && !decision.commercial) {
+    return { error: "Query required", status: 400, providerCalled: false, executed: false, dryRun: true };
+  }
+  if (decision.commercial) {
+    const { peripheralDeps } = require("./controlCenterJobAdmission");
+    return holdCommercialAiAction({
+      surface: "recommend",
+      text,
+      action: body.action,
+      actor: "ai_center_recommend",
+      subjectId: body.productId || body.product_id || null,
+      deps: peripheralDeps(),
+    });
+  }
   return {
-    intent: output.intent,
-    query: output.normalized,
+    ...decision,
+    intent: "recommendation",
     recommendations: [],
-    note: "Connect product catalog/search service to return live ranked products.",
+    note: "Product suggestions stay informational. Stock purchase and order creation stay closed.",
+  };
+}
+
+function holdAiJob(jobType, entityType, entityId) {
+  const crypto = require("crypto");
+  const { admitPeripheralAutomation, peripheralDeps, PERIPHERAL_AUTOMATION_SOURCES } = require("./controlCenterJobAdmission");
+  const admitted = admitPeripheralAutomation({
+    source: PERIPHERAL_AUTOMATION_SOURCES.AI_CENTER,
+    jobType,
+    actor: "ai_center",
+    subjectId: entityId || null,
+    deps: peripheralDeps(),
+  });
+  if (!admitted.ok) {
+    return { error: admitted.message, code: admitted.code, status: admitted.status, executed: false, dryRun: true };
+  }
+  const digest = crypto.createHash("sha256").update(`${jobType}:${entityId || ""}`).digest("hex").slice(0, 16);
+  const result = db.prepare(`
+    INSERT INTO aictr_jobs(
+      job_type, entity_type, entity_id, input_json, output_json, status, model
+    ) VALUES(?,?,?,?,NULL,'APPROVAL_REQUIRED','held')
+  `).run(
+    jobType,
+    entityType,
+    entityId || "",
+    JSON.stringify({ digest, dryRun: true, approvalId: admitted.approval.id, jobId: admitted.jobId })
+  );
+  return {
+    ok: true,
+    executed: false,
+    dryRun: true,
+    pendingApproval: true,
+    status: 202,
+    jobId: result.lastInsertRowid,
+    approval: admitted.approval,
+  };
+}
+
+function decideContent(text, action, surface) {
+  const { decideAiAction } = require("./aiCenterAuthority");
+  return decideAiAction({ surface, text, action });
+}
+
+function contentGate(surface, text, action, actor, subjectId, deps) {
+  const { decideAiAction, holdCommercialAiAction } = require("./aiCenterAuthority");
+  const decision = decideAiAction({ surface, text, action });
+  if (decision.commercial) {
+    const resolved = deps || require("./controlCenterJobAdmission").peripheralDeps();
+    return holdCommercialAiAction({
+      surface,
+      text,
+      action,
+      actor,
+      subjectId,
+      deps: resolved,
+    });
+  }
+  if (!decision.ok) return decision;
+  return null;
+}
+
+function withCommerceFlags(result) {
+  return {
+    ...result,
+    providerCalled: false,
+    executed: false,
+    dryRun: true,
+    orderStarted: false,
+    paymentStarted: false,
+    cancelStarted: false,
+    refundStarted: false,
+    purchaseStarted: false,
   };
 }
 
 function generateProductCopy(body = {}) {
-  if (!body.product) return { error: "Product data required", status: 400 };
-
-  const input = JSON.stringify(body.product);
-  const output = aiAdapter({ task: "product_copy", input, language: body.language || "de" });
-  const result = db
-    .prepare(`
-      INSERT INTO aictr_jobs(
-        job_type, entity_type, entity_id, input_json, output_json, status, model, completed_at
-      )
-      VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-    `)
-    .run(
-      "product_copy",
-      "product",
-      String(body.productSku || body.product_sku || ""),
-      input,
-      JSON.stringify(output),
-      "completed",
-      output.provider
-    );
-
-  return { jobId: result.lastInsertRowid, ...output };
+  if (!body.product) {
+    return { error: "Product data required", status: 400, providerCalled: false, executed: false, dryRun: true };
+  }
+  const text = typeof body.product === "string"
+    ? body.product
+    : [body.product.name, body.product.description, body.product.short_description].filter(Boolean).join(" ");
+  const gated = contentGate("product_copy", text, body.action, "ai_center_product_copy", body.productSku || body.product_sku || null, body.deps);
+  if (gated) return withCommerceFlags(gated);
+  if (body.deps) return withCommerceFlags(decideContent(text, body.action, "product_copy"));
+  return withCommerceFlags(holdAiJob("product_copy", "product", String(body.productSku || body.product_sku || "")));
 }
 
 function translate(body = {}) {
   if (!body.text || !body.targetLanguage) {
-    return { error: "Text and target language required", status: 400 };
+    return { error: "Text and target language required", status: 400, providerCalled: false, executed: false, dryRun: true };
   }
-
-  const output = aiAdapter({
-    task: "translate",
-    input: body.text,
-    language: body.targetLanguage,
-  });
-  const result = db
-    .prepare(`
-      INSERT INTO aictr_jobs(
-        job_type, entity_type, entity_id, input_json, output_json, status, model, completed_at
-      )
-      VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-    `)
-    .run(
-      "translation",
-      body.entityType || body.entity_type || "content",
-      String(body.entityId || body.entity_id || ""),
-      JSON.stringify(body),
-      JSON.stringify(output),
-      "completed",
-      output.provider
-    );
-
-  return { jobId: result.lastInsertRowid, ...output };
+  const gated = contentGate("translate", body.text, body.action, "ai_center_translate", body.entityId || body.entity_id || null, body.deps);
+  if (gated) return withCommerceFlags(gated);
+  if (body.deps) return withCommerceFlags(decideContent(body.text, body.action, "translate"));
+  return withCommerceFlags(holdAiJob(
+    "translation",
+    body.entityType || body.entity_type || "content",
+    String(body.entityId || body.entity_id || "")
+  ));
 }
 
 function analyzeReviewSentiment(body = {}) {
-  if (!body.review) return { error: "Review required", status: 400 };
-
-  const output = aiAdapter({ task: "sentiment", input: body.review });
-  const result = db
-    .prepare(`
-      INSERT INTO aictr_jobs(
-        job_type, entity_type, entity_id, input_json, output_json, status, model, completed_at
-      )
-      VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-    `)
-    .run(
-      "review_sentiment",
-      "review",
-      String(body.reviewId || body.review_id || ""),
-      JSON.stringify(body),
-      JSON.stringify(output),
-      "completed",
-      output.provider
-    );
-
-  return { jobId: result.lastInsertRowid, ...output };
+  if (!body.review) {
+    return { error: "Review required", status: 400, providerCalled: false, executed: false, dryRun: true };
+  }
+  const gated = contentGate("review_sentiment", body.review, body.action, "ai_center_review", body.reviewId || body.review_id || null, body.deps);
+  if (gated) return withCommerceFlags(gated);
+  if (body.deps) return withCommerceFlags(decideContent(body.review, body.action, "review_sentiment"));
+  return withCommerceFlags(holdAiJob("review_sentiment", "review", String(body.reviewId || body.review_id || "")));
 }
 
 function smartSearch(body = {}) {
-  if (!body.query) return { error: "Query required", status: 400 };
-
-  const output = aiAdapter({ task: "search", input: body.query, language: body.language || "de" });
-  return { ...output, filters: [], productIds: [] };
+  const text = clean(body.query);
+  const { decideAiAction, holdCommercialAiAction } = require("./aiCenterAuthority");
+  const decision = decideAiAction({ surface: "smart_search", text, action: body.action });
+  if (!text && !decision.commercial) {
+    return { error: "Query required", status: 400, providerCalled: false, executed: false, dryRun: true };
+  }
+  if (decision.commercial) {
+    const { peripheralDeps } = require("./controlCenterJobAdmission");
+    return holdCommercialAiAction({
+      surface: "smart_search",
+      text,
+      action: body.action,
+      actor: "ai_center_smart_search",
+      subjectId: body.productId || body.product_id || null,
+      deps: peripheralDeps(),
+    });
+  }
+  return {
+    ...decision,
+    intent: "product_info",
+    filters: Array.isArray(body.filters) ? body.filters.slice(0, 8) : [],
+    productIds: [],
+  };
 }
 
 function retryJob(jobId) {
   const job = db.prepare("SELECT * FROM aictr_jobs WHERE id = ?").get(jobId);
   if (!job) return { error: "AI job not found", status: 404 };
-
-  db.prepare("UPDATE aictr_jobs SET status = 'queued', completed_at = NULL WHERE id = ?").run(job.id);
-  return { ok: true, status: "queued" };
+  if (job.status === "queued" || job.status === "completed") {
+    db.prepare("UPDATE aictr_jobs SET status = 'refused', completed_at = NULL WHERE id = ?").run(job.id);
+  }
+  return { ok: false, code: "APPROVAL_REQUIRED", executed: false, dryRun: true, status: 409 };
 }
 
 function listJobs() {

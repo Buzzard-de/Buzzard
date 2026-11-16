@@ -100,7 +100,11 @@ function getTicketAdmin(ticketId) {
 }
 
 function replyTicketAdmin(adminUserId, ticketId, message) {
-  if (!message) return { error: "Message required", status: 400 };
+  const { evaluateSupportReply } = require("./notificationAdmission");
+  const guard = evaluateSupportReply(message);
+  if (!guard.ok) {
+    return { error: guard.code, code: guard.code, status: 409, executed: false, sent: false, dryRun: true, providerCalled: false, commercialAction: false };
+  }
   const ticket = db.prepare("SELECT * FROM tickets WHERE id = ?").get(ticketId);
   if (!ticket) return { error: "Ticket not found", status: 404 };
   db.prepare(
@@ -152,19 +156,51 @@ function createTrackingEvent(body = {}) {
 }
 
 function queueEmailNotification(body = {}) {
+  const { decideCustomerNotice, decideNotification } = require("./notificationAdmission");
   if (!body.userId || !body.subject || !body.body) {
-    return { error: "userId, subject and body required", status: 400 };
+    return { error: "userId, subject and body required", status: 400, sent: false, providerCalled: false, dryRun: true };
   }
-  notify(body.userId, "email", body.type || "general", body.subject, body.body);
-  return { queued: true, providerConfigured: Boolean(process.env.EMAIL_PROVIDER_URL) };
+  if (body.eventType) {
+    const decision = decideNotification({
+      eventType: body.eventType,
+      channel: body.channel || "email",
+    });
+    return { ...decision, error: decision.ok ? undefined : decision.code, status: decision.ok ? 202 : 409, queued: false };
+  }
+  const decision = decideCustomerNotice({ channel: "email", message: body.body });
+  if (!decision.ok) return { ...decision, error: decision.code, status: 409, queued: false };
+  return { ...decision, status: 202, queued: false, providerConfigured: false };
 }
 
-function queueWhatsAppNotification(body = {}) {
-  if (!body.userId || !body.body) {
-    return { error: "userId and body required", status: 400 };
-  }
-  notify(body.userId, "whatsapp", body.type || "general", "Buzzard WhatsApp", body.body);
-  return { queued: true, providerConfigured: Boolean(process.env.WHATSAPP_API_URL) };
+function queueSmsNotification(body = {}) {
+  const { decideNotification } = require("./notificationAdmission");
+  return {
+    ...decideNotification({ eventType: body.eventType, channel: "sms" }),
+    queued: false,
+    status: 409,
+  };
+}
+
+function queuePushNotification(body = {}) {
+  const { decideNotification } = require("./notificationAdmission");
+  return {
+    ...decideNotification({ eventType: body.eventType, channel: "push" }),
+    queued: false,
+    status: 409,
+  };
+}
+
+function queueWhatsAppNotification() {
+  return {
+    error: "WHATSAPP_CLOSED",
+    code: "WHATSAPP_CLOSED",
+    status: 403,
+    sent: false,
+    executed: false,
+    dryRun: true,
+    providerCalled: false,
+    queued: false,
+  };
 }
 
 function listSupportTemplates() {
@@ -201,6 +237,8 @@ module.exports = {
   updateTicketAdmin,
   createTrackingEvent,
   queueEmailNotification,
+  queueSmsNotification,
+  queuePushNotification,
   queueWhatsAppNotification,
   listSupportTemplates,
   getCustomerSupportStatus,

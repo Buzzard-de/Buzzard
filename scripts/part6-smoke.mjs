@@ -123,7 +123,8 @@ async function main() {
       headers: auth,
       body: JSON.stringify({ dryRun: true, raw: { sku: "BZ-JOB-DRY", title: "Job Dry" } }),
     });
-    if (res.status !== 201 || !body.job?.id) throw new Error(`status ${res.status}`);
+    if (res.status !== 202 || body.pendingApproval !== true || body.job) throw new Error(`status ${res.status}`);
+    if (!body.approval?.id) throw new Error("missing approval");
   });
 
   await test("Automation overview includes PIM job types", async () => {

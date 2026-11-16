@@ -1,5 +1,13 @@
 const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
+const facadeAuth = require("../core/auth");
+const {
+  admitControlCenterJob,
+  enforceControlCenterJobAccess,
+  planApprovalDecision,
+  productionDeps,
+  releaseApprovedControlCenterJob,
+} = require("../lib/controlCenterJobAdmission");
 const { logAuditFromRequest } = require("../lib/coreAudit");
 const controlCenter = require("../lib/controlCenter");
 const { enqueueTaskProcessing, resumeAfterApproval } = require("../lib/aiOrchestrator");
@@ -199,7 +207,19 @@ module.exports = {
         entityType: "approval",
         entityId: req.params.id,
       });
-      if (decision === "approve" && approval?.taskId) {
+      const plan = planApprovalDecision(approval, decision);
+      if (plan.action === "release_background_job") {
+        const released = releaseApprovedControlCenterJob({
+          approval,
+          actor: req.adminUser.email,
+          deps: productionDeps(),
+        });
+        if (!released.ok) {
+          return res.status(released.status).json({ success: false, code: released.code, message: released.message });
+        }
+        return res.json({ success: true, approval, job: released.job, pendingApproval: false });
+      }
+      if (plan.action === "resume_ai_task") {
         resumeAfterApproval(approval.taskId);
       }
       res.json({ success: true, approval });
@@ -245,23 +265,34 @@ module.exports = {
     });
 
     app.post("/api/admin/control-center/jobs", async (req, res) => {
-      if (!attachAdmin(req, res)) return;
-      if (!requirePerm(req, res, "system.configure")) return;
+      if (!enforceControlCenterJobAccess({
+        requireAuth: facadeAuth.requireAuth,
+        requirePermission: facadeAuth.requirePermission,
+        req,
+        res,
+      })) return;
       try {
-        const { enqueueJob } = require("../lib/jobQueue");
-        const job = enqueueJob({
-          jobType: req.body?.jobType || "manual",
-          payload: req.body?.payload || {},
-          priority: req.body?.priority || "NORMAL",
-          maxRetries: req.body?.maxRetries,
+        const result = admitControlCenterJob({
+          body: req.body,
+          actor: req.adminUser?.email,
+          deps: productionDeps(),
         });
+        if (!result.ok) {
+          return res.status(result.status).json({ success: false, code: result.code, message: result.message });
+        }
         logAuditFromRequest(req, {
-          action: "background_job.enqueue",
-          entityType: "background_job",
-          entityId: job.id,
-          newValue: job.jobType,
+          action: "background_job.admission",
+          entityType: "approval",
+          entityId: result.approval.id,
+          newValue: result.spec.jobType,
         });
-        res.status(201).json({ success: true, job });
+        res.status(202).json({
+          success: true,
+          pendingApproval: true,
+          approval: result.approval,
+          task: result.task,
+          job: null,
+        });
       } catch (error) {
         res.status(400).json({ success: false, message: error.message });
       }

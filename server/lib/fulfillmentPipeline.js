@@ -123,7 +123,19 @@ function createFulfillmentsForOrder(order, productsById, req = null) {
             orderNumber: order.orderNumber,
             error: submission.error || "Supplier submission failed",
           },
-          { idempotencyKey: `${order.orderNumber}:${supplierId}:fail` }
+          {
+            idempotencyKey: `${order.orderNumber}:${supplierId}:fail`,
+            actor: "fulfillment_pipeline",
+            subjectId: supplierId,
+            bindApproval: true,
+            operational: {
+              trusted: true,
+              verified: true,
+              source: "fulfillment_pipeline",
+              status: "failed",
+              subjectId: supplierId,
+            },
+          }
         );
       } catch {
         /* non-blocking */
@@ -175,7 +187,16 @@ function createFulfillmentsForOrder(order, productsById, req = null) {
             trackingNumber: submission.trackingNumber,
             language: "de",
           },
-          { idempotencyKey: `ship:${shipment.id}` }
+          {
+            idempotencyKey: `ship:${shipment.id}`,
+            transaction: {
+              trusted: true,
+              verified: true,
+              orderNumber: order.orderNumber,
+              source: "fulfillment_pipeline",
+              status: "shipped",
+            },
+          }
         );
       } catch {
         /* non-blocking */

@@ -9,7 +9,7 @@ const MOCK_CATALOG = [
     name: "Mock Bremsbelag Set Vorderachse",
     short_description: "Hochwertige Bremsbeläge für Testimport.",
     description: "Demo-Produkt aus Mock-Supplier. Kein echter Verkauf.",
-    supplier_category: "automotive/brakes",
+    supplier_category: "automotive/bremssystem",
     supplier_price: { amount: 24.5, currency: "EUR" },
     stock: 42,
     attributes: { material: "Keramik", position: "Vorderachse" },

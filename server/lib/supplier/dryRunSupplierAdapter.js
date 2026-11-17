@@ -15,9 +15,19 @@ const SAMPLE_PRODUCTS = [
     mpn: "P85073",
     brand: "ATE",
     name: "Bremsbelag Set Vorderachse",
-    supplier_category: "automotive/brakes",
-    supplier_price: { amount: 24.5, currency: "EUR" },
+    description: "Synthetic dry-run brake pad set for catalog review.",
+    supplier_category: "automotive/bremssystem",
+    supplier_price: { amount: 40, currency: "EUR" },
+    shipping_cost: 6,
+    marketplace_fee: 4,
+    payment_fee: 1.2,
+    return_reserve: 1,
+    other_cost: 0,
+    comparable_market_price: 90,
     stock: 12,
+    reserved_stock: 2,
+    stock_updated_at: new Date().toISOString(),
+    country: "DE",
     images: ["https://cdn.test-supplier.example.de/p85073.jpg"],
   },
 ];
@@ -70,13 +80,17 @@ class DryRunSupplierAdapter extends BaseSupplierAdapter {
 
   async fetchProductsDryRun(options = {}) {
     const limit = Math.min(Number(options.limit) || 10, 100);
+    const fetchedAt = new Date().toISOString();
     return {
       ok: true,
       dryRun: true,
       live: false,
-      records: SAMPLE_PRODUCTS.slice(0, limit),
+      records: SAMPLE_PRODUCTS.slice(0, limit).map((product) => ({
+        ...product,
+        stock_updated_at: fetchedAt,
+      })),
       total: SAMPLE_PRODUCTS.length,
-      fetchedAt: new Date().toISOString(),
+      fetchedAt,
     };
   }
 

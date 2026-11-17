@@ -208,13 +208,20 @@ describe("jobHandlers Part 6", () => {
   });
 
   it("handles PRODUCT_VALIDATE job", async () => {
-    const { executeJob } = require("../lib/jobHandlers.js");
+    const { executeJob, HANDLERS } = require("../lib/jobHandlers.js");
     const productCore = require("../lib/pim/productCore.js");
     const product = productCore.getProduct("pim_prod_demo001");
-    const result = await executeJob({
-      id: "test_job",
+    await expect(
+      executeJob({
+        id: "test_job",
+        jobType: "PRODUCT_VALIDATE",
+        payload: { product },
+      })
+    ).rejects.toMatchObject({ code: "JOB_EXECUTION_REFUSED" });
+    const result = await HANDLERS.PRODUCT_VALIDATE({
+      id: "test_job_dry",
       jobType: "PRODUCT_VALIDATE",
-      payload: { product },
+      payload: { product, dryRun: true },
     });
     expect(result.overall).toBeDefined();
   });

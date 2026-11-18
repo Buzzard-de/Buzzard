@@ -1,0 +1,31 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 19 tests using 1 worker
+
+  ✓   1 [chromium-tablet] › e2e/customer-journey.spec.ts:42:7 › Part 10 — Customer journey (commerce dry-run) › homepage loads (492ms)
+  ✓   2 [chromium-tablet] › e2e/customer-journey.spec.ts:48:7 › Part 10 — Customer journey (commerce dry-run) › warenkorb page loads (1.4s)
+  ✓   3 [chromium-tablet] › e2e/customer-journey.spec.ts:54:7 › Part 10 — Customer journey (commerce dry-run) › product → cart → checkout → READINESS_TEST success (1.8s)
+  -   4 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1280
+  -   5 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1440
+  -   6 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1920
+  ✓   7 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile320 (630ms)
+  ✓   8 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile360 (566ms)
+  ✓   9 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile375 (555ms)
+  ✓  10 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile390 (573ms)
+  ✓  11 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile414 (592ms)
+  ✓  12 [chromium-tablet] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — tablet768 (561ms)
+  ✓  13 [chromium-tablet] › e2e/device-regression.spec.ts:18:7 › Device regression — storefront › homepage: brand, search and navigation are present (363ms)
+  ✓  14 [chromium-tablet] › e2e/device-regression.spec.ts:33:7 › Device regression — storefront › categories: taxonomy page loads without inventing the fixture (2.1s)
+  ✓  15 [chromium-tablet] › e2e/device-regression.spec.ts:41:7 › Device regression — storefront › search: finds the synthetic shelf item by its real title (2.0s)
+  ✓  16 [chromium-tablet] › e2e/device-regression.spec.ts:51:7 › Device regression — storefront › product detail: shows the fixture without invented EAN/brand/category (2.5s)
+  ✓  17 [chromium-tablet] › e2e/device-regression.spec.ts:65:7 › Device regression — storefront › product → cart: add works; checkout stays inquiry-only while sales are locked (1.3s)
+  ✓  18 [chromium-tablet] › e2e/device-regression.spec.ts:88:7 › Device regression — storefront › admin entry: login page is reachable from the storefront host (302ms)
+  ✓  19 [chromium-tablet] › e2e/device-regression.spec.ts:97:7 › Device regression — storefront › public health of the catalog API is up (8ms)
+
+  3 skipped
+  16 passed (18.6s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.Z3Kslj
+EXIT=0

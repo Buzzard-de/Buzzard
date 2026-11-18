@@ -1,0 +1,33 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 20 tests using 1 worker
+
+(node:415992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium-mobile] › e2e/customer-journey.spec.ts:42:7 › Part 10 — Customer journey (commerce dry-run) › homepage loads (977ms)
+  ✓   2 [chromium-mobile] › e2e/customer-journey.spec.ts:48:7 › Part 10 — Customer journey (commerce dry-run) › warenkorb page loads (1.4s)
+  ✓   3 [chromium-mobile] › e2e/customer-journey.spec.ts:54:7 › Part 10 — Customer journey (commerce dry-run) › product → cart → checkout → READINESS_TEST success (1.9s)
+  -   4 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1280
+  -   5 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1440
+  -   6 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1920
+  ✓   7 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile320 (701ms)
+  ✓   8 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile360 (592ms)
+  ✓   9 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile375 (625ms)
+  ✓  10 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile390 (649ms)
+  ✓  11 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile414 (618ms)
+  ✓  12 [chromium-mobile] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — tablet768 (886ms)
+  ✓  13 [chromium-mobile] › e2e/device-regression.spec.ts:18:7 › Device regression — storefront › homepage: brand, search and navigation are present (3.6s)
+  ✓  14 [chromium-mobile] › e2e/device-regression.spec.ts:43:7 › Device regression — storefront › categories: taxonomy page loads without inventing the fixture (2.2s)
+  ✓  15 [chromium-mobile] › e2e/device-regression.spec.ts:51:7 › Device regression — storefront › search: finds the synthetic shelf item by its real title (2.4s)
+  ✓  16 [chromium-mobile] › e2e/device-regression.spec.ts:61:7 › Device regression — storefront › product detail: shows the fixture without invented EAN/brand/category (2.7s)
+  ✓  17 [chromium-mobile] › e2e/device-regression.spec.ts:75:7 › Device regression — storefront › product → cart: add works; checkout stays inquiry-only while sales are locked (1.9s)
+  ✓  18 [chromium-mobile] › e2e/device-regression.spec.ts:98:7 › Device regression — storefront › admin entry: login page is reachable from the storefront host (371ms)
+  ✓  19 [chromium-mobile] › e2e/device-regression.spec.ts:107:7 › Device regression — storefront › public health of the catalog API is up (7ms)
+  ✓  20 [chromium-mobile] › e2e/master-command-mobile-rtl.spec.ts:4:7 › mobile and Arabic landing › home and Arabic prefix stay usable on a phone viewport (3.2s)
+
+  3 skipped
+  17 passed (27.7s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.ODgpIq

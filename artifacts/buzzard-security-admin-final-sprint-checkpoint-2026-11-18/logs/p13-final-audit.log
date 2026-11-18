@@ -1,0 +1,28 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-api] API (limiter off) ready at http://127.0.0.1:3031
+Final audit → http://127.0.0.1:3031
+
+✓ SALES=0 enforced
+✓ Commercial checkout attempt blocked
+✓ Go-live lock active
+✓ Payment providers disabled (Stripe/PayPal flags)
+[security] {"id":"sec-1795021994839-tskjpp","timestamp":"2026-11-18T17:13:14.839Z","type":"supplier_order_blocked","severity":"CRITICAL","source":"api","success":false,"ip":null,"path":null,"userId":null,"email":null,"emailRef":null,"role":null,"resource":null,"status":"denied","detail":{"type":"supplier_order","reason":"supplier_order_disabled"}}
+✓ Commerce supplier order stub blocked
+[security] {"id":"sec-1795021994842-51y1mh","timestamp":"2026-11-18T17:13:14.842Z","type":"supplier_order_blocked","severity":"CRITICAL","source":"api","success":false,"ip":null,"path":null,"userId":null,"email":null,"emailRef":null,"role":null,"resource":null,"status":"denied","detail":{"type":"supplier_order","reason":"supplier_order_disabled"}}
+✓ Legacy fulfillment supplier path blocked
+✓ Price tampering rejected
+✓ Coupon tampering rejected
+✓ IDOR cart access denied
+✓ Admin route requires auth
+✓ Unified auth facade exists
+✓ Legacy cart has deprecation header
+✓ Catalog health reachable
+✓ 53 shop L1 categories in data
+✓ API health endpoint
+✓ Commerce health endpoint
+✓ Render blueprint documents SQLite persistence requirement
+✓ No hardcoded Stripe live keys in source
+
+Final audit: 18 passed, 0 failed, 0 skipped
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.39Xf4s
+EXIT=0

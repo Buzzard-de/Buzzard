@@ -1,0 +1,19 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-api] API (limiter off) ready at http://127.0.0.1:3031
+Part 3 security tests → http://127.0.0.1:3031
+
+✓ GET /api/security/health includes globalRbac
+✓ Admin route requires auth (401)
+✓ Admin login (administrator)
+✓ Read-only login
+✓ RBAC: admin can GET control-center status
+✓ GET /api/admin/sessions
+✓ AI blocked permission rejected
+✓ RBAC: read_only denied system.configure PUT (403)
+✓ Privilege: read_only cannot POST AI task assign
+✓ Bearer POST without CSRF succeeds (login path exempt)
+✓ IDOR: invalid session id rejected
+
+11/11 passed
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.I9snqv
+EXIT=0

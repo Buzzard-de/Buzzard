@@ -1,4 +1,4 @@
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/app/admin/layout.tsx work/app/admin/layout.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/app/admin/layout.tsx work/app/admin/layout.tsx
 --- ws-snapshot/app/admin/layout.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/app/admin/layout.tsx	2026-11-18 07:58:40.686752815 +0000
 @@ -3,6 +3,7 @@
@@ -20,7 +20,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      </AdminGuard>
    );
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/app/produkt/[slug]/page.tsx work/app/produkt/[slug]/page.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/app/produkt/[slug]/page.tsx work/app/produkt/[slug]/page.tsx
 --- ws-snapshot/app/produkt/[slug]/page.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/app/produkt/[slug]/page.tsx	2026-11-18 16:42:49.143065276 +0000
 @@ -10,14 +10,31 @@
@@ -57,7 +57,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    return buildProductMetadata(product);
  }
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminAiCenterPanel.tsx work/components/admin/AdminAiCenterPanel.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminAiCenterPanel.tsx work/components/admin/AdminAiCenterPanel.tsx
 --- ws-snapshot/components/admin/AdminAiCenterPanel.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminAiCenterPanel.tsx	2026-11-18 08:00:17.807336505 +0000
 @@ -2,6 +2,7 @@
@@ -104,7 +104,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          {answer && (
            <p className="admin-meta">
              <strong>Answer:</strong> {answer}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminAnalyticsHub.tsx work/components/admin/AdminAnalyticsHub.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminAnalyticsHub.tsx work/components/admin/AdminAnalyticsHub.tsx
 --- ws-snapshot/components/admin/AdminAnalyticsHub.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminAnalyticsHub.tsx	2026-11-18 08:38:26.617893205 +0000
 @@ -15,6 +15,7 @@
@@ -158,7 +158,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
            setSales(await fetchSalesAnalytics(range, from, to));
          }
        }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminCatalogSeoPanel.tsx work/components/admin/AdminCatalogSeoPanel.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminCatalogSeoPanel.tsx work/components/admin/AdminCatalogSeoPanel.tsx
 --- ws-snapshot/components/admin/AdminCatalogSeoPanel.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminCatalogSeoPanel.tsx	2026-11-18 11:48:13.167194814 +0000
 @@ -39,6 +39,7 @@
@@ -200,7 +200,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
        {status && (
          <div className="admin-stat-grid">
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminControlCenter.tsx work/components/admin/AdminControlCenter.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminControlCenter.tsx work/components/admin/AdminControlCenter.tsx
 --- ws-snapshot/components/admin/AdminControlCenter.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminControlCenter.tsx	2026-11-18 08:38:26.617893205 +0000
 @@ -44,6 +44,7 @@
@@ -521,7 +521,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
                >
                  Approve (does not enable sales)
                </button>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminDashboard.tsx work/components/admin/AdminDashboard.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminDashboard.tsx work/components/admin/AdminDashboard.tsx
 --- ws-snapshot/components/admin/AdminDashboard.tsx	2026-11-17 15:45:20.000000000 +0000
 +++ work/components/admin/AdminDashboard.tsx	2026-11-18 08:39:07.557597544 +0000
 @@ -2,6 +2,9 @@
@@ -564,7 +564,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
    const kpis = overview?.kpis;
    const showDemoFallback = !kpis;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminIdentitySecurityPanel.tsx work/components/admin/AdminIdentitySecurityPanel.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminIdentitySecurityPanel.tsx work/components/admin/AdminIdentitySecurityPanel.tsx
 --- ws-snapshot/components/admin/AdminIdentitySecurityPanel.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminIdentitySecurityPanel.tsx	2026-11-18 08:52:12.320193987 +0000
 @@ -3,14 +3,12 @@
@@ -634,7 +634,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        <section className="admin-card">
          <h2>Security architecture</h2>
          <ul className="admin-list">
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminLoginForm.tsx work/components/admin/AdminLoginForm.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminLoginForm.tsx work/components/admin/AdminLoginForm.tsx
 --- ws-snapshot/components/admin/AdminLoginForm.tsx	2026-11-17 19:50:52.000000000 +0000
 +++ work/components/admin/AdminLoginForm.tsx	2026-11-18 08:04:52.801215745 +0000
 @@ -9,7 +9,8 @@
@@ -667,7 +667,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          ) : null}
        </form>
      </div>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminPageAccess.tsx work/components/admin/AdminPageAccess.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminPageAccess.tsx work/components/admin/AdminPageAccess.tsx
 --- ws-snapshot/components/admin/AdminPageAccess.tsx	1970-01-01 00:00:00.000000000 +0000
 +++ work/components/admin/AdminPageAccess.tsx	2026-11-18 07:58:40.690752657 +0000
 @@ -0,0 +1,53 @@
@@ -724,7 +724,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    </div>
 +  );
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminPimCorePanel.tsx work/components/admin/AdminPimCorePanel.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminPimCorePanel.tsx work/components/admin/AdminPimCorePanel.tsx
 --- ws-snapshot/components/admin/AdminPimCorePanel.tsx	2026-11-17 19:26:33.000000000 +0000
 +++ work/components/admin/AdminPimCorePanel.tsx	2026-11-18 10:10:53.653322256 +0000
 @@ -13,8 +13,10 @@
@@ -946,7 +946,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
              <p>No mappings yet. Use import pipeline or API to create mappings.</p>
            ) : (
              <ul>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminSessionsPanel.tsx work/components/admin/AdminSessionsPanel.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminSessionsPanel.tsx work/components/admin/AdminSessionsPanel.tsx
 --- ws-snapshot/components/admin/AdminSessionsPanel.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminSessionsPanel.tsx	2026-11-18 08:00:02.671817422 +0000
 @@ -2,9 +2,11 @@
@@ -1028,7 +1028,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
                      Revoke
                    </button>
                  </td>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminShell.tsx work/components/admin/AdminShell.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/admin/AdminShell.tsx work/components/admin/AdminShell.tsx
 --- ws-snapshot/components/admin/AdminShell.tsx	2026-11-17 19:51:09.000000000 +0000
 +++ work/components/admin/AdminShell.tsx	2026-11-18 09:03:00.472303370 +0000
 @@ -2,9 +2,11 @@
@@ -1088,7 +1088,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          {children}
        </main>
      </div>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/CheckoutSuccess.tsx work/components/CheckoutSuccess.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/CheckoutSuccess.tsx work/components/CheckoutSuccess.tsx
 --- ws-snapshot/components/CheckoutSuccess.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/CheckoutSuccess.tsx	2026-11-18 06:19:41.067383151 +0000
 @@ -45,7 +45,14 @@
@@ -1122,7 +1122,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
            <p className="checkout-success-support">{t("checkout.successSupport")}</p>
          </>
        ) : (
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/ProductCard.tsx work/components/ProductCard.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/ProductCard.tsx work/components/ProductCard.tsx
 --- ws-snapshot/components/ProductCard.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/ProductCard.tsx	2026-11-18 16:34:37.066876303 +0000
 @@ -44,7 +44,7 @@
@@ -1134,7 +1134,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          <Link href={product.url} className="product-card-name">
            {localeName}
          </Link>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/ProductDetailView.tsx work/components/ProductDetailView.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/ProductDetailView.tsx work/components/ProductDetailView.tsx
 --- ws-snapshot/components/ProductDetailView.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/ProductDetailView.tsx	2026-11-18 16:34:37.066876303 +0000
 @@ -110,8 +110,8 @@
@@ -1148,7 +1148,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
              <h1>{localizedProduct.name}</h1>
              <p className="product-detail-sku">
                SKU: <strong>{activeSku}</strong>
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/seo/JsonLd.tsx work/components/seo/JsonLd.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/components/seo/JsonLd.tsx work/components/seo/JsonLd.tsx
 --- ws-snapshot/components/seo/JsonLd.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/seo/JsonLd.tsx	2026-11-18 06:12:16.326522329 +0000
 @@ -1,8 +1,5 @@
@@ -1163,7 +1163,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 -  );
 +  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }} />;
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/admin-login-limiter.spec.ts work/e2e/admin-login-limiter.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/admin-login-limiter.spec.ts work/e2e/admin-login-limiter.spec.ts
 --- ws-snapshot/e2e/admin-login-limiter.spec.ts	2026-11-17 19:29:09.000000000 +0000
 +++ work/e2e/admin-login-limiter.spec.ts	2026-11-18 08:03:01.563161085 +0000
 @@ -9,7 +9,7 @@
@@ -1175,7 +1175,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  test.describe("Admin login limiter", () => {
    test.skip(mode !== "on" && mode !== "off", "limiter mode unknown: run through scripts/isolated/e2e.sh");
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/admin-pim-core.spec.ts work/e2e/admin-pim-core.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/admin-pim-core.spec.ts work/e2e/admin-pim-core.spec.ts
 --- ws-snapshot/e2e/admin-pim-core.spec.ts	2026-11-17 19:28:17.000000000 +0000
 +++ work/e2e/admin-pim-core.spec.ts	2026-11-18 10:10:53.653322256 +0000
 @@ -51,6 +51,15 @@
@@ -1194,7 +1194,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
      await expect(page.getByTestId("pim-import-error")).toHaveCount(0);
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/admin-roles.spec.ts work/e2e/admin-roles.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/admin-roles.spec.ts work/e2e/admin-roles.spec.ts
 --- ws-snapshot/e2e/admin-roles.spec.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/e2e/admin-roles.spec.ts	2026-11-18 11:48:49.174802544 +0000
 @@ -0,0 +1,514 @@
@@ -1712,7 +1712,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(await page.evaluate((key) => sessionStorage.getItem(key), TOKEN_KEY)).toBeNull();
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/admin-session.spec.ts work/e2e/admin-session.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/admin-session.spec.ts work/e2e/admin-session.spec.ts
 --- ws-snapshot/e2e/admin-session.spec.ts	2026-11-17 19:32:16.000000000 +0000
 +++ work/e2e/admin-session.spec.ts	2026-11-18 08:06:27.256007525 +0000
 @@ -94,7 +94,9 @@
@@ -1739,7 +1739,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      await expect(page.getByTestId("pim-import-pending")).toHaveCount(0);
      await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
    });
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/catalog-fixture.spec.ts work/e2e/catalog-fixture.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/catalog-fixture.spec.ts work/e2e/catalog-fixture.spec.ts
 --- ws-snapshot/e2e/catalog-fixture.spec.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/e2e/catalog-fixture.spec.ts	2026-11-18 16:35:32.191138119 +0000
 @@ -0,0 +1,47 @@
@@ -1790,10 +1790,10 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(demo.status()).toBe(404);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/device-regression.spec.ts work/e2e/device-regression.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/device-regression.spec.ts work/e2e/device-regression.spec.ts
 --- ws-snapshot/e2e/device-regression.spec.ts	1970-01-01 00:00:00.000000000 +0000
-+++ work/e2e/device-regression.spec.ts	2026-11-18 16:49:31.889792274 +0000
-@@ -0,0 +1,104 @@
++++ work/e2e/device-regression.spec.ts	2026-11-18 17:13:51.841508409 +0000
+@@ -0,0 +1,114 @@
 +import { test, expect, type Page } from "@playwright/test";
 +
 +const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
@@ -1817,9 +1817,19 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    await expect(page.locator(".site-header").first()).toBeVisible();
 +    const searchWrap = page.locator(".search-wrap").first();
 +    const search = searchWrap.locator('input[type="search"]');
-+    if (testInfo.project.name === "chromium-mobile" || !(await search.isVisible())) {
-+      // Phone layouts keep the search field behind the header toggle.
-+      await page.locator("button.mobile-search-toggle").click();
++    const toggle = page.locator("button.mobile-search-toggle");
++    if (testInfo.project.name === "chromium-mobile" || (await toggle.isVisible())) {
++      // Phone layouts keep the search field behind the header toggle. Wait until
++      // the client handler is attached, then open (retry once if the first tap races hydration).
++      await expect(toggle).toBeVisible();
++      for (let attempt = 0; attempt < 2 && !(await searchWrap.evaluate((el) => el.classList.contains("mobile-open"))); attempt += 1) {
++        await toggle.click();
++        try {
++          await expect(searchWrap).toHaveClass(/mobile-open/, { timeout: 3_000 });
++        } catch {
++          /* retry */
++        }
++      }
 +      await expect(searchWrap).toHaveClass(/mobile-open/);
 +    }
 +    await expect(search).toBeVisible();
@@ -1898,7 +1908,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(body.health?.salesEnabled).toBe(false);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/global-setup.ts work/e2e/global-setup.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/global-setup.ts work/e2e/global-setup.ts
 --- ws-snapshot/e2e/global-setup.ts	2026-11-17 19:28:17.000000000 +0000
 +++ work/e2e/global-setup.ts	2026-11-18 07:43:54.033345892 +0000
 @@ -1,45 +1,153 @@
@@ -2080,7 +2090,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  }
 +  console.log(`[e2e-isolation] API ${api}: throwaway storage; storefront ${baseUrl}: sends its requests to ${used}`);
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/support/admin.ts work/e2e/support/admin.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/e2e/support/admin.ts work/e2e/support/admin.ts
 --- ws-snapshot/e2e/support/admin.ts	2026-11-17 19:28:17.000000000 +0000
 +++ work/e2e/support/admin.ts	2026-11-18 11:05:27.422246509 +0000
 @@ -1,7 +1,30 @@
@@ -2227,7 +2237,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  fs.writeFileSync(temporary, JSON.stringify(entries, null, 2), { mode: 0o600 });
 +  fs.renameSync(temporary, file);
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/client.ts work/lib/admin/client.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/client.ts work/lib/admin/client.ts
 --- ws-snapshot/lib/admin/client.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/admin/client.ts	2026-11-18 08:00:02.671817422 +0000
 @@ -49,8 +49,16 @@
@@ -2258,7 +2268,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      userId: string;
      email: string;
      role: string;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/context.tsx work/lib/admin/context.tsx
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/context.tsx work/lib/admin/context.tsx
 --- ws-snapshot/lib/admin/context.tsx	2026-11-17 19:34:00.000000000 +0000
 +++ work/lib/admin/context.tsx	2026-11-18 09:03:32.523727104 +0000
 @@ -10,6 +10,7 @@
@@ -2290,7 +2300,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      };
    }, [user]);
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/navPermissions.mjs work/lib/admin/navPermissions.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/navPermissions.mjs work/lib/admin/navPermissions.mjs
 --- ws-snapshot/lib/admin/navPermissions.mjs	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/admin/navPermissions.mjs	2026-11-18 08:39:07.557597544 +0000
 @@ -31,7 +31,8 @@
@@ -2367,7 +2377,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  export function filterNavGroupsForRole(groups, role) {
    if (!role) return [];
    return groups
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/permissions.ts work/lib/admin/permissions.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/permissions.ts work/lib/admin/permissions.ts
 --- ws-snapshot/lib/admin/permissions.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/lib/admin/permissions.ts	2026-11-18 07:58:16.543732315 +0000
 @@ -0,0 +1,17 @@
@@ -2388,7 +2398,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  const role = user?.role || "";
 +  return useCallback((permission: string) => Boolean(role) && canAccess(role, permission), [role]);
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/pimCoreTypes.ts work/lib/admin/pimCoreTypes.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/pimCoreTypes.ts work/lib/admin/pimCoreTypes.ts
 --- ws-snapshot/lib/admin/pimCoreTypes.ts	2026-11-17 19:02:55.000000000 +0000
 +++ work/lib/admin/pimCoreTypes.ts	2026-11-18 07:59:38.100637113 +0000
 @@ -78,10 +78,36 @@
@@ -2429,7 +2439,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  export type PimImportResponse = PimImportResult | PimImportPendingApproval;
  
  export function isPimImportPending(response: PimImportResponse): response is PimImportPendingApproval {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/admin/refusals.ts work/lib/admin/refusals.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/admin/refusals.ts work/lib/admin/refusals.ts
 --- ws-snapshot/lib/admin/refusals.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/lib/admin/refusals.ts	2026-11-18 09:03:00.460303593 +0000
 @@ -0,0 +1,44 @@
@@ -2477,7 +2487,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    // Reporting must never break the request it reports on.
 +  }
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/aiCenter/client.ts work/lib/aiCenter/client.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/aiCenter/client.ts work/lib/aiCenter/client.ts
 --- ws-snapshot/lib/aiCenter/client.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/aiCenter/client.ts	2026-11-18 06:46:11.997981148 +0000
 @@ -22,8 +22,8 @@
@@ -2508,7 +2518,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 -  if (!res.ok) throw new Error(data.error || "aiCenter.requestFailed");
 -  return data;
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/analytics/sections.mjs work/lib/analytics/sections.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/analytics/sections.mjs work/lib/analytics/sections.mjs
 --- ws-snapshot/lib/analytics/sections.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/lib/analytics/sections.mjs	2026-11-18 08:38:26.605893297 +0000
 @@ -0,0 +1,40 @@
@@ -2552,7 +2562,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +export function canSeeAnalyticsSection(role, section) {
 +  return analyticsSectionsForRole(role).includes(section);
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/catalogSeo/client.ts work/lib/catalogSeo/client.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/catalogSeo/client.ts work/lib/catalogSeo/client.ts
 --- ws-snapshot/lib/catalogSeo/client.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/catalogSeo/client.ts	2026-11-18 11:48:13.167194814 +0000
 @@ -49,8 +49,17 @@
@@ -2585,7 +2595,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  export async function createCatalogProduct(body: Record<string, unknown>): Promise<CatalogProduct> {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/orders/types.ts work/lib/orders/types.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/orders/types.ts work/lib/orders/types.ts
 --- ws-snapshot/lib/orders/types.ts	2026-10-28 12:23:42.000000000 +0000
 +++ work/lib/orders/types.ts	2026-11-18 06:19:41.067383151 +0000
 @@ -33,6 +33,8 @@
@@ -2597,7 +2607,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  export interface CreateOrderRequest {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/products/service.ts work/lib/products/service.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/products/service.ts work/lib/products/service.ts
 --- ws-snapshot/lib/products/service.ts	2026-10-28 12:23:42.000000000 +0000
 +++ work/lib/products/service.ts	2026-11-18 16:34:37.066876303 +0000
 @@ -117,8 +117,10 @@
@@ -2613,7 +2623,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  export function getProductsForCategory(category: BuzzardCategory, limit?: number): PublicProduct[] {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/security/browserFetch.ts work/lib/security/browserFetch.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/security/browserFetch.ts work/lib/security/browserFetch.ts
 --- ws-snapshot/lib/security/browserFetch.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/security/browserFetch.ts	2026-11-18 09:03:00.472303370 +0000
 @@ -1,3 +1,4 @@
@@ -2630,7 +2640,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  reportAdminRefusal(input, init, response.status);
 +  return response;
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/seo/serializeJsonLd.ts work/lib/seo/serializeJsonLd.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/seo/serializeJsonLd.ts work/lib/seo/serializeJsonLd.ts
 --- ws-snapshot/lib/seo/serializeJsonLd.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/lib/seo/serializeJsonLd.ts	2026-11-18 06:12:16.322522137 +0000
 @@ -0,0 +1,12 @@
@@ -2646,7 +2656,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    .replace(/\u2028/g, "\\u2028")
 +    .replace(/\u2029/g, "\\u2029");
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/seo/structured-data.ts work/lib/seo/structured-data.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/seo/structured-data.ts work/lib/seo/structured-data.ts
 --- ws-snapshot/lib/seo/structured-data.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/seo/structured-data.ts	2026-11-18 16:34:37.066876303 +0000
 @@ -82,6 +82,8 @@
@@ -2672,7 +2682,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      ...(showPrices()
        ? {
            offers: {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/storefront/map.ts work/lib/storefront/map.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/lib/storefront/map.ts work/lib/storefront/map.ts
 --- ws-snapshot/lib/storefront/map.ts	2026-10-28 12:23:42.000000000 +0000
 +++ work/lib/storefront/map.ts	2026-11-18 16:34:37.066876303 +0000
 @@ -17,8 +17,8 @@
@@ -2686,7 +2696,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      images: product.images,
      documents: [],
      attributes: {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/package.json work/package.json
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/package.json work/package.json
 --- ws-snapshot/package.json	2026-11-17 15:45:20.000000000 +0000
 +++ work/package.json	2026-11-18 05:44:36.014451085 +0000
 @@ -51,6 +51,8 @@
@@ -2698,7 +2708,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      "test:e2e": "playwright test",
      "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",
      "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/playwright.config.ts work/playwright.config.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/playwright.config.ts work/playwright.config.ts
 --- ws-snapshot/playwright.config.ts	2026-11-17 19:34:08.000000000 +0000
 +++ work/playwright.config.ts	2026-11-18 16:31:47.410929666 +0000
 @@ -30,23 +30,23 @@
@@ -2729,7 +2739,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.tablet768 },
      },
    ],
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/render.yaml work/render.yaml
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/render.yaml work/render.yaml
 --- ws-snapshot/render.yaml	2026-10-28 12:23:42.000000000 +0000
 +++ work/render.yaml	2026-11-18 06:36:57.956886212 +0000
 @@ -120,6 +120,8 @@
@@ -2764,7 +2774,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        - key: PAYPAL_CLIENT_ID
          sync: false
        - key: PAYPAL_CLIENT_SECRET
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/e2e-webserver.mjs work/scripts/e2e-webserver.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/e2e-webserver.mjs work/scripts/e2e-webserver.mjs
 --- ws-snapshot/scripts/e2e-webserver.mjs	2026-11-17 15:45:20.000000000 +0000
 +++ work/scripts/e2e-webserver.mjs	2026-11-18 07:48:56.306278386 +0000
 @@ -15,6 +15,13 @@
@@ -2801,7 +2811,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    );
  }
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/final-audit.mjs work/scripts/final-audit.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/final-audit.mjs work/scripts/final-audit.mjs
 --- ws-snapshot/scripts/final-audit.mjs	2026-10-28 12:23:42.000000000 +0000
 +++ work/scripts/final-audit.mjs	2026-11-18 07:42:32.140098952 +0000
 @@ -6,6 +6,7 @@
@@ -2833,7 +2843,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      const cart = await fetchJson("/api/commerce/cart", {
        method: "POST",
        body: JSON.stringify({ sessionId: `audit-tamper-${Date.now()}` }),
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/api.sh work/scripts/isolated/api.sh
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/api.sh work/scripts/isolated/api.sh
 --- ws-snapshot/scripts/isolated/api.sh	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/isolated/api.sh	2026-11-18 07:41:21.191059662 +0000
 @@ -0,0 +1,131 @@
@@ -2968,7 +2978,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +status=$?
 +set -e
 +exit "$status"
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/e2e.sh work/scripts/isolated/e2e.sh
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/e2e.sh work/scripts/isolated/e2e.sh
 --- ws-snapshot/scripts/isolated/e2e.sh	2026-11-17 19:45:49.000000000 +0000
 +++ work/scripts/isolated/e2e.sh	2026-11-18 16:42:49.143065276 +0000
 @@ -8,12 +8,18 @@
@@ -3133,7 +3143,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    node "$REPO/node_modules/@playwright/test/cli.js" test --output "$ROOT/test-results" "$@"
  status=$?
  set -e
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/run.sh work/scripts/isolated/run.sh
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/run.sh work/scripts/isolated/run.sh
 --- ws-snapshot/scripts/isolated/run.sh	2026-11-17 19:05:39.000000000 +0000
 +++ work/scripts/isolated/run.sh	2026-11-18 09:27:23.304082314 +0000
 @@ -7,24 +7,32 @@
@@ -3276,7 +3286,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    diff "$ROOT/protected-before.sha256" "$ROOT/protected-after.sha256" | sed 's/^\([<>]\) [0-9a-f]\{52\}/\1 …/' >&2 || true
    if [[ $status -eq 0 ]]; then
      status=90
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/seed-synthetic-admins.cjs work/scripts/isolated/seed-synthetic-admins.cjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/seed-synthetic-admins.cjs work/scripts/isolated/seed-synthetic-admins.cjs
 --- ws-snapshot/scripts/isolated/seed-synthetic-admins.cjs	2026-11-17 19:05:44.000000000 +0000
 +++ work/scripts/isolated/seed-synthetic-admins.cjs	2026-11-18 08:06:58.003689398 +0000
 @@ -15,7 +15,7 @@
@@ -3310,7 +3320,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  fs.writeFileSync(path.resolve(credentialsArg), JSON.stringify(credentials, null, 2), { mode: 0o600 });
 -console.error(`[seed-synthetic-admins] ${users.length} synthetic accounts (${ROLES.join(", ")})`);
 +console.error(`[seed-synthetic-admins] ${users.length} synthetic accounts (${ROLES.join(", ")}; two lockout probes)`);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/selftest/noop.spec.ts work/scripts/isolated/selftest/noop.spec.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/selftest/noop.spec.ts work/scripts/isolated/selftest/noop.spec.ts
 --- ws-snapshot/scripts/isolated/selftest/noop.spec.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/isolated/selftest/noop.spec.ts	2026-11-18 07:36:50.455558841 +0000
 @@ -0,0 +1,9 @@
@@ -3323,7 +3333,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  if (mark) fs.writeFileSync(mark, "started\n");
 +  expect(true).toBe(true);
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/selftest/playwright.config.ts work/scripts/isolated/selftest/playwright.config.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/selftest/playwright.config.ts work/scripts/isolated/selftest/playwright.config.ts
 --- ws-snapshot/scripts/isolated/selftest/playwright.config.ts	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/isolated/selftest/playwright.config.ts	2026-11-18 07:36:50.451558796 +0000
 @@ -0,0 +1,15 @@
@@ -3342,7 +3352,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  reporter: "line",
 +  use: { baseURL: process.env.PLAYWRIGHT_BASE_URL },
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/selftest/stub-server.cjs work/scripts/isolated/selftest/stub-server.cjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/selftest/stub-server.cjs work/scripts/isolated/selftest/stub-server.cjs
 --- ws-snapshot/scripts/isolated/selftest/stub-server.cjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/isolated/selftest/stub-server.cjs	2026-11-18 07:36:50.455558841 +0000
 @@ -0,0 +1,76 @@
@@ -3422,7 +3432,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  console.error("usage: stub-server.cjs api <port> <isolated|shared|nonsense> | storefront <port> <apiUrl>");
 +  process.exit(64);
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/selftest.sh work/scripts/isolated/selftest.sh
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/isolated/selftest.sh work/scripts/isolated/selftest.sh
 --- ws-snapshot/scripts/isolated/selftest.sh	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/isolated/selftest.sh	2026-11-18 07:51:20.128755043 +0000
 @@ -0,0 +1,233 @@
@@ -3659,7 +3669,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  exit 1
 +fi
 +exit 0
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/lib/requireIsolatedApi.mjs work/scripts/lib/requireIsolatedApi.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/lib/requireIsolatedApi.mjs work/scripts/lib/requireIsolatedApi.mjs
 --- ws-snapshot/scripts/lib/requireIsolatedApi.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/lib/requireIsolatedApi.mjs	2026-11-18 07:43:54.033345892 +0000
 @@ -0,0 +1,68 @@
@@ -3731,7 +3741,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  }
 +  return { email: account.email, password: account.password };
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/migrate-json-stores.mjs work/scripts/migrate-json-stores.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/migrate-json-stores.mjs work/scripts/migrate-json-stores.mjs
 --- ws-snapshot/scripts/migrate-json-stores.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/migrate-json-stores.mjs	2026-11-18 07:24:36.090162600 +0000
 @@ -0,0 +1,136 @@
@@ -3871,7 +3881,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +
 +console.log(JSON.stringify(report, null, 2));
 +console.log(`copied ${report.copied} file(s). Source left unchanged. Set BUZZARD_DATA_DIR to the target and start the server.`);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/part3-security.mjs work/scripts/part3-security.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/part3-security.mjs work/scripts/part3-security.mjs
 --- ws-snapshot/scripts/part3-security.mjs	2026-10-28 12:23:42.000000000 +0000
 +++ work/scripts/part3-security.mjs	2026-11-18 07:41:49.251465774 +0000
 @@ -1,9 +1,11 @@
@@ -3922,7 +3932,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      });
      if (res.status !== 401 && res.status !== 429) throw new Error(`unexpected ${res.status}`);
    });
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/production-safety.mjs work/scripts/production-safety.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/production-safety.mjs work/scripts/production-safety.mjs
 --- ws-snapshot/scripts/production-safety.mjs	2026-10-28 12:23:42.000000000 +0000
 +++ work/scripts/production-safety.mjs	2026-11-18 07:42:32.140098952 +0000
 @@ -2,6 +2,8 @@
@@ -3955,7 +3965,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      const cart = await fetchJson("/api/commerce/cart", {
        method: "POST",
        body: JSON.stringify({ sessionId: "prod-safety-tamper" }),
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/vitest-global-setup.mjs work/scripts/vitest-global-setup.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/scripts/vitest-global-setup.mjs work/scripts/vitest-global-setup.mjs
 --- ws-snapshot/scripts/vitest-global-setup.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/scripts/vitest-global-setup.mjs	2026-11-18 05:44:36.014451085 +0000
 @@ -0,0 +1,12 @@
@@ -3971,7 +3981,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +export default function setup() {
 +  rmSync(path.join(tmpdir(), "buzzard-test-data"), { recursive: true, force: true });
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/core/auth/index.js work/server/core/auth/index.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/core/auth/index.js work/server/core/auth/index.js
 --- ws-snapshot/server/core/auth/index.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/core/auth/index.js	2026-11-18 07:26:31.265042956 +0000
 @@ -127,7 +127,8 @@
@@ -3995,7 +4005,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  function logout(req, realm = "admin") {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/accountLockout.js work/server/lib/accountLockout.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/accountLockout.js work/server/lib/accountLockout.js
 --- ws-snapshot/server/lib/accountLockout.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/accountLockout.js	2026-11-18 05:58:29.981551625 +0000
 @@ -1,49 +1,66 @@
@@ -4167,7 +4177,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      .map(([key, entry]) => ({
        key,
        failures: entry.failures || 0,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/adminTwoFactor.js work/server/lib/adminTwoFactor.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/adminTwoFactor.js work/server/lib/adminTwoFactor.js
 --- ws-snapshot/server/lib/adminTwoFactor.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/adminTwoFactor.js	2026-11-18 06:54:18.512482439 +0000
 @@ -1,32 +1,35 @@
@@ -4250,7 +4260,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    isEnabled,
    createChallenge,
    consumeChallenge,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/advancedSearch.js work/server/lib/advancedSearch.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/advancedSearch.js work/server/lib/advancedSearch.js
 --- ws-snapshot/server/lib/advancedSearch.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/advancedSearch.js	2026-11-18 07:48:14.153565707 +0000
 @@ -8,7 +8,7 @@
@@ -4262,7 +4272,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));
      for (const product of raw.products || []) {
        if (product.status !== "active") continue;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/aiCenterAccess.js work/server/lib/aiCenterAccess.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/aiCenterAccess.js work/server/lib/aiCenterAccess.js
 --- ws-snapshot/server/lib/aiCenterAccess.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/aiCenterAccess.js	2026-11-18 06:45:11.888103331 +0000
 @@ -0,0 +1,174 @@
@@ -4440,7 +4450,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { validateInput, validateJobId, validateSessionToken, checkOutput, SCHEMAS };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/aiCenterAuthority.js work/server/lib/aiCenterAuthority.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/aiCenterAuthority.js work/server/lib/aiCenterAuthority.js
 --- ws-snapshot/server/lib/aiCenterAuthority.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/aiCenterAuthority.js	2026-11-18 06:46:01.990335283 +0000
 @@ -97,7 +97,9 @@
@@ -4454,7 +4464,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    if (explicit) return explicit;
    const folded = foldLatin(text.toLowerCase());
    if (isExplanation(text, folded)) return null;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/aiCenter.js work/server/lib/aiCenter.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/aiCenter.js work/server/lib/aiCenter.js
 --- ws-snapshot/server/lib/aiCenter.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/aiCenter.js	2026-11-18 06:46:01.990335283 +0000
 @@ -57,18 +57,32 @@
@@ -4520,7 +4530,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      session = db.prepare("SELECT * FROM aictr_sessions WHERE id = ?").get(created.sessionId);
    }
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/aiChatService.js work/server/lib/aiChatService.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/aiChatService.js work/server/lib/aiChatService.js
 --- ws-snapshot/server/lib/aiChatService.js	2026-11-17 14:54:18.000000000 +0000
 +++ work/server/lib/aiChatService.js	2026-11-18 05:44:36.014451085 +0000
 @@ -4,7 +4,7 @@
@@ -4532,7 +4542,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const ordersFile = path.join(dataDir, "orders.json");
  const sessionsFile = path.join(dataDir, "ai-chat-sessions.json");
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/analyticsEngine.js work/server/lib/analyticsEngine.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/analyticsEngine.js work/server/lib/analyticsEngine.js
 --- ws-snapshot/server/lib/analyticsEngine.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/analyticsEngine.js	2026-11-18 07:48:14.153565707 +0000
 @@ -2,10 +2,10 @@
@@ -4548,7 +4558,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const categoriesFile = path.join(rootDir, "data", "buzzard_categories.json");
  const returnsFile = path.join(dataDir, "return-requests.json");
  const fulfillmentsFile = path.join(dataDir, "fulfillments.json");
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/audit.js work/server/lib/audit.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/audit.js work/server/lib/audit.js
 --- ws-snapshot/server/lib/audit.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/audit.js	2026-11-18 06:53:48.329579929 +0000
 @@ -1,47 +1,15 @@
@@ -4607,7 +4617,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  module.exports = { logAudit, listAudit };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/auth.js work/server/lib/auth.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/auth.js work/server/lib/auth.js
 --- ws-snapshot/server/lib/auth.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/auth.js	2026-11-18 07:14:25.316540410 +0000
 @@ -2,105 +2,486 @@
@@ -5522,7 +5532,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  SESSION_TTL_MS,
 +  MAX_SESSIONS_PER_USER,
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/automationEngine.js work/server/lib/automationEngine.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/automationEngine.js work/server/lib/automationEngine.js
 --- ws-snapshot/server/lib/automationEngine.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/automationEngine.js	2026-11-18 06:53:59.585170794 +0000
 @@ -1,9 +1,11 @@
@@ -5673,7 +5683,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      ...decision,
      sent: false,
      executed: false,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/catalogFiles.js work/server/lib/catalogFiles.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/catalogFiles.js work/server/lib/catalogFiles.js
 --- ws-snapshot/server/lib/catalogFiles.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/catalogFiles.js	2026-11-18 07:47:42.333032269 +0000
 @@ -0,0 +1,71 @@
@@ -5748,7 +5758,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { repoCatalogDir, RUNTIME_CATALOG_FILES, getRuntimeCatalogInfo, runtimeCatalogFile };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/catalogProductSync.js work/server/lib/catalogProductSync.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/catalogProductSync.js work/server/lib/catalogProductSync.js
 --- ws-snapshot/server/lib/catalogProductSync.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/catalogProductSync.js	2026-11-18 07:48:14.153565707 +0000
 @@ -25,7 +25,7 @@
@@ -5760,7 +5770,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  function loadCatalogProducts() {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/categoryVisibility.js work/server/lib/categoryVisibility.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/categoryVisibility.js work/server/lib/categoryVisibility.js
 --- ws-snapshot/server/lib/categoryVisibility.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/categoryVisibility.js	2026-11-18 07:47:42.353032603 +0000
 @@ -2,8 +2,8 @@
@@ -5774,7 +5784,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  const CUSTOMER_VISIBLE = new Set([
    CATEGORY_VISIBILITY.ACTIVE,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/commerce/checkoutService.js work/server/lib/commerce/checkoutService.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/commerce/checkoutService.js work/server/lib/commerce/checkoutService.js
 --- ws-snapshot/server/lib/commerce/checkoutService.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/commerce/checkoutService.js	2026-11-18 07:23:03.967646351 +0000
 @@ -189,7 +189,7 @@
@@ -5786,7 +5796,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      sessionId: stock.cart.cart.sessionId,
      clientTotals: body.totals,
    });
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/commerce/commerceGuards.js work/server/lib/commerce/commerceGuards.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/commerce/commerceGuards.js work/server/lib/commerce/commerceGuards.js
 --- ws-snapshot/server/lib/commerce/commerceGuards.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/commerce/commerceGuards.js	2026-11-18 07:23:03.967646351 +0000
 @@ -10,7 +10,7 @@
@@ -5798,7 +5808,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      path: req?.url,
      userId: req?.customer?.id || req?.adminUser?.userId || null,
      detail,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/commerce/webhookFoundation.js work/server/lib/commerce/webhookFoundation.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/commerce/webhookFoundation.js work/server/lib/commerce/webhookFoundation.js
 --- ws-snapshot/server/lib/commerce/webhookFoundation.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/commerce/webhookFoundation.js	2026-11-18 06:36:32.329710659 +0000
 @@ -51,16 +51,19 @@
@@ -5826,7 +5836,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    recordWebhookEvent({ provider, eventId, eventType, payload: JSON.parse(rawBody || "{}"), verified });
    return { accepted: true, verified: true, status: 200, processed: false, note: "Foundation only" };
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/commercialIntegrations.js work/server/lib/commercialIntegrations.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/commercialIntegrations.js work/server/lib/commercialIntegrations.js
 --- ws-snapshot/server/lib/commercialIntegrations.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/commercialIntegrations.js	2026-11-18 06:36:57.952886341 +0000
 @@ -353,9 +353,11 @@
@@ -5843,7 +5853,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      },
    };
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/coreAudit.js work/server/lib/coreAudit.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/coreAudit.js work/server/lib/coreAudit.js
 --- ws-snapshot/server/lib/coreAudit.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/coreAudit.js	2026-11-18 07:14:04.467421206 +0000
 @@ -1,31 +1,35 @@
@@ -5976,7 +5986,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
 -module.exports = { logAudit, logAuditFromRequest, listAudit };
 +module.exports = { logAudit, logAuditFromRequest, listAudit, auditFile, MAX_ENTRIES };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/customer/customerExperienceAudit.js work/server/lib/customer/customerExperienceAudit.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/customer/customerExperienceAudit.js work/server/lib/customer/customerExperienceAudit.js
 --- ws-snapshot/server/lib/customer/customerExperienceAudit.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/customer/customerExperienceAudit.js	2026-11-18 07:31:08.156812706 +0000
 @@ -6,7 +6,8 @@
@@ -5989,7 +5999,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    return operationsAudit.recordAudit({
      actor,
      action,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/customerAuth.js work/server/lib/customerAuth.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/customerAuth.js work/server/lib/customerAuth.js
 --- ws-snapshot/server/lib/customerAuth.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/customerAuth.js	2026-11-18 07:19:14.156640029 +0000
 @@ -5,7 +5,7 @@
@@ -6147,7 +6157,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    consumeResetToken,
 +  revokeCustomerSessions,
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/customerStore.js work/server/lib/customerStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/customerStore.js work/server/lib/customerStore.js
 --- ws-snapshot/server/lib/customerStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/customerStore.js	2026-11-18 05:44:36.014451085 +0000
 @@ -4,7 +4,7 @@
@@ -6159,7 +6169,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const customersFile = path.join(dataDir, "customers.json");
  const seedFile = path.join(__dirname, "..", "..", "data", "buzzard_account_users.seed.json");
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/dataDir.js work/server/lib/dataDir.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/dataDir.js work/server/lib/dataDir.js
 --- ws-snapshot/server/lib/dataDir.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/dataDir.js	2026-11-18 07:01:05.633593693 +0000
 @@ -0,0 +1,71 @@
@@ -6234,7 +6244,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { defaultDataDir, resolveDataDir, ensureDataDir, getDataDirInfo, productionDataDirProblem };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/dbAuth.js work/server/lib/dbAuth.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/dbAuth.js work/server/lib/dbAuth.js
 --- ws-snapshot/server/lib/dbAuth.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/dbAuth.js	2026-11-18 06:02:14.265781240 +0000
 @@ -1,15 +1,104 @@
@@ -6413,7 +6423,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    extractToken,
    requireAuth,
    requireAdmin,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/dbPaths.js work/server/lib/dbPaths.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/dbPaths.js work/server/lib/dbPaths.js
 --- ws-snapshot/server/lib/dbPaths.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/dbPaths.js	2026-11-18 07:37:21.727917297 +0000
 @@ -43,6 +43,11 @@
@@ -6428,7 +6438,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    return defaultBackupDir;
  }
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/environmentValidation.js work/server/lib/environmentValidation.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/environmentValidation.js work/server/lib/environmentValidation.js
 --- ws-snapshot/server/lib/environmentValidation.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/environmentValidation.js	2026-11-18 16:34:25.786809452 +0000
 @@ -2,18 +2,62 @@
@@ -6614,7 +6624,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    validateEnvironment,
    assertProductionSafeStartup,
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/feedAdapters/index.js work/server/lib/feedAdapters/index.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/feedAdapters/index.js work/server/lib/feedAdapters/index.js
 --- ws-snapshot/server/lib/feedAdapters/index.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/feedAdapters/index.js	2026-11-18 07:48:14.153565707 +0000
 @@ -2,7 +2,7 @@
@@ -6626,7 +6636,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://buzzard24.de";
  
  function loadProducts() {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/fulfillmentStore.js work/server/lib/fulfillmentStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/fulfillmentStore.js work/server/lib/fulfillmentStore.js
 --- ws-snapshot/server/lib/fulfillmentStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/fulfillmentStore.js	2026-11-18 05:44:36.014451085 +0000
 @@ -3,7 +3,7 @@
@@ -6638,7 +6648,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const fulfillmentsFile = path.join(dataDir, "fulfillments.json");
  const supplierOrdersFile = path.join(dataDir, "supplier-orders.json");
  const shipmentsFile = path.join(dataDir, "shipments.json");
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/globalAuthMiddleware.js work/server/lib/globalAuthMiddleware.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/globalAuthMiddleware.js work/server/lib/globalAuthMiddleware.js
 --- ws-snapshot/server/lib/globalAuthMiddleware.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/globalAuthMiddleware.js	2026-11-18 07:16:54.123403723 +0000
 @@ -9,6 +9,8 @@
@@ -6805,7 +6815,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function requireAnyAdmin(req, res) {
    const identity = authFacade.requireAuth(req, res, { realm: "admin" });
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/identitySecurity.js work/server/lib/identitySecurity.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/identitySecurity.js work/server/lib/identitySecurity.js
 --- ws-snapshot/server/lib/identitySecurity.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/identitySecurity.js	2026-11-18 07:21:48.957318016 +0000
 @@ -3,7 +3,24 @@
@@ -7008,7 +7018,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
    db.prepare("UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
      hashPassword(password),
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/jsonFileStore.js work/server/lib/jsonFileStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/jsonFileStore.js work/server/lib/jsonFileStore.js
 --- ws-snapshot/server/lib/jsonFileStore.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/jsonFileStore.js	2026-11-18 07:08:15.516832141 +0000
 @@ -0,0 +1,347 @@
@@ -7359,7 +7369,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  PRIVATE_FILE_MODE,
 +  PRIVATE_DIR_MODE,
 +};
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/jwtSecret.js work/server/lib/jwtSecret.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/jwtSecret.js work/server/lib/jwtSecret.js
 --- ws-snapshot/server/lib/jwtSecret.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/jwtSecret.js	2026-11-18 05:44:36.014451085 +0000
 @@ -0,0 +1,14 @@
@@ -7377,7 +7387,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +const secret = configured || crypto.randomBytes(48).toString("hex");
 +
 +module.exports = { secret, isConfigured: Boolean(configured) };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/logisticsFulfillment.js work/server/lib/logisticsFulfillment.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/logisticsFulfillment.js work/server/lib/logisticsFulfillment.js
 --- ws-snapshot/server/lib/logisticsFulfillment.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/logisticsFulfillment.js	2026-11-18 06:37:51.223153599 +0000
 @@ -130,10 +130,41 @@
@@ -7448,7 +7458,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    handleCarrierWebhook,
    createReturn,
    listCustomerReturns,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/marketplaceHub.js work/server/lib/marketplaceHub.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/marketplaceHub.js work/server/lib/marketplaceHub.js
 --- ws-snapshot/server/lib/marketplaceHub.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/marketplaceHub.js	2026-11-18 06:37:51.223153599 +0000
 @@ -173,10 +173,22 @@
@@ -7475,7 +7485,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    try {
      db.prepare(`
        INSERT INTO marketplace_channel_orders(marketplace_id, external_order_id, internal_order_number, status, total, currency, customer_country)
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/notificationEngine.js work/server/lib/notificationEngine.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/notificationEngine.js work/server/lib/notificationEngine.js
 --- ws-snapshot/server/lib/notificationEngine.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/notificationEngine.js	2026-11-18 05:44:36.014451085 +0000
 @@ -1,7 +1,7 @@
@@ -7487,7 +7497,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const queueFile = path.join(dataDir, "notification-queue.json");
  
  const TEMPLATES = {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/operations/correlationContext.js work/server/lib/operations/correlationContext.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/operations/correlationContext.js work/server/lib/operations/correlationContext.js
 --- ws-snapshot/server/lib/operations/correlationContext.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/operations/correlationContext.js	2026-11-18 06:14:13.619113808 +0000
 @@ -13,18 +13,32 @@
@@ -7544,7 +7554,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    getContext,
    bindJob,
    formatLogPrefix,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/orderAutomation.js work/server/lib/orderAutomation.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/orderAutomation.js work/server/lib/orderAutomation.js
 --- ws-snapshot/server/lib/orderAutomation.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/orderAutomation.js	2026-11-18 06:37:51.223153599 +0000
 @@ -71,10 +71,18 @@
@@ -7568,7 +7578,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
    const eventKey = `payment:${eventId}`;
    const existing = db.prepare("SELECT id FROM integration_events WHERE event_key = ?").get(eventKey);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/passwordPolicy.js work/server/lib/passwordPolicy.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/passwordPolicy.js work/server/lib/passwordPolicy.js
 --- ws-snapshot/server/lib/passwordPolicy.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/passwordPolicy.js	2026-11-18 05:59:18.613307437 +0000
 @@ -0,0 +1,40 @@
@@ -7612,7 +7622,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { checkAdminPassword, MIN_LENGTH, MAX_LENGTH };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/paymentsFinance.js work/server/lib/paymentsFinance.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/paymentsFinance.js work/server/lib/paymentsFinance.js
 --- ws-snapshot/server/lib/paymentsFinance.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/paymentsFinance.js	2026-11-18 06:37:51.223153599 +0000
 @@ -160,9 +160,14 @@
@@ -7712,7 +7722,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
    audit("dispute_received", result.lastInsertRowid, { paymentIntentId: intent.id });
    return { ok: true, status: 202 };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/pim/productCatalogMigration.js work/server/lib/pim/productCatalogMigration.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/pim/productCatalogMigration.js work/server/lib/pim/productCatalogMigration.js
 --- ws-snapshot/server/lib/pim/productCatalogMigration.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/pim/productCatalogMigration.js	2026-11-18 07:48:14.153565707 +0000
 @@ -51,7 +51,7 @@
@@ -7724,7 +7734,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  function loadP1Candidates() {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/priceStockQueue.js work/server/lib/priceStockQueue.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/priceStockQueue.js work/server/lib/priceStockQueue.js
 --- ws-snapshot/server/lib/priceStockQueue.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/priceStockQueue.js	2026-11-18 05:44:36.014451085 +0000
 @@ -5,8 +5,8 @@
@@ -7738,7 +7748,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  const LARGE_CHANGE_PERCENT = Number(process.env.BUZZARD_PRICE_ALERT_PERCENT || 25);
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/productAi.js work/server/lib/productAi.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/productAi.js work/server/lib/productAi.js
 --- ws-snapshot/server/lib/productAi.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/lib/productAi.js	2026-11-18 05:44:36.014451085 +0000
 @@ -5,7 +5,7 @@
@@ -7750,7 +7760,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readQueue() {
    try {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/productStore.js work/server/lib/productStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/productStore.js work/server/lib/productStore.js
 --- ws-snapshot/server/lib/productStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/productStore.js	2026-11-18 07:47:42.353032603 +0000
 @@ -2,7 +2,7 @@
@@ -7762,7 +7772,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readCatalog() {
    const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/rateLimitStore.js work/server/lib/rateLimitStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/rateLimitStore.js work/server/lib/rateLimitStore.js
 --- ws-snapshot/server/lib/rateLimitStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/rateLimitStore.js	2026-11-18 05:58:29.981551625 +0000
 @@ -5,7 +5,7 @@
@@ -7855,7 +7865,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      return false;
    };
  }
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/recordStore.js work/server/lib/recordStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/recordStore.js work/server/lib/recordStore.js
 --- ws-snapshot/server/lib/recordStore.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/recordStore.js	2026-11-18 06:55:05.038788557 +0000
 @@ -0,0 +1,203 @@
@@ -8062,7 +8072,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  verifyRecordFile,
 +  hashEntry,
 +};
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/redirectStore.js work/server/lib/redirectStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/redirectStore.js work/server/lib/redirectStore.js
 --- ws-snapshot/server/lib/redirectStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/redirectStore.js	2026-11-18 05:44:36.014451085 +0000
 @@ -2,7 +2,7 @@
@@ -8074,7 +8084,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readJson(file, fallback) {
    if (!fs.existsSync(file)) return fallback;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/requestScope.js work/server/lib/requestScope.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/requestScope.js work/server/lib/requestScope.js
 --- ws-snapshot/server/lib/requestScope.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/requestScope.js	2026-11-18 06:53:17.642694552 +0000
 @@ -0,0 +1,28 @@
@@ -8106,7 +8116,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { run, current, ids };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/routePermissions.js work/server/lib/routePermissions.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/routePermissions.js work/server/lib/routePermissions.js
 --- ws-snapshot/server/lib/routePermissions.js	2026-11-17 14:54:18.000000000 +0000
 +++ work/server/lib/routePermissions.js	2026-11-18 06:55:39.877518616 +0000
 @@ -51,6 +51,9 @@
@@ -8293,7 +8303,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    resolveRoutePermission,
    routeKey,
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/runtimeEnv.js work/server/lib/runtimeEnv.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/runtimeEnv.js work/server/lib/runtimeEnv.js
 --- ws-snapshot/server/lib/runtimeEnv.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/runtimeEnv.js	2026-11-18 05:58:10.517528974 +0000
 @@ -0,0 +1,16 @@
@@ -8313,7 +8323,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { isProduction };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/security.js work/server/lib/security.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/security.js work/server/lib/security.js
 --- ws-snapshot/server/lib/security.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/security.js	2026-11-18 06:55:30.033877566 +0000
 @@ -1,6 +1,22 @@
@@ -8435,7 +8445,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    publicErrorBody,
    isSafeId,
    normalizeText,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/securityLog.js work/server/lib/securityLog.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/securityLog.js work/server/lib/securityLog.js
 --- ws-snapshot/server/lib/securityLog.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/securityLog.js	2026-11-18 07:30:51.644750486 +0000
 @@ -1,10 +1,17 @@
@@ -8677,7 +8687,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  MAX_ENTRIES,
 +  logFile,
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/seoStore.js work/server/lib/seoStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/seoStore.js work/server/lib/seoStore.js
 --- ws-snapshot/server/lib/seoStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/seoStore.js	2026-11-18 07:47:42.353032603 +0000
 @@ -2,9 +2,9 @@
@@ -8692,7 +8702,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readJson(file, fallback) {
    if (!fs.existsSync(file)) return fallback;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/staticFilePolicy.js work/server/lib/staticFilePolicy.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/staticFilePolicy.js work/server/lib/staticFilePolicy.js
 --- ws-snapshot/server/lib/staticFilePolicy.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/staticFilePolicy.js	2026-11-18 05:55:18.209168064 +0000
 @@ -0,0 +1,60 @@
@@ -8756,7 +8766,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { resolvePublicFile, PUBLIC_DIRS };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/catalogReadService.js work/server/lib/storefront/catalogReadService.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/storefront/catalogReadService.js work/server/lib/storefront/catalogReadService.js
 --- ws-snapshot/server/lib/storefront/catalogReadService.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/storefront/catalogReadService.js	2026-11-18 16:34:25.778809404 +0000
 @@ -5,7 +5,7 @@
@@ -8780,7 +8790,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    }
    if (!product || !isProductVisibleOnStorefront(product, { preview })) return null;
    return mapPimToStorefront(product);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/publicProductMapper.js work/server/lib/storefront/publicProductMapper.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/storefront/publicProductMapper.js work/server/lib/storefront/publicProductMapper.js
 --- ws-snapshot/server/lib/storefront/publicProductMapper.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/storefront/publicProductMapper.js	2026-11-18 16:34:04.478669378 +0000
 @@ -86,15 +86,22 @@
@@ -8819,7 +8829,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    mapPimToStorefront,
    isSafeMediaUrl,
    PLACEHOLDER_IMAGE,
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/storefrontSearchService.js work/server/lib/storefront/storefrontSearchService.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/storefront/storefrontSearchService.js work/server/lib/storefront/storefrontSearchService.js
 --- ws-snapshot/server/lib/storefront/storefrontSearchService.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/storefront/storefrontSearchService.js	2026-11-18 16:34:25.778809404 +0000
 @@ -82,7 +82,8 @@
@@ -8832,7 +8842,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
    let pimRows = productCore.listProducts({ limit: 1000 }).filter((p) => isProductVisibleOnStorefront(p, { preview }));
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storeHealth.js work/server/lib/storeHealth.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/storeHealth.js work/server/lib/storeHealth.js
 --- ws-snapshot/server/lib/storeHealth.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/storeHealth.js	2026-11-18 06:55:39.877518616 +0000
 @@ -0,0 +1,146 @@
@@ -8982,7 +8992,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { STORES, validateStore, describeStore, describeStores };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/supplierStore.js work/server/lib/supplierStore.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/supplierStore.js work/server/lib/supplierStore.js
 --- ws-snapshot/server/lib/supplierStore.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/supplierStore.js	2026-11-18 07:47:42.353032603 +0000
 @@ -1,10 +1,11 @@
@@ -9001,7 +9011,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readSuppliersDoc() {
    return JSON.parse(fs.readFileSync(suppliersFile, "utf8"));
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/syncLog.js work/server/lib/syncLog.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/syncLog.js work/server/lib/syncLog.js
 --- ws-snapshot/server/lib/syncLog.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/syncLog.js	2026-11-18 05:44:36.014451085 +0000
 @@ -1,7 +1,7 @@
@@ -9013,7 +9023,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const syncLogFile = path.join(dataDir, "sync-logs.json");
  const importLogFile = path.join(dataDir, "import-logs.json");
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/webhookGate.js work/server/lib/webhookGate.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/webhookGate.js work/server/lib/webhookGate.js
 --- ws-snapshot/server/lib/webhookGate.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/webhookGate.js	2026-11-18 06:35:57.438822859 +0000
 @@ -0,0 +1,278 @@
@@ -9295,7 +9305,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  describeConfiguration,
 +  resetForTests,
 +};
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/webhookInput.js work/server/lib/webhookInput.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/webhookInput.js work/server/lib/webhookInput.js
 --- ws-snapshot/server/lib/webhookInput.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/webhookInput.js	2026-11-18 06:37:51.207154124 +0000
 @@ -0,0 +1,48 @@
@@ -9347,7 +9357,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +const INVALID = Object.freeze({ error: "Invalid webhook payload", status: 400 });
 +
 +module.exports = { token, text, identifier, amount, currency, timestamp, INVALID };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/adminAuthPlugin.js work/server/plugins/adminAuthPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/adminAuthPlugin.js work/server/plugins/adminAuthPlugin.js
 --- ws-snapshot/server/plugins/adminAuthPlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/adminAuthPlugin.js	2026-11-18 06:54:40.011700028 +0000
 @@ -1,4 +1,15 @@
@@ -9432,7 +9442,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        return res.json({ success: true, sessions });
      });
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/adminCatalogPlugin.js work/server/plugins/adminCatalogPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/adminCatalogPlugin.js work/server/plugins/adminCatalogPlugin.js
 --- ws-snapshot/server/plugins/adminCatalogPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/adminCatalogPlugin.js	2026-11-18 07:23:03.967646351 +0000
 @@ -28,7 +28,7 @@
@@ -9453,7 +9463,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
            userId: req.adminUser?.userId,
            path: "/api/admin/import",
            detail: { supplierId, format },
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/aiAutomationPlugin.js work/server/plugins/aiAutomationPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/aiAutomationPlugin.js work/server/plugins/aiAutomationPlugin.js
 --- ws-snapshot/server/plugins/aiAutomationPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/aiAutomationPlugin.js	2026-11-18 05:44:36.014451085 +0000
 @@ -5,6 +5,7 @@
@@ -9492,7 +9502,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      });
  
      app.post("/api/ai/chat", (req, res) => {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/aiCenterPlugin.js work/server/plugins/aiCenterPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/aiCenterPlugin.js work/server/plugins/aiCenterPlugin.js
 --- ws-snapshot/server/plugins/aiCenterPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/aiCenterPlugin.js	2026-11-18 07:14:13.991938367 +0000
 @@ -1,6 +1,11 @@
@@ -9705,7 +9715,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      });
  
      app.get("/api/admin/ai-center/overview", (req, res) => {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/catalogSeoPlugin.js work/server/plugins/catalogSeoPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/catalogSeoPlugin.js work/server/plugins/catalogSeoPlugin.js
 --- ws-snapshot/server/plugins/catalogSeoPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/catalogSeoPlugin.js	2026-11-18 11:48:13.167194814 +0000
 @@ -80,6 +80,14 @@
@@ -9723,7 +9733,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      app.post("/api/admin/catalog/categories", (req, res) => {
        if (!requireAnyAdmin(req, res)) return;
        const result = catalogSeo.createCategory(req.body || {});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/commerceCorePlugin.js work/server/plugins/commerceCorePlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/commerceCorePlugin.js work/server/plugins/commerceCorePlugin.js
 --- ws-snapshot/server/plugins/commerceCorePlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/commerceCorePlugin.js	2026-11-18 06:36:32.329710659 +0000
 @@ -275,7 +275,7 @@
@@ -9735,7 +9745,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          eventType: req.body?.type || "unknown",
          rawBody,
          signature: req.headers["x-signature"] || "",
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/commercialIntegrationsPlugin.js work/server/plugins/commercialIntegrationsPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/commercialIntegrationsPlugin.js work/server/plugins/commercialIntegrationsPlugin.js
 --- ws-snapshot/server/plugins/commercialIntegrationsPlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/commercialIntegrationsPlugin.js	2026-11-18 06:24:03.849001073 +0000
 @@ -84,22 +84,28 @@
@@ -9771,7 +9781,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          return res.status(400).json({ error: "Unsupported carrier" });
        }
        try {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/contactStoragePlugin.js work/server/plugins/contactStoragePlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/contactStoragePlugin.js work/server/plugins/contactStoragePlugin.js
 --- ws-snapshot/server/plugins/contactStoragePlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/contactStoragePlugin.js	2026-11-18 07:25:12.217730668 +0000
 @@ -3,8 +3,10 @@
@@ -9857,7 +9867,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
      });
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/customerAccountPlugin.js work/server/plugins/customerAccountPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/customerAccountPlugin.js work/server/plugins/customerAccountPlugin.js
 --- ws-snapshot/server/plugins/customerAccountPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/customerAccountPlugin.js	2026-11-18 07:19:02.264226826 +0000
 @@ -8,6 +8,7 @@
@@ -9951,7 +9961,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        return res.json({ success: true });
      });
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/identitySecurityPlugin.js work/server/plugins/identitySecurityPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/identitySecurityPlugin.js work/server/plugins/identitySecurityPlugin.js
 --- ws-snapshot/server/plugins/identitySecurityPlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/identitySecurityPlugin.js	2026-11-18 07:12:53.003185517 +0000
 @@ -27,25 +27,25 @@
@@ -10014,7 +10024,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        return res.json(result);
      });
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/logisticsFulfillmentPlugin.js work/server/plugins/logisticsFulfillmentPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/logisticsFulfillmentPlugin.js work/server/plugins/logisticsFulfillmentPlugin.js
 --- ws-snapshot/server/plugins/logisticsFulfillmentPlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/logisticsFulfillmentPlugin.js	2026-11-18 06:30:03.389217717 +0000
 @@ -94,7 +94,15 @@
@@ -10034,7 +10044,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        const result = logisticsFulfillment.getShipmentTracking(req.params.orderNumber);
        if (result.error) return res.status(result.status || 404).json({ error: result.error });
        return res.json(result.tracking);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/logisticsPlugin.js work/server/plugins/logisticsPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/logisticsPlugin.js work/server/plugins/logisticsPlugin.js
 --- ws-snapshot/server/plugins/logisticsPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/logisticsPlugin.js	2026-11-18 05:44:36.014451085 +0000
 @@ -10,7 +10,7 @@
@@ -10046,7 +10056,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
  function readOrders() {
    if (!fs.existsSync(ordersFile)) return [];
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/ordersPlugin.js work/server/plugins/ordersPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/ordersPlugin.js work/server/plugins/ordersPlugin.js
 --- ws-snapshot/server/plugins/ordersPlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/ordersPlugin.js	2026-11-18 07:48:14.153565707 +0000
 @@ -17,9 +17,9 @@
@@ -10120,7 +10130,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      });
    },
  };
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/pimCorePlugin.js work/server/plugins/pimCorePlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/pimCorePlugin.js work/server/plugins/pimCorePlugin.js
 --- ws-snapshot/server/plugins/pimCorePlugin.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/plugins/pimCorePlugin.js	2026-11-18 10:10:53.653322256 +0000
 @@ -184,6 +184,9 @@
@@ -10133,7 +10143,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
          job: null,
        });
      });
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/securityPlugin.js work/server/plugins/securityPlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/securityPlugin.js work/server/plugins/securityPlugin.js
 --- ws-snapshot/server/plugins/securityPlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/securityPlugin.js	2026-11-18 06:55:39.877518616 +0000
 @@ -64,6 +64,13 @@
@@ -10150,7 +10160,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      app.get("/api/admin/security/events", (req, res) => {
        if (!requireAuth(req, res)) return;
        if (!requirePermission(req, res, "security.read")) return;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/storefrontBridgePlugin.js work/server/plugins/storefrontBridgePlugin.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/plugins/storefrontBridgePlugin.js work/server/plugins/storefrontBridgePlugin.js
 --- ws-snapshot/server/plugins/storefrontBridgePlugin.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/plugins/storefrontBridgePlugin.js	2026-11-18 16:34:25.778809404 +0000
 @@ -24,24 +24,25 @@
@@ -10207,7 +10217,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        res.send(xml);
      });
  
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/server.js work/server/server.js
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/server.js work/server/server.js
 --- ws-snapshot/server/server.js	2026-11-17 15:45:20.000000000 +0000
 +++ work/server/server.js	2026-11-18 07:17:39.753208963 +0000
 @@ -2,16 +2,27 @@
@@ -10604,7 +10614,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  });
  
  server.on("error", (err) => {
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/accountRecoverySecurity.test.mjs work/server/__tests__/accountRecoverySecurity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/accountRecoverySecurity.test.mjs work/server/__tests__/accountRecoverySecurity.test.mjs
 --- ws-snapshot/server/__tests__/accountRecoverySecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/accountRecoverySecurity.test.mjs	2026-11-18 07:25:26.209584048 +0000
 @@ -0,0 +1,362 @@
@@ -10970,7 +10980,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    }
 +  }, 120_000);
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminAuthorizationHardening.test.mjs work/server/__tests__/adminAuthorizationHardening.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminAuthorizationHardening.test.mjs work/server/__tests__/adminAuthorizationHardening.test.mjs
 --- ws-snapshot/server/__tests__/adminAuthorizationHardening.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminAuthorizationHardening.test.mjs	2026-11-18 06:30:53.463869888 +0000
 @@ -0,0 +1,344 @@
@@ -11318,7 +11328,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(write.status).not.toBe(429);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminJsonStoreIntegrity.test.mjs work/server/__tests__/adminJsonStoreIntegrity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminJsonStoreIntegrity.test.mjs work/server/__tests__/adminJsonStoreIntegrity.test.mjs
 --- ws-snapshot/server/__tests__/adminJsonStoreIntegrity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminJsonStoreIntegrity.test.mjs	2026-11-18 07:44:19.281739436 +0000
 @@ -0,0 +1,216 @@
@@ -11538,7 +11548,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(existsSync(path.join(dataDir, "automation-deliveries.json"))).toBe(false);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminLoginHardening.test.mjs work/server/__tests__/adminLoginHardening.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminLoginHardening.test.mjs work/server/__tests__/adminLoginHardening.test.mjs
 --- ws-snapshot/server/__tests__/adminLoginHardening.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminLoginHardening.test.mjs	2026-11-18 06:05:18.543406032 +0000
 @@ -0,0 +1,436 @@
@@ -11978,7 +11988,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(auth.listUsers().every((user) => !("password_hash" in user))).toBe(true);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminRouteMatrix.test.mjs work/server/__tests__/adminRouteMatrix.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminRouteMatrix.test.mjs work/server/__tests__/adminRouteMatrix.test.mjs
 --- ws-snapshot/server/__tests__/adminRouteMatrix.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminRouteMatrix.test.mjs	2026-11-18 06:48:39.948712303 +0000
 @@ -0,0 +1,416 @@
@@ -12398,7 +12408,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect([200, 404]).toContain(allowed.status);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminRoutePermissions.test.mjs work/server/__tests__/adminRoutePermissions.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminRoutePermissions.test.mjs work/server/__tests__/adminRoutePermissions.test.mjs
 --- ws-snapshot/server/__tests__/adminRoutePermissions.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminRoutePermissions.test.mjs	2026-11-18 06:41:19.400177057 +0000
 @@ -0,0 +1,123 @@
@@ -12525,7 +12535,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(resolveRoutePermission("POST", "/api/admin/pim-core/import")).toEqual({ permission: "products.write" });
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminSessionHttp.test.mjs work/server/__tests__/adminSessionHttp.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminSessionHttp.test.mjs work/server/__tests__/adminSessionHttp.test.mjs
 --- ws-snapshot/server/__tests__/adminSessionHttp.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminSessionHttp.test.mjs	2026-11-18 06:11:15.351845824 +0000
 @@ -0,0 +1,273 @@
@@ -12802,7 +12812,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect((await api.request("GET", "/api/admin/orders", { token: forged })).status).toBe(401);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminSessionLifecycle.test.mjs work/server/__tests__/adminSessionLifecycle.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminSessionLifecycle.test.mjs work/server/__tests__/adminSessionLifecycle.test.mjs
 --- ws-snapshot/server/__tests__/adminSessionLifecycle.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminSessionLifecycle.test.mjs	2026-11-18 06:09:03.641865206 +0000
 @@ -0,0 +1,469 @@
@@ -13275,7 +13285,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(auth.verifyTwoFactor(challenge, "000000", fakeRequest()).errorKey).toBe("admin.2fa.challengeExpired");
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminSessionSecurity.test.mjs work/server/__tests__/adminSessionSecurity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminSessionSecurity.test.mjs work/server/__tests__/adminSessionSecurity.test.mjs
 --- ws-snapshot/server/__tests__/adminSessionSecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminSessionSecurity.test.mjs	2026-11-18 05:44:36.014451085 +0000
 @@ -0,0 +1,271 @@
@@ -13550,7 +13560,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(auth.findSeedCredentialAccounts().sort()).toEqual(seed.map((entry) => entry.id).sort());
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/adminUiPermissions.test.mjs work/server/__tests__/adminUiPermissions.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/adminUiPermissions.test.mjs work/server/__tests__/adminUiPermissions.test.mjs
 --- ws-snapshot/server/__tests__/adminUiPermissions.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/adminUiPermissions.test.mjs	2026-11-18 11:48:49.174802544 +0000
 @@ -0,0 +1,372 @@
@@ -13926,7 +13936,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(JSON.stringify(after.json)).not.toContain("BZ-UI-CONTRACT-APPROVED");
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/aiCenterSecurity.test.mjs work/server/__tests__/aiCenterSecurity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/aiCenterSecurity.test.mjs work/server/__tests__/aiCenterSecurity.test.mjs
 --- ws-snapshot/server/__tests__/aiCenterSecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/aiCenterSecurity.test.mjs	2026-11-18 06:47:56.458267101 +0000
 @@ -0,0 +1,412 @@
@@ -14342,7 +14352,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    for (const schema of Object.values(aiCenterAccess.SCHEMAS)) expect(Object.keys(schema)).not.toContain("deps");
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/auditSecurityLogging.test.mjs work/server/__tests__/auditSecurityLogging.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/auditSecurityLogging.test.mjs work/server/__tests__/auditSecurityLogging.test.mjs
 --- ws-snapshot/server/__tests__/auditSecurityLogging.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/auditSecurityLogging.test.mjs	2026-11-18 07:30:51.644750486 +0000
 @@ -0,0 +1,532 @@
@@ -14878,7 +14888,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    }
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/catalogFixtureSecurity.test.mjs work/server/__tests__/catalogFixtureSecurity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/catalogFixtureSecurity.test.mjs work/server/__tests__/catalogFixtureSecurity.test.mjs
 --- ws-snapshot/server/__tests__/catalogFixtureSecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/catalogFixtureSecurity.test.mjs	2026-11-18 16:34:58.402989873 +0000
 @@ -0,0 +1,118 @@
@@ -15000,7 +15010,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(res.status).toBe(401);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/jsonLdSerialization.test.mjs work/server/__tests__/jsonLdSerialization.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/jsonLdSerialization.test.mjs work/server/__tests__/jsonLdSerialization.test.mjs
 --- ws-snapshot/server/__tests__/jsonLdSerialization.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/jsonLdSerialization.test.mjs	2026-11-18 06:12:16.326522329 +0000
 @@ -0,0 +1,21 @@
@@ -15025,7 +15035,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(JSON.parse(serializeJsonLd([hostile, { a: 1 }]))).toEqual([hostile, { a: 1 }]);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/jsonStoreIntegrity.test.mjs work/server/__tests__/jsonStoreIntegrity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/jsonStoreIntegrity.test.mjs work/server/__tests__/jsonStoreIntegrity.test.mjs
 --- ws-snapshot/server/__tests__/jsonStoreIntegrity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/jsonStoreIntegrity.test.mjs	2026-11-18 07:24:53.821940791 +0000
 @@ -0,0 +1,1061 @@
@@ -16090,7 +16100,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(JSON.parse(readFileSync(path.join(first.dataDir, "security-log.json"), "utf8"))).toEqual(before["security-log.json"]);
 +  }, 120_000);
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/jwtSecretHardening.test.mjs work/server/__tests__/jwtSecretHardening.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/jwtSecretHardening.test.mjs work/server/__tests__/jwtSecretHardening.test.mjs
 --- ws-snapshot/server/__tests__/jwtSecretHardening.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/jwtSecretHardening.test.mjs	2026-11-18 06:05:18.551405720 +0000
 @@ -0,0 +1,168 @@
@@ -16262,7 +16272,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(lib.load("environmentValidation.js").validateEnvironment().ok).toBe(true);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/productionStartup.test.mjs work/server/__tests__/productionStartup.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/productionStartup.test.mjs work/server/__tests__/productionStartup.test.mjs
 --- ws-snapshot/server/__tests__/productionStartup.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/productionStartup.test.mjs	2026-11-18 16:34:58.402989873 +0000
 @@ -0,0 +1,180 @@
@@ -16446,7 +16456,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect((await api.request("GET", "/api/health", { headers: { Origin: "null" } })).headers.get("access-control-allow-origin")).toBe("null");
 +  }, 90_000);
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/staticFileAccessHttp.test.mjs work/server/__tests__/staticFileAccessHttp.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/staticFileAccessHttp.test.mjs work/server/__tests__/staticFileAccessHttp.test.mjs
 --- ws-snapshot/server/__tests__/staticFileAccessHttp.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/staticFileAccessHttp.test.mjs	2026-11-18 05:55:37.494119780 +0000
 @@ -0,0 +1,209 @@
@@ -16659,7 +16669,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(res.text).not.toMatch(/password_hash|scrypt:/);
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/staticFilePolicy.test.mjs work/server/__tests__/staticFilePolicy.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/staticFilePolicy.test.mjs work/server/__tests__/staticFilePolicy.test.mjs
 --- ws-snapshot/server/__tests__/staticFilePolicy.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/staticFilePolicy.test.mjs	2026-11-18 05:55:18.209168064 +0000
 @@ -0,0 +1,136 @@
@@ -16799,7 +16809,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(resolvePublicFile(root, request)).toBeNull();
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/support/adminRouteTable.mjs work/server/__tests__/support/adminRouteTable.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/support/adminRouteTable.mjs work/server/__tests__/support/adminRouteTable.mjs
 --- ws-snapshot/server/__tests__/support/adminRouteTable.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/support/adminRouteTable.mjs	2026-11-18 06:24:03.849001073 +0000
 @@ -0,0 +1,118 @@
@@ -16921,7 +16931,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  ["GET","/api/returns-rma/returns/:rmaNumber","orders.read","read","record","closed-2026-11-18"],
 +  ["POST","/api/wms-inventory/scan","logistics.read","write","record","closed-2026-11-18"],
 +];
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/support/freshServerLib.mjs work/server/__tests__/support/freshServerLib.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/support/freshServerLib.mjs work/server/__tests__/support/freshServerLib.mjs
 --- ws-snapshot/server/__tests__/support/freshServerLib.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/support/freshServerLib.mjs	2026-11-18 06:11:09.936097215 +0000
 @@ -0,0 +1,60 @@
@@ -16985,7 +16995,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +export function fakeRequest(ip = "198.51.100.7", headers = {}) {
 +  return { headers: { "user-agent": "vitest", ...headers }, socket: { remoteAddress: ip } };
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/support/isolatedApi.mjs work/server/__tests__/support/isolatedApi.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/support/isolatedApi.mjs work/server/__tests__/support/isolatedApi.mjs
 --- ws-snapshot/server/__tests__/support/isolatedApi.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/support/isolatedApi.mjs	2026-11-18 07:48:14.153565707 +0000
 @@ -0,0 +1,145 @@
@@ -17134,7 +17144,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  }
 +  return api;
 +}
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/support/routeInventory.cjs work/server/__tests__/support/routeInventory.cjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/support/routeInventory.cjs work/server/__tests__/support/routeInventory.cjs
 --- ws-snapshot/server/__tests__/support/routeInventory.cjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/support/routeInventory.cjs	2026-11-18 06:14:34.115716615 +0000
 @@ -0,0 +1,41 @@
@@ -17179,7 +17189,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +
 +fs.writeFileSync(process.argv[2], JSON.stringify(routes));
 +process.exit(0);
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/testIsolation.test.mjs work/server/__tests__/testIsolation.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/testIsolation.test.mjs work/server/__tests__/testIsolation.test.mjs
 --- ws-snapshot/server/__tests__/testIsolation.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/testIsolation.test.mjs	2026-11-18 07:49:13.394569145 +0000
 @@ -0,0 +1,134 @@
@@ -17317,7 +17327,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    expect(process.env.BUZZARD_ISOLATED_NETWORK).toBe("loopback-only");
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/webhookSecurity.test.mjs work/server/__tests__/webhookSecurity.test.mjs
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/__tests__/webhookSecurity.test.mjs work/server/__tests__/webhookSecurity.test.mjs
 --- ws-snapshot/server/__tests__/webhookSecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/webhookSecurity.test.mjs	2026-11-18 06:40:34.773696435 +0000
 @@ -0,0 +1,619 @@
@@ -17940,7 +17950,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    }
 +  });
 +});
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/styles/admin.css work/styles/admin.css
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/styles/admin.css work/styles/admin.css
 --- ws-snapshot/styles/admin.css	2026-11-17 19:51:12.000000000 +0000
 +++ work/styles/admin.css	2026-11-18 09:03:00.472303370 +0000
 @@ -121,6 +121,41 @@
@@ -17985,7 +17995,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  .admin-api-banner {
    background: #2a1f0f;
    border: 1px solid #c9a227;
-diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/vitest.config.ts work/vitest.config.ts
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/vitest.config.ts work/vitest.config.ts
 --- ws-snapshot/vitest.config.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/vitest.config.ts	2026-11-18 05:44:36.014451085 +0000
 @@ -27,6 +27,7 @@

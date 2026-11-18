@@ -1,0 +1,103 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 82 tests using 1 worker
+
+  ✓   1 [chromium-desktop] › e2e/admin-pim-core.spec.ts:17:7 › Admin PIM Core E2E (Part 6) › PIM Core page loads (3.4s)
+  ✓   2 [chromium-desktop] › e2e/admin-pim-core.spec.ts:23:7 › Admin PIM Core E2E (Part 6) › Product list shows demo SKU (1.7s)
+  ✓   3 [chromium-desktop] › e2e/admin-pim-core.spec.ts:29:7 › Admin PIM Core E2E (Part 6) › Validation tab workflow (2.4s)
+  ✓   4 [chromium-desktop] › e2e/admin-pim-core.spec.ts:37:7 › Admin PIM Core E2E (Part 6) › Import dry-run is held for approval and not reported as run (4.4s)
+  ✓   5 [chromium-desktop] › e2e/admin-pim-core.spec.ts:75:7 › Admin PIM Core E2E (Part 6) › Brands section (2.0s)
+  ✓   6 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › administrator: is shown exactly the pages of the role and lands on one of them (976ms)
+[admin-pages] administrator: other failing API answers: /admin/returns/: 404 GET /api/admin/returns; /admin/analytics-foundation/: 404 GET /api/admin/analytics-foundation/kpis
+  ✓   7 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › administrator: no page that is offered sends a request the API refuses or throws an error (2.2m)
+  -   8 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › administrator: a page of another role shows a notice and loads nothing
+  ✓   9 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › admin: is shown exactly the pages of the role and lands on one of them (3.2s)
+[admin-pages] admin: other failing API answers: /admin/analytics-foundation/: 404 GET /api/admin/analytics-foundation/kpis
+  ✓  10 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › admin: no page that is offered sends a request the API refuses or throws an error (1.1m)
+  ✓  11 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › admin: a page of another role shows a notice and loads nothing (1.4m)
+  ✓  12 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › catalog_manager: is shown exactly the pages of the role and lands on one of them (3.1s)
+[admin-pages] catalog_manager: other failing API answers: none
+  ✓  13 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › catalog_manager: no page that is offered sends a request the API refuses or throws an error (48.0s)
+  ✓  14 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › catalog_manager: a page of another role shows a notice and loads nothing (1.0m)
+  ✓  15 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › order_manager: is shown exactly the pages of the role and lands on one of them (1.3s)
+[admin-pages] order_manager: other failing API answers: none
+  ✓  16 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › order_manager: no page that is offered sends a request the API refuses or throws an error (1.1m)
+  ✓  17 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › order_manager: a page of another role shows a notice and loads nothing (1.2m)
+  ✓  18 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › staff: is shown exactly the pages of the role and lands on one of them (2.4s)
+[admin-pages] staff: other failing API answers: none
+  ✓  19 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › staff: no page that is offered sends a request the API refuses or throws an error (53.3s)
+  ✓  20 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › staff: a page of another role shows a notice and loads nothing (59.7s)
+  ✓  21 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › ai_agent: is shown exactly the pages of the role and lands on one of them (1.7s)
+[admin-pages] ai_agent: other failing API answers: none
+  ✓  22 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › ai_agent: no page that is offered sends a request the API refuses or throws an error (2.6s)
+  ✓  23 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › ai_agent: a page of another role shows a notice and loads nothing (2.6m)
+  ✓  24 [chromium-desktop] › e2e/admin-roles.spec.ts:113:9 › Admin pages by role › read_only: is shown exactly the pages of the role and lands on one of them (5.4s)
+[admin-pages] read_only: other failing API answers: none
+  ✓  25 [chromium-desktop] › e2e/admin-roles.spec.ts:131:9 › Admin pages by role › read_only: no page that is offered sends a request the API refuses or throws an error (1.7m)
+  ✓  26 [chromium-desktop] › e2e/admin-roles.spec.ts:154:9 › Admin pages by role › read_only: a page of another role shows a notice and loads nothing (11.5s)
+  ✓  27 [chromium-desktop] › e2e/admin-roles.spec.ts:182:7 › Admin actions by permission › PIM import dry run is offered only with products.write and imports.run (13.5s)
+  ✓  28 [chromium-desktop] › e2e/admin-roles.spec.ts:205:7 › Admin actions by permission › catalog manager submits a dry run: held for approval, shown as pending, nothing imported (4.3s)
+  ✓  29 [chromium-desktop] › e2e/admin-roles.spec.ts:250:7 › Admin actions by permission › Control Center: read-only roles see the page, sections without permission are named, decisions are not offered (8.9s)
+  ✓  30 [chromium-desktop] › e2e/admin-roles.spec.ts:307:7 › Admin actions by permission › Control Center is closed to roles without system.read (6.8s)
+  ✓  31 [chromium-desktop] › e2e/admin-roles.spec.ts:320:7 › Admin actions by permission › Sessions: ending a session is offered only with security.manage, and ends it (4.7s)
+  ✓  32 [chromium-desktop] › e2e/admin-roles.spec.ts:349:7 › Admin actions by permission › a change the API refuses is announced on the page, and nothing is changed (2.6s)
+  ✓  33 [chromium-desktop] › e2e/admin-roles.spec.ts:377:7 › Admin actions by permission › Catalog page: lists the products and the categories of the catalog (4.6s)
+  ✓  34 [chromium-desktop] › e2e/admin-roles.spec.ts:408:7 › Admin actions by permission › AI Center: the assistant is offered only with ai.execute (7.5s)
+  ✓  35 [chromium-desktop] › e2e/admin-roles.spec.ts:432:7 › Admin session end and login messages › an expired session sends the page back to the login form and is refused by the API (3.7s)
+  ✓  36 [chromium-desktop] › e2e/admin-roles.spec.ts:451:7 › Admin session end and login messages › a session survives a reload and ends with the browser tab (2.2s)
+  ✓  37 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: wrong credentials (723ms)
+  ✓  38 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: locked account (729ms)
+  ✓  39 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: too many attempts (826ms)
+  ✓  40 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: sign-in service failing (747ms)
+  ✓  41 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: answer that is not from the API (731ms)
+  ✓  42 [chromium-desktop] › e2e/admin-roles.spec.ts:496:7 › Admin session end and login messages › locked account: the form says so, also for the right password (975ms)
+  ✓  43 [chromium-desktop] › e2e/admin-session.spec.ts:19:7 › Admin login, session and authorization UI › anonymous visit to an admin page ends on the login form (750ms)
+  ✓  44 [chromium-desktop] › e2e/admin-session.spec.ts:25:7 › Admin login, session and authorization UI › anonymous admin API request is answered with 401 (23ms)
+  ✓  45 [chromium-desktop] › e2e/admin-session.spec.ts:33:7 › Admin login, session and authorization UI › login with valid credentials opens the dashboard (957ms)
+  ✓  46 [chromium-desktop] › e2e/admin-session.spec.ts:41:7 › Admin login, session and authorization UI › wrong password shows a generic error and stores no token (821ms)
+  ✓  47 [chromium-desktop] › e2e/admin-session.spec.ts:49:7 › Admin login, session and authorization UI › unknown account gets the same message as a wrong password (842ms)
+  ✓  48 [chromium-desktop] › e2e/admin-session.spec.ts:56:7 › Admin login, session and authorization UI › unreachable admin service is reported as unreachable, not as wrong credentials (731ms)
+  ✓  49 [chromium-desktop] › e2e/admin-session.spec.ts:64:7 › Admin login, session and authorization UI › session survives a reload and navigation (2.2s)
+  ✓  50 [chromium-desktop] › e2e/admin-session.spec.ts:74:7 › Admin login, session and authorization UI › logout returns to the login form and invalidates the token (1.8s)
+  ✓  51 [chromium-desktop] › e2e/admin-session.spec.ts:87:7 › Admin login, session and authorization UI › a session that ended on the server sends the open page back to login (1.8s)
+  ✓  52 [chromium-desktop] › e2e/admin-session.spec.ts:111:7 › Admin login, session and authorization UI › an invalid stored token is discarded on load (1.2s)
+  ✓  53 [chromium-desktop] › e2e/admin-session.spec.ts:119:7 › Admin login, session and authorization UI › read-only administrator can open PIM but is refused the import dry run (1.8s)
+  ✓  54 [chromium-desktop] › e2e/admin.spec.ts:9:7 › Admin E2E (Part 5 foundation) › Admin login page loads (766ms)
+  ✓  55 [chromium-desktop] › e2e/admin.spec.ts:14:7 › Admin E2E (Part 5 foundation) › Admin login → dashboard (994ms)
+  ✓  56 [chromium-desktop] › e2e/admin.spec.ts:23:7 › Admin E2E (Part 5 foundation) › Control Center loads (1.6s)
+  ✓  57 [chromium-desktop] › e2e/admin.spec.ts:33:7 › Admin E2E (Part 5 foundation) › Sessions page loads (1.5s)
+  ✓  58 [chromium-desktop] › e2e/customer-journey.spec.ts:42:7 › Part 10 — Customer journey (commerce dry-run) › homepage loads (3.8s)
+  ✓  59 [chromium-desktop] › e2e/customer-journey.spec.ts:48:7 › Part 10 — Customer journey (commerce dry-run) › warenkorb page loads (3.2s)
+  ✓  60 [chromium-desktop] › e2e/customer-journey.spec.ts:54:7 › Part 10 — Customer journey (commerce dry-run) › product → cart → checkout → READINESS_TEST success (1.7s)
+  ✓  61 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1280 (636ms)
+  ✓  62 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1440 (539ms)
+  ✓  63 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — desktop1920 (588ms)
+  ✓  64 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile320 (503ms)
+  ✓  65 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile360 (537ms)
+  ✓  66 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile375 (536ms)
+  ✓  67 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile390 (507ms)
+  ✓  68 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — mobile414 (526ms)
+  ✓  69 [chromium-desktop] › e2e/customer-journey.spec.ts:89:9 › Part 10 — Mobile layout checks › no horizontal overflow — tablet768 (555ms)
+  ✓  70 [chromium-desktop] › e2e/device-regression.spec.ts:18:7 › Device regression — storefront › homepage: brand, search and navigation are present (626ms)
+  ✓  71 [chromium-desktop] › e2e/device-regression.spec.ts:33:7 › Device regression — storefront › categories: taxonomy page loads without inventing the fixture (2.5s)
+  ✓  72 [chromium-desktop] › e2e/device-regression.spec.ts:41:7 › Device regression — storefront › search: finds the synthetic shelf item by its real title (2.0s)
+  ✓  73 [chromium-desktop] › e2e/device-regression.spec.ts:51:7 › Device regression — storefront › product detail: shows the fixture without invented EAN/brand/category (3.1s)
+  ✓  74 [chromium-desktop] › e2e/device-regression.spec.ts:65:7 › Device regression — storefront › product → cart: add works; checkout stays inquiry-only while sales are locked (1.4s)
+  ✓  75 [chromium-desktop] › e2e/device-regression.spec.ts:88:7 › Device regression — storefront › admin entry: login page is reachable from the storefront host (379ms)
+  ✓  76 [chromium-desktop] › e2e/device-regression.spec.ts:97:7 › Device regression — storefront › public health of the catalog API is up (7ms)
+  ✓  77 [chromium-desktop] › e2e/storefront-bridge.spec.ts:17:7 › Storefront Bridge E2E (Part 7) › Homepage loads without horizontal overflow (760ms)
+  ✓  78 [chromium-desktop] › e2e/storefront-bridge.spec.ts:24:7 › Storefront Bridge E2E (Part 7) › Category page product grid at mobile 320px (1.0s)
+  ✓  79 [chromium-desktop] › e2e/storefront-bridge.spec.ts:31:7 › Storefront Bridge E2E (Part 7) › Mega menu: subcategories hidden until main category click (1.1s)
+  ✓  80 [chromium-desktop] › e2e/storefront-bridge.spec.ts:46:7 › Storefront Bridge E2E (Part 7) › Product listing via category (901ms)
+  ✓  81 [chromium-desktop] › e2e/storefront-bridge.spec.ts:51:7 › Storefront Bridge E2E (Part 7) › Search page loads (789ms)
+  ✓  82 [chromium-desktop] › e2e/storefront-bridge.spec.ts:56:7 › Storefront Bridge E2E (Part 7) › Admin storefront health (1.8s)
+
+  Slow test file: [chromium-desktop] › e2e/admin-roles.spec.ts (16.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 skipped
+  81 passed (17.8m)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.4s2oAu
+EXIT=0

@@ -1,0 +1,2154 @@
+TAP version 13
+# Subtest: release safety passes with safe defaults
+ok 1 - release safety passes with safe defaults
+  ---
+  duration_ms: 1.204751
+  type: 'test'
+  ...
+# Subtest: release safety fails when sales are enabled
+ok 2 - release safety fails when sales are enabled
+  ---
+  duration_ms: 0.227013
+  type: 'test'
+  ...
+# Subtest: release safety fails when live supplier import is enabled
+ok 3 - release safety fails when live supplier import is enabled
+  ---
+  duration_ms: 0.135366
+  type: 'test'
+  ...
+# Subtest: release readiness never auto activates
+ok 4 - release readiness never auto activates
+  ---
+  duration_ms: 0.497478
+  type: 'test'
+  ...
+# Subtest: go-live remains blocked pending human approval
+ok 5 - go-live remains blocked pending human approval
+  ---
+  duration_ms: 0.292441
+  type: 'test'
+  ...
+# Subtest: rollback requires a previous release
+ok 6 - rollback requires a previous release
+  ---
+  duration_ms: 0.161315
+  type: 'test'
+  ...
+# Subtest: rollback is ready with a previous release
+ok 7 - rollback is ready with a previous release
+  ---
+  duration_ms: 0.208403
+  type: 'test'
+  ...
+# Subtest: release manifest disables live actions
+ok 8 - release manifest disables live actions
+  ---
+  duration_ms: 0.353607
+  type: 'test'
+  ...
+# Subtest: readiness exposes twelve gates
+ok 9 - readiness exposes twelve gates
+  ---
+  duration_ms: 0.392294
+  type: 'test'
+  ...
+# Subtest: supplier remains disconnected
+ok 10 - supplier remains disconnected
+  ---
+  duration_ms: 0.441516
+  type: 'test'
+  ...
+# Subtest: Part 27 readiness is diagnostic only
+ok 11 - Part 27 readiness is diagnostic only
+  ---
+  duration_ms: 2.30759
+  type: 'test'
+  ...
+# Subtest: sales remain disabled
+ok 12 - sales remain disabled
+  ---
+  duration_ms: 0.262272
+  type: 'test'
+  ...
+# Subtest: supplier live import remains disabled
+ok 13 - supplier live import remains disabled
+  ---
+  duration_ms: 0.222115
+  type: 'test'
+  ...
+# Subtest: publish remains disabled
+ok 14 - publish remains disabled
+  ---
+  duration_ms: 0.204259
+  type: 'test'
+  ...
+# Subtest: payments remain disabled
+ok 15 - payments remain disabled
+  ---
+  duration_ms: 0.174071
+  type: 'test'
+  ...
+# Subtest: supplier orders remain blocked
+ok 16 - supplier orders remain blocked
+  ---
+  duration_ms: 0.143396
+  type: 'test'
+  ...
+# Subtest: safe environment passes with defaults
+ok 17 - safe environment passes with defaults
+  ---
+  duration_ms: 0.149504
+  type: 'test'
+  ...
+# Subtest: sales activation is blocked
+ok 18 - sales activation is blocked
+  ---
+  duration_ms: 0.086208
+  type: 'test'
+  ...
+# Subtest: live supplier import is blocked
+ok 19 - live supplier import is blocked
+  ---
+  duration_ms: 0.248824
+  type: 'test'
+  ...
+# Subtest: audit never exposes secrets
+ok 20 - audit never exposes secrets
+  ---
+  duration_ms: 0.373305
+  type: 'test'
+  ...
+# Subtest: readiness is never automatically activated
+ok 21 - readiness is never automatically activated
+  ---
+  duration_ms: 0.174608
+  type: 'test'
+  ...
+# Subtest: part number is 27
+ok 22 - part number is 27
+  ---
+  duration_ms: 0.172815
+  type: 'test'
+  ...
+# Subtest: all 15 gates returned
+ok 23 - all 15 gates returned
+  ---
+  duration_ms: 0.122302
+  type: 'test'
+  ...
+# Subtest: go-live approval gate is BLOCKED
+ok 24 - go-live approval gate is BLOCKED
+  ---
+  duration_ms: 0.078634
+  type: 'test'
+  ...
+# Subtest: supplier safety gate is READY without credentials
+ok 25 - supplier safety gate is READY without credentials
+  ---
+  duration_ms: 0.099436
+  type: 'test'
+  ...
+# Subtest: commerce safety gate is READY with sales OFF
+ok 26 - commerce safety gate is READY with sales OFF
+  ---
+  duration_ms: 0.092277
+  type: 'test'
+  ...
+# Subtest: RBAC public route is public
+ok 27 - RBAC public route is public
+  ---
+  duration_ms: 0.896827
+  type: 'test'
+  ...
+# Subtest: RBAC admin routes require permissions
+ok 28 - RBAC admin routes require permissions
+  ---
+  duration_ms: 0.591869
+  type: 'test'
+  ...
+# Subtest: Part 28 returns BLOCKED before human approval
+ok 29 - Part 28 returns BLOCKED before human approval
+  ---
+  duration_ms: 3.74302
+  type: 'test'
+  ...
+# Subtest: Part 28 is diagnostic only
+ok 30 - Part 28 is diagnostic only
+  ---
+  duration_ms: 0.767657
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 31 - Sales remain disabled
+  ---
+  duration_ms: 0.664675
+  type: 'test'
+  ...
+# Subtest: Supplier remains disconnected
+ok 32 - Supplier remains disconnected
+  ---
+  duration_ms: 0.735589
+  type: 'test'
+  ...
+# Subtest: Supplier API is not called
+ok 33 - Supplier API is not called
+  ---
+  duration_ms: 1.244998
+  type: 'test'
+  ...
+# Subtest: Live import remains disabled
+ok 34 - Live import remains disabled
+  ---
+  duration_ms: 0.639484
+  type: 'test'
+  ...
+# Subtest: Dry run remains enabled
+ok 35 - Dry run remains enabled
+  ---
+  duration_ms: 0.59239
+  type: 'test'
+  ...
+# Subtest: Stripe remains disabled
+ok 36 - Stripe remains disabled
+  ---
+  duration_ms: 0.589304
+  type: 'test'
+  ...
+# Subtest: PayPal remains disabled
+ok 37 - PayPal remains disabled
+  ---
+  duration_ms: 0.936195
+  type: 'test'
+  ...
+# Subtest: Publishing remains disabled
+ok 38 - Publishing remains disabled
+  ---
+  duration_ms: 0.83366
+  type: 'test'
+  ...
+# Subtest: Human approval is required
+ok 39 - Human approval is required
+  ---
+  duration_ms: 0.65462
+  type: 'test'
+  ...
+# Subtest: Human approval gate is blocking
+ok 40 - Human approval gate is blocking
+  ---
+  duration_ms: 0.625346
+  type: 'test'
+  ...
+# Subtest: Environment safety gate passes in safe state
+ok 41 - Environment safety gate passes in safe state
+  ---
+  duration_ms: 0.540853
+  type: 'test'
+  ...
+# Subtest: Security readiness gate exists
+ok 42 - Security readiness gate exists
+  ---
+  duration_ms: 0.480959
+  type: 'test'
+  ...
+# Subtest: Product quality readiness gate exists
+ok 43 - Product quality readiness gate exists
+  ---
+  duration_ms: 0.45382
+  type: 'test'
+  ...
+# Subtest: Supplier integration readiness remains non-live
+ok 44 - Supplier integration readiness remains non-live
+  ---
+  duration_ms: 0.500856
+  type: 'test'
+  ...
+# Subtest: Validation performs no mutation
+ok 45 - Validation performs no mutation
+  ---
+  duration_ms: 0.448404
+  type: 'test'
+  ...
+# Subtest: Audit never exposes secrets
+ok 46 - Audit never exposes secrets
+  ---
+  duration_ms: 0.630595
+  type: 'test'
+  ...
+# Subtest: Audit remains blocked before approval
+ok 47 - Audit remains blocked before approval
+  ---
+  duration_ms: 0.482939
+  type: 'test'
+  ...
+# Subtest: Final activation is never allowed automatically
+ok 48 - Final activation is never allowed automatically
+  ---
+  duration_ms: 0.473709
+  type: 'test'
+  ...
+# Subtest: Part 28 has no supplier activation capability
+ok 49 - Part 28 has no supplier activation capability
+  ---
+  duration_ms: 0.473385
+  type: 'test'
+  ...
+# Subtest: Final result is fail-closed
+ok 50 - Final result is fail-closed
+  ---
+  duration_ms: 0.453851
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 51 - RBAC public health route is public
+  ---
+  duration_ms: 0.708504
+  type: 'test'
+  ...
+# Subtest: RBAC admin final go-live routes require system.read
+ok 52 - RBAC admin final go-live routes require system.read
+  ---
+  duration_ms: 2.033796
+  type: 'test'
+  ...
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# fatal: not a git repository (or any of the parent directories): .git
+# Subtest: Part 29 returns BLOCKED before human approval
+ok 53 - Part 29 returns BLOCKED before human approval
+  ---
+  duration_ms: 164.518425
+  type: 'test'
+  ...
+# Subtest: Part 29 is diagnostic only
+ok 54 - Part 29 is diagnostic only
+  ---
+  duration_ms: 131.070983
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 55 - Sales remain disabled
+  ---
+  duration_ms: 122.77801
+  type: 'test'
+  ...
+# Subtest: Supplier remains disconnected
+ok 56 - Supplier remains disconnected
+  ---
+  duration_ms: 123.59992
+  type: 'test'
+  ...
+# Subtest: Supplier API is not called
+ok 57 - Supplier API is not called
+  ---
+  duration_ms: 128.525205
+  type: 'test'
+  ...
+# Subtest: Live import remains disabled
+ok 58 - Live import remains disabled
+  ---
+  duration_ms: 125.808837
+  type: 'test'
+  ...
+# Subtest: Dry run remains enabled
+ok 59 - Dry run remains enabled
+  ---
+  duration_ms: 120.436347
+  type: 'test'
+  ...
+# Subtest: Stripe remains disabled
+ok 60 - Stripe remains disabled
+  ---
+  duration_ms: 121.848485
+  type: 'test'
+  ...
+# Subtest: PayPal remains disabled
+ok 61 - PayPal remains disabled
+  ---
+  duration_ms: 125.255063
+  type: 'test'
+  ...
+# Subtest: Publishing remains disabled
+ok 62 - Publishing remains disabled
+  ---
+  duration_ms: 131.402197
+  type: 'test'
+  ...
+# Subtest: Human approval is required
+ok 63 - Human approval is required
+  ---
+  duration_ms: 136.290192
+  type: 'test'
+  ...
+# Subtest: Human pre-launch approval gate is blocking
+ok 64 - Human pre-launch approval gate is blocking
+  ---
+  duration_ms: 127.697748
+  type: 'test'
+  ...
+# Subtest: Configuration gate exists
+ok 65 - Configuration gate exists
+  ---
+  duration_ms: 144.265041
+  type: 'test'
+  ...
+# Subtest: Security readiness gate exists
+ok 66 - Security readiness gate exists
+  ---
+  duration_ms: 131.839346
+  type: 'test'
+  ...
+# Subtest: Monitoring readiness gate exists
+ok 67 - Monitoring readiness gate exists
+  ---
+  duration_ms: 138.443019
+  type: 'test'
+  ...
+# Subtest: Incident readiness gate exists
+ok 68 - Incident readiness gate exists
+  ---
+  duration_ms: 133.629703
+  type: 'test'
+  ...
+# Subtest: Backup readiness gate exists
+ok 69 - Backup readiness gate exists
+  ---
+  duration_ms: 126.894582
+  type: 'test'
+  ...
+# Subtest: Database readiness gate exists
+ok 70 - Database readiness gate exists
+  ---
+  duration_ms: 134.91681
+  type: 'test'
+  ...
+# Subtest: Worker readiness gate exists
+ok 71 - Worker readiness gate exists
+  ---
+  duration_ms: 134.218146
+  type: 'test'
+  ...
+# Subtest: Product quality gate exists
+ok 72 - Product quality gate exists
+  ---
+  duration_ms: 124.722319
+  type: 'test'
+  ...
+# Subtest: Supplier readiness remains verification only
+ok 73 - Supplier readiness remains verification only
+  ---
+  duration_ms: 127.67207
+  type: 'test'
+  ...
+# Subtest: Payment readiness remains verification only
+ok 74 - Payment readiness remains verification only
+  ---
+  duration_ms: 128.617363
+  type: 'test'
+  ...
+# Subtest: Commerce readiness gate exists
+ok 75 - Commerce readiness gate exists
+  ---
+  duration_ms: 127.299408
+  type: 'test'
+  ...
+# Subtest: Release readiness gate exists
+ok 76 - Release readiness gate exists
+  ---
+  duration_ms: 130.871302
+  type: 'test'
+  ...
+# Subtest: Rollback readiness gate exists
+ok 77 - Rollback readiness gate exists
+  ---
+  duration_ms: 128.468402
+  type: 'test'
+  ...
+# Subtest: Operational finalization gate exists
+ok 78 - Operational finalization gate exists
+  ---
+  duration_ms: 128.248883
+  type: 'test'
+  ...
+# Subtest: Final go-live readiness gate exists
+ok 79 - Final go-live readiness gate exists
+  ---
+  duration_ms: 129.616891
+  type: 'test'
+  ...
+# Subtest: Part 29 defines all required gates
+ok 80 - Part 29 defines all required gates
+  ---
+  duration_ms: 125.985808
+  type: 'test'
+  ...
+# Subtest: Validation performs no mutation
+ok 81 - Validation performs no mutation
+  ---
+  duration_ms: 125.052393
+  type: 'test'
+  ...
+# Subtest: Audit never exposes secrets
+ok 82 - Audit never exposes secrets
+  ---
+  duration_ms: 123.113678
+  type: 'test'
+  ...
+# Subtest: Audit remains blocked before approval
+ok 83 - Audit remains blocked before approval
+  ---
+  duration_ms: 128.383347
+  type: 'test'
+  ...
+# Subtest: Final activation is never allowed automatically
+ok 84 - Final activation is never allowed automatically
+  ---
+  duration_ms: 130.684454
+  type: 'test'
+  ...
+# Subtest: Part 29 has no supplier activation capability
+ok 85 - Part 29 has no supplier activation capability
+  ---
+  duration_ms: 129.784499
+  type: 'test'
+  ...
+# Subtest: Final result is fail-closed
+ok 86 - Final result is fail-closed
+  ---
+  duration_ms: 131.701189
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 87 - RBAC public health route is public
+  ---
+  duration_ms: 0.989946
+  type: 'test'
+  ...
+# Subtest: RBAC admin final prelaunch routes require system.read
+ok 88 - RBAC admin final prelaunch routes require system.read
+  ---
+  duration_ms: 0.621837
+  type: 'test'
+  ...
+# Subtest: Part 30 exposes all required gates
+ok 89 - Part 30 exposes all required gates
+  ---
+  duration_ms: 0.77326
+  type: 'test'
+  ...
+# Subtest: Part 30 is fail-closed without input
+ok 90 - Part 30 is fail-closed without input
+  ---
+  duration_ms: 0.396279
+  type: 'test'
+  ...
+# Subtest: Human operational approval is mandatory
+ok 91 - Human operational approval is mandatory
+  ---
+  duration_ms: 0.309026
+  type: 'test'
+  ...
+# Subtest: Human approval does not enable activation automatically
+ok 92 - Human approval does not enable activation automatically
+  ---
+  duration_ms: 0.198308
+  type: 'test'
+  ...
+# Subtest: Sales enabled is blocked
+ok 93 - Sales enabled is blocked
+  ---
+  duration_ms: 0.270018
+  type: 'test'
+  ...
+# Subtest: Supplier live is blocked
+ok 94 - Supplier live is blocked
+  ---
+  duration_ms: 0.127548
+  type: 'test'
+  ...
+# Subtest: Live import is blocked
+ok 95 - Live import is blocked
+  ---
+  duration_ms: 0.093467
+  type: 'test'
+  ...
+# Subtest: Publish is blocked
+ok 96 - Publish is blocked
+  ---
+  duration_ms: 0.084681
+  type: 'test'
+  ...
+# Subtest: Auto activation is always false
+ok 97 - Auto activation is always false
+  ---
+  duration_ms: 0.215555
+  type: 'test'
+  ...
+# Subtest: Missing upstream gate is blocked
+ok 98 - Missing upstream gate is blocked
+  ---
+  duration_ms: 0.267118
+  type: 'test'
+  ...
+# Subtest: Invalid upstream gate status is blocked
+ok 99 - Invalid upstream gate status is blocked
+  ---
+  duration_ms: 0.123369
+  type: 'test'
+  ...
+# Subtest: Condition propagates without becoming ready
+ok 100 - Condition propagates without becoming ready
+  ---
+  duration_ms: 0.084771
+  type: 'test'
+  ...
+# Subtest: Blocked gate dominates conditions
+ok 101 - Blocked gate dominates conditions
+  ---
+  duration_ms: 0.069559
+  type: 'test'
+  ...
+# Subtest: Safety state remains disabled
+ok 102 - Safety state remains disabled
+  ---
+  duration_ms: 1.619906
+  type: 'test'
+  ...
+# Subtest: Supplier cannot become live through readiness
+ok 103 - Supplier cannot become live through readiness
+  ---
+  duration_ms: 0.112352
+  type: 'test'
+  ...
+# Subtest: Sales cannot become enabled through readiness
+ok 104 - Sales cannot become enabled through readiness
+  ---
+  duration_ms: 0.065361
+  type: 'test'
+  ...
+# Subtest: Diagnostic-only invariant is permanent
+ok 105 - Diagnostic-only invariant is permanent
+  ---
+  duration_ms: 0.051938
+  type: 'test'
+  ...
+# Subtest: Audit is read-only
+ok 106 - Audit is read-only
+  ---
+  duration_ms: 0.230831
+  type: 'test'
+  ...
+# Subtest: Audit redacts secret-like fields
+ok 107 - Audit redacts secret-like fields
+  ---
+  duration_ms: 0.09133
+  type: 'test'
+  ...
+# Subtest: Final state cannot authorize activation
+ok 108 - Final state cannot authorize activation
+  ---
+  duration_ms: 0.045164
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 109 - RBAC public health route is public
+  ---
+  duration_ms: 0.746246
+  type: 'test'
+  ...
+# Subtest: RBAC admin final operational routes require system.read
+ok 110 - RBAC admin final operational routes require system.read
+  ---
+  duration_ms: 0.504971
+  type: 'test'
+  ...
+# Subtest: Part 31 exposes all required gates
+ok 111 - Part 31 exposes all required gates
+  ---
+  duration_ms: 0.895801
+  type: 'test'
+  ...
+# Subtest: Part 31 is fail-closed without input
+ok 112 - Part 31 is fail-closed without input
+  ---
+  duration_ms: 1.027632
+  type: 'test'
+  ...
+# Subtest: Part 31 is diagnostic only
+ok 113 - Part 31 is diagnostic only
+  ---
+  duration_ms: 0.298237
+  type: 'test'
+  ...
+# Subtest: Human launch approval is mandatory
+ok 114 - Human launch approval is mandatory
+  ---
+  duration_ms: 0.284621
+  type: 'test'
+  ...
+# Subtest: Human approval does not enable activation
+ok 115 - Human approval does not enable activation
+  ---
+  duration_ms: 0.175538
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 116 - Sales remain disabled
+  ---
+  duration_ms: 0.305476
+  type: 'test'
+  ...
+# Subtest: Supplier remains disconnected
+ok 117 - Supplier remains disconnected
+  ---
+  duration_ms: 0.203444
+  type: 'test'
+  ...
+# Subtest: Supplier API is not called
+ok 118 - Supplier API is not called
+  ---
+  duration_ms: 0.168287
+  type: 'test'
+  ...
+# Subtest: Live import remains disabled
+ok 119 - Live import remains disabled
+  ---
+  duration_ms: 0.325785
+  type: 'test'
+  ...
+# Subtest: Stripe and PayPal remain disabled
+ok 120 - Stripe and PayPal remain disabled
+  ---
+  duration_ms: 0.419459
+  type: 'test'
+  ...
+# Subtest: Publishing remains disabled
+ok 121 - Publishing remains disabled
+  ---
+  duration_ms: 0.176616
+  type: 'test'
+  ...
+# Subtest: Environment safety gate passes in safe state
+ok 122 - Environment safety gate passes in safe state
+  ---
+  duration_ms: 0.118296
+  type: 'test'
+  ...
+# Subtest: Sales activation in safety input is blocked
+ok 123 - Sales activation in safety input is blocked
+  ---
+  duration_ms: 0.103279
+  type: 'test'
+  ...
+# Subtest: Supplier live in safety input is blocked
+ok 124 - Supplier live in safety input is blocked
+  ---
+  duration_ms: 0.084731
+  type: 'test'
+  ...
+# Subtest: Missing upstream gate is blocked
+ok 125 - Missing upstream gate is blocked
+  ---
+  duration_ms: 0.097625
+  type: 'test'
+  ...
+# Subtest: Invalid upstream gate status is blocked
+ok 126 - Invalid upstream gate status is blocked
+  ---
+  duration_ms: 0.087251
+  type: 'test'
+  ...
+# Subtest: Condition propagates without becoming ready
+ok 127 - Condition propagates without becoming ready
+  ---
+  duration_ms: 0.09049
+  type: 'test'
+  ...
+# Subtest: Blocked gate dominates conditions
+ok 128 - Blocked gate dominates conditions
+  ---
+  duration_ms: 0.083956
+  type: 'test'
+  ...
+# Subtest: Final operational readiness gate exists
+ok 129 - Final operational readiness gate exists
+  ---
+  duration_ms: 0.099127
+  type: 'test'
+  ...
+# Subtest: Validation performs no mutation
+ok 130 - Validation performs no mutation
+  ---
+  duration_ms: 0.10445
+  type: 'test'
+  ...
+# Subtest: Audit is read-only and redacts secrets
+ok 131 - Audit is read-only and redacts secrets
+  ---
+  duration_ms: 0.370354
+  type: 'test'
+  ...
+# Subtest: Final state cannot authorize activation
+ok 132 - Final state cannot authorize activation
+  ---
+  duration_ms: 0.126823
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 133 - RBAC public health route is public
+  ---
+  duration_ms: 0.715283
+  type: 'test'
+  ...
+# Subtest: RBAC admin governance routes require system.read
+ok 134 - RBAC admin governance routes require system.read
+  ---
+  duration_ms: 0.575455
+  type: 'test'
+  ...
+# Subtest: Part 32 defines 20 gates
+ok 135 - Part 32 defines 20 gates
+  ---
+  duration_ms: 0.750335
+  type: 'test'
+  ...
+# Subtest: Part 32 is diagnostic only
+ok 136 - Part 32 is diagnostic only
+  ---
+  duration_ms: 0.141006
+  type: 'test'
+  ...
+# Subtest: Part 32 cannot auto activate
+ok 137 - Part 32 cannot auto activate
+  ---
+  duration_ms: 0.093462
+  type: 'test'
+  ...
+# Subtest: Final decision is always BLOCKED
+ok 138 - Final decision is always BLOCKED
+  ---
+  duration_ms: 0.279729
+  type: 'test'
+  ...
+# Subtest: Human approval remains mandatory
+ok 139 - Human approval remains mandatory
+  ---
+  duration_ms: 0.22673
+  type: 'test'
+  ...
+# Subtest: Supplier remains offline
+ok 140 - Supplier remains offline
+  ---
+  duration_ms: 0.085447
+  type: 'test'
+  ...
+# Subtest: Sales remains disabled
+ok 141 - Sales remains disabled
+  ---
+  duration_ms: 0.127272
+  type: 'test'
+  ...
+# Subtest: Payment activation remains disabled
+ok 142 - Payment activation remains disabled
+  ---
+  duration_ms: 0.069386
+  type: 'test'
+  ...
+# Subtest: Publish remains disabled
+ok 143 - Publish remains disabled
+  ---
+  duration_ms: 0.268199
+  type: 'test'
+  ...
+# Subtest: Sensitive audit values are redacted
+ok 144 - Sensitive audit values are redacted
+  ---
+  duration_ms: 0.422572
+  type: 'test'
+  ...
+# Subtest: Audit remains diagnostic-only
+ok 145 - Audit remains diagnostic-only
+  ---
+  duration_ms: 0.173811
+  type: 'test'
+  ...
+# Subtest: Gate evaluation is fail-closed for missing context
+ok 146 - Gate evaluation is fail-closed for missing context
+  ---
+  duration_ms: 0.07742
+  type: 'test'
+  ...
+# Subtest: All gates expose deterministic status
+ok 147 - All gates expose deterministic status
+  ---
+  duration_ms: 0.131542
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 148 - RBAC public health route is public
+  ---
+  duration_ms: 0.820628
+  type: 'test'
+  ...
+# Subtest: RBAC admin control recovery routes require system.read
+ok 149 - RBAC admin control recovery routes require system.read
+  ---
+  duration_ms: 1.691383
+  type: 'test'
+  ...
+# Subtest: Part 33 defines 21 gates
+ok 150 - Part 33 defines 21 gates
+  ---
+  duration_ms: 0.738229
+  type: 'test'
+  ...
+# Subtest: Part 33 policy is diagnostic only
+ok 151 - Part 33 policy is diagnostic only
+  ---
+  duration_ms: 0.146262
+  type: 'test'
+  ...
+# Subtest: Final state is always BLOCKED
+ok 152 - Final state is always BLOCKED
+  ---
+  duration_ms: 3.933759
+  type: 'test'
+  ...
+# Subtest: Human approval cannot unlock activation
+ok 153 - Human approval cannot unlock activation
+  ---
+  duration_ms: 1.06168
+  type: 'test'
+  ...
+# Subtest: Human final pre-launch approval gate is blocking
+ok 154 - Human final pre-launch approval gate is blocking
+  ---
+  duration_ms: 8.249408
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 155 - Sales remain disabled
+  ---
+  duration_ms: 7.308763
+  type: 'test'
+  ...
+# Subtest: Supplier remains offline
+ok 156 - Supplier remains offline
+  ---
+  duration_ms: 6.064497
+  type: 'test'
+  ...
+# Subtest: Supplier cannot be activated via safety input
+ok 157 - Supplier cannot be activated via safety input
+  ---
+  duration_ms: 0.831828
+  type: 'test'
+  ...
+# Subtest: Live import blocked via safety input
+ok 158 - Live import blocked via safety input
+  ---
+  duration_ms: 0.878347
+  type: 'test'
+  ...
+# Subtest: Publish blocked via safety input
+ok 159 - Publish blocked via safety input
+  ---
+  duration_ms: 0.843136
+  type: 'test'
+  ...
+# Subtest: Payment activation remains disabled
+ok 160 - Payment activation remains disabled
+  ---
+  duration_ms: 9.280975
+  type: 'test'
+  ...
+# Subtest: Audit redacts secrets
+ok 161 - Audit redacts secrets
+  ---
+  duration_ms: 0.170813
+  type: 'test'
+  ...
+# Subtest: Audit is read-only and exposes no secrets
+ok 162 - Audit is read-only and exposes no secrets
+  ---
+  duration_ms: 5.741593
+  type: 'test'
+  ...
+# Subtest: Validate is dry-run with no side effects
+ok 163 - Validate is dry-run with no side effects
+  ---
+  duration_ms: 5.361938
+  type: 'test'
+  ...
+# Subtest: Parts 28-32 upstream integration is present
+ok 164 - Parts 28-32 upstream integration is present
+  ---
+  duration_ms: 9.053066
+  type: 'test'
+  ...
+# Subtest: Launch governance gate integrates Part 31
+ok 165 - Launch governance gate integrates Part 31
+  ---
+  duration_ms: 5.456233
+  type: 'test'
+  ...
+# Subtest: Operational readiness gate integrates Part 30
+ok 166 - Operational readiness gate integrates Part 30
+  ---
+  duration_ms: 5.07965
+  type: 'test'
+  ...
+# Subtest: Human approval required flag is set
+ok 167 - Human approval required flag is set
+  ---
+  duration_ms: 5.411092
+  type: 'test'
+  ...
+# Subtest: Fail-closed when upstream gate missing
+ok 168 - Fail-closed when upstream gate missing
+  ---
+  duration_ms: 0.886808
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 169 - RBAC public health route is public
+  ---
+  duration_ms: 2.64764
+  type: 'test'
+  ...
+# Subtest: RBAC admin routes require system.read
+ok 170 - RBAC admin routes require system.read
+  ---
+  duration_ms: 0.572898
+  type: 'test'
+  ...
+# Subtest: Part 34 defines 23 gates
+ok 171 - Part 34 defines 23 gates
+  ---
+  duration_ms: 1.025953
+  type: 'test'
+  ...
+# Subtest: Part 34 policy is diagnostic only
+ok 172 - Part 34 policy is diagnostic only
+  ---
+  duration_ms: 0.146425
+  type: 'test'
+  ...
+# Subtest: Final state is always BLOCKED
+ok 173 - Final state is always BLOCKED
+  ---
+  duration_ms: 6.123267
+  type: 'test'
+  ...
+# Subtest: Upstream READY states cannot unlock Part 34
+ok 174 - Upstream READY states cannot unlock Part 34
+  ---
+  duration_ms: 1.317581
+  type: 'test'
+  ...
+# Subtest: Human approval cannot unlock activation
+ok 175 - Human approval cannot unlock activation
+  ---
+  duration_ms: 1.449846
+  type: 'test'
+  ...
+# Subtest: Human final launch approval gate is blocking
+ok 176 - Human final launch approval gate is blocking
+  ---
+  duration_ms: 81.705808
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 177 - Sales remain disabled
+  ---
+  duration_ms: 67.600465
+  type: 'test'
+  ...
+# Subtest: Supplier remains offline
+ok 178 - Supplier remains offline
+  ---
+  duration_ms: 69.956072
+  type: 'test'
+  ...
+# Subtest: Supplier cannot be activated via safety input
+ok 179 - Supplier cannot be activated via safety input
+  ---
+  duration_ms: 1.237453
+  type: 'test'
+  ...
+# Subtest: Live import blocked via safety input
+ok 180 - Live import blocked via safety input
+  ---
+  duration_ms: 1.127626
+  type: 'test'
+  ...
+# Subtest: Publish blocked via safety input
+ok 181 - Publish blocked via safety input
+  ---
+  duration_ms: 0.996664
+  type: 'test'
+  ...
+# Subtest: Payment activation remains disabled
+ok 182 - Payment activation remains disabled
+  ---
+  duration_ms: 69.742342
+  type: 'test'
+  ...
+# Subtest: Sales activation remains disabled
+ok 183 - Sales activation remains disabled
+  ---
+  duration_ms: 0.879043
+  type: 'test'
+  ...
+# Subtest: Audit redacts secrets
+ok 184 - Audit redacts secrets
+  ---
+  duration_ms: 0.159531
+  type: 'test'
+  ...
+# Subtest: Audit is read-only and exposes no secrets
+ok 185 - Audit is read-only and exposes no secrets
+  ---
+  duration_ms: 69.221423
+  type: 'test'
+  ...
+# Subtest: Validate is dry-run with no side effects
+ok 186 - Validate is dry-run with no side effects
+  ---
+  duration_ms: 72.881961
+  type: 'test'
+  ...
+# Subtest: Parts 28-33 upstream integration is present
+ok 187 - Parts 28-33 upstream integration is present
+  ---
+  duration_ms: 66.395918
+  type: 'test'
+  ...
+# Subtest: Pre-launch control gate integrates Part 33
+ok 188 - Pre-launch control gate integrates Part 33
+  ---
+  duration_ms: 63.859866
+  type: 'test'
+  ...
+# Subtest: Final control recovery gate integrates Part 32
+ok 189 - Final control recovery gate integrates Part 32
+  ---
+  duration_ms: 66.573857
+  type: 'test'
+  ...
+# Subtest: Launch governance gate integrates Part 31
+ok 190 - Launch governance gate integrates Part 31
+  ---
+  duration_ms: 66.110422
+  type: 'test'
+  ...
+# Subtest: Operational readiness gate integrates Part 30
+ok 191 - Operational readiness gate integrates Part 30
+  ---
+  duration_ms: 65.949611
+  type: 'test'
+  ...
+# Subtest: Human approval required flag is set
+ok 192 - Human approval required flag is set
+  ---
+  duration_ms: 66.407184
+  type: 'test'
+  ...
+# Subtest: Fail-closed when upstream gate missing
+ok 193 - Fail-closed when upstream gate missing
+  ---
+  duration_ms: 1.171567
+  type: 'test'
+  ...
+# Subtest: Public health summary is diagnostic only
+ok 194 - Public health summary is diagnostic only
+  ---
+  duration_ms: 75.56013
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 195 - RBAC public health route is public
+  ---
+  duration_ms: 0.908529
+  type: 'test'
+  ...
+# Subtest: RBAC admin routes require system.read
+ok 196 - RBAC admin routes require system.read
+  ---
+  duration_ms: 6.332208
+  type: 'test'
+  ...
+# Subtest: Part 35 defines 24 gates
+ok 197 - Part 35 defines 24 gates
+  ---
+  duration_ms: 0.739762
+  type: 'test'
+  ...
+# Subtest: Part 35 policy is diagnostic only
+ok 198 - Part 35 policy is diagnostic only
+  ---
+  duration_ms: 0.136055
+  type: 'test'
+  ...
+# Subtest: Final state is always BLOCKED
+ok 199 - Final state is always BLOCKED
+  ---
+  duration_ms: 6.547925
+  type: 'test'
+  ...
+# Subtest: Upstream READY states cannot unlock Part 35
+ok 200 - Upstream READY states cannot unlock Part 35
+  ---
+  duration_ms: 2.730368
+  type: 'test'
+  ...
+# Subtest: Human approval cannot unlock activation
+ok 201 - Human approval cannot unlock activation
+  ---
+  duration_ms: 3.347751
+  type: 'test'
+  ...
+# Subtest: Human final production governance approval gate is blocking
+ok 202 - Human final production governance approval gate is blocking
+  ---
+  duration_ms: 81.151466
+  type: 'test'
+  ...
+# Subtest: Sales remain disabled
+ok 203 - Sales remain disabled
+  ---
+  duration_ms: 72.907524
+  type: 'test'
+  ...
+# Subtest: Supplier remains offline
+ok 204 - Supplier remains offline
+  ---
+  duration_ms: 70.918528
+  type: 'test'
+  ...
+# Subtest: Supplier cannot be activated via safety input
+ok 205 - Supplier cannot be activated via safety input
+  ---
+  duration_ms: 2.01385
+  type: 'test'
+  ...
+# Subtest: Live import blocked via safety input
+ok 206 - Live import blocked via safety input
+  ---
+  duration_ms: 3.923551
+  type: 'test'
+  ...
+# Subtest: Publish blocked via safety input
+ok 207 - Publish blocked via safety input
+  ---
+  duration_ms: 1.911009
+  type: 'test'
+  ...
+# Subtest: Payment activation remains disabled
+ok 208 - Payment activation remains disabled
+  ---
+  duration_ms: 69.574904
+  type: 'test'
+  ...
+# Subtest: Sales activation remains disabled
+ok 209 - Sales activation remains disabled
+  ---
+  duration_ms: 1.481376
+  type: 'test'
+  ...
+# Subtest: Audit redacts secrets
+ok 210 - Audit redacts secrets
+  ---
+  duration_ms: 0.158124
+  type: 'test'
+  ...
+# Subtest: Audit is read-only and exposes no secrets
+ok 211 - Audit is read-only and exposes no secrets
+  ---
+  duration_ms: 76.000697
+  type: 'test'
+  ...
+# Subtest: Validate is dry-run with no side effects
+ok 212 - Validate is dry-run with no side effects
+  ---
+  duration_ms: 67.413955
+  type: 'test'
+  ...
+# Subtest: Parts 28-34 upstream integration is present
+ok 213 - Parts 28-34 upstream integration is present
+  ---
+  duration_ms: 67.128269
+  type: 'test'
+  ...
+# Subtest: Final launch control gate integrates Part 34
+ok 214 - Final launch control gate integrates Part 34
+  ---
+  duration_ms: 67.606721
+  type: 'test'
+  ...
+# Subtest: Pre-launch control gate integrates Part 33
+ok 215 - Pre-launch control gate integrates Part 33
+  ---
+  duration_ms: 66.724688
+  type: 'test'
+  ...
+# Subtest: Launch governance gate integrates Part 31
+ok 216 - Launch governance gate integrates Part 31
+  ---
+  duration_ms: 69.870892
+  type: 'test'
+  ...
+# Subtest: Human approval required flag is set
+ok 217 - Human approval required flag is set
+  ---
+  duration_ms: 85.142469
+  type: 'test'
+  ...
+# Subtest: Fail-closed when upstream gate missing
+ok 218 - Fail-closed when upstream gate missing
+  ---
+  duration_ms: 1.7202
+  type: 'test'
+  ...
+# Subtest: Public health summary is diagnostic only
+ok 219 - Public health summary is diagnostic only
+  ---
+  duration_ms: 67.50934
+  type: 'test'
+  ...
+# Subtest: RBAC public health route is public
+ok 220 - RBAC public health route is public
+  ---
+  duration_ms: 0.846978
+  type: 'test'
+  ...
+# Subtest: RBAC admin routes require system.read
+ok 221 - RBAC admin routes require system.read
+  ---
+  duration_ms: 0.658377
+  type: 'test'
+  ...
+1..221
+# tests 221
+# suites 0
+# pass 221
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4938.522741
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.g6BovN
+EXIT=0

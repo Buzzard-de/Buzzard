@@ -468,3 +468,30 @@ Phase 12+ continues in /tmp/buzzard-final-sprint/work.
 - Public fields: ean/gtin/brand/categoryId/categorySlug all null; title "Synthetic shelf item"; no invented identity.
 - Reachable by id and by slug after P12-2.
 - Demo SKU BZ-CORE-DEMO-001 stays HIDDEN from public routes even with `?preview=1`.
+
+## PHASE 13 — Complete regression — VERIFIED 2026-11-18 17:14 UTC
+
+| Suite | Log | Result |
+|---|---|---|
+| Vitest (all) | logs/p13-vitest-full.log | 141 files, 1918 passed |
+| Parts 24, 27–35 | logs/p13-parts-24-35.log | 221 passed |
+| Python egress | logs/p13-python-egress.log | 9 passed |
+| Typecheck | logs/p13-typecheck.log | EXIT=0 |
+| Lint | logs/p13-lint.log | clean |
+| Isolation selftest | logs/p13-selftest.log | 51 passed |
+| Playwright api | logs/p13-e2e-api.log | 25 passed, 1 skip (limiter-on test under limiter-off) |
+| Playwright desktop | logs/p13-e2e-desktop.log | 81 passed, 1 skip (admin has no hidden pages) |
+| Playwright mobile | logs/p13-e2e-mobile-rerun.log | 17 passed, 3 skip (desktop viewport checks on mobile project) |
+| Playwright tablet | logs/p13-e2e-tablet.log | 16 passed, 3 skip (same desktop viewport skips) |
+| Limiter on | logs/p13-e2e-limiter-on.log | 2 passed, 1 skip (limiter-off test) |
+| part3-security | logs/p13-part3-security.log | 11/11 |
+| final-audit | logs/p13-final-audit.log | 18 passed |
+| production-safety | logs/p13-production-safety.log | 7 passed |
+| Guard | 17:14:24Z | protected identical, processes unchanged |
+
+Skips (documented, not failures):
+- Limiter-on test when run with `--limiter off`, and limiter-off test when run with `--limiter on` — each executed in the matching run.
+- Administrator "hidden pages" test — role may open every page.
+- customer-journey desktop1280/1440/1920 checks skipped on chromium-mobile and chromium-tablet projects by design of that spec.
+
+One intermittent mobile homepage search-toggle miss was fixed (hydration retry) and the mobile suite re-run green.

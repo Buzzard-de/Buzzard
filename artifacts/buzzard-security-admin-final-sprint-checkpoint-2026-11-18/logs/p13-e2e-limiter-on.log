@@ -1,0 +1,15 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter on) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 3 tests using 1 worker
+
+  ✓  1 [api] › e2e/admin-login-limiter.spec.ts:18:7 › Admin login limiter › limiter on: the ninth login in the window is refused with 429 (310ms)
+  -  2 [api] › e2e/admin-login-limiter.spec.ts:29:7 › Admin login limiter › limiter off: twelve logins in a row succeed
+  ✓  3 [api] › e2e/admin-login-limiter.spec.ts:37:7 › Admin login limiter › five wrong passwords lock the account in either mode (160ms)
+
+  1 skipped
+  2 passed (3.1s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.Lx8yO6
+EXIT=0

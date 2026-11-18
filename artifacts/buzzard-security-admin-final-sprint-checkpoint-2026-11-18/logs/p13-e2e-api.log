@@ -1,0 +1,38 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 26 tests using 1 worker
+
+  -   1 [api] › e2e/admin-login-limiter.spec.ts:18:7 › Admin login limiter › limiter on: the ninth login in the window is refused with 429
+  ✓   2 [api] › e2e/admin-login-limiter.spec.ts:29:7 › Admin login limiter › limiter off: twelve logins in a row succeed (423ms)
+  ✓   3 [api] › e2e/admin-login-limiter.spec.ts:37:7 › Admin login limiter › five wrong passwords lock the account in either mode (159ms)
+  ✓   4 [api] › e2e/catalog-fixture.spec.ts:12:7 › Catalog fixture BZ-E2E-VISIBLE-001 › lists the fixture without invented identity fields (10ms)
+  ✓   5 [api] › e2e/catalog-fixture.spec.ts:27:7 › Catalog fixture BZ-E2E-VISIBLE-001 › opens the fixture by slug and by id (9ms)
+  ✓   6 [api] › e2e/catalog-fixture.spec.ts:37:7 › Catalog fixture BZ-E2E-VISIBLE-001 › ignores anonymous ?preview=1 (hidden demo stays hidden) (7ms)
+  ✓   7 [api] › e2e/commerce-readiness.spec.ts:7:7 › Commerce Readiness Part 8 › commerce health shows sales disabled (5ms)
+  ✓   8 [api] › e2e/commerce-readiness.spec.ts:14:7 › Commerce Readiness Part 8 › critical: commercial checkout attempt produces zero commercial orders (17ms)
+  ✓   9 [api] › e2e/commerce-readiness.spec.ts:26:7 › Commerce Readiness Part 8 › admin control center commerce API (39ms)
+  ✓  10 [api] › e2e/commerce-security.spec.ts:18:7 › Part 10 — Commerce safety E2E › COMMERCIAL checkout blocked with SALES=0 (14ms)
+  ✓  11 [api] › e2e/commerce-security.spec.ts:30:7 › Part 10 — Commerce safety E2E › price tampering rejected (11ms)
+  ✓  12 [api] › e2e/commerce-security.spec.ts:45:7 › Part 10 — Commerce safety E2E › coupon tampering rejected (20ms)
+  ✓  13 [api] › e2e/commerce-security.spec.ts:64:7 › Part 10 — Commerce safety E2E › server coupon validation authoritative (20ms)
+  ✓  14 [api] › e2e/commerce-security.spec.ts:84:7 › Part 10 — Commerce safety E2E › IDOR — customer cannot access foreign cart (6ms)
+  ✓  15 [api] › e2e/commerce-security.spec.ts:99:7 › Part 10 — Commerce safety E2E › duplicate checkout submit uses idempotency (52ms)
+  ✓  16 [api] › e2e/commerce-storefront.spec.ts:7:7 › Storefront Commerce Bridge Part 9 › critical API: commercial checkout blocked with sales off (10ms)
+  ✓  17 [api] › e2e/commerce-storefront.spec.ts:18:7 › Storefront Commerce Bridge Part 9 › storefront cart API round-trip (14ms)
+  ✓  18 [api] › e2e/commerce-storefront.spec.ts:39:7 › Storefront Commerce Bridge Part 9 › READINESS_TEST order via API (storefront backend path) (40ms)
+  ✓  19 [api] › e2e/egress-security.spec.ts:6:7 › Egress / sales safety (isolated; skip if API down) › health exists and sales/stripe stay off when reachable (23ms)
+  ✓  20 [api] › e2e/egress-security.spec.ts:18:7 › Egress / sales safety (isolated; skip if API down) › consent and payment flags stay closed (21ms)
+  ✓  21 [api] › e2e/master-command-acceptance.spec.ts:5:7 › Master Command 2 storefront acceptance › home, retired slugs absent, locale prefixes, sales off (1.7s)
+  ✓  22 [api] › e2e/master-command-chromium.spec.ts:4:7 › Master Command 3 Chromium › home loads, retired slugs absent, locale prefixes, RTL dir for Arabic (3.9s)
+  ✓  23 [api] › e2e/master-command-chromium.spec.ts:21:7 › Master Command 3 Chromium › cart, search, products and retired category stay isolated (4.6s)
+  ✓  24 [api] › e2e/master-command-chromium.spec.ts:30:7 › Master Command 3 Chromium › account login page is reachable without a production session (661ms)
+  ✓  25 [api] › e2e/master-command-locales.spec.ts:5:7 › 30 locale prefixes › every catalog locale landing returns below 500 (2.0s)
+  ✓  26 [api] › e2e/master-command-mobile-rtl.spec.ts:4:7 › mobile and Arabic landing › home and Arabic prefix stay usable on a phone viewport (1.4s)
+
+  1 skipped
+  25 passed (18.0s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.VkTHLh
+EXIT=0

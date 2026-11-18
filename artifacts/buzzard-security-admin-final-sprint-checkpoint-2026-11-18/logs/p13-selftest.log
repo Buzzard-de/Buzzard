@@ -1,0 +1,59 @@
+== run.sh ==
+PASS  server/data inside holds the marker and nothing else
+PASS  a write to server/data inside does not reach the real directory
+PASS  the catalog files in data/ cannot be written inside; working copies are outside the checkout
+PASS  network inside: interfaces ['lo']
+PASS  network inside: outside address unreachable
+PASS  network inside: developer API 3001 unreachable
+PASS  network inside: developer storefront 3000 unreachable
+PASS  network inside: name lookup no answer
+PASS  network inside: own loopback works
+PASS  an isolated root inside the repository is refused
+PASS  refused root left nothing behind
+PASS  the command's own failure is passed on
+PASS  a change of the real server/data during a run is reported (status 90)
+PASS  a change of the catalog files in data/ during a run is reported (status 90)
+== e2e.sh arguments ==
+PASS  API port 3001 is refused
+PASS  storefront port 3000 is refused
+PASS  API port 3000 is refused
+PASS  the same port twice is refused
+PASS  an unknown limiter mode is refused
+PASS  a host other than 127.0.0.1 or localhost is refused
+PASS  a privileged or non-numeric port is refused
+== api.sh arguments ==
+PASS  api.sh refuses port 3001
+PASS  api.sh refuses port 3000
+PASS  api.sh refuses to be pointed at another data directory
+PASS  api.sh refuses to be pointed at another database
+PASS  api.sh without a command is refused
+== Playwright global setup and API scripts ==
+PASS  isolated API with a storefront that uses it: the run starts
+PASS  the same server named localhost and 127.0.0.1 counts as one
+PASS  an API on its regular database is refused
+PASS  BUZZARD_ISOLATED=1 in the test process does not make a shared API acceptable
+PASS  an API that does not answer with a health report is refused
+PASS  a storefront that talks to another API than the one under test is refused
+PASS  a storefront that talks to a shared API is refused although the API under test is isolated
+PASS  a storefront whose API was not checked is refused when the API under test is down
+PASS  with no API and no storefront nothing can be written: the run starts
+PASS  the override is not accepted for a server on another machine
+PASS  the explicit override for a local stack is honoured
+PASS  scripts/part3-security.mjs refuses an API that is shared
+PASS  scripts/part3-security.mjs refuses an API that is nonsense
+PASS  scripts/part3-security.mjs refuses an API that is down
+PASS  scripts/final-audit.mjs refuses an API that is shared
+PASS  scripts/final-audit.mjs refuses an API that is nonsense
+PASS  scripts/final-audit.mjs refuses an API that is down
+PASS  scripts/production-safety.mjs refuses an API that is shared
+PASS  scripts/production-safety.mjs refuses an API that is nonsense
+PASS  scripts/production-safety.mjs refuses an API that is down
+PASS  stand-in API 4011 received nothing but health checks
+PASS  stand-in API 4012 received nothing but health checks
+PASS  stand-in API 4013 received nothing but health checks
+PASS  stand-in API 4014 received nothing but health checks
+== real data ==
+PASS  server/data and data/ of this checkout are byte-identical before and after the self-test
+
+isolation self-test: 51 passed, 0 failed, 0 skipped
+EXIT=0

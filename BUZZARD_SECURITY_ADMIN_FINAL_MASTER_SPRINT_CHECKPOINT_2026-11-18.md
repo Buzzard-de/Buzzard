@@ -11,7 +11,8 @@
 | Phases 0–10 | VERIFIED (isolated) |
 | Phase 11 Admin UI + PIM | VERIFIED (localhost + 127.0.0.1) |
 | Phase 12 Storefront/device | VERIFIED |
-| Phases 13–15 | Pending |
+| Phase 13 Complete regression | VERIFIED |
+| Phases 14–15 | Pending |
 | Overall sprint | **Below 100%** (mandatory later phases open) |
 | Live stack 3000/3001 | Untouched |
 | SALES / EGRESS | LOCKED / DENY |

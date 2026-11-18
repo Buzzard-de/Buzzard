@@ -1,0 +1,15 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-api] API (limiter off) ready at http://127.0.0.1:3031
+Production safety tests → http://127.0.0.1:3031
+
+✓ BUZZARD_SALES_ENABLED=0 via /api/commerce/status
+✓ Commercial order creation blocked
+✓ Child flags cannot bypass SALES=0
+✓ Go-live approval cannot enable sales
+✓ Mock payment only — no real payment providers
+✓ Price tampering still blocked
+✓ Coupon tampering blocked server-side
+
+Production safety: 7 passed, 0 failed
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.0DGhoT
+EXIT=0

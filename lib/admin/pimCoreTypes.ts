@@ -78,8 +78,34 @@ export interface PimImportPendingApproval {
   pendingApproval: true;
   executed: false;
   dryRun: boolean;
-  approval?: { id?: string; status?: string; riskLevel?: string; [key: string]: unknown } | null;
+  approval?: {
+    id?: string;
+    status?: string;
+    riskLevel?: string;
+    resourceId?: string;
+    metadata?: { jobId?: string; [key: string]: unknown } | null;
+    [key: string]: unknown;
+  } | null;
+  approvalId?: string;
+  /** Id reserved for the run that may follow an approval. No job exists while the request is pending. */
+  importJobId?: string;
   job: null;
+}
+
+/** What the import tab shows for a request that waits for approval. */
+export function pimImportPendingSummary(response: PimImportPendingApproval): {
+  approvalId: string | null;
+  importJobId: string | null;
+  status: string;
+  riskLevel: string | null;
+} {
+  const approval = response.approval || null;
+  return {
+    approvalId: response.approvalId || approval?.id || null,
+    importJobId: response.importJobId || approval?.metadata?.jobId || approval?.resourceId || null,
+    status: approval?.status || "PENDING",
+    riskLevel: approval?.riskLevel || null,
+  };
 }
 
 export type PimImportResponse = PimImportResult | PimImportPendingApproval;

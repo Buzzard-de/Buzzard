@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { fetchDashboardSummary } from "@/lib/admin/controlCenter";
+import { useAdminAuth } from "@/lib/admin/context";
+import { useCan } from "@/lib/admin/permissions";
+import { canSeeAnalyticsSection } from "@/lib/analytics/sections.mjs";
 import type { DashboardSummary } from "@/lib/admin/controlCenterTypes";
 import Link from "next/link";
 import SimpleLineChart from "./charts/SimpleLineChart";
@@ -16,15 +19,21 @@ export default function AdminDashboard() {
   const [demoStats] = useState(getDemoOrderStats);
   const [ccSummary, setCcSummary] = useState<DashboardSummary | null>(null);
 
+  const can = useCan();
+  const role = useAdminAuth().user?.role || "";
+
   useEffect(() => {
-    Promise.all([fetchAnalyticsOverview("last_30_days"), fetchSalesAnalytics("last_30_days")])
-      .then(([ov, sales]) => {
-        setOverview(ov);
-        setTrend(sales.trend.map((row) => ({ label: row.date, value: row.revenue })));
-      })
-      .catch(() => {});
-    fetchDashboardSummary().then(setCcSummary).catch(() => {});
-  }, []);
+    // Only what the role may read is requested; the rest stays empty.
+    if (can("analytics.read")) {
+      fetchAnalyticsOverview("last_30_days").then(setOverview).catch(() => {});
+      if (canSeeAnalyticsSection(role, "sales")) {
+        fetchSalesAnalytics("last_30_days")
+          .then((sales) => setTrend(sales.trend.map((row) => ({ label: row.date, value: row.revenue }))))
+          .catch(() => {});
+      }
+    }
+    if (can("system.read")) fetchDashboardSummary().then(setCcSummary).catch(() => {});
+  }, [can, role]);
 
   const kpis = overview?.kpis;
   const showDemoFallback = !kpis;

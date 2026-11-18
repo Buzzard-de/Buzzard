@@ -9,7 +9,8 @@ import { BrowserConnectError } from "@/lib/security/browserFetch";
 export default function AdminLoginForm() {
   const router = useRouter();
   const { login } = useAdminAuth();
-  const [email, setEmail] = useState("admin@buzzard24.de");
+  // The production build names no account; the development build keeps the demo account as a convenience.
+  const [email, setEmail] = useState(isProductionBuild() ? "" : "admin@buzzard24.de");
   const [password, setPassword] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
@@ -38,6 +39,8 @@ export default function AdminLoginForm() {
         setError("Verbindung zum Admin-Service wurde von der Browser-Sicherheitsrichtlinie blockiert. Bitte die konfigurierte API-Adresse prüfen.");
       } else if (err instanceof TypeError || (err instanceof Error && err.message === "admin.apiUnavailable")) {
         setError("Admin-Service derzeit nicht erreichbar. Bitte später erneut versuchen.");
+      } else if (err instanceof Error && err.message === "admin.auth.unavailable") {
+        setError("Anmeldung derzeit nicht möglich: Der Admin-Service meldet eine Störung. Bitte den Betrieb informieren.");
       } else if (err instanceof Error && err.message === "admin.auth.locked") {
         setError("Konto vorübergehend gesperrt. Bitte in 30 Minuten erneut versuchen.");
       } else if (err instanceof Error && err.message === "admin.auth.rateLimited") {
@@ -104,7 +107,11 @@ export default function AdminLoginForm() {
         <button type="submit" className="shop-btn-primary" disabled={loading}>
           {loading ? "Anmelden…" : challengeToken ? "Code bestätigen" : "Anmelden"}
         </button>
-        {/* No password hint: credentials come from the environment / synthetic seed only. */}
+        {!isProductionBuild() && !challengeToken ? (
+          <p className="admin-login-hint">
+            Entwicklungsumgebung: Demo-Zugänge stehen in data/buzzard_admin_users.seed.json.
+          </p>
+        ) : null}
       </form>
     </div>
   );

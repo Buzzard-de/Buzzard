@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { fetchAdminSessions, revokeAdminSession, getAdminToken } from "@/lib/admin/client";
+import { useCan } from "@/lib/admin/permissions";
 
 interface SessionRow {
   sessionId: string;
+  current?: boolean;
   userId: string;
   email: string;
   role: string;
@@ -18,6 +20,7 @@ export default function AdminSessionsPanel() {
   const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const mayRevoke = useCan()("security.manage");
 
   const reload = useCallback(async () => {
     setError("");
@@ -37,9 +40,14 @@ export default function AdminSessionsPanel() {
   }, [reload]);
 
   async function handleRevoke(sessionId: string) {
+    if (!mayRevoke) return;
     if (!confirm("Session wirklich beenden?")) return;
-    await revokeAdminSession(sessionId);
-    await reload();
+    try {
+      await revokeAdminSession(sessionId);
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Revoke failed");
+    }
   }
 
   if (loading) return <p>Lade Sessions…</p>;
@@ -50,7 +58,12 @@ export default function AdminSessionsPanel() {
         <h1>Session Management</h1>
         <p>Aktive Admin-Sessions — Part 4</p>
       </header>
-      {error && <p className="shop-modal-error">{error}</p>}
+      {error && <p className="shop-modal-error" role="alert">{error}</p>}
+      {!mayRevoke && (
+        <p className="admin-note" data-testid="sessions-read-only">
+          Ihre Rolle darf Sessions einsehen, aber nicht beenden (security.manage erforderlich).
+        </p>
+      )}
       <div className="cc-table-wrap">
         <table className="admin-table">
           <thead>
@@ -67,8 +80,11 @@ export default function AdminSessionsPanel() {
           </thead>
           <tbody>
             {sessions.map((s) => (
-              <tr key={s.sessionId}>
-                <td><code>{s.sessionId}</code></td>
+              <tr key={s.sessionId} data-testid="session-row" data-current={s.current ? "true" : "false"}>
+                <td>
+                  <code>{s.sessionId}</code>
+                  {s.current ? " (diese Sitzung)" : ""}
+                </td>
                 <td>{s.email}</td>
                 <td>{s.role}</td>
                 <td>{s.createdAt ? new Date(s.createdAt).toLocaleString("de-DE") : "—"}</td>
@@ -76,7 +92,12 @@ export default function AdminSessionsPanel() {
                 <td>{s.ip || "—"}</td>
                 <td className="cc-muted">{(s.userAgent || "—").slice(0, 40)}</td>
                 <td>
-                  <button type="button" className="shop-btn-secondary" onClick={() => handleRevoke(s.sessionId)}>
+                  <button
+                    type="button"
+                    className="shop-btn-secondary"
+                    disabled={!mayRevoke}
+                    onClick={() => handleRevoke(s.sessionId)}
+                  >
                     Revoke
                   </button>
                 </td>

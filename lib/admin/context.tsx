@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { adminLogin, adminLogout, clearAdminToken, fetchAdminMe, getAdminToken } from "./client";
+import { ADMIN_REFUSAL_EVENT, type AdminRefusal } from "./refusals";
 import type { AdminLoginResult } from "./securityTypes";
 import type { AdminUser } from "./types";
 
@@ -78,14 +79,20 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         checking = false;
       }
     }
+    // An admin request that was answered with "not signed in": ask the API right away.
+    function onRefusal(event: Event) {
+      if ((event as CustomEvent<AdminRefusal>).detail?.status === 401) void recheck();
+    }
     const timer = window.setInterval(recheck, SESSION_RECHECK_MS);
     window.addEventListener("focus", recheck);
     document.addEventListener("visibilitychange", recheck);
+    window.addEventListener(ADMIN_REFUSAL_EVENT, onRefusal);
     return () => {
       active = false;
       window.clearInterval(timer);
       window.removeEventListener("focus", recheck);
       document.removeEventListener("visibilitychange", recheck);
+      window.removeEventListener(ADMIN_REFUSAL_EVENT, onRefusal);
     };
   }, [user]);
 

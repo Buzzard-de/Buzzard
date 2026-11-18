@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { getAdminToken } from "@/lib/admin/client";
 import {
-  fetchIdentityAccount,
   fetchIdentitySecurityAudit,
   fetchIdentitySecurityOverview,
   fetchIdentitySecurityStatus,
   fetchIdentitySessions,
 } from "@/lib/identitySecurity/client";
 import type {
-  IdentityAccount,
   IdentitySecurityAuditEvent,
   IdentitySecurityOverview,
   IdentitySecurityStatus,
@@ -33,7 +31,6 @@ const FEATURES = [
 export default function AdminIdentitySecurityPanel() {
   const [status, setStatus] = useState<IdentitySecurityStatus | null>(null);
   const [overview, setOverview] = useState<IdentitySecurityOverview | null>(null);
-  const [account, setAccount] = useState<IdentityAccount | null>(null);
   const [audit, setAudit] = useState<IdentitySecurityAuditEvent[]>([]);
   const [sessions, setSessions] = useState<IdentitySessionRow[]>([]);
   const [error, setError] = useState("");
@@ -41,16 +38,16 @@ export default function AdminIdentitySecurityPanel() {
 
   const reload = useCallback(async () => {
     setError("");
-    const [statusRow, overviewRow, accountRow, auditRows, sessionRows] = await Promise.all([
+    // The identity account route belongs to customer sign-ins and refuses an administrator session,
+    // so this page does not ask for it.
+    const [statusRow, overviewRow, auditRows, sessionRows] = await Promise.all([
       fetchIdentitySecurityStatus(),
       fetchIdentitySecurityOverview(),
-      fetchIdentityAccount(),
       fetchIdentitySecurityAudit(),
       fetchIdentitySessions(),
     ]);
     setStatus(statusRow);
     setOverview(overviewRow);
-    setAccount(accountRow);
     setAudit(auditRows);
     setSessions(sessionRows);
   }, []);
@@ -107,23 +104,6 @@ export default function AdminIdentitySecurityPanel() {
               <strong>{value}</strong>
             </div>
           ))}
-        </section>
-      )}
-
-      {account && (
-        <section className="admin-card">
-          <h2>Current account</h2>
-          <p>
-            <strong>
-              {account.firstName} {account.lastName}
-            </strong>
-          </p>
-          <p>{account.email}</p>
-          <div className="admin-tags">
-            <span>{account.role}</span>
-            <span>{account.emailVerified ? "Email verified" : "Email not verified"}</span>
-            <span>{account.twofaEnabled ? "2FA enabled" : "2FA not enabled"}</span>
-          </div>
         </section>
       )}
 

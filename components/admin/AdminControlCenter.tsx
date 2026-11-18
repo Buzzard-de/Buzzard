@@ -44,6 +44,7 @@ import {
   requestGoLive,
 } from "@/lib/admin/commerce";
 import type { CommerceFeatureFlags, CommerceHealth, CommerceReadiness, GoLiveRequest } from "@/lib/admin/commerceTypes";
+import { useCan } from "@/lib/admin/permissions";
 import { getMainCategories } from "@/lib/categories";
 
 type Tab =
@@ -68,7 +69,18 @@ const STATUS_CLASS: Record<string, string> = {
   UNKNOWN: "cc-status-unknown",
 };
 
+/** Shown in place of a section the signed-in role may not read; the request for it is not sent. */
+function NoAccess({ permission }: { permission: string }) {
+  return (
+    <p className="admin-note" data-testid="cc-no-permission">
+      Ihre Rolle darf diesen Bereich nicht einsehen ({permission} erforderlich).
+    </p>
+  );
+}
+
 export default function AdminControlCenter() {
+  const can = useCan();
+  const [actionError, setActionError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("overview");
   const [status, setStatus] = useState<ControlCenterStatus | null>(null);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -101,15 +113,16 @@ export default function AdminControlCenter() {
     setLoading(true);
     setError(null);
     try {
+      // A section the role may not read is left empty instead of failing the whole page.
       const [st, sum, emps, tsk, appr, integ, act, vis, auto] = await Promise.all([
         fetchControlCenterStatus(),
         fetchDashboardSummary(),
-        fetchAiEmployees(),
-        fetchAiTasks(),
-        fetchApprovals("PENDING"),
-        fetchIntegrations(true),
-        fetchActivity(25),
-        fetchCategoryVisibility(),
+        can("ai.read") ? fetchAiEmployees() : [],
+        can("ai.read") ? fetchAiTasks() : [],
+        can("ai.read") ? fetchApprovals("PENDING") : [],
+        can("integrations.read") ? fetchIntegrations(true) : [],
+        can("audit.read") ? fetchActivity(25) : [],
+        can("categories.read") ? fetchCategoryVisibility() : {},
         fetchAutomationOverview().catch(() => null),
       ]);
       setStatus(st);
@@ -128,7 +141,7 @@ export default function AdminControlCenter() {
       const [jobList, schedList, health] = await Promise.all([
         fetchAutomationJobs().catch(() => []),
         fetchSchedules().catch(() => []),
-        fetchIntegrationHealth(true).catch(() => []),
+        can("integrations.read") ? fetchIntegrationHealth(true).catch(() => []) : [],
       ]);
       setJobs(jobList);
       setSchedules(schedList);
@@ -140,7 +153,7 @@ export default function AdminControlCenter() {
         setCommerceFlags(commerce.flags);
         setCommerceOrders(commerce.ordersByType);
         setGoLiveRequests(commerce.goLiveRequests);
-        const events = await fetchCommerceSecurityEvents().catch(() => []);
+        const events = can("security.read") ? await fetchCommerceSecurityEvents().catch(() => []) : [];
         setCommerceEvents(events);
       } catch {
         /* commerce module optional during load */
@@ -155,7 +168,22 @@ export default function AdminControlCenter() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [can]);
+
+  /** Runs a write action; a refusal is shown instead of being lost as an unhandled rejection. */
+  const runAction = useCallback(
+    async (permission: string, action: () => Promise<unknown>) => {
+      if (!can(permission)) return;
+      setActionError(null);
+      try {
+        await action();
+        await reload();
+      } catch (e) {
+        setActionError(e instanceof Error ? e.message : "admin.requestFailed");
+      }
+    },
+    [can, reload]
+  );
 
   useEffect(() => {
     reload();
@@ -163,14 +191,15 @@ export default function AdminControlCenter() {
 
   async function handleCreateTask() {
     if (!newTaskTitle.trim()) return;
-    await createAiTask({
-      title: newTaskTitle.trim(),
-      employeeId: newTaskEmployee || undefined,
-      priority: "NORMAL",
-      permissionsRequired: ["ai.execute"],
+    await runAction("ai.assign", async () => {
+      await createAiTask({
+        title: newTaskTitle.trim(),
+        employeeId: newTaskEmployee || undefined,
+        priority: "NORMAL",
+        permissionsRequired: ["ai.execute"],
+      });
+      setNewTaskTitle("");
     });
-    setNewTaskTitle("");
-    await reload();
   }
 
   async function handleSearch(e: React.FormEvent) {
@@ -181,8 +210,7 @@ export default function AdminControlCenter() {
   }
 
   async function handleCategoryStatus(categoryId: string, newStatus: string) {
-    await updateCategoryVisibility(categoryId, newStatus);
-    await reload();
+    await runAction("categories.write", () => updateCategoryVisibility(categoryId, newStatus));
   }
 
   const mainCategories = getMainCategories();
@@ -199,7 +227,12 @@ export default function AdminControlCenter() {
         </button>
       </div>
 
-      {error && <p className="cc-error">{error}</p>}
+      {error && <p className="cc-error" role="alert">{error}</p>}
+      {actionError && (
+        <p className="cc-error" role="alert" data-testid="cc-action-error">
+          Aktion abgelehnt: {actionError}
+        </p>
+      )}
 
       <form className="cc-search" onSubmit={handleSearch}>
         <input
@@ -275,6 +308,7 @@ export default function AdminControlCenter() {
       {!loading && tab === "ai" && (
         <section className="admin-panel">
           <h2>AI Employee Center</h2>
+          {!can("ai.read") && <NoAccess permission="ai.read" />}
           <div className="cc-table-wrap">
             <table className="admin-table">
               <thead>
@@ -305,6 +339,7 @@ export default function AdminControlCenter() {
       {!loading && tab === "tasks" && (
         <section className="admin-panel">
           <h2>AI Task Center</h2>
+          {!can("ai.read") && <NoAccess permission="ai.read" />}
           <div className="cc-form-row">
             <input
               type="text"
@@ -318,7 +353,9 @@ export default function AdminControlCenter() {
                 <option key={e.id} value={e.id}>{e.name}</option>
               ))}
             </select>
-            <button type="button" className="shop-btn-primary" onClick={handleCreateTask}>Oluştur</button>
+            <button type="button" className="shop-btn-primary" onClick={handleCreateTask} disabled={!can("ai.assign")}>
+              Oluştur
+            </button>
           </div>
           <div className="cc-table-wrap">
             <table className="admin-table">
@@ -343,18 +380,38 @@ export default function AdminControlCenter() {
       {!loading && tab === "approvals" && (
         <section className="admin-panel">
           <h2>Human Approval Center</h2>
-          {approvals.length === 0 && <p className="admin-note">Bekleyen onay yok.</p>}
+          {!can("ai.read") && <NoAccess permission="ai.read" />}
+          {can("ai.read") && approvals.length === 0 && <p className="admin-note">Bekleyen onay yok.</p>}
+          {can("ai.read") && !can("ai.execute") && (
+            <p className="admin-note" data-testid="cc-approvals-read-only">
+              Ihre Rolle darf Freigaben einsehen, aber nicht entscheiden (ai.execute erforderlich).
+            </p>
+          )}
           <ul className="admin-list">
             {approvals.map((a) => (
-              <li key={a.id} className="cc-approval-item">
+              <li key={a.id} className="cc-approval-item" data-approval-id={a.id}>
                 <div>
                   <strong>{a.reason || a.resourceType}</strong>
                   <span> Risk: {a.riskLevel}</span>
                   <p>{a.aiRecommendation}</p>
                 </div>
                 <div className="cc-actions">
-                  <button type="button" className="shop-btn-primary" onClick={() => decideApproval(a.id, "approve").then(reload)}>Onayla</button>
-                  <button type="button" className="shop-btn-secondary" onClick={() => decideApproval(a.id, "reject").then(reload)}>Reddet</button>
+                  <button
+                    type="button"
+                    className="shop-btn-primary"
+                    disabled={!can("ai.execute")}
+                    onClick={() => runAction("ai.execute", () => decideApproval(a.id, "approve"))}
+                  >
+                    Onayla
+                  </button>
+                  <button
+                    type="button"
+                    className="shop-btn-secondary"
+                    disabled={!can("ai.execute")}
+                    onClick={() => runAction("ai.execute", () => decideApproval(a.id, "reject"))}
+                  >
+                    Reddet
+                  </button>
                 </div>
               </li>
             ))}
@@ -365,6 +422,7 @@ export default function AdminControlCenter() {
       {!loading && tab === "categories" && (
         <section className="admin-panel">
           <h2>Category Management</h2>
+          {!can("categories.read") && <NoAccess permission="categories.read" />}
           <p className="admin-note">
             Admin tüm kategorileri görür. READY olmayan kategori satışa açılmaz (BUZZARD_SALES_ENABLED=0).
           </p>
@@ -397,6 +455,7 @@ export default function AdminControlCenter() {
                           value={st}
                           onChange={(e) => handleCategoryStatus(cat.id, e.target.value)}
                           aria-label={`Status for ${cat.name}`}
+                          disabled={!can("categories.write")}
                         >
                           <option value="ACTIVE">ACTIVE</option>
                           <option value="HIDDEN">HIDDEN</option>
@@ -417,6 +476,7 @@ export default function AdminControlCenter() {
       {!loading && tab === "integrations" && (
         <section className="admin-panel">
           <h2>Integration Center</h2>
+          {!can("integrations.read") && <NoAccess permission="integrations.read" />}
           <ul className="cc-status-list">
             {integrations.map((i) => (
               <li key={i.id}>
@@ -432,6 +492,7 @@ export default function AdminControlCenter() {
       {!loading && tab === "activity" && (
         <section className="admin-panel">
           <h2>Activity Center</h2>
+          {!can("audit.read") && <NoAccess permission="audit.read" />}
           <ul className="admin-list">
             {activity.map((ev) => (
               <li key={ev.id}>
@@ -463,7 +524,13 @@ export default function AdminControlCenter() {
           {worker && <p>Status: <strong>{worker.status}</strong> — ID: {worker.workerId || "—"}</p>}
           <div className="cc-actions">
             {(["start", "pause", "resume", "stop"] as const).map((a) => (
-              <button key={a} type="button" className="shop-btn-secondary" onClick={() => workerAction(a).then(reload)}>
+              <button
+                key={a}
+                type="button"
+                className="shop-btn-secondary"
+                disabled={!can("system.configure")}
+                onClick={() => runAction("system.configure", () => workerAction(a))}
+              >
                 {a}
               </button>
             ))}
@@ -481,10 +548,24 @@ export default function AdminControlCenter() {
                     <td>{j.executionMs ?? "—"}</td>
                     <td>
                       {(j.status === "FAILED" || j.status === "DEAD_LETTER") && (
-                        <button type="button" className="shop-btn-secondary" onClick={() => retryJob(j.id).then(reload)}>Retry</button>
+                        <button
+                          type="button"
+                          className="shop-btn-secondary"
+                          disabled={!can("system.configure")}
+                          onClick={() => runAction("system.configure", () => retryJob(j.id))}
+                        >
+                          Retry
+                        </button>
                       )}
                       {["QUEUED", "RETRYING", "RUNNING"].includes(j.status) && (
-                        <button type="button" className="shop-btn-secondary" onClick={() => cancelJob(j.id).then(reload)}>Cancel</button>
+                        <button
+                          type="button"
+                          className="shop-btn-secondary"
+                          disabled={!can("system.configure")}
+                          onClick={() => runAction("system.configure", () => cancelJob(j.id))}
+                        >
+                          Cancel
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -522,7 +603,13 @@ export default function AdminControlCenter() {
           <p className="admin-note">Foundation — no live supplier orders. Sales disabled.</p>
           <div className="cc-actions">
             {(["product", "price", "stock", "supplier"] as const).map((k) => (
-              <button key={k} type="button" className="shop-btn-primary" onClick={() => enqueueSync(k).then(reload)}>
+              <button
+                key={k}
+                type="button"
+                className="shop-btn-primary"
+                disabled={!can("sync.run")}
+                onClick={() => runAction("sync.run", () => enqueueSync(k))}
+              >
                 {k} sync
               </button>
             ))}
@@ -598,7 +685,8 @@ export default function AdminControlCenter() {
             <button
               type="button"
               className="shop-btn-secondary"
-              onClick={() => requestGoLive("Control Center request").then(reload)}
+              disabled={!can("system.configure")}
+              onClick={() => runAction("system.configure", () => requestGoLive("Control Center request"))}
             >
               Request Go-Live
             </button>
@@ -606,7 +694,8 @@ export default function AdminControlCenter() {
               <button
                 type="button"
                 className="shop-btn-primary"
-                onClick={() => approveGoLive(goLiveRequests[0].id).then(reload)}
+                disabled={!can("system.configure")}
+                onClick={() => runAction("system.configure", () => approveGoLive(goLiveRequests[0].id))}
               >
                 Approve (does not enable sales)
               </button>

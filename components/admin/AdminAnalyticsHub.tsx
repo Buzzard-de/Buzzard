@@ -15,6 +15,7 @@ import {
   fetchSalesAnalytics,
   fetchSupplierAnalytics,
 } from "@/lib/analytics/client";
+import { canSeeAnalyticsSection } from "@/lib/analytics/sections.mjs";
 import type { AnalyticsOverview, AnalyticsRangePreset } from "@/lib/analytics/types";
 import { formatPrice } from "@/lib/products";
 import SimpleBarChart from "./charts/SimpleBarChart";
@@ -22,16 +23,7 @@ import SimpleLineChart from "./charts/SimpleLineChart";
 
 type TabId = "overview" | "sales" | "products" | "categories" | "customers" | "inventory" | "suppliers" | "finance";
 
-const TAB_ROLE: Record<TabId, string[]> = {
-  overview: ["administrator", "catalog_manager", "order_manager", "read_only"],
-  sales: ["administrator", "order_manager", "read_only"],
-  products: ["administrator", "catalog_manager", "read_only"],
-  categories: ["administrator", "catalog_manager", "read_only"],
-  customers: ["administrator", "order_manager"],
-  inventory: ["administrator", "catalog_manager", "read_only"],
-  suppliers: ["administrator", "catalog_manager", "order_manager"],
-  finance: ["administrator"],
-};
+const TABS: TabId[] = ["overview", "sales", "products", "categories", "customers", "inventory", "suppliers", "finance"];
 
 export default function AdminAnalyticsHub({ initialTab = "overview" }: { initialTab?: TabId }) {
   const { user } = useAdminAuth();
@@ -52,12 +44,12 @@ export default function AdminAnalyticsHub({ initialTab = "overview" }: { initial
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
   const visibleTabs = useMemo(
-    () => (Object.keys(TAB_ROLE) as TabId[]).filter((id) => user && TAB_ROLE[id].includes(user.role)),
+    () => TABS.filter((id) => user && canSeeAnalyticsSection(user.role, id)),
     [user]
   );
 
   const load = useCallback(async () => {
-    if (!user) return;
+    if (!user || !canSeeAnalyticsSection(user.role, tab)) return;
     setLoading(true);
     setErrorKey(null);
     const from = range === "custom" ? customFrom : undefined;
@@ -66,7 +58,8 @@ export default function AdminAnalyticsHub({ initialTab = "overview" }: { initial
       if (tab === "overview" || tab === "sales") {
         const overviewData = await fetchAnalyticsOverview(range, from, to);
         setOverview(overviewData);
-        if (tab === "overview") {
+        // The overview shows the sales trend only to roles that are given the sales section.
+        if (tab === "overview" && canSeeAnalyticsSection(user.role, "sales")) {
           setSales(await fetchSalesAnalytics(range, from, to));
         }
       }

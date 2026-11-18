@@ -49,8 +49,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const base = apiBase();
   if (!base) throw new Error("admin.apiUnavailable");
   const res = await browserFetch(`${base}${path}`, { ...init, headers: { ...authHeaders(), ...init?.headers } });
-  const data = (await res.json()) as T & { success?: boolean; errorKey?: string };
-  if (!res.ok) throw new Error((data as { errorKey?: string }).errorKey || "admin.requestFailed");
+  let data: (T & { success?: boolean; errorKey?: string }) | null = null;
+  try {
+    data = (await res.json()) as T & { success?: boolean; errorKey?: string };
+  } catch {
+    // An answer that is not JSON comes from something in front of the API, or from an API that is failing.
+  }
+  if (!res.ok) {
+    throw new Error(data?.errorKey || (res.status >= 500 ? "admin.apiUnavailable" : "admin.requestFailed"));
+  }
+  if (data === null) throw new Error("admin.apiUnavailable");
   return data;
 }
 
@@ -295,6 +303,8 @@ export async function fetchSecurityDashboard(params?: {
 export async function fetchAdminSessions(): Promise<
   Array<{
     sessionId: string;
+    /** Set by the API for the session of the request itself. */
+    current?: boolean;
     userId: string;
     email: string;
     role: string;

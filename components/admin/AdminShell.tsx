@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useAdminAuth } from "@/lib/admin/context";
 import { ADMIN_NAV_GROUPS, adminHref } from "@/lib/admin/nav.config.mjs";
 import { filterNavGroupsForRole } from "@/lib/admin/navPermissions.mjs";
+import { ADMIN_REFUSAL_EVENT, type AdminRefusal } from "@/lib/admin/refusals";
 import AdminApiStatusBanner from "./AdminApiStatusBanner";
 
 type NavItem = { slug: string; label: string };
@@ -22,6 +24,21 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const router = useRouter();
   const { user, logout } = useAdminAuth();
   const visibleNavGroups = filterNavGroupsForRole(ADMIN_NAV_GROUPS, user?.role || "");
+  const [refused, setRefused] = useState<AdminRefusal | null>(null);
+
+  // A change the API refused for this role is announced here, whichever page asked for it.
+  useEffect(() => {
+    function onRefusal(event: Event) {
+      const detail = (event as CustomEvent<AdminRefusal>).detail;
+      if (detail?.status === 403) setRefused(detail);
+    }
+    window.addEventListener(ADMIN_REFUSAL_EVENT, onRefusal);
+    return () => window.removeEventListener(ADMIN_REFUSAL_EVENT, onRefusal);
+  }, []);
+
+  useEffect(() => {
+    setRefused(null);
+  }, [pathname]);
 
   async function handleLogout() {
     try {
@@ -67,6 +84,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </aside>
       <main className="admin-main">
         <AdminApiStatusBanner />
+        {refused && (
+          <div className="admin-refusal" role="alert" data-testid="admin-action-refused">
+            <p>
+              <strong>Aktion nicht erlaubt.</strong> Ihre Rolle ({user?.role || "unbekannt"}) darf diese Änderung nicht
+              ausführen; es wurde nichts geändert.
+            </p>
+            <p className="admin-meta">
+              <code>
+                {refused.method} {refused.path}
+              </code>
+            </p>
+            <button type="button" className="shop-btn-secondary" onClick={() => setRefused(null)}>
+              Schließen
+            </button>
+          </div>
+        )}
         {children}
       </main>
     </div>

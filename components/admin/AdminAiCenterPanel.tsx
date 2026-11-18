@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getAdminToken } from "@/lib/admin/client";
+import { useCan } from "@/lib/admin/permissions";
 import {
   fetchAiCenterOverview,
   fetchAiCenterStatus,
@@ -32,6 +33,7 @@ export default function AdminAiCenterPanel() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [chatting, setChatting] = useState(false);
+  const mayChat = useCan()("ai.execute");
 
   const reload = useCallback(async () => {
     setError("");
@@ -57,7 +59,7 @@ export default function AdminAiCenterPanel() {
   }, [reload]);
 
   async function handleChat() {
-    if (!message.trim()) return;
+    if (!message.trim() || !mayChat) return;
     setChatting(true);
     setError("");
     try {
@@ -109,11 +111,17 @@ export default function AdminAiCenterPanel() {
             placeholder="Ask Buzzard AI…"
             rows={3}
             aria-label="AI message"
+            disabled={!mayChat}
           />
-          <button type="button" className="btn-secondary" disabled={chatting} onClick={handleChat}>
+          <button type="button" className="btn-secondary" disabled={chatting || !mayChat} onClick={handleChat}>
             {chatting ? "Sending…" : "Send"}
           </button>
         </div>
+        {!mayChat && (
+          <p className="admin-meta" data-testid="ai-chat-no-permission">
+            Ihre Rolle darf den AI Assistant nicht verwenden (ai.execute erforderlich).
+          </p>
+        )}
         {answer && (
           <p className="admin-meta">
             <strong>Answer:</strong> {answer}

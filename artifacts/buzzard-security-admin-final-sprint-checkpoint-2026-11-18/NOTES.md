@@ -430,3 +430,9 @@ role-based navigation → "is shown exactly the pages of the role" ×7; permissi
 error messages → "login form message" ×5, "locked account", "a change the API refuses is announced"; Control Center access → 3 tests;
 PIM dry run and pending approval → admin-pim-core.spec "Import dry-run is held for approval", admin-roles "catalog manager submits a dry run",
 adminUiPermissions.test.mjs (approvalId, importJobId, approval recorded without a run, new request on resubmission, `dryRun:false` held as dry run).
+
+## Checkpoint 2026-11-18 (Europe/Berlin evening)
+User asked to persist work. Committed and pushed branch `cursor/security-admin-final-checkpoint-c293` (PR #507).
+Artifacts: patch, scrubbed work-tree.tgz, NOTES, Phase 11 logs. Live 3000/3001 untouched; protected SHA-256 identical (7/7).
+Working-tree content digest after commit: e3b0c44298fc1c14/e3b0c44298fc1c14. Guard EXPECT_CONTENT updated accordingly.
+Phase 12+ continues in /tmp/buzzard-final-sprint/work.

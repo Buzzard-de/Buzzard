@@ -1,0 +1,21 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter on) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 9 tests using 1 worker
+
+  ✓  1 [api] › e2e/admin-login-limiter.spec.ts:18:7 › Admin login limiter › limiter on: the ninth login in the window is refused with 429 (299ms)
+  -  2 [api] › e2e/admin-login-limiter.spec.ts:29:7 › Admin login limiter › limiter off: twelve logins in a row succeed
+  ✓  3 [api] › e2e/admin-login-limiter.spec.ts:37:7 › Admin login limiter › five wrong passwords lock the account in either mode (158ms)
+  ✓  4 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: wrong credentials (747ms)
+  ✓  5 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: locked account (720ms)
+  ✓  6 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: too many attempts (762ms)
+  ✓  7 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: sign-in service failing (709ms)
+  ✓  8 [chromium-desktop] › e2e/admin-roles.spec.ts:474:9 › Admin session end and login messages › login form message: answer that is not from the API (690ms)
+  ✓  9 [chromium-desktop] › e2e/admin-roles.spec.ts:496:7 › Admin session end and login messages › locked account: the form says so, also for the right password (879ms)
+
+  1 skipped
+  8 passed (8.1s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.dbmQ5t
+EXIT=0

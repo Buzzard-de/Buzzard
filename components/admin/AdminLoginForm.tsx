@@ -104,9 +104,7 @@ export default function AdminLoginForm() {
         <button type="submit" className="shop-btn-primary" disabled={loading}>
           {loading ? "Anmelden…" : challengeToken ? "Code bestätigen" : "Anmelden"}
         </button>
-        {!isProductionBuild() && !challengeToken ? (
-          <p className="admin-login-hint">Demo: admin@buzzard24.de / BuzzardAdmin2026!</p>
-        ) : null}
+        {/* No password hint: credentials come from the environment / synthetic seed only. */}
       </form>
     </div>
   );

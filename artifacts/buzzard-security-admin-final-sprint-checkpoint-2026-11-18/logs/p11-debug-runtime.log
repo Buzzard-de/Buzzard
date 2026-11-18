@@ -1,0 +1,172 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 1 test using 1 worker
+
+(node:349446) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[nav] http://127.0.0.1:3010/admin/login/
+[console.error] : X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/login/
+[nav] http://127.0.0.1:3010/admin/
+[nav] http://127.0.0.1:3010/admin/
+[console.error] /admin/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/
+[nav] http://127.0.0.1:3010/admin/control-center/
+[console.error] /admin/control-center/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/control-center/
+[nav] http://127.0.0.1:3010/admin/analytics-dashboard/
+[console.error] /admin/analytics-dashboard/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/analytics-dashboard/
+[nav] http://127.0.0.1:3010/admin/master-admin-v40/
+[console.error] /admin/master-admin-v40/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/master-admin-v40/
+[nav] http://127.0.0.1:3010/admin/products/
+[console.error] /admin/products/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/products/
+[nav] http://127.0.0.1:3010/admin/catalog/
+[console.error] /admin/catalog/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/catalog/
+[pageerror] /admin/catalog/: categories.map is not a function
+[nav] http://127.0.0.1:3010/admin/pim-catalog/
+[console.error] /admin/pim-catalog/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/pim-catalog/
+[nav] http://127.0.0.1:3010/admin/pim-core/
+[console.error] /admin/pim-core/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/pim-core/
+[nav] http://127.0.0.1:3010/admin/product-catalog-pim/
+[console.error] /admin/product-catalog-pim/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/product-catalog-pim/
+[nav] http://127.0.0.1:3010/admin/seo/
+[console.error] /admin/seo/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/seo/
+[nav] http://127.0.0.1:3010/admin/orders/
+[console.error] /admin/orders/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/orders/
+[nav] http://127.0.0.1:3010/admin/order-management/
+[console.error] /admin/order-management/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/order-management/
+[nav] http://127.0.0.1:3010/admin/order-management-v32/
+[console.error] /admin/order-management-v32/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/order-management-v32/
+[nav] http://127.0.0.1:3010/admin/cart-checkout/
+[console.error] /admin/cart-checkout/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/cart-checkout/
+[nav] http://127.0.0.1:3010/admin/customer-checkout/
+[console.error] /admin/customer-checkout/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/customer-checkout/
+[nav] http://127.0.0.1:3010/admin/returns-rma/
+[console.error] /admin/returns-rma/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/returns-rma/
+[nav] http://127.0.0.1:3010/admin/returns/
+[console.error] /admin/returns/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/returns/
+[console.error] /admin/returns/: Failed to load resource: the server responded with a status of 404 (Not Found)
+[console.error] /admin/returns/: Failed to load resource: the server responded with a status of 404 (Not Found)
+[nav] http://127.0.0.1:3010/admin/payments-finance/
+[console.error] /admin/payments-finance/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/payments-finance/
+[nav] http://127.0.0.1:3010/admin/payments-v36/
+[console.error] /admin/payments-v36/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/payments-v36/
+[nav] http://127.0.0.1:3010/admin/marketing-center/
+[console.error] /admin/marketing-center/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/marketing-center/
+[nav] http://127.0.0.1:3010/admin/marketing-loyalty/
+[console.error] /admin/marketing-loyalty/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/marketing-loyalty/
+[nav] http://127.0.0.1:3010/admin/reviews-ratings/
+[console.error] /admin/reviews-ratings/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/reviews-ratings/
+[nav] http://127.0.0.1:3010/admin/marketplace-hub/
+[console.error] /admin/marketplace-hub/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/marketplace-hub/
+[nav] http://127.0.0.1:3010/admin/marketplace-v35/
+[console.error] /admin/marketplace-v35/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/marketplace-v35/
+[nav] http://127.0.0.1:3010/admin/crm-customer-service/
+[console.error] /admin/crm-customer-service/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/crm-customer-service/
+[nav] http://127.0.0.1:3010/admin/crm-loyalty/
+[console.error] /admin/crm-loyalty/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/crm-loyalty/
+[nav] http://127.0.0.1:3010/admin/customer-support/
+[console.error] /admin/customer-support/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/customer-support/
+[nav] http://127.0.0.1:3010/admin/contact-submissions/
+[console.error] /admin/contact-submissions/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/contact-submissions/
+[nav] http://127.0.0.1:3010/admin/logistics/
+[console.error] /admin/logistics/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/logistics/
+[nav] http://127.0.0.1:3010/admin/logistics-fulfillment/
+[console.error] /admin/logistics-fulfillment/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/logistics-fulfillment/
+[nav] http://127.0.0.1:3010/admin/fulfillment-v33/
+[console.error] /admin/fulfillment-v33/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/fulfillment-v33/
+[nav] http://127.0.0.1:3010/admin/logistics-v34/
+[console.error] /admin/logistics-v34/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/logistics-v34/
+[nav] http://127.0.0.1:3010/admin/wms-inventory/
+[console.error] /admin/wms-inventory/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/wms-inventory/
+[nav] http://127.0.0.1:3010/admin/suppliers/
+[console.error] /admin/suppliers/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/suppliers/
+[nav] http://127.0.0.1:3010/admin/supplier-hub/
+[console.error] /admin/supplier-hub/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/supplier-hub/
+[nav] http://127.0.0.1:3010/admin/supplier-integration-hub/
+[console.error] /admin/supplier-integration-hub/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/supplier-integration-hub/
+[nav] http://127.0.0.1:3010/admin/sync/
+[console.error] /admin/sync/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/sync/
+[nav] http://127.0.0.1:3010/admin/integrations/
+[console.error] /admin/integrations/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/integrations/
+[nav] http://127.0.0.1:3010/admin/analytics/
+[console.error] /admin/analytics/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/analytics/
+[nav] http://127.0.0.1:3010/admin/analytics-foundation/
+[console.error] /admin/analytics-foundation/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/analytics-foundation/
+[console.error] /admin/analytics-foundation/: Failed to load resource: the server responded with a status of 404 (Not Found)
+[console.error] /admin/analytics-foundation/: Failed to load resource: the server responded with a status of 404 (Not Found)
+[nav] http://127.0.0.1:3010/admin/analytics-v39/
+[console.error] /admin/analytics-v39/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/analytics-v39/
+[nav] http://127.0.0.1:3010/admin/identity-security/
+[console.error] /admin/identity-security/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/identity-security/
+[nav] http://127.0.0.1:3010/admin/security-dashboard/
+[console.error] /admin/security-dashboard/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/security-dashboard/
+[nav] http://127.0.0.1:3010/admin/sessions/
+[console.error] /admin/sessions/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/sessions/
+[nav] http://127.0.0.1:3010/admin/security-v38/
+[console.error] /admin/security-v38/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/security-v38/
+[nav] http://127.0.0.1:3010/admin/international-v37/
+[console.error] /admin/international-v37/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/international-v37/
+[nav] http://127.0.0.1:3010/admin/ai-center/
+[console.error] /admin/ai-center/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/ai-center/
+[nav] http://127.0.0.1:3010/admin/advanced-search/
+[console.error] /admin/advanced-search/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/advanced-search/
+[nav] http://127.0.0.1:3010/admin/localization/
+[console.error] /admin/localization/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/localization/
+[nav] http://127.0.0.1:3010/admin/automation/
+[console.error] /admin/automation/: X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>.
+[nav] http://127.0.0.1:3010/admin/automation/
+  ✓  1 [chromium-desktop] › e2e/zz-debug-admin.spec.ts:4:5 › debug: runtime errors on admin pages (3.2m)
+
+  1 passed (3.3m)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.DHUIXv

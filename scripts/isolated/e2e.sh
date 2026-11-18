@@ -8,12 +8,18 @@
 #                      "on" leaves it enforced (8 logins per 15 min and address).
 #   --api-port N       default 3011
 #   --web-port N       default 3010
-#   --no-network       loopback only: nothing can reach an external provider
+#   --host NAME        127.0.0.1 (default) or localhost: the name the browser uses
+#   --allow-network    keep the host network. Default is loopback only in a
+#                      private network namespace: no external provider and no
+#                      developer stack (3000/3001) can be reached at all.
 #   --serve-only       start the stack and wait instead of running Playwright
 #
 # Ports 3000 and 3001 are refused: they belong to the developer stack, which
 # works on the real server/data. Admin specs log in with synthetic accounts
 # created for this run (see seed-synthetic-admins.cjs).
+#
+# Exit status: Playwright's status; 64 bad arguments; 90-94 see run.sh;
+# 95 a port is already in use; 96 the started API is not the isolated one.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -24,26 +30,38 @@ if [[ "${BUZZARD_E2E_STAGE:-}" != "inner" ]]; then
   API_PORT=3011
   WEB_PORT=3010
   SERVE_ONLY=0
+  HOST=127.0.0.1
   RUN_ARGS=()
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --limiter) LIMITER="$2"; shift 2 ;;
       --api-port) API_PORT="$2"; shift 2 ;;
       --web-port) WEB_PORT="$2"; shift 2 ;;
-      --no-network) RUN_ARGS+=(--no-network); shift ;;
+      --host) HOST="$2"; shift 2 ;;
+      --no-network) shift ;;
+      --allow-network) RUN_ARGS+=(--allow-network); shift ;;
       --serve-only) SERVE_ONLY=1; shift ;;
-      -h|--help) sed -n '2,17p' "$SELF" | sed 's/^# \{0,1\}//'; exit 0 ;;
+      -h|--help) sed -n '2,23p' "$SELF" | sed 's/^# \{0,1\}//'; exit 0 ;;
       --) shift; break ;;
       *) break ;;
     esac
   done
   case "$LIMITER" in on|off) ;; *) echo "--limiter expects on or off" >&2; exit 64 ;; esac
+  case "$HOST" in 127.0.0.1|localhost) ;; *) echo "--host expects 127.0.0.1 or localhost" >&2; exit 64 ;; esac
   for port in "$API_PORT" "$WEB_PORT"; do
+    if ! [[ "$port" =~ ^[0-9]+$ ]] || (( port < 1024 || port > 65535 )); then
+      echo "ports must be numbers between 1024 and 65535" >&2
+      exit 64
+    fi
     if [[ "$port" == "3000" || "$port" == "3001" ]]; then
       echo "ports 3000 and 3001 are reserved for the developer stack" >&2
       exit 64
     fi
   done
+  if [[ "$API_PORT" == "$WEB_PORT" ]]; then
+    echo "API and storefront need different ports" >&2
+    exit 64
+  fi
   # A second `next dev` in the same checkout shares .next with the first and
   # clears it on start, which breaks the pages the first one is serving. This
   # has to be decided here: inside the namespace /proc/<pid>/cwd of outside
@@ -51,7 +69,8 @@ if [[ "${BUZZARD_E2E_STAGE:-}" != "inner" ]]; then
   # counts as using this checkout.
   PRIVATE_WEB=0
   for dir in /proc/[0-9]*; do
-    cmd="$(tr '\0' ' ' < "$dir/cmdline" 2>/dev/null || true)"
+    # A process may end between the listing and the read.
+    cmd="$({ tr '\0' ' ' < "$dir/cmdline"; } 2>/dev/null || true)"
     [[ "$cmd" =~ next(-server|\ dev) ]] || continue
     cwd="$(readlink "$dir/cwd" 2>/dev/null || echo unreadable)"
     if [[ "$cwd" == "$REPO" || "$cwd" == "unreadable" ]]; then
@@ -60,14 +79,25 @@ if [[ "${BUZZARD_E2E_STAGE:-}" != "inner" ]]; then
     fi
   done
   export BUZZARD_E2E_STAGE=inner BUZZARD_E2E_LIMITER="$LIMITER" BUZZARD_E2E_API_PORT="$API_PORT" \
-    BUZZARD_E2E_WEB_PORT="$WEB_PORT" BUZZARD_E2E_SERVE_ONLY="$SERVE_ONLY" BUZZARD_E2E_PRIVATE_WEB="$PRIVATE_WEB"
+    BUZZARD_E2E_WEB_PORT="$WEB_PORT" BUZZARD_E2E_SERVE_ONLY="$SERVE_ONLY" BUZZARD_E2E_PRIVATE_WEB="$PRIVATE_WEB" \
+    BUZZARD_E2E_HOST="$HOST"
   exec "$REPO/scripts/isolated/run.sh" "${RUN_ARGS[@]}" -- "$SELF" "$@"
 fi
 
 unset BUZZARD_E2E_STAGE
 ROOT="$BUZZARD_ISOLATED_ROOT"
-API_URL="http://127.0.0.1:$BUZZARD_E2E_API_PORT"
-WEB_URL="http://127.0.0.1:$BUZZARD_E2E_WEB_PORT"
+HOST="${BUZZARD_E2E_HOST:-127.0.0.1}"
+API_URL="http://$HOST:$BUZZARD_E2E_API_PORT"
+WEB_URL="http://$HOST:$BUZZARD_E2E_WEB_PORT"
+
+# With the host network kept, something else may already listen there; "ready"
+# would then be said of a server this script did not start.
+for port in "$BUZZARD_E2E_API_PORT" "$BUZZARD_E2E_WEB_PORT"; do
+  if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
+    echo "[isolated-e2e] port $port is already in use; choose another with --api-port/--web-port" >&2
+    exit 95
+  fi
+done
 
 node "$REPO/scripts/isolated/seed-synthetic-admins.cjs" "$ROOT/data" "$ROOT/synthetic-admins.json"
 
@@ -98,6 +128,9 @@ trap cleanup EXIT INT TERM
 api_env=(
   PORT="$BUZZARD_E2E_API_PORT"
   BUZZARD_DB_PATH="$ROOT/catalog.sqlite"
+  BUZZARD_DATA_DIR="$ROOT/data"
+  BUZZARD_BACKUP_DIR="$ROOT/backups"
+  BUZZARD_BIND_HOST="$HOST"
   BUZZARD_E2E_DB=1
   BUZZARD_COMMERCE_CORE=1
   BUZZARD_SALES_ENABLED=0
@@ -111,9 +144,18 @@ fi
   > "$ROOT/api.log" 2>&1 &
 pids+=($!)
 
+# The development server grows with every page it compiles (several GB over a
+# full admin run). A heap limit makes it restart itself earlier instead; tests
+# that open many pages repeat a navigation that falls into such a restart.
+WEB_NODE_OPTIONS="${NODE_OPTIONS:-}"
+if [[ "$WEB_NODE_OPTIONS" != *max-old-space-size* ]]; then
+  WEB_NODE_OPTIONS="${WEB_NODE_OPTIONS:+$WEB_NODE_OPTIONS }--max-old-space-size=${BUZZARD_E2E_WEB_HEAP_MB:-3072}"
+fi
 (cd "$WEB_DIR" && exec env NEXT_PUBLIC_SALES_ENABLED=0 NEXT_PUBLIC_COMMERCE_CORE=1 \
-  NEXT_PUBLIC_BUZZARD_API_URL="$API_URL" NEXT_TELEMETRY_DISABLED=1 \
-  node "$REPO/node_modules/next/dist/bin/next" dev -p "$BUZZARD_E2E_WEB_PORT" -H 127.0.0.1) \
+  NODE_OPTIONS="$WEB_NODE_OPTIONS" \
+  NEXT_PUBLIC_BUZZARD_API_URL="$API_URL" NEXT_PUBLIC_BUZZARD_E2E_FIXTURE=1 \
+  NEXT_TELEMETRY_DISABLED=1 \
+  node "$REPO/node_modules/next/dist/bin/next" dev -p "$BUZZARD_E2E_WEB_PORT" -H "$HOST") \
   > "$ROOT/web.log" 2>&1 &
 pids+=($!)
 
@@ -129,6 +171,22 @@ wait_for() {
   echo "[isolated-e2e] $label ready at ${url%/api/health}" >&2
 }
 wait_for "$API_URL/api/health" "API (limiter $BUZZARD_E2E_LIMITER)"
+
+# The API that answers must be the one started above, on the throwaway data.
+if ! curl -fs -m 10 "$API_URL/api/health" | ROOT="$ROOT" node -e '
+  let text = "";
+  process.stdin.on("data", (chunk) => (text += chunk)).on("end", () => {
+    const health = JSON.parse(text);
+    const root = require("fs").realpathSync(process.env.ROOT) + "/";
+    const db = String(health.database?.path || "");
+    const ok = health.adminData?.isolated === true && db.startsWith(root);
+    if (!ok) console.error(`[isolated-e2e] API reports isolated=${health.adminData?.isolated}, database below the run directory=${db.startsWith(root)}`);
+    process.exit(ok ? 0 : 1);
+  });
+'; then
+  echo "[isolated-e2e] ABORT: the API on $API_URL does not report throwaway storage" >&2
+  exit 96
+fi
 wait_for "$WEB_URL/" "storefront"
 
 if [[ "$BUZZARD_E2E_SERVE_ONLY" == "1" ]]; then
@@ -152,6 +210,7 @@ BUZZARD_ADMIN_EMAIL="$ADMIN_EMAIL" \
 BUZZARD_ADMIN_PASSWORD="$ADMIN_PASSWORD" \
 BUZZARD_E2E_CREDENTIALS_FILE="$ROOT/synthetic-admins.json" \
 BUZZARD_E2E_LIMITER="$BUZZARD_E2E_LIMITER" \
+BUZZARD_E2E_RUN_ROOT="$ROOT" \
   node "$REPO/node_modules/@playwright/test/cli.js" test --output "$ROOT/test-results" "$@"
 status=$?
 set -e

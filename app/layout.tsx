@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <meta httpEquiv="Content-Security-Policy" content={SECURITY_HEADERS.contentSecurityPolicy} />
         )}
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-Frame-Options" content="DENY" />
+        {/* X-Frame-Options belongs on the HTTP response (server/lib/security.js); meta is ignored by browsers. */}
         <meta httpEquiv="Cross-Origin-Opener-Policy" content="same-origin" />
         <meta httpEquiv="Cross-Origin-Resource-Policy" content="same-site" />
         {process.env.NODE_ENV === "production" && (

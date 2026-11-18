@@ -110,8 +110,8 @@ export default function ProductDetailView({ product }: ProductDetailViewProps) {
           <ProductGallery images={localizedProduct.images} imageKey={localizedProduct.imageKey} name={localizedProduct.name} />
 
           <div className="product-detail-info">
-            <span className="product-detail-brand">{localizedProduct.brand}</span>
-            <span className="product-card-category">{categoryLabel}</span>
+            {localizedProduct.brand ? <span className="product-detail-brand">{localizedProduct.brand}</span> : null}
+            {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
             <h1>{localizedProduct.name}</h1>
             <p className="product-detail-sku">
               SKU: <strong>{activeSku}</strong>

@@ -15,7 +15,7 @@ const path = require("path");
 const { hashPassword } = require("../../server/lib/password");
 const { PERMISSIONS } = require("../../server/lib/rbac");
 
-const ROLES = ["administrator", "catalog_manager", "order_manager", "read_only"];
+const ROLES = ["administrator", "admin", "catalog_manager", "order_manager", "staff", "ai_agent", "read_only"];
 
 function fail(message) {
   console.error(`[seed-synthetic-admins] ${message}`);
@@ -47,6 +47,20 @@ const users = ROLES.map((role) => {
   };
 });
 
+// Accounts that tests may lock out, so that no role account becomes unusable for the rest of a run.
+for (const probe of ["lockout_probe", "lockout_probe_ui"]) {
+  const password = crypto.randomBytes(18).toString("base64url");
+  const email = `synthetic-${probe.replace(/_/g, "-")}@isolated.buzzard.test`;
+  credentials[probe] = { email, password };
+  users.push({
+    id: `usr-synthetic-${probe.replace(/_/g, "-")}`,
+    email,
+    name: `Synthetic ${probe.replace(/_/g, " ")}`,
+    role: "read_only",
+    password_hash: hashPassword(password),
+  });
+}
+
 fs.writeFileSync(path.join(dataDir, "admin-users.json"), JSON.stringify(users, null, 2), { mode: 0o600 });
 fs.writeFileSync(path.resolve(credentialsArg), JSON.stringify(credentials, null, 2), { mode: 0o600 });
-console.error(`[seed-synthetic-admins] ${users.length} synthetic accounts (${ROLES.join(", ")})`);
+console.error(`[seed-synthetic-admins] ${users.length} synthetic accounts (${ROLES.join(", ")}; two lockout probes)`);

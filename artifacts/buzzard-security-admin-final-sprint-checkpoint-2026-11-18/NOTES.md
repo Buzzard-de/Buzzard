@@ -495,3 +495,24 @@ Skips (documented, not failures):
 - customer-journey desktop1280/1440/1920 checks skipped on chromium-mobile and chromium-tablet projects by design of that spec.
 
 One intermittent mobile homepage search-toggle miss was fixed (hydration retry) and the mobile suite re-run green.
+
+## PHASE 14 — Final independent security review — VERIFIED 2026-11-18 17:16 UTC
+
+### Searches performed
+Anonymous catalog preview, unprotected admin writes (handler-level requireAuth+requirePermission present on adminCatalogPlugin), hardcoded secrets/JWT fallbacks (no built-in JWT fallback; weak list in environmentValidation), demo password literals (committed seed + DEV_ADMIN denylist; e2e fallbacks env-only after scrub), token leakage in logs (prior Phase 9), path traversal (Phase 2 static policy), BUZZARD_E2E_DB in production (refused), git stderr noise in isolated API.
+
+### Critical / high fixed this phase
+- P14-1: `listProducts` now accepts preview only as boolean `true` (query string `preview=1` ignored even if a public handler forgets to strip it).
+- P14-2: `deploymentIdentity` git calls use stdio ignore for stderr (stops `fatal: not a git repository` spam in isolated api.log without changing identity behaviour).
+- P14-3: removed ineffective `<meta http-equiv="X-Frame-Options">` from `app/layout.tsx` (browsers ignore meta; header remains from `server/lib/security.js`).
+
+### Remaining (not claimed fixed; not sprint-blocking for code-complete verification where external)
+- Committed seed file still holds bootstrap password literals (denylisted in production admin bootstrap).
+- DEV_ADMIN_PASSWORD constant remains as development denylist/bootstrap source (production refuses it).
+- Administrator may approve own Control Center request (O11-2).
+- Legacy `/api/admin/import` and `/api/admin/sync/retry` without approval gate (O11-1).
+- TOTP secrets at-rest encryption, non-atomic writers for some JSON stores, mail delivery for password reset — external/ops.
+- Applying the server patch to the live watched stack requires a human restart decision (BLOCKED for live apply).
+
+### Evidence
+catalogFixtureSecurity + webhookSecurity re-run after hardenings; preview probe shows demo still 404 with `?preview=1`.

@@ -13,8 +13,10 @@ import {
   runPimImport,
   validatePimProduct,
 } from "@/lib/admin/pimCore";
-import { isPimImportPending } from "@/lib/admin/pimCoreTypes";
+import { useCan } from "@/lib/admin/permissions";
+import { isPimImportPending, pimImportPendingSummary } from "@/lib/admin/pimCoreTypes";
 import type {
+  PimImportResult,
   PimBrand,
   PimImportPendingApproval,
   PimProduct,
@@ -32,7 +34,14 @@ export default function AdminPimCorePanel() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [validation, setValidation] = useState<PimValidationResult | null>(null);
   const [quality, setQuality] = useState<{ score: number; dimensions: Record<string, number> } | null>(null);
-  const [importResult, setImportResult] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<PimImportResult | null>(null);
+  const [importBusy, setImportBusy] = useState(false);
+  const [validateError, setValidateError] = useState<string | null>(null);
+  const can = useCan();
+  // The import route asks for both; the API decides, this only keeps the page from offering a refused action.
+  const mayImport = can("products.write") && can("imports.run");
+  const mayValidate = can("products.write");
+  const maySeeMappings = can("suppliers.read");
   const [importPending, setImportPending] = useState<PimImportPendingApproval | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [attributeSchema, setAttributeSchema] = useState<string | null>(null);
@@ -41,10 +50,11 @@ export default function AdminPimCorePanel() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    // Supplier mappings need suppliers.read on top of the page's products.read.
     const [productRows, brandRows, mappingRows, caps] = await Promise.all([
       fetchPimProducts(),
       fetchPimBrands(),
-      fetchSupplierMappings(),
+      maySeeMappings ? fetchSupplierMappings() : [],
       fetchPimAiCapabilities(),
     ]);
     setProducts(productRows);
@@ -52,7 +62,7 @@ export default function AdminPimCorePanel() {
     setMappings(mappingRows);
     setAiCaps(caps);
     if (productRows[0] && !selectedId) setSelectedId(productRows[0].id);
-  }, [selectedId]);
+  }, [selectedId, maySeeMappings]);
 
   useEffect(() => {
     if (!getAdminToken()) {
@@ -78,10 +88,15 @@ export default function AdminPimCorePanel() {
   }
 
   async function handleValidate() {
-    if (!selectedId) return;
-    const result = await validatePimProduct(selectedId);
-    setValidation(result);
-    setTab("validation");
+    if (!selectedId || !mayValidate) return;
+    setValidateError(null);
+    try {
+      const result = await validatePimProduct(selectedId);
+      setValidation(result);
+      setTab("validation");
+    } catch (err) {
+      setValidateError(err instanceof Error ? err.message : "admin.requestFailed");
+    }
   }
 
   async function handleDryRunImport() {
@@ -89,6 +104,8 @@ export default function AdminPimCorePanel() {
     setImportPending(null);
     setImportError(null);
     setTab("import");
+    if (!mayImport || importBusy) return;
+    setImportBusy(true);
     try {
       const result = await runPimImport(
         {
@@ -106,9 +123,11 @@ export default function AdminPimCorePanel() {
         setImportPending(result);
         return;
       }
-      setImportResult(`Dry run ${result.importJobId}: ${result.validation.overall} (${result.stages.length} stages)`);
+      setImportResult(result);
     } catch (err) {
       setImportError(err instanceof Error ? err.message : "admin.requestFailed");
+    } finally {
+      setImportBusy(false);
     }
   }
 
@@ -181,8 +200,20 @@ export default function AdminPimCorePanel() {
             <div className="admin-detail">
               <h3>{selected.title}</h3>
               <p>SKU: {selected.sku} · Brand: {selected.brand?.name || "—"}</p>
-              <button type="button" onClick={handleValidate}>Validate</button>
+              <button
+                type="button"
+                onClick={handleValidate}
+                disabled={!mayValidate}
+                title={mayValidate ? undefined : "Ihre Rolle darf Produkte nicht validieren (products.write)."}
+              >
+                Validate
+              </button>
               <button type="button" onClick={handleLoadAttributes}>Category attributes</button>
+              {validateError && (
+                <p className="admin-error" role="alert" data-testid="pim-validate-error">
+                  Validation request failed: {validateError}
+                </p>
+              )}
             </div>
           )}
         </section>
@@ -203,28 +234,75 @@ export default function AdminPimCorePanel() {
         <section className="admin-panel">
           <h2>Import Pipeline</h2>
           <p className="admin-note">Supplier → Raw → Validation → Normalization → Mapping → PIM (dry-run default)</p>
-          <button type="button" onClick={handleDryRunImport}>Run dry-run import</button>
-          {importPending && (
-            <div className="admin-note" role="status" data-testid="pim-import-pending">
-              <p>
-                <strong>Dry run pending approval</strong> — not executed. Nothing was imported or validated yet.
-              </p>
-              <p>
-                Approval: {importPending.approval?.id || "—"} · Status: {importPending.approval?.status || "PENDING"}
-                {importPending.approval?.riskLevel ? ` · Risk: ${importPending.approval.riskLevel}` : ""}
-              </p>
-              <p>
-                A person has to approve this request in the{" "}
-                <Link href="/admin/control-center/">Control Center</Link> (tab “Onaylar”) before the dry run can start.
-              </p>
-            </div>
+          <button type="button" onClick={handleDryRunImport} disabled={!mayImport || importBusy}>
+            Run dry-run import
+          </button>
+          {!mayImport && (
+            <p className="admin-note" data-testid="pim-import-no-permission">
+              Ihre Rolle darf keinen Import anfordern (products.write und imports.run erforderlich).
+            </p>
           )}
+          {importPending &&
+            (() => {
+              const pending = pimImportPendingSummary(importPending);
+              return (
+                <div className="admin-note" role="status" data-testid="pim-import-pending">
+                  <p>
+                    <strong>Dry run pending approval</strong> — not executed. Nothing was imported or validated yet.
+                  </p>
+                  <dl className="admin-facts">
+                    <dt>State</dt>
+                    <dd data-testid="pim-import-state">pendingApproval</dd>
+                    <dt>Approval</dt>
+                    <dd data-testid="pim-import-approval-id">{pending.approvalId || "—"}</dd>
+                    <dt>Approval status</dt>
+                    <dd data-testid="pim-import-approval-status">{pending.status}</dd>
+                    {pending.riskLevel && (
+                      <>
+                        <dt>Risk</dt>
+                        <dd>{pending.riskLevel}</dd>
+                      </>
+                    )}
+                    <dt>Import job</dt>
+                    <dd data-testid="pim-import-job-id">
+                      {pending.importJobId ? `${pending.importJobId} (reserved, not started)` : "— (none yet)"}
+                    </dd>
+                    <dt>Validation</dt>
+                    <dd data-testid="pim-import-validation">not run</dd>
+                  </dl>
+                  <p data-testid="pim-import-after-approval">
+                    A person decides on this request in the{" "}
+                    <Link href="/admin/control-center/">Control Center</Link> (tab “Onaylar”). The decision is
+                    recorded there; an approval does not start the dry run, and sending the request again opens a
+                    new request.
+                  </p>
+                </div>
+              );
+            })()}
           {importError && (
             <p className="admin-error" role="alert" data-testid="pim-import-error">
               Dry run request failed: {importError}
             </p>
           )}
-          {importResult && <pre data-testid="pim-import-result">{importResult}</pre>}
+          {importResult && (
+            <div className="admin-note" role="status" data-testid="pim-import-result">
+              <p>
+                <strong>{importResult.dryRun ? "Dry run finished" : "Import finished"}</strong>
+                {importResult.dryRun ? " — nothing was written to the catalog." : ""}
+              </p>
+              <dl className="admin-facts">
+                <dt>Import job</dt>
+                <dd data-testid="pim-import-job-id">{importResult.importJobId}</dd>
+                <dt>Validation</dt>
+                <dd data-testid="pim-import-validation">
+                  {importResult.validation.overall} ({importResult.validation.failCount} fail,{" "}
+                  {importResult.validation.warningCount} warn)
+                </dd>
+                <dt>Stages</dt>
+                <dd>{importResult.stages.map((stage) => `${stage.stage}: ${stage.status}`).join(" · ")}</dd>
+              </dl>
+            </div>
+          )}
         </section>
       )}
 
@@ -248,7 +326,11 @@ export default function AdminPimCorePanel() {
       {tab === "mapping" && (
         <section className="admin-panel">
           <h2>Supplier Mapping</h2>
-          {mappings.length === 0 ? (
+          {!maySeeMappings ? (
+            <p className="admin-note" data-testid="pim-mappings-no-permission">
+              Ihre Rolle darf Lieferanten-Zuordnungen nicht einsehen (suppliers.read erforderlich).
+            </p>
+          ) : mappings.length === 0 ? (
             <p>No mappings yet. Use import pipeline or API to create mappings.</p>
           ) : (
             <ul>

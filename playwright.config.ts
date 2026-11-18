@@ -30,23 +30,23 @@ export default defineConfig({
     {
       name: "api",
       testMatch:
-        /commerce-(storefront|security|readiness)\.spec\.ts|admin-login-limiter\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+        /commerce-(storefront|security|readiness)\.spec\.ts|admin-login-limiter\.spec\.ts|catalog-fixture\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "chromium-desktop",
       testMatch:
-        /customer-journey|admin(?:-pim-core|-session)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+        /customer-journey|device-regression|catalog-fixture|admin(?:-pim-core|-session|-roles)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
     },
     {
       name: "chromium-mobile",
-      testMatch: /customer-journey\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+      testMatch: /customer-journey\.spec\.ts|device-regression\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
       use: { ...devices["Pixel 5"], viewport: VIEWPORTS.mobile375 },
     },
     {
       name: "chromium-tablet",
-      testMatch: /customer-journey\.spec\.ts/,
+      testMatch: /customer-journey\.spec\.ts|device-regression\.spec\.ts/,
       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.tablet768 },
     },
   ],

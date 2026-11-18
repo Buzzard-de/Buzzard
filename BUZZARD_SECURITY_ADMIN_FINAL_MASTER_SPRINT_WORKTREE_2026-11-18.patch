@@ -20,6 +20,18 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      </AdminGuard>
    );
  }
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/app/layout.tsx work/app/layout.tsx
+--- ws-snapshot/app/layout.tsx	2026-11-17 15:45:20.000000000 +0000
++++ work/app/layout.tsx	2026-11-18 17:15:17.505209879 +0000
+@@ -75,7 +75,7 @@
+           <meta httpEquiv="Content-Security-Policy" content={SECURITY_HEADERS.contentSecurityPolicy} />
+         )}
+         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+-        <meta httpEquiv="X-Frame-Options" content="DENY" />
++        {/* X-Frame-Options belongs on the HTTP response (server/lib/security.js); meta is ignored by browsers. */}
+         <meta httpEquiv="Cross-Origin-Opener-Policy" content="same-origin" />
+         <meta httpEquiv="Cross-Origin-Resource-Policy" content="same-site" />
+         {process.env.NODE_ENV === "production" && (
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/app/produkt/[slug]/page.tsx work/app/produkt/[slug]/page.tsx
 --- ws-snapshot/app/produkt/[slug]/page.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/app/produkt/[slug]/page.tsx	2026-11-18 16:42:49.143065276 +0000
@@ -6438,6 +6450,27 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    return defaultBackupDir;
  }
  
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/deploymentIdentity.js work/server/lib/deploymentIdentity.js
+--- ws-snapshot/server/lib/deploymentIdentity.js	2026-10-28 12:23:42.000000000 +0000
++++ work/server/lib/deploymentIdentity.js	2026-11-18 17:15:17.505209879 +0000
+@@ -24,7 +24,7 @@
+ function readLocalGitCommit() {
+   try {
+     const root = path.join(__dirname, "..", "..");
+-    return execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8" }).trim();
++    return execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+   } catch {
+     return null;
+   }
+@@ -33,7 +33,7 @@
+ function readLocalGitBranch() {
+   try {
+     const root = path.join(__dirname, "..", "..");
+-    return execSync("git rev-parse --abbrev-ref HEAD", { cwd: root, encoding: "utf8" }).trim();
++    return execSync("git rev-parse --abbrev-ref HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+   } catch {
+     return null;
+   }
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/environmentValidation.js work/server/lib/environmentValidation.js
 --- ws-snapshot/server/lib/environmentValidation.js	2026-10-28 12:23:42.000000000 +0000
 +++ work/server/lib/environmentValidation.js	2026-11-18 16:34:25.786809452 +0000
@@ -8768,7 +8801,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +module.exports = { resolvePublicFile, PUBLIC_DIRS };
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=__pycache__' ws-snapshot/server/lib/storefront/catalogReadService.js work/server/lib/storefront/catalogReadService.js
 --- ws-snapshot/server/lib/storefront/catalogReadService.js	2026-10-28 12:23:42.000000000 +0000
-+++ work/server/lib/storefront/catalogReadService.js	2026-11-18 16:34:25.778809404 +0000
++++ work/server/lib/storefront/catalogReadService.js	2026-11-18 17:15:17.505209879 +0000
 @@ -5,7 +5,7 @@
  const productCore = require("../pim/productCore");
  const categoryEngine = require("../pim/categoryEngine");
@@ -8778,7 +8811,17 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  const { isProductVisibleOnStorefront } = require("./storefrontVisibility");
  const catalogCache = require("./catalogCache");
  const { sortProducts, filterProducts, buildFilterFacets } = require("./filterSort");
-@@ -118,8 +118,10 @@
+@@ -53,7 +53,8 @@
+   const page = Math.max(1, Number(query.page) || 1);
+   const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(query.limit) || DEFAULT_PAGE_SIZE));
+   const sort = query.sort || SORT_OPTIONS.RELEVANCE;
+-  const preview = query.preview === "1" || query.preview === true;
++  // Only an explicit boolean true opens preview (admin routes). Query strings like preview=1 are ignored.
++  const preview = query.preview === true;
+   const cacheKey = catalogCache.cacheKey([
+     "catalog",
+     "products",
+@@ -118,8 +119,10 @@
  function getProductById(idOrSlug, { preview = false } = {}) {
    let product = productCore.getProduct(idOrSlug);
    if (!product) {

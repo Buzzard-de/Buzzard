@@ -82,6 +82,8 @@ export function breadcrumbSchema(
 }
 
 export function productSchema(product: PublicProduct, categoryLabel: string) {
+  const brandName = String(product.brand || "").trim();
+  const category = String(categoryLabel || "").trim();
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -90,11 +92,8 @@ export function productSchema(product: PublicProduct, categoryLabel: string) {
     description: product.shortDescription || product.description,
     sku: product.sku,
     ...(product.eanGtin ? { gtin13: product.eanGtin } : {}),
-    brand: {
-      "@type": "Brand",
-      name: product.brand,
-    },
-    category: categoryLabel,
+    ...(brandName ? { brand: { "@type": "Brand", name: brandName } } : {}),
+    ...(category && category !== "catalog" ? { category } : {}),
     ...(showPrices()
       ? {
           offers: {

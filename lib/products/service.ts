@@ -117,8 +117,10 @@ export function getLegacyProductParams(): { id: string }[] {
 }
 
 export function getCategoryLabelForProduct(product: PublicProduct, locale: BuzzardLocale = "de"): string {
-  const category = getCategoryById(product.categoryId);
-  return category ? getCategoryLabel(category, locale) : product.categoryId;
+  const id = String(product.categoryId || "").trim();
+  if (!id || id === "catalog") return "";
+  const category = getCategoryById(id);
+  return category ? getCategoryLabel(category, locale) : "";
 }
 
 export function getProductsForCategory(category: BuzzardCategory, limit?: number): PublicProduct[] {

@@ -44,7 +44,7 @@ export default function ProductCard({
         )}
       </Link>
       <div className="product-card-body">
-        <span className="product-card-category">{categoryLabel}</span>
+        {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
         <Link href={product.url} className="product-card-name">
           {localeName}
         </Link>

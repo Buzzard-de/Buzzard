@@ -17,8 +17,8 @@ export function mapStorefrontToPublic(product: StorefrontProduct): PublicProduct
     name: product.title,
     shortDescription: product.shortDescription || product.description.slice(0, 160),
     description: product.description,
-    categoryId: product.categoryId || product.categorySlug || "catalog",
-    categoryIds: [product.categoryId || product.categorySlug || "catalog"],
+    categoryId: product.categoryId || product.categorySlug || "",
+    categoryIds: [product.categoryId || product.categorySlug].filter(Boolean) as string[],
     images: product.images,
     documents: [],
     attributes: {

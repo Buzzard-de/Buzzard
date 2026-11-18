@@ -39,6 +39,7 @@ export default function AdminCatalogSeoPanel() {
   const [status, setStatus] = useState<CatalogSeoStatus | null>(null);
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [categories, setCategories] = useState<CatalogCategory[]>([]);
+  const [categoriesMissing, setCategoriesMissing] = useState(false);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("");
   const [editing, setEditing] = useState<CatalogProductInput | null>(null);
@@ -49,13 +50,15 @@ export default function AdminCatalogSeoPanel() {
 
   const reload = useCallback(async () => {
     setError("");
+    // The product list is shown even when the category list cannot be loaded.
     const [productRows, categoryRows, hubStatus] = await Promise.all([
       fetchAdminCatalogProducts(),
-      fetchCatalogCategories(),
+      fetchCatalogCategories().catch(() => null),
       fetchCatalogSeoStatus().catch(() => null),
     ]);
     setProducts(productRows);
-    setCategories(categoryRows);
+    setCategories(categoryRows ?? []);
+    setCategoriesMissing(categoryRows === null);
     setStatus(hubStatus);
   }, []);
 
@@ -132,6 +135,12 @@ export default function AdminCatalogSeoPanel() {
 
       {error && <p className="shop-modal-error">{error}</p>}
       {message && <p className="admin-message">{message}</p>}
+      {categoriesMissing && (
+        <p className="admin-note" role="status" data-testid="catalog-categories-unavailable">
+          Die Kategorien dieses Katalogs konnten nicht geladen werden. Die Produkte werden ohne Kategorieauswahl
+          angezeigt.
+        </p>
+      )}
 
       {status && (
         <div className="admin-stat-grid">

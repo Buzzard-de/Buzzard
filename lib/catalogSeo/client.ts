@@ -49,8 +49,17 @@ export async function fetchCatalogSeoStatus(): Promise<CatalogSeoStatus> {
   return data.catalogSeo;
 }
 
+/**
+ * Categories of the SQLite catalog (numeric ids), for the admin catalog page.
+ *
+ * The public path /api/catalog/categories is answered by the storefront bridge
+ * with the taxonomy ({ categories: [...] }, ids like "cat-01"). Those are other
+ * records, so they are not used here.
+ */
 export async function fetchCatalogCategories(): Promise<CatalogCategory[]> {
-  return request<CatalogCategory[]>("/api/catalog/categories");
+  const data = await request<unknown>("/api/admin/catalog/categories");
+  if (!Array.isArray(data)) throw new Error("catalogSeo.categoriesUnavailable");
+  return data as CatalogCategory[];
 }
 
 export async function fetchCatalogProducts(filters?: {
@@ -81,7 +90,9 @@ export async function fetchCatalogProductBySlug(slug: string): Promise<CatalogPr
 }
 
 export async function fetchAdminCatalogProducts(): Promise<CatalogProduct[]> {
-  return request<CatalogProduct[]>("/api/admin/catalog/products");
+  const data = await request<unknown>("/api/admin/catalog/products");
+  if (!Array.isArray(data)) throw new Error("catalogSeo.requestFailed");
+  return data as CatalogProduct[];
 }
 
 export async function createCatalogProduct(body: Record<string, unknown>): Promise<CatalogProduct> {

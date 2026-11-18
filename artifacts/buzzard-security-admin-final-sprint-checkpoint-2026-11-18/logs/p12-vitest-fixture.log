@@ -1,0 +1,26 @@
+
+ RUN  v3.2.7 /tmp/buzzard-final-sprint/work
+
+ ✓ server/__tests__/catalogFixtureSecurity.test.mjs (7 tests) 2027ms
+ ✓ server/__tests__/productionStartup.test.mjs (14 tests) 10726ms
+   ✓ production refuses to start without its mandatory secrets > without JWT_SECRET  706ms
+   ✓ production refuses to start without its mandatory secrets > with a short JWT_SECRET  660ms
+   ✓ production refuses to start without its mandatory secrets > with a placeholder JWT_SECRET  722ms
+   ✓ production refuses to start without its mandatory secrets > without ADMIN_EMAIL and ADMIN_PASSWORD when no account exists  573ms
+   ✓ production refuses to start without its mandatory secrets > with a weak ADMIN_PASSWORD  564ms
+   ✓ production refuses to start without its mandatory secrets > with a demo password from the committed seed file as ADMIN_PASSWORD  564ms
+   ✓ production refuses to start without its mandatory secrets > with BUZZARD_TEST_MODE=1  622ms
+   ✓ production refuses to start without its mandatory secrets > with BUZZARD_E2E_DB=1  619ms
+   ✓ production refuses to start without its mandatory secrets > with BUZZARD_RATE_LIMIT_DISABLED=1  579ms
+   ✓ production refuses to start without its mandatory secrets > on a hosted runtime that forgot NODE_ENV=production  551ms
+   ✓ production with a complete configuration > starts, creates exactly the configured administrator and no demo account, and prints no secret  1162ms
+   ✓ production with a complete configuration > enforces the login limiter, sends HSTS and does not trust the null origin  1355ms
+   ✓ production with a complete configuration > starts a second time on the same data without the bootstrap variables  1237ms
+   ✓ development configuration > starts without secrets, seeds the demo accounts and warns about nothing fatal  810ms
+
+ Test Files  2 passed (2)
+      Tests  21 passed (21)
+   Start at  16:35:32
+   Duration  10.96s (transform 45ms, setup 0ms, collect 80ms, tests 12.75s, environment 0ms, prepare 97ms)
+
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.XeSpco

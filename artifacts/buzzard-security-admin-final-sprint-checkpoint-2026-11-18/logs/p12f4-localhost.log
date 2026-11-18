@@ -1,0 +1,22 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://localhost:3011
+[isolated-e2e] storefront ready at http://localhost:3010/
+[e2e-isolation] API http://localhost:3011: throwaway storage; storefront http://localhost:3010: sends its requests to http://localhost:3011
+
+Running 10 tests using 1 worker
+
+(node:390216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium-desktop] › e2e/catalog-fixture.spec.ts:12:7 › Catalog fixture BZ-E2E-VISIBLE-001 › lists the fixture without invented identity fields (25ms)
+  ✓   2 [chromium-desktop] › e2e/catalog-fixture.spec.ts:27:7 › Catalog fixture BZ-E2E-VISIBLE-001 › opens the fixture by slug and by id (13ms)
+  ✓   3 [chromium-desktop] › e2e/catalog-fixture.spec.ts:37:7 › Catalog fixture BZ-E2E-VISIBLE-001 › ignores anonymous ?preview=1 (hidden demo stays hidden) (11ms)
+  ✓   4 [chromium-desktop] › e2e/device-regression.spec.ts:18:7 › Device regression — storefront › homepage: brand, search and navigation are present (800ms)
+  ✓   5 [chromium-desktop] › e2e/device-regression.spec.ts:33:7 › Device regression — storefront › categories: taxonomy page loads without inventing the fixture (2.3s)
+  ✓   6 [chromium-desktop] › e2e/device-regression.spec.ts:41:7 › Device regression — storefront › search: finds the synthetic shelf item by its real title (2.8s)
+  ✓   7 [chromium-desktop] › e2e/device-regression.spec.ts:51:7 › Device regression — storefront › product detail: shows the fixture without invented EAN/brand/category (2.1s)
+  ✓   8 [chromium-desktop] › e2e/device-regression.spec.ts:65:7 › Device regression — storefront › product → cart: add works; checkout stays inquiry-only while sales are locked (3.2s)
+  ✓   9 [chromium-desktop] › e2e/device-regression.spec.ts:88:7 › Device regression — storefront › admin entry: login page is reachable from the storefront host (339ms)
+  ✓  10 [chromium-desktop] › e2e/device-regression.spec.ts:97:7 › Device regression — storefront › public health of the catalog API is up (7ms)
+
+  10 passed (14.5s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.67nj1r

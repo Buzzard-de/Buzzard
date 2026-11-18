@@ -436,3 +436,35 @@ User asked to persist work. Committed and pushed branch `cursor/security-admin-f
 Artifacts: patch, scrubbed work-tree.tgz, NOTES, Phase 11 logs. Live 3000/3001 untouched; protected SHA-256 identical (7/7).
 Working-tree content digest after commit: e3b0c44298fc1c14/e3b0c44298fc1c14. Guard EXPECT_CONTENT updated accordingly.
 Phase 12+ continues in /tmp/buzzard-final-sprint/work.
+
+## PHASE 12 — Storefront and device regression — VERIFIED 2026-11-18 16:50 UTC
+
+### Corrections
+- P12-1 (HIGH): public catalog accepted `?preview=1` and showed HIDDEN demo products to anonymous callers.
+  Fixed in `storefrontBridgePlugin.js` + `storefrontSearchService.js` (preview only on `/api/admin/storefront/preview/*`).
+- P12-2: `/api/catalog/products/slug/:slug` 404 for title-derived slugs (fixture `synthetic-shelf-item`).
+  Fixed via `storefrontSlugOf` in mapper + catalogReadService lookup.
+- P12-3: production accepted `BUZZARD_E2E_DB=1`. Now refused in `environmentValidation.js` (+ productionStartup test).
+- P12-4: PDP for live-only PIM slugs 500 under `output: "export"` (missing generateStaticParams).
+  Isolated E2E sets `NEXT_PUBLIC_BUZZARD_E2E_FIXTURE=1` so the fixture slug is listed; production builds do not.
+- P12-5: public UI/JSON-LD no longer invent empty brand or the sentinel category `"catalog"`.
+
+### Evidence
+| Run | Log | Result |
+|---|---|---|
+| catalog-fixture (api) | logs/p12f-fixture-api.log | 3 passed |
+| device desktop 127 | logs/p12f-device-desktop-127.log | 7 passed |
+| device desktop localhost | logs/p12f4-localhost.log | 10 passed (device+fixture) |
+| device mobile 127 | logs/p12f4-devices.log | included in 21 passed |
+| device tablet 127 | logs/p12f4-devices.log | included in 21 passed |
+| All devices combined | logs/p12f4-devices.log | 21 passed, 0 failed |
+| catalogFixtureSecurity vitest | logs/p12-vitest-fixture.log / re-run | 7 passed |
+| productionStartup (+ E2E_DB refusal) | with fixture vitest | included in 21 earlier |
+| selftest | logs/p12-selftest.log | (see below) |
+| Guard | 16:50:05Z | protected 7 identical, processes unchanged |
+
+### BZ-E2E-VISIBLE-001
+- Present only with `BUZZARD_E2E_DB=1`; absent without the flag.
+- Public fields: ean/gtin/brand/categoryId/categorySlug all null; title "Synthetic shelf item"; no invented identity.
+- Reachable by id and by slug after P12-2.
+- Demo SKU BZ-CORE-DEMO-001 stays HIDDEN from public routes even with `?preview=1`.

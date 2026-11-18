@@ -10,7 +10,8 @@
 |---|---|
 | Phases 0–10 | VERIFIED (isolated) |
 | Phase 11 Admin UI + PIM | VERIFIED (localhost + 127.0.0.1) |
-| Phases 12–15 | Not started / pending |
+| Phase 12 Storefront/device | VERIFIED |
+| Phases 13–15 | Pending |
 | Overall sprint | **Below 100%** (mandatory later phases open) |
 | Live stack 3000/3001 | Untouched |
 | SALES / EGRESS | LOCKED / DENY |
@@ -26,3 +27,6 @@
 1. Restore staging from `work-tree.tgz` under `/tmp/buzzard-final-sprint/` (or keep existing `/tmp` tree if still present).
 2. Continue Phase 12 (storefront / device regression) in isolation only.
 3. Do not restart ports 3000/3001; do not write real `server/data`.
+
+## Phase 12
+VERIFIED: fixture security, anonymous preview closed, device E2E desktop/mobile/tablet (21 passed), localhost+127.

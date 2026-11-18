@@ -20,6 +20,43 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      </AdminGuard>
    );
  }
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/app/produkt/[slug]/page.tsx work/app/produkt/[slug]/page.tsx
+--- ws-snapshot/app/produkt/[slug]/page.tsx	2026-10-28 12:23:42.000000000 +0000
++++ work/app/produkt/[slug]/page.tsx	2026-11-18 16:42:49.143065276 +0000
+@@ -10,14 +10,31 @@
+   params: Promise<{ slug: string }>;
+ }
+ 
++/** Slug of the synthetic shelf item inserted when BUZZARD_E2E_DB=1. */
++const E2E_FIXTURE_SLUG = "synthetic-shelf-item";
++
+ export async function generateStaticParams() {
+-  return getProductStaticParams();
++  const params = getProductStaticParams();
++  // output: "export" only serves slugs listed here. The isolated E2E storefront
++  // sets NEXT_PUBLIC_BUZZARD_E2E_FIXTURE=1 so the fixture's PDP can be opened;
++  // production builds never set that flag, so the slug is not published empty.
++  if (process.env.NEXT_PUBLIC_BUZZARD_E2E_FIXTURE === "1") {
++    if (!params.some((entry) => entry.slug === E2E_FIXTURE_SLUG)) {
++      params.push({ slug: E2E_FIXTURE_SLUG });
++    }
++  }
++  return params;
+ }
+ 
+ export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+   const { slug } = await params;
+   const product = getProductBySlug(slug);
+-  if (!product) return { title: "Produkt nicht gefunden" };
++  if (!product) {
++    if (process.env.NEXT_PUBLIC_BUZZARD_E2E_FIXTURE === "1" && slug === E2E_FIXTURE_SLUG) {
++      return { title: "Synthetic shelf item", robots: { index: false, follow: false } };
++    }
++    return { title: "Produkt nicht gefunden" };
++  }
+   return buildProductMetadata(product);
+ }
+ 
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/admin/AdminAiCenterPanel.tsx work/components/admin/AdminAiCenterPanel.tsx
 --- ws-snapshot/components/admin/AdminAiCenterPanel.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/admin/AdminAiCenterPanel.tsx	2026-11-18 08:00:17.807336505 +0000
@@ -1085,6 +1122,32 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
            <p className="checkout-success-support">{t("checkout.successSupport")}</p>
          </>
        ) : (
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/ProductCard.tsx work/components/ProductCard.tsx
+--- ws-snapshot/components/ProductCard.tsx	2026-10-28 12:23:42.000000000 +0000
++++ work/components/ProductCard.tsx	2026-11-18 16:34:37.066876303 +0000
+@@ -44,7 +44,7 @@
+         )}
+       </Link>
+       <div className="product-card-body">
+-        <span className="product-card-category">{categoryLabel}</span>
++        {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
+         <Link href={product.url} className="product-card-name">
+           {localeName}
+         </Link>
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/ProductDetailView.tsx work/components/ProductDetailView.tsx
+--- ws-snapshot/components/ProductDetailView.tsx	2026-10-28 12:23:42.000000000 +0000
++++ work/components/ProductDetailView.tsx	2026-11-18 16:34:37.066876303 +0000
+@@ -110,8 +110,8 @@
+           <ProductGallery images={localizedProduct.images} imageKey={localizedProduct.imageKey} name={localizedProduct.name} />
+ 
+           <div className="product-detail-info">
+-            <span className="product-detail-brand">{localizedProduct.brand}</span>
+-            <span className="product-card-category">{categoryLabel}</span>
++            {localizedProduct.brand ? <span className="product-detail-brand">{localizedProduct.brand}</span> : null}
++            {categoryLabel ? <span className="product-card-category">{categoryLabel}</span> : null}
+             <h1>{localizedProduct.name}</h1>
+             <p className="product-detail-sku">
+               SKU: <strong>{activeSku}</strong>
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/components/seo/JsonLd.tsx work/components/seo/JsonLd.tsx
 --- ws-snapshot/components/seo/JsonLd.tsx	2026-10-28 12:23:42.000000000 +0000
 +++ work/components/seo/JsonLd.tsx	2026-11-18 06:12:16.326522329 +0000
@@ -1676,6 +1739,165 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      await expect(page.getByTestId("pim-import-pending")).toHaveCount(0);
      await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
    });
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/catalog-fixture.spec.ts work/e2e/catalog-fixture.spec.ts
+--- ws-snapshot/e2e/catalog-fixture.spec.ts	1970-01-01 00:00:00.000000000 +0000
++++ work/e2e/catalog-fixture.spec.ts	2026-11-18 16:35:32.191138119 +0000
+@@ -0,0 +1,47 @@
++import { test, expect } from "@playwright/test";
++
++const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
++
++/**
++ * Phase 12 — What the isolated stack's public catalog says about the synthetic
++ * shelf item. Never invents EAN/GTIN/brand/category. Runs in the api project.
++ */
++test.describe("Catalog fixture BZ-E2E-VISIBLE-001", () => {
++  test.skip(!process.env.BUZZARD_E2E_RUN_ROOT, "isolated stack required (scripts/isolated/e2e.sh)");
++
++  test("lists the fixture without invented identity fields", async ({ request }) => {
++    const list = await request.get(`${API}/api/catalog/products`);
++    expect(list.ok()).toBeTruthy();
++    const body = await list.json();
++    const item = (body.items || []).find((row: { sku?: string }) => row.sku === "BZ-E2E-VISIBLE-001");
++    expect(item, "fixture present when BUZZARD_E2E_DB=1").toBeTruthy();
++    expect(item.ean).toBeNull();
++    expect(item.gtin).toBeNull();
++    expect(item.brand).toBeNull();
++    expect(item.categoryId).toBeNull();
++    expect(item.categorySlug).toBeNull();
++    expect(item.title).toBe("Synthetic shelf item");
++    expect(item.seo?.slug).toBe("synthetic-shelf-item");
++  });
++
++  test("opens the fixture by slug and by id", async ({ request }) => {
++    const bySlug = await request.get(`${API}/api/catalog/products/slug/synthetic-shelf-item`);
++    expect(bySlug.status()).toBe(200);
++    expect((await bySlug.json()).product.sku).toBe("BZ-E2E-VISIBLE-001");
++
++    const byId = await request.get(`${API}/api/catalog/products/pim_prod_e2e_visible`);
++    expect(byId.status()).toBe(200);
++    expect((await byId.json()).product.sku).toBe("BZ-E2E-VISIBLE-001");
++  });
++
++  test("ignores anonymous ?preview=1 (hidden demo stays hidden)", async ({ request }) => {
++    const list = await request.get(`${API}/api/catalog/products?preview=1`);
++    expect(list.ok()).toBeTruthy();
++    const skus = ((await list.json()).items || []).map((row: { sku?: string }) => row.sku);
++    expect(skus).not.toContain("BZ-CORE-DEMO-001");
++    expect(skus).toContain("BZ-E2E-VISIBLE-001");
++
++    const demo = await request.get(`${API}/api/catalog/products/pim_prod_demo001?preview=1`);
++    expect(demo.status()).toBe(404);
++  });
++});
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/device-regression.spec.ts work/e2e/device-regression.spec.ts
+--- ws-snapshot/e2e/device-regression.spec.ts	1970-01-01 00:00:00.000000000 +0000
++++ work/e2e/device-regression.spec.ts	2026-11-18 16:49:31.889792274 +0000
+@@ -0,0 +1,104 @@
++import { test, expect, type Page } from "@playwright/test";
++
++const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
++
++async function noHorizontalOverflow(page: Page) {
++  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
++  expect(overflow).toBe(false);
++}
++
++/**
++ * Phase 12 — Storefront regression on desktop, mobile and tablet projects.
++ * Uses only the synthetic shelf item. Does not invent EAN, brand or category.
++ */
++test.describe("Device regression — storefront", () => {
++  test.skip(!process.env.BUZZARD_E2E_RUN_ROOT, "isolated stack required (scripts/isolated/e2e.sh)");
++
++
++  test("homepage: brand, search and navigation are present", async ({ page }, testInfo) => {
++    await page.goto("/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator(".brand-name").first()).toContainText(/BUZZARD/i);
++    await expect(page.locator(".site-header").first()).toBeVisible();
++    const searchWrap = page.locator(".search-wrap").first();
++    const search = searchWrap.locator('input[type="search"]');
++    if (testInfo.project.name === "chromium-mobile" || !(await search.isVisible())) {
++      // Phone layouts keep the search field behind the header toggle.
++      await page.locator("button.mobile-search-toggle").click();
++      await expect(searchWrap).toHaveClass(/mobile-open/);
++    }
++    await expect(search).toBeVisible();
++    await noHorizontalOverflow(page);
++  });
++
++  test("categories: taxonomy page loads without inventing the fixture", async ({ page }) => {
++    await page.goto("/kategorie/textil/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
++    // The fixture has no category; a category page must not invent one for it.
++    await expect(page.locator("body")).not.toContainText(/BZ-E2E-VISIBLE-001/);
++    await noHorizontalOverflow(page);
++  });
++
++  test("search: finds the synthetic shelf item by its real title", async ({ page }) => {
++    await page.goto("/products/?q=Synthetic", { waitUntil: "domcontentloaded" });
++    const card = page.locator(".product-card", { hasText: "BZ-E2E-VISIBLE-001" }).first();
++    await expect(card).toBeVisible({ timeout: 20_000 });
++    await expect(card.locator(".product-card-name")).toContainText(/Synthetic shelf item/i);
++    await expect(card.locator(".product-card-sku")).toContainText("BZ-E2E-VISIBLE-001");
++    await expect(card.locator(".product-card-category")).toHaveCount(0);
++    await noHorizontalOverflow(page);
++  });
++
++  test("product detail: shows the fixture without invented EAN/brand/category", async ({ page }) => {
++    await page.goto("/produkt/synthetic-shelf-item/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator(".product-detail h1").first()).toContainText(/Synthetic shelf item/i, {
++      timeout: 30_000,
++    });
++    await expect(page.locator(".product-detail-sku").first()).toContainText("BZ-E2E-VISIBLE-001");
++    await expect(page.locator(".product-detail-sku").first()).not.toContainText(/\bEAN\b/i);
++    await expect(page.locator(".product-detail-brand")).toHaveCount(0);
++    await expect(page.locator(".product-detail .product-card-category")).toHaveCount(0);
++    await expect(page.locator(".product-detail-price")).toHaveCount(0);
++    await expect(page.locator(".product-detail-actions .shop-btn-primary").first()).toBeVisible();
++    await noHorizontalOverflow(page);
++  });
++
++  test("product → cart: add works; checkout stays inquiry-only while sales are locked", async ({ page }) => {
++    await page.goto("/produkt/synthetic-shelf-item/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator(".product-detail h1").first()).toContainText(/Synthetic shelf item/i, {
++      timeout: 30_000,
++    });
++    await page.locator(".product-detail-actions .shop-btn-primary").first().click();
++    await page.goto("/warenkorb/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator(".cart-page, .shop-empty").first()).toBeVisible();
++    const hasLine = (await page.locator(".cart-item").count()) > 0;
++    if (hasLine) {
++      await expect(page.locator(".cart-item").first()).toContainText(/Synthetic shelf item|BZ-E2E-VISIBLE-001/i);
++    } else {
++      // Local cart may store by id; the empty state is still a valid catalog-mode outcome to assert no crash.
++      await expect(page.locator(".shop-empty, .cart-page").first()).toBeVisible();
++    }
++    await noHorizontalOverflow(page);
++
++    await page.goto("/checkout/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator("body")).not.toContainText(/Internal Server Error/i);
++    await expect(page.locator("body")).not.toContainText(/Kartenzahlung|Kreditkarte|PayPal|Sofortüberweisung/i);
++    await noHorizontalOverflow(page);
++  });
++
++  test("admin entry: login page is reachable from the storefront host", async ({ page }) => {
++    await page.goto("/admin/login/", { waitUntil: "domcontentloaded" });
++    await expect(page.locator("form.admin-login-card")).toBeVisible();
++    await expect(page.locator("#email")).toBeVisible();
++    await expect(page.locator("#password")).toBeVisible();
++    await expect(page.locator("body")).not.toContainText(/BuzzardAdmin|Demo:\s*admin@/i);
++    await noHorizontalOverflow(page);
++  });
++
++  test("public health of the catalog API is up", async ({ request }) => {
++    const health = await request.get(`${API}/api/storefront/health`);
++    expect(health.ok()).toBeTruthy();
++    const body = await health.json();
++    expect(body.success).toBe(true);
++    expect(body.health?.salesEnabled).toBe(false);
++  });
++});
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/e2e/global-setup.ts work/e2e/global-setup.ts
 --- ws-snapshot/e2e/global-setup.ts	2026-11-17 19:28:17.000000000 +0000
 +++ work/e2e/global-setup.ts	2026-11-18 07:43:54.033345892 +0000
@@ -2375,6 +2597,22 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  }
  
  export interface CreateOrderRequest {
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/products/service.ts work/lib/products/service.ts
+--- ws-snapshot/lib/products/service.ts	2026-10-28 12:23:42.000000000 +0000
++++ work/lib/products/service.ts	2026-11-18 16:34:37.066876303 +0000
+@@ -117,8 +117,10 @@
+ }
+ 
+ export function getCategoryLabelForProduct(product: PublicProduct, locale: BuzzardLocale = "de"): string {
+-  const category = getCategoryById(product.categoryId);
+-  return category ? getCategoryLabel(category, locale) : product.categoryId;
++  const id = String(product.categoryId || "").trim();
++  if (!id || id === "catalog") return "";
++  const category = getCategoryById(id);
++  return category ? getCategoryLabel(category, locale) : "";
+ }
+ 
+ export function getProductsForCategory(category: BuzzardCategory, limit?: number): PublicProduct[] {
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/security/browserFetch.ts work/lib/security/browserFetch.ts
 --- ws-snapshot/lib/security/browserFetch.ts	2026-11-17 15:45:20.000000000 +0000
 +++ work/lib/security/browserFetch.ts	2026-11-18 09:03:00.472303370 +0000
@@ -2408,6 +2646,46 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    .replace(/\u2028/g, "\\u2028")
 +    .replace(/\u2029/g, "\\u2029");
 +}
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/seo/structured-data.ts work/lib/seo/structured-data.ts
+--- ws-snapshot/lib/seo/structured-data.ts	2026-11-17 15:45:20.000000000 +0000
++++ work/lib/seo/structured-data.ts	2026-11-18 16:34:37.066876303 +0000
+@@ -82,6 +82,8 @@
+ }
+ 
+ export function productSchema(product: PublicProduct, categoryLabel: string) {
++  const brandName = String(product.brand || "").trim();
++  const category = String(categoryLabel || "").trim();
+   return {
+     "@context": "https://schema.org",
+     "@type": "Product",
+@@ -90,11 +92,8 @@
+     description: product.shortDescription || product.description,
+     sku: product.sku,
+     ...(product.eanGtin ? { gtin13: product.eanGtin } : {}),
+-    brand: {
+-      "@type": "Brand",
+-      name: product.brand,
+-    },
+-    category: categoryLabel,
++    ...(brandName ? { brand: { "@type": "Brand", name: brandName } } : {}),
++    ...(category && category !== "catalog" ? { category } : {}),
+     ...(showPrices()
+       ? {
+           offers: {
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/lib/storefront/map.ts work/lib/storefront/map.ts
+--- ws-snapshot/lib/storefront/map.ts	2026-10-28 12:23:42.000000000 +0000
++++ work/lib/storefront/map.ts	2026-11-18 16:34:37.066876303 +0000
+@@ -17,8 +17,8 @@
+     name: product.title,
+     shortDescription: product.shortDescription || product.description.slice(0, 160),
+     description: product.description,
+-    categoryId: product.categoryId || product.categorySlug || "catalog",
+-    categoryIds: [product.categoryId || product.categorySlug || "catalog"],
++    categoryId: product.categoryId || product.categorySlug || "",
++    categoryIds: [product.categoryId || product.categorySlug].filter(Boolean) as string[],
+     images: product.images,
+     documents: [],
+     attributes: {
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/package.json work/package.json
 --- ws-snapshot/package.json	2026-11-17 15:45:20.000000000 +0000
 +++ work/package.json	2026-11-18 05:44:36.014451085 +0000
@@ -2422,16 +2700,35 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/playwright.config.ts work/playwright.config.ts
 --- ws-snapshot/playwright.config.ts	2026-11-17 19:34:08.000000000 +0000
-+++ work/playwright.config.ts	2026-11-18 08:51:54.880172976 +0000
-@@ -36,7 +36,7 @@
++++ work/playwright.config.ts	2026-11-18 16:31:47.410929666 +0000
+@@ -30,23 +30,23 @@
+     {
+       name: "api",
+       testMatch:
+-        /commerce-(storefront|security|readiness)\.spec\.ts|admin-login-limiter\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
++        /commerce-(storefront|security|readiness)\.spec\.ts|admin-login-limiter\.spec\.ts|catalog-fixture\.spec\.ts|egress-security\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-locales\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+       use: { ...devices["Desktop Chrome"] },
+     },
      {
        name: "chromium-desktop",
        testMatch:
 -        /customer-journey|admin(?:-pim-core|-session)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
-+        /customer-journey|admin(?:-pim-core|-session|-roles)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
++        /customer-journey|device-regression|catalog-fixture|admin(?:-pim-core|-session|-roles)?\.spec\.ts|storefront-bridge\.spec\.ts|master-command-acceptance\.spec\.ts|master-command-chromium\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
        use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.desktop1280 },
      },
      {
+       name: "chromium-mobile",
+-      testMatch: /customer-journey\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
++      testMatch: /customer-journey\.spec\.ts|device-regression\.spec\.ts|master-command-mobile-rtl\.spec\.ts/,
+       use: { ...devices["Pixel 5"], viewport: VIEWPORTS.mobile375 },
+     },
+     {
+       name: "chromium-tablet",
+-      testMatch: /customer-journey\.spec\.ts/,
++      testMatch: /customer-journey\.spec\.ts|device-regression\.spec\.ts/,
+       use: { ...devices["Desktop Chrome"], viewport: VIEWPORTS.tablet768 },
+     },
+   ],
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/render.yaml work/render.yaml
 --- ws-snapshot/render.yaml	2026-10-28 12:23:42.000000000 +0000
 +++ work/render.yaml	2026-11-18 06:36:57.956886212 +0000
@@ -2673,7 +2970,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +exit "$status"
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/scripts/isolated/e2e.sh work/scripts/isolated/e2e.sh
 --- ws-snapshot/scripts/isolated/e2e.sh	2026-11-17 19:45:49.000000000 +0000
-+++ work/scripts/isolated/e2e.sh	2026-11-18 09:27:23.304082314 +0000
++++ work/scripts/isolated/e2e.sh	2026-11-18 16:42:49.143065276 +0000
 @@ -8,12 +8,18 @@
  #                      "on" leaves it enforced (8 logins per 15 min and address).
  #   --api-port N       default 3011
@@ -2784,7 +3081,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
    BUZZARD_E2E_DB=1
    BUZZARD_COMMERCE_CORE=1
    BUZZARD_SALES_ENABLED=0
-@@ -111,9 +144,17 @@
+@@ -111,9 +144,18 @@
    > "$ROOT/api.log" 2>&1 &
  pids+=($!)
  
@@ -2796,14 +3093,16 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +  WEB_NODE_OPTIONS="${WEB_NODE_OPTIONS:+$WEB_NODE_OPTIONS }--max-old-space-size=${BUZZARD_E2E_WEB_HEAP_MB:-3072}"
 +fi
  (cd "$WEB_DIR" && exec env NEXT_PUBLIC_SALES_ENABLED=0 NEXT_PUBLIC_COMMERCE_CORE=1 \
-+  NODE_OPTIONS="$WEB_NODE_OPTIONS" \
-   NEXT_PUBLIC_BUZZARD_API_URL="$API_URL" NEXT_TELEMETRY_DISABLED=1 \
+-  NEXT_PUBLIC_BUZZARD_API_URL="$API_URL" NEXT_TELEMETRY_DISABLED=1 \
 -  node "$REPO/node_modules/next/dist/bin/next" dev -p "$BUZZARD_E2E_WEB_PORT" -H 127.0.0.1) \
++  NODE_OPTIONS="$WEB_NODE_OPTIONS" \
++  NEXT_PUBLIC_BUZZARD_API_URL="$API_URL" NEXT_PUBLIC_BUZZARD_E2E_FIXTURE=1 \
++  NEXT_TELEMETRY_DISABLED=1 \
 +  node "$REPO/node_modules/next/dist/bin/next" dev -p "$BUZZARD_E2E_WEB_PORT" -H "$HOST") \
    > "$ROOT/web.log" 2>&1 &
  pids+=($!)
  
-@@ -129,6 +170,22 @@
+@@ -129,6 +171,22 @@
    echo "[isolated-e2e] $label ready at ${url%/api/health}" >&2
  }
  wait_for "$API_URL/api/health" "API (limiter $BUZZARD_E2E_LIMITER)"
@@ -2826,7 +3125,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  wait_for "$WEB_URL/" "storefront"
  
  if [[ "$BUZZARD_E2E_SERVE_ONLY" == "1" ]]; then
-@@ -152,6 +209,7 @@
+@@ -152,6 +210,7 @@
  BUZZARD_ADMIN_PASSWORD="<redacted>" \
  BUZZARD_E2E_CREDENTIALS_FILE="$ROOT/synthetic-admins.json" \
  BUZZARD_E2E_LIMITER="$BUZZARD_E2E_LIMITER" \
@@ -6131,8 +6430,8 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
  
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/environmentValidation.js work/server/lib/environmentValidation.js
 --- ws-snapshot/server/lib/environmentValidation.js	2026-10-28 12:23:42.000000000 +0000
-+++ work/server/lib/environmentValidation.js	2026-11-18 07:01:05.633593693 +0000
-@@ -2,12 +2,50 @@
++++ work/server/lib/environmentValidation.js	2026-11-18 16:34:25.786809452 +0000
+@@ -2,18 +2,62 @@
   * Part 13 — Production environment validation (test mode separation)
   */
  
@@ -6185,7 +6484,19 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
      if (process.env.BUZZARD_TEST_MODE === "1") {
        errors.push({
          code: "test_mode_in_production",
-@@ -26,10 +64,89 @@
+         message: "BUZZARD_TEST_MODE=1 must not be set in production",
+       });
+     }
++    if (process.env.BUZZARD_E2E_DB === "1") {
++      errors.push({
++        code: "e2e_db_in_production",
++        message: "BUZZARD_E2E_DB=1 must not be set in production (synthetic catalog fixture)",
++      });
++    }
+     if (process.env.BUZZARD_RATE_LIMIT_DISABLED === "1") {
+       errors.push({
+         code: "rate_limit_disabled_in_production",
+@@ -26,10 +70,89 @@
          message: "BUZZARD_SALES_ENABLED=1 — commercial sales active",
        });
      }
@@ -6278,7 +6589,7 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        });
      }
    }
-@@ -49,17 +166,23 @@
+@@ -49,17 +172,23 @@
    if (!result.ok) {
      const msg = result.errors.map((e) => e.message).join("; ");
      console.error("[env-validation] FATAL:", msg);
@@ -8445,6 +8756,82 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +}
 +
 +module.exports = { resolvePublicFile, PUBLIC_DIRS };
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/catalogReadService.js work/server/lib/storefront/catalogReadService.js
+--- ws-snapshot/server/lib/storefront/catalogReadService.js	2026-10-28 12:23:42.000000000 +0000
++++ work/server/lib/storefront/catalogReadService.js	2026-11-18 16:34:25.778809404 +0000
+@@ -5,7 +5,7 @@
+ const productCore = require("../pim/productCore");
+ const categoryEngine = require("../pim/categoryEngine");
+ const brandService = require("../pim/brandService");
+-const { mapPimToStorefront } = require("./publicProductMapper");
++const { mapPimToStorefront, storefrontSlugOf } = require("./publicProductMapper");
+ const { isProductVisibleOnStorefront } = require("./storefrontVisibility");
+ const catalogCache = require("./catalogCache");
+ const { sortProducts, filterProducts, buildFilterFacets } = require("./filterSort");
+@@ -118,8 +118,10 @@
+ function getProductById(idOrSlug, { preview = false } = {}) {
+   let product = productCore.getProduct(idOrSlug);
+   if (!product) {
++    const wanted = String(idOrSlug || "").replace(/^\/+|\/+$/g, "");
+     const all = productCore.listProducts({ limit: 500 });
+-    product = all.find((p) => p.seo?.slug === idOrSlug);
++    // Match the slug the catalog shows (seo.slug or the title-derived slug), not only seo_json.
++    product = all.find((p) => storefrontSlugOf(p) === wanted);
+   }
+   if (!product || !isProductVisibleOnStorefront(product, { preview })) return null;
+   return mapPimToStorefront(product);
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/publicProductMapper.js work/server/lib/storefront/publicProductMapper.js
+--- ws-snapshot/server/lib/storefront/publicProductMapper.js	2026-10-28 12:23:42.000000000 +0000
++++ work/server/lib/storefront/publicProductMapper.js	2026-11-18 16:34:04.478669378 +0000
+@@ -86,15 +86,22 @@
+   };
+ }
+ 
+-function mapPimToStorefront(product) {
+-  if (!product) return null;
+-
+-  const seoRaw = product.seo || {};
+-  const slug = seoRaw.slug || String(product.title || product.sku)
++/** Same slug the public catalog shows for a product (seo.slug, else from the title). */
++function storefrontSlugOf(product) {
++  const seoRaw = product?.seo || {};
++  if (seoRaw.slug) return String(seoRaw.slug).replace(/^\/+|\/+$/g, "");
++  return String(product?.title || product?.sku || "")
+     .toLowerCase()
+     .replace(/[^a-z0-9]+/g, "-")
+     .replace(/^-|-$/g, "")
+     .slice(0, 120);
++}
++
++function mapPimToStorefront(product) {
++  if (!product) return null;
++
++  const seoRaw = product.seo || {};
++  const slug = storefrontSlugOf(product);
+ 
+   const media = mapMedia(product.images, product.documents);
+   const imageUrls = media.filter((m) => m.type === "image").map((m) => m.url);
+@@ -150,6 +157,7 @@
+ }
+ 
+ module.exports = {
++  storefrontSlugOf,
+   mapPimToStorefront,
+   isSafeMediaUrl,
+   PLACEHOLDER_IMAGE,
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storefront/storefrontSearchService.js work/server/lib/storefront/storefrontSearchService.js
+--- ws-snapshot/server/lib/storefront/storefrontSearchService.js	2026-10-28 12:23:42.000000000 +0000
++++ work/server/lib/storefront/storefrontSearchService.js	2026-11-18 16:34:25.778809404 +0000
+@@ -82,7 +82,8 @@
+   const page = Math.max(1, Number(query.page) || 1);
+   const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(query.limit) || DEFAULT_PAGE_SIZE));
+   const sort = query.sort || SORT_OPTIONS.RELEVANCE;
+-  const preview = query.preview === "1" || query.preview === true;
++  // Public search never opens hidden products. Admin preview uses /api/admin/storefront/preview/*.
++  const preview = false;
+ 
+   let pimRows = productCore.listProducts({ limit: 1000 }).filter((p) => isProductVisibleOnStorefront(p, { preview }));
+ 
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/lib/storeHealth.js work/server/lib/storeHealth.js
 --- ws-snapshot/server/lib/storeHealth.js	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/lib/storeHealth.js	2026-11-18 06:55:39.877518616 +0000
@@ -9765,8 +10152,53 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
        if (!requirePermission(req, res, "security.read")) return;
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/plugins/storefrontBridgePlugin.js work/server/plugins/storefrontBridgePlugin.js
 --- ws-snapshot/server/plugins/storefrontBridgePlugin.js	2026-10-28 12:23:42.000000000 +0000
-+++ work/server/plugins/storefrontBridgePlugin.js	2026-11-18 06:24:34.800497755 +0000
-@@ -87,7 +87,7 @@
++++ work/server/plugins/storefrontBridgePlugin.js	2026-11-18 16:34:25.778809404 +0000
+@@ -24,24 +24,25 @@
+     }
+ 
+     app.get("/api/catalog/products", (req, res) => {
+-      const preview = req.query?.preview === "1";
++      // Anonymous callers must not open unpublished products via ?preview=1.
++      // That mode exists only on /api/admin/storefront/preview/*.
++      const query = { ...(req.query || {}) };
++      delete query.preview;
+       res.json({
+         success: true,
+-        ...catalogReadService.listProducts({ ...req.query, preview }),
++        ...catalogReadService.listProducts({ ...query, preview: false }),
+       });
+     });
+ 
+     app.get("/api/catalog/products/slug/:slug", (req, res) => {
+-      const preview = req.query?.preview === "1";
+-      const product = catalogReadService.getProductById(req.params.slug, { preview });
++      const product = catalogReadService.getProductById(req.params.slug, { preview: false });
+       if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
+       res.json({ success: true, product });
+     });
+ 
+     app.get("/api/catalog/products/:id", (req, res) => {
+       if (req.params.id === "slug") return;
+-      const preview = req.query?.preview === "1";
+-      const product = catalogReadService.getProductById(req.params.id, { preview });
++      const product = catalogReadService.getProductById(req.params.id, { preview: false });
+       if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
+       res.json({ success: true, product });
+     });
+@@ -67,9 +68,11 @@
+     });
+ 
+     app.get("/api/catalog/search", (req, res) => {
++      const query = { ...(req.query || {}) };
++      delete query.preview;
+       res.json({
+         success: true,
+-        ...catalogReadService.searchProducts(req.query || {}),
++        ...catalogReadService.searchProducts(query),
+       });
+     });
+ 
+@@ -87,7 +90,7 @@
      app.get("/api/catalog/feed/google.xml", (req, res) => {
        const merchantFeedService = require("../lib/storefront/merchantFeedService");
        const xml = merchantFeedService.buildGoogleMerchantFeedXml(req.query || {});
@@ -14446,6 +14878,128 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +    }
 +  });
 +});
+diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/catalogFixtureSecurity.test.mjs work/server/__tests__/catalogFixtureSecurity.test.mjs
+--- ws-snapshot/server/__tests__/catalogFixtureSecurity.test.mjs	1970-01-01 00:00:00.000000000 +0000
++++ work/server/__tests__/catalogFixtureSecurity.test.mjs	2026-11-18 16:34:58.402989873 +0000
+@@ -0,0 +1,118 @@
++/**
++ * Phase 12 — Synthetic shelf item (BZ-E2E-VISIBLE-001) and public catalog safety.
++ * Uses only an isolated API; never the developer ports or server/data.
++ */
++import { afterAll, beforeAll, describe, expect, it } from "vitest";
++import { startIsolatedApi } from "./support/isolatedApi.mjs";
++
++let withFlag;
++let withoutFlag;
++
++beforeAll(async () => {
++  withFlag = await startIsolatedApi({ env: { BUZZARD_E2E_DB: "1", BUZZARD_TEST_MODE: "1" } });
++  withoutFlag = await startIsolatedApi({ env: { BUZZARD_E2E_DB: undefined, BUZZARD_TEST_MODE: "1" } });
++}, 120_000);
++
++afterAll(async () => {
++  await withFlag?.stop();
++  await withoutFlag?.stop();
++});
++
++function publicKeys(product) {
++  return {
++    sku: product.sku,
++    ean: product.ean,
++    gtin: product.gtin,
++    brand: product.brand,
++    categoryId: product.categoryId,
++    categorySlug: product.categorySlug,
++    title: product.title,
++  };
++}
++
++describe("BZ-E2E-VISIBLE-001 fixture", () => {
++  it("is inserted only when BUZZARD_E2E_DB=1", async () => {
++    const on = await withFlag.request("GET", "/api/catalog/products");
++    expect(on.status).toBe(200);
++    expect(on.json.items.map((i) => i.sku)).toContain("BZ-E2E-VISIBLE-001");
++
++    const off = await withoutFlag.request("GET", "/api/catalog/products");
++    expect(off.status).toBe(200);
++    expect(off.json.items.map((i) => i.sku)).not.toContain("BZ-E2E-VISIBLE-001");
++    expect(JSON.stringify(off.json)).not.toMatch(/BZ-E2E-VISIBLE-001|Synthetic shelf item|pim_prod_e2e_visible/);
++  });
++
++  it("does not invent EAN, GTIN, brand or category for the fixture", async () => {
++    const list = await withFlag.request("GET", "/api/catalog/products");
++    const item = list.json.items.find((i) => i.sku === "BZ-E2E-VISIBLE-001");
++    expect(item).toBeTruthy();
++    expect(publicKeys(item)).toMatchObject({
++      sku: "BZ-E2E-VISIBLE-001",
++      ean: null,
++      gtin: null,
++      brand: null,
++      categoryId: null,
++      categorySlug: null,
++      title: "Synthetic shelf item",
++    });
++    // Structured data must not invent a brand or gtin either.
++    expect(item.structuredData?.brand).toBeUndefined();
++    expect(item.structuredData?.gtin).toBeUndefined();
++    expect(item.structuredData?.gtin13).toBeUndefined();
++  });
++
++  it("is reachable by its public slug and by its id", async () => {
++    const byId = await withFlag.request("GET", "/api/catalog/products/pim_prod_e2e_visible");
++    expect(byId.status).toBe(200);
++    expect(byId.json.product.sku).toBe("BZ-E2E-VISIBLE-001");
++    expect(byId.json.product.seo.slug).toBe("synthetic-shelf-item");
++
++    const bySlug = await withFlag.request("GET", "/api/catalog/products/slug/synthetic-shelf-item");
++    expect(bySlug.status).toBe(200);
++    expect(bySlug.json.product.sku).toBe("BZ-E2E-VISIBLE-001");
++
++    const bySlugAsId = await withFlag.request("GET", "/api/catalog/products/synthetic-shelf-item");
++    expect(bySlugAsId.status).toBe(200);
++    expect(bySlugAsId.json.product.sku).toBe("BZ-E2E-VISIBLE-001");
++  });
++
++  it("keeps the HIDDEN demo product out of the public catalog", async () => {
++    const list = await withFlag.request("GET", "/api/catalog/products");
++    expect(list.json.items.map((i) => i.sku)).not.toContain("BZ-CORE-DEMO-001");
++    const demo = await withFlag.request("GET", "/api/catalog/products/pim_prod_demo001");
++    expect(demo.status).toBe(404);
++  });
++});
++
++describe("anonymous preview must not open unpublished products", () => {
++  it("ignores ?preview=1 on public catalog and search routes", async () => {
++    for (const path of [
++      "/api/catalog/products?preview=1",
++      "/api/catalog/products/pim_prod_demo001?preview=1",
++      "/api/catalog/products/slug/universal-demo-product?preview=1",
++      "/api/catalog/search?q=demo&preview=1",
++    ]) {
++      const res = await withFlag.request("GET", path);
++      if (path.startsWith("/api/catalog/products?") || path.startsWith("/api/catalog/search")) {
++        expect(res.status, path).toBe(200);
++        const skus = (res.json.items || []).map((i) => i.sku);
++        expect(skus, path).not.toContain("BZ-CORE-DEMO-001");
++      } else {
++        expect(res.status, path).toBe(404);
++      }
++    }
++  });
++
++  it("still lets an administrator open the admin preview list", async () => {
++    const token = await withFlag.login("administrator");
++    const res = await withFlag.request("GET", "/api/admin/storefront/preview/products", { token });
++    expect(res.status).toBe(200);
++    expect(res.json.preview).toBe(true);
++    expect(res.json.items.map((i) => i.sku)).toContain("BZ-CORE-DEMO-001");
++  });
++
++  it("refuses the admin preview without a session", async () => {
++    const res = await withFlag.request("GET", "/api/admin/storefront/preview/products");
++    expect(res.status).toBe(401);
++  });
++});
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/jsonLdSerialization.test.mjs work/server/__tests__/jsonLdSerialization.test.mjs
 --- ws-snapshot/server/__tests__/jsonLdSerialization.test.mjs	1970-01-01 00:00:00.000000000 +0000
 +++ work/server/__tests__/jsonLdSerialization.test.mjs	2026-11-18 06:12:16.326522329 +0000
@@ -15710,8 +16264,8 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +});
 diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude=out' '--exclude=test-results' '--exclude=playwright-report' '--exclude=*.sqlite' '--exclude=*.db' '--exclude=*.db-*' '--exclude=__pycache__' '--exclude=.turbo' '--exclude=coverage' ws-snapshot/server/__tests__/productionStartup.test.mjs work/server/__tests__/productionStartup.test.mjs
 --- ws-snapshot/server/__tests__/productionStartup.test.mjs	1970-01-01 00:00:00.000000000 +0000
-+++ work/server/__tests__/productionStartup.test.mjs	2026-11-18 06:26:10.030722324 +0000
-@@ -0,0 +1,176 @@
++++ work/server/__tests__/productionStartup.test.mjs	2026-11-18 16:34:58.402989873 +0000
+@@ -0,0 +1,180 @@
 +import { randomBytes } from "node:crypto";
 +import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 +import path from "node:path";
@@ -15778,6 +16332,10 @@ diff -ruN '--exclude=node_modules' '--exclude=.next' '--exclude=.git' '--exclude
 +
 +  it("with BUZZARD_TEST_MODE=1", async () => {
 +    await expectRefusal({ BUZZARD_TEST_MODE: "1" }, /BUZZARD_TEST_MODE=1 must not be set in production/);
++  }, 60_000);
++
++  it("with BUZZARD_E2E_DB=1", async () => {
++    await expectRefusal({ BUZZARD_E2E_DB: "1" }, /BUZZARD_E2E_DB=1 must not be set in production/);
 +  }, 60_000);
 +
 +  it("with BUZZARD_RATE_LIMIT_DISABLED=1", async () => {

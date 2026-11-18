@@ -1,0 +1,14 @@
+[seed-synthetic-admins] 9 synthetic accounts (administrator, admin, catalog_manager, order_manager, staff, ai_agent, read_only; two lockout probes)
+[isolated-e2e] API (limiter off) ready at http://127.0.0.1:3011
+[isolated-e2e] storefront ready at http://127.0.0.1:3010/
+[e2e-isolation] API http://127.0.0.1:3011: throwaway storage; storefront http://127.0.0.1:3010: sends its requests to http://127.0.0.1:3011
+
+Running 3 tests using 1 worker
+
+  ✓  1 [api] › e2e/catalog-fixture.spec.ts:12:7 › Catalog fixture BZ-E2E-VISIBLE-001 › lists the fixture without invented identity fields (25ms)
+  ✓  2 [api] › e2e/catalog-fixture.spec.ts:27:7 › Catalog fixture BZ-E2E-VISIBLE-001 › opens the fixture by slug and by id (15ms)
+  ✓  3 [api] › e2e/catalog-fixture.spec.ts:37:7 › Catalog fixture BZ-E2E-VISIBLE-001 › ignores anonymous ?preview=1 (hidden demo stays hidden) (16ms)
+
+  3 passed (2.8s)
+[isolated] real server/data unchanged (1 files, SHA-256 before = after); data/ unchanged (134 files); network: loopback-only; root: /tmp/buzzard-isolated.tagaCY
+EXIT=0

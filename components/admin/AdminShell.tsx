@@ -24,8 +24,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const visibleNavGroups = filterNavGroupsForRole(ADMIN_NAV_GROUPS, user?.role || "");
 
   async function handleLogout() {
-    await logout();
-    router.push("/admin/login/");
+    try {
+      await logout();
+    } finally {
+      router.push("/admin/login/");
+    }
   }
 
   return (

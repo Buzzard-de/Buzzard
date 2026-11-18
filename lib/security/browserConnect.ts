@@ -31,10 +31,16 @@ const ANALYTICS_HOSTS = [
   "analytics.tiktok.com",
 ];
 
+/**
+ * The exact loopback literal is the local-dev API host (allowed below as LOCAL_DEV).
+ * Only names that merely embed it (127.0.0.1.nip.io, 127.0.0.1.evil.example) are lookalikes.
+ */
+const LOOPBACK_LITERAL = "127.0.0.1";
+
 function isRebindLookalike(host: string): boolean {
   const h = String(host || "").toLowerCase();
   return (
-    /\b127\.0\.0\.1\b/.test(h) ||
+    (h !== LOOPBACK_LITERAL && /\b127\.0\.0\.1\b/.test(h)) ||
     h.includes("localhost.") ||
     h.endsWith(".nip.io") ||
     h.endsWith(".sslip.io") ||

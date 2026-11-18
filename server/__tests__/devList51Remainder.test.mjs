@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
-import { statSync } from "node:fs";
+import { protectedDbState } from "./support/protectedDb.mjs";
 
 const require = createRequire(import.meta.url);
 const { bindProductCategory } = require("../lib/pim/productCategoryBind.js");
@@ -16,8 +16,6 @@ const { createReturnStore, requestReturn, refundMoney } = require("../lib/commer
 const { htmlDirForLanguage } = require("../lib/i18n/rtlDir.js");
 const { evaluateDevList51 } = require("../lib/platform/devList51.js");
 const { evaluateSalesGate } = require("../lib/salesSafetyGate.js");
-
-const PROTECTED = "/workspace/server/data/buzzard.db";
 
 describe("dev-list 51 remainder", () => {
   it("binds a mapped category and refuses an unmapped one without PIM write", () => {
@@ -152,7 +150,7 @@ describe("dev-list 51 remainder", () => {
   });
 
   it("closes the 51-item remainder without enabling sales or touching the protected db", () => {
-    const before = statSync(PROTECTED);
+    const before = protectedDbState();
     expect(evaluateSalesGate().status).toBe("LOCKED");
     const report = evaluateDevList51();
     expect(report.listed).toBe(51);
@@ -167,8 +165,6 @@ describe("dev-list 51 remainder", () => {
     ]);
     expect(report.items.filter((item) => item.status === "CODE_COMPLETE" || item.status === "ALREADY_COMPLETE")).toHaveLength(45);
     expect(report.items.every((item) => item.live === false)).toBe(true);
-    const after = statSync(PROTECTED);
-    expect(after.size).toBe(before.size);
-    expect(after.mtimeMs).toBe(before.mtimeMs);
+    expect(protectedDbState()).toEqual(before);
   });
 });

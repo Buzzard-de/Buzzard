@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { getAdminToken } from "@/lib/admin/client";
 import {
   fetchCategoryAttributeSchema,
@@ -12,7 +13,14 @@ import {
   runPimImport,
   validatePimProduct,
 } from "@/lib/admin/pimCore";
-import type { PimBrand, PimProduct, PimSupplierMapping, PimValidationResult } from "@/lib/admin/pimCoreTypes";
+import { isPimImportPending } from "@/lib/admin/pimCoreTypes";
+import type {
+  PimBrand,
+  PimImportPendingApproval,
+  PimProduct,
+  PimSupplierMapping,
+  PimValidationResult,
+} from "@/lib/admin/pimCoreTypes";
 
 type Tab = "products" | "brands" | "import" | "validation" | "mapping" | "attributes";
 
@@ -25,6 +33,8 @@ export default function AdminPimCorePanel() {
   const [validation, setValidation] = useState<PimValidationResult | null>(null);
   const [quality, setQuality] = useState<{ score: number; dimensions: Record<string, number> } | null>(null);
   const [importResult, setImportResult] = useState<string | null>(null);
+  const [importPending, setImportPending] = useState<PimImportPendingApproval | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
   const [attributeSchema, setAttributeSchema] = useState<string | null>(null);
   const [aiCaps, setAiCaps] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -75,20 +85,31 @@ export default function AdminPimCorePanel() {
   }
 
   async function handleDryRunImport() {
-    const result = await runPimImport(
-      {
-        sku: "BZ-IMPORT-DRY-001",
-        supplierSku: "SUP-DRY-001",
-        title: "Dry Run Import Product",
-        ean: "4006381333932",
-        category: "cat-05",
-        price: 19.99,
-        stock: 5,
-      },
-      true
-    );
-    setImportResult(`Dry run ${result.importJobId}: ${result.validation.overall} (${result.stages.length} stages)`);
+    setImportResult(null);
+    setImportPending(null);
+    setImportError(null);
     setTab("import");
+    try {
+      const result = await runPimImport(
+        {
+          sku: "BZ-IMPORT-DRY-001",
+          supplierSku: "SUP-DRY-001",
+          title: "Dry Run Import Product",
+          ean: "4006381333932",
+          category: "cat-05",
+          price: 19.99,
+          stock: 5,
+        },
+        true
+      );
+      if (isPimImportPending(result)) {
+        setImportPending(result);
+        return;
+      }
+      setImportResult(`Dry run ${result.importJobId}: ${result.validation.overall} (${result.stages.length} stages)`);
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : "admin.requestFailed");
+    }
   }
 
   async function handleLoadAttributes() {
@@ -183,7 +204,27 @@ export default function AdminPimCorePanel() {
           <h2>Import Pipeline</h2>
           <p className="admin-note">Supplier → Raw → Validation → Normalization → Mapping → PIM (dry-run default)</p>
           <button type="button" onClick={handleDryRunImport}>Run dry-run import</button>
-          {importResult && <pre>{importResult}</pre>}
+          {importPending && (
+            <div className="admin-note" role="status" data-testid="pim-import-pending">
+              <p>
+                <strong>Dry run pending approval</strong> — not executed. Nothing was imported or validated yet.
+              </p>
+              <p>
+                Approval: {importPending.approval?.id || "—"} · Status: {importPending.approval?.status || "PENDING"}
+                {importPending.approval?.riskLevel ? ` · Risk: ${importPending.approval.riskLevel}` : ""}
+              </p>
+              <p>
+                A person has to approve this request in the{" "}
+                <Link href="/admin/control-center/">Control Center</Link> (tab “Onaylar”) before the dry run can start.
+              </p>
+            </div>
+          )}
+          {importError && (
+            <p className="admin-error" role="alert" data-testid="pim-import-error">
+              Dry run request failed: {importError}
+            </p>
+          )}
+          {importResult && <pre data-testid="pim-import-result">{importResult}</pre>}
         </section>
       )}
 

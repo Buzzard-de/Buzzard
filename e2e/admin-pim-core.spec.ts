@@ -34,12 +34,33 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
     await expect(page.locator("body")).toContainText(/Overall|PASS|WARNING|FAIL/i);
   });
 
-  test("Import dry-run", async ({ page }) => {
+  test("Import dry-run is held for approval and not reported as run", async ({ page }) => {
     await adminLogin(page);
     await page.goto("/admin/pim-core/");
     await page.click('button:has-text("Import")');
-    await page.click('button:has-text("dry-run")');
-    await expect(page.locator("body")).toContainText(/Dry run/i);
+    const [response] = await Promise.all([
+      page.waitForResponse((res) => res.url().endsWith("/api/admin/pim-core/import") && res.request().method() === "POST"),
+      page.click('button:has-text("dry-run")'),
+    ]);
+    expect(response.status()).toBe(202);
+    const body = await response.json();
+    expect(body).toMatchObject({ success: true, pendingApproval: true, executed: false, dryRun: true, job: null });
+    expect(body.approval?.id).toBeTruthy();
+
+    const pending = page.getByTestId("pim-import-pending");
+    await expect(pending).toContainText("Dry run pending approval");
+    await expect(pending).toContainText("not executed");
+    await expect(pending).toContainText(String(body.approval.id));
+    await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
+    await expect(page.getByTestId("pim-import-error")).toHaveCount(0);
+
+    // The request waits in the Control Center approval list; nothing was imported.
+    await pending.getByRole("link", { name: "Control Center" }).click();
+    await page.waitForURL(/\/admin\/control-center\/?$/);
+    await page.click('button:has-text("Onaylar")');
+    await expect(page.locator(".cc-approval-item").first()).toBeVisible();
+    await page.goto("/admin/pim-core/");
+    await expect(page.locator("body")).not.toContainText("BZ-IMPORT-DRY-001");
   });
 
   test("Brands section", async ({ page }) => {

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { adminCredentials } from "./support/admin";
 
 const API = (process.env.BUZZARD_API_URL || "http://localhost:3001").replace(/\/$/, "");
 
@@ -23,12 +24,13 @@ test.describe("Commerce Readiness Part 8", () => {
   });
 
   test("admin control center commerce API", async ({ request }) => {
+    const credentials = adminCredentials("administrator");
+    test.skip(!credentials, "Admin credentials unavailable (BUZZARD_ADMIN_EMAIL / BUZZARD_ADMIN_PASSWORD)");
     const login = await request.post(`${API}/api/admin/login`, {
-      data: { email: "admin@buzzard.de", password: "BuzzardAdmin2026!" },
+      data: credentials!,
     });
-    const loginBody = await login.json();
-    const token = loginBody.token;
-    test.skip(!token, "Admin credentials unavailable");
+    expect(login.status()).toBe(200);
+    const token = (await login.json()).token;
 
     const overview = await request.get(`${API}/api/admin/commerce/overview`, {
       headers: { Authorization: `Bearer ${token}` },

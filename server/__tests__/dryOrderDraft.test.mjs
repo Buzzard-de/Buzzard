@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
-import { statSync } from "node:fs";
+import { protectedDbState } from "./support/protectedDb.mjs";
 
 const require = createRequire(import.meta.url);
 const { validateEan } = require("../lib/productValidator.js");
@@ -137,13 +137,11 @@ describe("dry order draft from catalog review", () => {
   });
 
   it("does not touch the protected commerce sqlite", () => {
-    const before = statSync("/workspace/server/data/buzzard.db");
+    const before = protectedDbState();
     const result = readyRun();
     const store = createDraftStore();
     draftOrdersFromDryRun(result, { customerId: "SYN-CUST", store });
     store.db.close();
-    const after = statSync("/workspace/server/data/buzzard.db");
-    expect(after.size).toBe(before.size);
-    expect(after.mtimeMs).toBe(before.mtimeMs);
+    expect(protectedDbState()).toEqual(before);
   });
 });

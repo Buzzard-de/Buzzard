@@ -73,6 +73,21 @@ export interface PimImportResult {
   product?: PimProduct | null;
 }
 
+/** HTTP 202 from the import route: the dry run is held for human approval and has not run. */
+export interface PimImportPendingApproval {
+  pendingApproval: true;
+  executed: false;
+  dryRun: boolean;
+  approval?: { id?: string; status?: string; riskLevel?: string; [key: string]: unknown } | null;
+  job: null;
+}
+
+export type PimImportResponse = PimImportResult | PimImportPendingApproval;
+
+export function isPimImportPending(response: PimImportResponse): response is PimImportPendingApproval {
+  return (response as PimImportPendingApproval).pendingApproval === true;
+}
+
 export interface PimAttributeSchema {
   categoryId: string;
   version?: number;

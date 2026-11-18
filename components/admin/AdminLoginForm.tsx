@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAdminAuth } from "@/lib/admin/context";
 import { isProductionBuild } from "@/lib/api/config";
+import { BrowserConnectError } from "@/lib/security/browserFetch";
 
 export default function AdminLoginForm() {
   const router = useRouter();
@@ -33,7 +34,9 @@ export default function AdminLoginForm() {
       }
       router.push("/admin/");
     } catch (err) {
-      if (err instanceof Error && err.message === "admin.apiUnavailable") {
+      if (err instanceof BrowserConnectError) {
+        setError("Verbindung zum Admin-Service wurde von der Browser-Sicherheitsrichtlinie blockiert. Bitte die konfigurierte API-Adresse prüfen.");
+      } else if (err instanceof TypeError || (err instanceof Error && err.message === "admin.apiUnavailable")) {
         setError("Admin-Service derzeit nicht erreichbar. Bitte später erneut versuchen.");
       } else if (err instanceof Error && err.message === "admin.auth.locked") {
         setError("Konto vorübergehend gesperrt. Bitte in 30 Minuten erneut versuchen.");
@@ -97,7 +100,7 @@ export default function AdminLoginForm() {
           </>
         )}
 
-        {error && <p className="shop-modal-error">{error}</p>}
+        {error && <p className="shop-modal-error" role="alert">{error}</p>}
         <button type="submit" className="shop-btn-primary" disabled={loading}>
           {loading ? "Anmelden…" : challengeToken ? "Code bestätigen" : "Anmelden"}
         </button>

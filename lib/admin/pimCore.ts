@@ -2,7 +2,7 @@ import { browserFetch } from "@/lib/security/browserFetch";
 import type {
   PimAttributeSchema,
   PimBrand,
-  PimImportResult,
+  PimImportResponse,
   PimProduct,
   PimQualityScore,
   PimSupplierMapping,
@@ -90,8 +90,8 @@ export async function fetchSupplierMappings(params?: {
   return data.mappings;
 }
 
-export async function runPimImport(raw: Record<string, unknown>, dryRun = true): Promise<PimImportResult> {
-  const data = await request<PimImportResult & { success: boolean }>("/api/admin/pim-core/import", {
+export async function runPimImport(raw: Record<string, unknown>, dryRun = true): Promise<PimImportResponse> {
+  const data = await request<PimImportResponse & { success: boolean }>("/api/admin/pim-core/import", {
     method: "POST",
     body: JSON.stringify({ raw, dryRun }),
   });

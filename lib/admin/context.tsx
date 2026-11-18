@@ -27,6 +27,9 @@ interface AdminAuthContextValue {
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
 
+/** How often an open admin page asks the API whether its session still exists. */
+const SESSION_RECHECK_MS = 5 * 60 * 1000;
+
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [ready, setReady] = useState(false);
@@ -53,6 +56,39 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // A session ends on the server (8 h lifetime, revocation, logout elsewhere) while the page
+  // stays open. Re-check on focus and on a timer so the page returns to the login form.
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    let checking = false;
+    async function recheck() {
+      if (checking || document.visibilityState === "hidden") return;
+      checking = true;
+      try {
+        if (getAdminToken()) await fetchAdminMe();
+        else if (active) setUser(null);
+      } catch (err) {
+        // Only a rejected session ends the login; an unreachable API does not.
+        if (active && err instanceof Error && err.message === "admin.auth.required") {
+          clearAdminToken();
+          setUser(null);
+        }
+      } finally {
+        checking = false;
+      }
+    }
+    const timer = window.setInterval(recheck, SESSION_RECHECK_MS);
+    window.addEventListener("focus", recheck);
+    document.addEventListener("visibilitychange", recheck);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", recheck);
+      document.removeEventListener("visibilitychange", recheck);
+    };
+  }, [user]);
+
   const login = useCallback(async (email: string, password: string, totpCode?: string, challengeToken?: string) => {
     const result = await adminLogin(email, password, totpCode, challengeToken);
     if (!result.requires2FA && result.user) setUser(result.user);
@@ -60,8 +96,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await adminLogout();
-    setUser(null);
+    try {
+      await adminLogout();
+    } finally {
+      setUser(null);
+    }
   }, []);
 
   const value = useMemo(() => ({ user, ready, login, logout }), [user, ready, login, logout]);

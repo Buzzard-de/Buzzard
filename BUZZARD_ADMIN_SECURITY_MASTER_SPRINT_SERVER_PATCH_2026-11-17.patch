@@ -1,0 +1,1983 @@
+diff --git a/package.json b/package.json
+index a5b3674..4104baf 100644
+--- a/package.json
++++ b/package.json
+@@ -51,6 +51,8 @@
+     "product:sot:validate": "node scripts/product-sot-validate.mjs",
+     "test:unit:ci": "vitest run server/__tests__/masterIntegrationFoundation.test.mjs server/__tests__/masterIntegrationPhase2.test.mjs server/__tests__/masterIntegrationPhase3.test.mjs server/__tests__/pusatIdempotency.test.mjs server/__tests__/survivalCopies32110.test.mjs server/__tests__/pusatCouncil.test.mjs server/__tests__/ab27Commerce.test.mjs server/__tests__/ecosystemSecurity.test.mjs lib/backgrounds lib/market/languageIndependence.test.ts lib/market/resolveInitialCountry.test.ts lib/i18n/catalog.test.ts lib/i18n/languages.test.ts lib/categories/i18n.test.ts",
+     "test:unit:watch": "vitest",
++    "test:unit:isolated": "scripts/isolated/run.sh --no-network -- npx vitest run",
++    "test:e2e:isolated": "scripts/isolated/e2e.sh --no-network",
+     "test:e2e": "playwright test",
+     "test:e2e:api": "PLAYWRIGHT_SKIP_WEBSERVER=1 playwright test e2e/commerce-storefront.spec.ts e2e/commerce-security.spec.ts",
+     "test:rbac-audit": "node scripts/rbac-plugin-audit.mjs",
+diff --git a/render.yaml b/render.yaml
+index a94f43d..31a4e88 100644
+--- a/render.yaml
++++ b/render.yaml
+@@ -120,6 +120,8 @@ services:
+         value: /var/data/buzzard.db
+       - key: BUZZARD_BACKUP_DIR
+         value: /var/data/backups
++      - key: BUZZARD_DATA_DIR
++        value: /var/data/state
+       - key: BUZZARD_CSRF_ENFORCE
+         value: "1"
+       - key: BUZZARD_EMBEDDED_INTELLIGENCE
+diff --git a/scripts/e2e-webserver.mjs b/scripts/e2e-webserver.mjs
+index f92ad14..8debfe8 100644
+--- a/scripts/e2e-webserver.mjs
++++ b/scripts/e2e-webserver.mjs
+@@ -15,6 +15,9 @@ const WEB_URL = "http://localhost:3000";
+ const e2eDbDir = path.join(os.tmpdir(), "buzzard-e2e-sqlite");
+ fs.mkdirSync(e2eDbDir, { recursive: true });
+ const E2E_DB_PATH = path.join(e2eDbDir, "buzzard-e2e.db");
++// Admin users, sessions and the security/audit logs of the test API stay out of server/data.
++const E2E_DATA_DIR = path.join(os.tmpdir(), "buzzard-e2e-data");
++fs.mkdirSync(E2E_DATA_DIR, { recursive: true });
+ 
+ const env = {
+   ...process.env,
+@@ -26,6 +29,7 @@ const env = {
+   BUZZARD_TEST_MODE: "1",
+   BUZZARD_E2E_DB: "1",
+   BUZZARD_DB_PATH: E2E_DB_PATH,
++  BUZZARD_DATA_DIR: E2E_DATA_DIR,
+   FORCE_COLOR: "1",
+ };
+ 
+@@ -104,7 +108,8 @@ function canReuse(port) {
+     env.NEXT_PUBLIC_BUZZARD_API_URL === API_URL &&
+     env.BUZZARD_TEST_MODE === "1" &&
+     env.BUZZARD_E2E_DB === "1" &&
+-    env.BUZZARD_DB_PATH === E2E_DB_PATH
++    env.BUZZARD_DB_PATH === E2E_DB_PATH &&
++    env.BUZZARD_DATA_DIR === E2E_DATA_DIR
+   );
+ }
+ 
+diff --git a/scripts/vitest-global-setup.mjs b/scripts/vitest-global-setup.mjs
+new file mode 100644
+index 0000000..7b8f2d0
+--- /dev/null
++++ b/scripts/vitest-global-setup.mjs
+@@ -0,0 +1,12 @@
++import { rmSync } from "node:fs";
++import { tmpdir } from "node:os";
++import path from "node:path";
++
++/**
++ * Unit tests keep their JSON stores in per-worker directories under the OS
++ * temp dir (server/lib/dataDir.js). Start every run from empty directories so
++ * a lockout or session left by an earlier run cannot change a result.
++ */
++export default function setup() {
++  rmSync(path.join(tmpdir(), "buzzard-test-data"), { recursive: true, force: true });
++}
+diff --git a/server/__tests__/adminJsonStoreIntegrity.test.mjs b/server/__tests__/adminJsonStoreIntegrity.test.mjs
+new file mode 100644
+index 0000000..1bcdaba
+--- /dev/null
++++ b/server/__tests__/adminJsonStoreIntegrity.test.mjs
+@@ -0,0 +1,203 @@
++import { chmodSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
++import path from "node:path";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { freshServerLib, tempDataDir } from "./support/freshServerLib.mjs";
++
++let lib;
++
++function setup(env = {}) {
++  const dataDir = tempDataDir("json");
++  lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir, ...env });
++  return dataDir;
++}
++
++function readStore(dataDir, name) {
++  return JSON.parse(readFileSync(path.join(dataDir, name), "utf8"));
++}
++
++afterEach(() => {
++  lib?.restore();
++  lib = null;
++  vi.restoreAllMocks();
++});
++
++describe("data directory", () => {
++  it("keeps automated tests out of server/data unless a directory is configured", () => {
++    lib = freshServerLib({ BUZZARD_DATA_DIR: undefined });
++    const { resolveDataDir, defaultDataDir, getDataDirInfo } = lib.load("dataDir.js");
++    expect(resolveDataDir()).not.toBe(defaultDataDir);
++    expect(resolveDataDir().startsWith(defaultDataDir)).toBe(false);
++    expect(getDataDirInfo().mode).toBe("test_isolated");
++  });
++
++  it("uses BUZZARD_DATA_DIR for every admin security store", () => {
++    const dataDir = setup();
++    lib.load("securityLog.js").logSecurityEvent({ type: "permission_denied", success: false });
++    lib.load("audit.js").logAudit({ action: "unit.test", actor: "synthetic" });
++    lib.load("automationEngine.js").emit("new_customer", { customerId: "SYN-1" }, { isolate: false });
++    lib.load("accountLockout.js").recordFailure("admin", "synthetic@unit.buzzard.test", {});
++    expect(readdirSync(dataDir).sort()).toEqual(
++      expect.arrayContaining(["account-lockouts.json", "audit-log.json", "automation-events.json", "security-log.json"])
++    );
++  });
++});
++
++describe("atomic JSON writes", () => {
++  it("replaces the file in one step and leaves no temporary file", () => {
++    const dataDir = setup();
++    const { writeJsonAtomic, readJsonArray } = lib.load("jsonFileStore.js");
++    const file = path.join(dataDir, "sample.json");
++    writeJsonAtomic(file, [{ n: 1 }]);
++    const firstInode = statSync(file).ino;
++    writeJsonAtomic(file, [{ n: 1 }, { n: 2 }]);
++    expect(statSync(file).ino).not.toBe(firstInode);
++    expect(readJsonArray(file)).toEqual([{ n: 1 }, { n: 2 }]);
++    expect(readdirSync(dataDir)).toEqual(["sample.json"]);
++    expect(statSync(file).mode & 0o777).toBe(0o600);
++  });
++
++  it("keeps the previous content when a write fails", () => {
++    const dataDir = setup();
++    const { writeJsonAtomic } = lib.load("jsonFileStore.js");
++    const file = path.join(dataDir, "sample.json");
++    writeJsonAtomic(file, [{ n: 1 }]);
++    const circular = [];
++    circular.push(circular);
++    expect(() => writeJsonAtomic(file, circular)).toThrow();
++    expect(JSON.parse(readFileSync(file, "utf8"))).toEqual([{ n: 1 }]);
++    expect(readdirSync(dataDir)).toEqual(["sample.json"]);
++  });
++
++  it("refuses to write when the directory is read-only instead of truncating the file", () => {
++    if (process.getuid?.() === 0) return;
++    const dataDir = setup();
++    const { writeJsonAtomic } = lib.load("jsonFileStore.js");
++    const file = path.join(dataDir, "sample.json");
++    writeJsonAtomic(file, [{ n: 1 }]);
++    chmodSync(dataDir, 0o500);
++    try {
++      expect(() => writeJsonAtomic(file, [{ n: 2 }])).toThrow();
++      expect(JSON.parse(readFileSync(file, "utf8"))).toEqual([{ n: 1 }]);
++    } finally {
++      chmodSync(dataDir, 0o700);
++    }
++  });
++});
++
++describe("malformed store files", () => {
++  it.each([
++    ["security-log.json", (l) => l.load("securityLog.js").logSecurityEvent({ type: "permission_denied", success: false })],
++    ["audit-log.json", (l) => l.load("audit.js").logAudit({ action: "unit.test", actor: "synthetic" })],
++    ["audit-log.json", (l) => l.load("coreAudit.js").logAudit({ action: "unit.test", actor: "synthetic" })],
++    ["automation-events.json", (l) => l.load("automationEngine.js").emit("new_customer", { customerId: "SYN-1" })],
++  ])("keeps a copy of an unparseable %s before the next append", (name, append) => {
++    const dataDir = setup();
++    vi.spyOn(console, "error").mockImplementation(() => {});
++    vi.spyOn(console, "log").mockImplementation(() => {});
++    const damaged = '[{"id":"history-1"},{"id":"history-2"';
++    writeFileSync(path.join(dataDir, name), damaged);
++
++    append(lib);
++
++    const copies = readdirSync(dataDir).filter((entry) => entry.startsWith(`${name}.corrupt-`));
++    expect(copies).toHaveLength(1);
++    expect(readFileSync(path.join(dataDir, copies[0]), "utf8")).toBe(damaged);
++    expect(readStore(dataDir, name)).toHaveLength(1);
++
++    append(lib);
++    expect(readdirSync(dataDir).filter((entry) => entry.startsWith(`${name}.corrupt-`))).toHaveLength(1);
++    expect(readStore(dataDir, name)).toHaveLength(2);
++  });
++
++  it("treats a JSON object where a list is expected as damaged", () => {
++    const dataDir = setup();
++    vi.spyOn(console, "error").mockImplementation(() => {});
++    const { readJsonArray } = lib.load("jsonFileStore.js");
++    const file = path.join(dataDir, "audit-log.json");
++    writeFileSync(file, '{"not":"a list"}');
++    expect(readJsonArray(file)).toEqual([]);
++    expect(readdirSync(dataDir).some((entry) => entry.startsWith("audit-log.json.corrupt-"))).toBe(true);
++  });
++
++  it("does not replace a damaged users file with the demo seed accounts", () => {
++    const dataDir = setup();
++    vi.spyOn(console, "error").mockImplementation(() => {});
++    const file = path.join(dataDir, "admin-users.json");
++    writeFileSync(file, "[{");
++    const auth = lib.load("auth.js");
++    const seed = JSON.parse(readFileSync(new URL("../../data/buzzard_admin_users.seed.json", import.meta.url), "utf8"));
++    const result = auth.login(seed[0].email, seed[0].password, { headers: {}, socket: { remoteAddress: "198.51.100.9" } });
++    expect(result.success).toBe(false);
++    expect(readFileSync(file, "utf8")).toBe("[{");
++  });
++
++  it("returns the fallback for a missing or empty file without creating anything", () => {
++    const dataDir = setup();
++    const { readJsonArray } = lib.load("jsonFileStore.js");
++    expect(readJsonArray(path.join(dataDir, "missing.json"))).toEqual([]);
++    writeFileSync(path.join(dataDir, "empty.json"), "");
++    expect(readJsonArray(path.join(dataDir, "empty.json"))).toEqual([]);
++    expect(readdirSync(dataDir)).toEqual(["empty.json"]);
++  });
++});
++
++describe("log records", () => {
++  it("writes every one of 300 back-to-back security events", () => {
++    const dataDir = setup();
++    vi.spyOn(console, "log").mockImplementation(() => {});
++    const { logSecurityEvent } = lib.load("securityLog.js");
++    for (let index = 0; index < 300; index += 1) {
++      logSecurityEvent({ type: "permission_denied", success: false, detail: { index } });
++    }
++    const entries = readStore(dataDir, "security-log.json");
++    expect(entries.map((entry) => entry.detail.index)).toEqual(Array.from({ length: 300 }, (_, index) => index));
++    expect(new Set(entries.map((entry) => entry.id)).size).toBe(300);
++  });
++
++  it("redacts secrets in security event details", () => {
++    const dataDir = setup();
++    vi.spyOn(console, "log").mockImplementation(() => {});
++    const { logSecurityEvent } = lib.load("securityLog.js");
++    logSecurityEvent({
++      type: "admin_login_failed",
++      success: false,
++      detail: {
++        password: "synthetic-password-value",
++        nested: { accessToken: "synthetic-token-value", apiKey: "synthetic-key-value", authorization: "Bearer synthetic" },
++        remainingAttempts: 4,
++      },
++    });
++    const raw = readFileSync(path.join(dataDir, "security-log.json"), "utf8");
++    expect(raw).not.toMatch(/synthetic-(password|token|key)-value|Bearer synthetic/);
++    expect(JSON.parse(raw)[0].detail.remainingAttempts).toBe(4);
++  });
++
++  it("gives every security and audit entry an id, a timestamp and a type or action", () => {
++    const dataDir = setup();
++    vi.spyOn(console, "log").mockImplementation(() => {});
++    lib.load("securityLog.js").logSecurityEvent({ type: "session_revoked", success: true, userId: "usr-synthetic" });
++    lib.load("audit.js").logAudit({ action: "unit.test", actor: "synthetic", entityId: "E-1" });
++    const [security] = readStore(dataDir, "security-log.json");
++    const [audit] = readStore(dataDir, "audit-log.json");
++    expect(security).toMatchObject({ type: "session_revoked", severity: "INFO", success: true, userId: "usr-synthetic" });
++    expect(Number.isNaN(Date.parse(security.timestamp))).toBe(false);
++    expect(security.id).toMatch(/^sec-/);
++    expect(audit.action).toBe("unit.test");
++    expect(Number.isNaN(Date.parse(audit.timestamp || audit.at || audit.createdAt))).toBe(false);
++  });
++
++  it("records a repeated automation event again with the same key and never marks it sent", () => {
++    const dataDir = setup();
++    const engine = lib.load("automationEngine.js");
++    engine.emit("new_customer", { customerId: "SYN-42" });
++    engine.emit("new_customer", { customerId: "SYN-42" });
++    const events = readStore(dataDir, "automation-events.json");
++    expect(events).toHaveLength(2);
++    expect(events[0].idempotencyKey).toBe(events[1].idempotencyKey);
++    expect(events[0].id).not.toBe(events[1].id);
++    for (const event of events) {
++      expect(event).toMatchObject({ dryRun: true, sent: false, executed: false, providerCalled: false });
++    }
++    expect(existsSync(path.join(dataDir, "automation-deliveries.json"))).toBe(false);
++  });
++});
+diff --git a/server/__tests__/adminRoutePermissions.test.mjs b/server/__tests__/adminRoutePermissions.test.mjs
+new file mode 100644
+index 0000000..710463b
+--- /dev/null
++++ b/server/__tests__/adminRoutePermissions.test.mjs
+@@ -0,0 +1,117 @@
++import { createRequire } from "node:module";
++import { describe, expect, it } from "vitest";
++
++const require = createRequire(import.meta.url);
++const { resolveRoutePermission, ADMIN_MODULE_PREFIX } = require("../lib/routePermissions.js");
++const { can } = require("../lib/rbac.js");
++
++const MODULES = [
++  ["master-admin-v40", "system.read", "system.configure"],
++  ["security-v38", "security.read", "security.manage"],
++  ["payments-v36", "orders.read", "orders.write"],
++  ["order-management-v32", "orders.read", "orders.write"],
++  ["marketplace-v35", "analytics.read", "integrations.manage"],
++  ["logistics-v34", "logistics.read", "logistics.write"],
++  ["fulfillment-v33", "logistics.read", "logistics.write"],
++  ["international-v37", "products.read", "system.configure"],
++  ["analytics-v39", "analytics.read", "analytics.export"],
++];
++
++describe("back-office modules outside /api/admin", () => {
++  it.each(MODULES)("%s needs %s to read and %s to change", (module, read, write) => {
++    expect(resolveRoutePermission("GET", `/api/${module}/records`)).toEqual({ permission: read });
++    expect(resolveRoutePermission("GET", `/api/${module}/records/:code`)).toEqual({ permission: read });
++    expect(resolveRoutePermission("GET", `/api/${module}/jobs`)).toEqual({ permission: read });
++    expect(resolveRoutePermission("POST", `/api/${module}/records`)).toEqual({ permission: write });
++    expect(resolveRoutePermission("PATCH", `/api/${module}/records/:id`)).toEqual({ permission: write });
++    expect(resolveRoutePermission("POST", `/api/${module}/jobs`)).toEqual({ permission: write });
++  });
++
++  it("covers every prefix in the table", () => {
++    expect(ADMIN_MODULE_PREFIX.map((entry) => entry.prefix).sort()).toEqual(
++      [...MODULES.map(([module]) => `/api/${module}/`), "/api/product-catalog-pim/", "/api/supplier-integration-hub/"].sort()
++    );
++  });
++
++  it("asks for the same read permission as the admin navigation entry of the module", async () => {
++    const { NAV_SLUG_PERMISSIONS } = await import("../../lib/admin/navPermissions.mjs");
++    for (const entry of ADMIN_MODULE_PREFIX) {
++      const slug = entry.prefix.replace(/^\/api\//, "").replace(/\/$/, "");
++      expect(NAV_SLUG_PERMISSIONS[slug], slug).toBe(entry.read);
++    }
++  });
++
++  it("protects the product catalog PIM and the supplier integration hub", () => {
++    expect(resolveRoutePermission("GET", "/api/product-catalog-pim/products/:sku")).toEqual({ permission: "products.read" });
++    for (const route of ["brands", "categories", "products", "products/:sku/attributes", "products/:sku/media", "products/:sku/variants"]) {
++      expect(resolveRoutePermission("POST", `/api/product-catalog-pim/${route}`)).toEqual({ permission: "products.write" });
++    }
++    expect(resolveRoutePermission("PUT", "/api/product-catalog-pim/products/:sku/translation/:language")).toEqual({
++      permission: "products.write",
++    });
++    expect(resolveRoutePermission("GET", "/api/supplier-integration-hub/suppliers")).toEqual({ permission: "suppliers.read" });
++    for (const route of ["suppliers", "suppliers/:code/mappings", "suppliers/:code/sync", "suppliers/:code/snapshot", "orders"]) {
++      expect(resolveRoutePermission("POST", `/api/supplier-integration-hub/${route}`)).toEqual({ permission: "suppliers.write" });
++    }
++  });
++
++  it.each([
++    ["POST", "/api/payments-finance/intents", "orders.write"],
++    ["POST", "/api/payments-finance/intents/:id/confirm", "orders.write"],
++    ["POST", "/api/payments-finance/intents/:id/refunds", "orders.write"],
++    ["POST", "/api/payments-finance/invoices", "orders.write"],
++    ["GET", "/api/marketing-loyalty/campaigns", "analytics.read"],
++    ["POST", "/api/marketing-loyalty/campaigns", "analytics.export"],
++    ["POST", "/api/marketing-loyalty/points", "orders.write"],
++    ["POST", "/api/suppliers/import", "imports.run"],
++    ["POST", "/api/dropship/forward", "orders.write"],
++    ["POST", "/api/shipping/label", "logistics.write"],
++    ["POST", "/api/vehicles/seed", "products.write"],
++    ["POST", "/api/tecdoc/compatibility/link", "products.write"],
++    ["POST", "/api/automation/order-created", "automation.run"],
++  ])("%s %s needs %s", (method, route, permission) => {
++    expect(resolveRoutePermission(method, route)).toEqual({ permission });
++  });
++
++  it("keeps a read-only administrator from every write in these modules", () => {
++    const writes = [
++      ...ADMIN_MODULE_PREFIX.map((entry) => entry.write),
++      "imports.run",
++      "automation.run",
++      "analytics.export",
++    ];
++    for (const permission of writes) {
++      expect(can("read_only", permission), permission).toBe(false);
++      expect(can("administrator", permission), permission).toBe(true);
++    }
++    expect(can("catalog_manager", "orders.write")).toBe(false);
++    expect(can("order_manager", "products.write")).toBe(false);
++    expect(can("order_manager", "system.configure")).toBe(false);
++  });
++});
++
++describe("routes that stay without an admin policy", () => {
++  it.each([
++    ["GET", "/api/products"],
++    ["GET", "/api/vehicles"],
++    ["GET", "/api/tecdoc/compatibility/:sku"],
++    ["POST", "/api/tecdoc/compatibility"],
++    ["POST", "/api/commerce/cart"],
++    ["POST", "/api/cart-checkout/carts"],
++    ["POST", "/api/account/register"],
++    ["POST", "/api/contact"],
++    ["POST", "/api/payments-finance/webhook"],
++    ["POST", "/api/marketing-loyalty/campaigns/:code/apply"],
++    ["GET", "/api/master-admin-v40"],
++    ["GET", "/api/product-catalog-pimx/products"],
++  ])("%s %s", (method, route) => {
++    expect(resolveRoutePermission(method, route)).toBeNull();
++  });
++
++  it("leaves login public and the admin area authenticated", () => {
++    expect(resolveRoutePermission("POST", "/api/admin/login")).toEqual({ public: true });
++    expect(resolveRoutePermission("GET", "/api/admin/me")).toEqual({ authenticated: true });
++    expect(resolveRoutePermission("DELETE", "/api/admin/sessions/:sessionId")).toEqual({ permission: "security.manage" });
++    expect(resolveRoutePermission("POST", "/api/admin/pim-core/import")).toEqual({ permission: "products.write" });
++  });
++});
+diff --git a/server/__tests__/adminSessionSecurity.test.mjs b/server/__tests__/adminSessionSecurity.test.mjs
+new file mode 100644
+index 0000000..cf55b17
+--- /dev/null
++++ b/server/__tests__/adminSessionSecurity.test.mjs
+@@ -0,0 +1,271 @@
++import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
++import path from "node:path";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { fakeRequest, freshServerLib, seedSyntheticAdmins, tempDataDir } from "./support/freshServerLib.mjs";
++
++const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
++
++function responseRecorder() {
++  return {
++    statusCode: null,
++    body: null,
++    writeHead(status) {
++      this.statusCode = status;
++    },
++    setHeader() {},
++    end(payload) {
++      this.body = payload ? JSON.parse(payload) : null;
++    },
++    status(code) {
++      this.statusCode = code;
++      return this;
++    },
++    json(payload) {
++      this.body = payload;
++      return this;
++    },
++  };
++}
++
++function bearer(token) {
++  return fakeRequest("198.51.100.7", token ? { authorization: `Bearer ${token}` } : {});
++}
++
++let lib;
++
++function setup(env = {}) {
++  const dataDir = tempDataDir("session");
++  const accounts = seedSyntheticAdmins(dataDir);
++  lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir, BUZZARD_TEST_MODE: undefined, BUZZARD_RATE_LIMIT_DISABLED: undefined, ...env });
++  return { dataDir, accounts, auth: lib.load("auth.js") };
++}
++
++afterEach(() => {
++  vi.useRealTimers();
++  lib?.restore();
++  lib = null;
++});
++
++describe("admin login", () => {
++  it("accepts the right password and rejects a wrong one with a generic error", () => {
++    const { auth, accounts } = setup();
++    const admin = accounts.administrator;
++
++    const ok = auth.login(admin.email, admin.password, fakeRequest());
++    expect(ok.success).toBe(true);
++    expect(ok.token).toMatch(/^[0-9a-f]{64}$/);
++    expect(ok.user).toEqual({ id: admin.id, email: admin.email, name: admin.name, role: "administrator" });
++    expect(JSON.stringify(ok)).not.toContain("password");
++
++    const wrong = auth.login(admin.email, `${admin.password}x`, fakeRequest());
++    expect(wrong).toEqual({ success: false, errorKey: "admin.auth.invalid" });
++
++    const unknown = auth.login("nobody@unit.buzzard.test", admin.password, fakeRequest());
++    expect(unknown).toEqual({ success: false, errorKey: "admin.auth.invalid" });
++  });
++
++  it("issues a new server-generated token on every login", () => {
++    const { auth, accounts } = setup();
++    const admin = accounts.administrator;
++    const first = auth.login(admin.email, admin.password, fakeRequest());
++    const second = auth.login(admin.email, admin.password, fakeRequest());
++    expect(first.token).not.toBe(second.token);
++    expect(auth.getSession(first.token).sessionId).not.toBe(auth.getSession(second.token).sessionId);
++    expect(auth.getSession("a".repeat(64))).toBeNull();
++  });
++
++  it("does not write the password or the bearer token to the security log", () => {
++    const { auth, accounts, dataDir } = setup();
++    const admin = accounts.administrator;
++    const { token } = auth.login(admin.email, admin.password, fakeRequest());
++    auth.login(admin.email, "wrong-password-value", fakeRequest());
++    const log = readFileSync(path.join(dataDir, "security-log.json"), "utf8");
++    expect(log).not.toContain(admin.password);
++    expect(log).not.toContain("wrong-password-value");
++    expect(log).not.toContain(token);
++    expect(JSON.parse(log).map((entry) => entry.type)).toEqual(["admin_login", "admin_login_failed"]);
++  });
++});
++
++describe("admin session lifetime", () => {
++  it("answers 401 without a token, with an unknown token and after logout", () => {
++    const { auth, accounts } = setup();
++    const admin = accounts.administrator;
++    const { token } = auth.login(admin.email, admin.password, fakeRequest());
++
++    const valid = responseRecorder();
++    expect(auth.requireAuth(bearer(token), valid)).toMatchObject({ userId: admin.id, role: "administrator" });
++    expect(valid.statusCode).toBeNull();
++
++    for (const candidate of [null, "f".repeat(64), `${token}0`, token.slice(0, 63)]) {
++      const res = responseRecorder();
++      expect(auth.requireAuth(bearer(candidate), res)).toBeFalsy();
++      expect(res.statusCode).toBe(401);
++    }
++
++    auth.logout(token, fakeRequest());
++    const afterLogout = responseRecorder();
++    expect(auth.requireAuth(bearer(token), afterLogout)).toBeFalsy();
++    expect(afterLogout.statusCode).toBe(401);
++  });
++
++  it("expires a session eight hours after login", () => {
++    vi.useFakeTimers({ toFake: ["Date"] });
++    vi.setSystemTime(new Date("2026-11-17T08:00:00.000Z"));
++    const { auth, accounts, dataDir } = setup();
++    const admin = accounts.administrator;
++    const { token } = auth.login(admin.email, admin.password, fakeRequest());
++    expect(auth.getSession(token).expiresAt - Date.now()).toBe(EIGHT_HOURS_MS);
++
++    vi.setSystemTime(Date.now() + EIGHT_HOURS_MS - 1000);
++    expect(auth.getSession(token)).not.toBeNull();
++
++    vi.setSystemTime(Date.now() + 1000);
++    const res = responseRecorder();
++    expect(auth.requireAuth(bearer(token), res)).toBeFalsy();
++    expect(res.statusCode).toBe(401);
++    expect(JSON.parse(readFileSync(path.join(dataDir, "admin-sessions.json"), "utf8"))).toEqual([]);
++  });
++
++  it("revokes one session by id and leaves the others", () => {
++    const { auth, accounts } = setup();
++    const admin = accounts.administrator;
++    const first = auth.login(admin.email, admin.password, fakeRequest());
++    const second = auth.login(admin.email, admin.password, fakeRequest());
++    const firstId = auth.getSession(first.token).sessionId;
++
++    expect(auth.revokeSession(firstId, { revokedBy: admin.email })).toBeTruthy();
++    expect(auth.getSession(first.token)).toBeNull();
++    expect(auth.getSession(second.token)).not.toBeNull();
++  });
++
++  it("restores unexpired sessions after a restart and drops expired ones", () => {
++    vi.useFakeTimers({ toFake: ["Date"] });
++    vi.setSystemTime(new Date("2026-11-17T08:00:00.000Z"));
++    const { auth, accounts, dataDir } = setup();
++    const admin = accounts.administrator;
++    const early = auth.login(admin.email, admin.password, fakeRequest());
++    vi.setSystemTime(Date.now() + 2 * 60 * 60 * 1000);
++    const late = auth.login(admin.email, admin.password, fakeRequest());
++    lib.restore();
++
++    vi.setSystemTime(new Date("2026-11-17T16:30:00.000Z"));
++    lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir });
++    const restarted = lib.load("auth.js");
++    expect(restarted.getSession(early.token)).toBeNull();
++    expect(restarted.getSession(late.token)).toMatchObject({ userId: admin.id });
++  });
++
++  it("logs everyone out and keeps the damaged file when the session store is unreadable", () => {
++    const { auth, accounts, dataDir } = setup();
++    const admin = accounts.administrator;
++    const { token } = auth.login(admin.email, admin.password, fakeRequest());
++    lib.restore();
++
++    const file = path.join(dataDir, "admin-sessions.json");
++    const damaged = readFileSync(file, "utf8").slice(0, 40);
++    writeFileSync(file, damaged);
++
++    lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir });
++    const restarted = lib.load("auth.js");
++    expect(restarted.getSession(token)).toBeNull();
++    const copies = readdirSync(dataDir).filter((name) => name.startsWith("admin-sessions.json.corrupt-"));
++    expect(copies).toHaveLength(1);
++    expect(readFileSync(path.join(dataDir, copies[0]), "utf8")).toBe(damaged);
++  });
++});
++
++describe("admin login limiter", () => {
++  it("returns rateLimited on the ninth attempt in fifteen minutes when the limiter is on", () => {
++    const { auth, accounts } = setup();
++    const admin = accounts.administrator;
++    const req = fakeRequest("198.51.100.20");
++    for (let attempt = 1; attempt <= 8; attempt += 1) {
++      expect(auth.login(admin.email, admin.password, req).success, `attempt ${attempt}`).toBe(true);
++    }
++    expect(auth.login(admin.email, admin.password, req)).toEqual({ success: false, errorKey: "admin.auth.rateLimited" });
++    // Another address is counted separately.
++    expect(auth.login(admin.email, admin.password, fakeRequest("198.51.100.21")).success).toBe(true);
++  });
++
++  it("does not rate limit in test mode but still locks the account after five failures", () => {
++    const { auth, accounts } = setup({ BUZZARD_TEST_MODE: "1" });
++    const admin = accounts.administrator;
++    const req = fakeRequest("198.51.100.30");
++    for (let attempt = 1; attempt <= 12; attempt += 1) {
++      expect(auth.login(admin.email, admin.password, req).success, `attempt ${attempt}`).toBe(true);
++    }
++
++    const readOnly = accounts.read_only;
++    const results = [];
++    for (let attempt = 1; attempt <= 6; attempt += 1) {
++      results.push(auth.login(readOnly.email, "wrong-password-value", req).errorKey);
++    }
++    expect(results).toEqual([
++      "admin.auth.invalid",
++      "admin.auth.invalid",
++      "admin.auth.invalid",
++      "admin.auth.invalid",
++      "admin.auth.locked",
++      "admin.auth.locked",
++    ]);
++    // The right password does not get through a locked account either.
++    expect(auth.login(readOnly.email, readOnly.password, req).errorKey).toBe("admin.auth.locked");
++  });
++
++  it("locks the account after five failures with the limiter on", () => {
++    const { auth, accounts } = setup();
++    const readOnly = accounts.read_only;
++    const req = fakeRequest("198.51.100.40");
++    const results = [];
++    for (let attempt = 1; attempt <= 5; attempt += 1) {
++      results.push(auth.login(readOnly.email, "wrong-password-value", req).errorKey);
++    }
++    expect(results.slice(0, 4)).toEqual(Array(4).fill("admin.auth.invalid"));
++    expect(results[4]).toBe("admin.auth.locked");
++  });
++});
++
++describe("admin account seeding", () => {
++  it("creates no accounts from the committed seed file in production", () => {
++    const dataDir = tempDataDir("seed");
++    lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir, NODE_ENV: "production", ADMIN_EMAIL: undefined, ADMIN_PASSWORD: undefined });
++    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
++    const auth = lib.load("auth.js");
++    const seed = JSON.parse(readFileSync(new URL("../../data/buzzard_admin_users.seed.json", import.meta.url), "utf8"));
++
++    for (const entry of seed) {
++      expect(auth.login(entry.email, entry.password, fakeRequest()).success).toBe(false);
++    }
++    expect(existsSync(path.join(dataDir, "admin-users.json"))).toBe(false);
++    errors.mockRestore();
++  });
++
++  it("creates the first production administrator from ADMIN_EMAIL and ADMIN_PASSWORD", () => {
++    const dataDir = tempDataDir("seed");
++    const password = `synthetic-${Math.random().toString(36).slice(2)}-production`;
++    lib = freshServerLib({
++      BUZZARD_DATA_DIR: dataDir,
++      NODE_ENV: "production",
++      ADMIN_EMAIL: "Owner@Unit.Buzzard.Test",
++      ADMIN_PASSWORD: password,
++    });
++    const auth = lib.load("auth.js");
++    const result = auth.login("owner@unit.buzzard.test", password, fakeRequest());
++    expect(result.success).toBe(true);
++    expect(result.user.role).toBe("administrator");
++    const stored = readFileSync(path.join(dataDir, "admin-users.json"), "utf8");
++    expect(stored).not.toContain(password);
++    expect(JSON.parse(stored)).toHaveLength(1);
++    expect(auth.findSeedCredentialAccounts()).toEqual([]);
++  });
++
++  it("reports accounts that still use a seed password", () => {
++    const dataDir = tempDataDir("seed");
++    lib = freshServerLib({ BUZZARD_DATA_DIR: dataDir, NODE_ENV: "test" });
++    const auth = lib.load("auth.js");
++    const seed = JSON.parse(readFileSync(new URL("../../data/buzzard_admin_users.seed.json", import.meta.url), "utf8"));
++    auth.login(seed[0].email, "not-the-password", fakeRequest());
++    expect(auth.findSeedCredentialAccounts().sort()).toEqual(seed.map((entry) => entry.id).sort());
++  });
++});
+diff --git a/server/__tests__/jwtSecretHardening.test.mjs b/server/__tests__/jwtSecretHardening.test.mjs
+new file mode 100644
+index 0000000..2a9bd77
+--- /dev/null
++++ b/server/__tests__/jwtSecretHardening.test.mjs
+@@ -0,0 +1,120 @@
++import { createRequire } from "node:module";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { freshServerLib, tempDataDir } from "./support/freshServerLib.mjs";
++
++const require = createRequire(import.meta.url);
++const jwt = require("jsonwebtoken");
++
++const FORMER_BUILT_IN_SECRET = "DEV_ONLY_CHANGE_ME";
++const adminClaims = { sub: 1, email: "forged@unit.buzzard.test", role: "admin" };
++
++let lib;
++
++afterEach(() => {
++  lib?.restore();
++  lib = null;
++  vi.restoreAllMocks();
++});
++
++describe("JWT signing key", () => {
++  it("rejects an admin token signed with the former built-in secret when no secret is configured", () => {
++    lib = freshServerLib({ JWT_SECRET: undefined, AUTH_SECRET: undefined, BUZZARD_DATA_DIR: tempDataDir("jwt") });
++    const dbAuth = lib.load("dbAuth.js");
++    const forged = jwt.sign(adminClaims, FORMER_BUILT_IN_SECRET, { expiresIn: "1h" });
++    expect(() => dbAuth.verifyToken(forged)).toThrow();
++    expect(dbAuth.isDefaultJwtSecret()).toBe(true);
++    expect(dbAuth.getJwtSecret()).not.toBe(FORMER_BUILT_IN_SECRET);
++    expect(dbAuth.getJwtSecret().length).toBeGreaterThanOrEqual(64);
++
++    const auth = lib.load("auth.js");
++    const res = { statusCode: null, status(code) { this.statusCode = code; return this; }, json() { return this; } };
++    vi.spyOn(console, "log").mockImplementation(() => {});
++    const identity = auth.requireAuth(
++      { headers: { authorization: `Bearer ${forged}` }, socket: { remoteAddress: "198.51.100.5" }, url: "/api/admin/me" },
++      res
++    );
++    expect(identity).toBeFalsy();
++    expect(res.statusCode).toBe(401);
++  });
++
++  it("uses a different key in every process that has no secret configured", () => {
++    lib = freshServerLib({ JWT_SECRET: undefined, AUTH_SECRET: undefined });
++    const first = lib.load("jwtSecret.js").secret;
++    lib.restore();
++    lib = freshServerLib({ JWT_SECRET: undefined, AUTH_SECRET: undefined });
++    expect(lib.load("jwtSecret.js").secret).not.toBe(first);
++  });
++
++  it("verifies its own tokens with the configured secret and rejects other keys", () => {
++    const secret = "unit-test-secret-0123456789abcdef0123456789abcdef";
++    lib = freshServerLib({ JWT_SECRET: secret, AUTH_SECRET: undefined });
++    const dbAuth = lib.load("dbAuth.js");
++    expect(dbAuth.isDefaultJwtSecret()).toBe(false);
++    const own = dbAuth.signUser({ id: 7, email: "customer@unit.buzzard.test", role: "customer", name: "Synthetic" });
++    expect(dbAuth.verifyToken(own).email).toBe("customer@unit.buzzard.test");
++    expect(() => dbAuth.verifyToken(jwt.sign(adminClaims, `${secret}x`))).toThrow();
++    expect(() => dbAuth.verifyToken(jwt.sign(adminClaims, FORMER_BUILT_IN_SECRET))).toThrow();
++  });
++
++  it("honours AUTH_SECRET when JWT_SECRET is absent", () => {
++    lib = freshServerLib({ JWT_SECRET: undefined, AUTH_SECRET: "unit-auth-secret-0123456789abcdef0123456789abcdef" });
++    expect(lib.load("dbAuth.js").isDefaultJwtSecret()).toBe(false);
++  });
++});
++
++describe("production environment validation", () => {
++  const strong = "unit-test-secret-0123456789abcdef0123456789abcdef";
++
++  function validate(env) {
++    lib = freshServerLib({
++      NODE_ENV: "production",
++      BUZZARD_DATA_DIR: tempDataDir("env"),
++      BUZZARD_TEST_MODE: undefined,
++      BUZZARD_RATE_LIMIT_DISABLED: undefined,
++      ADMIN_EMAIL: undefined,
++      ADMIN_PASSWORD: undefined,
++      AUTH_SECRET: undefined,
++      ...env,
++    });
++    return lib.load("environmentValidation.js").validateEnvironment();
++  }
++
++  it("fails without a JWT secret", () => {
++    const result = validate({ JWT_SECRET: undefined });
++    expect(result.ok).toBe(false);
++    expect(result.errors.map((error) => error.code)).toContain("jwt_secret_missing");
++  });
++
++  it.each([FORMER_BUILT_IN_SECRET, "dev-secret-change-me", "short-secret"])("fails with the weak secret %s", (secret) => {
++    const result = validate({ JWT_SECRET: secret });
++    expect(result.errors.map((error) => error.code)).toContain("jwt_secret_weak");
++  });
++
++  it("passes with a strong secret and no seed accounts", () => {
++    const result = validate({ JWT_SECRET: strong });
++    expect(result.errors).toEqual([]);
++    expect(result.ok).toBe(true);
++  });
++
++  it("fails when stored admin accounts still use seed passwords", () => {
++    const dataDir = tempDataDir("env");
++    lib = freshServerLib({ NODE_ENV: "test", BUZZARD_DATA_DIR: dataDir });
++    lib.load("auth.js").login("nobody@unit.buzzard.test", "x", { headers: {}, socket: { remoteAddress: "198.51.100.6" } });
++    lib.restore();
++
++    const result = validate({ JWT_SECRET: strong, BUZZARD_DATA_DIR: dataDir });
++    expect(result.errors.map((error) => error.code)).toEqual(["default_admin_credentials"]);
++    expect(JSON.stringify(result)).not.toMatch(/scrypt:|password_hash/);
++  });
++
++  it("refuses to start in production when validation fails", () => {
++    lib = freshServerLib({ NODE_ENV: "production", JWT_SECRET: undefined, AUTH_SECRET: undefined, BUZZARD_DATA_DIR: tempDataDir("env") });
++    vi.spyOn(console, "error").mockImplementation(() => {});
++    expect(() => lib.load("environmentValidation.js").assertProductionSafeStartup()).toThrow(/JWT_SECRET/);
++  });
++
++  it("does not block development without a secret", () => {
++    lib = freshServerLib({ NODE_ENV: "development", JWT_SECRET: undefined, AUTH_SECRET: undefined, BUZZARD_DATA_DIR: tempDataDir("env") });
++    expect(lib.load("environmentValidation.js").validateEnvironment().ok).toBe(true);
++  });
++});
+diff --git a/server/__tests__/staticFilePolicy.test.mjs b/server/__tests__/staticFilePolicy.test.mjs
+new file mode 100644
+index 0000000..4fd06ef
+--- /dev/null
++++ b/server/__tests__/staticFilePolicy.test.mjs
+@@ -0,0 +1,89 @@
++import { mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
++import { createRequire } from "node:module";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import { beforeAll, describe, expect, it } from "vitest";
++
++const require = createRequire(import.meta.url);
++const { resolvePublicFile } = require("../lib/staticFilePolicy.js");
++
++let root;
++
++beforeAll(() => {
++  root = mkdtempSync(path.join(tmpdir(), "buzzard-static-"));
++  const files = {
++    "index.html": "<html>",
++    "google-verification.html": "ok",
++    "package.json": "{}",
++    ".env": "SECRET=1",
++    "render.yaml": "x",
++    "public/manifest.json": "{}",
++    "public/images/a.png": "png",
++    "public/council/index.html": "<html>",
++    "public/.hidden": "x",
++    "logo/logo.png": "png",
++    "styles/admin.css": "body{}",
++    "server/data/admin-sessions.json": "[]",
++    "server/data/admin-users.json": "[]",
++    "server/data/security-log.json": "[]",
++    "server/data/audit-log.json": "[]",
++    "server/data/automation-events.json": "[]",
++    "server/data/buzzard.db": "sqlite",
++    "server/lib/auth.js": "x",
++    "data/buzzard_admin_users.seed.json": "[]",
++    ".git/config": "x",
++  };
++  for (const [name, content] of Object.entries(files)) {
++    mkdirSync(path.dirname(path.join(root, name)), { recursive: true });
++    writeFileSync(path.join(root, name), content);
++  }
++  symlinkSync(path.join(root, "server", "data", "admin-users.json"), path.join(root, "public", "leak.json"));
++  symlinkSync(path.join(root, "server", "data"), path.join(root, "public", "leakdir"));
++});
++
++describe("static file policy", () => {
++  it.each([
++    ["/", "index.html"],
++    ["/index.html", "index.html"],
++    ["/google-verification.html", "google-verification.html"],
++    ["/public/manifest.json", "public/manifest.json"],
++    ["/public/images/a.png", "public/images/a.png"],
++    ["/public/council", "public/council/index.html"],
++    ["/public/council/", "public/council/index.html"],
++    ["/logo/logo.png", "logo/logo.png"],
++    ["/styles/admin.css", "styles/admin.css"],
++  ])("serves %s", (request, file) => {
++    expect(resolvePublicFile(root, request)).toBe(path.join(root, file));
++  });
++
++  it.each([
++    "/server/data/admin-sessions.json",
++    "/server/data/admin-users.json",
++    "/server/data/security-log.json",
++    "/server/data/audit-log.json",
++    "/server/data/automation-events.json",
++    "/server/data/buzzard.db",
++    "/server/lib/auth.js",
++    "/data/buzzard_admin_users.seed.json",
++    "/package.json",
++    "/render.yaml",
++    "/.env",
++    "/.git/config",
++    "/public/.hidden",
++    "/public/../server/data/admin-users.json",
++    "/public/%2e%2e/server/data/admin-users.json",
++    "/public/..%2fserver/data/admin-users.json",
++    "/public/%2e%2e%2f%2e%2e%2fetc/passwd",
++    "/public\\..\\server\\data\\admin-users.json",
++    "/public/leak.json",
++    "/public/leakdir/admin-users.json",
++    "//server/data/admin-users.json",
++    "/public/missing.png",
++    "/public/%00",
++    "/%E0%A4%A",
++    "/server",
++    "/public",
++  ])("does not serve %s", (request) => {
++    expect(resolvePublicFile(root, request)).toBeNull();
++  });
++});
+diff --git a/server/__tests__/support/freshServerLib.mjs b/server/__tests__/support/freshServerLib.mjs
+new file mode 100644
+index 0000000..1792501
+--- /dev/null
++++ b/server/__tests__/support/freshServerLib.mjs
+@@ -0,0 +1,60 @@
++import { mkdtempSync, writeFileSync } from "node:fs";
++import { createRequire } from "node:module";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import { fileURLToPath } from "node:url";
++
++const require = createRequire(import.meta.url);
++const libDir = fileURLToPath(new URL("../../lib/", import.meta.url));
++
++/** A new empty directory under the OS temp dir for one test's JSON stores. */
++export function tempDataDir(label = "store") {
++  return mkdtempSync(path.join(tmpdir(), `buzzard-${label}-`));
++}
++
++/**
++ * Loads server/lib modules again with the given environment, so module-level
++ * state (session map, limiter, data directory, signing key) starts from zero.
++ * Returns the loader; the environment stays applied until `restore()`.
++ */
++export function freshServerLib(env = {}) {
++  const previous = {};
++  for (const [key, value] of Object.entries(env)) {
++    previous[key] = process.env[key];
++    if (value === undefined) delete process.env[key];
++    else process.env[key] = String(value);
++  }
++  for (const id of Object.keys(require.cache)) {
++    if (id.startsWith(libDir)) delete require.cache[id];
++  }
++  return {
++    load: (name) => require(path.join(libDir, name)),
++    restore() {
++      for (const [key, value] of Object.entries(previous)) {
++        if (value === undefined) delete process.env[key];
++        else process.env[key] = value;
++      }
++    },
++  };
++}
++
++/** Writes synthetic admin accounts (one per role) and returns their login data. */
++export function seedSyntheticAdmins(dataDir, roles = ["administrator", "read_only"]) {
++  const { hashPassword } = require(path.join(libDir, "password.js"));
++  const accounts = roles.map((role, index) => ({
++    id: `usr-synthetic-${role}`,
++    email: `synthetic-${role}@unit.buzzard.test`,
++    name: `Synthetic ${role}`,
++    role,
++    password: `synthetic-${role}-${index}-${Math.random().toString(36).slice(2)}`,
++  }));
++  writeFileSync(
++    path.join(dataDir, "admin-users.json"),
++    JSON.stringify(accounts.map(({ password, ...rest }) => ({ ...rest, password_hash: hashPassword(password) })))
++  );
++  return Object.fromEntries(accounts.map((account) => [account.role, account]));
++}
++
++export function fakeRequest(ip = "198.51.100.7", headers = {}) {
++  return { headers: { "user-agent": "vitest", ...headers }, socket: { remoteAddress: ip } };
++}
+diff --git a/server/lib/accountLockout.js b/server/lib/accountLockout.js
+index 688e924..f8ad9bc 100644
+--- a/server/lib/accountLockout.js
++++ b/server/lib/accountLockout.js
+@@ -2,7 +2,7 @@ const fs = require("fs");
+ const path = require("path");
+ const { logSecurityEvent } = require("./securityLog");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const lockFile = path.join(dataDir, "account-lockouts.json");
+ 
+ const DEFAULTS = {
+diff --git a/server/lib/adminTwoFactor.js b/server/lib/adminTwoFactor.js
+index 229587b..ecdb45e 100644
+--- a/server/lib/adminTwoFactor.js
++++ b/server/lib/adminTwoFactor.js
+@@ -3,7 +3,7 @@ const path = require("path");
+ const crypto = require("crypto");
+ const { generateSecret, verifyTotp, buildOtpAuthUri } = require("./totp");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const storeFile = path.join(dataDir, "admin-2fa.json");
+ const CHALLENGE_TTL_MS = 5 * 60 * 1000;
+ 
+diff --git a/server/lib/aiChatService.js b/server/lib/aiChatService.js
+index 2ce84a6..5234bf2 100644
+--- a/server/lib/aiChatService.js
++++ b/server/lib/aiChatService.js
+@@ -4,7 +4,7 @@ const crypto = require("crypto");
+ const productStore = require("./productStore");
+ const recommendationService = require("./recommendationService");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const ordersFile = path.join(dataDir, "orders.json");
+ const sessionsFile = path.join(dataDir, "ai-chat-sessions.json");
+ 
+diff --git a/server/lib/analyticsEngine.js b/server/lib/analyticsEngine.js
+index 1338b75..bf47367 100644
+--- a/server/lib/analyticsEngine.js
++++ b/server/lib/analyticsEngine.js
+@@ -2,7 +2,7 @@ const fs = require("fs");
+ const path = require("path");
+ 
+ const rootDir = path.join(__dirname, "..", "..");
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const ordersFile = path.join(dataDir, "orders.json");
+ const customersFile = path.join(dataDir, "customers.json");
+ const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+diff --git a/server/lib/audit.js b/server/lib/audit.js
+index 3961362..315f611 100644
+--- a/server/lib/audit.js
++++ b/server/lib/audit.js
+@@ -1,26 +1,16 @@
+-const fs = require("fs");
+ const path = require("path");
++const { resolveDataDir } = require("./dataDir");
++const { readJsonArray, writeJsonAtomic } = require("./jsonFileStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = resolveDataDir();
+ const auditFile = path.join(dataDir, "audit-log.json");
+ 
+-function ensureDataDir() {
+-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+-}
+-
+ function readLog() {
+-  ensureDataDir();
+-  if (!fs.existsSync(auditFile)) return [];
+-  try {
+-    return JSON.parse(fs.readFileSync(auditFile, "utf8") || "[]");
+-  } catch {
+-    return [];
+-  }
++  return readJsonArray(auditFile);
+ }
+ 
+ function writeLog(entries) {
+-  ensureDataDir();
+-  fs.writeFileSync(auditFile, JSON.stringify(entries.slice(-5000), null, 2), "utf8");
++  writeJsonAtomic(auditFile, entries.slice(-5000));
+ }
+ 
+ function logAudit({ userId, userEmail, action, entityType, entityId, field, oldValue, newValue }) {
+diff --git a/server/lib/auth.js b/server/lib/auth.js
+index 05f7ee0..b3c13b4 100644
+--- a/server/lib/auth.js
++++ b/server/lib/auth.js
+@@ -6,8 +6,10 @@ const { createRateLimiter, getClientIp } = require("./security");
+ const { logSecurityEvent } = require("./securityLog");
+ const { isLocked, getLockoutInfo, recordFailure, clearFailures } = require("./accountLockout");
+ const adminTwoFactor = require("./adminTwoFactor");
++const { resolveDataDir } = require("./dataDir");
++const { readJsonArray, writeJsonAtomic } = require("./jsonFileStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = resolveDataDir();
+ const usersFile = path.join(dataDir, "admin-users.json");
+ const sessionsFile = path.join(dataDir, "admin-sessions.json");
+ const seedFile = path.join(__dirname, "..", "..", "data", "buzzard_admin_users.seed.json");
+@@ -16,27 +18,48 @@ const sessions = new Map();
+ const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+ const loginRateLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 8, keyPrefix: "admin-login:" });
+ 
+-function ensureDataDir() {
+-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
++function writeJson(file, data) {
++  writeJsonAtomic(file, data, { durable: true });
+ }
+ 
+-function readJson(file, fallback) {
+-  if (!fs.existsSync(file)) return fallback;
++/**
++ * The committed seed file carries demo passwords. Production never seeds from
++ * it: the first administrator comes from ADMIN_EMAIL / ADMIN_PASSWORD, and
++ * without them no account exists and every login is refused.
++ */
++let warnedNoProductionAdmin = false;
++
++function readSeed() {
+   try {
+-    return JSON.parse(fs.readFileSync(file, "utf8"));
++    const seed = JSON.parse(fs.readFileSync(seedFile, "utf8"));
++    return Array.isArray(seed) ? seed : [];
+   } catch {
+-    return fallback;
++    return [];
+   }
+ }
+ 
+-function writeJson(file, data) {
+-  ensureDataDir();
+-  fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
++function seedProductionAdmin() {
++  const email = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
++  const password = process.env.ADMIN_PASSWORD || "";
++  if (!email || !password) {
++    if (!warnedNoProductionAdmin) {
++      warnedNoProductionAdmin = true;
++      console.error("[admin-auth] no admin accounts: set ADMIN_EMAIL and ADMIN_PASSWORD to create the first administrator");
++    }
++    return;
++  }
++  writeJson(usersFile, [
++    { id: "usr-admin-001", email, name: "Buzzard Admin", role: "administrator", password_hash: hashPassword(password) },
++  ]);
+ }
+ 
+ function seedUsers() {
+   if (fs.existsSync(usersFile)) return;
+-  const seed = readJson(seedFile, []);
++  if (process.env.NODE_ENV === "production") {
++    seedProductionAdmin();
++    return;
++  }
++  const seed = readSeed();
+   const users = seed.map(({ password, ...rest }) => ({
+     ...rest,
+     password_hash: hashPassword(password),
+@@ -44,16 +67,41 @@ function seedUsers() {
+   writeJson(usersFile, users);
+ }
+ 
++let seedCredentialCheck = { stamp: null, ids: [] };
++
++/**
++ * Ids of stored accounts whose password is still one from the committed seed
++ * file. Each comparison is a scrypt run and a public health route asks for
++ * this, so the answer is kept until the users file changes.
++ */
++function findSeedCredentialAccounts() {
++  let stamp;
++  try {
++    const stat = fs.statSync(usersFile);
++    stamp = `${stat.mtimeMs}:${stat.size}`;
++  } catch {
++    return [];
++  }
++  if (seedCredentialCheck.stamp !== stamp) {
++    const seedPasswords = [...new Set(readSeed().map((entry) => entry.password).filter(Boolean))];
++    const ids = readJsonArray(usersFile)
++      .filter((user) => seedPasswords.some((password) => verifyPassword(password, user.password_hash)))
++      .map((user) => user.id);
++    seedCredentialCheck = { stamp, ids };
++  }
++  return [...seedCredentialCheck.ids];
++}
++
+ function persistSessions() {
+   const entries = [...sessions.entries()].map(([token, session]) => ({ token, session }));
+   writeJson(sessionsFile, entries);
+ }
+ 
+ function loadSessions() {
+-  const entries = readJson(sessionsFile, []);
++  const entries = readJsonArray(sessionsFile);
+   const now = Date.now();
+   for (const entry of entries) {
+-    if (entry.session?.expiresAt > now) {
++    if (typeof entry?.token === "string" && entry.token && entry.session?.expiresAt > now) {
+       sessions.set(entry.token, entry.session);
+     }
+   }
+@@ -76,7 +124,7 @@ function upgradePasswordHash(user, password) {
+ 
+ function loadUsers() {
+   seedUsers();
+-  return readJson(usersFile, []);
++  return readJsonArray(usersFile).filter((entry) => typeof entry?.email === "string" && entry.email);
+ }
+ 
+ function createSession(user, meta = {}) {
+@@ -373,4 +421,5 @@ module.exports = {
+   loadUsers,
+   listActiveSessions,
+   revokeSession,
++  findSeedCredentialAccounts,
+ };
+diff --git a/server/lib/automationEngine.js b/server/lib/automationEngine.js
+index f2d5f05..aea38e5 100644
+--- a/server/lib/automationEngine.js
++++ b/server/lib/automationEngine.js
+@@ -1,9 +1,10 @@
+-const fs = require("fs");
+ const path = require("path");
+ const crypto = require("crypto");
+ const notificationEngine = require("./notificationEngine");
++const { resolveDataDir } = require("./dataDir");
++const { readJsonArray, writeJsonAtomic } = require("./jsonFileStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = resolveDataDir();
+ const eventsFile = path.join(dataDir, "automation-events.json");
+ const deliveriesFile = path.join(dataDir, "automation-deliveries.json");
+ 
+@@ -22,39 +23,20 @@ const EVENT_TYPES = new Set([
+   "review_request",
+ ]);
+ 
+-function ensureDataDir() {
+-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+-}
+-
+-function readJson(file, fallback) {
+-  ensureDataDir();
+-  if (!fs.existsSync(file)) return fallback;
+-  try {
+-    return JSON.parse(fs.readFileSync(file, "utf8") || JSON.stringify(fallback));
+-  } catch {
+-    return fallback;
+-  }
+-}
+-
+-function writeJson(file, data) {
+-  ensureDataDir();
+-  fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
+-}
+-
+ function readEvents() {
+-  return readJson(eventsFile, []);
++  return readJsonArray(eventsFile);
+ }
+ 
+ function writeEvents(events) {
+-  writeJson(eventsFile, events);
++  writeJsonAtomic(eventsFile, events);
+ }
+ 
+ function readDeliveries() {
+-  return readJson(deliveriesFile, []);
++  return readJsonArray(deliveriesFile);
+ }
+ 
+ function writeDeliveries(deliveries) {
+-  writeJson(deliveriesFile, deliveries);
++  writeJsonAtomic(deliveriesFile, deliveries);
+ }
+ 
+ function buildIdempotencyKey(eventType, payload, explicitKey) {
+diff --git a/server/lib/coreAudit.js b/server/lib/coreAudit.js
+index 04a52f9..1e5956f 100644
+--- a/server/lib/coreAudit.js
++++ b/server/lib/coreAudit.js
+@@ -1,26 +1,16 @@
+-const fs = require("fs");
+ const path = require("path");
++const { resolveDataDir } = require("./dataDir");
++const { readJsonArray, writeJsonAtomic } = require("./jsonFileStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = resolveDataDir();
+ const auditFile = path.join(dataDir, "audit-log.json");
+ 
+-function ensureDataDir() {
+-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+-}
+-
+ function readLog() {
+-  ensureDataDir();
+-  if (!fs.existsSync(auditFile)) return [];
+-  try {
+-    return JSON.parse(fs.readFileSync(auditFile, "utf8") || "[]");
+-  } catch {
+-    return [];
+-  }
++  return readJsonArray(auditFile);
+ }
+ 
+ function writeLog(entries) {
+-  ensureDataDir();
+-  fs.writeFileSync(auditFile, JSON.stringify(entries.slice(-5000), null, 2), "utf8");
++  writeJsonAtomic(auditFile, entries.slice(-5000));
+ }
+ 
+ function logAudit({
+diff --git a/server/lib/customerAuth.js b/server/lib/customerAuth.js
+index 7a5eae0..7361ccd 100644
+--- a/server/lib/customerAuth.js
++++ b/server/lib/customerAuth.js
+@@ -5,7 +5,7 @@ const { hashPassword, verifyPassword, needsRehash } = require("./password");
+ const { createRateLimiter, getClientIp } = require("./security");
+ const { logSecurityEvent } = require("./securityLog");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const sessionsFile = path.join(dataDir, "customer-sessions.json");
+ const resetFile = path.join(dataDir, "password-reset-tokens.json");
+ const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+diff --git a/server/lib/customerStore.js b/server/lib/customerStore.js
+index 8b71dea..759c62b 100644
+--- a/server/lib/customerStore.js
++++ b/server/lib/customerStore.js
+@@ -4,7 +4,7 @@ const crypto = require("crypto");
+ const { hashPassword, verifyPassword: verifyPasswordHash } = require("./password");
+ const { publicUser } = require("./customerAuth");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const customersFile = path.join(dataDir, "customers.json");
+ const seedFile = path.join(__dirname, "..", "..", "data", "buzzard_account_users.seed.json");
+ 
+diff --git a/server/lib/dataDir.js b/server/lib/dataDir.js
+new file mode 100644
+index 0000000..6349917
+--- /dev/null
++++ b/server/lib/dataDir.js
+@@ -0,0 +1,51 @@
++/**
++ * Location of the runtime JSON stores: admin users, sessions, lockouts, 2FA,
++ * audit and security logs, automation events, rate-limit buckets, and the
++ * customer, order, fulfilment and queue files next to them.
++ *
++ * Defaults to server/data. BUZZARD_DATA_DIR moves them, which is what keeps
++ * them across redeploys on a persistent disk and what lets tests run against
++ * a throwaway directory. Automated test processes get their own directory per
++ * worker unless one is configured, the same way dbPaths.js isolates SQLite.
++ */
++const fs = require("fs");
++const os = require("os");
++const path = require("path");
++
++const defaultDataDir = path.join(__dirname, "..", "data");
++
++function isAutomatedTestProcess() {
++  if (process.env.VITEST === "true") return true;
++  const args = [...process.execArgv, ...process.argv];
++  if (args.includes("--test")) return true;
++  return process.argv.some((arg) => /(?:^|[\\/])__tests__[\\/].+\.test\.mjs$/.test(arg));
++}
++
++function isolatedTestDataDir() {
++  const worker = process.env.VITEST_POOL_ID || process.env.VITEST_WORKER_ID || String(process.pid);
++  return path.join(os.tmpdir(), "buzzard-test-data", `worker-${worker}`);
++}
++
++function resolveDataDir() {
++  const configured = String(process.env.BUZZARD_DATA_DIR || "").trim();
++  if (configured) return path.resolve(configured);
++  if (isAutomatedTestProcess()) return isolatedTestDataDir();
++  return defaultDataDir;
++}
++
++function ensureDataDir(dir = resolveDataDir()) {
++  fs.mkdirSync(dir, { recursive: true });
++  return dir;
++}
++
++function getDataDirInfo() {
++  const dir = resolveDataDir();
++  return {
++    path: dir,
++    mode: process.env.BUZZARD_DATA_DIR ? "custom_path" : dir === defaultDataDir ? "default" : "test_isolated",
++    // True when the stores live under the OS temp dir, i.e. a throwaway test stack.
++    isolated: dir.startsWith(os.tmpdir() + path.sep),
++  };
++}
++
++module.exports = { defaultDataDir, resolveDataDir, ensureDataDir, getDataDirInfo };
+diff --git a/server/lib/dbAuth.js b/server/lib/dbAuth.js
+index 868c0d2..3c5371c 100644
+--- a/server/lib/dbAuth.js
++++ b/server/lib/dbAuth.js
+@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
+ const { db } = require("./db");
+ const { hashPassword, verifyPassword, needsRehash } = require("./password");
+ 
+-const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
++const { secret, isConfigured: isJwtSecretConfigured } = require("./jwtSecret");
+ 
+ function signUser(user) {
+   return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, { expiresIn: "7d" });
+@@ -84,7 +84,7 @@ function getJwtSecret() {
+ }
+ 
+ function isDefaultJwtSecret() {
+-  return secret === "DEV_ONLY_CHANGE_ME";
++  return !isJwtSecretConfigured;
+ }
+ 
+ module.exports = {
+diff --git a/server/lib/environmentValidation.js b/server/lib/environmentValidation.js
+index bda005f..2f6c20a 100644
+--- a/server/lib/environmentValidation.js
++++ b/server/lib/environmentValidation.js
+@@ -2,6 +2,8 @@
+  * Part 13 — Production environment validation (test mode separation)
+  */
+ 
++const WEAK_JWT_SECRETS = new Set(["DEV_ONLY_CHANGE_ME", "dev-secret-change-me"]);
++
+ function validateEnvironment() {
+   const env = process.env.NODE_ENV || "development";
+   const errors = [];
+@@ -26,10 +28,28 @@ function validateEnvironment() {
+         message: "BUZZARD_SALES_ENABLED=1 — commercial sales active",
+       });
+     }
+-    if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "dev-secret-change-me") {
+-      warnings.push({
+-        code: "default_jwt_secret",
+-        message: "JWT_SECRET should be set to a strong value in production",
++    const jwtSecret = String(process.env.JWT_SECRET || process.env.AUTH_SECRET || "");
++    if (!jwtSecret) {
++      errors.push({
++        code: "jwt_secret_missing",
++        message: "JWT_SECRET must be set in production",
++      });
++    } else if (jwtSecret.length < 32 || WEAK_JWT_SECRETS.has(jwtSecret)) {
++      errors.push({
++        code: "jwt_secret_weak",
++        message: "JWT_SECRET must be a random value of at least 32 characters in production",
++      });
++    }
++    let seedAccounts = [];
++    try {
++      seedAccounts = require("./auth").findSeedCredentialAccounts();
++    } catch {
++      seedAccounts = [];
++    }
++    if (seedAccounts.length) {
++      errors.push({
++        code: "default_admin_credentials",
++        message: `${seedAccounts.length} admin account(s) still use a password from the committed seed file`,
+       });
+     }
+   }
+diff --git a/server/lib/fulfillmentStore.js b/server/lib/fulfillmentStore.js
+index 22803a6..cbae528 100644
+--- a/server/lib/fulfillmentStore.js
++++ b/server/lib/fulfillmentStore.js
+@@ -3,7 +3,7 @@ const path = require("path");
+ const crypto = require("crypto");
+ const { getTrackingUrl } = require("./carriers");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const fulfillmentsFile = path.join(dataDir, "fulfillments.json");
+ const supplierOrdersFile = path.join(dataDir, "supplier-orders.json");
+ const shipmentsFile = path.join(dataDir, "shipments.json");
+diff --git a/server/lib/identitySecurity.js b/server/lib/identitySecurity.js
+index 51d9acd..5b71a76 100644
+--- a/server/lib/identitySecurity.js
++++ b/server/lib/identitySecurity.js
+@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
+ const { db } = require("./db");
+ const { hashPassword: legacyHashPassword } = require("./dbAuth");
+ 
+-const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
++const { secret } = require("./jwtSecret");
+ const accessMinutes = Number(process.env.ACCESS_TOKEN_MINUTES || 30);
+ const refreshDays = Number(process.env.REFRESH_TOKEN_DAYS || 30);
+ 
+diff --git a/server/lib/jsonFileStore.js b/server/lib/jsonFileStore.js
+new file mode 100644
+index 0000000..057fc83
+--- /dev/null
++++ b/server/lib/jsonFileStore.js
+@@ -0,0 +1,85 @@
++/**
++ * JSON file persistence for the admin security stores.
++ *
++ * Writes go to a temporary file in the same directory and are renamed over the
++ * target, so a reader or a crash never sees a half-written file. A file that
++ * exists but cannot be parsed is copied aside before the caller falls back to
++ * an empty value: the next write would otherwise replace the history with only
++ * the newest entry.
++ *
++ * This does not serialise writers in different processes. Two API processes
++ * appending to the same log can still lose one of two simultaneous entries.
++ */
++const crypto = require("crypto");
++const fs = require("fs");
++const path = require("path");
++
++const PRIVATE_FILE_MODE = 0o600;
++const reportedCorrupt = new Set();
++
++function preserveCorruptFile(file, raw) {
++  const digest = crypto.createHash("sha256").update(raw).digest("hex").slice(0, 12);
++  const copy = `${file}.corrupt-${digest}`;
++  try {
++    if (!fs.existsSync(copy)) {
++      fs.writeFileSync(copy, raw, { mode: PRIVATE_FILE_MODE, flag: "wx" });
++    }
++  } catch {
++    return null;
++  }
++  if (!reportedCorrupt.has(copy)) {
++    reportedCorrupt.add(copy);
++    console.error(`[json-store] ${path.basename(file)} is not valid JSON; original kept as ${path.basename(copy)}`);
++  }
++  return copy;
++}
++
++function readJsonFile(file, fallback, { validate } = {}) {
++  let raw;
++  try {
++    raw = fs.readFileSync(file, "utf8");
++  } catch {
++    return fallback;
++  }
++  if (!raw.trim()) return fallback;
++  let parsed;
++  try {
++    parsed = JSON.parse(raw);
++  } catch {
++    preserveCorruptFile(file, raw);
++    return fallback;
++  }
++  if (validate && !validate(parsed)) {
++    preserveCorruptFile(file, raw);
++    return fallback;
++  }
++  return parsed;
++}
++
++function readJsonArray(file) {
++  return readJsonFile(file, [], { validate: Array.isArray });
++}
++
++function writeJsonAtomic(file, data, { durable = false } = {}) {
++  const dir = path.dirname(file);
++  fs.mkdirSync(dir, { recursive: true });
++  const tmp = path.join(dir, `.${path.basename(file)}.${process.pid}.${crypto.randomBytes(6).toString("hex")}.tmp`);
++  const fd = fs.openSync(tmp, "wx", PRIVATE_FILE_MODE);
++  try {
++    fs.writeFileSync(fd, JSON.stringify(data, null, 2), "utf8");
++    if (durable) fs.fsyncSync(fd);
++  } catch (err) {
++    fs.closeSync(fd);
++    fs.rmSync(tmp, { force: true });
++    throw err;
++  }
++  fs.closeSync(fd);
++  try {
++    fs.renameSync(tmp, file);
++  } catch (err) {
++    fs.rmSync(tmp, { force: true });
++    throw err;
++  }
++}
++
++module.exports = { readJsonFile, readJsonArray, writeJsonAtomic, preserveCorruptFile, PRIVATE_FILE_MODE };
+diff --git a/server/lib/jwtSecret.js b/server/lib/jwtSecret.js
+new file mode 100644
+index 0000000..ed40105
+--- /dev/null
++++ b/server/lib/jwtSecret.js
+@@ -0,0 +1,14 @@
++/**
++ * Signing key for customer and service JWTs (dbAuth, identitySecurity).
++ *
++ * There is no built-in fallback secret: a constant in the source would let
++ * anyone sign an administrator token. Without JWT_SECRET (or AUTH_SECRET) the
++ * key is random per process, so tokens stop working at the next restart, and
++ * production refuses to start (see environmentValidation.js).
++ */
++const crypto = require("crypto");
++
++const configured = String(process.env.JWT_SECRET || process.env.AUTH_SECRET || "");
++const secret = configured || crypto.randomBytes(48).toString("hex");
++
++module.exports = { secret, isConfigured: Boolean(configured) };
+diff --git a/server/lib/notificationEngine.js b/server/lib/notificationEngine.js
+index a818d4e..7077d58 100644
+--- a/server/lib/notificationEngine.js
++++ b/server/lib/notificationEngine.js
+@@ -1,7 +1,7 @@
+ const fs = require("fs");
+ const path = require("path");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const queueFile = path.join(dataDir, "notification-queue.json");
+ 
+ const TEMPLATES = {
+diff --git a/server/lib/priceStockQueue.js b/server/lib/priceStockQueue.js
+index 7b41b13..1a425cc 100644
+--- a/server/lib/priceStockQueue.js
++++ b/server/lib/priceStockQueue.js
+@@ -5,8 +5,8 @@ const { calculateSalePrice, applySafetyStock } = require("./pricing");
+ const fs = require("fs");
+ const path = require("path");
+ 
+-const queueFile = path.join(__dirname, "..", "data", "price-stock-queue.json");
+-const auditFile = path.join(__dirname, "..", "data", "price-stock-audit.json");
++const queueFile = path.join(require("./dataDir").resolveDataDir(), "price-stock-queue.json");
++const auditFile = path.join(require("./dataDir").resolveDataDir(), "price-stock-audit.json");
+ 
+ const LARGE_CHANGE_PERCENT = Number(process.env.BUZZARD_PRICE_ALERT_PERCENT || 25);
+ 
+diff --git a/server/lib/productAi.js b/server/lib/productAi.js
+index d78e3a8..235b3f6 100644
+--- a/server/lib/productAi.js
++++ b/server/lib/productAi.js
+@@ -5,7 +5,7 @@ const path = require("path");
+ const productValidator = require("./productValidator");
+ const { screenProductAi, holdCommercialAiAction } = require("./aiCenterAuthority");
+ 
+-const reviewFile = path.join(__dirname, "..", "data", "ai-review-queue.json");
++const reviewFile = path.join(require("./dataDir").resolveDataDir(), "ai-review-queue.json");
+ 
+ function readQueue() {
+   try {
+diff --git a/server/lib/rateLimitStore.js b/server/lib/rateLimitStore.js
+index e66171c..6546284 100644
+--- a/server/lib/rateLimitStore.js
++++ b/server/lib/rateLimitStore.js
+@@ -5,7 +5,7 @@
+ const fs = require("fs");
+ const path = require("path");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const persistFile = path.join(dataDir, "rate-limit-buckets.json");
+ const PERSIST_INTERVAL_MS = 15_000;
+ 
+diff --git a/server/lib/redirectStore.js b/server/lib/redirectStore.js
+index 0d59914..9f1e04a 100644
+--- a/server/lib/redirectStore.js
++++ b/server/lib/redirectStore.js
+@@ -2,7 +2,7 @@ const fs = require("fs");
+ const path = require("path");
+ 
+ const redirectsFile = path.join(__dirname, "..", "..", "data", "buzzard_redirects.json");
+-const serverRedirectsFile = path.join(__dirname, "..", "data", "redirects-runtime.json");
++const serverRedirectsFile = path.join(require("./dataDir").resolveDataDir(), "redirects-runtime.json");
+ 
+ function readJson(file, fallback) {
+   if (!fs.existsSync(file)) return fallback;
+diff --git a/server/lib/routePermissions.js b/server/lib/routePermissions.js
+index acbc4ef..02ef94a 100644
+--- a/server/lib/routePermissions.js
++++ b/server/lib/routePermissions.js
+@@ -175,6 +175,44 @@ const PREFIX = [
+   { prefix: "/api/security/admin", read: "security.read", write: "security.manage" },
+ ];
+ 
++/**
++ * Back-office modules mounted outside /api/admin/. The admin UI is their only
++ * caller and already sends the admin bearer; without an entry here the routes
++ * are reachable without any session. Read permissions match the ones that
++ * show the module in the admin navigation (lib/admin/navPermissions.mjs).
++ */
++const ADMIN_MODULE_PREFIX = [
++  { prefix: "/api/master-admin-v40/", read: "system.read", write: "system.configure" },
++  { prefix: "/api/security-v38/", read: "security.read", write: "security.manage" },
++  { prefix: "/api/payments-v36/", read: "orders.read", write: "orders.write" },
++  { prefix: "/api/order-management-v32/", read: "orders.read", write: "orders.write" },
++  { prefix: "/api/marketplace-v35/", read: "analytics.read", write: "integrations.manage" },
++  { prefix: "/api/logistics-v34/", read: "logistics.read", write: "logistics.write" },
++  { prefix: "/api/fulfillment-v33/", read: "logistics.read", write: "logistics.write" },
++  { prefix: "/api/international-v37/", read: "products.read", write: "system.configure" },
++  { prefix: "/api/analytics-v39/", read: "analytics.read", write: "analytics.export" },
++  { prefix: "/api/product-catalog-pim/", read: "products.read", write: "products.write" },
++  { prefix: "/api/supplier-integration-hub/", read: "suppliers.read", write: "suppliers.write" },
++];
++
++/** Back-office operations on otherwise customer-facing prefixes. */
++const ADMIN_OPERATIONS = {
++  "POST /api/payments-finance/intents": "orders.write",
++  "POST /api/payments-finance/intents/:id/confirm": "orders.write",
++  "POST /api/payments-finance/intents/:id/refunds": "orders.write",
++  "POST /api/payments-finance/invoices": "orders.write",
++  "GET /api/marketing-loyalty/campaigns": "analytics.read",
++  "POST /api/marketing-loyalty/campaigns": "analytics.export",
++  "POST /api/marketing-loyalty/points": "orders.write",
++  "POST /api/suppliers/import": "imports.run",
++  "POST /api/dropship/forward": "orders.write",
++  "POST /api/shipping/label": "logistics.write",
++  "POST /api/vehicles/seed": "products.write",
++  "POST /api/tecdoc/compatibility/link": "products.write",
++  "POST /api/automation/order-created": "automation.run",
++};
++Object.assign(EXACT, ADMIN_OPERATIONS);
++
+ const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+ 
+ function routeKey(method, pathname) {
+@@ -230,6 +268,12 @@ function resolveRoutePermission(method, pathname) {
+     };
+   }
+ 
++  for (const entry of ADMIN_MODULE_PREFIX) {
++    if (pathname.startsWith(entry.prefix)) {
++      return { permission: WRITE_METHODS.has(upper) ? entry.write : entry.read };
++    }
++  }
++
+   return null;
+ }
+ 
+@@ -237,6 +281,8 @@ module.exports = {
+   PUBLIC_ROUTES,
+   EXACT,
+   PREFIX,
++  ADMIN_MODULE_PREFIX,
++  ADMIN_OPERATIONS,
+   resolveRoutePermission,
+   routeKey,
+ };
+diff --git a/server/lib/securityLog.js b/server/lib/securityLog.js
+index a83f973..107a12f 100644
+--- a/server/lib/securityLog.js
++++ b/server/lib/securityLog.js
+@@ -1,8 +1,9 @@
+-const fs = require("fs");
+ const path = require("path");
+ const { redactForLog } = require("./security");
++const { resolveDataDir } = require("./dataDir");
++const { readJsonArray, writeJsonAtomic } = require("./jsonFileStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = resolveDataDir();
+ const logFile = path.join(dataDir, "security-log.json");
+ const MAX_ENTRIES = 5000;
+ 
+@@ -38,23 +39,12 @@ const EVENT_SEVERITY = {
+   go_live_approved: "INFO",
+ };
+ 
+-function ensureDataDir() {
+-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+-}
+-
+ function readLog() {
+-  ensureDataDir();
+-  if (!fs.existsSync(logFile)) return [];
+-  try {
+-    return JSON.parse(fs.readFileSync(logFile, "utf8") || "[]");
+-  } catch {
+-    return [];
+-  }
++  return readJsonArray(logFile);
+ }
+ 
+ function writeLog(entries) {
+-  ensureDataDir();
+-  fs.writeFileSync(logFile, JSON.stringify(entries.slice(-MAX_ENTRIES), null, 2), "utf8");
++  writeJsonAtomic(logFile, entries.slice(-MAX_ENTRIES));
+ }
+ 
+ function inferSeverity(type) {
+diff --git a/server/lib/staticFilePolicy.js b/server/lib/staticFilePolicy.js
+new file mode 100644
+index 0000000..3cceb42
+--- /dev/null
++++ b/server/lib/staticFilePolicy.js
+@@ -0,0 +1,57 @@
++/**
++ * Which files the API's static fallback may serve.
++ *
++ * The API runs from the repository root. Without a list, every file below it
++ * is one GET away: server/data (admin sessions, password hashes, SQLite),
++ * data/ seed files with demo passwords, source, .git and .env files. Only the
++ * public asset directories and top-level HTML files are served; everything
++ * else is reported as not found.
++ */
++const fs = require("fs");
++const path = require("path");
++
++const PUBLIC_DIRS = ["public", "logo", "styles"];
++const ROOT_HTML = /^[A-Za-z0-9][A-Za-z0-9_-]*\.html$/;
++
++function isInside(parent, child) {
++  const rel = path.relative(parent, child);
++  return rel !== "" && !rel.startsWith("..") && !path.isAbsolute(rel);
++}
++
++/** Absolute path of the file to serve for a request path, or null. */
++function resolvePublicFile(rootDir, pathname) {
++  let decoded;
++  try {
++    decoded = decodeURIComponent(String(pathname || ""));
++  } catch {
++    return null;
++  }
++  if (decoded.includes("\0") || decoded.includes("\\")) return null;
++
++  const segments = path.posix
++    .normalize(`/${decoded}`)
++    .split("/")
++    .filter(Boolean);
++  if (segments.length === 0) segments.push("index.html");
++  if (segments.some((segment) => segment.startsWith("."))) return null;
++
++  const allowed = segments.length === 1 ? ROOT_HTML.test(segments[0]) : PUBLIC_DIRS.includes(segments[0]);
++  if (!allowed) return null;
++
++  try {
++    const root = fs.realpathSync(rootDir);
++    let file = path.join(root, ...segments);
++    if (fs.statSync(file).isDirectory()) file = path.join(file, "index.html");
++    const real = fs.realpathSync(file);
++    if (!fs.statSync(real).isFile()) return null;
++    const within =
++      segments.length === 1
++        ? path.dirname(real) === root
++        : PUBLIC_DIRS.some((dir) => isInside(path.join(root, dir), real));
++    return within ? real : null;
++  } catch {
++    return null;
++  }
++}
++
++module.exports = { resolvePublicFile, PUBLIC_DIRS };
+diff --git a/server/lib/supplierStore.js b/server/lib/supplierStore.js
+index c8603b2..c9c5844 100644
+--- a/server/lib/supplierStore.js
++++ b/server/lib/supplierStore.js
+@@ -4,7 +4,7 @@ const path = require("path");
+ const rootDir = path.join(__dirname, "..", "..");
+ const suppliersFile = path.join(rootDir, "data", "buzzard_suppliers.json");
+ const mappingsFile = path.join(rootDir, "data", "buzzard_supplier_category_mappings.json");
+-const secretsFile = path.join(__dirname, "..", "data", "supplier-secrets.json");
++const secretsFile = path.join(require("./dataDir").resolveDataDir(), "supplier-secrets.json");
+ 
+ function readSuppliersDoc() {
+   return JSON.parse(fs.readFileSync(suppliersFile, "utf8"));
+diff --git a/server/lib/syncLog.js b/server/lib/syncLog.js
+index b028d49..63c186f 100644
+--- a/server/lib/syncLog.js
++++ b/server/lib/syncLog.js
+@@ -1,7 +1,7 @@
+ const fs = require("fs");
+ const path = require("path");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("./dataDir").resolveDataDir();
+ const syncLogFile = path.join(dataDir, "sync-logs.json");
+ const importLogFile = path.join(dataDir, "import-logs.json");
+ 
+diff --git a/server/plugins/adminCatalogPlugin.js b/server/plugins/adminCatalogPlugin.js
+index 136cc6d..2fc166a 100644
+--- a/server/plugins/adminCatalogPlugin.js
++++ b/server/plugins/adminCatalogPlugin.js
+@@ -28,7 +28,7 @@ function rejectLegacyProductWrite(res, source) {
+   }
+ }
+ 
+-const ordersFile = path.join(__dirname, "..", "data", "orders.json");
++const ordersFile = path.join(require("../lib/dataDir").resolveDataDir(), "orders.json");
+ 
+ function readOrders() {
+   if (!fs.existsSync(ordersFile)) return [];
+diff --git a/server/plugins/aiAutomationPlugin.js b/server/plugins/aiAutomationPlugin.js
+index 0f88679..90fbb6a 100644
+--- a/server/plugins/aiAutomationPlugin.js
++++ b/server/plugins/aiAutomationPlugin.js
+@@ -5,6 +5,7 @@ const { requireAuth } = require("../lib/auth");
+ const { requirePermission } = require("../lib/rbac");
+ const { createRateLimiter } = require("../lib/security");
+ const automationEngine = require("../lib/automationEngine");
++const { getDataDirInfo } = require("../lib/dataDir");
+ const notificationEngine = require("../lib/notificationEngine");
+ const aiChatService = require("../lib/aiChatService");
+ const phoneAssistantService = require("../lib/phoneAssistantService");
+@@ -13,7 +14,7 @@ const productStore = require("../lib/productStore");
+ const supplierStore = require("../lib/supplierStore");
+ const fulfillmentStore = require("../lib/fulfillmentStore");
+ 
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = getDataDirInfo().path;
+ const cartsFile = path.join(dataDir, "abandoned-carts.json");
+ const chatRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "ai-chat:" });
+ 
+@@ -450,7 +451,7 @@ function collectHealth() {
+   try {
+     const fs = require("fs");
+     const path = require("path");
+-    const file = path.join(__dirname, "..", "data", "submissions.json");
++    const file = path.join(dataDir, "submissions.json");
+     if (fs.existsSync(file)) {
+       const rows = JSON.parse(fs.readFileSync(file, "utf8") || "[]");
+       contactSubmissions = { enabled: true, count: Array.isArray(rows) ? rows.length : 0 };
+@@ -557,7 +558,8 @@ function collectHealth() {
+ module.exports = {
+   register(app) {
+     app.get("/api/health", (_req, res) => {
+-      return res.json({ success: true, ...collectHealth() });
++      const { mode, isolated } = getDataDirInfo();
++      return res.json({ success: true, ...collectHealth(), adminData: { mode, isolated } });
+     });
+ 
+     app.post("/api/ai/chat", (req, res) => {
+diff --git a/server/plugins/logisticsPlugin.js b/server/plugins/logisticsPlugin.js
+index 6764bac..8991c13 100644
+--- a/server/plugins/logisticsPlugin.js
++++ b/server/plugins/logisticsPlugin.js
+@@ -10,7 +10,7 @@ const customerStore = require("../lib/customerStore");
+ const fs = require("fs");
+ const path = require("path");
+ 
+-const ordersFile = path.join(__dirname, "..", "data", "orders.json");
++const ordersFile = path.join(require("../lib/dataDir").resolveDataDir(), "orders.json");
+ 
+ function readOrders() {
+   if (!fs.existsSync(ordersFile)) return [];
+diff --git a/server/plugins/ordersPlugin.js b/server/plugins/ordersPlugin.js
+index 6d7d946..4197396 100644
+--- a/server/plugins/ordersPlugin.js
++++ b/server/plugins/ordersPlugin.js
+@@ -17,7 +17,7 @@ const fulfillmentStore = require("../lib/fulfillmentStore");
+ const { validateCoupon } = require("../lib/coupons");
+ 
+ const rootDir = path.join(__dirname, "..", "..");
+-const dataDir = path.join(__dirname, "..", "data");
++const dataDir = require("../lib/dataDir").resolveDataDir();
+ const ordersFile = path.join(dataDir, "orders.json");
+ const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+ 
+diff --git a/server/server.js b/server/server.js
+index ceb2e8d..eb9cc5f 100644
+--- a/server/server.js
++++ b/server/server.js
+@@ -6,6 +6,7 @@ const { isDefaultJwtSecret } = require('./lib/dbAuth');
+ const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
+ const { logSecurityEvent } = require('./lib/securityLog');
+ const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
++const { resolvePublicFile } = require('./lib/staticFilePolicy');
+ 
+ const port = process.env.PORT || 3001;
+ const rootDir = path.join(__dirname, '..');
+@@ -158,10 +159,6 @@ function sendFile(res, filePath) {
+   });
+ }
+ 
+-function safePath(requestPath) {
+-  const cleaned = path.normalize(requestPath).replace(/^\.\.[/\\]+/, '');
+-  return path.join(rootDir, cleaned);
+-}
+ 
+ const MAX_BODY_BYTES = 256 * 1024;
+ 
+@@ -340,18 +337,8 @@ const server = http.createServer(async (req, res) => {
+     return;
+   }
+ 
+-  let filePath = pathname === '/' ? path.join(rootDir, 'index.html') : safePath(pathname);
+-
+-  if (!filePath.startsWith(rootDir)) {
+-    sendJson(res, 403, { message: 'Zugriff verweigert.' });
+-    return;
+-  }
+-
+-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+-    filePath = path.join(filePath, 'index.html');
+-  }
+-
+-  if (!fs.existsSync(filePath)) {
++  const filePath = req.method === 'GET' || req.method === 'HEAD' ? resolvePublicFile(rootDir, pathname) : null;
++  if (!filePath) {
+     sendJson(res, 404, { message: 'Seite nicht gefunden.' });
+     return;
+   }
+diff --git a/vitest.config.ts b/vitest.config.ts
+index fda57b2..9765d9e 100644
+--- a/vitest.config.ts
++++ b/vitest.config.ts
+@@ -27,6 +27,7 @@ export default defineConfig({
+       "lib/categories/i18n.test.ts",
+     ],
+     globals: false,
++    globalSetup: ["./scripts/vitest-global-setup.mjs"],
+     testTimeout: 15000,
+     env: {
+       BUZZARD_SALES_GATE_BYPASS: "1",

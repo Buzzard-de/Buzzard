@@ -1,0 +1,40 @@
+{
+  "takenAtUtc": "2026-11-18T05:43:03.831Z",
+  "files": {
+    "admin-sessions.json": {
+      "sha256": "15f9855f0046dda6b73d08a7cc348faf1451023dd617b16492fc2becae355e17",
+      "size": 1078,
+      "mtime": "2026-11-17T17:28:21.698Z"
+    },
+    "admin-users.json": {
+      "sha256": "945fd0a13fc31b0a044ed1ca3a2115d737c67d9de2ccb36258155850dd1c0e63",
+      "size": 1299,
+      "mtime": "2026-11-17T16:52:15.492Z"
+    },
+    "audit-log.json": {
+      "sha256": "e1b4b60d1ff8ac964006b14a95846348ef90e2639139a7e35c6f473365680a4b",
+      "size": 2552,
+      "mtime": "2026-11-17T17:29:07.214Z"
+    },
+    "automation-events.json": {
+      "sha256": "c1c32687822049446d54f4ae209a899a7606efbdc69a718e8060b2341c1abc21",
+      "size": 7274,
+      "mtime": "2026-11-17T17:29:21.646Z"
+    },
+    "buzzard.db": {
+      "sha256": "42224f804208319768768672e43b90b3d240284d26e91c713beea554bafa497e",
+      "size": 1761280,
+      "mtime": "2026-11-17T16:52:20.324Z"
+    },
+    "customers.json": {
+      "sha256": "ef23706b719739fe3820eb00864b30aa18b3c849d1be12328d1680b6aba71b57",
+      "size": 620,
+      "mtime": "2026-11-17T14:54:14.318Z"
+    },
+    "security-log.json": {
+      "sha256": "12d8bd3d18772380acf151241a82c0536adf03a130b9e57c608e73dfc7e37ff4",
+      "size": 398824,
+      "mtime": "2026-11-17T17:29:21.646Z"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "version": "1.3.0",
+  "alignedWithUserList": "2026-11-19",
+  "orderedPhases": [
+    { "n": 1, "id": "core_integrity", "titleTr": "Çekirdek sistem ve veri bütünlüğü", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase1CoreIntegrity.test.mjs" },
+    { "n": 2, "id": "category_filters", "titleTr": "Kategori, alt kategori, özellik ve filtreler", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase2CategoryInfrastructure.test.mjs" },
+    { "n": 3, "id": "product_pim", "titleTr": "Ürün oluşturma ve veri yönetimi", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase3ProductPim.test.mjs" },
+    { "n": 4, "id": "supplier", "titleTr": "Tedarikçi entegrasyonları ve stok otomasyonu", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase4SupplierAutomation.test.mjs" },
+    { "n": 5, "id": "pricing", "titleTr": "Fiyatlandırma ve kâr motoru", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase5PricingProfit.test.mjs" },
+    { "n": 6, "id": "order_management", "titleTr": "Sipariş yönetimi", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 7, "id": "payment_finance", "titleTr": "Ödeme ve finans", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 8, "id": "logistics", "titleTr": "Kargo ve lojistik", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 9, "id": "textile_ai", "titleTr": "Tekstil AI (canlı)", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs", "liveBlocked": ["TEX_LIVE_TRYON"] },
+    { "n": 10, "id": "marketplace", "titleTr": "Pazaryeri otomasyonu", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 11, "id": "pim_sot", "titleTr": "Ürün yönetimi ve PIM (SoT)", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 12, "id": "customer_support", "titleTr": "Müşteri hizmetleri", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 13, "id": "pusat", "titleTr": "Pusat ve AI Kurmay", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 14, "id": "ai_specialists", "titleTr": "AI uzmanlık modülleri", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 15, "id": "storefront", "titleTr": "Mağaza ve UX", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 16, "id": "tax_compliance", "titleTr": "Vergi, gümrük, yasal", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 17, "id": "security", "titleTr": "Güvenlik", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 18, "id": "marketing", "titleTr": "Pazarlama ve marka", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 19, "id": "admin_reporting", "titleTr": "Yönetim ve raporlama", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 20, "id": "performance", "titleTr": "Performans ve dayanıklılık", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
+    { "n": 21, "id": "e2e_automation", "titleTr": "Uçtan uca otomasyon", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" }
+  ],
+  "incompleteChecklist": "data/master/buzzard_incomplete_checklist.v1.json",
+  "liveBlockedCriticalSix": [
+    "Canlı TecDoc",
+    "Gerçek tedarikçi API",
+    "Gerçek ödeme tahsilatı",
+    "Gerçek iade/geri ödeme",
+    "Tax Connect canlı",
+    "Canlı kargo fiyatları"
+  ],
+  "liveBlockedDevListItems": [19, 20, 28, 30, 37, 41]
+}

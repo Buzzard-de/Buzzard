@@ -13,16 +13,30 @@ function newCorrelationId() {
   return `corr_${crypto.randomBytes(8).toString("hex")}`;
 }
 
+// Ids arrive in request headers and end up in logs and response headers.
+const ID_PATTERN = /^[A-Za-z0-9_.:-]{1,64}$/;
+const MAX_CONTEXTS = 2000;
+
+function acceptId(value) {
+  return typeof value === "string" && ID_PATTERN.test(value) ? value : null;
+}
+
 function createContext({ requestId, correlationId, jobId, actor } = {}) {
   const ctx = {
-    requestId: requestId || newRequestId(),
-    correlationId: correlationId || newCorrelationId(),
+    requestId: acceptId(requestId) || newRequestId(),
+    correlationId: acceptId(correlationId) || newCorrelationId(),
     jobId: jobId || null,
     actor: actor || null,
     createdAt: new Date().toISOString(),
   };
   store.set(ctx.requestId, ctx);
+  // Bounded: a context nobody released must not stay in memory forever.
+  while (store.size > MAX_CONTEXTS) store.delete(store.keys().next().value);
   return ctx;
+}
+
+function releaseContext(requestId) {
+  store.delete(requestId);
 }
 
 function getContext(requestId) {
@@ -46,7 +60,7 @@ function formatLogPrefix(ctx) {
 
 function middleware() {
   return (req, res, next) => {
-    const incoming = req.headers["x-request-id"] || req.headers["x-correlation-id"];
+    const incoming = acceptId(req.headers["x-request-id"]) || acceptId(req.headers["x-correlation-id"]);
     const ctx = createContext({
       requestId: req.headers["x-request-id"] || undefined,
       correlationId: incoming || undefined,
@@ -65,6 +79,9 @@ module.exports = {
   newRequestId,
   newCorrelationId,
   createContext,
+  releaseContext,
+  acceptId,
+  MAX_CONTEXTS,
   getContext,
   bindJob,
   formatLogPrefix,

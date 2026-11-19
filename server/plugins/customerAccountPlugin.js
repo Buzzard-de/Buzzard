@@ -8,6 +8,7 @@ const {
   createSession,
   createResetToken,
   consumeResetToken,
+  revokeCustomerSessions,
 } = require("../lib/customerAuth");
 const customerStore = require("../lib/customerStore");
 const fulfillmentStore = require("../lib/fulfillmentStore");
@@ -51,7 +52,6 @@ module.exports = {
       const session = createSession(result.customer);
       logAudit({
         userId: result.customer.id,
-        userEmail: result.customer.email,
         action: "register",
         entityType: "customer",
         entityId: result.customer.id,
@@ -251,7 +251,6 @@ module.exports = {
       if (!exportData) return res.status(404).json({ success: false, errorKey: "account.notFound" });
       logAudit({
         userId: session.customerId,
-        userEmail: session.email,
         action: "export",
         entityType: "customer",
         entityId: session.customerId,
@@ -270,29 +269,31 @@ module.exports = {
 
     app.post("/api/account/password-reset/request", (req, res) => {
       const email = String(req.body?.email || "").trim().toLowerCase();
+      // One answer for known and unknown addresses.
+      const answer = { success: true, message: "If the email exists, a reset link was generated." };
       const customer = customerStore.findByEmail(email);
-      if (customer) {
-        const reset = createResetToken(customer.id, req);
+      if (!customer) return res.json(answer);
+
+      // A reset token proves control of the mailbox only if it is sent there. Without mail
+      // delivery a deployed server creates none; development and test stacks get it in the answer.
+      const tokenInAnswer = !require("../lib/runtimeEnv").isProduction();
+      let reset = null;
+      if (tokenInAnswer) {
+        reset = createResetToken(customer.id, req);
         if (reset.limited) {
           return res.status(429).json({ success: false, errorKey: "security.rateLimited" });
         }
-        logAudit({
-          userId: customer.id,
-          userEmail: customer.email,
-          action: "password_reset_request",
-          entityType: "customer",
-          entityId: customer.id,
-          field: null,
-          oldValue: null,
-          newValue: "requested",
-        });
-        return res.json({
-          success: true,
-          message: "If the email exists, a reset link was generated.",
-          resetToken: reset.token,
-        });
       }
-      return res.json({ success: true, message: "If the email exists, a reset link was generated." });
+      logAudit({
+        userId: customer.id,
+        action: "password_reset_request",
+        entityType: "customer",
+        entityId: customer.id,
+        field: null,
+        oldValue: null,
+        newValue: tokenInAnswer ? "requested" : "requested_no_delivery_channel",
+      });
+      return res.json(reset ? { ...answer, resetToken: reset.token } : answer);
     });
 
     app.post("/api/account/password-reset/confirm", (req, res) => {
@@ -306,6 +307,16 @@ module.exports = {
       const customerId = consumeResetToken(token);
       if (!customerId) return res.status(400).json({ success: false, errorKey: "account.passwordReset.invalidToken" });
       customerStore.updatePassword(customerId, password);
+      // Whoever was signed in with the old password is signed out.
+      const endedSessions = revokeCustomerSessions(customerId);
+      logAudit({
+        userId: customerId,
+        action: "password_reset_complete",
+        entityType: "customer",
+        entityId: customerId,
+        field: "password",
+        metadata: { endedSessions },
+      });
       return res.json({ success: true });
     });
 

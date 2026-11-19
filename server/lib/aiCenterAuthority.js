@@ -97,7 +97,9 @@ function isExplanation(text, folded) {
 }
 
 function detectCommercialKind(text, action) {
-  const explicit = EXPLICIT_ACTIONS[String(action || "").trim().toLowerCase()];
+  const requested = String(action || "").trim().toLowerCase();
+  // Own entries only: "constructor" or "__proto__" as an action must not resolve to anything.
+  const explicit = Object.prototype.hasOwnProperty.call(EXPLICIT_ACTIONS, requested) ? EXPLICIT_ACTIONS[requested] : null;
   if (explicit) return explicit;
   const folded = foldLatin(text.toLowerCase());
   if (isExplanation(text, folded)) return null;

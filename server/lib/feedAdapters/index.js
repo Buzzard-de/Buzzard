@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.join(__dirname, "..", "..", "..");
-const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+const productsFile = require("../catalogFiles").runtimeCatalogFile("buzzard_products.json");
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://buzzard24.de";
 
 function loadProducts() {

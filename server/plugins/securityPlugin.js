@@ -64,6 +64,13 @@ module.exports = {
       });
     });
 
+    // State of the account, session and log stores: counts and states only, no content.
+    app.get("/api/admin/security/stores", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "security.read")) return;
+      return res.json({ success: true, ...require("../lib/storeHealth").describeStores() });
+    });
+
     app.get("/api/admin/security/events", (req, res) => {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "security.read")) return;

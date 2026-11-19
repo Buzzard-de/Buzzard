@@ -20,7 +20,7 @@ Phases **0–14 are VERIFIED** in an isolated staging tree with evidence logs. P
 
 ## 3. Final project status
 
-- Checkpoint branch pushed with artifacts, redacted patch, NOTES, Phase 11–13 logs.
+- Checkpoint branch (PR #507) with artifacts, redacted patch, NOTES, Phase 8–13 logs, and `BUZZARD_PR507_FINAL_REVIEW.md`.
 - Staging implements Phases 1–14 corrections; live module graph **not** rewritten (watcher hazard).
 - SALES locked, EGRESS deny, productionReady false, live false.
 

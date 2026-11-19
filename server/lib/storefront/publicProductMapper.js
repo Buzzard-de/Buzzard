@@ -86,15 +86,22 @@ function buildStructuredData(product, seo) {
   };
 }
 
-function mapPimToStorefront(product) {
-  if (!product) return null;
-
-  const seoRaw = product.seo || {};
-  const slug = seoRaw.slug || String(product.title || product.sku)
+/** Same slug the public catalog shows for a product (seo.slug, else from the title). */
+function storefrontSlugOf(product) {
+  const seoRaw = product?.seo || {};
+  if (seoRaw.slug) return String(seoRaw.slug).replace(/^\/+|\/+$/g, "");
+  return String(product?.title || product?.sku || "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 120);
+}
+
+function mapPimToStorefront(product) {
+  if (!product) return null;
+
+  const seoRaw = product.seo || {};
+  const slug = storefrontSlugOf(product);
 
   const media = mapMedia(product.images, product.documents);
   const imageUrls = media.filter((m) => m.type === "image").map((m) => m.url);
@@ -150,6 +157,7 @@ function mapPimToStorefront(product) {
 }
 
 module.exports = {
+  storefrontSlugOf,
   mapPimToStorefront,
   isSafeMediaUrl,
   PLACEHOLDER_IMAGE,

@@ -1,0 +1,1945 @@
+{
+  "schema": "buzzard.l1-catalog-filter-templates.v1",
+  "generatedAt": "2026-11-18T18:55:03.979Z",
+  "note": "L1 defaults inherited by all L2 subcategories unless overridden.",
+  "templates": {
+    "textil": {
+      "l1Id": "cat-01",
+      "slug": "textil",
+      "filters": [
+        "brand",
+        "size",
+        "color",
+        "material",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "size",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "color",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "material",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "kosmetik-und-koerperpflege": {
+      "l1Id": "cat-02",
+      "slug": "kosmetik-und-koerperpflege",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "reinigungsprodukte": {
+      "l1Id": "cat-03",
+      "slug": "reinigungsprodukte",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "schule-und-buerobedarf": {
+      "l1Id": "cat-04",
+      "slug": "schule-und-buerobedarf",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "automotive": {
+      "l1Id": "cat-05",
+      "slug": "automotive",
+      "filters": [
+        "brand",
+        "mpn",
+        "gtin",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "position",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "oeReference",
+          "type": "string",
+          "required": false,
+          "filter": false
+        },
+        {
+          "key": "vehicleFitment",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "haustierbedarf": {
+      "l1Id": "cat-06",
+      "slug": "haustierbedarf",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "garten": {
+      "l1Id": "cat-07",
+      "slug": "garten",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "arbeitsschutz-und-berufskleidung": {
+      "l1Id": "cat-08",
+      "slug": "arbeitsschutz-und-berufskleidung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "werkzeuge-und-eisenwaren": {
+      "l1Id": "cat-09",
+      "slug": "werkzeuge-und-eisenwaren",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "haus-und-wohnen": {
+      "l1Id": "cat-10",
+      "slug": "haus-und-wohnen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "moebel": {
+      "l1Id": "cat-11",
+      "slug": "moebel",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "elektronik": {
+      "l1Id": "cat-12",
+      "slug": "elektronik",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "connectivity",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "powerWatts",
+          "type": "number",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "haushaltsgeraete": {
+      "l1Id": "cat-13",
+      "slug": "haushaltsgeraete",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "sport-und-outdoor": {
+      "l1Id": "cat-14",
+      "slug": "sport-und-outdoor",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "schuhe": {
+      "l1Id": "cat-15",
+      "slug": "schuhe",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "taschen-und-accessoires": {
+      "l1Id": "cat-16",
+      "slug": "taschen-und-accessoires",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "mutter-und-baby": {
+      "l1Id": "cat-17",
+      "slug": "mutter-und-baby",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "spielzeug-und-kinder": {
+      "l1Id": "cat-18",
+      "slug": "spielzeug-und-kinder",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "hobby-und-freizeit": {
+      "l1Id": "cat-19",
+      "slug": "hobby-und-freizeit",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "tier-und-landwirtschaftsausruestung": {
+      "l1Id": "cat-20",
+      "slug": "tier-und-landwirtschaftsausruestung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "bau-und-konstruktion": {
+      "l1Id": "cat-21",
+      "slug": "bau-und-konstruktion",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "elektro-und-beleuchtung": {
+      "l1Id": "cat-22",
+      "slug": "elektro-und-beleuchtung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "wasser-heizung-und-sanitaer": {
+      "l1Id": "cat-23",
+      "slug": "wasser-heizung-und-sanitaer",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "kueche-und-essen": {
+      "l1Id": "cat-24",
+      "slug": "kueche-und-essen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "tierfutter": {
+      "l1Id": "cat-26",
+      "slug": "tierfutter",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "gesundheit-und-wellness": {
+      "l1Id": "cat-27",
+      "slug": "gesundheit-und-wellness",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "buero-und-gewerbe": {
+      "l1Id": "cat-28",
+      "slug": "buero-und-gewerbe",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "verpackung-und-versand": {
+      "l1Id": "cat-29",
+      "slug": "verpackung-und-versand",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "industrie-und-gewerbeausruestung": {
+      "l1Id": "cat-30",
+      "slug": "industrie-und-gewerbeausruestung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "sicherheit-und-ueberwachung": {
+      "l1Id": "cat-31",
+      "slug": "sicherheit-und-ueberwachung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "reise-und-koffer": {
+      "l1Id": "cat-32",
+      "slug": "reise-und-koffer",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "gartenhobby-und-camping": {
+      "l1Id": "cat-33",
+      "slug": "gartenhobby-und-camping",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "saisonales-und-feiern": {
+      "l1Id": "cat-34",
+      "slug": "saisonales-und-feiern",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "dekoration": {
+      "l1Id": "cat-35",
+      "slug": "dekoration",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "persoenliche-elektronik-und-mobil": {
+      "l1Id": "cat-36",
+      "slug": "persoenliche-elektronik-und-mobil",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "foto-und-video": {
+      "l1Id": "cat-37",
+      "slug": "foto-und-video",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "computer-und-gaming": {
+      "l1Id": "cat-38",
+      "slug": "computer-und-gaming",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "fahrzeug-und-mobilitaet": {
+      "l1Id": "cat-39",
+      "slug": "fahrzeug-und-mobilitaet",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "energie-und-solar": {
+      "l1Id": "cat-40",
+      "slug": "energie-und-solar",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "angebote-und-sonderkollektionen": {
+      "l1Id": "cat-41",
+      "slug": "angebote-und-sonderkollektionen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "heimtextilien": {
+      "l1Id": "cat-42",
+      "slug": "heimtextilien",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "koerperpflege": {
+      "l1Id": "cat-44",
+      "slug": "koerperpflege",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "apotheke-medizinprodukte": {
+      "l1Id": "cat-45",
+      "slug": "apotheke-medizinprodukte",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "kinder-schule": {
+      "l1Id": "cat-47",
+      "slug": "kinder-schule",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "musik-musikinstrumente": {
+      "l1Id": "cat-48",
+      "slug": "musik-musikinstrumente",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "buecher-medien-unterhaltung": {
+      "l1Id": "cat-49",
+      "slug": "buecher-medien-unterhaltung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "geschenke-blumen-anlaesse": {
+      "l1Id": "cat-50",
+      "slug": "geschenke-blumen-anlaesse",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "kunsthandwerk-naehen-diy": {
+      "l1Id": "cat-51",
+      "slug": "kunsthandwerk-naehen-diy",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "pool-spa-wellness-ausstattung": {
+      "l1Id": "cat-52",
+      "slug": "pool-spa-wellness-ausstattung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "luxus-sammlerstuecke-wertvolles": {
+      "l1Id": "cat-53",
+      "slug": "luxus-sammlerstuecke-wertvolles",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    }
+  },
+  "byL1Id": {
+    "cat-01": {
+      "slug": "textil",
+      "filters": [
+        "brand",
+        "size",
+        "color",
+        "material",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "size",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "color",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "material",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-02": {
+      "slug": "kosmetik-und-koerperpflege",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-03": {
+      "slug": "reinigungsprodukte",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-04": {
+      "slug": "schule-und-buerobedarf",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-05": {
+      "slug": "automotive",
+      "filters": [
+        "brand",
+        "mpn",
+        "gtin",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "position",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "oeReference",
+          "type": "string",
+          "required": false,
+          "filter": false
+        },
+        {
+          "key": "vehicleFitment",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-06": {
+      "slug": "haustierbedarf",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-07": {
+      "slug": "garten",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-08": {
+      "slug": "arbeitsschutz-und-berufskleidung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-09": {
+      "slug": "werkzeuge-und-eisenwaren",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-10": {
+      "slug": "haus-und-wohnen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-11": {
+      "slug": "moebel",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-12": {
+      "slug": "elektronik",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock"
+      ],
+      "attributes": [
+        {
+          "key": "connectivity",
+          "type": "string",
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "powerWatts",
+          "type": "number",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-13": {
+      "slug": "haushaltsgeraete",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-14": {
+      "slug": "sport-und-outdoor",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-15": {
+      "slug": "schuhe",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-16": {
+      "slug": "taschen-und-accessoires",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-17": {
+      "slug": "mutter-und-baby",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-18": {
+      "slug": "spielzeug-und-kinder",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-19": {
+      "slug": "hobby-und-freizeit",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-20": {
+      "slug": "tier-und-landwirtschaftsausruestung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-21": {
+      "slug": "bau-und-konstruktion",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-22": {
+      "slug": "elektro-und-beleuchtung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-23": {
+      "slug": "wasser-heizung-und-sanitaer",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-24": {
+      "slug": "kueche-und-essen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-26": {
+      "slug": "tierfutter",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-27": {
+      "slug": "gesundheit-und-wellness",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-28": {
+      "slug": "buero-und-gewerbe",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-29": {
+      "slug": "verpackung-und-versand",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-30": {
+      "slug": "industrie-und-gewerbeausruestung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-31": {
+      "slug": "sicherheit-und-ueberwachung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-32": {
+      "slug": "reise-und-koffer",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-33": {
+      "slug": "gartenhobby-und-camping",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-34": {
+      "slug": "saisonales-und-feiern",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-35": {
+      "slug": "dekoration",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-36": {
+      "slug": "persoenliche-elektronik-und-mobil",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-37": {
+      "slug": "foto-und-video",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-38": {
+      "slug": "computer-und-gaming",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-39": {
+      "slug": "fahrzeug-und-mobilitaet",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-40": {
+      "slug": "energie-und-solar",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-41": {
+      "slug": "angebote-und-sonderkollektionen",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-42": {
+      "slug": "heimtextilien",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-44": {
+      "slug": "koerperpflege",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-45": {
+      "slug": "apotheke-medizinprodukte",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-47": {
+      "slug": "kinder-schule",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-48": {
+      "slug": "musik-musikinstrumente",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-49": {
+      "slug": "buecher-medien-unterhaltung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-50": {
+      "slug": "geschenke-blumen-anlaesse",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-51": {
+      "slug": "kunsthandwerk-naehen-diy",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-52": {
+      "slug": "pool-spa-wellness-ausstattung",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    },
+    "cat-53": {
+      "slug": "luxus-sammlerstuecke-wertvolles",
+      "filters": [
+        "brand",
+        "minPrice",
+        "maxPrice",
+        "inStock",
+        "availability"
+      ],
+      "attributes": [
+        {
+          "key": "variant",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    }
+  },
+  "overrides": {
+    "cat-05-03": {
+      "attributes": [
+        {
+          "key": "axle",
+          "type": "enum",
+          "values": [
+            "front",
+            "rear"
+          ],
+          "required": false,
+          "filter": true
+        },
+        {
+          "key": "position",
+          "type": "string",
+          "required": false,
+          "filter": true
+        }
+      ]
+    }
+  }
+}

@@ -3,7 +3,24 @@ const jwt = require("jsonwebtoken");
 const { db } = require("./db");
 const { hashPassword: legacyHashPassword } = require("./dbAuth");
 
-const secret = process.env.JWT_SECRET || process.env.AUTH_SECRET || "DEV_ONLY_CHANGE_ME";
+const { secret } = require("./jwtSecret");
+const { isProduction } = require("./runtimeEnv");
+const { createRateLimiter, getClientIp } = require("./security");
+const { logSecurityEvent } = require("./securityLog");
+const { getLockoutInfo, recordFailure, clearFailures } = require("./accountLockout");
+
+// Per address and account, like the other sign-in routes.
+const loginLimit = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 8, keyPrefix: "identity-login:" });
+
+/**
+ * A reset or verification token proves control of the mailbox only if it
+ * travels through the mailbox. There is no mail delivery yet, so development
+ * and test stacks get the token in the answer; a deployed server never hands
+ * it to the caller.
+ */
+function mayReturnTokenToCaller() {
+  return !isProduction();
+}
 const accessMinutes = Number(process.env.ACCESS_TOKEN_MINUTES || 30);
 const refreshDays = Number(process.env.REFRESH_TOKEN_DAYS || 30);
 
@@ -37,13 +54,13 @@ function verifyPassword(storedHash, password) {
 }
 
 function ipHash(req) {
-  const ip = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown";
-  return sha256(Array.isArray(ip) ? ip[0] : ip);
+  return sha256(getClientIp(req));
 }
 
 function accessToken(user) {
-  return jwt.sign({ sub: user.id, email: user.email, role: user.role }, secret, {
+  return jwt.sign(require("./dbAuth").buildClaims(user), secret, {
     expiresIn: `${accessMinutes}m`,
+    algorithm: "HS256",
   });
 }
 
@@ -52,6 +69,11 @@ function audit(userId, eventType, req, metadata = {}) {
     INSERT INTO identity_security_audit(user_id, event_type, ip_hash, metadata_json)
     VALUES(?,?,?,?)
   `).run(userId || null, eventType, ipHash(req), JSON.stringify(metadata || {}));
+}
+
+/** A token as text; anything that is not a string of plausible length matches nothing. */
+function tokenText(value) {
+  return typeof value === "string" && value.length <= 256 ? value : "";
 }
 
 function registerUser(body = {}, req) {
@@ -86,6 +108,7 @@ function registerUser(body = {}, req) {
     `).run(result.lastInsertRowid, sha256(raw), "email_verification");
 
     audit(result.lastInsertRowid, "register", req);
+    if (!mayReturnTokenToCaller()) return { userId: result.lastInsertRowid };
     return { userId: result.lastInsertRowid, verificationTokenForDevelopment: raw };
   } catch {
     return { error: "Email already registered", status: 409 };
@@ -98,7 +121,7 @@ function verifyEmail(body = {}, req) {
       SELECT * FROM identity_verification_tokens
       WHERE token_hash = ? AND token_type = 'email_verification' AND used = 0 AND expires_at > datetime('now')
     `)
-    .get(sha256(body.token || ""));
+    .get(sha256(tokenText(body.token)));
   if (!row) return { error: "Invalid or expired verification token", status: 400 };
 
   db.prepare("UPDATE users SET email_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(row.user_id);
@@ -111,8 +134,24 @@ function loginUser(body = {}, req) {
   const email = String(body.email || "")
     .toLowerCase()
     .trim();
-  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  const ok = user && (user.status || "active") === "active" && verifyPassword(user.password_hash, body.password);
+  const ip = getClientIp(req);
+  const lockout = getLockoutInfo("identity", email);
+  if (lockout.locked) {
+    return { error: "Account temporarily locked", status: 423, retryAfterSec: lockout.retryAfterSec };
+  }
+  if (loginLimit(req, { key: `${ip}:${email || "unknown"}` })) {
+    logSecurityEvent({ type: "auth_login_rate_limited", success: false, ip, email, path: "/api/identity-security/auth/login" });
+    return { error: "Too many attempts. Please try again later.", status: 429 };
+  }
+  const password = typeof body.password === "string" && body.password.length <= 1024 ? body.password : null;
+  const user = email && password ? db.prepare("SELECT * FROM users WHERE email = ?").get(email) : null;
+  const ok = Boolean(user) && (user.status || "active") === "active" && verifyPassword(user.password_hash, password);
+  if (ok) {
+    clearFailures("identity", email);
+  } else {
+    recordFailure("identity", email, { ip, email, path: "/api/identity-security/auth/login" });
+    logSecurityEvent({ type: "auth_login_failed", success: false, ip, email, path: "/api/identity-security/auth/login" });
+  }
 
   db.prepare("INSERT INTO identity_login_attempts(email, success, ip_hash) VALUES(?,?,?)").run(
     email,
@@ -150,7 +189,7 @@ function refreshAccessToken(body = {}) {
       JOIN users u ON u.id = s.user_id
       WHERE s.refresh_hash = ? AND s.revoked = 0 AND s.expires_at > datetime('now')
     `)
-    .get(sha256(body.refreshToken || ""));
+    .get(sha256(tokenText(body.refreshToken)));
 
   if (!session || session.status !== "active") {
     return { error: "Invalid refresh token", status: 401 };
@@ -158,9 +197,9 @@ function refreshAccessToken(body = {}) {
 
   return {
     accessToken: jwt.sign(
-      { sub: session.user_id, email: session.email, role: session.role },
+      require("./dbAuth").buildClaims({ id: session.user_id, email: session.email, role: session.role }),
       secret,
-      { expiresIn: `${accessMinutes}m` }
+      { expiresIn: `${accessMinutes}m`, algorithm: "HS256" }
     ),
   };
 }
@@ -168,7 +207,7 @@ function refreshAccessToken(body = {}) {
 function logoutUser(userId, body = {}, req) {
   if (body.refreshToken) {
     db.prepare("UPDATE identity_sessions SET revoked = 1 WHERE refresh_hash = ? AND user_id = ?").run(
-      sha256(body.refreshToken),
+      sha256(tokenText(body.refreshToken)),
       userId
     );
   }
@@ -249,17 +288,36 @@ function requestPasswordReset(body = {}, req) {
   const email = String(body.email || "")
     .toLowerCase()
     .trim();
-  const user = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
-  if (user) {
-    const raw = crypto.randomBytes(32).toString("hex");
-    db.prepare(`
-      INSERT INTO identity_verification_tokens(user_id, token_hash, token_type, expires_at)
-      VALUES(?,?,?,datetime('now','+1 hour'))
-    `).run(user.id, sha256(raw), "password_reset");
-    audit(user.id, "password_reset_requested", req);
-    return { ok: true, resetTokenForDevelopment: raw };
+  const user = db.prepare("SELECT id, role FROM users WHERE email = ?").get(email);
+  // The answer is the same whether or not the address is known.
+  if (!user) return { ok: true };
+
+  // Accounts with back-office access are not reset through the self-service route.
+  if ((user.role || "customer") !== "customer") {
+    logSecurityEvent({
+      type: "password_reset_refused",
+      severity: "HIGH",
+      success: false,
+      ip: getClientIp(req),
+      userId: String(user.id),
+      role: user.role,
+      path: "/api/identity-security/auth/password-reset-request",
+      detail: { reason: "back_office_account" },
+    });
+    return { ok: true };
   }
-  return { ok: true };
+
+  audit(user.id, "password_reset_requested", req);
+  if (!mayReturnTokenToCaller()) {
+    // No delivery channel: no token is created that nobody could legitimately receive.
+    return { ok: true };
+  }
+  const raw = crypto.randomBytes(32).toString("hex");
+  db.prepare(`
+    INSERT INTO identity_verification_tokens(user_id, token_hash, token_type, expires_at)
+    VALUES(?,?,?,datetime('now','+1 hour'))
+  `).run(user.id, sha256(raw), "password_reset");
+  return { ok: true, resetTokenForDevelopment: raw };
 }
 
 function completePasswordReset(body = {}, req) {
@@ -271,8 +329,22 @@ function completePasswordReset(body = {}, req) {
       SELECT * FROM identity_verification_tokens
       WHERE token_hash = ? AND token_type = 'password_reset' AND used = 0 AND expires_at > datetime('now')
     `)
-    .get(sha256(body.token || ""));
+    .get(sha256(tokenText(body.token)));
   if (!token) return { error: "Invalid or expired reset token", status: 400 };
+  const owner = db.prepare("SELECT role FROM users WHERE id = ?").get(token.user_id);
+  if (!owner || (owner.role || "customer") !== "customer") {
+    db.prepare("UPDATE identity_verification_tokens SET used = 1 WHERE id = ?").run(token.id);
+    logSecurityEvent({
+      type: "password_reset_refused",
+      severity: "HIGH",
+      success: false,
+      ip: getClientIp(req),
+      userId: String(token.user_id),
+      path: "/api/identity-security/auth/password-reset",
+      detail: { reason: "back_office_account_token" },
+    });
+    return { error: "Invalid or expired reset token", status: 400 };
+  }
 
   db.prepare("UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(
     hashPassword(password),

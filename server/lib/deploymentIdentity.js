@@ -24,7 +24,7 @@ function readBuildInfoFile() {
 function readLocalGitCommit() {
   try {
     const root = path.join(__dirname, "..", "..");
-    return execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8" }).trim();
+    return execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   } catch {
     return null;
   }
@@ -33,7 +33,7 @@ function readLocalGitCommit() {
 function readLocalGitBranch() {
   try {
     const root = path.join(__dirname, "..", "..");
-    return execSync("git rev-parse --abbrev-ref HEAD", { cwd: root, encoding: "utf8" }).trim();
+    return execSync("git rev-parse --abbrev-ref HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
   } catch {
     return null;
   }

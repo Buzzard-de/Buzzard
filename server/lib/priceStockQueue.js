@@ -5,8 +5,8 @@ const { calculateSalePrice, applySafetyStock } = require("./pricing");
 const fs = require("fs");
 const path = require("path");
 
-const queueFile = path.join(__dirname, "..", "data", "price-stock-queue.json");
-const auditFile = path.join(__dirname, "..", "data", "price-stock-audit.json");
+const queueFile = path.join(require("./dataDir").resolveDataDir(), "price-stock-queue.json");
+const auditFile = path.join(require("./dataDir").resolveDataDir(), "price-stock-audit.json");
 
 const LARGE_CHANGE_PERCENT = Number(process.env.BUZZARD_PRICE_ALERT_PERCENT || 25);
 

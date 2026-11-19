@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
-const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "<redacted>";
+const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
 
 test.describe("Admin E2E (Part 5 foundation)", () => {
   test.skip(!process.env.NEXT_PUBLIC_BUZZARD_API_URL, "API URL required for admin E2E");

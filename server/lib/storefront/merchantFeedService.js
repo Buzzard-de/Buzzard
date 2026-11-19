@@ -101,6 +101,25 @@ function buildGoogleMerchantFeedXml(filters = {}) {
   return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel><title>Buzzard Merchant Feed</title><description>Validated public catalog only</description>${xmlItems}</channel></rss>`;
 }
 
+function validateMarketplaceListing(row = {}) {
+  const issues = [];
+  if (!row.title || String(row.title).trim().length < 3) issues.push("TITLE_TOO_SHORT");
+  if (!row.sku) issues.push("SKU_MISSING");
+  const gtin = validateGtin(row.gtin || row.ean);
+  if (!gtin.ok) issues.push(gtin.code || "GTIN_INVALID");
+  const mpn = validateMpn(row.mpn);
+  if (!mpn.ok) issues.push(mpn.code || "MPN_INVALID");
+  if (!row.image_link && !(row.images || []).length) issues.push("IMAGE_MISSING");
+  if (process.env.BUZZARD_SALES_ENABLED === "1") issues.push("SALES_MUST_STAY_LOCKED_FOR_VALIDATION");
+  return {
+    ok: issues.length === 0,
+    issues,
+    publishAllowed: false,
+    live: false,
+    salesEnabled: false,
+  };
+}
+
 function getMerchantFeedReadiness() {
   const { items, salesEnabled } = buildEligibleFeedItems({});
   return {
@@ -119,5 +138,6 @@ function getMerchantFeedReadiness() {
 module.exports = {
   buildEligibleFeedItems,
   buildGoogleMerchantFeedXml,
+  validateMarketplaceListing,
   getMerchantFeedReadiness,
 };

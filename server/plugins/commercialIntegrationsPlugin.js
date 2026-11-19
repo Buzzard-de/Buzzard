@@ -84,22 +84,28 @@ module.exports = {
         successUrl,
         cancelUrl,
       } = req.body || {};
-      if (!payments[provider]) {
+      // A payment session is the first step of a sale: refused while sales are locked.
+      const { assertCustomerMutationAllowed } = require("../lib/customer/customerMutationGuard");
+      const block = assertCustomerMutationAllowed({ req, action: "payment_session_create" });
+      if (block?.blocked) {
+        return res.status(block.status || 403).json({ error: block.code, message: block.message, failClosed: true });
+      }
+      if (!Object.prototype.hasOwnProperty.call(payments, provider)) {
         return res.status(400).json({ error: "Unsupported payment provider" });
       }
       try {
         const payload = { orderId, amount, currency, successUrl, cancelUrl };
         return res.json(await payments[provider](payload));
       } catch (error) {
-        console.error("Payment session error:", error);
-        return res.status(500).json({ error: error.message || "Internal server error" });
+        console.error("Payment session error:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
       }
     });
 
     app.post("/api/shipping/label", async (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const { carrier = "dhl", orderNumber, countryCode, weightKg, address } = req.body || {};
-      if (!carriers[carrier]) {
+      if (!Object.prototype.hasOwnProperty.call(carriers, carrier)) {
         return res.status(400).json({ error: "Unsupported carrier" });
       }
       try {

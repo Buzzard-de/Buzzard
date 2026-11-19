@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const { hashPassword, verifyPassword: verifyPasswordHash } = require("./password");
 const { publicUser } = require("./customerAuth");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const customersFile = path.join(dataDir, "customers.json");
 const seedFile = path.join(__dirname, "..", "..", "data", "buzzard_account_users.seed.json");
 

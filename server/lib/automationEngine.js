@@ -1,9 +1,11 @@
-const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const notificationEngine = require("./notificationEngine");
+const { resolveDataDir } = require("./dataDir");
+const { readJsonArray, writeJsonAtomic, withFileLock } = require("./jsonFileStore");
+const { appendRecord, readRecords } = require("./recordStore");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = resolveDataDir();
 const eventsFile = path.join(dataDir, "automation-events.json");
 const deliveriesFile = path.join(dataDir, "automation-deliveries.json");
 
@@ -22,39 +24,38 @@ const EVENT_TYPES = new Set([
   "review_request",
 ]);
 
-function ensureDataDir() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-}
-
-function readJson(file, fallback) {
-  ensureDataDir();
-  if (!fs.existsSync(file)) return fallback;
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf8") || JSON.stringify(fallback));
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(file, data) {
-  ensureDataDir();
-  fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
-}
+const MAX_EVENTS = 2000;
 
 function readEvents() {
-  return readJson(eventsFile, []);
+  return readRecords(eventsFile);
 }
 
-function writeEvents(events) {
-  writeJson(eventsFile, events);
+/**
+ * Records an event. A caller that names an idempotency key gets the stored
+ * event back instead of a second record. Without one the key is only derived
+ * from the payload (the same product can run low twice), so the event is
+ * recorded and points at the earlier one.
+ */
+function recordEvent(event, { explicitKey }) {
+  let existing = null;
+  const stored = appendRecord(eventsFile, event, {
+    keep: MAX_EVENTS,
+    build(events, candidate) {
+      existing = events.find((entry) => entry && entry.idempotencyKey === candidate.idempotencyKey) || null;
+      if (!existing) return candidate;
+      if (explicitKey) return null;
+      return { ...candidate, duplicateOf: existing.id };
+    },
+  });
+  return { stored, existing };
 }
 
 function readDeliveries() {
-  return readJson(deliveriesFile, []);
+  return readJsonArray(deliveriesFile);
 }
 
 function writeDeliveries(deliveries) {
-  writeJson(deliveriesFile, deliveries);
+  writeJsonAtomic(deliveriesFile, deliveries);
 }
 
 function buildIdempotencyKey(eventType, payload, explicitKey) {
@@ -76,10 +77,12 @@ function wasDelivered(idempotencyKey) {
 }
 
 function markDelivered(idempotencyKey, eventId) {
-  const deliveries = readDeliveries();
-  if (deliveries.some((d) => d.key === idempotencyKey)) return;
-  deliveries.push({ key: idempotencyKey, eventId, at: new Date().toISOString() });
-  writeDeliveries(deliveries.slice(-5000));
+  withFileLock(deliveriesFile, () => {
+    const deliveries = readDeliveries();
+    if (deliveries.some((d) => d.key === idempotencyKey)) return;
+    deliveries.push({ key: idempotencyKey, eventId, at: new Date().toISOString() });
+    writeDeliveries(deliveries.slice(-5000));
+  });
 }
 
 function emit(eventType, payload = {}, options = {}) {
@@ -94,6 +97,28 @@ function emit(eventType, payload = {}, options = {}) {
       dryRun: true,
       providerCalled: false,
     };
+  }
+
+  // A repeated delivery of an event that named its key is answered from the record:
+  // no second admission decision, no second approval request, no second entry.
+  if (options.idempotencyKey && options.isolate !== true) {
+    const key = buildIdempotencyKey(eventType, payload, options.idempotencyKey);
+    const existing = readEvents().find((entry) => entry && entry.idempotencyKey === key);
+    if (existing) {
+      return {
+        ok: existing.status !== "refused",
+        duplicate: true,
+        event: existing,
+        code: existing.code,
+        kind: existing.kind,
+        channel: existing.channel,
+        pendingApproval: existing.status === "approval_required",
+        sent: false,
+        executed: false,
+        dryRun: true,
+        providerCalled: false,
+      };
+    }
   }
 
   const channel = options.channel || payload.channel || "email";
@@ -149,18 +174,20 @@ function emit(eventType, payload = {}, options = {}) {
     executed: false,
     providerCalled: false,
   };
+  let recorded = event;
+  let duplicate = false;
   if (options.isolate === true) {
     if (typeof options.record === "function") options.record(event);
   } else {
-    const events = readEvents();
-    events.push(event);
-    writeEvents(events.slice(-2000));
+    const { stored, existing } = recordEvent(event, { explicitKey: Boolean(options.idempotencyKey) });
+    duplicate = Boolean(existing);
+    recorded = stored || existing;
   }
 
   return {
     ok: Boolean(decision.ok || decision.pendingApproval),
-    duplicate: false,
-    event,
+    duplicate,
+    event: recorded,
     ...decision,
     sent: false,
     executed: false,

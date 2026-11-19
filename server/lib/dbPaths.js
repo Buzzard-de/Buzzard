@@ -43,6 +43,11 @@ function resolveBackupDir() {
   if (process.env.BUZZARD_BACKUP_DIR) {
     return path.resolve(process.env.BUZZARD_BACKUP_DIR);
   }
+  // A test that makes a backup must not put it next to the real database.
+  if (isAutomatedTestProcess()) {
+    const worker = process.env.VITEST_POOL_ID || process.env.VITEST_WORKER_ID || String(process.pid);
+    return path.join(os.tmpdir(), "buzzard-test-sqlite", `backups-${worker}`);
+  }
   return defaultBackupDir;
 }
 

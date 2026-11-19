@@ -16,8 +16,30 @@ const RETIRED_FILE = path.join(ROOT, "data", "taxonomy", "retired_shop_l1.json")
 const MASTER_FILE = path.join(ROOT, "data", "taxonomy", "buzzard_master_50_main_categories.json");
 const CROSSWALK_FILE = path.join(ROOT, "data", "taxonomy", "master_shop_l1_mapping.json");
 const HUB_FILE = path.join(ROOT, "data", "taxonomy", "shop_hub_l1_extensions.json");
+const SUPPLIER_ALIAS_FILE = path.join(ROOT, "data", "taxonomy", "supplier_category_aliases.json");
 
 let catalogCache = null;
+let supplierAliasCache = null;
+
+function loadSupplierCategoryAliases() {
+  if (supplierAliasCache) return supplierAliasCache;
+  if (!fs.existsSync(SUPPLIER_ALIAS_FILE)) {
+    supplierAliasCache = new Map();
+    return supplierAliasCache;
+  }
+  const doc = JSON.parse(fs.readFileSync(SUPPLIER_ALIAS_FILE, "utf8"));
+  supplierAliasCache = new Map(
+    Object.entries(doc.aliases || {}).map(([from, to]) => [String(from).trim().toLowerCase(), String(to).trim()])
+  );
+  return supplierAliasCache;
+}
+
+function normalizeSupplierCategoryPath(supplierCategory) {
+  const raw = String(supplierCategory || "").trim();
+  if (!raw) return raw;
+  const aliases = loadSupplierCategoryAliases();
+  return aliases.get(raw.toLowerCase()) || raw;
+}
 
 function isRetiredShopId(id, retiredShop) {
   const value = String(id || "");
@@ -232,7 +254,8 @@ function mapActiveCatalogCategory(supplierCategory, buzzardCategory) {
 
   const supplier = String(supplierCategory || "").trim();
   if (!supplier) return finishCategory(refuse("CATEGORY_MISSING"));
-  return finishCategory(lookupToken(supplier, { freeText: true }), supplier);
+  const normalized = normalizeSupplierCategoryPath(supplier);
+  return finishCategory(lookupToken(normalized, { freeText: true }), supplier);
 }
 
 function mapSupplierCategory(supplierCategory, buzzardCategory) {

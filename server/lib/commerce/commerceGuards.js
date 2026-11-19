@@ -10,7 +10,7 @@ function logCommerceBlock(type, detail, req) {
   return logSecurityEvent({
     type,
     success: false,
-    ip: req?.headers?.["x-forwarded-for"]?.split(",")[0]?.trim() || req?.socket?.remoteAddress,
+    ip: req ? require("../security").getClientIp(req) : undefined,
     path: req?.url,
     userId: req?.customer?.id || req?.adminUser?.userId || null,
     detail,

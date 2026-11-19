@@ -3,7 +3,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { getTrackingUrl } = require("./carriers");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const fulfillmentsFile = path.join(dataDir, "fulfillments.json");
 const supplierOrdersFile = path.join(dataDir, "supplier-orders.json");
 const shipmentsFile = path.join(dataDir, "shipments.json");

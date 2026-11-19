@@ -8,7 +8,7 @@ function getSkuSlugIndex() {
   if (skuSlugIndex) return skuSlugIndex;
   skuSlugIndex = new Map();
   try {
-    const productsFile = path.join(__dirname, "..", "..", "data", "buzzard_products.json");
+    const productsFile = require("./catalogFiles").runtimeCatalogFile("buzzard_products.json");
     const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));
     for (const product of raw.products || []) {
       if (product.status !== "active") continue;

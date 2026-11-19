@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const persistFile = path.join(dataDir, "rate-limit-buckets.json");
 const PERSIST_INTERVAL_MS = 15_000;
 
@@ -20,10 +20,33 @@ function isRateLimitDisabled() {
   return process.env.BUZZARD_RATE_LIMIT_DISABLED === "1" || process.env.BUZZARD_TEST_MODE === "1";
 }
 
+const MAX_BUCKETS = 20_000;
+const BUCKET_MAX_AGE_MS = 60 * 60 * 1000;
+
+/** Keys come from request data (address, e-mail); without this the map only grows. */
+function pruneBuckets(buckets, now, maxAgeMs = BUCKET_MAX_AGE_MS) {
+  for (const [key, records] of buckets) {
+    const last = records[records.length - 1];
+    if (last === undefined || now - last > maxAgeMs) buckets.delete(key);
+  }
+  if (buckets.size > MAX_BUCKETS) {
+    const overflow = buckets.size - MAX_BUCKETS;
+    let removed = 0;
+    for (const key of buckets.keys()) {
+      buckets.delete(key);
+      removed += 1;
+      if (removed >= overflow) break;
+    }
+  }
+}
+
 function createMemoryBackend() {
   const buckets = new Map();
   return {
     name: "memory",
+    prune(now, maxAgeMs) {
+      pruneBuckets(buckets, now, maxAgeMs);
+    },
     get(key) {
       return buckets.get(key) || [];
     },
@@ -112,12 +135,14 @@ function createFileBackendSimple() {
     },
     persist() {
       try {
-        if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
         const obj = Object.fromEntries([...buckets.entries()].slice(0, 5000));
-        fs.writeFileSync(persistFile, JSON.stringify(obj), "utf8");
+        require("./jsonFileStore").writeJsonAtomic(persistFile, obj, { backup: false });
       } catch {
         /* non-fatal */
       }
+    },
+    prune(now, maxAgeMs) {
+      pruneBuckets(buckets, now, maxAgeMs);
     },
   };
   backend.load();
@@ -198,10 +223,15 @@ function createBackend() {
 }
 
 let backend = createBackend();
+let persistDirty = false;
 
-if (backend.name === "file") {
-  setInterval(() => backend.persist(), PERSIST_INTERVAL_MS).unref();
-}
+setInterval(() => {
+  if (typeof backend.prune === "function") backend.prune(Date.now());
+  if (backend.name === "file" && persistDirty) {
+    persistDirty = false;
+    backend.persist();
+  }
+}, PERSIST_INTERVAL_MS).unref();
 
 function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
   if (isRateLimitDisabled()) {
@@ -221,7 +251,8 @@ function createRateLimiter({ windowMs, max, keyPrefix = "" }) {
     }
     records.push(now);
     backend.set(key, records);
-    if (backend.name === "file") backend.persist();
+    // Written by the interval above: a synchronous file write per request is a cheap way to stall the API.
+    persistDirty = true;
     return false;
   };
 }

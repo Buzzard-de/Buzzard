@@ -1,28 +1,241 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
   "alignedWithUserList": "2026-11-19",
   "orderedPhases": [
-    { "n": 1, "id": "core_integrity", "titleTr": "Çekirdek sistem ve veri bütünlüğü", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase1CoreIntegrity.test.mjs" },
-    { "n": 2, "id": "category_filters", "titleTr": "Kategori, alt kategori, özellik ve filtreler", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase2CategoryInfrastructure.test.mjs" },
-    { "n": 3, "id": "product_pim", "titleTr": "Ürün oluşturma ve veri yönetimi", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase3ProductPim.test.mjs" },
-    { "n": 4, "id": "supplier", "titleTr": "Tedarikçi entegrasyonları ve stok otomasyonu", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase4SupplierAutomation.test.mjs" },
-    { "n": 5, "id": "pricing", "titleTr": "Fiyatlandırma ve kâr motoru", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phase5PricingProfit.test.mjs" },
-    { "n": 6, "id": "order_management", "titleTr": "Sipariş yönetimi", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 7, "id": "payment_finance", "titleTr": "Ödeme ve finans", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 8, "id": "logistics", "titleTr": "Kargo ve lojistik", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 9, "id": "textile_ai", "titleTr": "Tekstil AI (canlı)", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs", "liveBlocked": ["TEX_LIVE_TRYON"] },
-    { "n": 10, "id": "marketplace", "titleTr": "Pazaryeri otomasyonu", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 11, "id": "pim_sot", "titleTr": "Ürün yönetimi ve PIM (SoT)", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 12, "id": "customer_support", "titleTr": "Müşteri hizmetleri", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 13, "id": "pusat", "titleTr": "Pusat ve AI Kurmay", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 14, "id": "ai_specialists", "titleTr": "AI uzmanlık modülleri", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 15, "id": "storefront", "titleTr": "Mağaza ve UX", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 16, "id": "tax_compliance", "titleTr": "Vergi, gümrük, yasal", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 17, "id": "security", "titleTr": "Güvenlik", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 18, "id": "marketing", "titleTr": "Pazarlama ve marka", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 19, "id": "admin_reporting", "titleTr": "Yönetim ve raporlama", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 20, "id": "performance", "titleTr": "Performans ve dayanıklılık", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" },
-    { "n": 21, "id": "e2e_automation", "titleTr": "Uçtan uca otomasyon", "status": "COMPLETE", "percent": 100, "evidence": "server/__tests__/phases6to21Gate.test.mjs" }
+    {
+      "n": 1,
+      "id": "core_integrity",
+      "titleTr": "Çekirdek sistem ve veri bütünlüğü",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 74,
+      "evidence": "server/__tests__/phase1CoreIntegrity.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 74,
+      "completeClaim": false
+    },
+    {
+      "n": 2,
+      "id": "category_filters",
+      "titleTr": "Kategori, alt kategori, özellik ve filtreler",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 88,
+      "evidence": "server/__tests__/phase2CategoryInfrastructure.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 88,
+      "completeClaim": false
+    },
+    {
+      "n": 3,
+      "id": "product_pim",
+      "titleTr": "Ürün oluşturma ve veri yönetimi",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 74,
+      "evidence": "server/__tests__/phase3ProductPim.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 74,
+      "completeClaim": false
+    },
+    {
+      "n": 4,
+      "id": "supplier",
+      "titleTr": "Tedarikçi entegrasyonları ve stok otomasyonu",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 70,
+      "evidence": "server/__tests__/phase4SupplierAutomation.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 70,
+      "completeClaim": false
+    },
+    {
+      "n": 5,
+      "id": "pricing",
+      "titleTr": "Fiyatlandırma ve kâr motoru",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 83,
+      "evidence": "server/__tests__/phase5PricingProfit.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 83,
+      "completeClaim": false
+    },
+    {
+      "n": 6,
+      "id": "order_management",
+      "titleTr": "Sipariş yönetimi",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 68,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs; orderDryRehearsalIntegration.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 68,
+      "completeClaim": false
+    },
+    {
+      "n": 7,
+      "id": "payment_finance",
+      "titleTr": "Ödeme ve finans",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 58,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 58,
+      "completeClaim": false
+    },
+    {
+      "n": 8,
+      "id": "logistics",
+      "titleTr": "Kargo ve lojistik",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 52,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 52,
+      "completeClaim": false
+    },
+    {
+      "n": 9,
+      "id": "textile_ai",
+      "titleTr": "Tekstil AI (canlı)",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 36,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "liveBlocked": [
+        "TEX_LIVE_TRYON"
+      ],
+      "gatePercent": 100,
+      "verifiedPercent": 36,
+      "completeClaim": false
+    },
+    {
+      "n": 10,
+      "id": "marketplace",
+      "titleTr": "Pazaryeri otomasyonu",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 52,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 52,
+      "completeClaim": false
+    },
+    {
+      "n": 11,
+      "id": "pim_sot",
+      "titleTr": "Ürün yönetimi ve PIM (SoT)",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 66,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 66,
+      "completeClaim": false
+    },
+    {
+      "n": 12,
+      "id": "customer_support",
+      "titleTr": "Müşteri hizmetleri",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 50,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 50,
+      "completeClaim": false
+    },
+    {
+      "n": 13,
+      "id": "pusat",
+      "titleTr": "Pusat ve AI Kurmay",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 54,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 54,
+      "completeClaim": false
+    },
+    {
+      "n": 14,
+      "id": "ai_specialists",
+      "titleTr": "AI uzmanlık modülleri",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 48,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 48,
+      "completeClaim": false
+    },
+    {
+      "n": 15,
+      "id": "storefront",
+      "titleTr": "Mağaza ve UX",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 60,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 60,
+      "completeClaim": false
+    },
+    {
+      "n": 16,
+      "id": "tax_compliance",
+      "titleTr": "Vergi, gümrük, yasal",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 64,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 64,
+      "completeClaim": false
+    },
+    {
+      "n": 17,
+      "id": "security",
+      "titleTr": "Güvenlik",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 72,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 72,
+      "completeClaim": false
+    },
+    {
+      "n": 18,
+      "id": "marketing",
+      "titleTr": "Pazarlama ve marka",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 32,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 32,
+      "completeClaim": false
+    },
+    {
+      "n": 19,
+      "id": "admin_reporting",
+      "titleTr": "Yönetim ve raporlama",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 58,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 58,
+      "completeClaim": false
+    },
+    {
+      "n": 20,
+      "id": "performance",
+      "titleTr": "Performans ve dayanıklılık",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 38,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 38,
+      "completeClaim": false
+    },
+    {
+      "n": 21,
+      "id": "e2e_automation",
+      "titleTr": "Uçtan uca otomasyon",
+      "status": "SOFTWARE_PARTIAL",
+      "percent": 58,
+      "evidence": "server/__tests__/phases6to21Gate.test.mjs",
+      "gatePercent": 100,
+      "verifiedPercent": 58,
+      "completeClaim": false
+    }
   ],
   "incompleteChecklist": "data/master/buzzard_incomplete_checklist.v1.json",
   "liveBlockedCriticalSix": [
@@ -33,5 +246,32 @@
     "Tax Connect canlı",
     "Canlı kargo fiyatları"
   ],
-  "liveBlockedDevListItems": [19, 20, 28, 30, 37, 41]
+  "liveBlockedDevListItems": [
+    19,
+    20,
+    28,
+    30,
+    37,
+    41
+  ],
+  "alignedWithUserDirective": "BUZZARD_MASTER_SOFTWARE_COMPLETION_DIRECTIVE_v2.0",
+  "updatedAt": "2026-11-19T15:38:00+01:00",
+  "invariants": {
+    "SALES": "LOCKED",
+    "EGRESS": "DENY",
+    "productionReady": false,
+    "live": false
+  },
+  "honestLedger": {
+    "softwareCompletionPercent": 59.8,
+    "liveIntegrationReadinessPercent": 24,
+    "vitestServer": {
+      "passed": 1949,
+      "failed": 0,
+      "skipped": 1,
+      "files": 159
+    },
+    "completeClaim": false,
+    "note": "verifiedPercent per phase is independent audit; gate tests at 100% are not sufficient alone"
+  }
 }

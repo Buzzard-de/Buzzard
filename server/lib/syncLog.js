@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const syncLogFile = path.join(dataDir, "sync-logs.json");
 const importLogFile = path.join(dataDir, "import-logs.json");
 

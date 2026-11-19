@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const { CATEGORY_VISIBILITY, READINESS_STATUS } = require("../core/constants");
 
-const dataDir = path.join(__dirname, "..", "..", "data");
-const visibilityFile = path.join(dataDir, "buzzard_category_visibility.json");
+const visibilityFile = require("./catalogFiles").runtimeCatalogFile("buzzard_category_visibility.json");
+const dataDir = path.dirname(visibilityFile);
 
 const CUSTOMER_VISIBLE = new Set([
   CATEGORY_VISIBILITY.ACTIVE,

@@ -17,9 +17,9 @@ const fulfillmentStore = require("../lib/fulfillmentStore");
 const { validateCoupon } = require("../lib/coupons");
 
 const rootDir = path.join(__dirname, "..", "..");
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("../lib/dataDir").resolveDataDir();
 const ordersFile = path.join(dataDir, "orders.json");
-const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+const productsFile = require("../lib/catalogFiles").runtimeCatalogFile("buzzard_products.json");
 
 const VALID_PAYMENTS = new Set(["paypal", "stripe", "klarna", "sepa"]);
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -175,6 +175,48 @@ function sanitizePublicOrder(order) {
   return clone;
 }
 
+/**
+ * Order numbers count upwards per day, so knowing a number proves nothing.
+ * Name, e-mail, phone and addresses are only returned to the customer who
+ * placed the order or to a back-office session that may read orders.
+ */
+function mayReadOrderIdentity(req, order) {
+  const adminAuth = require("../lib/auth");
+  const { can } = require("../lib/rbac");
+  const admin = adminAuth.getSession(adminAuth.extractToken(req));
+  if (admin && can(admin.role, "orders.read")) return true;
+
+  const { resolveCustomerSession } = require("../lib/customer/customerAuthBridge");
+  const customer = resolveCustomerSession(req);
+  if (!customer) return false;
+  if (order.customerId && String(customer.customerId) === String(order.customerId)) return true;
+  const orderEmail = String(order.customer?.email || "").trim().toLowerCase();
+  return Boolean(customer.email && orderEmail && String(customer.email).trim().toLowerCase() === orderEmail);
+}
+
+function withoutIdentity(order) {
+  const {
+    customer,
+    shippingAddress,
+    billingAddress,
+    customerId,
+    customerNote,
+    notes,
+    ip,
+    userAgent,
+    duplicateKey,
+    ...rest
+  } = order;
+  return {
+    ...rest,
+    customer: { firstName: "", lastName: "", email: "" },
+    shippingAddress: { country: shippingAddress?.country || "" },
+    billingAddress: { country: billingAddress?.country || "" },
+    shipments: (order.shipments || []).map(({ recipient, address, shippingAddress: to, customer: who, email, phone, ...shipment }) => shipment),
+    identityWithheld: true,
+  };
+}
+
 function validateAddress(address) {
   if (!address) return false;
   const required = ["firstName", "lastName", "street", "zip", "city", "country"];
@@ -201,6 +243,69 @@ function buildDuplicateKey(body, quote) {
 module.exports = {
   register(app) {
     ensureDataDir();
+
+    app.post("/api/orders/dry-rehearsal", async (req, res) => {
+      const { evaluateSalesGate } = require("../lib/salesSafetyGate");
+      const sales = evaluateSalesGate();
+      if (sales.allowed) {
+        return res.status(403).json({ success: false, code: "SALES_MUST_STAY_LOCKED", errorKey: "sales.locked" });
+      }
+
+      const body = req.body || {};
+      const bypassCatalog = body.rehearsalCatalogBypass === true;
+      if (!bypassCatalog) {
+        const validationError = validatePayload(body);
+        if (validationError) {
+          return res.status(400).json({ success: false, errorKey: "checkout.errorRequired", detail: validationError });
+        }
+      } else if (!body.customer?.email || !body.acceptTerms || !body.acceptPrivacy) {
+        return res.status(400).json({ success: false, errorKey: "checkout.errorRequired" });
+      }
+
+      const country = String(body.shippingAddress?.country || "DE").toUpperCase();
+      let quote;
+      if (bypassCatalog) {
+        const lines = Array.isArray(body.lines) ? body.lines : [];
+        const subtotal = lines.reduce((sum, line) => sum + (Number(line.unitPrice) || 40) * (Number(line.qty) || 1), 0);
+        quote = {
+          currency: "EUR",
+          lines,
+          subtotal,
+          shipping: 6,
+          discount: 0,
+          vatAmount: Math.round(subtotal * 0.19 * 100) / 100,
+          total: Math.round((subtotal + 6) * 100) / 100,
+        };
+      } else {
+        quote = calculateQuote(body.lines, body.shippingMethodId || "standard", body.couponCode, country);
+        if (!quote) {
+          return res.status(400).json({ success: false, errorKey: "checkout.stockError" });
+        }
+        if (quote.errorKey) {
+          return res.status(400).json({ success: false, errorKey: quote.errorKey });
+        }
+      }
+
+      const { rehearseOrderFromCheckout } = require("../lib/commerce/orderManagementOrchestrator");
+      try {
+        const rehearsal = await rehearseOrderFromCheckout({ body, quote, country });
+        logSecurityEvent({
+          type: "order_dry_rehearsal",
+          success: rehearsal.ok === true,
+          ip: getClientIp(req),
+          path: "/api/orders/dry-rehearsal",
+          detail: { salesLocked: true, ok: rehearsal.ok },
+        });
+        return res.status(rehearsal.ok ? 200 : 422).json({
+          success: rehearsal.ok === true,
+          rehearsal: true,
+          live: false,
+          result: rehearsal,
+        });
+      } catch (err) {
+        return res.status(500).json({ success: false, code: "REHEARSAL_FAILED", message: err.message, live: false });
+      }
+    });
 
     app.post("/api/checkout/quote", (req, res) => {
       const { lines, shippingMethodId = "standard", couponCode, country = "DE" } = req.body || {};
@@ -417,7 +522,8 @@ module.exports = {
       if (!order) {
         return res.status(404).json({ success: false, errorKey: "checkout.orderNotFound" });
       }
-      return res.json({ success: true, order: attachShipments(order) });
+      const view = attachShipments(order);
+      return res.json({ success: true, order: mayReadOrderIdentity(req, order) ? view : withoutIdentity(view) });
     });
   },
 };

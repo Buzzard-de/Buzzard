@@ -80,6 +80,14 @@ module.exports = {
       return res.json(catalogSeo.listAdminProducts());
     });
 
+    // The categories of this catalog (numeric ids). The public path
+    // /api/catalog/categories is answered by the storefront bridge with the
+    // taxonomy, which is a different list; the admin catalog page needs this one.
+    app.get("/api/admin/catalog/categories", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
+      return res.json(catalogSeo.listCategories());
+    });
+
     app.post("/api/admin/catalog/categories", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const result = catalogSeo.createCategory(req.body || {});

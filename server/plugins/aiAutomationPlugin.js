@@ -5,6 +5,7 @@ const { requireAuth } = require("../lib/auth");
 const { requirePermission } = require("../lib/rbac");
 const { createRateLimiter } = require("../lib/security");
 const automationEngine = require("../lib/automationEngine");
+const { getDataDirInfo } = require("../lib/dataDir");
 const notificationEngine = require("../lib/notificationEngine");
 const aiChatService = require("../lib/aiChatService");
 const phoneAssistantService = require("../lib/phoneAssistantService");
@@ -13,7 +14,7 @@ const productStore = require("../lib/productStore");
 const supplierStore = require("../lib/supplierStore");
 const fulfillmentStore = require("../lib/fulfillmentStore");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = getDataDirInfo().path;
 const cartsFile = path.join(dataDir, "abandoned-carts.json");
 const chatRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 30, keyPrefix: "ai-chat:" });
 
@@ -450,7 +451,7 @@ function collectHealth() {
   try {
     const fs = require("fs");
     const path = require("path");
-    const file = path.join(__dirname, "..", "data", "submissions.json");
+    const file = path.join(dataDir, "submissions.json");
     if (fs.existsSync(file)) {
       const rows = JSON.parse(fs.readFileSync(file, "utf8") || "[]");
       contactSubmissions = { enabled: true, count: Array.isArray(rows) ? rows.length : 0 };
@@ -557,7 +558,8 @@ function collectHealth() {
 module.exports = {
   register(app) {
     app.get("/api/health", (_req, res) => {
-      return res.json({ success: true, ...collectHealth() });
+      const { mode, isolated } = getDataDirInfo();
+      return res.json({ success: true, ...collectHealth(), adminData: { mode, isolated } });
     });
 
     app.post("/api/ai/chat", (req, res) => {

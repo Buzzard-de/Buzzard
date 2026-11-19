@@ -26,7 +26,7 @@ describe("dev-list 51 remainder", () => {
     expect(ok.ok).toBe(true);
     expect(ok.pimWrite).toBe(false);
     expect(ok.published).toBe(false);
-    const bad = bindProductCategory({ sku: "DRY-SKU-002", supplier_category: "automotive/brakes" });
+    const bad = bindProductCategory({ sku: "DRY-SKU-002", supplier_category: "supplier/unmapped/part" });
     expect(bad.ok).toBe(false);
     expect(bad.code).toBe("CATEGORY_UNMAPPED");
   });

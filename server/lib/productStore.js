@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.join(__dirname, "..", "..");
-const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+const productsFile = require("./catalogFiles").runtimeCatalogFile("buzzard_products.json");
 
 function readCatalog() {
   const raw = JSON.parse(fs.readFileSync(productsFile, "utf8"));

@@ -71,9 +71,17 @@ function queueOrderCreated(orderNumber) {
 }
 
 function handlePaymentWebhook(body = {}) {
-  const { provider = "stripe", eventId, type, orderNumber, status } = body;
-  if (!eventId || !orderNumber) {
+  if (!body.eventId || !body.orderNumber) {
     return { ok: false, error: "eventId and orderNumber required", status: 400 };
+  }
+  const webhookInput = require("./webhookInput");
+  const eventId = webhookInput.identifier(body.eventId);
+  const orderNumber = webhookInput.identifier(body.orderNumber);
+  const provider = body.provider === undefined ? "stripe" : webhookInput.token(body.provider);
+  const status = body.status === undefined || body.status === null ? undefined : webhookInput.token(body.status);
+  const type = webhookInput.text(body.type, 80);
+  if (!eventId || !orderNumber || !provider || status === null || type === null) {
+    return { ok: false, error: "Invalid webhook payload", status: 400 };
   }
 
   const eventKey = `payment:${eventId}`;

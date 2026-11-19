@@ -94,7 +94,9 @@ test.describe("Admin login, session and authorization UI", () => {
     const sessions = await request.get(`${API_URL}/api/admin/sessions`, { headers: bearer(token) });
     expect(sessions.status()).toBe(200);
     const own = (await sessions.json()).sessions.find(
-      (entry: { tokenPreview?: string }) => entry.tokenPreview === `${token.slice(0, 8)}…`
+      // The patched API marks the caller's own session; the unpatched one still returns a token preview.
+      (entry: { current?: boolean; tokenPreview?: string }) =>
+        entry.current === true || entry.tokenPreview === `${token.slice(0, 8)}…`
     );
     expect(own, "current session in the session list").toBeTruthy();
     const revoked = await request.delete(`${API_URL}/api/admin/sessions/${own.sessionId}`, { headers: bearer(other) });
@@ -129,8 +131,10 @@ test.describe("Admin login, session and authorization UI", () => {
     await page.goto("/admin/pim-core/");
     await expect(page.locator("body")).toContainText(/Product Core|PIM/i);
     await page.click('button:has-text("Import")');
-    await page.click('button:has-text("dry-run")');
-    await expect(page.getByTestId("pim-import-error")).toContainText("Dry run request failed");
+    // The page does not offer what the API refuses: the button is disabled and says why.
+    await expect(page.locator('button:has-text("dry-run")')).toBeDisabled();
+    await expect(page.getByTestId("pim-import-no-permission")).toBeVisible();
+    await expect(page.getByTestId("pim-import-error")).toHaveCount(0);
     await expect(page.getByTestId("pim-import-pending")).toHaveCount(0);
     await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
   });

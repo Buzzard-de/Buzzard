@@ -516,3 +516,15 @@ Anonymous catalog preview, unprotected admin writes (handler-level requireAuth+r
 
 ### Evidence
 catalogFixtureSecurity + webhookSecurity re-run after hardenings; preview probe shows demo still 404 with `?preview=1`.
+
+## Evidence recovery — Phases 8–10 (2026-11-18 17:46 UTC)
+
+Raw logs were missing from the committed `artifacts/.../logs/` bundle but still present under `/tmp/buzzard-final-sprint/logs/`. Copied into `artifacts/buzzard-security-admin-final-sprint-checkpoint-2026-11-18/logs/` **without re-running** tests (no invented evidence).
+
+| Phase | Files recovered |
+|---|---|
+| 8 JSON integrity | `p8-full-1.log`, `p8-full-2.log`, `p8-full-3-1.log`, `p8-full-3-2.log`, `p8-integrity.log`, `p8-lock-stress.log`, `p8-full-vitest.log` |
+| 9 Audit / logging | `p9-logging.log`, `p9-recovery.log`, `p9-reset-probe-before.log`, `p9-reset-probe-after.log`, `p9-suites.log`, `p9-full-vitest.log`, `p9-full-vitest-final.log` |
+| 10 Isolation | `p10-full-vitest.log`, `p10-full-vitest-netspy.log`, `p10-parts.log`, `p10-python-egress.log`, `p10-selftest.log`, `p10-limiter-on.log`, `p10-limiter-off.log`, `p10-typecheck.log`, `p10-enoent.log`, `p10-script-part3-security.log`, `p10-script-final-audit.log`, `p10-script-production-safety.log` |
+
+See `BUZZARD_PR507_FINAL_REVIEW.md` for PR/CI status and live vs staging distinctions.

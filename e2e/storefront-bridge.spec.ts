@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
-const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "<redacted>";
+const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
 
 async function adminLogin(page: import("@playwright/test").Page) {
   await page.goto("/admin/login/");

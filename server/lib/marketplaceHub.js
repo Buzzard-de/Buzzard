@@ -1,4 +1,6 @@
 const { db } = require("./db");
+const { validateMarketplaceListing } = require("./storefront/merchantFeedService");
+const { createConnector, snapshot: connectorSnapshot } = require("./marketplace/marketplaceConnectorRegistry");
 
 const CHANNELS = [
   ["amazon", "Amazon"],
@@ -91,10 +93,53 @@ function queueOrderSync() {
   return { queued: marketplaces.length };
 }
 
+function preflightListing(body = {}) {
+  const connector = createConnector(body.marketplace);
+  if (connector.ok === false) return { ok: false, code: connector.code, live: false };
+  const validation = validateMarketplaceListing({
+    sku: body.productSku,
+    title: body.title,
+    gtin: body.gtin || body.ean,
+    mpn: body.mpn,
+    image_link: body.imageLink || body.image_link,
+    images: body.images,
+  });
+  const dryPublish =
+    validation.ok && typeof connector.publishListing === "function"
+      ? connector.publishListing({
+          sku: body.productSku,
+          title: body.title,
+          gtin: body.gtin || body.ean,
+          mpn: body.mpn,
+          image_link: body.imageLink || body.image_link,
+        })
+      : null;
+  return {
+    ok: validation.ok,
+    validation,
+    connector: body.marketplace,
+    dryPublish,
+    live: false,
+    publishAllowed: false,
+  };
+}
+
 function upsertListing(body = {}) {
   const marketplace = db.prepare("SELECT * FROM marketplace_channels WHERE code = ?").get(body.marketplace);
   if (!marketplace) return { error: "Marketplace not found", status: 404 };
   if (!body.productSku) return { error: "productSku required", status: 400 };
+
+  if (String(body.status || "draft") !== "draft" || body.validateListing === true) {
+    const preflight = preflightListing(body);
+    if (!preflight.ok) {
+      return {
+        error: "LISTING_VALIDATION_FAILED",
+        status: 422,
+        issues: preflight.validation.issues,
+        preflight,
+      };
+    }
+  }
 
   db.prepare(`
     INSERT INTO marketplace_listings(marketplace_id, product_sku, channel_sku, title, price, currency, stock, status)
@@ -173,10 +218,22 @@ function listChannelOrders() {
 }
 
 function importOrderWebhook(body = {}) {
-  const marketplace = db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(body.marketplace);
+  const webhookInput = require("./webhookInput");
+  const code = webhookInput.token(body.marketplace);
+  const marketplace = code ? db.prepare("SELECT id FROM marketplace_channels WHERE code = ?").get(code) : null;
   if (!marketplace || !body.externalOrderId) {
     return { error: "marketplace and externalOrderId required", status: 400 };
   }
+  const order = {
+    externalOrderId: webhookInput.identifier(body.externalOrderId),
+    internalOrderNumber: body.internalOrderNumber ? webhookInput.identifier(body.internalOrderNumber) : "",
+    status: body.status === undefined ? "imported" : webhookInput.token(body.status),
+    total: webhookInput.amount(body.total),
+    currency: webhookInput.currency(body.currency),
+    customerCountry: body.customerCountry ? (/^[A-Za-z]{2}$/.test(String(body.customerCountry)) ? String(body.customerCountry).toUpperCase() : null) : "",
+  };
+  if (Object.values(order).some((value) => value === null)) return webhookInput.INVALID;
+  body = { ...order, internalOrderNumber: order.internalOrderNumber || null };
   try {
     db.prepare(`
       INSERT INTO marketplace_channel_orders(marketplace_id, external_order_id, internal_order_number, status, total, currency, customer_country)
@@ -201,6 +258,7 @@ function getMarketplaceHubStatus() {
     version: "1.5.0",
     enabled: isEnabled(),
     channels: CHANNELS.length,
+    connectors: connectorSnapshot(),
     totals: {
       marketplaces: db.prepare("SELECT COUNT(*) n FROM marketplace_channels").get().n,
       listings: db.prepare("SELECT COUNT(*) n FROM marketplace_listings").get().n,
@@ -228,4 +286,5 @@ module.exports = {
   listChannelOrders,
   importOrderWebhook,
   getMarketplaceHubStatus,
+  preflightListing,
 };

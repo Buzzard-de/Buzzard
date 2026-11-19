@@ -1,10 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-const rootDir = path.join(__dirname, "..", "..");
-const suppliersFile = path.join(rootDir, "data", "buzzard_suppliers.json");
-const mappingsFile = path.join(rootDir, "data", "buzzard_supplier_category_mappings.json");
-const secretsFile = path.join(__dirname, "..", "data", "supplier-secrets.json");
+const { runtimeCatalogFile } = require("./catalogFiles");
+
+const suppliersFile = runtimeCatalogFile("buzzard_suppliers.json");
+const mappingsFile = runtimeCatalogFile("buzzard_supplier_category_mappings.json");
+const secretsFile = path.join(require("./dataDir").resolveDataDir(), "supplier-secrets.json");
 
 function readSuppliersDoc() {
   return JSON.parse(fs.readFileSync(suppliersFile, "utf8"));

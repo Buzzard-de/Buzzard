@@ -2,32 +2,36 @@
 
 **Date:** 2026-11-18 (Europe/Berlin)  
 **Branch:** `cursor/security-admin-final-checkpoint-c293`  
-**Purpose:** Persist Phases 0–11 work so it is not lost from ephemeral `/tmp` staging. Sprint continues at Phase 12.
+**PR:** [#507](https://github.com/Buzzard-de/Buzzard/pull/507)  
+**Purpose:** Persist Phases 0–15 evidence; server-graph changes remain **unapplied** on live ports 3000/3001.
 
-## Status
+## Status (synchronized 2026-11-18)
 
 | Item | State |
 |---|---|
-| Phases 0–10 | VERIFIED (isolated) |
-| Phase 11 Admin UI + PIM | VERIFIED (localhost + 127.0.0.1) |
-| Phase 12 Storefront/device | VERIFIED |
-| Phase 13 Complete regression | VERIFIED |
-| Phases 14–15 | Pending |
-| Overall sprint | **Below 100%** (mandatory later phases open) |
-| Live stack 3000/3001 | Untouched |
+| Phases 0–14 | **VERIFIED** (isolated staging `/tmp/buzzard-final-sprint/work`) |
+| Phase 15 | **COMPLETE** — final report + redacted unapplied patch on branch |
+| Overall sprint | **Below 100%** — live server-graph apply **BLOCKED**; external ops blockers |
+| Live stack 3000/3001 | Untouched (no restart) |
 | SALES / EGRESS | LOCKED / DENY |
 | productionReady / live | false / false |
 
 ## Artifacts
 
-- `BUZZARD_SECURITY_ADMIN_FINAL_MASTER_SPRINT_WORKTREE_2026-11-18.patch` — full staging diff (`ws-snapshot` → `work`), password literals redacted; **do not apply** onto the watched live API module graph without an explicit restart decision.
-- `artifacts/buzzard-security-admin-final-sprint-checkpoint-2026-11-18/` — NOTES, hashes, route matrix, Phase 11 logs, helper scripts, scrubbed `work-tree.tgz`.
+| Path | Role |
+|---|---|
+| `BUZZARD_SECURITY_ADMIN_FINAL_MASTER_SPRINT_REPORT.md` | 30-section master sprint report |
+| `BUZZARD_SECURITY_ADMIN_FINAL_MASTER_SPRINT_WORKTREE_2026-11-18.patch` | Full `ws-snapshot` → `work` diff; secrets redacted; **do not apply** to watched API without explicit restart approval |
+| `BUZZARD_PR507_FINAL_REVIEW.md` | PR verification, CI strategy, patch review, evidence index |
+| `artifacts/buzzard-security-admin-final-sprint-checkpoint-2026-11-18/` | NOTES, hashes, routes, logs (P8–P13), `work-tree.tgz` |
 
-## Resume
+## Evidence logs
 
-1. Restore staging from `work-tree.tgz` under `/tmp/buzzard-final-sprint/` (or keep existing `/tmp` tree if still present).
-2. Continue Phase 12 (storefront / device regression) in isolation only.
-3. Do not restart ports 3000/3001; do not write real `server/data`.
+- **Phases 8–10:** recovered from `/tmp/buzzard-final-sprint/logs/` into `artifacts/.../logs/` (26 files: `p8-*`, `p9-*`, `p10-*`).
+- **Phases 11–13:** `p11-final3-*`, `p12*`, `p13-*` in the same `logs/` directory.
 
-## Phase 12
-VERIFIED: fixture security, anonymous preview closed, device E2E desktop/mobile/tablet (21 passed), localhost+127.
+## Resume / human gates
+
+1. Review PR #507; **do not merge** until conflicts with base are resolved and CI strategy executed (see final review).
+2. Apply server patch only in a maintenance window with **explicit approval** to restart API 3001.
+3. Never write real `server/data` from tests; use `scripts/isolated/*` only.

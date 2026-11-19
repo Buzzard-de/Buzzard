@@ -1,49 +1,66 @@
-const fs = require("fs");
 const path = require("path");
 const { logSecurityEvent } = require("./securityLog");
+const { inspectJsonFile, writeJsonAtomic, withFileLock } = require("./jsonFileStore");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const lockFile = path.join(dataDir, "account-lockouts.json");
 
 const DEFAULTS = {
   maxFailures: 5,
   lockMs: 30 * 60 * 1000,
+  // A failure counter that is not followed by another failure expires after this long.
+  failureWindowMs: 24 * 60 * 60 * 1000,
+  // Identifiers are chosen by whoever sends the login request; the store must not grow with them.
+  maxEntries: 5000,
 };
 
-function ensureDataDir() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
 function readState() {
-  ensureDataDir();
-  if (!fs.existsSync(lockFile)) return {};
-  try {
-    return JSON.parse(fs.readFileSync(lockFile, "utf8") || "{}");
-  } catch {
-    return {};
-  }
+  const result = inspectJsonFile(lockFile, { validate: isPlainObject });
+  return result.state === "ok" || result.state === "restored" ? result.value : {};
 }
 
-function writeState(state) {
-  ensureDataDir();
-  fs.writeFileSync(lockFile, JSON.stringify(state, null, 2), "utf8");
+function isExpired(entry, now) {
+  if (!isPlainObject(entry)) return true;
+  if (entry.lockedUntil) return entry.lockedUntil <= now;
+  const last = Date.parse(entry.lastFailure || "");
+  return Number.isNaN(last) || now - last > DEFAULTS.failureWindowMs;
+}
+
+function prune(state, now) {
+  for (const [key, entry] of Object.entries(state)) {
+    if (isExpired(entry, now)) delete state[key];
+  }
+  const keys = Object.keys(state);
+  if (keys.length > DEFAULTS.maxEntries) {
+    // Active locks are kept; the oldest plain counters go first.
+    const removable = keys
+      .filter((key) => !state[key].lockedUntil)
+      .sort((a, b) => String(state[a].lastFailure).localeCompare(String(state[b].lastFailure)));
+    for (const key of removable.slice(0, keys.length - DEFAULTS.maxEntries)) delete state[key];
+  }
+  return state;
+}
+
+function update(mutate) {
+  return withFileLock(lockFile, () => {
+    const state = prune(readState(), Date.now());
+    const result = mutate(state);
+    writeJsonAtomic(lockFile, state, { backup: false });
+    return result;
+  });
 }
 
 function makeKey(scope, identifier) {
-  return `${scope}:${String(identifier || "unknown").trim().toLowerCase()}`;
+  return `${scope}:${String(identifier || "unknown").trim().toLowerCase().slice(0, 254)}`;
 }
 
 function getEntry(scope, identifier) {
-  const state = readState();
-  const key = makeKey(scope, identifier);
-  const entry = state[key];
-  if (!entry) return null;
-  if (entry.lockedUntil && entry.lockedUntil <= Date.now()) {
-    delete state[key];
-    writeState(state);
-    return null;
-  }
-  return entry;
+  const entry = readState()[makeKey(scope, identifier)];
+  return entry && !isExpired(entry, Date.now()) ? entry : null;
 }
 
 function isLocked(scope, identifier) {
@@ -65,56 +82,50 @@ function getLockoutInfo(scope, identifier) {
 }
 
 function recordFailure(scope, identifier, meta = {}) {
-  const state = readState();
-  const key = makeKey(scope, identifier);
   const now = Date.now();
-  const current = state[key] || { failures: 0, lockedUntil: null };
-  if (current.lockedUntil && current.lockedUntil <= now) {
-    current.failures = 0;
-    current.lockedUntil = null;
-  }
+  const key = makeKey(scope, identifier);
+  const outcome = update((state) => {
+    const current = state[key] || { failures: 0, lockedUntil: null };
+    current.failures += 1;
+    current.lastFailure = new Date(now).toISOString();
+    const locked = current.failures >= DEFAULTS.maxFailures;
+    if (locked) current.lockedUntil = now + DEFAULTS.lockMs;
+    state[key] = current;
+    return { locked, failures: current.failures, lockedUntil: current.lockedUntil };
+  });
 
-  current.failures += 1;
-  current.lastFailure = new Date(now).toISOString();
-
-  let locked = false;
-  if (current.failures >= DEFAULTS.maxFailures) {
-    current.lockedUntil = now + DEFAULTS.lockMs;
-    locked = true;
+  if (outcome.locked) {
     logSecurityEvent({
       type: `${scope}_account_locked`,
       success: false,
       ip: meta.ip || null,
       email: meta.email || null,
       path: meta.path || null,
-      detail: { failures: current.failures, retryAfterSec: Math.ceil(DEFAULTS.lockMs / 1000) },
+      detail: { failures: outcome.failures, retryAfterSec: Math.ceil(DEFAULTS.lockMs / 1000) },
     });
   }
 
-  state[key] = current;
-  writeState(state);
-
   return {
-    locked,
-    failures: current.failures,
-    remainingAttempts: Math.max(0, DEFAULTS.maxFailures - current.failures),
-    retryAfterSec: locked ? Math.ceil((current.lockedUntil - now) / 1000) : 0,
+    locked: outcome.locked,
+    failures: outcome.failures,
+    remainingAttempts: Math.max(0, DEFAULTS.maxFailures - outcome.failures),
+    retryAfterSec: outcome.locked ? Math.ceil((outcome.lockedUntil - now) / 1000) : 0,
   };
 }
 
 function clearFailures(scope, identifier) {
-  const state = readState();
   const key = makeKey(scope, identifier);
-  if (state[key]) {
+  if (!readState()[key]) return;
+  update((state) => {
     delete state[key];
-    writeState(state);
-  }
+  });
 }
 
 function listLockouts(limit = 50) {
   const state = readState();
   const now = Date.now();
   return Object.entries(state)
+    .filter(([, entry]) => !isExpired(entry, now))
     .map(([key, entry]) => ({
       key,
       failures: entry.failures || 0,

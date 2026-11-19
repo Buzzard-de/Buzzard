@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const ADMIN_EMAIL = process.env.BUZZARD_ADMIN_EMAIL || "admin@buzzard.de";
-const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "<redacted>";
+const ADMIN_PASSWORD = process.env.BUZZARD_ADMIN_PASSWORD || "BuzzardAdmin2026!";
 
 async function adminLogin(page: import("@playwright/test").Page) {
   await page.goto("/admin/login/");
@@ -51,6 +51,15 @@ test.describe("Admin PIM Core E2E (Part 6)", () => {
     await expect(pending).toContainText("Dry run pending approval");
     await expect(pending).toContainText("not executed");
     await expect(pending).toContainText(String(body.approval.id));
+    // The page names the state, the approval and the reserved job, and claims no validation result.
+    await expect(page.getByTestId("pim-import-state")).toHaveText("pendingApproval");
+    await expect(page.getByTestId("pim-import-approval-id")).toHaveText(String(body.approval.id));
+    await expect(page.getByTestId("pim-import-approval-status")).toHaveText("PENDING");
+    await expect(page.getByTestId("pim-import-job-id")).toContainText(String(body.approval.metadata.jobId));
+    await expect(page.getByTestId("pim-import-job-id")).toContainText("not started");
+    await expect(page.getByTestId("pim-import-validation")).toContainText("not run");
+    await expect(pending).not.toContainText(/finished|completed|abgeschlossen/i);
+    await expect(page.getByTestId("pim-import-after-approval")).toContainText("does not start the dry run");
     await expect(page.getByTestId("pim-import-result")).toHaveCount(0);
     await expect(page.getByTestId("pim-import-error")).toHaveCount(0);
 

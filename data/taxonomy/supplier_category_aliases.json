@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "description": "Verified supplier path aliases to active shop slug paths (no invented categories).",
+  "aliases": {
+    "automotive/brakes": "automotive/bremssystem"
+  }
+}

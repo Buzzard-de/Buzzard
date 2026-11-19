@@ -28,7 +28,7 @@ function rejectLegacyProductWrite(res, source) {
   }
 }
 
-const ordersFile = path.join(__dirname, "..", "data", "orders.json");
+const ordersFile = path.join(require("../lib/dataDir").resolveDataDir(), "orders.json");
 
 function readOrders() {
   if (!fs.existsSync(ordersFile)) return [];
@@ -216,7 +216,7 @@ module.exports = {
         logSecurityEvent({
           type: "admin_import_failed",
           success: false,
-          ip: req.headers["x-forwarded-for"] || req.socket?.remoteAddress,
+          ip: require("../lib/security").getClientIp(req),
           userId: req.adminUser?.userId,
           path: "/api/admin/import",
           detail: { supplierId, format },

@@ -5,7 +5,7 @@ const path = require("path");
 const productValidator = require("./productValidator");
 const { screenProductAi, holdCommercialAiAction } = require("./aiCenterAuthority");
 
-const reviewFile = path.join(__dirname, "..", "data", "ai-review-queue.json");
+const reviewFile = path.join(require("./dataDir").resolveDataDir(), "ai-review-queue.json");
 
 function readQueue() {
   try {

@@ -1,7 +1,8 @@
 # BUZZARD — Master Development Plan (single ledger)
 
-**Last updated:** 2026-11-18, 20:47 Europe/Berlin (19:47 UTC)  
-**Branch:** `cursor/security-admin-final-checkpoint-c293` (HEAD `b2479b6b` + **local uncommitted implementation**)  
+**Last updated:** 2026-11-19, 15:40 Europe/Berlin  
+**Branch:** `cursor/master-phases-6-21-c293` (HEAD `3df03351` + **local uncommitted implementation**)  
+**Authoritative completion report:** `BUZZARD_MASTER_SOFTWARE_COMPLETION_FINAL_REPORT.md`  
 **Invariants:** SALES=LOCKED · EGRESS=DENY · `productionReady=false` · `live=false`  
 **Live API process on 3000/3001:** **Not restarted** — running tree may still be pre-merge until authorized maintenance.
 
@@ -16,7 +17,7 @@
 | 3 Ürün / PIM (kuru) | **%100 COMPLETE** | `phase3ProductPim.test.mjs` |
 | 4 Tedarikçi / stok (kuru) | **%100 COMPLETE** | `phase4SupplierAutomation.test.mjs` |
 | 5 Fiyat / kâr motoru | **%100 COMPLETE** | `phase5PricingProfit.test.mjs` · `pricingAutomationService` |
-| 6–21 | **COMPLETE (yazılım)** | Vitest: `phases6to21Gate.test.mjs`; canlı kalemler `BLOCKED_EXTERNAL` |
+| 6–21 | **SOFTWARE_PARTIAL** (verified ≈36–72% / faz) | Gate rubric 100% ≠ verified; `buzzard_ordered_phases.v1.json` v1.4.0 |
 
 **Tamamlanmamış iş listesi eşlemesi:** `data/master/buzzard_incomplete_checklist.v1.json` (canlı maddeler `BLOCKED_EXTERNAL`, yazılım maddeleri faz kapılarıyla).
 
@@ -31,11 +32,12 @@
 | Dev list 51 | **13** ALREADY_COMPLETE · **32** CODE_COMPLETE · **6** LIVE_BLOCKED · **0** FAILED |
 | Software-complete items (51 list) | **45 / 51** = **88.2%** (blocked items are **not** complete) |
 | Commerce engines registered | **11 / 11** present, **0** live |
-| Ecosystem `softwarePercent` | **100** (internal rubric; `completeClaim: false`) |
-| Ecosystem `goLivePercent` | **69** (go-live evidence, not sales) |
-| PR #507 server security (repo) | **Merged into workspace** this session (isolated tests **309** passed) |
-| PR #507 server security (live 3001) | **BLOCKED_EXTERNAL** — no patch apply / restart |
-| Mission overall | **IN_PROGRESS** |
+| Verified software completion (21 faz) | **59.8%** (`honestLedger` in ordered phases JSON) |
+| Live integration readiness | **≈24%** |
+| Server vitest | **1949 PASS / 0 FAIL / 1 SKIP** (full `server/__tests__`) |
+| PR #507 security (worktree) | Present uncommitted; **not on HEAD**; live **BLOCKED_EXTERNAL** |
+| Protected `buzzard.db` hash | **DRIFT** this session — see final report §12 |
+| Mission overall | **IN_PROGRESS** (Directive v2.0) |
 
 Statuses used in this ledger: **COMPLETE** · **IN_PROGRESS** · **BLOCKED_EXTERNAL** · **NOT_STARTED** · **FAILED**
 

@@ -334,9 +334,16 @@ async function forwardDropshipOrder({ supplier, order, req } = {}) {
 }
 
 function getIntegrationStatus() {
+  let operational = null;
+  try {
+    operational = require("./operations/integrationSnapshots").buildIntegrationSnapshots();
+  } catch {
+    operational = { ok: false, code: "SNAPSHOT_UNAVAILABLE", live: false };
+  }
   return {
     version: "0.5.1",
     salesEnabled: process.env.BUZZARD_SALES_ENABLED === "1",
+    operational,
     payments: {
       stripe: Boolean(process.env.STRIPE_SECRET_KEY),
       paypal: Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET),
@@ -353,9 +360,11 @@ function getIntegrationStatus() {
     supplier: Boolean(process.env.SUPPLIER_API_KEY),
     tecdoc: Boolean(process.env.TECDOC_API_KEY),
     webhooks: {
-      note: "Signed provider webhooks required before production",
+      note: "Inbound webhooks are admitted by signature only; a scope without a secret refuses every request",
       stripe: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
-      configured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+      configured: require("./webhookGate")
+        .describeConfiguration()
+        .some((entry) => entry.configured),
     },
   };
 }

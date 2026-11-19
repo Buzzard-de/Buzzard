@@ -9,6 +9,7 @@ const { createDraftStore, draftOrdersFromDryRun } = require("./dryOrderDraft");
 const { validateOrderPayload } = require("../supplier/supplierOrderReadiness");
 const { selectSupplierForOrder } = require("../supplier/supplierSelectionEngine");
 const { planSupplierRecovery } = require("../supplier/supplierErrorRecovery");
+const { forwardDrySupplierOrder } = require("../supplier/supplierOrderOrchestrator");
 
 const tracker = new Map();
 
@@ -68,20 +69,49 @@ function cancelOrderDry(orderId) {
 }
 
 function routeToSupplier(order = {}) {
+  const orderId = order.orderId || `DRY-ORD-${crypto.randomBytes(3).toString("hex")}`;
   const payload = {
     supplierId: order.supplierId || "api-supplier-dry",
-    orderId: order.orderId || `DRY-ORD-${crypto.randomBytes(3).toString("hex")}`,
+    orderId,
     items: order.items || [{ supplierSku: order.sku, quantity: order.qty || 1 }],
+    lineItems: order.lineItems || [{ sku: order.sku, quantity: order.qty || 1 }],
+    offersBySku: order.offersBySku,
   };
   const validation = validateOrderPayload(payload);
+  const selection =
+    payload.offersBySku && payload.lineItems
+      ? selectSupplierForOrder({ lineItems: payload.lineItems, offersBySku: payload.offersBySku })
+      : null;
   return {
     ok: validation.ok,
-    orderId: payload.orderId,
+    orderId,
     readiness: {
       ok: validation.ok,
       dryRun: true,
       createOrderBlocked: validation.createOrderBlocked,
     },
+    selection,
+    transmitted: false,
+    live: false,
+  };
+}
+
+async function routeToSupplierWithAdapter(order = {}) {
+  const orderId = order.orderId || `DRY-ORD-${crypto.randomBytes(3).toString("hex")}`;
+  const payload = {
+    supplierId: order.supplierId || "api-supplier-dry",
+    orderId,
+    items: order.items || [{ supplierSku: order.sku, quantity: order.qty || 1 }],
+    lineItems: order.lineItems || [{ sku: order.sku, quantity: order.qty || 1 }],
+    offersBySku: order.offersBySku,
+  };
+  const forwarded = await forwardDrySupplierOrder(payload);
+  return {
+    ok: forwarded.ok,
+    orderId,
+    readiness: forwarded.readiness,
+    selection: forwarded.selection,
+    submit: forwarded.submit,
     transmitted: false,
     live: false,
   };
@@ -160,13 +190,73 @@ function listTrackedOrders() {
   return [...tracker.values()];
 }
 
+/**
+ * Checkout-shaped dry rehearsal for ordersPlugin (sales locked, no persistence).
+ */
+async function rehearseOrderFromCheckout({ body, quote, country = "DE" } = {}) {
+  const line = (quote?.lines || body?.lines || [])[0] || {};
+  const sku = line.sku || line.productId || "DRY-SKU-001";
+  const sampleRecord = {
+    sku,
+    supplier_sku: sku,
+    name: line.title || "Checkout rehearsal item",
+    title: line.title || "Checkout rehearsal item",
+    description: "Dry rehearsal record generated from checkout payload.",
+    supplier_category: line.supplierCategory || "automotive/bremssystem",
+    ean_gtin: line.ean || "5901234123457",
+    mpn: line.mpn || "P85073",
+    brand: line.brand || "ATE",
+    images: line.images?.length ? line.images : ["https://cdn.test-supplier.example.de/p85073.jpg"],
+    supplier_price: { amount: Number(line.unitPrice) || 40, currency: quote?.currency || "EUR" },
+    shipping_cost: 6,
+    marketplace_fee: 4,
+    payment_fee: 1.2,
+    return_reserve: 1,
+    other_cost: 0,
+    comparable_market_price: 90,
+    stock: Number(line.stock) || 12,
+    reserved_stock: 0,
+    stock_updated_at: new Date().toISOString(),
+    country: String(country || "DE").toUpperCase(),
+  };
+
+  const pipe = runDryOrderPipeline(sampleRecord);
+  const tracked = listTrackedOrders()[0];
+  const supplierAdapter = await routeToSupplierWithAdapter({
+    orderId: tracked?.orderId || pipe.supplierForward?.orderId,
+    sku,
+    qty: line.qty || 1,
+    supplierId: pipe.selection?.lines?.[0]?.primary?.supplierId,
+    lineItems: [{ sku, quantity: line.qty || 1 }],
+    offersBySku:
+      pipe.selection?.lines?.[0]
+        ? {
+            [sku]: [pipe.selection.lines[0].primary, pipe.selection.lines[0].fallback].filter(Boolean),
+          }
+        : undefined,
+  });
+
+  return {
+    ok: pipe.ok && supplierAdapter.ok,
+    pipeline: pipe,
+    supplierAdapter,
+    salesLocked: true,
+    live: false,
+    paymentCapture: false,
+    customerEmail: body?.customer?.email || null,
+    quoteTotal: quote?.total ?? null,
+  };
+}
+
 module.exports = {
   validateOrderAutomatic,
   dryReserveStock,
   transitionOrderStatus,
   cancelOrderDry,
   routeToSupplier,
+  routeToSupplierWithAdapter,
   runDryOrderPipeline,
+  rehearseOrderFromCheckout,
   getCentralOrder,
   listTrackedOrders,
 };

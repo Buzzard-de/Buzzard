@@ -3,6 +3,7 @@
 import "@/styles/admin.css";
 import AdminGuard from "@/components/admin/AdminGuard";
 import AdminShell from "@/components/admin/AdminShell";
+import AdminPageAccess from "@/components/admin/AdminPageAccess";
 import { AdminAuthProvider } from "@/lib/admin/context";
 import { usePathname } from "next/navigation";
 
@@ -14,7 +15,9 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
 
   return (
     <AdminGuard>
-      <AdminShell>{children}</AdminShell>
+      <AdminShell>
+        <AdminPageAccess>{children}</AdminPageAccess>
+      </AdminShell>
     </AdminGuard>
   );
 }

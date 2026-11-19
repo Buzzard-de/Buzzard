@@ -2,10 +2,10 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.join(__dirname, "..", "..");
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const ordersFile = path.join(dataDir, "orders.json");
 const customersFile = path.join(dataDir, "customers.json");
-const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+const productsFile = require("./catalogFiles").runtimeCatalogFile("buzzard_products.json");
 const categoriesFile = path.join(rootDir, "data", "buzzard_categories.json");
 const returnsFile = path.join(dataDir, "return-requests.json");
 const fulfillmentsFile = path.join(dataDir, "fulfillments.json");

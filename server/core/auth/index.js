@@ -127,7 +127,8 @@ function requirePermission(req, res, permission) {
     const auth = requireAuth(req, res, { realm: "admin" });
     if (!auth) return false;
   }
-  if (!rbacRequirePermission(req, res, permission)) {
+  if (!can(req.adminUser?.role, permission)) {
+    // Recorded before the refusal is sent, so the log never lags behind the answer.
     logSecurityEvent({
       type: "permission_denied",
       success: false,
@@ -138,9 +139,8 @@ function requirePermission(req, res, permission) {
       role: req.adminUser?.role,
       detail: { permission },
     });
-    return false;
   }
-  return true;
+  return rbacRequirePermission(req, res, permission);
 }
 
 function logout(req, realm = "admin") {

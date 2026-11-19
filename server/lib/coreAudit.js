@@ -1,31 +1,35 @@
-const fs = require("fs");
 const path = require("path");
+const { resolveDataDir } = require("./dataDir");
+const { appendRecord, readRecords } = require("./recordStore");
+const { redactForLog, getClientIp } = require("./security");
+const requestScope = require("./requestScope");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = resolveDataDir();
 const auditFile = path.join(dataDir, "audit-log.json");
-
-function ensureDataDir() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-}
+const MAX_ENTRIES = 5000;
+const RESULTS = new Set(["success", "failure", "denied", "rejected", "error", "aborted", "blocked", "refused", "pending_approval", "approval_required"]);
 
 function readLog() {
-  ensureDataDir();
-  if (!fs.existsSync(auditFile)) return [];
-  try {
-    return JSON.parse(fs.readFileSync(auditFile, "utf8") || "[]");
-  } catch {
-    return [];
-  }
+  return readRecords(auditFile);
 }
 
-function writeLog(entries) {
-  ensureDataDir();
-  fs.writeFileSync(auditFile, JSON.stringify(entries.slice(-5000), null, 2), "utf8");
+function text(value, max) {
+  if (value === undefined || value === null || value === "") return null;
+  return String(value)
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .slice(0, max);
+}
+
+/** Values are kept for the record of what changed, never credentials. */
+function loggedValue(value) {
+  if (value === undefined || value === null) return null;
+  return redactForLog(value);
 }
 
 function logAudit({
   userId,
   userEmail,
+  role,
   action,
   entityType,
   entityId,
@@ -36,36 +40,49 @@ function logAudit({
   ip,
   userAgent,
   metadata,
+  // Names used by the commerce modules for the same things.
+  actorId,
+  actorType,
+  resourceType,
+  resourceId,
 }) {
-  const entries = readLog();
-  entries.push({
-    id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    userId: userId || null,
-    userEmail: userEmail || null,
-    action,
-    entityType,
-    entityId: entityId || null,
-    field: field || null,
-    oldValue: oldValue ?? null,
-    newValue: newValue ?? null,
-    result,
-    ip: ip || null,
-    userAgent: userAgent || null,
-    metadata: metadata || null,
-    timestamp: new Date().toISOString(),
-  });
-  writeLog(entries);
+  userId = userId ?? actorId;
+  entityType = entityType ?? resourceType;
+  entityId = entityId ?? resourceId;
+  const sensitiveField = typeof field === "string" && redactForLog({ [field]: "x" })[field] !== "x";
+  return appendRecord(
+    auditFile,
+    {
+      id: `audit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      userId: text(userId, 120),
+      userEmail: text(userEmail, 254),
+      role: text(role, 40),
+      actorType: text(actorType, 40) || (userId ? "user" : "system"),
+      action: text(action, 120) || "unknown",
+      entityType: text(entityType, 80),
+      entityId: text(entityId, 200),
+      field: text(field, 120),
+      oldValue: sensitiveField && oldValue != null ? "[redacted]" : loggedValue(oldValue),
+      newValue: sensitiveField && newValue != null ? "[redacted]" : loggedValue(newValue),
+      result: RESULTS.has(result) ? result : text(result, 40) || "success",
+      ip: text(ip, 45),
+      userAgent: text(userAgent, 300),
+      metadata: metadata ? redactForLog(metadata) : null,
+      ...requestScope.ids(),
+      timestamp: new Date().toISOString(),
+    },
+    { keep: MAX_ENTRIES }
+  );
 }
 
 function logAuditFromRequest(req, payload) {
-  const ip = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || null;
-  const userAgent = req.headers["user-agent"] || null;
   const user = req.adminUser || {};
-  logAudit({
+  return logAudit({
     userId: user.userId || user.id,
     userEmail: user.email,
-    ip,
-    userAgent,
+    role: user.role,
+    ip: getClientIp(req),
+    userAgent: req.headers["user-agent"] || null,
     ...payload,
   });
 }
@@ -77,4 +94,4 @@ function listAudit(limit = 100, filters = {}) {
   return rows.slice(0, limit);
 }
 
-module.exports = { logAudit, logAuditFromRequest, listAudit };
+module.exports = { logAudit, logAuditFromRequest, listAudit, auditFile, MAX_ENTRIES };

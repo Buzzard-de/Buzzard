@@ -184,6 +184,9 @@ module.exports = {
         executed: false,
         dryRun: true,
         approval: admitted.approval,
+        approvalId: admitted.approval.id,
+        // The id the admission reserved. No job is created here, and none exists under this id.
+        importJobId: admitted.jobId,
         job: null,
       });
     });

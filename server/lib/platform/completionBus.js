@@ -11,6 +11,9 @@ const { verify: verifyPaymentWebhook } = require("../finance/paymentWebhook");
 const { probe: probe16 } = require("../workstreams/special16Runtime");
 const { snapshot: streams } = require("../workstreams/special16");
 const { coverage, publishBanner } = require("../storefront/holidayProgram");
+const { validateCatalogCoverage } = require("../pim/subcategoryCatalogProfile");
+const { runSyntheticCustomerJourney } = require("../commerce/syntheticCustomerJourney");
+const { assessTextile } = require("../storefront/textileProgram");
 const { SHARED } = require("../security/egressPolicy");
 const { assessVoice } = require("../voice/voiceReadiness");
 const { send, migrateNumber } = require("../comms/whatsappSandbox");
@@ -55,6 +58,7 @@ function integrate({ root = process.cwd() } = {}) {
     fr: split({ netProfit: 100, taxEstimate: 20, country: "FR" }),
     de: split({ netProfit: 100, taxEstimate: 20, country: "DE" }),
   };
+  const journey = runSyntheticCustomerJourney();
   return {
     live: false,
     productionReady: false,
@@ -67,6 +71,9 @@ function integrate({ root = process.cwd() } = {}) {
     whatsapp: { sent: send().sent, migrate: migrateNumber().code },
     voice: assessVoice(),
     holidays: { ...holidays, publish: publishBanner() },
+    catalogProfiles: validateCatalogCoverage(),
+    textile: assessTextile(),
+    syntheticJourney: { ok: journey.ok, steps: journey.stepCount, failed: journey.failedSteps, live: false },
     streams: streams(),
     tax,
     incident: { live: incident.live, notify: incident.notify, worm: incident.worm },

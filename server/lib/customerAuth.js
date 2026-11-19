@@ -5,7 +5,7 @@ const { hashPassword, verifyPassword, needsRehash } = require("./password");
 const { createRateLimiter, getClientIp } = require("./security");
 const { logSecurityEvent } = require("./securityLog");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const sessionsFile = path.join(dataDir, "customer-sessions.json");
 const resetFile = path.join(dataDir, "password-reset-tokens.json");
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -30,23 +30,46 @@ function readJson(file, fallback) {
 
 function writeJson(file, data) {
   ensureDataDir();
-  fs.writeFileSync(file, JSON.stringify(data, null, 2), "utf8");
+  // Whole file or nothing, readable by the service account only. No previous
+  // version is kept: sessions and reset tokens have no history worth restoring.
+  require("./jsonFileStore").writeJsonAtomic(file, data, { backup: false });
 }
 
+function tokenKey(token) {
+  return crypto.createHash("sha256").update(String(token || "")).digest("hex");
+}
+
+// Sessions are kept under the hash of their token: the file does not contain
+// anything that could be presented as a session.
 function loadSessions() {
+  let legacy = false;
   for (const entry of readJson(sessionsFile, [])) {
-    if (entry.session?.expiresAt > Date.now()) sessions.set(entry.token, entry.session);
+    if (!entry || !(entry.session?.expiresAt > Date.now())) continue;
+    if (typeof entry.tokenHash === "string") {
+      sessions.set(entry.tokenHash, entry.session);
+    } else if (typeof entry.token === "string") {
+      // Written by an earlier version; still valid, re-keyed on first write.
+      sessions.set(tokenKey(entry.token), entry.session);
+      legacy = true;
+    }
+  }
+  if (legacy) {
+    try {
+      persistSessions();
+    } catch {
+      // Read-only start (inspection); the next sign-in rewrites the file.
+    }
   }
 }
-
-loadSessions();
 
 function persistSessions() {
   writeJson(
     sessionsFile,
-    [...sessions.entries()].map(([token, session]) => ({ token, session }))
+    [...sessions.entries()].map(([tokenHash, session]) => ({ tokenHash, session }))
   );
 }
+
+loadSessions();
 
 function createToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -61,7 +84,7 @@ function createSession(customer) {
     lastName: customer.lastName,
     expiresAt: Date.now() + SESSION_TTL_MS,
   };
-  sessions.set(token, session);
+  sessions.set(tokenKey(token), session);
   persistSessions();
   return { token, user: publicUser(customer) };
 }
@@ -123,8 +146,7 @@ function login(email, password, verifyPasswordFn, req) {
 }
 
 function logout(token, req) {
-  sessions.delete(token);
-  persistSessions();
+  if (sessions.delete(tokenKey(token))) persistSessions();
   if (req) {
     logSecurityEvent({
       type: "customer_logout",
@@ -136,14 +158,29 @@ function logout(token, req) {
 }
 
 function getSession(token) {
-  if (!token) return null;
-  const session = sessions.get(token);
-  if (!session || session.expiresAt <= Date.now()) {
-    sessions.delete(token);
+  if (typeof token !== "string" || token.length < 16 || token.length > 256) return null;
+  const key = tokenKey(token);
+  const session = sessions.get(key);
+  if (!session) return null;
+  if (session.expiresAt <= Date.now()) {
+    sessions.delete(key);
     persistSessions();
     return null;
   }
   return session;
+}
+
+/** Ends every session of one customer (password reset, account closed). */
+function revokeCustomerSessions(customerId) {
+  let removed = 0;
+  for (const [key, session] of sessions) {
+    if (session.customerId === customerId) {
+      sessions.delete(key);
+      removed += 1;
+    }
+  }
+  if (removed) persistSessions();
+  return removed;
 }
 
 function extractToken(req) {
@@ -169,20 +206,29 @@ function requireCustomer(req, res) {
   return session;
 }
 
+function resetTokenHash(token) {
+  return crypto.createHash("sha256").update(String(token || "")).digest("hex");
+}
+
 function createResetToken(customerId, req) {
   if (resetRateLimit(req, { key: customerId })) {
     return { limited: true };
   }
   const token = createToken();
   const tokens = readJson(resetFile, []).filter((entry) => entry.expiresAt > Date.now());
-  tokens.push({ token, customerId, expiresAt: Date.now() + RESET_TTL_MS, createdAt: new Date().toISOString() });
+  // Only the hash is kept: the file alone does not let anyone reset a password.
+  tokens.push({ tokenHash: resetTokenHash(token), customerId, expiresAt: Date.now() + RESET_TTL_MS, createdAt: new Date().toISOString() });
   writeJson(resetFile, tokens);
   return { token };
 }
 
 function consumeResetToken(token) {
+  if (typeof token !== "string" || token.length < 16 || token.length > 256) return null;
   const tokens = readJson(resetFile, []);
-  const idx = tokens.findIndex((entry) => entry.token === token && entry.expiresAt > Date.now());
+  const hash = resetTokenHash(token);
+  const idx = tokens.findIndex(
+    (entry) => entry && entry.expiresAt > Date.now() && (entry.tokenHash === hash || (typeof entry.token === "string" && entry.token === token))
+  );
   if (idx < 0) return null;
   const entry = tokens[idx];
   tokens.splice(idx, 1);
@@ -201,4 +247,5 @@ module.exports = {
   requireCustomer,
   createResetToken,
   consumeResetToken,
+  revokeCustomerSessions,
 };

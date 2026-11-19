@@ -10,7 +10,7 @@ const customerStore = require("../lib/customerStore");
 const fs = require("fs");
 const path = require("path");
 
-const ordersFile = path.join(__dirname, "..", "data", "orders.json");
+const ordersFile = path.join(require("../lib/dataDir").resolveDataDir(), "orders.json");
 
 function readOrders() {
   if (!fs.existsSync(ordersFile)) return [];

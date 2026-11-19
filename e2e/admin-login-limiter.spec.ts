@@ -9,7 +9,7 @@ import { API_URL, adminCredentials } from "./support/admin";
  */
 const mode = process.env.BUZZARD_E2E_LIMITER;
 const account = adminCredentials("catalog_manager");
-const lockTarget = adminCredentials("order_manager");
+const lockTarget = adminCredentials("lockout_probe");
 
 test.describe("Admin login limiter", () => {
   test.skip(mode !== "on" && mode !== "off", "limiter mode unknown: run through scripts/isolated/e2e.sh");

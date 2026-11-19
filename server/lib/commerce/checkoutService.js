@@ -189,7 +189,7 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
 
   const risk = assessCheckoutRisk({
     items: stock.cart.items,
-    clientIp: ctx.req?.headers?.["x-forwarded-for"],
+    clientIp: ctx.req ? require("../security").getClientIp(ctx.req) : undefined,
     sessionId: stock.cart.cart.sessionId,
     clientTotals: body.totals,
   });

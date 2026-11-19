@@ -2,9 +2,9 @@ const fs = require("fs");
 const path = require("path");
 
 const rootDir = path.join(__dirname, "..", "..");
-const productsFile = path.join(rootDir, "data", "buzzard_products.json");
+const productsFile = require("./catalogFiles").runtimeCatalogFile("buzzard_products.json");
 const categoriesFile = path.join(rootDir, "data", "buzzard_categories.json");
-const overridesFile = path.join(rootDir, "data", "buzzard_seo_overrides.json");
+const overridesFile = require("./catalogFiles").runtimeCatalogFile("buzzard_seo_overrides.json");
 
 function readJson(file, fallback) {
   if (!fs.existsSync(file)) return fallback;

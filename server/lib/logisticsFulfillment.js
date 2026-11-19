@@ -130,10 +130,41 @@ function getShipmentTracking(orderNumber) {
   return { tracking: { ...shipment, events } };
 }
 
+/**
+ * True when the signed-in customer placed the order. Order numbers are
+ * sequential, so knowing one is not proof of ownership.
+ */
+function customerOwnsOrder(user, orderNumber) {
+  if (!user || !orderNumber) return false;
+  const id = user.sub !== undefined && user.sub !== null ? String(user.sub) : null;
+  const email = typeof user.email === "string" ? user.email.trim().toLowerCase() : "";
+  const lookups = [
+    ["SELECT user_id AS owner_id, NULL AS owner_email FROM orders WHERE order_number = ?"],
+    ["SELECT customer_id AS owner_id, customer_email AS owner_email FROM oms_orders WHERE order_number = ?"],
+  ];
+  for (const [sql] of lookups) {
+    let row;
+    try {
+      row = db.prepare(sql).get(orderNumber);
+    } catch {
+      row = null; // table not present in this configuration
+    }
+    if (!row) continue;
+    if (id && row.owner_id !== null && row.owner_id !== undefined && String(row.owner_id) === id) return true;
+    if (email && row.owner_email && String(row.owner_email).trim().toLowerCase() === email) return true;
+  }
+  return false;
+}
+
 function handleCarrierWebhook(body = {}) {
-  const orderNumber = String(body.orderNumber || "").trim();
-  const status = String(body.status || "").trim();
-  if (!orderNumber || !status) return { error: "orderNumber and status required", status: 400 };
+  if (!body.orderNumber || !body.status) return { error: "orderNumber and status required", status: 400 };
+  const webhookInput = require("./webhookInput");
+  const orderNumber = webhookInput.identifier(body.orderNumber);
+  const status = webhookInput.token(body.status);
+  const location = webhookInput.text(body.location, 120);
+  const message = webhookInput.text(body.message, 500);
+  const eventTime = webhookInput.timestamp(body.eventTime);
+  if (!orderNumber || !status || location === null || message === null || !eventTime) return webhookInput.INVALID;
 
   const shipment = db
     .prepare("SELECT id FROM logistics_shipments WHERE order_number = ?")
@@ -143,13 +174,7 @@ function handleCarrierWebhook(body = {}) {
   db.prepare("UPDATE logistics_shipments SET status = ? WHERE id = ?").run(status, shipment.id);
   db.prepare(
     "INSERT INTO logistics_tracking_events(shipment_id, status, location, message, event_time) VALUES(?,?,?,?,?)"
-  ).run(
-    shipment.id,
-    status,
-    body.location || "",
-    body.message || "",
-    body.eventTime || new Date().toISOString()
-  );
+  ).run(shipment.id, status, location, message, eventTime);
   return { ok: true, status: 202 };
 }
 
@@ -243,6 +268,7 @@ module.exports = {
   updateLabelResult,
   listShipments,
   getShipmentTracking,
+  customerOwnsOrder,
   handleCarrierWebhook,
   createReturn,
   listCustomerReturns,

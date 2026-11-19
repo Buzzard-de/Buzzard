@@ -1,4 +1,15 @@
-const { login, logout, verifyTwoFactor, requireAuth, extractToken, listActiveSessions, revokeSession } = require("../lib/auth");
+const {
+  login,
+  logout,
+  verifyTwoFactor,
+  requireAuth,
+  extractToken,
+  listActiveSessions,
+  revokeSession,
+  changePassword,
+  changeUserRole,
+  listUsers,
+} = require("../lib/auth");
 const { listAudit } = require("../lib/audit");
 const { requirePermission } = require("../lib/rbac");
 const adminTwoFactor = require("../lib/adminTwoFactor");
@@ -14,7 +25,10 @@ module.exports = {
     app.post("/api/admin/login", (req, res) => {
       const { email, password } = req.body || {};
       const result = login(email, password, req);
-      if (!result.success) return res.status(result.errorKey === "admin.auth.rateLimited" ? 429 : 401).json(result);
+      if (!result.success) {
+        const status = result.errorKey === "admin.auth.rateLimited" ? 429 : result.errorKey === "admin.auth.unavailable" ? 503 : 401;
+        return res.status(status).json(result);
+      }
       if (result.requires2FA) {
         return res.json(result);
       }
@@ -28,9 +42,41 @@ module.exports = {
       return res.json(result);
     });
 
+    // Always answers success: whether a token was still valid is not something to tell an anonymous caller.
     app.post("/api/admin/logout", (req, res) => {
       logout(extractToken(req), req);
       return res.json({ success: true });
+    });
+
+    app.post("/api/admin/account/password", (req, res) => {
+      const session = requireAuth(req, res);
+      if (!session) return;
+      const { currentPassword, newPassword } = req.body || {};
+      const result = changePassword(session, currentPassword, newPassword, req);
+      if (!result.success) {
+        const { status, ...body } = result;
+        return res.status(status).json(body);
+      }
+      return res.json(result);
+    });
+
+    app.get("/api/admin/users", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "users.read")) return;
+      return res.json({ success: true, users: listUsers() });
+    });
+
+    app.patch("/api/admin/users/:userId/role", (req, res) => {
+      if (!requireAuth(req, res)) return;
+      if (!requirePermission(req, res, "users.write")) return;
+      const { assertSafeId } = require("../lib/idorGuard");
+      if (!assertSafeId(req, res, req.params.userId, "userId")) return;
+      const result = changeUserRole(req.adminUser, req.params.userId, String(req.body?.role || ""), req);
+      if (!result.success) {
+        const { status, ...body } = result;
+        return res.status(status).json(body);
+      }
+      return res.json(result);
     });
 
     app.get("/api/admin/me", (req, res) => {
@@ -101,7 +147,7 @@ module.exports = {
       if (!requireAuth(req, res)) return;
       if (!requirePermission(req, res, "security.read")) return;
       const scopeAll = req.adminUser.role === "administrator" || req.adminUser.role === "super_admin";
-      const sessions = listActiveSessions(scopeAll ? null : req.adminUser.userId);
+      const sessions = listActiveSessions(scopeAll ? null : req.adminUser.userId, { currentToken: req.adminToken });
       return res.json({ success: true, sessions });
     });
 

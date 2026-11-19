@@ -160,9 +160,14 @@ function createRefund(id, body = {}) {
 }
 
 function handlePaymentWebhook(body = {}) {
-  const externalId = String(body.externalId || body.external_id || "").trim();
-  const status = String(body.status || "").trim();
-  if (!externalId || !status) return { error: "externalId and status required", status: 400 };
+  const webhookInput = require("./webhookInput");
+  if (!body.externalId && !body.external_id) return { error: "externalId and status required", status: 400 };
+  if (body.status === undefined || body.status === null || body.status === "") {
+    return { error: "externalId and status required", status: 400 };
+  }
+  const externalId = webhookInput.identifier(body.externalId || body.external_id);
+  const status = webhookInput.token(body.status);
+  if (!externalId || !status) return webhookInput.INVALID;
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
@@ -211,30 +216,46 @@ function createInvoice(body = {}) {
 }
 
 function handlePayoutWebhook(body = {}) {
-  const provider = db
-    .prepare("SELECT id FROM finance_payment_providers WHERE code = ?")
-    .get(body.provider);
+  const webhookInput = require("./webhookInput");
+  const providerCode = webhookInput.token(body.provider);
+  const provider = providerCode
+    ? db.prepare("SELECT id FROM finance_payment_providers WHERE code = ?").get(providerCode)
+    : null;
   if (!provider) return { error: "Unknown provider", status: 400 };
+
+  const rawPayoutId = body.externalPayoutId || body.external_payout_id;
+  const payoutId = rawPayoutId === undefined || rawPayoutId === null ? uuid() : webhookInput.identifier(rawPayoutId);
+  const amount = webhookInput.amount(body.amount);
+  const currency = webhookInput.currency(body.currency);
+  const status = body.status === undefined ? "received" : webhookInput.token(body.status);
+  const payoutDate = webhookInput.timestamp(body.payoutDate || body.payout_date);
+  if (!payoutId || amount === null || !currency || !status || !payoutDate) return webhookInput.INVALID;
 
   db.prepare(`
     INSERT INTO finance_payouts(provider_id, external_payout_id, amount, currency, status, payout_date)
     VALUES(?,?,?,?,?,?)
-  `).run(
-    provider.id,
-    body.externalPayoutId || body.external_payout_id || uuid(),
-    Number(body.amount || 0),
-    body.currency || "EUR",
-    body.status || "received",
-    body.payoutDate || body.payout_date || new Date().toISOString()
-  );
+  `).run(provider.id, payoutId, amount, currency, status, payoutDate);
   return { ok: true, status: 202 };
 }
 
 function handleDisputeWebhook(body = {}) {
-  const intent = db
-    .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
-    .get(body.externalId || body.external_id);
+  const webhookInput = require("./webhookInput");
+  const externalId = webhookInput.identifier(body.externalId || body.external_id);
+  const intent = externalId
+    ? db.prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?").get(externalId)
+    : null;
   if (!intent) return { error: "Payment not found", status: 404 };
+
+  const rawCaseId = body.caseId || body.case_id;
+  const caseId = rawCaseId === undefined || rawCaseId === null ? uuid() : webhookInput.identifier(rawCaseId);
+  const amount = webhookInput.amount(body.amount);
+  const currency = webhookInput.currency(body.currency, intent.currency);
+  const status = body.status === undefined ? "open" : webhookInput.token(body.status);
+  const providerCode = body.provider === undefined || body.provider === "" ? "" : webhookInput.token(body.provider);
+  const reason = webhookInput.text(body.reason, 500);
+  if (!caseId || amount === null || !currency || !status || providerCode === null || reason === null) {
+    return webhookInput.INVALID;
+  }
 
   const result = db
     .prepare(`
@@ -243,15 +264,7 @@ function handleDisputeWebhook(body = {}) {
       )
       VALUES(?,?,?,?,?,?,?)
     `)
-    .run(
-      intent.id,
-      body.provider || "",
-      body.caseId || body.case_id || uuid(),
-      Number(body.amount || 0),
-      body.currency || intent.currency,
-      body.status || "open",
-      body.reason || ""
-    );
+    .run(intent.id, providerCode, caseId, amount, currency, status, reason);
 
   audit("dispute_received", result.lastInsertRowid, { paymentIntentId: intent.id });
   return { ok: true, status: 202 };

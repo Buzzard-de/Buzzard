@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const productStore = require("./productStore");
 const recommendationService = require("./recommendationService");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const ordersFile = path.join(dataDir, "orders.json");
 const sessionsFile = path.join(dataDir, "ai-chat-sessions.json");
 

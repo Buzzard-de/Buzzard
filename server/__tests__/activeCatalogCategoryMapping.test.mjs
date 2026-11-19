@@ -100,6 +100,14 @@ describe("active catalog category mapping", () => {
     expect(mapActiveCatalogCategory("bremssystem").catalog.subcategoryId).toBe("cat-05-03");
   });
 
+  it("resolves verified supplier path aliases to active slug paths", () => {
+    const aliased = mapActiveCatalogCategory("automotive/brakes");
+    expect(aliased.ok).toBe(true);
+    expect(aliased.code).toBe("CATEGORY_MATCHED");
+    expect(aliased.categoryId).toBe("cat-05");
+    expect(aliased.catalog.subcategoryId).toBe("cat-05-03");
+  });
+
   it("rejects retired shop ids, slugs, and master codes", () => {
     expect(mapActiveCatalogCategory(null, "cat-25").code).toBe("CATEGORY_RETIRED");
     expect(mapActiveCatalogCategory(null, "cat-43").code).toBe("CATEGORY_RETIRED");
@@ -118,7 +126,6 @@ describe("active catalog category mapping", () => {
     expect(mapActiveCatalogCategory(null, "not-a-category").code).toBe("CATEGORY_UNKNOWN");
     expect(mapActiveCatalogCategory(null, "").code).toBe("CATEGORY_MISSING");
     expect(mapActiveCatalogCategory("unknown/path").code).toBe("CATEGORY_UNMAPPED");
-    expect(mapActiveCatalogCategory("automotive/brakes").code).toBe("CATEGORY_UNMAPPED");
     expect(mapActiveCatalogCategory("brakes").code).toBe("CATEGORY_UNMAPPED");
     expect(mapActiveCatalogCategory("??").code).toBe("CATEGORY_UNMAPPED");
   });
@@ -181,7 +188,7 @@ describe("active catalog category mapping", () => {
       [{ ...SYNTHETIC_PRODUCT }, "", "supplierId"],
       [{ ...SYNTHETIC_PRODUCT }, "unknown", "supplierId"],
       [{ ...SYNTHETIC_PRODUCT, supplier_category: "" }, "synthetic-dry", "supplierCategory"],
-      [{ ...SYNTHETIC_PRODUCT, supplier_category: "automotive/brakes" }, "synthetic-dry", "category"],
+      [{ ...SYNTHETIC_PRODUCT, supplier_category: "supplier/unmapped/part" }, "synthetic-dry", "category"],
     ];
     for (const [record, supplierId, field] of cases) {
       const result = mapSupplierProduct(record, { supplierId });

@@ -25,7 +25,7 @@ function ensureCategory(name) {
 }
 
 function catalogJsonPath() {
-  return path.join(__dirname, "../../data/buzzard_products.json");
+  return require("./catalogFiles").runtimeCatalogFile("buzzard_products.json");
 }
 
 function loadCatalogProducts() {

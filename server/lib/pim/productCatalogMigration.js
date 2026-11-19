@@ -51,7 +51,7 @@ const PIM_CODE_TO_TAXONOMY = {
 };
 
 function p1CatalogPath() {
-  return path.join(__dirname, "..", "..", "..", "data", "buzzard_products.json");
+  return require("../catalogFiles").runtimeCatalogFile("buzzard_products.json");
 }
 
 function loadP1Candidates() {

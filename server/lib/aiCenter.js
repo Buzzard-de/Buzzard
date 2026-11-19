@@ -57,18 +57,32 @@ function aiAdapter({ task, input, language = "de" }) {
   return { answer: `AI assistant draft: ${clean(input, 1000)}`, provider, demo: true };
 }
 
-function createSession(body = {}) {
+let ownerColumnReady = false;
+
+/** Conversations belong to the back-office account that started them. */
+function ensureOwnerColumn() {
+  if (ownerColumnReady) return;
+  const columns = db.prepare("PRAGMA table_info(aictr_sessions)").all();
+  if (!columns.some((column) => column.name === "owner_user_id")) {
+    db.exec("ALTER TABLE aictr_sessions ADD COLUMN owner_user_id TEXT");
+  }
+  ownerColumnReady = true;
+}
+
+function createSession(body = {}, context = {}) {
+  ensureOwnerColumn();
   const token = sessionToken();
   const result = db
     .prepare(`
-      INSERT INTO aictr_sessions(session_token, customer_id, language, channel)
-      VALUES(?,?,?,?)
+      INSERT INTO aictr_sessions(session_token, customer_id, language, channel, owner_user_id)
+      VALUES(?,?,?,?,?)
     `)
     .run(
       token,
       body.customerId || body.customer_id || null,
       body.language || "de",
-      body.channel || "web"
+      body.channel || "web",
+      context.ownerUserId || null
     );
 
   return {
@@ -90,7 +104,7 @@ function getSessionByToken(token) {
   };
 }
 
-function chat(body = {}) {
+function chat(body = {}, context = {}) {
   const text = clean(body.message);
   const { decideAiAction } = require("./aiCenterAuthority");
   const preview = decideAiAction({ surface: "support", text, action: body.action });
@@ -108,12 +122,15 @@ function chat(body = {}) {
     });
   }
 
+  ensureOwnerColumn();
   let session = body.sessionToken
     ? db.prepare("SELECT * FROM aictr_sessions WHERE session_token = ?").get(body.sessionToken)
     : null;
+  // A conversation started by someone else is not continued; the caller gets a new one.
+  if (session && context.ownerUserId && session.owner_user_id !== context.ownerUserId) session = null;
 
   if (!session) {
-    const created = createSession(body);
+    const created = createSession(body, context);
     session = db.prepare("SELECT * FROM aictr_sessions WHERE id = ?").get(created.sessionId);
   }
 

@@ -51,14 +51,17 @@ function handleWebhook({ provider, eventId, eventType, rawBody, signature, secre
     };
   }
 
-  if (isDuplicateWebhook(eventId)) {
-    return { accepted: true, duplicate: true, status: 200 };
-  }
-
-  const verified = verifySignature(rawBody, signature, secret);
+  // The route admits the request by signature before this runs (lib/webhookGate.js).
+  // A direct caller without that admission has to bring a valid signature itself.
+  const verified = req?.webhook?.verified === true || verifySignature(rawBody, signature, secret);
   if (!verified) {
     logSecurityEvent({ type: "payment_attempt_blocked", success: false, detail: { provider, reason: "bad_signature" } });
     return { accepted: false, code: "invalid_signature", status: 401 };
+  }
+
+  // Only an authentic sender learns whether an event id is already known.
+  if (isDuplicateWebhook(eventId)) {
+    return { accepted: true, duplicate: true, status: 200 };
   }
 
   recordWebhookEvent({ provider, eventId, eventType, payload: JSON.parse(rawBody || "{}"), verified });

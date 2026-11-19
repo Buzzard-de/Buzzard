@@ -27,23 +27,23 @@ function requireAnyAdmin(req, res) {
   return null;
 }
 
+/**
+ * Account routes act on the caller's own identity account (JWT subject).
+ * A back-office session has no such account, so it is not accepted here;
+ * the back office reads identity data through /api/admin/identity-security/*.
+ */
 function requireIdentityAuth(req, res) {
   const bearer = extractToken(req);
   if (bearer) {
     try {
-      req.user = verifyToken(bearer);
-      return req.user;
+      const user = verifyToken(bearer);
+      if (user && user.sub !== undefined && user.sub !== null) {
+        req.user = user;
+        return user;
+      }
     } catch {
       /* fall through */
     }
-  }
-
-  const adminToken = extractAdminToken(req);
-  const session = getSession(adminToken);
-  if (session) {
-    req.adminUser = session;
-    req.user = { sub: session.id, email: session.email, role: session.role };
-    return req.user;
   }
 
   res.status(401).json({ error: "Authentication required" });
@@ -60,7 +60,9 @@ module.exports = {
     app.post("/api/identity-security/auth/register", (req, res) => {
       const result = identitySecurity.registerUser(req.body || {}, req);
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
-      return res.status(201).json({ ok: true, userId: result.userId, verificationTokenForDevelopment: result.verificationTokenForDevelopment });
+      const body = { ok: true, userId: result.userId };
+      if (result.verificationTokenForDevelopment) body.verificationTokenForDevelopment = result.verificationTokenForDevelopment;
+      return res.status(201).json(body);
     });
 
     app.post("/api/identity-security/auth/verify-email", (req, res) => {
@@ -71,7 +73,11 @@ module.exports = {
 
     app.post("/api/identity-security/auth/login", (req, res) => {
       const result = identitySecurity.loginUser(req.body || {}, req);
-      if (result.error) return res.status(result.status || 401).json({ error: result.error });
+      if (result.error) {
+        const body = { error: result.error };
+        if (result.retryAfterSec) body.retryAfterSec = result.retryAfterSec;
+        return res.status(result.status || 401).json(body);
+      }
       return res.json(result);
     });
 

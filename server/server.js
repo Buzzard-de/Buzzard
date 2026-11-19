@@ -2,16 +2,27 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL, URLSearchParams } = require('url');
-const { isDefaultJwtSecret } = require('./lib/dbAuth');
-const { createRateLimiter, setSecurityHeaders, publicErrorBody } = require('./lib/security');
+// Checked before anything opens a store: several modules create their files while loading.
+if (require('./lib/runtimeEnv').isProduction()) {
+  const problem = require('./lib/dataDir').productionDataDirProblem();
+  if (problem) {
+    console.error(`[startup] ${problem.message}`);
+    process.exit(1);
+  }
+}
+
+const { createRateLimiter, setSecurityHeaders, publicErrorBody, getClientIp } = require('./lib/security');
 const { logSecurityEvent } = require('./lib/securityLog');
 const { wrapRouteHandler } = require('./lib/globalAuthMiddleware');
+const { resolveRoutePermission } = require('./lib/routePermissions');
+const { resolvePublicFile } = require('./lib/staticFilePolicy');
 
 const port = process.env.PORT || 3001;
 const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const anonymousWriteLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: 'api-anon-write:' });
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);
@@ -24,8 +35,10 @@ function getAllowedOrigins() {
     "http://localhost:3001",
     "https://buzzard24.de",
     "https://www.buzzard24.de",
-    "null",
   ];
+  // "null" is the origin of file:// pages and sandboxed frames. Local HTML
+  // prototypes rely on it; a deployed API has no reason to trust it.
+  if (!require("./lib/runtimeEnv").isProduction()) defaults.push("null");
   const extra = (process.env.BUZZARD_CORS_ORIGINS || "")
     .split(",")
     .map((entry) => entry.trim())
@@ -72,8 +85,21 @@ const app = {
   }
 };
 
+class BadRequestError extends Error {
+  constructor(errorKey) {
+    super(errorKey);
+    this.errorKey = errorKey;
+  }
+}
+
 function matchRoute(method, pathname) {
   const requestSegments = pathname.split('/').filter(Boolean);
+  let decodedSegments;
+  try {
+    decodedSegments = requestSegments.map((segment) => decodeURIComponent(segment));
+  } catch {
+    throw new BadRequestError('security.malformedUrl');
+  }
 
   for (const route of routes) {
     if (route.method !== method) continue;
@@ -84,7 +110,7 @@ function matchRoute(method, pathname) {
 
     for (let i = 0; i < route.segments.length; i += 1) {
       const routeSegment = route.segments[i];
-      const requestSegment = decodeURIComponent(requestSegments[i]);
+      const requestSegment = decodedSegments[i];
 
       if (routeSegment.dynamic) {
         params[routeSegment.name] = requestSegment;
@@ -95,15 +121,44 @@ function matchRoute(method, pathname) {
     }
 
     if (matched) {
-      return { handler: route.handler, params };
+      return { handler: route.handler, params, routePath: route.routePath };
     }
   }
 
   return null;
 }
 
+/**
+ * Health and readiness routes are public and describe storage (database file,
+ * backup directory). In production an anonymous caller gets the file names
+ * without the directory layout of the host.
+ */
+let publicPathRoots = null;
+function withoutHostPaths(json) {
+  if (!publicPathRoots) {
+    const { resolveDataDir } = require('./lib/dataDir');
+    const candidates = [
+      [resolveDataDir(), '[data]'],
+      [process.env.BUZZARD_DB_PATH ? path.dirname(path.resolve(process.env.BUZZARD_DB_PATH)) : null, '[data]'],
+      [process.env.BUZZARD_BACKUP_DIR ? path.resolve(process.env.BUZZARD_BACKUP_DIR) : null, '[backups]'],
+      [rootDir, '[app]'],
+    ];
+    publicPathRoots = candidates
+      .filter(([dir]) => typeof dir === 'string' && dir.length > 1)
+      .map(([dir, label]) => [JSON.stringify(dir).slice(1, -1), label])
+      .sort((a, b) => b[0].length - a[0].length);
+  }
+  let out = json;
+  for (const [dir, label] of publicPathRoots) out = out.split(dir).join(label);
+  return out;
+}
+
 function sendJson(res, statusCode, body) {
-  const data = JSON.stringify(body || {});
+  let data = JSON.stringify(body || {});
+  const req = res.req;
+  if (req && !req.adminUser && !req.user && require('./lib/runtimeEnv').isProduction()) {
+    data = withoutHostPaths(data);
+  }
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(data)
@@ -127,7 +182,8 @@ function attachResponseHelpers(res) {
       this.end(JSON.stringify(body));
       return;
     }
-    this.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    // A handler that already declared its type (XML feed, CSV export) keeps it.
+    if (!this.getHeader('Content-Type')) this.setHeader('Content-Type', 'text/plain; charset=utf-8');
     this.end(String(body));
   };
 }
@@ -158,10 +214,6 @@ function sendFile(res, filePath) {
   });
 }
 
-function safePath(requestPath) {
-  const cleaned = path.normalize(requestPath).replace(/^\.\.[/\\]+/, '');
-  return path.join(rootDir, cleaned);
-}
 
 const MAX_BODY_BYTES = 256 * 1024;
 
@@ -181,8 +233,11 @@ function parseBody(req) {
     });
 
     req.on("end", () => {
-      const raw = Buffer.concat(chunks).toString("utf8");
-      const contentType = (req.headers["content-type"] || "").split(";")[0].trim();
+      const rawBuffer = Buffer.concat(chunks);
+      // Signature checks need the bytes as they were sent, not a re-serialised object.
+      req.rawBody = rawBuffer;
+      const raw = rawBuffer.toString("utf8");
+      const contentType = (req.headers["content-type"] || "").split(";")[0].trim().toLowerCase();
 
       if (!raw) {
         resolve({});
@@ -192,8 +247,8 @@ function parseBody(req) {
       if (contentType === "application/json") {
         try {
           resolve(JSON.parse(raw));
-        } catch (error) {
-          reject(error);
+        } catch {
+          reject(new BadRequestError('security.invalidJson'));
         }
         return;
       }
@@ -237,6 +292,9 @@ app.get('/api/status', (req, res) => {
 
 loadPlugins();
 
+const { isProduction } = require("./lib/runtimeEnv");
+
+// A production process without its mandatory secrets must not start serving.
 try {
   const { assertProductionSafeStartup } = require("./lib/environmentValidation");
   assertProductionSafeStartup();
@@ -244,14 +302,14 @@ try {
   const configResult = validateConfiguration();
   if (!configResult.ok) {
     console.error("[config-validation] FAIL CLOSED:", configResult.errors.map((e) => e.message).join("; "));
-    if (process.env.NODE_ENV === "production") process.exit(1);
+    if (isProduction()) process.exit(1);
   }
   for (const w of configResult.warnings) {
     console.warn("[config-validation]", w.message);
   }
 } catch (err) {
   console.error(err.message);
-  if (process.env.NODE_ENV === "production") process.exit(1);
+  if (isProduction()) process.exit(1);
 }
 
 try {
@@ -259,7 +317,7 @@ try {
   validateDatabaseStartup();
 } catch (err) {
   console.error(err.message);
-  if (process.env.NODE_ENV === "production") process.exit(1);
+  if (isProduction()) process.exit(1);
 }
 
 if (process.env.BUZZARD_WORKER_ENABLED === "1") {
@@ -276,9 +334,7 @@ if (process.env.BUZZARD_WORKER_ENABLED === "1") {
   }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
 }
 
-const server = http.createServer(async (req, res) => {
-  attachResponseHelpers(res);
-  setCommonHeaders(res);
+async function handleRequest(req, res) {
   const correlationContext = require("./lib/operations/correlationContext");
   const ctx = correlationContext.createContext({
     requestId: req.headers["x-request-id"],
@@ -287,10 +343,25 @@ const server = http.createServer(async (req, res) => {
   req.requestId = ctx.requestId;
   req.correlationId = ctx.correlationId;
   req.operationsContext = ctx;
+  res.once("close", () => correlationContext.releaseContext(ctx.requestId));
   res.setHeader("X-Request-Id", ctx.requestId);
   res.setHeader("X-Correlation-Id", ctx.correlationId);
 
-  const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  return require("./lib/requestScope").run(
+    { requestId: ctx.requestId, correlationId: ctx.correlationId },
+    // The error answer is written inside the scope too, so what gets logged
+    // while reporting it still carries the ids of this request.
+    () => serveRequest(req, res).catch((error) => sendRequestError(req, res, error))
+  );
+}
+
+async function serveRequest(req, res) {
+  let requestUrl;
+  try {
+    requestUrl = new URL(req.url, 'http://localhost');
+  } catch {
+    throw new BadRequestError('security.malformedUrl');
+  }
   const pathname = requestUrl.pathname;
 
   if (pathname.startsWith('/api/')) {
@@ -305,7 +376,7 @@ const server = http.createServer(async (req, res) => {
       logSecurityEvent({
         type: 'api_rate_limited',
         success: false,
-        ip: req.headers['x-forwarded-for'] || req.socket?.remoteAddress,
+        ip: getClientIp(req),
         path: pathname,
       });
       sendJson(res, 429, publicErrorBody('security.rateLimited'));
@@ -318,54 +389,110 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    req.params = route.params;
-    try {
-      const queryParams = Object.fromEntries(requestUrl.searchParams.entries());
-      req.query = queryParams;
-      if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {
-        req.body = await parseBody(req);
+    // Writes without credentials are the storefront's guest actions (cart, contact, registration).
+    // They get a tighter budget than reads. A webhook that carries a signature is exempt:
+    // it authenticates per request and has its own failure budget. One without a signature is not.
+    const isWrite = req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE';
+    if (isWrite && !req.headers.authorization) {
+      const policy = resolveRoutePermission(req.method, route.routePath);
+      const signedWebhook = Boolean(policy?.webhook && req.headers['x-buzzard-signature']);
+      if (!signedWebhook && anonymousWriteLimit(req)) {
+        logSecurityEvent({
+          type: 'api_rate_limited',
+          success: false,
+          ip: getClientIp(req),
+          path: route.routePath,
+          detail: { scope: 'anonymous_write' },
+        });
+        sendJson(res, 429, publicErrorBody('security.rateLimited'));
+        return;
       }
-      route.handler(req, res);
-    } catch (error) {
-      console.error('API error:', error);
-      logSecurityEvent({
-        type: 'api_error',
-        success: false,
-        path: pathname,
-        detail: { message: error.message },
-      });
-      const statusCode = error.message === 'Payload too large' ? 413 : 500;
-      sendJson(res, statusCode, publicErrorBody(statusCode === 413 ? 'security.payloadTooLarge' : 'security.internalError'));
     }
+
+    // Answers to the back office and to anything sent with credentials must not sit in a shared or disk cache.
+    if (pathname.startsWith('/api/admin/') || req.headers.authorization) {
+      res.setHeader('Cache-Control', 'no-store');
+    }
+
+    req.params = route.params;
+    req.routePath = route.routePath;
+    req.query = Object.fromEntries(requestUrl.searchParams.entries());
+    if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH' || req.method === 'DELETE') {
+      req.body = await parseBody(req);
+    }
+    await route.handler(req, res);
     return;
   }
 
-  let filePath = pathname === '/' ? path.join(rootDir, 'index.html') : safePath(pathname);
-
-  if (!filePath.startsWith(rootDir)) {
-    sendJson(res, 403, { message: 'Zugriff verweigert.' });
-    return;
-  }
-
-  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, 'index.html');
-  }
-
-  if (!fs.existsSync(filePath)) {
+  const filePath = req.method === 'GET' || req.method === 'HEAD' ? resolvePublicFile(rootDir, pathname) : null;
+  if (!filePath) {
     sendJson(res, 404, { message: 'Seite nicht gefunden.' });
     return;
   }
 
   sendFile(res, filePath);
+}
+
+function isRejectedInput(error) {
+  const code = error && typeof error.code === 'string' ? error.code : '';
+  return code.startsWith('SQLITE_CONSTRAINT') || code === 'SQLITE_MISMATCH';
+}
+
+function sendRequestError(req, res, error) {
+  let statusCode = 500;
+  let errorKey = 'security.internalError';
+  if (error instanceof BadRequestError) {
+    statusCode = 400;
+    errorKey = error.errorKey;
+  } else if (error && error.message === 'Payload too large') {
+    statusCode = 413;
+    errorKey = 'security.payloadTooLarge';
+  } else if (isRejectedInput(error)) {
+    // The database refused the values (missing field, unknown reference, wrong
+    // type). Nothing was written; the caller sent input the route cannot store.
+    statusCode = 400;
+    errorKey = 'security.invalidInput';
+    console.warn('API input rejected by storage:', String(req.url || '').split('?')[0].slice(0, 200), error.code);
+  } else {
+    console.error('API error:', error);
+    try {
+      logSecurityEvent({
+        type: 'api_error',
+        success: false,
+        ip: getClientIp(req),
+        userId: req.adminUser?.id || null,
+        path: String(req.url || '').split('?')[0].slice(0, 200),
+        detail: { message: String(error && error.message).slice(0, 200) },
+      });
+    } catch {
+      /* the log store itself may be the failing part */
+    }
+  }
+  if (res.headersSent || res.writableEnded) {
+    res.end();
+    return;
+  }
+  sendJson(res, statusCode, publicErrorBody(errorKey));
+}
+
+// One malformed request must not end the process: every failure, including a
+// rejected async route handler, is answered here.
+const server = http.createServer((req, res) => {
+  attachResponseHelpers(res);
+  setCommonHeaders(res);
+  handleRequest(req, res).catch((error) => {
+    try {
+      sendRequestError(req, res, error);
+    } catch (fatal) {
+      console.error('API error while reporting an error:', fatal && fatal.message);
+      res.destroy();
+    }
+  });
 });
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Buzzard API server running on http://0.0.0.0:${port}`);
-  if (process.env.NODE_ENV === "production" && isDefaultJwtSecret()) {
-    console.warn(
-      "SECURITY WARNING: JWT_SECRET is unset — set JWT_SECRET in production (Render env / .env.local)."
-    );
-  }
+const bindHost = process.env.BUZZARD_BIND_HOST || "0.0.0.0";
+server.listen(port, bindHost, () => {
+  console.log(`Buzzard API server running on http://${bindHost}:${port}`);
 });
 
 server.on("error", (err) => {

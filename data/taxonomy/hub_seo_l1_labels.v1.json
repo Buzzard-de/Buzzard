@@ -1,0 +1,594 @@
+{
+  "schema": "buzzard.hub-seo-l1-labels.v1",
+  "primaryLocales": [
+    "de",
+    "en",
+    "tr",
+    "ar"
+  ],
+  "fallbackLocales": [
+    "de",
+    "en",
+    "tr",
+    "ar",
+    "fr",
+    "nl",
+    "bg",
+    "hr",
+    "el",
+    "cs",
+    "da",
+    "et",
+    "fi",
+    "hu",
+    "it",
+    "lv",
+    "lt",
+    "lb",
+    "mt",
+    "pl",
+    "pt",
+    "ro",
+    "sk",
+    "sl",
+    "es",
+    "ca",
+    "eu",
+    "gl",
+    "sv",
+    "ga"
+  ],
+  "hubs": [
+    {
+      "id": "cat-01",
+      "slug": "textil",
+      "url": "/kategorie/textil",
+      "labels": {
+        "de": "Textil",
+        "en": "Textiles",
+        "tr": "Tekstil",
+        "ar": "النسيج"
+      }
+    },
+    {
+      "id": "cat-02",
+      "slug": "kosmetik-und-koerperpflege",
+      "url": "/kategorie/kosmetik-und-koerperpflege",
+      "labels": {
+        "de": "Kosmetik & Körperpflege",
+        "en": "Cosmetics & Personal Care",
+        "tr": "Kozmetik ve Kişisel Bakım",
+        "ar": "التجميل والعناية الشخصية"
+      }
+    },
+    {
+      "id": "cat-03",
+      "slug": "reinigungsprodukte",
+      "url": "/kategorie/reinigungsprodukte",
+      "labels": {
+        "de": "Reinigungsprodukte",
+        "en": "Cleaning Products",
+        "tr": "Temizlik Ürünleri",
+        "ar": "منتجات التنظيف"
+      }
+    },
+    {
+      "id": "cat-04",
+      "slug": "schule-und-buerobedarf",
+      "url": "/kategorie/schule-und-buerobedarf",
+      "labels": {
+        "de": "Schule & Bürobedarf",
+        "en": "School & Office Supplies",
+        "tr": "Okul ve Ofis Malzemeleri",
+        "ar": "المدرسة والمكتب"
+      }
+    },
+    {
+      "id": "cat-05",
+      "slug": "automotive",
+      "url": "/kategorie/automotive",
+      "labels": {
+        "de": "Automotive",
+        "en": "Automotive",
+        "tr": "Otomotiv",
+        "ar": "السيارات"
+      }
+    },
+    {
+      "id": "cat-06",
+      "slug": "haustierbedarf",
+      "url": "/kategorie/haustierbedarf",
+      "labels": {
+        "de": "Haustierbedarf",
+        "en": "Pet Supplies",
+        "tr": "Evcil Hayvan Ürünleri",
+        "ar": "مستلزمات الحيوانات"
+      }
+    },
+    {
+      "id": "cat-07",
+      "slug": "garten",
+      "url": "/kategorie/garten",
+      "labels": {
+        "de": "Garten",
+        "en": "Garden",
+        "tr": "Bahçe",
+        "ar": "الحديقة"
+      }
+    },
+    {
+      "id": "cat-08",
+      "slug": "arbeitsschutz-und-berufskleidung",
+      "url": "/kategorie/arbeitsschutz-und-berufskleidung",
+      "labels": {
+        "de": "Arbeitsschutz & Berufskleidung",
+        "en": "Work Safety & Workwear",
+        "tr": "İş Güvenliği ve İş Kıyafetleri",
+        "ar": "معدات السلامة والملابس المهنية"
+      }
+    },
+    {
+      "id": "cat-09",
+      "slug": "werkzeuge-und-eisenwaren",
+      "url": "/kategorie/werkzeuge-und-eisenwaren",
+      "labels": {
+        "de": "Werkzeuge & Eisenwaren",
+        "en": "Tools & Hardware",
+        "tr": "Aletler ve Hırdavat",
+        "ar": "الأدوات والعدد"
+      }
+    },
+    {
+      "id": "cat-10",
+      "slug": "haus-und-wohnen",
+      "url": "/kategorie/haus-und-wohnen",
+      "labels": {
+        "de": "Haus & Wohnen",
+        "en": "Home & Living",
+        "tr": "Ev ve Yaşam",
+        "ar": "المنزل والمعيشة"
+      }
+    },
+    {
+      "id": "cat-11",
+      "slug": "moebel",
+      "url": "/kategorie/moebel",
+      "labels": {
+        "de": "Möbel",
+        "en": "Furniture",
+        "tr": "Mobilya",
+        "ar": "الأثاث"
+      }
+    },
+    {
+      "id": "cat-12",
+      "slug": "elektronik",
+      "url": "/kategorie/elektronik",
+      "labels": {
+        "de": "Elektronik",
+        "en": "Electronics",
+        "tr": "Elektronik",
+        "ar": "الإلكترونيات"
+      }
+    },
+    {
+      "id": "cat-13",
+      "slug": "haushaltsgeraete",
+      "url": "/kategorie/haushaltsgeraete",
+      "labels": {
+        "de": "Haushaltsgeräte",
+        "en": "Home Appliances",
+        "tr": "Ev Aletleri",
+        "ar": "الأجهزة المنزلية"
+      }
+    },
+    {
+      "id": "cat-14",
+      "slug": "sport-und-outdoor",
+      "url": "/kategorie/sport-und-outdoor",
+      "labels": {
+        "de": "Sport & Outdoor",
+        "en": "Sports & Outdoor",
+        "tr": "Spor ve Outdoor",
+        "ar": "الرياضة والأنشطة الخارجية"
+      }
+    },
+    {
+      "id": "cat-15",
+      "slug": "schuhe",
+      "url": "/kategorie/schuhe",
+      "labels": {
+        "de": "Schuhe",
+        "en": "Shoes",
+        "tr": "Ayakkabı",
+        "ar": "الأحذية"
+      }
+    },
+    {
+      "id": "cat-16",
+      "slug": "taschen-und-accessoires",
+      "url": "/kategorie/taschen-und-accessoires",
+      "labels": {
+        "de": "Taschen & Accessoires",
+        "en": "Bags & Accessories",
+        "tr": "Çanta ve Aksesuar",
+        "ar": "الحقائب والإكسسوارات"
+      }
+    },
+    {
+      "id": "cat-17",
+      "slug": "mutter-und-baby",
+      "url": "/kategorie/mutter-und-baby",
+      "labels": {
+        "de": "Mutter & Baby",
+        "en": "Mother & Baby",
+        "tr": "Anne ve Bebek",
+        "ar": "الأم والطفل"
+      }
+    },
+    {
+      "id": "cat-18",
+      "slug": "spielzeug-und-kinder",
+      "url": "/kategorie/spielzeug-und-kinder",
+      "labels": {
+        "de": "Spielzeug & Kinder",
+        "en": "Toys & Kids",
+        "tr": "Oyuncak ve Çocuk",
+        "ar": "الألعاب والأطفال"
+      }
+    },
+    {
+      "id": "cat-19",
+      "slug": "hobby-und-freizeit",
+      "url": "/kategorie/hobby-und-freizeit",
+      "labels": {
+        "de": "Hobby & Freizeit",
+        "en": "Hobby & Leisure",
+        "tr": "Hobi ve Boş Zaman",
+        "ar": "الهوايات والترفيه"
+      }
+    },
+    {
+      "id": "cat-20",
+      "slug": "tier-und-landwirtschaftsausruestung",
+      "url": "/kategorie/tier-und-landwirtschaftsausruestung",
+      "labels": {
+        "de": "Tier- & Landwirtschaftsausrüstung",
+        "en": "Livestock & Farm Equipment",
+        "tr": "Hayvancılık ve Çiftlik Ekipmanı",
+        "ar": "معدات تربية الحيوانات"
+      }
+    },
+    {
+      "id": "cat-21",
+      "slug": "bau-und-konstruktion",
+      "url": "/kategorie/bau-und-konstruktion",
+      "labels": {
+        "de": "Bau & Konstruktion",
+        "en": "Construction",
+        "tr": "İnşaat",
+        "ar": "البناء والتشييد"
+      }
+    },
+    {
+      "id": "cat-22",
+      "slug": "elektro-und-beleuchtung",
+      "url": "/kategorie/elektro-und-beleuchtung",
+      "labels": {
+        "de": "Elektro & Beleuchtung",
+        "en": "Electrical & Lighting",
+        "tr": "Elektrik ve Aydınlatma",
+        "ar": "الكهرباء والإضاءة"
+      }
+    },
+    {
+      "id": "cat-23",
+      "slug": "wasser-heizung-und-sanitaer",
+      "url": "/kategorie/wasser-heizung-und-sanitaer",
+      "labels": {
+        "de": "Wasser, Heizung & Sanitär",
+        "en": "Water, Heating & Plumbing",
+        "tr": "Su, Isıtma ve Tesisat",
+        "ar": "المياه والتدفئة والسباكة"
+      }
+    },
+    {
+      "id": "cat-24",
+      "slug": "kueche-und-essen",
+      "url": "/kategorie/kueche-und-essen",
+      "labels": {
+        "de": "Küche & Essen",
+        "en": "Kitchen & Dining",
+        "tr": "Mutfak ve Yemek",
+        "ar": "المطبخ والطعام"
+      }
+    },
+    {
+      "id": "cat-26",
+      "slug": "tierfutter",
+      "url": "/kategorie/tierfutter",
+      "labels": {
+        "de": "Tierfutter",
+        "en": "Pet Food",
+        "tr": "Evcil Hayvan Maması",
+        "ar": "أعلاف الحيوانات"
+      }
+    },
+    {
+      "id": "cat-27",
+      "slug": "gesundheit-und-wellness",
+      "url": "/kategorie/gesundheit-und-wellness",
+      "labels": {
+        "de": "Gesundheit & Wellness",
+        "en": "Health & Wellness",
+        "tr": "Sağlık ve Wellness",
+        "ar": "الصحة والعافية"
+      }
+    },
+    {
+      "id": "cat-28",
+      "slug": "buero-und-gewerbe",
+      "url": "/kategorie/buero-und-gewerbe",
+      "labels": {
+        "de": "Büro & Gewerbe",
+        "en": "Office & Business",
+        "tr": "Ofis ve Ticaret",
+        "ar": "المكتب والتجارة"
+      }
+    },
+    {
+      "id": "cat-29",
+      "slug": "verpackung-und-versand",
+      "url": "/kategorie/verpackung-und-versand",
+      "labels": {
+        "de": "Verpackung & Versand",
+        "en": "Packaging & Shipping",
+        "tr": "Ambalaj ve Kargo",
+        "ar": "التعبئة والشحن"
+      }
+    },
+    {
+      "id": "cat-30",
+      "slug": "industrie-und-gewerbeausruestung",
+      "url": "/kategorie/industrie-und-gewerbeausruestung",
+      "labels": {
+        "de": "Industrie- & Gewerbeausrüstung",
+        "en": "Industrial & Commercial Equipment",
+        "tr": "Endüstriyel ve Ticari Ekipman",
+        "ar": "معدات صناعية وتجارية"
+      }
+    },
+    {
+      "id": "cat-31",
+      "slug": "sicherheit-und-ueberwachung",
+      "url": "/kategorie/sicherheit-und-ueberwachung",
+      "labels": {
+        "de": "Sicherheit & Überwachung",
+        "en": "Security & Surveillance",
+        "tr": "Güvenlik ve Gözetim",
+        "ar": "الأمن والمراقبة"
+      }
+    },
+    {
+      "id": "cat-32",
+      "slug": "reise-und-koffer",
+      "url": "/kategorie/reise-und-koffer",
+      "labels": {
+        "de": "Reise & Koffer",
+        "en": "Travel & Luggage",
+        "tr": "Seyahat ve Valiz",
+        "ar": "السفر والحقائب"
+      }
+    },
+    {
+      "id": "cat-33",
+      "slug": "gartenhobby-und-camping",
+      "url": "/kategorie/gartenhobby-und-camping",
+      "labels": {
+        "de": "Gartenhobby & Camping",
+        "en": "Garden Hobby & Camping",
+        "tr": "Bahçe Hobi ve Kamp",
+        "ar": "الحديقة والتخييم"
+      }
+    },
+    {
+      "id": "cat-34",
+      "slug": "saisonales-und-feiern",
+      "url": "/kategorie/saisonales-und-feiern",
+      "labels": {
+        "de": "Saisonales & Feiern",
+        "en": "Seasonal & Celebrations",
+        "tr": "Sezonluk ve Kutlama",
+        "ar": "موسمي واحتفالات"
+      }
+    },
+    {
+      "id": "cat-35",
+      "slug": "dekoration",
+      "url": "/kategorie/dekoration",
+      "labels": {
+        "de": "Dekoration",
+        "en": "Decoration",
+        "tr": "Dekorasyon",
+        "ar": "الديكور"
+      }
+    },
+    {
+      "id": "cat-36",
+      "slug": "persoenliche-elektronik-und-mobil",
+      "url": "/kategorie/persoenliche-elektronik-und-mobil",
+      "labels": {
+        "de": "Persönliche Elektronik & Mobil",
+        "en": "Personal Electronics & Mobile",
+        "tr": "Kişisel Elektronik ve Mobil",
+        "ar": "الإلكترونيات الشخصية والجوال"
+      }
+    },
+    {
+      "id": "cat-37",
+      "slug": "foto-und-video",
+      "url": "/kategorie/foto-und-video",
+      "labels": {
+        "de": "Foto & Video",
+        "en": "Photo & Video",
+        "tr": "Fotoğraf ve Video",
+        "ar": "التصوير والفيديو"
+      }
+    },
+    {
+      "id": "cat-38",
+      "slug": "computer-und-gaming",
+      "url": "/kategorie/computer-und-gaming",
+      "labels": {
+        "de": "Computer & Gaming",
+        "en": "Computer & Gaming",
+        "tr": "Bilgisayar ve Oyun",
+        "ar": "الكمبيوتر والألعاب"
+      }
+    },
+    {
+      "id": "cat-39",
+      "slug": "fahrzeug-und-mobilitaet",
+      "url": "/kategorie/fahrzeug-und-mobilitaet",
+      "labels": {
+        "de": "Fahrzeug & Mobilität",
+        "en": "Vehicle & Mobility",
+        "tr": "Araç ve Mobilite",
+        "ar": "المركبات والتنقل"
+      }
+    },
+    {
+      "id": "cat-40",
+      "slug": "energie-und-solar",
+      "url": "/kategorie/energie-und-solar",
+      "labels": {
+        "de": "Energie & Solar",
+        "en": "Energy & Solar",
+        "tr": "Enerji ve Solar",
+        "ar": "الطاقة والطاقة الشمسية"
+      }
+    },
+    {
+      "id": "cat-41",
+      "slug": "angebote-und-sonderkollektionen",
+      "url": "/kategorie/angebote-und-sonderkollektionen",
+      "labels": {
+        "de": "Angebote & Sonderkollektionen",
+        "en": "Offers & Special Collections",
+        "tr": "Fırsatlar ve Özel Koleksiyonlar",
+        "ar": "العروض والمجموعات الخاصة"
+      }
+    },
+    {
+      "id": "cat-42",
+      "slug": "heimtextilien",
+      "url": "/kategorie/heimtextilien",
+      "labels": {
+        "de": "Heimtextilien",
+        "en": "Heimtextilien",
+        "tr": "Ev Tekstili",
+        "ar": "Heimtextilien"
+      }
+    },
+    {
+      "id": "cat-44",
+      "slug": "koerperpflege",
+      "url": "/kategorie/koerperpflege",
+      "labels": {
+        "de": "Körperpflege",
+        "en": "Körperpflege",
+        "tr": "Kişisel Bakım",
+        "ar": "Körperpflege"
+      }
+    },
+    {
+      "id": "cat-45",
+      "slug": "apotheke-medizinprodukte",
+      "url": "/kategorie/apotheke-medizinprodukte",
+      "labels": {
+        "de": "Apotheke & Medizinprodukte",
+        "en": "Apotheke & Medizinprodukte",
+        "tr": "Eczane ve Medikal Ürünler",
+        "ar": "Apotheke & Medizinprodukte"
+      }
+    },
+    {
+      "id": "cat-47",
+      "slug": "kinder-schule",
+      "url": "/kategorie/kinder-schule",
+      "labels": {
+        "de": "Kinder & Schule",
+        "en": "Kinder & Schule",
+        "tr": "Çocuk ve Okul",
+        "ar": "Kinder & Schule"
+      }
+    },
+    {
+      "id": "cat-48",
+      "slug": "musik-musikinstrumente",
+      "url": "/kategorie/musik-musikinstrumente",
+      "labels": {
+        "de": "Musik & Musikinstrumente",
+        "en": "Musik & Musikinstrumente",
+        "tr": "Müzik ve Enstrümanlar",
+        "ar": "Musik & Musikinstrumente"
+      }
+    },
+    {
+      "id": "cat-49",
+      "slug": "buecher-medien-unterhaltung",
+      "url": "/kategorie/buecher-medien-unterhaltung",
+      "labels": {
+        "de": "Bücher, Medien & Unterhaltung",
+        "en": "Bücher, Medien & Unterhaltung",
+        "tr": "Kitap, Medya ve Eğlence",
+        "ar": "Bücher, Medien & Unterhaltung"
+      }
+    },
+    {
+      "id": "cat-50",
+      "slug": "geschenke-blumen-anlaesse",
+      "url": "/kategorie/geschenke-blumen-anlaesse",
+      "labels": {
+        "de": "Geschenke, Blumen & Anlässe",
+        "en": "Geschenke, Blumen & Anlässe",
+        "tr": "Geschenke, Blumen & Anlässe",
+        "ar": "Geschenke, Blumen & Anlässe"
+      }
+    },
+    {
+      "id": "cat-51",
+      "slug": "kunsthandwerk-naehen-diy",
+      "url": "/kategorie/kunsthandwerk-naehen-diy",
+      "labels": {
+        "de": "Kunsthandwerk, Nähen & DIY",
+        "en": "Kunsthandwerk, Nähen & DIY",
+        "tr": "Kunsthandwerk, Nähen & DIY",
+        "ar": "Kunsthandwerk, Nähen & DIY"
+      }
+    },
+    {
+      "id": "cat-52",
+      "slug": "pool-spa-wellness-ausstattung",
+      "url": "/kategorie/pool-spa-wellness-ausstattung",
+      "labels": {
+        "de": "Pool, Spa & Wellness-Ausstattung",
+        "en": "Pool, Spa & Wellness-Ausstattung",
+        "tr": "Pool, Spa & Wellness-Ausstattung",
+        "ar": "Pool, Spa & Wellness-Ausstattung"
+      }
+    },
+    {
+      "id": "cat-53",
+      "slug": "luxus-sammlerstuecke-wertvolles",
+      "url": "/kategorie/luxus-sammlerstuecke-wertvolles",
+      "labels": {
+        "de": "Luxus, Sammlerstücke & Wertvolles",
+        "en": "Luxus, Sammlerstücke & Wertvolles",
+        "tr": "Luxus, Sammlerstücke & Wertvolles",
+        "ar": "Luxus, Sammlerstücke & Wertvolles"
+      }
+    }
+  ],
+  "missingPrimary": []
+}

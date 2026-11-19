@@ -1,24 +1,22 @@
 # Buzzard Security Admin Final Master Sprint — Checkpoint (2026-11-18)
 
-Phases 0–11 VERIFIED in isolated staging under `/tmp/buzzard-final-sprint/`.
-Phases 12–15 not yet complete. Overall sprint is **not** 100%.
+Phases **0–14 VERIFIED** in isolated staging. Phase **15** deliverables on branch `cursor/security-admin-final-checkpoint-c293` (PR #507). Overall sprint **not 100%** until live server patch apply (human-approved) and external blockers clear.
 
 ## What is saved here
 
-- `NOTES.md` — phase evidence (Phases 0–11)
+- `NOTES.md` — phase evidence (Phases 0–14)
 - `baseline-hashes.json` — protected-file SHA-256 at Phase 0
-- `routes-p5.json` — admin route matrix snapshot
-- `logs/` — Phase 11 final evidence runs
-- `bin/` — staging helper scripts used during the sprint
-- Root patch: `/workspace/BUZZARD_SECURITY_ADMIN_FINAL_MASTER_SPRINT_WORKTREE_2026-11-18.patch`
-  (diff `ws-snapshot` → `work`; **unapplied**; applying server-graph files restarts API on port 3001 — do not apply on the live stack without an explicit decision)
+- `routes-p5.json` — admin route matrix snapshot (761 routes)
+- `logs/` — raw evidence: **P8–P10** (recovered), **P11–P13** final runs
+- `bin/` — staging helper scripts
+- Root: `BUZZARD_SECURITY_ADMIN_FINAL_MASTER_SPRINT_WORKTREE_2026-11-18.patch` (unapplied)
 
 ## Absolute state preserved
 
 - SALES=LOCKED, EGRESS=DENY, productionReady=false, live=false
-- Ports 3000/3001 untouched; protected `server/data` hashes unchanged
-- No commit of production secrets; synthetic test data only
+- Ports 3000/3001 untouched; protected `server/data` hashes unchanged (7/7)
+- No production secrets in committed logs; patch literals redacted
 
 ## Resume
 
-Continue from Phase 12 in `/tmp/buzzard-final-sprint/work` (or re-apply the patch onto a fresh copy of the tree under `/tmp`, never onto the watched live API module graph without approval).
+Use `/tmp/buzzard-final-sprint/work` or `work-tree.tgz`; never apply server-graph files to the watched live API on 3001 without an explicit restart decision.

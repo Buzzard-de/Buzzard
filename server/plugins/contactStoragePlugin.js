@@ -3,8 +3,10 @@ const path = require('path');
 const { requireAuth } = require('../lib/auth');
 const { requirePermission } = require('../lib/rbac');
 
-const dataDir = path.join(__dirname, '..', 'data');
+// Same location as every other store: follows BUZZARD_DATA_DIR (persistent disk, isolated tests).
+const dataDir = require('../lib/dataDir').resolveDataDir();
 const submissionsFile = path.join(dataDir, 'submissions.json');
+const jsonFileStore = require('../lib/jsonFileStore');
 const requestLog = new Map();
 const WINDOW_MS = 5 * 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
@@ -52,24 +54,15 @@ function ensureDataDirectory() {
 }
 
 function readSubmissions() {
-  if (!fs.existsSync(submissionsFile)) {
-    return [];
-  }
-  try {
-    const content = fs.readFileSync(submissionsFile, 'utf8');
-    return JSON.parse(content || '[]');
-  } catch (err) {
-    console.error('Error reading submissions file:', err);
-    return [];
-  }
+  return jsonFileStore.readJsonArray(submissionsFile);
 }
 
-function writeSubmissions(submissions) {
-  try {
-    fs.writeFileSync(submissionsFile, JSON.stringify(submissions, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Error writing submissions file:', err);
-  }
+/**
+ * Adds one message. The file is replaced as a whole under a lock, the previous
+ * version is kept, and a damaged file is set aside instead of being overwritten.
+ */
+function addSubmission(submission) {
+  jsonFileStore.updateJsonArray(submissionsFile, (submissions) => [...submissions, submission], { durable: true });
 }
 
 module.exports = {
@@ -77,8 +70,8 @@ module.exports = {
     ensureDataDirectory();
 
     app.post('/api/contact', (req, res) => {
-      const forwardedFor = req.headers['x-forwarded-for'];
-      const ip = (Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor || req.socket.remoteAddress || 'unknown')).split(',')[0].trim();
+      // The address as the proxy chain reports it, not a header the sender can write.
+      const ip = require('../lib/security').getClientIp(req);
       if (isRateLimited(ip)) {
         return res.status(429).json({ message: 'Zu viele Anfragen. Bitte versuchen Sie es in einigen Minuten erneut.' });
       }
@@ -106,17 +99,17 @@ module.exports = {
         return res.status(400).json({ message: 'Bitte eine gültige E-Mail-Adresse eingeben.' });
       }
 
-      const submissions = readSubmissions();
-      submissions.push({
-        id: Date.now(),
-        name,
-        email,
-        message,
-        createdAt: new Date().toISOString(),
-      });
-      writeSubmissions(submissions);
+      const submissionId = Date.now();
+      try {
+        addSubmission({ id: submissionId, name, email, message, createdAt: new Date().toISOString() });
+      } catch (err) {
+        // The sender is not told "received" for a message that was not stored.
+        console.error('Kontaktanfrage konnte nicht gespeichert werden:', err.code || err.name);
+        return res.status(503).json({ message: 'Ihre Nachricht konnte gerade nicht gespeichert werden. Bitte versuchen Sie es später erneut.' });
+      }
 
-      console.log('Kontaktanfrage gespeichert:', { name, email });
+      // Who wrote is in the submissions store; the server output only notes that something arrived.
+      console.log('Kontaktanfrage gespeichert:', submissionId);
       return res.json({ message: 'Vielen Dank — Ihre Nachricht wurde erfolgreich empfangen.' });
     });
 

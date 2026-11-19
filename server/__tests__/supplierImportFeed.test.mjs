@@ -136,7 +136,7 @@ describe("dry catalog import", () => {
         record({ supplier_sku: "HUB-SKU-001", ean_gtin: EAN_XML, supplier_category: "cat-54" }),
         record({ supplier_sku: "AMB-SKU-001", ean_gtin: EAN_CSV, supplier_category: "bz.12" }),
         record({ supplier_sku: "UNK-SKU-001", ean_gtin: EAN_DUP, supplier_category: "cat-99" }),
-        record({ supplier_sku: "BAD-SKU-001", ean_gtin: ean13("400000000000"), supplier_category: "automotive/brakes" }),
+        record({ supplier_sku: "BAD-SKU-001", ean_gtin: ean13("400000000000"), supplier_category: "supplier/unmapped/part" }),
       ],
     });
 

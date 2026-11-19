@@ -5,10 +5,11 @@
 const productCore = require("../pim/productCore");
 const categoryEngine = require("../pim/categoryEngine");
 const brandService = require("../pim/brandService");
-const { mapPimToStorefront } = require("./publicProductMapper");
+const { mapPimToStorefront, storefrontSlugOf } = require("./publicProductMapper");
 const { isProductVisibleOnStorefront } = require("./storefrontVisibility");
 const catalogCache = require("./catalogCache");
 const { sortProducts, filterProducts, buildFilterFacets } = require("./filterSort");
+const { resolveProfile, enrichFacets } = require("../pim/subcategoryCatalogProfile");
 const {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
@@ -53,7 +54,8 @@ function listProducts(query = {}) {
   const page = Math.max(1, Number(query.page) || 1);
   const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(query.limit) || DEFAULT_PAGE_SIZE));
   const sort = query.sort || SORT_OPTIONS.RELEVANCE;
-  const preview = query.preview === "1" || query.preview === true;
+  // Only an explicit boolean true opens preview (admin routes). Query strings like preview=1 are ignored.
+  const preview = query.preview === true;
   const cacheKey = catalogCache.cacheKey([
     "catalog",
     "products",
@@ -83,6 +85,11 @@ function listProducts(query = {}) {
   }
 
   let mapped = pimRows.map(mapPimToStorefront).filter(Boolean);
+  const profile = resolveProfile({
+    subcategoryId: query.subcategory || query.subcategoryId,
+    subcategorySlug: query.subcategorySlug,
+    rootSlug: query.rootSlug,
+  });
   mapped = filterProducts(mapped, {
     brand: query.brand,
     minPrice: query.minPrice,
@@ -92,8 +99,10 @@ function listProducts(query = {}) {
     sku: query.sku,
     gtin: query.gtin,
     mpn: query.mpn,
+    attributes: query.attributes,
   });
-  const facets = buildFilterFacets(mapped);
+  let facets = buildFilterFacets(mapped);
+  if (profile.ok) facets = enrichFacets(facets, mapped, profile);
   mapped = sortProducts(mapped, sort);
 
   const total = mapped.length;
@@ -118,8 +127,10 @@ function listProducts(query = {}) {
 function getProductById(idOrSlug, { preview = false } = {}) {
   let product = productCore.getProduct(idOrSlug);
   if (!product) {
+    const wanted = String(idOrSlug || "").replace(/^\/+|\/+$/g, "");
     const all = productCore.listProducts({ limit: 500 });
-    product = all.find((p) => p.seo?.slug === idOrSlug);
+    // Match the slug the catalog shows (seo.slug or the title-derived slug), not only seo_json.
+    product = all.find((p) => storefrontSlugOf(p) === wanted);
   }
   if (!product || !isProductVisibleOnStorefront(product, { preview })) return null;
   return mapPimToStorefront(product);

@@ -82,7 +82,8 @@ function searchCatalog(query = {}) {
   const page = Math.max(1, Number(query.page) || 1);
   const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, Number(query.limit) || DEFAULT_PAGE_SIZE));
   const sort = query.sort || SORT_OPTIONS.RELEVANCE;
-  const preview = query.preview === "1" || query.preview === true;
+  // Public search never opens hidden products. Admin preview uses /api/admin/storefront/preview/*.
+  const preview = false;
 
   let pimRows = productCore.listProducts({ limit: 1000 }).filter((p) => isProductVisibleOnStorefront(p, { preview }));
 

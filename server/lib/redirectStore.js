@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const redirectsFile = path.join(__dirname, "..", "..", "data", "buzzard_redirects.json");
-const serverRedirectsFile = path.join(__dirname, "..", "data", "redirects-runtime.json");
+const serverRedirectsFile = path.join(require("./dataDir").resolveDataDir(), "redirects-runtime.json");
 
 function readJson(file, fallback) {
   if (!fs.existsSync(file)) return fallback;

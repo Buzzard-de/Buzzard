@@ -1,0 +1,91 @@
+{
+  "version": "1.1.0",
+  "updatedAt": "2026-11-19T15:38:00+01:00",
+  "vitestBaseline": { "serverPass": 1949, "serverFail": 0, "serverSkip": 1 },
+  "legend": {
+    "COMPLETE": "Software-tested in workspace",
+    "BLOCKED_EXTERNAL": "Live credential, deploy, or legal gate",
+    "IN_PROGRESS": "Active implementation queue",
+    "NOT_STARTED": "Queued after prior ordered phase"
+  },
+  "sections": {
+    "1_core": {
+      "title": "Çekirdek sistem ve altyapı",
+      "items": [
+        { "id": "live_api_3001_security", "status": "BLOCKED_EXTERNAL", "note": "No :3001 restart authorized" },
+        { "id": "prod_session_verify", "status": "BLOCKED_EXTERNAL", "evidenceRepo": "adminRouteMatrix vitest" },
+        { "id": "json_atomic_live", "status": "COMPLETE", "evidence": "jsonStoreIntegrity.test.mjs" },
+        { "id": "prod_db_persistent_disk", "status": "BLOCKED_EXTERNAL" },
+        { "id": "backup_restore_test", "status": "IN_PROGRESS", "evidence": "scripts/db-backup dry docs" },
+        { "id": "global_error_recovery", "status": "IN_PROGRESS", "evidence": "supplierErrorRecovery.js" },
+        { "id": "scheduler_queue_ha", "status": "IN_PROGRESS", "evidence": "automationHealth.js" }
+      ]
+    },
+    "2_supplier": {
+      "title": "Tedarikçi entegrasyonları",
+      "items": [
+        { "id": "live_supplier_api", "status": "BLOCKED_EXTERNAL", "devList": 20 },
+        { "id": "xml_csv_dry_adapters", "status": "COMPLETE", "phase": 4 },
+        { "id": "mapping_sync_selection", "status": "COMPLETE", "phase": 4 },
+        { "id": "live_stock_price_feed", "status": "BLOCKED_EXTERNAL" }
+      ]
+    },
+    "18_live_blocked_six": [
+      { "n": 1, "name": "Canlı TecDoc", "devList": 19, "status": "BLOCKED_EXTERNAL" },
+      { "n": 2, "name": "Gerçek tedarikçi", "devList": 20, "status": "BLOCKED_EXTERNAL" },
+      { "n": 3, "name": "Gerçek tahsilat", "devList": 28, "status": "BLOCKED_EXTERNAL" },
+      { "n": 4, "name": "Gerçek iade", "devList": 30, "status": "BLOCKED_EXTERNAL" },
+      { "n": 5, "name": "Tax Connect canlı", "devList": 37, "status": "BLOCKED_EXTERNAL" },
+      { "n": 6, "name": "Canlı kargo fiyatı", "devList": 41, "status": "BLOCKED_EXTERNAL" }
+    ]
+  },
+  "phase5_pricing": {
+    "title": "Fiyatlandırma ve kâr motoru",
+    "status": "COMPLETE",
+    "items": [
+      { "id": "supplier_cost_auto", "status": "COMPLETE", "evidence": "pricingAutomationService.js" },
+      { "id": "shipping_in_price", "status": "COMPLETE", "evidence": "dryShippingQuote" },
+      { "id": "marketplace_commission", "status": "COMPLETE", "evidence": "dryMarketplaceCommission" },
+      { "id": "country_vat", "status": "COMPLETE", "evidence": "quoteCommercialPrice + ab27Tax" },
+      { "id": "return_reserve", "status": "COMPLETE" },
+      { "id": "min_net_050", "status": "COMPLETE" },
+      { "id": "undercut_010", "status": "COMPLETE" },
+      { "id": "margin_auto_11", "status": "COMPLETE" },
+      { "id": "margin_other_07", "status": "COMPLETE" },
+      { "id": "margin_drinks_15", "status": "COMPLETE" },
+      { "id": "loss_blocked", "status": "COMPLETE", "evidence": "assertProfitableSale" },
+      { "id": "anomaly_pusat_report", "status": "COMPLETE", "evidence": "pricingAnomalyPusatReporter.js" }
+    ]
+  },
+  "orderedPhaseProgressVerified": {
+    "note": "Independent verified %; see buzzard_ordered_phases.v1.json honestLedger",
+    "phase1": 74,
+    "phase2": 88,
+    "phase3": 74,
+    "phase4": 70,
+    "phase5": 83,
+    "phase6": 68,
+    "phase7": 58,
+    "phase8": 52,
+    "phase9": 36,
+    "phase10": 52,
+    "phase11": 66,
+    "phase12": 50,
+    "phase13": 54,
+    "phase14": 48,
+    "phase15": 60,
+    "phase16": 64,
+    "phase17": 72,
+    "phase18": 32,
+    "phase19": 58,
+    "phase20": 38,
+    "phase21": 58
+  },
+  "recentSoftwareWins": [
+    { "id": "order_http_dry_rehearsal", "status": "COMPLETE", "evidence": "ordersPlugin + orderManagementOrchestrator; orderDryRehearsalIntegration.test.mjs" },
+    { "id": "json_store_migrate_script", "status": "COMPLETE", "evidence": "scripts/migrate-json-stores.mjs" },
+    { "id": "json_ld_serializer", "status": "COMPLETE", "evidence": "lib/seo/serializeJsonLd.ts" },
+    { "id": "admin_route_matrix_regression", "status": "COMPLETE", "evidence": "adminRouteMatrix.test.mjs 124 tests" },
+    { "id": "jwt_no_fallback_worktree", "status": "COMPLETE", "evidence": "server/lib/jwtSecret.js (worktree; HEAD still weak until merge)" }
+  ]
+}

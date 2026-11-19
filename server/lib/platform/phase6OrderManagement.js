@@ -6,6 +6,17 @@ const {
   listTrackedOrders,
 } = require("../commerce/orderManagementOrchestrator");
 const { SAMPLE } = require("./phase4SupplierAutomation");
+const fs = require("fs");
+const path = require("path");
+
+function ordersPluginHasDryRehearsalRoute() {
+  try {
+    const src = fs.readFileSync(path.join(__dirname, "../../plugins/ordersPlugin.js"), "utf8");
+    return src.includes("/api/orders/dry-rehearsal") && src.includes("rehearseOrderFromCheckout");
+  } catch {
+    return false;
+  }
+}
 
 const RECORD = {
   sku: "DRY-SKU-001",
@@ -48,6 +59,7 @@ function evaluatePhase6OrderManagement() {
     { id: "ORD_ALT_SUPPLIER", ok: pipe.selection?.lines?.[0]?.fallback != null },
     { id: "ORD_CENTRAL_TRACK", ok: pipe.trackerSize >= 1 },
     { id: "ORD_RECOVERY", ok: pipe.recovery?.retry === true },
+    { id: "ORD_HTTP_DRY_REHEARSAL", ok: ordersPluginHasDryRehearsalRoute() },
     { id: "ORD_LIVE_SUBMIT", ok: false, status: "BLOCKED_EXTERNAL", note: "supplierOrdersBlocked + SALES locked" },
   ];
 

@@ -275,7 +275,7 @@ module.exports = {
       const rawBody = JSON.stringify(req.body || {});
       const result = commerce.webhookFoundation.handleWebhook({
         provider: req.params.provider,
-        eventId: req.headers["x-event-id"] || `evt_${Date.now()}`,
+        eventId: req.webhook?.eventId || req.headers["x-event-id"] || `evt_${Date.now()}`,
         eventType: req.body?.type || "unknown",
         rawBody,
         signature: req.headers["x-signature"] || "",

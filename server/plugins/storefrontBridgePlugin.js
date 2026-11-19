@@ -24,24 +24,25 @@ module.exports = {
     }
 
     app.get("/api/catalog/products", (req, res) => {
-      const preview = req.query?.preview === "1";
+      // Anonymous callers must not open unpublished products via ?preview=1.
+      // That mode exists only on /api/admin/storefront/preview/*.
+      const query = { ...(req.query || {}) };
+      delete query.preview;
       res.json({
         success: true,
-        ...catalogReadService.listProducts({ ...req.query, preview }),
+        ...catalogReadService.listProducts({ ...query, preview: false }),
       });
     });
 
     app.get("/api/catalog/products/slug/:slug", (req, res) => {
-      const preview = req.query?.preview === "1";
-      const product = catalogReadService.getProductById(req.params.slug, { preview });
+      const product = catalogReadService.getProductById(req.params.slug, { preview: false });
       if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       res.json({ success: true, product });
     });
 
     app.get("/api/catalog/products/:id", (req, res) => {
       if (req.params.id === "slug") return;
-      const preview = req.query?.preview === "1";
-      const product = catalogReadService.getProductById(req.params.id, { preview });
+      const product = catalogReadService.getProductById(req.params.id, { preview: false });
       if (!product) return res.status(404).json({ success: false, errorKey: "product.notFound" });
       res.json({ success: true, product });
     });
@@ -67,9 +68,11 @@ module.exports = {
     });
 
     app.get("/api/catalog/search", (req, res) => {
+      const query = { ...(req.query || {}) };
+      delete query.preview;
       res.json({
         success: true,
-        ...catalogReadService.searchProducts(req.query || {}),
+        ...catalogReadService.searchProducts(query),
       });
     });
 
@@ -87,7 +90,7 @@ module.exports = {
     app.get("/api/catalog/feed/google.xml", (req, res) => {
       const merchantFeedService = require("../lib/storefront/merchantFeedService");
       const xml = merchantFeedService.buildGoogleMerchantFeedXml(req.query || {});
-      res.set("Content-Type", "application/xml; charset=utf-8");
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
       res.send(xml);
     });
 

@@ -6,7 +6,8 @@ const { CUSTOMER_AUDIT_ACTIONS } = require("../../core/customerExperienceConstan
 
 function recordCustomerAction(req, { action, resource, resourceId, result = "success", reason, metadata } = {}) {
   const session = req.customerSession;
-  const actor = session?.email || session?.customerId || "anonymous";
+  // The customer's id identifies the actor; the address is personal data the audit trail does not need.
+  const actor = session?.customerId ? String(session.customerId) : session ? "customer" : "anonymous";
   return operationsAudit.recordAudit({
     actor,
     action,

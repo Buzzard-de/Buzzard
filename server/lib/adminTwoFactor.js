@@ -1,32 +1,35 @@
-const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const { generateSecret, verifyTotp, buildOtpAuthUri } = require("./totp");
+const { inspectJsonFile, writeJsonAtomic, withFileLock } = require("./jsonFileStore");
 
-const dataDir = path.join(__dirname, "..", "data");
+const dataDir = require("./dataDir").resolveDataDir();
 const storeFile = path.join(dataDir, "admin-2fa.json");
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 
 const challenges = new Map();
 const pendingSetup = new Map();
 
-function ensureDataDir() {
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+/** "missing" | "empty" | "ok" | "restored" | "corrupt" */
+function storeState() {
+  return inspectJsonFile(storeFile, { validate: isPlainObject }).state;
+}
+
+/**
+ * True when the file exists but cannot be read. Which accounts have a second
+ * factor is then unknown, and sign-in must not quietly go on without one.
+ */
+function isStoreUnreadable() {
+  return storeState() === "corrupt";
 }
 
 function readStore() {
-  ensureDataDir();
-  if (!fs.existsSync(storeFile)) return {};
-  try {
-    return JSON.parse(fs.readFileSync(storeFile, "utf8") || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function writeStore(store) {
-  ensureDataDir();
-  fs.writeFileSync(storeFile, JSON.stringify(store, null, 2), "utf8");
+  const result = inspectJsonFile(storeFile, { validate: isPlainObject });
+  return result.state === "ok" || result.state === "restored" ? result.value : {};
 }
 
 function normalizeEmail(email) {
@@ -44,9 +47,16 @@ function isEnabled(email) {
 }
 
 function saveConfig(email, config) {
-  const store = readStore();
-  store[normalizeEmail(email)] = config;
-  writeStore(store);
+  withFileLock(storeFile, () => {
+    if (isStoreUnreadable()) {
+      const error = new Error("admin-2fa.json is unreadable; it was not replaced");
+      error.code = "STORE_UNREADABLE";
+      throw error;
+    }
+    const store = readStore();
+    store[normalizeEmail(email)] = config;
+    writeJsonAtomic(storeFile, store, { durable: true });
+  });
 }
 
 function createChallenge(user) {
@@ -122,6 +132,8 @@ function getStatus(email) {
 }
 
 module.exports = {
+  storeState,
+  isStoreUnreadable,
   isEnabled,
   createChallenge,
   consumeChallenge,

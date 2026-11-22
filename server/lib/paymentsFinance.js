@@ -28,12 +28,26 @@ function listPaymentMethods() {
     .all();
 }
 
+function refuseWhileSalesLocked(code) {
+  if (require("./salesMode").isSalesEnabled()) return null;
+  return {
+    error: "payment_capture_refused",
+    code,
+    status: 403,
+    captured: false,
+    realMoneyMovement: false,
+    refundIssued: false,
+  };
+}
+
 function createPaymentIntent(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const amount = Number(body.amount || 0);
   if (!orderNumber || amount <= 0) {
     return { error: "orderNumber and positive amount required", status: 400 };
   }
+  const locked = refuseWhileSalesLocked("PAYMENT_NOT_LIVE");
+  if (locked) return locked;
 
   const idempotencyKey = body.idempotencyKey || body.idempotency_key || uuid();
   const existing = db
@@ -83,15 +97,8 @@ function createPaymentIntent(body = {}) {
 }
 
 function confirmPaymentIntent(id) {
-  if (!require("./salesMode").isSalesEnabled()) {
-    return {
-      error: "payment_capture_refused",
-      code: "PAYMENT_NOT_LIVE",
-      status: 403,
-      captured: false,
-      realMoneyMovement: false,
-    };
-  }
+  const locked = refuseWhileSalesLocked("PAYMENT_NOT_LIVE");
+  if (locked) return locked;
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent) return { error: "Payment intent not found", status: 404 };
   if (["succeeded", "refunded", "partially_refunded"].includes(intent.status)) {
@@ -113,15 +120,8 @@ function confirmPaymentIntent(id) {
 }
 
 function createRefund(id, body = {}) {
-  if (!require("./salesMode").isSalesEnabled()) {
-    return {
-      error: "refund_refused",
-      code: "REFUND_NOT_LIVE",
-      status: 403,
-      refundIssued: false,
-      realMoneyMovement: false,
-    };
-  }
+  const locked = refuseWhileSalesLocked("REFUND_NOT_LIVE");
+  if (locked) return locked;
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent || intent.status !== "succeeded") {
     return { error: "Payment must be succeeded before refund", status: 400 };
@@ -186,6 +186,8 @@ function handlePaymentWebhook(body = {}) {
   const externalId = webhookInput.identifier(body.externalId || body.external_id);
   const status = webhookInput.token(body.status);
   if (!externalId || !status) return webhookInput.INVALID;
+  const locked = refuseWhileSalesLocked("PAYMENT_NOT_LIVE");
+  if (locked) return locked;
 
   const intent = db
     .prepare("SELECT * FROM finance_payment_intents WHERE external_id = ?")
@@ -203,6 +205,8 @@ function createInvoice(body = {}) {
   const orderNumber = String(body.orderNumber || body.order_number || "").trim();
   const grossAmount = Number(body.grossAmount || body.gross_amount || 0);
   if (!orderNumber || grossAmount <= 0) return { error: "Invoice data missing", status: 400 };
+  const locked = refuseWhileSalesLocked("INVOICE_NOT_LIVE");
+  if (locked) return locked;
 
   const invoiceNumber =
     body.invoiceNumber ||
@@ -248,6 +252,8 @@ function handlePayoutWebhook(body = {}) {
   const status = body.status === undefined ? "received" : webhookInput.token(body.status);
   const payoutDate = webhookInput.timestamp(body.payoutDate || body.payout_date);
   if (!payoutId || amount === null || !currency || !status || !payoutDate) return webhookInput.INVALID;
+  const locked = refuseWhileSalesLocked("PAYOUT_NOT_LIVE");
+  if (locked) return locked;
 
   db.prepare(`
     INSERT INTO finance_payouts(provider_id, external_payout_id, amount, currency, status, payout_date)
@@ -274,6 +280,8 @@ function handleDisputeWebhook(body = {}) {
   if (!caseId || amount === null || !currency || !status || providerCode === null || reason === null) {
     return webhookInput.INVALID;
   }
+  const locked = refuseWhileSalesLocked("DISPUTE_NOT_LIVE");
+  if (locked) return locked;
 
   const result = db
     .prepare(`

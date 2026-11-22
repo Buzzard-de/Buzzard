@@ -29,6 +29,14 @@ function requireAnyAdmin(req, res) {
   return null;
 }
 
+function financeError(res, result, fallback) {
+  const body = { error: result.error, realMoneyMovement: false };
+  if (result.code) body.code = result.code;
+  if (result.captured === false) body.captured = false;
+  if (result.refundIssued === false) body.refundIssued = false;
+  return res.status(result.status || fallback).json(body);
+}
+
 function guardAdmin(handler) {
   return function adminGuarded(req, res) {
     if (!requireAnyAdmin(req, res)) return undefined;
@@ -73,7 +81,7 @@ module.exports = {
 
     app.post("/api/payments-finance/intents", guardAdmin((req, res) => {
       const result = paymentsFinance.createPaymentIntent(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return financeError(res, result, 400);
       return res.status(result.intent?.id ? 201 : 200).json(result.intent);
     }));
 
@@ -105,25 +113,25 @@ module.exports = {
 
     app.post("/api/payments-finance/webhook", guardWebhook("payment", (req, res) => {
       const result = paymentsFinance.handlePaymentWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error, realMoneyMovement: false });
+      if (result.error) return financeError(res, result, 400);
       return res.status(result.status || 202).json({ ok: result.ok, realMoneyMovement: false });
     }));
 
     app.post("/api/payments-finance/invoices", guardAdmin((req, res) => {
       const result = paymentsFinance.createInvoice(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error });
+      if (result.error) return financeError(res, result, 400);
       return res.status(201).json(result.invoice);
     }));
 
     app.post("/api/payments-finance/provider/payout-webhook", guardWebhook("payout", (req, res) => {
       const result = paymentsFinance.handlePayoutWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 400).json({ error: result.error, realMoneyMovement: false });
+      if (result.error) return financeError(res, result, 400);
       return res.status(result.status || 202).json({ ok: result.ok, realMoneyMovement: false });
     }));
 
     app.post("/api/payments-finance/provider/dispute-webhook", guardWebhook("dispute", (req, res) => {
       const result = paymentsFinance.handleDisputeWebhook(req.body || {});
-      if (result.error) return res.status(result.status || 404).json({ error: result.error, realMoneyMovement: false });
+      if (result.error) return financeError(res, result, 404);
       return res.status(result.status || 202).json({ ok: result.ok, realMoneyMovement: false });
     }));
 

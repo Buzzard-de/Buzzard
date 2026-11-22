@@ -33,17 +33,29 @@ function publishBanner() {
 }
 
 const schedules = new Map();
+const MAX_SCHEDULES = 64;
+let scheduleSeq = 0;
+
+function plainCopy(value, fallback) {
+  const source = value == null || value === "" ? String(fallback || "") : String(value);
+  return source.replace(/[\u0000-\u001f\u007f<>]/g, "").trim().slice(0, 120);
+}
 
 function openSchedule({ country, copy } = {}) {
   const code = String(country || "").toUpperCase();
   const day = listDays(code)[0];
   if (!day) return { ok: false, code: "NO_SOURCED_DAY", published: false };
-  const id = `hol_${code}_${schedules.size + 1}`;
+  if (schedules.size >= MAX_SCHEDULES) {
+    const oldest = schedules.keys().next().value;
+    schedules.delete(oldest);
+  }
+  scheduleSeq += 1;
+  const id = `hol_${code}_${scheduleSeq}`;
   const draft = {
     id,
     country: code,
     day,
-    copy: String(copy || day.name).slice(0, 120),
+    copy: plainCopy(copy, day.name),
     status: "preview",
     published: false,
     copyrightChecked: false,
@@ -54,8 +66,9 @@ function openSchedule({ country, copy } = {}) {
 
 function editSchedule(id, copy) {
   const draft = schedules.get(id);
-  if (!draft || draft.status === "closed") return { ok: false, code: "NOT_EDITABLE", published: false };
-  draft.copy = String(copy || "").slice(0, 120);
+  if (!draft) return { ok: false, code: "NOT_FOUND", published: false };
+  if (draft.status === "closed") return { ok: false, code: "NOT_EDITABLE", published: false };
+  draft.copy = plainCopy(copy, "");
   draft.status = "edited";
   draft.published = false;
   return { ok: true, draft: { ...draft } };

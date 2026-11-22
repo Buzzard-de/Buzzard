@@ -1,0 +1,238 @@
+item_number,content_title,title_taken_from,what_it_assigns,why_it_is_there,register_status,files_named_in_register,original_title
+1,Repository baseline and working-tree integrity,Established scope,"Inspect branch, HEAD, dirty files, ancestry; do not destroy work",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,git status / git log,UNKNOWN
+2,Architecture inventory without duplicate systems,Established scope,"Single Pusat, single approval center, single product write boundary",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"server/lib/pusat, productWriteBoundary, controlCenter",UNKNOWN
+3,Authentication on protected endpoints,Established scope,Unauthenticated callers cannot use protected routes,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"globalAuthMiddleware, wrapRouteHandler",UNKNOWN
+4,Authorization / RBAC on protected operations,Established scope,Permission checks on admin and AI tool paths,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"rbac.js, routePermissions.js",UNKNOWN
+5,Object-level access and IDOR protection,Established scope,Cross-customer cart/order/checkout denied,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,commerceGuards.js,UNKNOWN
+6,Admin and customer session separation,Established scope,Distinct HttpOnly cookies; no session mix-up,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"auth.js, customerAuth.js",UNKNOWN
+7,"Cookie flags HttpOnly, Secure, SameSite",Established scope,Session cookies not readable by JS; CSRF companion token,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,admin/customer cookie helpers,UNKNOWN
+8,CSRF protection for cookie-authenticated mutations,Established scope,Mutating cookie session requires X-Buzzard-CSRF-Token,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,csrf tests,UNKNOWN
+9,CORS origin and header policy,Established scope,Unlisted Origin rejected; null Origin not trusted unless listed,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,corsOrigins.js,UNKNOWN
+10,Production JWT secret fail-closed,Established scope,Empty/default JWT_SECRET throws in production,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"jwtSecret.js, environmentValidation.js",UNKNOWN
+11,Rate limiting remains enabled,Established scope,Production cannot set RATE_LIMIT_DISABLED; health has own bucket,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"rateLimitStore.js, server.js",UNKNOWN
+12,Feature flags sales / SoT / live payments parent-child,Established scope,Child commercial flags ineffective while sales off; SoT never auto-active,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,commerceFeatureFlags.js,UNKNOWN
+13,Environment validation at startup,Established scope,"Production rejects test mode, disabled rate limit, default JWT, live payments without sales",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,environmentValidation.js,UNKNOWN
+14,Secrets redaction and secure configuration,Established scope,No secrets in logs/reports/commits,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"securityLog, guardian.scanSecrets",UNKNOWN
+15,Request validation and safe error messages,Established scope,Client totals rejected; public errors do not leak internals,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"commerceValidation.js, publicErrorBody",UNKNOWN
+16,Guest commerce proof for cart/checkout/order,Established scope,Guest without session/token fail-closed,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"commerceGuards, checkoutService, orderService",UNKNOWN
+17,Diagnostic / Guardian / Orchestrator / DB GET protection,Established scope,Unauthenticated diagnostic prefixes 401,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"routePermissions, globalAuthMiddleware",UNKNOWN
+18,Data protection and durable storage design,Established scope,App data not persisted in /tmp; intended DB path used,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,dbPaths.js,UNKNOWN
+19,Project integrity: commercial locks stay off,Established scope,"SALES, SoT, LIVE_PAYMENTS remain off; no fail-open auth wrappers",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19),PARTIAL,"salesMode.js, process env",UNKNOWN
+20,Shared commerce constants and state machines,Established scope,Checkout and order transitions enforced,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+21,Common error contracts,Established scope,Public error keys without stack traces,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+22,Cart data contract,Established scope,Server-owned totals; session binding,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/pricingProfitIntegrity.js`; cartService.js; commerceValidation,UNKNOWN
+23,Checkout data contract,Established scope,Sales lock; guest proof,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/pricingProfitIntegrity.js`; checkoutService.js; commerceValidation,UNKNOWN
+24,Order data contract,Established scope,Guest token stripped from public map,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+25,Product data contract,Established scope,Canonical product fields via PIM core,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+26,Core DB schema and migrations,Established scope,Additive software/pusat tables,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+27,Shared quantity and total validation,Established scope,Negative qty and client totals rejected,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/pricingProfitIntegrity.js`; commerceValidation.js,UNKNOWN
+28,Idempotency-key plumbing,Established scope,Sensitive commerce operations accept Idempotency-Key,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+29,Request correlation IDs,Established scope,X-Request-Id / X-Correlation-Id on API,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+30,Software facade is not a second orchestrator,Established scope,server/lib/software wraps existing engines,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,aiAutomationIntegrity.js; software/index.js,UNKNOWN
+31,API health endpoints,Established scope,Health remains rate-limited on its own bucket,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+32,Plugin / route registry,Established scope,wrapRouteHandler on registered routes,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+33,Catalog vs commerce mode split,Established scope,Sales off => catalog mode,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+34,Core shared-service test harness,Established scope,Vitest unit suite for commerce core,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34),PARTIAL,`server/lib/software/coreRunwayIntegrity.js` plus existing engines,UNKNOWN
+35,Pusat orchestrator core,Established scope,"Initialize, dispatch, health",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,server/lib/pusat,UNKNOWN
+36,Agent registry and coordination,Established scope,Employee/agent registry,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/agents.js,UNKNOWN
+37,Central AI memory,Established scope,Host/kv style memory in Pusat,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat memory modules,UNKNOWN
+38,Specialist agents,Established scope,Named agents with tools,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/agents.js,UNKNOWN
+39,Task orchestration,Established scope,Tasks wait on approval,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/lifecycle.js,UNKNOWN
+40,Pusat error handling fail-closed,Established scope,Exceptions classified; payments not retried,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/exceptions,UNKNOWN
+41,AI governance: cannot self-approve,Established scope,decide() rejects requesting agent / AI identity,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/approval.js,UNKNOWN
+42,Dispatch idempotency,Established scope,Durable read-only dispatch keys,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat idempotency,UNKNOWN
+43,Worker integration,Established scope,Pusat worker hooks,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusatWorkerIntegration tests,UNKNOWN
+44,Agent approval requests,Established scope,requestApproval bound to input hash,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/approval.js,UNKNOWN
+45,Pusat exception dead-letter,Established scope,Retry then DEAD_LETTER,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,exceptions.shouldRetry,UNKNOWN
+46,Memory and Guardian tests,Established scope,Guardian deny + memory tests,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusatMemoryGuardian.test.mjs,UNKNOWN
+47,Stub vs live LLM providers,Established scope,Stub default; live not claimed,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,aiProviders.js,UNKNOWN
+48,AI tool rate limit,Established scope,Guardian per-agent rate window,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/guardian.js,UNKNOWN
+49,Agent isolation via permissions,Established scope,aiCanExecute + tool allow-list,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,rbac + guardian,UNKNOWN
+50,Sensitive action classification,Established scope,SENSITIVE_ACTIONS require approval,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/constants,UNKNOWN
+51,Orchestrator HTTP protection,Established scope,GET /api/orchestrator prefix authenticated,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,routePermissions,UNKNOWN
+52,Automations non-destructive,Established scope,No autonomous money movement,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat automations,UNKNOWN
+53,Cross-process memory proof,Established scope,Documented in AI completion,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,docs/ai-automation-completion,UNKNOWN
+54,Recommendation-only assistants,Established scope,Cannot execute commercial side effects,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/agents.js,UNKNOWN
+55,Pusat health/status,Established scope,Health reports stub/live honestly,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55),PARTIAL,pusat/health.js,UNKNOWN
+56,Canonical product model,Established scope,productCore create/read,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+57,PIM write boundary,Established scope,authorizeCreate/Update/Delete; actor from session,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+58,Customer-facing taxonomy L1,Established scope,50 customer L1 categories,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+59,Category localization,Established scope,DE/EN/TR/AR labels,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+60,Product validation,Established scope,PIM validation / customs decision,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+61,Product SoT readiness while inactive,Established scope,activationStatus.activated false even if env flag,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+62,Dual-write forbidden,Established scope,assertNoDualWrite throws,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+63,SKU uniqueness,Established scope,productStore uniqueness,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+64,Catalog SEO,Established scope,createProduct active=0,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+65,JSON product store,Established scope,Optional BUZZARD_PRODUCT_STORE_PATH,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+66,PIM import dry-run,Established scope,No live import without flag,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+67,PIM publish gated,Established scope,Publish not SoT activation,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),HUMAN_APPROVAL_REQUIRED,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+68,Storefront catalog read,Established scope,catalogCache / catalogReadService,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+69,Search index local,Established scope,sync-search-index; not live OpenSearch,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+70,Product i18n,Established scope,fill-product-i18n-gaps,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+71,Customs validation on products,Established scope,validateCustomsDecision,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+72,Catalog / PIM health,Established scope,pimCatalog plugin health,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+73,SoT activation remains human-gated,Established scope,humanApprovalRequired true,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),HUMAN_APPROVAL_REQUIRED,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+74,No invented live prices or images,Established scope,Catalog mode; no fake LIVE_VERIFIED prices,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74),PARTIAL,`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js,UNKNOWN
+75,Pricing engine,Established scope,server/lib/pricing.js,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+76,Profit calculation / MIN_NET_PROFIT,Established scope,MIN_NET_PROFIT_EUR 0.50,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+77,Supplier integration framework,Established scope,Connector inventory; no real PO,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+78,Supplier normalization,Established scope,Feed dry-run CSV/XML/JSON,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+79,Inventory synchronization (local),Established scope,stockEngine,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+80,Supplier availability,Established scope,Adapter class / mock,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+81,Shipping cost calculation local,Established scope,shippingProvider stubs,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+82,Pricing safeguards / no undercut,Established scope,MARKET_UNDERCUT_IMPLEMENTED false,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),NOT_APPLICABLE_WITH_EVIDENCE,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+83,Supplier feeds dry-run only,Established scope,No live fetch,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+84,No real purchase orders,Established scope,supplierOrdersEnabled false,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+85,Stock engine,Established scope,operations/stockEngine.js,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+86,WMS reserve vs software reserve,Established scope,Two tables; shared audit only,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+87,Inter-Cars adapter class,Established scope,Sandbox/mock; no live order,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),BLOCKED_EXTERNAL_DEPENDENCY,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+88,TecDoc adapter class,Established scope,Classification / adapter,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),BLOCKED_EXTERNAL_DEPENDENCY,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+89,Price snapshot on cart,Established scope,priceSnapshot field,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+90,Currency handling,Established scope,Market currency,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+91,Market price rules,Established scope,Per-market config,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+92,Supplier connector inventory honesty,Established scope,class NOT_IMPLEMENTED where true,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+93,Supplier retry/idempotency,Established scope,Fail-closed outage,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+94,Fail-closed supplier outage,Established scope,Malformed/outage not treated as stock,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94),PARTIAL,`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter,UNKNOWN
+95,Cart service,Established scope,Session-bound writes,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+96,Checkout service,Established scope,Sales lock + guest proof,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+97,Order service,Established scope,skipAccessCheck only internal,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+98,Stripe payment adapter,Established scope,Live HTTP requires sales AND LIVE_PAYMENTS,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+99,PayPal payment adapter,Established scope,Same live gate,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+100,Dual payment engine,Established scope,Diagnostics use effective flags not raw env,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+101,Finance confirm fail-closed,Established scope,PROVIDER_CONFIRMATION_REQUIRED 409,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+102,Refund fail-closed,Established scope,PROVIDER_REFUND_REQUIRED 409,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+103,Returns RMA,Established scope,Customer refund ≠ supplier credit,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+104,Financial reconciliation local,Established scope,No invented revenue,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+105,Payment idempotency,Established scope,Timeout UNCERTAIN never retried as success,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+106,Fraud safeguards,Established scope,Client cannot mark paid,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+107,Financial authorization,Established scope,Finance endpoints not public,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+108,Live payments gated,Established scope,livePaymentsEnabled false in this workspace,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+109,Webhook signature verification,Established scope,Unsigned cannot mark paid,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+110,Guest checkout proof,Established scope,401 without proof,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+111,Order identity / QR,Established scope,Phase 3 identity,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+112,Loyalty non-abuse,Established scope,Cannot mint value via guest IDOR,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+113,Official payment ingress,Established scope,Single official webhook path,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113),PARTIAL,`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress,UNKNOWN
+114,Marketplace hub classification,Established scope,Classification only for missing channels,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,marketplaceHub,UNKNOWN
+115,Listing model without live publish,Established scope,Mutations gated,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),HUMAN_APPROVAL_REQUIRED,marketplace software,UNKNOWN
+116,Market configuration 35 markets,Established scope,market-engine registry,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,lib/market-engine,UNKNOWN
+117,VAT configuration,Established scope,Per-market VAT,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,market engine / tax,UNKNOWN
+118,Localization 30 locales,Established scope,lib/i18n,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,lib/i18n,UNKNOWN
+119,Multilingual storefront,Established scope,Locale hydration must not rewrite wrongly,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,homepage-multicategory ancestry,UNKNOWN
+120,International expansion registry,Established scope,Markets listed,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,market-engine,UNKNOWN
+121,Marketplace readiness flags,Established scope,Live publish off,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,feature flags,UNKNOWN
+122,Amazon/eBay class if present,Established scope,Inventory honesty,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,connectorInventory,UNKNOWN
+123,OTTO classification-only,Established scope,No live adapter claimed,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,REMAINING_SOFTWARE_WORK,UNKNOWN
+124,eMAG classification-only,Established scope,No live adapter,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,same,UNKNOWN
+125,Skroutz classification-only,Established scope,No live adapter,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,same,UNKNOWN
+126,bol.com classification-only,Established scope,No live adapter,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,same,UNKNOWN
+127,Cdiscount classification-only,Established scope,No live adapter,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,same,UNKNOWN
+128,Channel mapping,Established scope,Hub vs software lists,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,marketplaceHub,UNKNOWN
+129,Marketplace mutations gated,Established scope,No publish without approval,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),,approval + flags,UNKNOWN
+130,RTL markets,Established scope,RTL CSS,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,storefront CSS,UNKNOWN
+131,Country and language independence,Established scope,Locale not rewritten on market hydrate,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,i18n,UNKNOWN
+132,Market engine registry tests,Established scope,Vitest market checks,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,market tests,UNKNOWN
+133,Currency per market,Established scope,Registry currency,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,market-engine,UNKNOWN
+134,Legal pages per market,Established scope,Impressum redirects historically,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,scripts/sync-redirects,UNKNOWN
+135,Feed export dry-run,Established scope,No live marketplace push,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,software feeds,UNKNOWN
+136,No live listing this session,Established scope,Policy,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136),PARTIAL,safety rules,UNKNOWN
+137,Homepage,Established scope,Storefront home,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+138,Navigation / mega menu,Established scope,Desktop mega menu,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+139,Product pages,Established scope,PDP 200 / unknown 404,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+140,Search UI,Established scope,Storefront search,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+141,Responsive layouts,Established scope,Mobile homepage work,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+142,Customer experience readiness,Established scope,customerExperienceReadiness,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,customerExperienceReadiness.js,UNKNOWN
+143,Accessibility,Established scope,Not a full WCAG audit this session,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+144,Language selection,Established scope,Locale switcher,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,marketplaceInternationalIntegrity.js; LanguageSelector.tsx,UNKNOWN
+145,Country selection,Established scope,Market switcher,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,marketplaceInternationalIntegrity.js; CountrySelector.tsx,UNKNOWN
+146,RTL CSS,Established scope,Arabic/Hebrew direction,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,marketplaceInternationalIntegrity.js; styles/rtl.css,UNKNOWN
+147,UI regression Playwright,Established scope,Isolated :3010 static + :3001 API,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),,e2e/,UNKNOWN
+148,Mobile homepage,Established scope,Phone layouts,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+149,Category boxes and drawers,Established scope,Phone drawers,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+150,Admin UI pages,Established scope,Control Center / PIM / Sessions,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+151,Cart and account chrome,Established scope,Header cart,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151),PARTIAL,`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI,UNKNOWN
+152,Shipping data models,Established scope,shipmentGate,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,"`server/lib/software/shipmentGate.js`, `eta.js`",UNKNOWN
+153,Customer operations,Established scope,customerOrderBridge,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,customerOrderBridge,UNKNOWN
+154,Tracking UI,Established scope,Scan-based stub; not GPS,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,"`carriers.js`, `tracking.js`, `eta.js`, `liveMap.js`",UNKNOWN
+155,Notifications draft / send blocked,Established scope,communications.js send BLOCKED,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),HUMAN_APPROVAL_REQUIRED,software/communications.js,UNKNOWN
+156,Customer accounts,Established scope,customerAuth login rate limit,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,logisticsCustomerIntegrity.js; customerAuth.js,UNKNOWN
+157,Returns workflows,Established scope,RMA + ledger,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,logisticsCustomerIntegrity.js; software/returns.js,UNKNOWN
+158,Carrier adapter DHL,Established scope,Stub,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+159,Carrier adapter DPD,Established scope,Stub,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+160,Carrier adapter GLS,Established scope,Stub,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+161,Carrier adapter Hermes,Established scope,Stub,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+162,Carrier adapter UPS,Established scope,Stub,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+163,No real label purchase,Established scope,Policy,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,safety,UNKNOWN
+164,Operational visibility,Established scope,Control Center events,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,logisticsCustomerIntegrity.js; controlCenter.js,UNKNOWN
+165,Communications module,Established scope,Send always BLOCKED,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),HUMAN_APPROVAL_REQUIRED,communications.js,UNKNOWN
+166,Customer order bridge,Established scope,Existing engine,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,logisticsCustomerIntegrity.js; customerAccess.js; customerOrderBridge.js,UNKNOWN
+167,Scan-based tracking honesty,Established scope,carriers note not live GPS,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167),PARTIAL,carriers.js,UNKNOWN
+168,Human Approval Center,Established scope,controlCenter delegates to pusat.approval,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,controlCenter.js,UNKNOWN
+169,Exception handling,Established scope,Pusat exceptions,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,pusat/exceptions,UNKNOWN
+170,Approval policies,Established scope,"TTL, risk, requiredApprover",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.js,UNKNOWN
+171,Approver identity required,Established scope,Empty decidedBy rejected on approve,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,isForbiddenApprover,UNKNOWN
+172,Financial-impact recorded,Established scope,financialImpact on metadata,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.js,UNKNOWN
+173,Action input hashes,Established scope,hashInput bind,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,pusat/hash.js,UNKNOWN
+174,Approval expiration,Established scope,expireDue,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.js,UNKNOWN
+175,Replay protection,Established scope,Second decide duplicate,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.js,UNKNOWN
+176,Audit trails,Established scope,controlCenter.recordSystemEvent,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,controlCenter,UNKNOWN
+177,Controlled execution,Established scope,assertBound before execute,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.assertBound,UNKNOWN
+178,AI cannot self-approve,Established scope,requestingAgent match rejected,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.decide,UNKNOWN
+179,Pending-action list,Established scope,listApprovals PENDING,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,controlCenter.listApprovals,UNKNOWN
+180,Revalidate before execute,Established scope,assertBound hash check,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,approval.js,UNKNOWN
+181,Control Center = Pusat approval,Established scope,No unbound insert path,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),PARTIAL,controlCenter.createApproval,UNKNOWN
+182,High-impact gated actions catalog,Established scope,"Sales, SoT, live pay, PO, listing, ship, deploy",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182),HUMAN_APPROVAL_REQUIRED,software/gatedActions.js,UNKNOWN
+183,Structured logs,Established scope,securityLog + correlation,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,testReliabilityOpsIntegrity.js; securityLog.js,UNKNOWN
+184,Metrics,Established scope,Limited local counters,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,productionHealth,UNKNOWN
+185,Alerting,Established scope,Not a live pager,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),BLOCKED_EXTERNAL_DEPENDENCY,ops,UNKNOWN
+186,Backup,Established scope,scripts/backup-db.mjs,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,backup-db.mjs,UNKNOWN
+187,Restore,Established scope,restore-db.mjs --dry-run,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,restore-db.mjs,UNKNOWN
+188,Persistence design,Established scope,Intended durable disk not /tmp,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,"dbPaths, RENDER docs",UNKNOWN
+189,Recovery,Established scope,Local operations pack,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,ops:local,UNKNOWN
+190,Incident evidence,Established scope,Reports in docs/software-completion,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,docs,UNKNOWN
+191,Operational diagnostics,Established scope,"provider-diagnostics, health",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,scripts,UNKNOWN
+192,Correlation IDs,Established scope,X-Request-Id,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,correlationContext,UNKNOWN
+193,Security event log,Established scope,logSecurityEvent rate limit + guardian,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,securityLog.js,UNKNOWN
+194,Health / software report,Established scope,/api/health/software,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,softwareCompletionPlugin,UNKNOWN
+195,No /tmp as durable app store,Established scope,Policy + dbPaths,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195),PARTIAL,dbPaths.js,UNKNOWN
+196,Unit tests,Established scope,vitest run,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,package.json test:unit; testReliabilityOpsIntegrity.js,UNKNOWN
+197,Integration tests,Established scope,software + commerce,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,testReliabilityOpsIntegrity.js; server/__tests__,UNKNOWN
+198,API security tests,Established scope,"fortressAuthz, csrf, cors, guest",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,fortressAuthz.test.mjs csrf.test.mjs corsOrigins.test.mjs guestCommerceAccess.test.mjs,UNKNOWN
+199,E2E tests,Established scope,Playwright,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,e2e/,UNKNOWN
+200,Regression tests,Established scope,Locked manifests on other branches,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,testReliabilityOpsIntegritySoftware.test.mjs + locked pack,UNKNOWN
+201,Load-related safe checks,Established scope,Rate limiter unit,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,testReliabilityOpsIntegrity.js; rateLimitStore.test.mjs,UNKNOWN
+202,Production build,Established scope,next build isolated,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,package.json build,UNKNOWN
+203,Lint,Established scope,next lint,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,package.json lint,UNKNOWN
+204,Typecheck,Established scope,tsc --noEmit,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,package.json typecheck,UNKNOWN
+205,Release quality,Established scope,CI UNKNOWN for PR head vs local,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,GitHub,UNKNOWN
+206,CSRF and CORS tests,Established scope,csrf.test.mjs corsOrigins,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,csrf.test.mjs; corsOrigins.js,UNKNOWN
+207,Finance and idempotency tests,Established scope,fortressAuthz / dualPayment,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,dualPaymentAdapters.test.mjs; officialPaymentIngress,UNKNOWN
+208,Human approval tests,Established scope,"pusatApprovalExceptions, controlCenter bridge",SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,aiAutomationIntegrity.js; pusat/approval.js,UNKNOWN
+209,Authz and IDOR tests,Established scope,guestCommerceAccess,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,guestCommerceAccess.test.mjs; commerceGuards.js,UNKNOWN
+210,Dependency audit,Established scope,npm audit --audit-level=high,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,package.json security:audit,UNKNOWN
+211,Backup/restore tests,Established scope,test:backup-restore dry-run,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,scripts,UNKNOWN
+212,CI evidence,Established scope,PR #430 checks,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212),PARTIAL,GitHub,UNKNOWN
+213,Production environment configuration,Established scope,Cannot change production env,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,safety,UNKNOWN
+214,Deployment preparation,Established scope,Scripts exist; no deploy,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,"start-production, render",UNKNOWN
+215,External integrations inventory,Established scope,externalIntegrations.js,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,software/externalIntegrations.js,UNKNOWN
+216,Secrets handling,Established scope,No secrets in git,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,policy,UNKNOWN
+217,Monitoring,Established scope,Local health only,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,ops,UNKNOWN
+218,Commercial readiness,Established scope,Sales off is truthful catalog mode,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,salesMode,UNKNOWN
+219,Launch controls,Established scope,goLiveApproval,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,goLiveApproval.js,UNKNOWN
+220,Render persistence,Established scope,Prior proof branch; this HEAD UNKNOWN,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,docs RENDER,UNKNOWN
+221,DNS and access policy,Established scope,No live DNS change,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,safety,UNKNOWN
+222,Go-live verify script,Established scope,verify-go-live.mjs,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,scripts,UNKNOWN
+223,Provider diagnostics,Established scope,provider-diagnostics.mjs,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,scripts,UNKNOWN
+224,Production safety script,Established scope,production-safety.mjs,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),PARTIAL,scripts,UNKNOWN
+225,First real customer order,Established scope,Irreversible,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,safety,UNKNOWN
+226,Merge and production deploy,Established scope,Forbidden without human,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226),HUMAN_APPROVAL_REQUIRED,git/PR,UNKNOWN
+227,Threat detection (safe),Established scope,Guardian DANGEROUS_PATTERN,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,pusat/guardian.js,UNKNOWN
+228,Authorization enforcement (Guardian),Established scope,aiCanExecute,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.js,UNKNOWN
+229,Anomaly detection,Established scope,Rate + dangerous pattern,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.js,UNKNOWN
+230,Security telemetry,Established scope,guardian.deny events,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,controlCenter + securityLog,UNKNOWN
+231,Containment safeguards,Established scope,Deny/fail-closed only; no autonomous destructive containment,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.js,UNKNOWN
+232,Auditability,Established scope,guardian.allow/deny system events,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,controlCenter,UNKNOWN
+233,Agent isolation,Established scope,Tool allow-list + identity required,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.evaluateUnsafe,UNKNOWN
+234,Incident response playbooks,Established scope,Docs + deny path,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,docs GUARDIAN_DE,UNKNOWN
+235,Secret scanning in Guardian,Established scope,scanSecrets,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.js,UNKNOWN
+236,Dangerous pattern block,Established scope,purchase/refund/wire/drop table,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,DANGEROUS_PATTERN,UNKNOWN
+237,Guardian evaluation fail-closed,Established scope,evaluate() catches and denies,SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237),PARTIAL,guardian.evaluate,UNKNOWN

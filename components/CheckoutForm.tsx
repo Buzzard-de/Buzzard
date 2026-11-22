@@ -30,6 +30,7 @@ import CommerceDryRunBanner from "@/components/shop/CommerceDryRunBanner";
 import { getFreeShippingThreshold } from "@/lib/checkout/shipping";
 import { isCheckoutEnabled, shouldUseCommerceCore } from "@/lib/shop/mode";
 import { useLocale } from "@/lib/i18n/context";
+import { countryDisplayName } from "@/lib/market/country-names";
 import { trackMarketingEvent } from "@/lib/marketing/events";
 import { useMarket } from "@/lib/market/context";
 import { shouldUseCustomerCheckoutApi } from "@/lib/customerCheckout/runtime";
@@ -58,7 +59,7 @@ function stepIndex(step: CheckoutStep): number {
 
 export default function CheckoutForm() {
   const router = useRouter();
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const { countryCode, deliveryDays } = useMarket();
   const { user: accountUser, ready: accountReady } = useAccount();
   const { items, couponCode, clear, subtotal, shipping, discount, vatAmount, total } = useCart();
@@ -550,6 +551,7 @@ export default function CheckoutForm() {
                 address={shippingAddress}
                 onChange={setShippingAddress}
                 t={t}
+                locale={locale}
                 prefix="shipping"
               />
             </section>
@@ -571,6 +573,7 @@ export default function CheckoutForm() {
                   address={billingAddress}
                   onChange={setBillingAddress}
                   t={t}
+                  locale={locale}
                   prefix="billing"
                 />
               )}
@@ -754,11 +757,13 @@ function AddressFields({
   address,
   onChange,
   t,
+  locale,
   prefix,
 }: {
   address: ReturnType<typeof emptyAddress>;
   onChange: (next: typeof address) => void;
   t: (key: string) => string;
+  locale: string;
   prefix: string;
 }) {
   return (
@@ -825,7 +830,7 @@ function AddressFields({
       >
         {CHECKOUT_COUNTRIES.map((country) => (
           <option key={country.code} value={country.code}>
-            {country.name}
+            {countryDisplayName(country.code, locale)}
           </option>
         ))}
       </select>

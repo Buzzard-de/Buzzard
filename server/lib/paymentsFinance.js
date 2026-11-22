@@ -83,6 +83,15 @@ function createPaymentIntent(body = {}) {
 }
 
 function confirmPaymentIntent(id) {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return {
+      error: "payment_capture_refused",
+      code: "PAYMENT_NOT_LIVE",
+      status: 403,
+      captured: false,
+      realMoneyMovement: false,
+    };
+  }
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent) return { error: "Payment intent not found", status: 404 };
   if (["succeeded", "refunded", "partially_refunded"].includes(intent.status)) {
@@ -104,6 +113,15 @@ function confirmPaymentIntent(id) {
 }
 
 function createRefund(id, body = {}) {
+  if (!require("./salesMode").isSalesEnabled()) {
+    return {
+      error: "refund_refused",
+      code: "REFUND_NOT_LIVE",
+      status: 403,
+      refundIssued: false,
+      realMoneyMovement: false,
+    };
+  }
   const intent = db.prepare("SELECT * FROM finance_payment_intents WHERE id = ?").get(id);
   if (!intent || intent.status !== "succeeded") {
     return { error: "Payment must be succeeded before refund", status: 400 };

@@ -39,6 +39,11 @@ function evaluatePhase3ProductPim() {
   const demoOrigin = classifyProductOrigin({ sku: "BZ-CORE-DEMO-001", title: "Demo product" });
   const publishDemo = canPublishProduct({ sku: "BZ-CORE-DEMO-001", title: "Demo", brand: "Buzzard Demo" });
   const imported = importSupplierFeed({ supplierId: "api-supplier-dry", format: "api", records: [SAMPLE] });
+  const missingEan = importSupplierFeed({
+    supplierId: "api-supplier-dry",
+    format: "api",
+    records: [{ ...SAMPLE, ean_gtin: "", gtin: "", ean: "" }],
+  });
   const sorted = searchAndSort(
     [
       { sku: "B", title: "Brake", price: 20, stock: 1 },
@@ -55,12 +60,31 @@ function evaluatePhase3ProductPim() {
     { id: "PIM_MEDIA", ok: media.ok && demoMedia.code === "MEDIA_DEMO_BLOCKED" },
     { id: "PIM_ORIGIN", ok: origin.origin === "DRY_RUN" && demoOrigin.origin === "DEMO" },
     { id: "PIM_DEMO_PUBLISH_BLOCKED", ok: publishDemo.status === "SKIPPED_DEMO" || publishDemo.ok === false },
-    { id: "PIM_DRY_IMPORT", ok: imported && imported.ok !== false, liveImport: false },
+    {
+      id: "PIM_DRY_IMPORT",
+      ok: imported.ok === true && imported.catalog.length >= 1 && imported.rejected.length === 0 && imported.pimWrite === false,
+      liveImport: false,
+    },
+    {
+      id: "PIM_DRY_IMPORT_INVALID",
+      ok:
+        missingEan.catalog.length === 0 &&
+        missingEan.rejected.length === 1 &&
+        missingEan.rejected[0].findings.some((finding) => finding.field === "gtin"),
+      liveImport: false,
+    },
     { id: "PIM_SEARCH", ok: sorted.items[0]?.sku === "A" && health.fallbackAvailable },
+    {
+      id: "PIM_LIVE_PUBLISH",
+      ok: false,
+      status: "BLOCKED_EXTERNAL",
+      note: "Publishing a product to a live channel needs human approval",
+    },
   ];
 
-  const passed = checks.filter((c) => c.ok).length;
-  const total = checks.length;
+  const softwareChecks = checks.filter((check) => check.status !== "BLOCKED_EXTERNAL");
+  const passed = softwareChecks.filter((c) => c.ok).length;
+  const total = softwareChecks.length;
   return {
     phase: 3,
     title: "Ürün oluşturma ve ürün veri yönetimi",
@@ -71,7 +95,7 @@ function evaluatePhase3ProductPim() {
     checks,
     livePublish: false,
     pimWrite: false,
-    completeClaim: passed === total,
+    completeClaim: false,
     timestamp: new Date().toISOString(),
   };
 }

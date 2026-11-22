@@ -36,6 +36,9 @@ function draftEmail({ locale = "de", intent = "faq", facts = {} } = {}) {
 }
 
 function handle({ text, locale = "de", facts = {} } = {}) {
+  if (!String(text || "").trim()) {
+    return { ok: false, code: "EMPTY_INPUT", sent: false, text: "" };
+  }
   const intent = classify(text);
   if (intent === "complaint") {
     return {

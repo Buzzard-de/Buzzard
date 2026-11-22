@@ -97,7 +97,7 @@ function evaluatePhase5PricingProfit() {
     policy: CATEGORY_TARGET_MARGIN,
     sampleQuote: { netProfit: quote.netProfit, finalRecommendedPrice: quote.finalRecommendedPrice },
     live: false,
-    completeClaim: passed === total,
+    completeClaim: false,
     timestamp: new Date().toISOString(),
   };
 }

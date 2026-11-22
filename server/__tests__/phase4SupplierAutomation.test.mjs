@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { evaluatePhase4SupplierAutomation } = require("../lib/platform/phase4SupplierAutomation.js");
+const { evaluatePhase4SupplierAutomation, selectionAccepted } = require("../lib/platform/phase4SupplierAutomation.js");
 const { selectSupplierForOrder } = require("../lib/supplier/supplierSelectionEngine.js");
 
 describe("phase 4 — supplier automation", () => {
@@ -15,6 +15,7 @@ describe("phase 4 — supplier automation", () => {
     const live = report.checks.find((c) => c.id === "SUP_LIVE_API");
     expect(live.status).toBe("BLOCKED_EXTERNAL");
     expect(live.ok).toBe(false);
+    expect(report.completeClaim).toBe(false);
   });
 
   it("selects fallback supplier without pre-buy", () => {
@@ -31,5 +32,7 @@ describe("phase 4 — supplier automation", () => {
     expect(picked.preBuyBlocked).toBe(true);
     expect(picked.lines[0].primary.supplierId).toBe("api-supplier-dry");
     expect(picked.lines[0].fallback.supplierId).toBe("xml-supplier-dry");
+    expect(selectionAccepted(picked)).toBe(true);
+    expect(selectionAccepted({ ok: false, lines: [{ fallback: { supplierId: "xml-supplier-dry" } }] })).toBe(false);
   });
 });

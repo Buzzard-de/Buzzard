@@ -2085,6 +2085,11 @@ body:has(.home-fullscreen) #maincontent {
   color: #fff;
 }
 
+/* Hidden without an inline style: the browser rewrites style="display:none" to "display: none" and React 19 reports a hydration mismatch. */
+.home-newsletter-form input.form-honeypot {
+  display: none;
+}
+
 .home-newsletter-form button {
   padding: 12px 18px;
   background: var(--gold);

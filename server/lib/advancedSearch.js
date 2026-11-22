@@ -177,6 +177,35 @@ function createProduct(body = {}) {
   if (!body.sku || !body.title) {
     return { error: "SKU and title required", status: 400 };
   }
+  const sku = String(body.sku).trim();
+  const canonical = require("./productService").recordCanonicalProduct(
+    {
+      sku,
+      title: body.title,
+      description: body.description,
+      price: body.price,
+      stock: body.stock,
+      category: body.category,
+    },
+    { source: "SEARCH" }
+  );
+  if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
+  const existing = db.prepare("SELECT id FROM srch_products WHERE sku = ?").get(sku);
+  if (existing) {
+    require("./productService").linkProjection({
+      sourceSystem: "srch_products",
+      sourceId: existing.id,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "advancedSearch.createProduct",
+    });
+    return {
+      product: db.prepare("SELECT * FROM srch_products WHERE id = ?").get(existing.id),
+      created: false,
+      canonicalProductId: canonical.id,
+    };
+  }
 
   try {
     const result = db
@@ -203,9 +232,18 @@ function createProduct(body = {}) {
         JSON.stringify(body.attributes || {})
       );
 
+    require("./productService").linkProjection({
+      sourceSystem: "srch_products",
+      sourceId: result.lastInsertRowid,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "advancedSearch.createProduct",
+    });
     return {
       product: db.prepare("SELECT * FROM srch_products WHERE id = ?").get(result.lastInsertRowid),
       created: true,
+      canonicalProductId: canonical.id,
     };
   } catch {
     return { error: "SKU already exists", status: 409 };

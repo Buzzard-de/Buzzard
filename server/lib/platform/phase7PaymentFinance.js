@@ -34,11 +34,29 @@ function evaluatePhase7PaymentFinance() {
     { id: "PAY_TAX_CONNECT_LIVE", ok: false, status: "BLOCKED_EXTERNAL", note: "Dev list #37" },
   ];
 
-  return finalizePhase(7, "Ödeme ve finans", checks, [
-    "PAY_LIVE_CAPTURE",
-    "PAY_LIVE_REFUND",
-    "PAY_TAX_CONNECT_LIVE",
-  ]);
+  return {
+    ...finalizePhase(7, "Ödeme ve finans", checks, [
+      "PAY_LIVE_CAPTURE",
+      "PAY_LIVE_REFUND",
+      "PAY_TAX_CONNECT_LIVE",
+    ]),
+    evidence: {
+      ok: auth.ok === true
+        && auth.captured === false
+        && cap.ok === false
+        && cap.captured === false
+        && coupon.code === "coupon_tampering"
+        && refund.refundIssued === false
+        && refund.live === false
+        && tax.filingEnabled === false
+        && tax.connected === false,
+      captured: auth.captured === true,
+      captureAccepted: cap.ok === true,
+      coupon: coupon.code,
+      refundIssued: refund.refundIssued === true,
+      filingEnabled: tax.filingEnabled === true,
+    },
+  };
 }
 
 module.exports = { evaluatePhase7PaymentFinance };

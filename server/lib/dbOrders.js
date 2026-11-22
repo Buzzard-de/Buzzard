@@ -9,7 +9,7 @@ function orderNumber() {
   return `BZ-${new Date().getFullYear()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
-function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shippingAddress = {} } = {}) {
+function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shippingAddress = {}, idempotencyKey = null } = {}) {
   const blocked = assertSalesEnabled();
   if (blocked) return blocked;
 
@@ -41,6 +41,46 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
     taxInfo.tax ??
     Number(((subtotal + shipping) * (taxInfo.rate ?? 0.19)).toFixed(2));
   const total = Number((subtotal + shipping + tax).toFixed(2));
+  const canonical = require("./commerce/orderService").recordCanonicalOrder({
+    orderType: "COMMERCIAL",
+    customerId: String(userId),
+    currency,
+    subtotal,
+    shipping,
+    tax,
+    discount: 0,
+    total,
+    items: items.map((item) => ({
+      sku: item.sku,
+      title: item.name,
+      quantity: item.quantity,
+      unitPrice: item.price_eur,
+      productId: item.product_id,
+    })),
+    idempotencyKey: idempotencyKey ? `cart:${idempotencyKey}` : null,
+    channel: "cart",
+    payment: { status: "NONE", captured: false, realMoneyMovement: false },
+  });
+  if (canonical.error || canonical.blocked) {
+    return {
+      error: canonical.message || canonical.error,
+      code: canonical.code,
+      status: canonical.status || 400,
+    };
+  }
+  if (canonical.created === false) {
+    return {
+      duplicate: true,
+      canonicalOrderId: canonical.id,
+      status: canonical.status,
+      currency,
+      subtotal,
+      shipping,
+      tax,
+      total,
+    };
+  }
+
   const number = orderNumber();
 
   const orderId = db.transaction(() => {
@@ -82,6 +122,7 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
 
   return {
     orderId,
+    canonicalOrderId: canonical.id,
     orderNumber: number,
     subtotal,
     shipping,

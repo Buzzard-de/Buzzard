@@ -7,6 +7,7 @@ const catalogReadService = require("./catalogReadService");
 const { mapPimToStorefront } = require("./publicProductMapper");
 const productCore = require("../pim/productCore");
 const { isProductVisibleOnStorefront } = require("./storefrontVisibility");
+const { buildL2SeoMeta } = require("./hubSeoLocaleService");
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || process.env.BUZZARD_SITE_URL || "https://buzzard24.de").replace(
   /\/$/,
@@ -28,15 +29,20 @@ function buildProductSeo(product) {
   };
 }
 
-function buildCategorySeo(categoryId) {
+function buildCategorySeo(categoryId, locale = "de") {
   const cat = categoryCatalog.getCategoryById(categoryId);
   if (!cat) return null;
+  const copy = buildL2SeoMeta(categoryId, locale);
   return {
     canonical: `${SITE_URL}${cat.url || `/kategorie/${cat.slug}/`}`,
-    title: cat.name,
-    metaDescription: `${cat.name} — Buzzard Katalog`,
+    title: copy.label || cat.name,
+    metaDescription: `${copy.label || cat.name} — Buzzard Katalog`,
     slug: cat.slug,
     robots: "index,follow",
+    locale,
+    reviewed: copy.reviewed,
+    fallbackFrom: copy.fallbackFrom,
+    professionalCopy: false,
   };
 }
 

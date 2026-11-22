@@ -425,8 +425,42 @@ module.exports = {
         return res.status(402).json({ success: false, errorKey: payment.errorKey });
       }
 
+      const { recordCanonicalOrder } = require("../lib/commerce/orderService");
+      const canonical = recordCanonicalOrder({
+        orderType: "COMMERCIAL",
+        customerId: customerSession?.customerId || null,
+        currency: quote.currency,
+        subtotal: quote.subtotal,
+        shipping: quote.shipping,
+        tax: quote.vatAmount,
+        discount: quote.discount,
+        total: quote.total,
+        items: (quote.lines || []).map((line) => ({
+          sku: line.sku || line.productId,
+          title: line.title || line.name || "",
+          quantity: line.qty,
+          unitPrice: line.unitPrice,
+        })),
+        idempotencyKey: `storefront:${duplicateKey}`,
+        channel: "storefront_json",
+        payment: { status: "NONE", captured: false, realMoneyMovement: false, reference: payment.transactionId },
+        req,
+      });
+      if (canonical.blocked || canonical.error) {
+        return res.status(canonical.status || 403).json({
+          success: false,
+          error: canonical.message || canonical.error,
+          code: canonical.code || "sales_disabled",
+        });
+      }
+      if (canonical.created === false) {
+        const existing = orders.find((order) => order.canonicalOrderId === canonical.id);
+        if (existing) return res.status(200).json({ success: true, order: existing, duplicate: true, live: false });
+      }
+
       const order = {
         id: crypto.randomUUID(),
+        canonicalOrderId: canonical.id,
         orderNumber,
         customerId: customerSession?.customerId || null,
         status: "paid",

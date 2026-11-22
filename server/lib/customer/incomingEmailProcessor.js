@@ -17,6 +17,9 @@ function verifySender({ from, verifiedCustomerId = null } = {}) {
 function processInboundEmail({ from, subject = "", body = "", locale = "de", verifiedCustomerId = null } = {}) {
   const sender = verifySender({ from, verifiedCustomerId });
   const text = `${subject}\n${body}`.trim();
+  if (!text) {
+    return { ok: false, code: "EMPTY_INPUT", live: false, autoSent: false, sender, intent: null };
+  }
   const intent = classify(text);
   const desk = handle({
     text,

@@ -99,6 +99,35 @@ function listCategories() {
 
 function createProduct(body = {}) {
   if (!body.sku) return { error: "SKU required", status: 400 };
+  const sku = String(body.sku).trim();
+  const canonical = require("./productService").recordCanonicalProduct(
+    {
+      sku,
+      title: body.title || body.name || sku,
+      ean: body.barcode || body.ean,
+      price: body.sellingPrice ?? body.selling_price,
+      stock: body.stockQty ?? body.stock_qty,
+      category: body.categoryId || body.category_id,
+    },
+    { source: "PIM30" }
+  );
+  if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
+  const existing = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
+  if (existing) {
+    require("./productService").linkProjection({
+      sourceSystem: "pim30_products",
+      sourceId: existing.id,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "productCatalogPim.createProduct",
+    });
+    return {
+      product: db.prepare("SELECT * FROM pim30_products WHERE id = ?").get(existing.id),
+      created: false,
+      canonicalProductId: canonical.id,
+    };
+  }
 
   try {
     const result = db
@@ -132,7 +161,15 @@ function createProduct(body = {}) {
 
     const product = db.prepare("SELECT * FROM pim30_products WHERE id = ?").get(result.lastInsertRowid);
     const score = updateCompleteness(product.id);
-    return { product, completeness: score, created: true };
+    require("./productService").linkProjection({
+      sourceSystem: "pim30_products",
+      sourceId: product.id,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "productCatalogPim.createProduct",
+    });
+    return { product, completeness: score, created: true, canonicalProductId: canonical.id };
   } catch {
     return { error: "SKU already exists", status: 409 };
   }

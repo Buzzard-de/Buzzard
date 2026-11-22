@@ -15,15 +15,21 @@ function isEnabled() {
   return process.env.BUZZARD_COMMERCIAL_INTEGRATIONS !== "0";
 }
 
+function isAdminRole(role) {
+  return role === "admin" || role === "administrator";
+}
+
 function requireAnyAdmin(req, res) {
   const bearer = extractToken(req);
   if (bearer) {
     try {
       const user = verifyToken(bearer);
-      if (user.role === "admin") {
+      if (isAdminRole(user.role)) {
         req.user = user;
         return user;
       }
+      res.status(403).json({ error: "Admin access required" });
+      return null;
     } catch {
       /* try JSON admin session next */
     }
@@ -31,12 +37,16 @@ function requireAnyAdmin(req, res) {
 
   const adminToken = extractAdminToken(req);
   const session = getSession(adminToken);
-  if (session) {
+  if (session && isAdminRole(session.role)) {
     req.adminUser = session;
     return session;
   }
+  if (session) {
+    res.status(403).json({ error: "Admin access required" });
+    return null;
+  }
 
-  res.status(403).json({ error: "Admin access required" });
+  res.status(401).json({ error: "Authentication required" });
   return null;
 }
 

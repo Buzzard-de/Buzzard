@@ -42,6 +42,38 @@ function createOrder(body = {}) {
   const items = Array.isArray(body.items) ? body.items : [];
   if (!items.length) return { error: "At least one item is required", status: 400 };
 
+  const canonical = require("./commerce/orderService").recordCanonicalOrder({
+    orderType: "DRY_RUN",
+    customerId: body.customerId || body.customer_id || null,
+    currency: body.currency || process.env.OMS_DEFAULT_CURRENCY || "EUR",
+    subtotal: items.reduce(
+      (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
+      0
+    ),
+    shipping: Number(body.shippingTotal || body.shipping_total || 0),
+    discount: Number(body.discountTotal || body.discount_total || 0),
+    tax: Number(body.taxTotal || body.tax_total || 0),
+    total: Math.max(
+      0,
+      items.reduce(
+        (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
+        0
+      ) + Number(body.shippingTotal || body.shipping_total || 0) + Number(body.taxTotal || body.tax_total || 0) - Number(body.discountTotal || body.discount_total || 0)
+    ),
+    items: items.map((item) => ({
+      sku: item.sku || item.product_sku,
+      title: item.title || item.name || "",
+      quantity: Number(item.quantity || 1),
+      unitPrice: Number(item.unitPrice || item.unit_price || 0),
+    })),
+    idempotencyKey: key ? `oms:${key}` : null,
+    channel: "oms",
+    payment: { status: "NONE", captured: false, realMoneyMovement: false },
+  });
+  if (canonical.error || canonical.blocked) {
+    return { error: canonical.error || canonical.code, code: canonical.code, status: canonical.status || 400 };
+  }
+
   const subtotal = items.reduce(
     (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
     0
@@ -109,7 +141,7 @@ function createOrder(body = {}) {
       channel: body.channel || "web",
     });
     const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid);
-    return { order, created: true };
+    return { order, created: true, canonicalOrderId: canonical.id };
   } catch (error) {
     return { error: "Order creation conflict", detail: error.message, status: 409 };
   }
@@ -226,6 +258,27 @@ function splitOrder(id, body = {}) {
 
   const requested = Array.isArray(body.items) ? body.items : [];
   if (!requested.length) return { error: "Split items required", status: 400 };
+  const canonical = require("./commerce/orderService").recordCanonicalOrder({
+    orderType: "DRY_RUN",
+    customerId: parent.customer_id,
+    currency: parent.currency,
+    subtotal: requested.reduce(
+      (sum, item) => sum + Number(item.unitPrice || item.unit_price || 0) * Number(item.quantity || 0),
+      0
+    ),
+    items: requested.map((item) => ({
+      sku: item.sku || item.product_sku,
+      title: item.title || "",
+      quantity: Number(item.quantity || 1),
+      unitPrice: Number(item.unitPrice || item.unit_price || 0),
+    })),
+    idempotencyKey: body.idempotencyKey ? `oms-split:${body.idempotencyKey}` : null,
+    channel: "oms_split",
+    payment: { status: "NONE", captured: false, realMoneyMovement: false },
+  });
+  if (canonical.error || canonical.blocked) {
+    return { error: canonical.error || canonical.code, code: canonical.code, status: canonical.status || 400 };
+  }
 
   const childNo = orderNumber();
   const result = db
@@ -289,7 +342,11 @@ function splitOrder(id, body = {}) {
     parentOrder: parent.order_number,
   });
 
-  return { order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid), created: true };
+  return {
+    order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(result.lastInsertRowid),
+    created: true,
+    canonicalOrderId: canonical.id,
+  };
 }
 
 function addFulfillmentLink(id, body = {}) {

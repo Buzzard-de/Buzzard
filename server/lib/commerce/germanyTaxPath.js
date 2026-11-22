@@ -75,6 +75,7 @@ function submitElster() {
     ok: false,
     code: "ELSTER_BLOCKED",
     live: false,
+    filed: false,
     elsterLive: false,
     note: "Germany filing stays human-gated. No ELSTER connection.",
   };

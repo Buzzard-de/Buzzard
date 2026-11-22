@@ -27,6 +27,12 @@ const SAMPLE = {
   stock: 8,
 };
 
+function selectionAccepted(picked) {
+  if (picked?.ok !== true) return false;
+  const fallbackId = picked.fallback?.supplierId || picked.lines?.[0]?.fallback?.supplierId;
+  return fallbackId === "xml-supplier-dry";
+}
+
 function evaluatePhase4SupplierAutomation() {
   const api = new ApiSupplierAdapter();
   const xml = new XmlSupplierAdapter();
@@ -77,7 +83,7 @@ function evaluatePhase4SupplierAutomation() {
     { id: "SUP_MAPPING", ok: mapping.ok === true && Boolean(mapping.categoryId) },
     { id: "SUP_IMPORT", ok: imported.catalog.length >= 1 },
     { id: "SUP_PRICE_STOCK_SYNC", ok: sync.ok && sync.liveImport === false && sync.priceStock.length >= 1 },
-    { id: "SUP_SELECTION", ok: picked.ok && picked.fallback?.supplierId === "xml-supplier-dry" || picked.lines[0]?.fallback },
+    { id: "SUP_SELECTION", ok: selectionAccepted(picked) },
     { id: "SUP_ORDER_DRY", ok: order.ok === true && order.live === false && order.submit?.live !== true },
     { id: "SUP_PERFORMANCE", ok: health.ok && health.canConnectLive === false },
     { id: "SUP_RECOVERY", ok: recovery.retry === true },
@@ -104,9 +110,9 @@ function evaluatePhase4SupplierAutomation() {
     total,
     checks,
     liveBlocked: ["SUP_LIVE_API"],
-    completeClaim: passed === total,
+    completeClaim: false,
     timestamp: new Date().toISOString(),
   };
 }
 
-module.exports = { evaluatePhase4SupplierAutomation, SAMPLE };
+module.exports = { evaluatePhase4SupplierAutomation, selectionAccepted, SAMPLE };

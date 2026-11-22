@@ -52,8 +52,10 @@ function transitionOrderStatus(from, to) {
 }
 
 function cancelOrderDry(orderId) {
+  if (!orderId) return { ok: false, code: "MISSING_ORDER_ID", refundIssued: false, live: false };
   const row = tracker.get(orderId);
-  const transition = transitionOrderStatus(row?.status || ORDER_STATUS.PENDING, ORDER_STATUS.CANCELLED);
+  if (!row) return { ok: false, code: "ORDER_NOT_FOUND", orderId, refundIssued: false, live: false };
+  const transition = transitionOrderStatus(row.status || ORDER_STATUS.PENDING, ORDER_STATUS.CANCELLED);
   if (row && transition.ok) {
     row.status = ORDER_STATUS.CANCELLED;
     row.events.push({ event: "CANCELLED", at: new Date().toISOString() });
@@ -134,6 +136,17 @@ function runDryOrderPipeline(sampleRecord) {
   const store = createDraftStore();
   const drafted = draftOrdersFromDryRun(dryRun, { customerId: "SYN-CUST", qty: 1, store });
   const primaryOrder = drafted.drafts.find((d) => d.ok);
+  const canonical = require("./orderService").recordCanonicalOrder({
+    orderType: "DRY_RUN",
+    idempotencyKey: primaryOrder?.orderId ? `dry-pipeline:${primaryOrder.orderId}` : null,
+    channel: "dry_orchestrator",
+    currency: "EUR",
+    subtotal: 40,
+    total: 40,
+    items: [{ sku: sampleRecord.sku, quantity: 1, unitPrice: 40, title: sampleRecord.name || sampleRecord.sku }],
+    payment: { status: "NONE", captured: false, realMoneyMovement: false },
+  });
+  const canonicalId = canonical?.id || null;
   const selection = selectSupplierForOrder({
     lineItems: [{ sku: sampleRecord.sku, quantity: 1 }],
     offersBySku: {
@@ -144,16 +157,16 @@ function runDryOrderPipeline(sampleRecord) {
     },
   });
   const supplierForward = routeToSupplier({
-    orderId: primaryOrder?.orderId,
+    orderId: canonicalId,
     sku: sampleRecord.sku,
     supplierId: selection.lines?.[0]?.primary?.supplierId,
     offersBySku: selection.lines?.length ? { [sampleRecord.sku]: [selection.lines[0].primary, selection.lines[0].fallback].filter(Boolean) } : {},
   });
   store.db.close();
 
-  if (primaryOrder?.orderId) {
-    tracker.set(primaryOrder.orderId, {
-      orderId: primaryOrder.orderId,
+  if (canonicalId) {
+    tracker.set(canonicalId, {
+      orderId: canonicalId,
       status: ORDER_STATUS.PENDING,
       sku: sampleRecord.sku,
       supplierId: selection.lines?.[0]?.primary?.supplierId,
@@ -170,7 +183,10 @@ function runDryOrderPipeline(sampleRecord) {
       reserve.ok &&
       dryRun.salesGate === "LOCKED" &&
       drafted.summary.drafted >= 1 &&
-      dryRun.products?.[0]?.decision === DECISIONS.READY_FOR_REVIEW,
+      dryRun.products?.[0]?.decision === DECISIONS.READY_FOR_REVIEW &&
+      Boolean(canonicalId) &&
+      canonical.metadata?.captured === false,
+    canonicalOrderId: canonicalId,
     validation,
     reserve,
     drafted: drafted.summary,

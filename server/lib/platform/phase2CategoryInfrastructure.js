@@ -82,7 +82,7 @@ function evaluatePhase2CategoryInfrastructure() {
     total,
     checks,
     openInLaterPhases: ["L2 ürün SEO metinleri", "Tüm L2 için profesyonel çeviri"],
-    completeClaim: passed === total,
+    completeClaim: false,
     timestamp: new Date().toISOString(),
   };
 }

@@ -51,6 +51,93 @@ function mapOrder(row) {
   };
 }
 
+function idempotencyHash(key) {
+  return crypto.createHash("sha256").update(String(key)).digest("hex");
+}
+
+function recordCanonicalOrder({
+  orderType = ORDER_TYPE.DRY_RUN,
+  checkoutId = null,
+  customerId = null,
+  currency = "EUR",
+  subtotal = 0,
+  shipping = 0,
+  tax = 0,
+  discount = 0,
+  total = 0,
+  items = [],
+  payment = null,
+  idempotencyKey = null,
+  channel = "commerce",
+  metadata = {},
+  req = null,
+} = {}) {
+  const block = assertCanCreateOrder({ orderType, req });
+  if (block && isCommercialOrderType(orderType)) return block;
+  if (!Array.isArray(items) || items.length === 0) {
+    return { error: "At least one item is required", code: "ITEMS_REQUIRED", status: 400 };
+  }
+  if (payment?.captured === true || payment?.realMoneyMovement === true) {
+    return { error: "payment_capture_refused", code: "PAYMENT_NOT_LIVE", status: 403, captured: false, realMoneyMovement: false };
+  }
+
+  if (idempotencyKey) {
+    const existing = db
+      .prepare("SELECT resource_id FROM commerce_idempotency WHERE key_hash = ? AND scope = ?")
+      .get(idempotencyHash(idempotencyKey), "canonical_order");
+    if (existing?.resource_id) {
+      const row = db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(existing.resource_id);
+      if (row) return { ...mapOrder(row), created: false, canonical: true };
+    }
+  }
+
+  const id = newId("ord");
+  const status = isCommercialOrderType(orderType) ? ORDER_STATUS.PENDING : ORDER_STATUS.CONFIRMED;
+  const meta = {
+    ...metadata,
+    channel,
+    dryRun: !isCommercialOrderType(orderType),
+    paymentReference: payment?.reference || null,
+    paymentStatus: payment?.status || "NONE",
+    captured: false,
+    realMoneyMovement: false,
+    supplierOrderSubmitted: false,
+    canonicalWriter: "orderService.recordCanonicalOrder",
+  };
+
+  db.prepare(`
+    INSERT INTO commerce_orders(
+      id, checkout_id, customer_id, order_type, status, payment_status, fulfillment_status,
+      currency, subtotal, shipping, tax, discount, total, items_json, metadata_json
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    id,
+    checkoutId,
+    customerId,
+    orderType,
+    status,
+    payment?.status || "NONE",
+    "NONE",
+    currency || "EUR",
+    subtotal || 0,
+    shipping || 0,
+    tax || 0,
+    discount || 0,
+    total || 0,
+    JSON.stringify(items),
+    JSON.stringify(meta)
+  );
+
+  if (idempotencyKey) {
+    db.prepare(`
+      INSERT INTO commerce_idempotency(key_hash, scope, resource_id, response_json)
+      VALUES (?, ?, ?, ?)
+    `).run(idempotencyHash(idempotencyKey), "canonical_order", id, JSON.stringify({ id }));
+  }
+
+  return { ...mapOrder(db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(id)), created: true, canonical: true };
+}
+
 function createOrderFromCheckout({ checkout, payment, orderType, req }) {
   const block = assertCanCreateOrder({ orderType, req });
   if (block && isCommercialOrderType(orderType)) return block;
@@ -97,40 +184,22 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
     });
   }
 
-  const id = newId("ord");
-  const status = isCommercialOrderType(orderType) ? ORDER_STATUS.PENDING : ORDER_STATUS.CONFIRMED;
-
-  db.prepare(`
-    INSERT INTO commerce_orders(
-      id, checkout_id, customer_id, order_type, status, payment_status, fulfillment_status,
-      currency, subtotal, shipping, tax, discount, total, items_json, metadata_json
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    id,
-    checkout.id,
-    checkout.customerId,
+  return recordCanonicalOrder({
     orderType,
-    status,
-    payment?.status || "NONE",
-    "NONE",
-    totals.currency || "EUR",
-    totals.subtotal || 0,
-    totals.shipping || 0,
-    totals.tax || 0,
-    totals.discount || 0,
-    totals.total || 0,
-    JSON.stringify(items),
-    JSON.stringify({
-      dryRun: !isCommercialOrderType(orderType),
-      paymentReference: payment?.reference,
-      paymentStatus: payment?.status || "NONE",
-      captured: false,
-      realMoneyMovement: false,
-      supplierOrderSubmitted: false,
-    })
-  );
-
-  return mapOrder(db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(id));
+    checkoutId: checkout.id,
+    customerId: checkout.customerId,
+    currency: totals.currency || "EUR",
+    subtotal: totals.subtotal || 0,
+    shipping: totals.shipping || 0,
+    tax: totals.tax || 0,
+    discount: totals.discount || 0,
+    total: totals.total || 0,
+    items,
+    payment,
+    idempotencyKey: checkout.idempotencyKey || null,
+    channel: "checkout",
+    req,
+  });
 }
 
 function getOrder(orderId, ctx = {}) {
@@ -241,6 +310,7 @@ function planLogisticsDryRun(orderLike = {}) {
 }
 
 module.exports = {
+  recordCanonicalOrder,
   createOrderFromCheckout,
   getOrder,
   transitionOrderStatus,

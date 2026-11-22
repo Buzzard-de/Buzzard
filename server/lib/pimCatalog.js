@@ -99,6 +99,37 @@ function getProductBySku(sku) {
 function createProduct(body = {}) {
   const sku = String(body.sku || "").trim();
   if (!sku) return { error: "sku required", status: 400 };
+  const canonical = require("./productService").recordCanonicalProduct(
+    {
+      sku,
+      title: body.title || body.name || sku,
+      ean: body.ean,
+      gtin: body.gtin,
+      price: body.price,
+      stock: body.stock,
+      category: body.categoryId || body.category_id,
+    },
+    { source: "PIM_CATALOG" }
+  );
+  if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
+  const existing = db.prepare("SELECT id FROM pim_products WHERE sku = ?").get(sku);
+  if (existing || canonical.created === false) {
+    if (existing) {
+      require("./productService").linkProjection({
+        sourceSystem: "pim_products",
+        sourceId: existing.id,
+        sourceSku: sku,
+        targetProductId: canonical.id,
+        targetSku: sku,
+        evidence: "pimCatalog.createProduct",
+      });
+    }
+    return {
+      product: { ...(existing ? db.prepare("SELECT * FROM pim_products WHERE id = ?").get(existing.id) : {}), canonicalProductId: canonical.id, sku },
+      created: false,
+      canonicalProductId: canonical.id,
+    };
+  }
   try {
     const result = db
       .prepare(`
@@ -119,7 +150,15 @@ function createProduct(body = {}) {
       );
     const score = updateCompleteness(result.lastInsertRowid);
     const product = db.prepare("SELECT * FROM pim_products WHERE id = ?").get(result.lastInsertRowid);
-    return { product: { ...product, completeness: score } };
+    require("./productService").linkProjection({
+      sourceSystem: "pim_products",
+      sourceId: product.id,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "pimCatalog.createProduct",
+    });
+    return { product: { ...product, completeness: score, canonicalProductId: canonical.id }, canonicalProductId: canonical.id, created: true };
   } catch {
     return { error: "SKU already exists", status: 409 };
   }

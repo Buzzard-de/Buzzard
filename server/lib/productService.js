@@ -37,7 +37,55 @@ function createProduct(input, ctx = {}) {
     payload: { id: product.id, sku: product.sku },
     correlationId: ctx.correlationId || null,
   });
-  return product;
+  return { ...product, created: true, canonical: true, canonicalProductId: product.id };
+}
+
+function recordCanonicalProduct(input = {}, ctx = {}) {
+  const sku = String(input.sku || "").trim();
+  if (!sku) return { error: "SKU required", code: "SKU_REQUIRED", status: 400 };
+  const existing = productCore.getProduct(sku);
+  if (existing) {
+    return { ...existing, created: false, canonical: true, canonicalProductId: existing.id };
+  }
+  try {
+    return createProduct(
+      {
+        ...input,
+        sku,
+        title: input.title || input.name || sku,
+        price: input.price ?? input.priceEur ?? input.sellingPrice ?? input.selling_price ?? 0,
+        stock: input.stock ?? input.stockQty ?? input.stock_qty ?? 0,
+        ean: input.ean || input.ean_gtin || null,
+        gtin: input.gtin || input.ean || input.ean_gtin || null,
+      },
+      ctx
+    );
+  } catch (error) {
+    if (String(error.code || "").startsWith("duplicate_")) {
+      const again = productCore.getProduct(sku);
+      if (again) return { ...again, created: false, canonical: true, canonicalProductId: again.id };
+    }
+    return { error: error.message, code: error.code || "PRODUCT_REJECTED", status: error.status || 409 };
+  }
+}
+
+function linkProjection({ sourceSystem, sourceId, sourceSku, targetProductId, targetSku, evidence }) {
+  if (!sourceSystem || sourceId == null || !targetProductId) return;
+  try {
+    productSot.upsertIdentityMap({
+      sourceSystem,
+      sourceId: String(sourceId),
+      sourceSku: sourceSku || null,
+      targetProductId,
+      targetSku: targetSku || sourceSku || null,
+      mappingStatus: "MAPPED",
+      collisionStatus: "NONE",
+      confidence: 1,
+      evidence: evidence || "productService.linkProjection",
+    });
+  } catch {
+    /* identity map is optional for ancient fixtures */
+  }
 }
 
 function updateProduct(id, input, ctx = {}) {
@@ -80,6 +128,8 @@ module.exports = {
   getProductByEan,
   listProducts,
   createProduct,
+  recordCanonicalProduct,
+  linkProjection,
   updateProduct,
   archiveProduct,
 };

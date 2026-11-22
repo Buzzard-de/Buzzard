@@ -157,10 +157,15 @@ function enrichFacets(facets, items, profile) {
   };
 }
 
+function listActiveL2() {
+  return loadShopIndex().l2.map((row) => ({ id: row.id, name: row.name, rootId: row.rootId }));
+}
+
 module.exports = {
   loadTemplates,
   resolveProfile,
   validateCatalogCoverage,
   validateProductAttributes,
   enrichFacets,
+  listActiveL2,
 };

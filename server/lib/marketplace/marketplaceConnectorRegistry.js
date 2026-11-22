@@ -25,6 +25,22 @@ function publishAllowed(channel) {
   return process.env[channel.publishEnv] === "1" && credentialsConfigured(channel);
 }
 
+function decidePublish(channel, listing) {
+  const valid = validateMarketplaceListing(listing);
+  if (!valid.ok) return { ...valid, channel: channel.id, live: false };
+  if (!publishAllowed(channel)) {
+    return {
+      ok: false,
+      code: "LIVE_CONNECTION_BLOCKED",
+      channel: channel.id,
+      live: false,
+      oauth: credentialsConfigured(channel),
+      note: "Explicit publish flag and credentials required.",
+    };
+  }
+  return { ok: false, code: "HUMAN_APPROVAL_REQUIRED", channel: channel.id, live: false };
+}
+
 function createConnector(channelId) {
   const channel = CHANNELS.find((row) => row.id === channelId);
   if (!channel) return { ok: false, code: "CHANNEL_UNKNOWN" };
@@ -36,20 +52,11 @@ function createConnector(channelId) {
     sandbox: true,
     credentialsConfigured: credentialsConfigured(channel),
     publishAllowed: publishAllowed(channel),
+    publishDecision(listing) {
+      return decidePublish(channel, listing);
+    },
     async publishListing(listing) {
-      const valid = validateMarketplaceListing(listing);
-      if (!valid.ok) return { ...valid, channel: channel.id, live: false };
-      if (!publishAllowed(channel)) {
-        return {
-          ok: false,
-          code: "LIVE_CONNECTION_BLOCKED",
-          channel: channel.id,
-          live: false,
-          oauth: credentialsConfigured(channel),
-          note: "Explicit publish flag and credentials required.",
-        };
-      }
-      return { ok: false, code: "HUMAN_APPROVAL_REQUIRED", channel: channel.id, live: false };
+      return decidePublish(channel, listing);
     },
     async syncStock(_payload) {
       return { ok: true, dryRun: true, live: false, channel: channel.id, updated: 0 };
@@ -96,4 +103,4 @@ function snapshot() {
   };
 }
 
-module.exports = { CHANNELS, createConnector, listConnectors, snapshot };
+module.exports = { CHANNELS, createConnector, listConnectors, snapshot, decidePublish };

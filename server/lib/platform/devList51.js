@@ -1,8 +1,14 @@
 /**
  * 51-item development close-out. Does not enable sales or live connections.
  */
+const fs = require("fs");
+const path = require("path");
 const { evaluateSalesGate } = require("../salesSafetyGate");
+const { validateTaxonomy } = require("../taxonomy/validateTaxonomy");
+const { validateCatalogCoverage } = require("../pim/subcategoryCatalogProfile");
+const { validateHubSeoCoverage, buildHubSeoMeta } = require("../storefront/hubSeoLocaleService");
 const { bindProductCategory } = require("../pim/productCategoryBind");
+const { mapActiveCatalogCategory } = require("../supplier/supplierMappingService");
 const { classifyProductOrigin } = require("../pim/productOrigin");
 const { assessMedia } = require("../pim/mediaReadiness");
 const { envelopeProductContent, LOCALES } = require("../pim/productContentI18n");
@@ -13,7 +19,7 @@ const { validateEan } = require("../productValidator");
 const { ApiSupplierAdapter } = require("../supplier/apiSupplierAdapter");
 const { XmlSupplierAdapter } = require("../supplier/xmlSupplierAdapter");
 const { CsvSupplierAdapter } = require("../supplier/csvSupplierAdapter");
-const { listAdapters } = require("../supplier/adapterRegistry");
+const { listSuppliers } = require("../supplier/supplierRegistry");
 const { importSupplierFeed } = require("../supplier/supplierImportPipeline");
 const { runCommercialDryRun, quoteCommercialPrice, DECISIONS } = require("../commerce/commercialCore");
 const { deriveStockStatus } = require("../operations/stockEngine");
@@ -24,7 +30,7 @@ const { createDraftStore, draftOrdersFromDryRun } = require("../commerce/dryOrde
 const { capture } = require("../commerce/paymentSandbox");
 const { createReturnStore, requestReturn, refundMoney } = require("../commerce/dryReturnRequest");
 const { rejectClientCouponFields } = require("../commerce/commerceCouponService");
-const { isEnabled: orderAutomationEnabled } = require("../orderAutomation");
+const { queueJob } = require("../orderAutomation");
 const { AB27, estimateVat } = require("../commerce/ab27Tax");
 const { POOL_COUNTRIES, resetPools } = require("../commerce/taxPools");
 const { createTaxPoolStore, postPoolIncome } = require("../commerce/taxPoolLedger");
@@ -139,7 +145,30 @@ function evaluateDevList51() {
   const sales = evaluateSalesGate();
   const items = [];
 
-  for (const n of [1, 2, 3, 4, 5]) items.push(already(n));
+  const taxonomy = validateTaxonomy();
+  items.push(taxonomy.ok === true && taxonomy.master50 === 50 ? complete(1, { master50: taxonomy.master50 }) : fail(1, { master50: taxonomy.master50 }));
+
+  const catalog = validateCatalogCoverage();
+  items.push(catalog.activeL1 === 50 && catalog.missingL1.length === 0 ? complete(2, { activeL1: catalog.activeL1 }) : fail(2, { activeL1: catalog.activeL1 }));
+
+  const retiredDecisions = ["cat-25", "getraenke", "schmuck-uhren"].map((token) => mapActiveCatalogCategory(token));
+  items.push(
+    retiredDecisions.every((decision) => decision.ok === false && decision.code === "CATEGORY_RETIRED")
+      ? complete(3, { code: "CATEGORY_RETIRED", count: retiredDecisions.length })
+      : fail(3, { codes: retiredDecisions.map((decision) => decision.code) })
+  );
+
+  const hubs = validateHubSeoCoverage();
+  items.push(hubs.ok === true && hubs.activeHubs === 50 ? complete(4, { activeHubs: hubs.activeHubs }) : fail(4, { activeHubs: hubs.activeHubs }));
+
+  const deHub = buildHubSeoMeta("cat-01", "de");
+  const enHub = buildHubSeoMeta("cat-01", "en");
+  const trHub = buildHubSeoMeta("cat-01", "tr");
+  items.push(
+    deHub.ok && deHub.title.startsWith("Textil") && enHub.title.startsWith("Textiles") && trHub.title.startsWith("Tekstil")
+      ? complete(5, { de: "Textil", en: "Textiles", tr: "Tekstil" })
+      : fail(5, { deHub, enHub, trHub })
+  );
 
   const bound = bindProductCategory(sampleRecord());
   items.push(bound.ok && bound.categoryId ? complete(6, { categoryId: bound.categoryId, pimWrite: false }) : fail(6, bound));
@@ -175,7 +204,7 @@ function evaluateDevList51() {
 
   const publishDemo = canPublishProduct({ sku: "BZ-CORE-DEMO-001", title: "Demo", brand: "Buzzard Demo" });
   items.push(
-    publishDemo.status === "SKIPPED_DEMO" || publishDemo.ok === false
+    publishDemo.status === "SKIPPED_DEMO" && publishDemo.ok === false
       ? complete(11, { demoPublish: publishDemo.status, salesEnabled: false })
       : fail(11, publishDemo)
   );
@@ -194,8 +223,14 @@ function evaluateDevList51() {
       : fail(12, { sorted, health })
   );
 
-  const adapters = listAdapters();
-  items.push(adapters.length >= 1 ? complete(13, { adapters: adapters.map((a) => a.id), ordersEnabled: false }) : fail(13));
+  const suppliers = listSuppliers();
+  const supplierIds = suppliers.map((supplier) => supplier.id);
+  items.push(
+    ["api-supplier-dry", "xml-supplier-dry", "csv-supplier-dry"].every((id) => supplierIds.includes(id)) &&
+      suppliers.every((supplier) => supplier.ordersEnabled === false && supplier.canGoLive === false)
+      ? complete(13, { suppliers: supplierIds, ordersEnabled: false })
+      : fail(13, { supplierIds })
+  );
 
   const api = new ApiSupplierAdapter();
   const xml = new XmlSupplierAdapter();
@@ -209,7 +244,11 @@ function evaluateDevList51() {
     format: "api",
     records: [sampleRecord()],
   });
-  items.push(imported && imported.ok !== false ? complete(17, { liveImport: false }) : fail(17, { imported }));
+  items.push(
+    imported.ok === true && imported.catalog.length >= 1 && imported.rejected.length === 0 && imported.pimWrite === false
+      ? complete(17, { liveImport: false, catalog: imported.catalog.length })
+      : fail(17, { catalog: imported.catalog?.length, rejected: imported.rejected?.length })
+  );
 
   items.push(bound.ok ? complete(18, { code: bound.code, categoryId: bound.categoryId }) : fail(18, bound));
 
@@ -263,7 +302,16 @@ function evaluateDevList51() {
     costs: { vat: { vat: 14 }, netBeforeVat: 52 },
     returnOccurred: false,
   });
-  items.push(margin && margin.realized != null ? complete(24, { live: false }) : fail(24, margin));
+  const returned = profit({
+    sellGross: 90,
+    costs: { vat: { vat: 14 }, netBeforeVat: 52 },
+    returnOccurred: true,
+  });
+  items.push(
+    margin.realized === 24 && returned.realized === null
+      ? complete(24, { realized: margin.realized, unreimbursedReturn: null })
+      : fail(24, { realized: margin.realized, returned: returned.realized })
+  );
 
   const tamper = detectPriceTampering(9.99, 19.99);
   items.push(tamper.tampered ? complete(25, tamper) : fail(25, tamper));
@@ -295,9 +343,19 @@ function evaluateDevList51() {
   items.push(blocked(30, refund.code));
 
   const coupon = rejectClientCouponFields({ discount: 100 }, 5);
-  items.push(coupon.ok === false || coupon.tampered === true || coupon.code ? complete(31, { clientTotalsRejected: true }) : fail(31, coupon));
+  const honestCoupon = rejectClientCouponFields({ discount: 5 }, 5);
+  items.push(
+    coupon.ok === false && coupon.code === "coupon_tampering" && coupon.fields.includes("discount") && honestCoupon.ok === true
+      ? complete(31, { code: coupon.code })
+      : fail(31, coupon)
+  );
 
-  items.push(typeof orderAutomationEnabled === "function" ? complete(32, { enabled: orderAutomationEnabled(), live: false }) : fail(32));
+  const queued = queueJob("payment", `DRY-DEVLIST-${Date.now()}`, { provider: "sandbox" });
+  items.push(
+    queued.ok === true && queued.approval && queued.jobId
+      ? complete(32, { status: "APPROVAL_REQUIRED", liveOrder: false })
+      : fail(32, { ok: queued.ok, code: queued.code })
+  );
 
   items.push(AB27.length === 27 && estimateVat({ country: "DE", netAmount: 100 }).ok ? already(33) : fail(33));
   items.push(estimateVat({ country: "XX", netAmount: 100 }).code === "VAT_UNKNOWN" ? already(34) : fail(34));
@@ -326,15 +384,16 @@ function evaluateDevList51() {
 
   const sanctions = screenCompliance({ destination: "IR", goodsCode: "8708", parties: [{ name: "Unknown", country: "IR" }] });
   items.push(
-    sanctions.sanctionsCleared === false
-      ? already(38)
-      : complete(38, { sanctionsCleared: false, autoApproved: false, evidence: sanctions.code || sanctions.uncertainty })
+    sanctions.sanctionsCleared === false && sanctions.autoApproved === false && sanctions.status === "HUMAN_REVIEW" && sanctions.code === "OUTSIDE_AB27"
+      ? complete(38, { code: sanctions.code, autoApproved: false })
+      : fail(38, { code: sanctions.code, status: sanctions.status })
   );
 
+  const highValue = screenCompliance({ destination: "FR", value: 10000, goodsCode: "8708" });
   items.push(
-    sanctions.sanctionsCleared === false
-      ? already(39)
-      : complete(39, { review: true, autoApproved: false })
+    highValue.sanctionsCleared === false && highValue.autoApproved === false && highValue.code === "HIGH_VALUE"
+      ? complete(39, { code: highValue.code, autoApproved: false })
+      : fail(39, { code: highValue.code, status: highValue.status })
   );
 
   const carriers = carrierSnapshot();
@@ -347,7 +406,11 @@ function evaluateDevList51() {
     postalCode: "10115",
     address: { postalCode: "10115" },
   });
-  items.push(shipment.liveShipment === false ? complete(42, { code: shipment.code, liveShipment: false }) : fail(42, shipment));
+  items.push(
+    shipment.ok === false && shipment.code === "HUMAN_GATE_REQUIRED" && shipment.liveShipment === false
+      ? complete(42, { code: shipment.code, liveShipment: false })
+      : fail(42, shipment)
+  );
 
   const tracked = getAdapter("DHL").trackShipment({ status: "transit" });
   items.push(tracked.status === "IN_TRANSIT" ? complete(43, { trackingStatus: tracked.status }) : fail(43, tracked));
@@ -366,9 +429,26 @@ function evaluateDevList51() {
   const retLog = startReturn({ shipmentId: "DRY-1" });
   items.push(retLog.live === false && retLog.customerRefundIssued === false ? complete(45, { state: retLog.state }) : fail(45, retLog));
 
-  items.push(LOCALES.length === 30 ? already(46) : fail(46, { listed: LOCALES.length }));
-  items.push(already(47));
-  items.push(already(48));
+  items.push(LOCALES.length === 30 && LOCALES.includes("ar") && LOCALES.includes("de") ? complete(46, { listed: LOCALES.length }) : fail(46, { listed: LOCALES.length }));
+  const localeSource = fs.readFileSync(path.join(process.cwd(), "lib/i18n/detect.ts"), "utf8");
+  const countrySource = fs.readFileSync(path.join(process.cwd(), "lib/market/storage.ts"), "utf8");
+  const languageSelector = fs.readFileSync(path.join(process.cwd(), "components/LanguageSelector.tsx"), "utf8");
+  items.push(
+    localeSource.includes('STORAGE_KEY = "buzzard_locale"') &&
+      !countrySource.includes("buzzard_locale") &&
+      languageSelector.includes("setLocale") &&
+      !languageSelector.includes("setCountryCode")
+      ? complete(47, { localeKey: "buzzard_locale" })
+      : fail(47)
+  );
+  const countrySelector = fs.readFileSync(path.join(process.cwd(), "components/CountrySelector.tsx"), "utf8");
+  items.push(
+    countrySource.includes('STORAGE_KEY = "buzzard_market_country"') &&
+      countrySelector.includes("setCountryCode") &&
+      !countrySelector.includes("setLocale")
+      ? complete(48, { countryKey: "buzzard_market_country" })
+      : fail(48)
+  );
 
   const i18n = envelopeProductContent(sampleRecord());
   items.push(

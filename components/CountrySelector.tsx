@@ -1,12 +1,13 @@
 "use client";
 
 import { getDeliverableMarketCountries } from "@/lib/market/countries";
+import { countryDisplayName } from "@/lib/market/country-names";
 import { useMarket } from "@/lib/market/context";
 import { useLocale } from "@/lib/i18n/context";
 
 export default function CountrySelector() {
   const { countryCode, setCountryCode } = useMarket();
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const countries = getDeliverableMarketCountries();
 
   return (
@@ -19,7 +20,7 @@ export default function CountrySelector() {
       >
         {countries.map((country) => (
           <option key={country.code} value={country.code}>
-            {country.flag} {country.name}
+            {country.flag} {countryDisplayName(country.code, locale)}
           </option>
         ))}
       </select>

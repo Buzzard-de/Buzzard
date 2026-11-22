@@ -146,7 +146,6 @@ export function getDiversePopularCategories(
     "cat-07",
     "cat-10",
     "cat-14",
-    "cat-14",
     "cat-39",
     "cat-02",
     "cat-18",

@@ -50,8 +50,11 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const nextLocale = detectLocale();
+    // A manual locale choice is the language choice. Reading them separately
+    // left the chrome in the browser language and the categories in the chosen one.
+    const nextLanguage = hasManualLocaleOverride() ? nextLocale : detectLanguage();
     setLocaleState(nextLocale);
-    setLanguageState(detectLanguage());
+    setLanguageState(nextLanguage);
     setReady(true);
   }, []);
 
@@ -64,6 +67,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
           const lang = me.preferences?.language as BuzzardLocale | undefined;
           if (lang && SUPPORTED_LOCALES.includes(lang)) {
             setLocaleState(lang);
+            setLanguageState(lang);
           }
         })
         .catch(() => {});
@@ -79,7 +83,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   const setLocale = useCallback((next: BuzzardLocale, manual = true) => {
     setLocaleState(next);
+    setLanguageState(next);
     persistLocale(next, manual);
+    persistLanguage(next);
     if (manual) syncAccountLanguage(next);
   }, []);
 

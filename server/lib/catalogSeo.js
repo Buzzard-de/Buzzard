@@ -166,6 +166,27 @@ function createProduct(body = {}) {
     slug,
   } = body;
   if (!sku || !name) return { error: "sku and name required", status: 400 };
+  const canonical = require("./productService").recordCanonicalProduct(
+    { sku, title: name, description, price: priceEur, stock, category: categoryId },
+    { source: "CATALOG_SEO" }
+  );
+  if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
+  const existingSeo = db.prepare("SELECT id FROM products WHERE sku = ?").get(sku);
+  if (existingSeo) {
+    require("./productService").linkProjection({
+      sourceSystem: "products",
+      sourceId: existingSeo.id,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "catalogSeo.createProduct",
+    });
+    return {
+      product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(existingSeo.id)),
+      created: false,
+      canonicalProductId: canonical.id,
+    };
+  }
   const cost = Number(supplierCostEur) || 0;
   const floor = Number(marginFloor);
   const price = priceEur != null && priceEur !== "" ? Number(priceEur) : autoPrice(cost, floor);
@@ -192,7 +213,19 @@ function createProduct(body = {}) {
         seoDescription || description || name
       );
     audit(result.lastInsertRowid, "created", body);
-    return { product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)) };
+    require("./productService").linkProjection({
+      sourceSystem: "products",
+      sourceId: result.lastInsertRowid,
+      sourceSku: sku,
+      targetProductId: canonical.id,
+      targetSku: sku,
+      evidence: "catalogSeo.createProduct",
+    });
+    return {
+      product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid)),
+      created: true,
+      canonicalProductId: canonical.id,
+    };
   } catch {
     return { error: "SKU or slug already exists", status: 409 };
   }

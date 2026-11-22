@@ -77,7 +77,7 @@ export default function HomeNewsletter() {
         <h2 id="home-newsletter-title">{t("home.newsletter")}</h2>
         <p>{t("home.newsletterText")}</p>
         <form className="home-newsletter-form" onSubmit={handleSubmit} noValidate>
-          <input type="text" name="_honey" tabIndex={-1} autoComplete="off" style={{ display: "none" }} aria-hidden="true" />
+          <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="form-honeypot" aria-hidden="true" />
           <input
             type="email"
             name="email"

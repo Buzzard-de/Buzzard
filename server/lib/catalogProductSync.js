@@ -91,8 +91,24 @@ function syncCatalogProducts() {
   `);
 
   let synced = 0;
+  let canonicalRejected = 0;
   for (const product of products) {
     for (const row of collectCatalogRows(product)) {
+      const canonical = require("./productService").recordCanonicalProduct(
+        {
+          sku: row.sku,
+          title: row.name,
+          description: row.description,
+          price: row.price,
+          stock: row.stock,
+          category: row.categoryName,
+        },
+        { source: "CATALOG_SYNC" }
+      );
+      if (canonical.error || !canonical.id) {
+        canonicalRejected += 1;
+        continue;
+      }
       const categoryId = ensureCategory(row.categoryName);
       upsert.run(
         row.sku,
@@ -107,7 +123,7 @@ function syncCatalogProducts() {
     }
   }
 
-  return { synced };
+  return { synced, canonicalRejected };
 }
 
 function findProductBySku(sku) {

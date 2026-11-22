@@ -41,4 +41,11 @@ function campaignDraft({ identityId, channel, brief } = {}) {
   };
 }
 
-module.exports = { BRAND, IDENTITIES, campaignDraft };
+function publishCampaign(draft) {
+  if (draft?.publishAllowed === true) {
+    return { ok: false, published: false, live: false, code: "PUBLISH_BLOCKED", publishAllowed: false };
+  }
+  return { ok: false, published: false, live: false, code: "PUBLISH_BLOCKED", publishAllowed: false };
+}
+
+module.exports = { BRAND, IDENTITIES, campaignDraft, publishCampaign };

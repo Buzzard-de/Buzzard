@@ -14,6 +14,14 @@ describe("phase 5 — pricing and profit", () => {
     expect(report.ok).toBe(true);
     const blocked = report.checks.find((c) => c.id === "PRICE_LIVE_WRITE");
     expect(blocked.status).toBe("BLOCKED_EXTERNAL");
+    expect(blocked.ok).toBe(false);
+    expect(report.checks.find((c) => c.id === "PRICE_MARGIN_AUTO_11").ok).toBe(true);
+    expect(report.checks.find((c) => c.id === "PRICE_MARGIN_OTHER_07").ok).toBe(true);
+    expect(report.checks.find((c) => c.id === "PRICE_MARGIN_DRINKS_15").ok).toBe(true);
+    expect(report.checks.find((c) => c.id === "PRICE_MIN_NET_050").ok).toBe(true);
+    expect(report.checks.find((c) => c.id === "PRICE_UNDERCUT_010").ok).toBe(true);
+    expect(report.checks.find((c) => c.id === "PRICE_LOSS_BLOCKED").ok).toBe(true);
+    expect(report.completeClaim).toBe(false);
   });
 
   it("auto-quotes with shipping and marketplace fees", () => {

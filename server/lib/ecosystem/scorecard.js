@@ -63,6 +63,7 @@ function buildScorecard() {
     softwarePercent,
     softwareCompleteClaim: softwareReady,
     completeClaim: false,
+    live: false,
     salesEnabled: false,
     items,
     blocked: items.filter((i) => i.status === "BLOCKED" || i.status === "NEEDS_APPROVAL"),

@@ -1,3 +1,4 @@
+const { finalizePhase } = require("./phaseGateFinalize");
 const { ORDER_STATUS, canTransitionOrder } = require("../../core/commerceConstants");
 const {
   runDryOrderPipeline,
@@ -46,37 +47,41 @@ function evaluatePhase6OrderManagement() {
   const pipe = runDryOrderPipeline(RECORD);
   const tracked = listTrackedOrders();
   const trackedId = tracked[0]?.orderId;
-  const cancelled = trackedId ? cancelOrderDry(trackedId) : { ok: false };
+  const cancelled = trackedId ? cancelOrderDry(trackedId) : { ok: false, code: "MISSING_ORDER_ID" };
+  const missingCancel = cancelOrderDry("");
+  const unknownCancel = cancelOrderDry("missing-order");
   const transition = canTransitionOrder(ORDER_STATUS.PENDING, ORDER_STATUS.CANCELLED);
   const reserveFail = dryReserveStock({ sku: "X", quantity: 99, available: 1 });
 
   const checks = [
-    { id: "ORD_LIFECYCLE", ok: pipe.ok === true },
+    { id: "ORD_LIFECYCLE", ok: pipe.ok === true && pipe.supplierForward?.live === false },
     { id: "ORD_VALIDATE", ok: pipe.validation?.ok === true },
     { id: "ORD_RESERVE", ok: pipe.reserve?.ok === true && reserveFail.ok === false },
-    { id: "ORD_CANCEL_RULE", ok: transition === true && (trackedId ? cancelled.ok === true : true) },
+    {
+      id: "ORD_CANCEL_RULE",
+      ok: transition === true && Boolean(trackedId) && cancelled.ok === true && missingCancel.ok === false && unknownCancel.ok === false,
+    },
     { id: "ORD_SUPPLIER_FORWARD", ok: pipe.supplierForward?.ok === true && pipe.supplierForward.live === false },
     { id: "ORD_ALT_SUPPLIER", ok: pipe.selection?.lines?.[0]?.fallback != null },
     { id: "ORD_CENTRAL_TRACK", ok: pipe.trackerSize >= 1 },
     { id: "ORD_RECOVERY", ok: pipe.recovery?.retry === true },
-    { id: "ORD_HTTP_DRY_REHEARSAL", ok: ordersPluginHasDryRehearsalRoute() },
+    {
+      id: "ORD_HTTP_DRY_REHEARSAL",
+      ok: ordersPluginHasDryRehearsalRoute(),
+      note: "Route presence only. phase6DryRehearsalRoute.test.mjs calls POST /api/orders/dry-rehearsal and expects 200 with live false",
+    },
     { id: "ORD_LIVE_SUBMIT", ok: false, status: "BLOCKED_EXTERNAL", note: "supplierOrdersBlocked + SALES locked" },
   ];
 
-  const software = checks.filter((c) => c.id !== "ORD_LIVE_SUBMIT");
-  const passed = software.filter((c) => c.ok).length;
-
   return {
-    phase: 6,
-    title: "Sipariş yönetimi",
-    ok: passed === software.length,
-    percentComplete: Math.round((passed / software.length) * 1000) / 10,
-    passed,
-    total: software.length,
-    checks,
-    live: false,
-    completeClaim: passed === software.length,
-    timestamp: new Date().toISOString(),
+    ...finalizePhase(6, "Sipariş yönetimi", checks, ["ORD_LIVE_SUBMIT"]),
+    evidence: {
+      ok: pipe.ok === true && pipe.supplierForward?.live === false && reserveFail.ok === false,
+      tracked: Boolean(trackedId),
+      cancelled: cancelled.ok === true,
+      missingCancel: missingCancel.code,
+      unknownCancel: unknownCancel.code,
+    },
   };
 }
 

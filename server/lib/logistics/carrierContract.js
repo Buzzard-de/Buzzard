@@ -133,6 +133,43 @@ const PROFILES = Object.freeze({
   ...Object.fromEntries(AB27.map((cc) => [`POST_${cc}`, postProfile(cc)])),
 });
 
+const STATUS_RANK = Object.freeze({
+  CREATED: 1,
+  IN_TRANSIT: 2,
+  DELAYED: 2,
+  DELIVERED: 3,
+});
+
+function foldTrackingEvents(events = []) {
+  const seen = new Set();
+  let current = null;
+  const accepted = [];
+  const ignored = [];
+  for (const event of events) {
+    const status = normalizeStatus(event?.status);
+    const id = event?.id || `${status}|${event?.at || ""}`;
+    if (seen.has(id)) {
+      ignored.push({ id, status, reason: "DUPLICATE" });
+      continue;
+    }
+    seen.add(id);
+    if (status === "FAILED" || status === "LOST" || status === "RETURNING") {
+      current = status;
+      accepted.push({ id, status });
+      continue;
+    }
+    const rank = STATUS_RANK[status] || 0;
+    const currentRank = current ? STATUS_RANK[current] || 0 : 0;
+    if (current && rank < currentRank) {
+      ignored.push({ id, status, reason: "OUT_OF_ORDER" });
+      continue;
+    }
+    current = status;
+    accepted.push({ id, status });
+  }
+  return { ok: true, status: current, accepted, ignored, live: false };
+}
+
 function normalizeStatus(raw) {
   const u = String(raw || "").toUpperCase();
   if (STATUSES.includes(u)) return u;
@@ -284,6 +321,7 @@ module.exports = {
   POSTCODE,
   PROFILES,
   normalizeStatus,
+  foldTrackingEvents,
   mapStatus,
   getAdapter,
   profileOf,

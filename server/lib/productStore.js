@@ -61,10 +61,50 @@ function nextProductId() {
 }
 
 function upsertProduct(product) {
+  const sku = String(product.sku || "").trim();
+  let canonical = null;
+  if (sku) {
+    canonical = require("./productService").recordCanonicalProduct(
+      {
+        sku,
+        title: product.name || product.title || sku,
+        ean: product.ean_gtin || product.ean,
+        price: product.price || product.supplier_price?.amount,
+        stock: product.stock,
+        category: product.category_id,
+      },
+      { source: "IMPORT" }
+    );
+    if (canonical.error) {
+      const error = new Error(canonical.error);
+      error.code = canonical.code;
+      error.status = canonical.status;
+      throw error;
+    }
+  }
   const catalog = readCatalog();
   const idx = catalog.products.findIndex((p) => p.id === product.id);
   const now = new Date().toISOString();
-  const next = { ...product, updated_at: now };
+  const next = {
+    ...product,
+    updated_at: now,
+    canonicalProductId: canonical?.canonicalProductId || product.canonicalProductId || null,
+  };
+  if (canonical?.id) {
+    try {
+      require("./productService").updateProduct(
+        canonical.id,
+        {
+          title: next.name || next.title,
+          price: Number(next.price || next.supplier_price?.amount || 0),
+          stock: Number(next.stock || 0),
+        },
+        { source: "IMPORT" }
+      );
+    } catch {
+      /* the JSON projection still updates when a status transition is illegal */
+    }
+  }
   if (idx >= 0) {
     catalog.products[idx] = { ...catalog.products[idx], ...next };
   } else {

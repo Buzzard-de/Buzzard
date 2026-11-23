@@ -1,0 +1,238 @@
+item,task,criterion,code,test_evidence,status,gap
+1,Repository baseline and working-tree integrity,"Inspect branch, HEAD, dirty files, ancestry; do not destroy work",server/lib/platform/phase1CoreIntegrity.js,CORE_PROTECTED_DATA bu sabah FAIL. percent 91.7. admin-sessions.json ve diğer korunan dosyalar UNEXPECTEDLY_MISSING.,🟡,Korunan JSON tabanı bu çalışma ağacında beklenen durumda değil.
+2,Architecture inventory without duplicate systems,"Single Pusat, single approval center, single product write boundary",bu turda maddeye özel dosya açılmadı,Aranan iz: `orchestrator`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+3,Authentication on protected endpoints,Unauthenticated callers cannot use protected routes,server/__tests__/adminSessionSecurity.test.mjs,Bu sabah geçti: tokensuz istek 401.,🟡,Bütün korumalı yollar tek tek sayılmadı.
+4,Authorization / RBAC on protected operations,Permission checks on admin and AI tool paths,server/lib/globalAuthMiddleware.js,requireAnyAdmin kodda var. Bu sabahki dosyada ayrı bir RBAC testi koşulmadı.,🟡,Her yönetici yolu için izin matrisi bu turda açılmadı.
+5,Object-level access and IDOR protection,Cross-customer cart/order/checkout denied,server/__tests__/idorGuard.test.mjs,Bu sabah geçti: yol gezintisi ve rol yükseltme reddedildi.,🟡,Müşteri sepeti/siparişi çapraz erişim bu test dosyasında yok.
+6,Admin and customer session separation,Distinct HttpOnly cookies; no session mix-up,server/__tests__/adminSessionSecurity.test.mjs,Yönetici oturumu bu sabah geçti.,🟡,Müşteri oturumu ile yönetici oturumunun ayrımı ayrıca ölçülmedi.
+7,"Cookie flags HttpOnly, Secure, SameSite",Session cookies not readable by JS; CSRF companion token,bu turda maddeye özel dosya açılmadı,Aranan iz: `HttpOnly`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+8,CSRF protection for cookie-authenticated mutations,Mutating cookie session requires X-Buzzard-CSRF-Token,server/lib/csrf.js,CSRF kodu var. Zorlama yalnızca BUZZARD_CSRF_ENFORCE=1 iken. Bearer istek CSRF istemez. Zorunlu durumun testi bu sabah geçti.,🟡,Varsayılan kapalı. HttpOnly çerez bayrağı bulunamadı.
+9,CORS origin and header policy,Unlisted Origin rejected; null Origin not trusted unless listed,server/server.js,Access-Control-Allow-Origin atanıyor.,🟡,İzinli origin listesinin reddi bu sabah test edilmedi.
+10,Production JWT secret fail-closed,Empty/default JWT_SECRET throws in production,server/lib/environmentValidation.js,Üretimde JWT_SECRET boşsa hata metni var. jwtSecretHardening bu sabah geçti.,🟡,Çalışan üretim sürecine bakılmadı.
+11,Rate limiting remains enabled,Production cannot set RATE_LIMIT_DISABLED; health has own bucket,server/__tests__/rateLimitStore.test.mjs,Hız sınırı testi bu sabah geçti.,🟡,Sağlık yolu için ayrı kova bu turda ölçülmedi.
+12,Feature flags sales / SoT / live payments parent-child,Child commercial flags ineffective while sales off; SoT never auto-active,server/lib/salesMode.js,isSalesEnabled satış kapalıyken false. phaseSoftwareSide bu sabah geçti.,🟡,Canlı satış açma denemesi yok.
+13,Environment validation at startup,"Production rejects test mode, disabled rate limit, default JWT, live payments without sales",server/lib/environmentValidation.js,Üretim JWT ve zayıf sır kontrolü var.,🟡,Bütün ortam değişkenleri tek tek sayılmadı.
+14,Secrets redaction and secure configuration,No secrets in logs/reports/commits,server/lib/security.js,Bu ağaçta `redact` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+15,Request validation and safe error messages,Client totals rejected; public errors do not leak internals,bu turda maddeye özel dosya açılmadı,Aranan iz: `sendPublicError`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+16,Guest commerce proof for cart/checkout/order,Guest without session/token fail-closed,bu turda maddeye özel dosya açılmadı,Aranan iz: `guest`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+17,Diagnostic / Guardian / Orchestrator / DB GET protection,Unauthenticated diagnostic prefixes 401,server/lib/rbac.js,Bu ağaçta `system.read` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+18,Data protection and durable storage design,App data not persisted in /tmp; intended DB path used,server/lib/dbStartup.js,Bu ağaçta `dbPaths` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+19,Project integrity: commercial locks stay off,"SALES, SoT, LIVE_PAYMENTS remain off; no fail-open auth wrappers",server/lib/salesMode.js,Satış kilidi kodda. phase1 invariant salesLocked true bekliyor; phase1 yüzdesi bu sabah 91.7.,🟡,Kilit duruyor. Korunan veri kontrolü kırmızı.
+20,Shared commerce constants and state machines,Checkout and order transitions enforced,bu turda maddeye özel dosya açılmadı,Aranan iz: `state machine`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+21,Common error contracts,Public error keys without stack traces,bu turda maddeye özel dosya açılmadı,Aranan iz: `errorKey`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+22,Cart data contract,Server-owned totals; session binding,bu turda maddeye özel dosya açılmadı,Aranan iz: `addItem`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+23,Checkout data contract,Sales lock; guest proof,bu turda maddeye özel dosya açılmadı,Aranan iz: `checkout`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+24,Order data contract,Guest token stripped from public map,bu turda maddeye özel dosya açılmadı,Aranan iz: `cancelOrder`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+25,Product data contract,Canonical product fields via PIM core,bu turda maddeye özel dosya açılmadı,Aranan iz: `canonicalProduct`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+26,Core DB schema and migrations,Additive software/pusat tables,bu turda maddeye özel dosya açılmadı,Aranan iz: `migrations`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+27,Shared quantity and total validation,Negative qty and client totals rejected,server/lib/returnsRma.js,Bu ağaçta `quantity` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+28,Idempotency-key plumbing,Sensitive commerce operations accept Idempotency-Key,server/lib/paymentsFinance.js,Bu ağaçta `idempotency` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+29,Request correlation IDs,X-Request-Id / X-Correlation-Id on API,server/server.js,Bu ağaçta `correlation` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+30,Software facade is not a second orchestrator,server/lib/software wraps existing engines,server/lib/controlCenter.js,Bu ağaçta `orchestratorBridge` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+31,API health endpoints,Health remains rate-limited on its own bucket,bu turda maddeye özel dosya açılmadı,Aranan iz: `/api/health`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+32,Plugin / route registry,wrapRouteHandler on registered routes,bu turda maddeye özel dosya açılmadı,Aranan iz: `plugins`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+33,Catalog vs commerce mode split,Sales off => catalog mode,bu turda maddeye özel dosya açılmadı,Aranan iz: `sales_disabled`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+34,Core shared-service test harness,Vitest unit suite for commerce core,server/plugins/ecosystemPlugin.js,Bu ağaçta `phase1CoreIntegrity` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+35,Pusat orchestrator core,"Initialize, dispatch, health",server/__tests__/pusatOrchestrator.test.mjs,Pusat orkestratör testi bu sabah geçti.,🟡,Canlı model yok.
+36,Agent registry and coordination,Employee/agent registry,server/lib/workstreams/special16Runtime.js,Bu ağaçta `specialistDispatch` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+37,Central AI memory,Host/kv style memory in Pusat,server/lib/pusat/durable.js,Bu ağaçta `putMemory` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+38,Specialist agents,Named agents with tools,server/core/constants.js,Bu ağaçta `price_ai` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+39,Task orchestration,Tasks wait on approval,server/lib/comms/whatsappSandbox.js,Bu ağaçta `durableTaskQueue` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+40,Pusat error handling fail-closed,Exceptions classified; payments not retried,bu turda maddeye özel dosya açılmadı,Aranan iz: `fail-closed`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+41,AI governance: cannot self-approve,decide() rejects requesting agent / AI identity,server/lib/controlCenter.js,"decideApproval var. Bu, kendini onaylama yasağının kanıtı değil.",🟡,Düşük risk policy:low-risk ile otomatik APPROVED oluyor. Yasağın testi yok.
+42,Dispatch idempotency,Durable read-only dispatch keys,server/lib/pusat/idempotencyService.js,Bu ağaçta `idempotencyService` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+43,Worker integration,Pusat worker hooks,bu turda maddeye özel dosya açılmadı,Aranan iz: `worker`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+44,Agent approval requests,requestApproval bound to input hash,server/lib/pusat/orchestrator.js,Bu ağaçta `submitApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+45,Pusat exception dead-letter,Retry then DEAD_LETTER,bu turda maddeye özel dosya açılmadı,Aranan iz: `dead-letter`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+46,Memory and Guardian tests,Guardian deny + memory tests,server/lib/pusat/durable.js,Bu ağaçta `PERSONAL_MEMORY_DENIED` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+47,Stub vs live LLM providers,Stub default; live not claimed,bu turda maddeye özel dosya açılmadı,Aranan iz: `liveTts`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+48,AI tool rate limit,Guardian per-agent rate window,bu turda maddeye özel dosya açılmadı,Aranan iz: `rate limit`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+49,Agent isolation via permissions,aiCanExecute + tool allow-list,server/lib/security/phase17Evidence.js,Bu ağaçta `MEMORY_ISOLATION` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+50,Sensitive action classification,SENSITIVE_ACTIONS require approval,bu turda maddeye özel dosya açılmadı,Aranan iz: `HIGH`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+51,Orchestrator HTTP protection,GET /api/orchestrator prefix authenticated,server/lib/rbac.js,Bu ağaçta `system.read` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+52,Automations non-destructive,No autonomous money movement,bu turda maddeye özel dosya açılmadı,Aranan iz: `non-destructive`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+53,Cross-process memory proof,Documented in AI completion,bu turda maddeye özel dosya açılmadı,Aranan iz: `cross-process`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+54,Recommendation-only assistants,Cannot execute commercial side effects,server/lib/commerce/pricingIntegration.js,Bu ağaçta `recommendationOnly` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+55,Pusat health/status,Health reports stub/live honestly,bu turda maddeye özel dosya açılmadı,Aranan iz: `pusat`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+56,Canonical product model,productCore create/read,server/__tests__/canonicalProductWriter.test.mjs,canonicalProductId yazarı var. Bu sabah koşulmadı.,🟡,Test bu oturumda çalıştırılmadı.
+57,PIM write boundary,authorizeCreate/Update/Delete; actor from session,bu turda maddeye özel dosya açılmadı,Aranan iz: `productWrite`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+58,Customer-facing taxonomy L1,50 customer L1 categories,bu turda maddeye özel dosya açılmadı,Aranan iz: `activeL1`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+59,Category localization,DE/EN/TR/AR labels,bu turda maddeye özel dosya açılmadı,Aranan iz: `hubSeo`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+60,Product validation,PIM validation / customs decision,bu turda maddeye özel dosya açılmadı,Aranan iz: `validateEan`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+61,Product SoT readiness while inactive,activationStatus.activated false even if env flag,server/lib/salesSafetyGate.js,Bu ağaçta `PRODUCT_SOT` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+62,Dual-write forbidden,assertNoDualWrite throws,bu turda maddeye özel dosya açılmadı,Aranan iz: `dual-write`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+63,SKU uniqueness,productStore uniqueness,server/lib/pim/phase11Evidence.js,Bu ağaçta `duplicate_ean` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+64,Catalog SEO,createProduct active=0,bu turda maddeye özel dosya açılmadı,Aranan iz: `jsonLd`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+65,JSON product store,Optional BUZZARD_PRODUCT_STORE_PATH,bu turda maddeye özel dosya açılmadı,Aranan iz: `jsonStore`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+66,PIM import dry-run,No live import without flag,bu turda maddeye özel dosya açılmadı,Aranan iz: `dry-run`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+67,PIM publish gated,Publish not SoT activation,server/lib/platform/phase3ProductPim.js,PIM_LIVE_PUBLISH kapısı var.,🟡,Yayın insan onayında. Canlı PIM yok.
+68,Storefront catalog read,catalogCache / catalogReadService,bu turda maddeye özel dosya açılmadı,Aranan iz: `catalog`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+69,Search index local,sync-search-index; not live OpenSearch,bu turda maddeye özel dosya açılmadı,Aranan iz: `searchAndSort`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+70,Product i18n,fill-product-i18n-gaps,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+71,Customs validation on products,validateCustomsDecision,bu turda maddeye özel dosya açılmadı,Aranan iz: `customs`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+72,Catalog / PIM health,pimCatalog plugin health,bu turda maddeye özel dosya açılmadı,Aranan iz: `catalog`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+73,SoT activation remains human-gated,humanApprovalRequired true,server/lib/salesSafetyGate.js,PRODUCT_SOT kapısı var.,🟡,Kaynak etkinleştirme insan işi.
+74,No invented live prices or images,Catalog mode; no fake LIVE_VERIFIED prices,server/lib/buzzardNative/core/specialists/pricingEngine.js,Bu ağaçta `MISSING_COST` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+75,Pricing engine,server/lib/pricing.js,server/lib/commerce/pricingPolicy.js,Fiyat politikası dosyası var.,🟡,Kâr tabanı bu sabah yeniden hesaplanmadı.
+76,Profit calculation / MIN_NET_PROFIT,MIN_NET_PROFIT_EUR 0.50,server/lib/commerce/pricingPolicy.js,MIN_NET_PROFIT sembolü fiyat politikasında aranacak dosyada duruyor.,🟡,Bu sabah fiyat testi koşulmadı.
+77,Supplier integration framework,Connector inventory; no real PO,server/lib/supplier/dryRunSupplierAdapter.js,Bu ağaçta `baseAdapter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+78,Supplier normalization,Feed dry-run CSV/XML/JSON,server/lib/jobHandlers.js,Bu ağaçta `supplierMapping` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+79,Inventory synchronization (local),stockEngine,bu turda maddeye özel dosya açılmadı,Aranan iz: `inventory`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+80,Supplier availability,Adapter class / mock,bu turda maddeye özel dosya açılmadı,Aranan iz: `availability`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+81,Shipping cost calculation local,shippingProvider stubs,bu turda maddeye özel dosya açılmadı,Aranan iz: `dryShipping`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+82,Pricing safeguards / no undercut,MARKET_UNDERCUT_IMPLEMENTED false,bu turda maddeye özel dosya açılmadı,Aranan iz: `undercut`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+83,Supplier feeds dry-run only,No live fetch,bu turda maddeye özel dosya açılmadı,Aranan iz: `supplierFeed`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+84,No real purchase orders,supplierOrdersEnabled false,server/lib/jobSafetyGate.js,Bu ağaçta `submitOrder` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+85,Stock engine,operations/stockEngine.js,bu turda maddeye özel dosya açılmadı,Aranan iz: `reserve`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+86,WMS reserve vs software reserve,Two tables; shared audit only,server/plugins/wmsInventoryPlugin.js,Bu ağaçta `wmsInventory` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+87,Inter-Cars adapter class,Sandbox/mock; no live order,yok,server ağacında Inter Cars adaptörü yok.,🔴,Adaptör yazılmamış. Canlı hesap olsa da bağlanacak sınıf yok.
+88,TecDoc adapter class,Classification / adapter,server/lib/adapters/tecdocAdapter.js,TecDoc kum havuzu adaptörü var.,⛔,Canlı TecDoc hesabı ve kataloğu bu ağaçta yok.
+89,Price snapshot on cart,priceSnapshot field,bu turda maddeye özel dosya açılmadı,Aranan iz: `price snapshot`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+90,Currency handling,Market currency,bu turda maddeye özel dosya açılmadı,Aranan iz: `currency`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+91,Market price rules,Per-market config,bu turda maddeye özel dosya açılmadı,Aranan iz: `quoteForMarket`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+92,Supplier connector inventory honesty,class NOT_IMPLEMENTED where true,bu turda maddeye özel dosya açılmadı,Aranan iz: `supplier`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+93,Supplier retry/idempotency,Fail-closed outage,bu turda maddeye özel dosya açılmadı,Aranan iz: `supplier`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+94,Fail-closed supplier outage,Malformed/outage not treated as stock,bu turda maddeye özel dosya açılmadı,Aranan iz: `outage`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+95,Cart service,Session-bound writes,bu turda maddeye özel dosya açılmadı,Aranan iz: `cart`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+96,Checkout service,Sales lock + guest proof,bu turda maddeye özel dosya açılmadı,Aranan iz: `checkout`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+97,Order service,skipAccessCheck only internal,bu turda maddeye özel dosya açılmadı,Aranan iz: `orderManagement`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+98,Stripe payment adapter,Live HTTP requires sales AND LIVE_PAYMENTS,server/lib/paymentsFinance.js,Stripe adı finans kodunda var.,🟡,Canlı tahsilat yok.
+99,PayPal payment adapter,Same live gate,server/lib/paymentsFinance.js,PayPal adı finans kodunda var.,🟡,Canlı tahsilat yok.
+100,Dual payment engine,Diagnostics use effective flags not raw env,server/lib/paymentsFinance.js,Ödeme fonksiyonları bu dosyada. phase7CaptureRoute bu sabah geçti: satış kapalıyken yakalama ve iade 403.,🟡,Canlı para hareketi yok.
+101,Finance confirm fail-closed,PROVIDER_CONFIRMATION_REQUIRED 409,server/lib/paymentsFinance.js,Satış kilitliyken finans yazısı reddediliyor.,🟡,Canlı onay yok.
+102,Refund fail-closed,PROVIDER_REFUND_REQUIRED 409,server/lib/paymentsFinance.js,REFUND_NOT_LIVE. phase7 bu sabah 403 gördü.,🟡,Canlı iade yok.
+103,Returns RMA,Customer refund ≠ supplier credit,server/lib/platform/devList51.js,Bu ağaçta `startReturn` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+104,Financial reconciliation local,No invented revenue,bu turda maddeye özel dosya açılmadı,Aranan iz: `reconciliation`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+105,Payment idempotency,Timeout UNCERTAIN never retried as success,server/lib/paymentsFinance.js,Bu ağaçta `idempotency` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+106,Fraud safeguards,Client cannot mark paid,bu turda maddeye özel dosya açılmadı,Aranan iz: `fraud`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+107,Financial authorization,Finance endpoints not public,server/lib/paymentsFinance.js,Bu ağaçta `refuseWhileSalesLocked` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+108,Live payments gated,livePaymentsEnabled false in this workspace,bu turda maddeye özel dosya açılmadı,Aranan iz: `BUZZARD_LIVE_PAYMENTS`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+109,Webhook signature verification,Unsigned cannot mark paid,server/__tests__/webhookSecurity.test.mjs,Webhook güvenlik testi bu sabah geçti.,🟡,İmza sağlayıcı hesabı yok.
+110,Guest checkout proof,401 without proof,bu turda maddeye özel dosya açılmadı,Aranan iz: `guest`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+111,Order identity / QR,Phase 3 identity,bu turda maddeye özel dosya açılmadı,Aranan iz: `QR`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+112,Loyalty non-abuse,Cannot mint value via guest IDOR,bu turda maddeye özel dosya açılmadı,Aranan iz: `loyalty`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+113,Official payment ingress,Single official webhook path,bu turda maddeye özel dosya açılmadı,Aranan iz: `payment ingress`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+114,Marketplace hub classification,Classification only for missing channels,server/lib/marketplace/marketplaceConnectorRegistry.js,10 kanal tanımlı. marketplaceConnectorRegistry testi bu sabah geçti.,🟡,Canlı ilan yok.
+115,Listing model without live publish,Mutations gated,server/lib/marketplaceHub.js,Bu ağaçta `validateMarketplaceListing` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+116,Market configuration 35 markets,market-engine registry,bu turda maddeye özel dosya açılmadı,Aranan iz: `market`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+117,VAT configuration,Per-market VAT,server/lib/buzzardNative/core/tradeFlow.js,Bu ağaçta `vatEngine` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+118,Localization 30 locales,lib/i18n,bu turda maddeye özel dosya açılmadı,Aranan iz: `supported-locales`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+119,Multilingual storefront,Locale hydration must not rewrite wrongly,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+120,International expansion registry,Markets listed,bu turda maddeye özel dosya açılmadı,Aranan iz: `europe`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+121,Marketplace readiness flags,Live publish off,server/lib/marketplace/marketplaceConnectorRegistry.js,Bu ağaçta `LIVE_CONNECTION_BLOCKED` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+122,Amazon/eBay class if present,Inventory honesty,bu turda maddeye özel dosya açılmadı,Aranan iz: `amazon`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+123,OTTO classification-only,No live adapter claimed,server/lib/marketplace/marketplaceConnectorRegistry.js,otto kanalı listede.,🟡,Canlı OTTO adaptörü yok.
+124,eMAG classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,emag kanalı listede.,🟡,Canlı eMAG yok.
+125,Skroutz classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,skroutz kanalı listede.,🟡,Canlı Skroutz yok.
+126,bol.com classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,bol kanalı listede.,🟡,Canlı bol.com yok.
+127,Cdiscount classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,cdiscount kanalı listede.,🟡,Canlı Cdiscount yok.
+128,Channel mapping,Hub vs software lists,bu turda maddeye özel dosya açılmadı,Aranan iz: `channel`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+129,Marketplace mutations gated,No publish without approval,server/lib/marketplace/marketplaceConnectorRegistry.js,decidePublish LIVE_CONNECTION_BLOCKED döner.,🟡,Canlı yayın insan ve kimlik bilgisi ister.
+130,RTL markets,RTL CSS,bu turda maddeye özel dosya açılmadı,Aranan iz: `rtl`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+131,Country and language independence,Locale not rewritten on market hydrate,bu turda maddeye özel dosya açılmadı,Aranan iz: `languageIndependence`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+132,Market engine registry tests,Vitest market checks,bu turda maddeye özel dosya açılmadı,Aranan iz: `marketEngine`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+133,Currency per market,Registry currency,bu turda maddeye özel dosya açılmadı,Aranan iz: `currency`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+134,Legal pages per market,Impressum redirects historically,bu turda maddeye özel dosya açılmadı,Aranan iz: `impressum`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+135,Feed export dry-run,No live marketplace push,bu turda maddeye özel dosya açılmadı,Aranan iz: `feed`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+136,No live listing this session,Policy,bu turda maddeye özel dosya açılmadı,Aranan iz: `PUBLISH_BLOCKED`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+137,Homepage,Storefront home,bu turda maddeye özel dosya açılmadı,Aranan iz: `homepage`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+138,Navigation / mega menu,Desktop mega menu,bu turda maddeye özel dosya açılmadı,Aranan iz: `mega`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+139,Product pages,PDP 200 / unknown 404,bu turda maddeye özel dosya açılmadı,Aranan iz: `product page`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+140,Search UI,Storefront search,bu turda maddeye özel dosya açılmadı,Aranan iz: `search`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+141,Responsive layouts,Mobile homepage work,bu turda maddeye özel dosya açılmadı,Aranan iz: `responsive`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+142,Customer experience readiness,customerExperienceReadiness,bu turda maddeye özel dosya açılmadı,Aranan iz: `customer experience`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+143,Accessibility,Not a full WCAG audit this session,bu turda maddeye özel dosya açılmadı,Aranan iz: `accessibility`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+144,Language selection,Locale switcher,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+145,Country selection,Market switcher,bu turda maddeye özel dosya açılmadı,Aranan iz: `country`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+146,RTL CSS,Arabic/Hebrew direction,bu turda maddeye özel dosya açılmadı,Aranan iz: `rtl`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+147,UI regression Playwright,Isolated :3010 static + :3001 API,bu turda maddeye özel dosya açılmadı,Aranan iz: `playwright`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+148,Mobile homepage,Phone layouts,bu turda maddeye özel dosya açılmadı,Aranan iz: `mobile`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+149,Category boxes and drawers,Phone drawers,bu turda maddeye özel dosya açılmadı,Aranan iz: `drawer`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+150,Admin UI pages,Control Center / PIM / Sessions,bu turda maddeye özel dosya açılmadı,Aranan iz: `admin`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+151,Cart and account chrome,Header cart,bu turda maddeye özel dosya açılmadı,Aranan iz: `cart`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+152,Shipping data models,shipmentGate,server/lib/workstreams/special16Runtime.js,Bu ağaçta `carrierAdapter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+153,Customer operations,customerOrderBridge,bu turda maddeye özel dosya açılmadı,Aranan iz: `customer`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+154,Tracking UI,Scan-based stub; not GPS,bu turda maddeye özel dosya açılmadı,Aranan iz: `tracking`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+155,Notifications draft / send blocked,communications.js send BLOCKED,bu turda maddeye özel dosya açılmadı,Aranan iz: `notification`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+156,Customer accounts,customerAuth login rate limit,bu turda maddeye özel dosya açılmadı,Aranan iz: `account`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+157,Returns workflows,RMA + ledger,bu turda maddeye özel dosya açılmadı,Aranan iz: `returns`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+158,Carrier adapter DHL,Stub,server/lib/logistics/carrierAdapter.js,DHL createShipment/createLabel var.,🟡,Canlı etiket yok.
+159,Carrier adapter DPD,Stub,server/lib/logistics/v5/adapterFramework.js,DPD kaydı var.,🟡,Canlı etiket yok.
+160,Carrier adapter GLS,Stub,server/lib/logistics/v5/adapterFramework.js,GLS kaydı var.,🟡,Canlı etiket yok.
+161,Carrier adapter Hermes,Stub,server/lib/logistics/v5/adapterFramework.js,Hermes kaydı var.,🟡,Canlı etiket yok.
+162,Carrier adapter UPS,Stub,server/lib/logistics/v5/adapterFramework.js,UPS kaydı var.,🟡,Canlı etiket yok.
+163,No real label purchase,Policy,server/lib/logistics/carrierContract.js,Bu ağaçta `createLabel` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+164,Operational visibility,Control Center events,bu turda maddeye özel dosya açılmadı,Aranan iz: `operational`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+165,Communications module,Send always BLOCKED,bu turda maddeye özel dosya açılmadı,Aranan iz: `notification`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+166,Customer order bridge,Existing engine,bu turda maddeye özel dosya açılmadı,Aranan iz: `order bridge`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+167,Scan-based tracking honesty,carriers note not live GPS,bu turda maddeye özel dosya açılmadı,Aranan iz: `IN_TRANSIT`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+168,Human Approval Center,controlCenter delegates to pusat.approval,server/lib/pusat/humanApproval.js,Onay merkezi var. Düşük risk otomatik APPROVED. Varsayılan veritabanı os.tmpdir.,🟡,Kendini onaylama yasağı bu dosyada görünmüyor. Kalıcı disk değil.
+169,Exception handling,Pusat exceptions,bu turda maddeye özel dosya açılmadı,Aranan iz: `exception`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+170,Approval policies,"TTL, risk, requiredApprover",server/core/constants.js,Bu ağaçta `WAITING_APPROVAL` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+171,Approver identity required,Empty decidedBy rejected on approve,server/lib/controlCenter.js,Bu ağaçta `actorId` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+172,Financial-impact recorded,financialImpact on metadata,bu turda maddeye özel dosya açılmadı,Aranan iz: `financial`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+173,Action input hashes,hashInput bind,bu turda maddeye özel dosya açılmadı,Aranan iz: `input hash`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+174,Approval expiration,expireDue,bu turda maddeye özel dosya açılmadı,Aranan iz: `expire`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+175,Replay protection,Second decide duplicate,bu turda maddeye özel dosya açılmadı,Aranan iz: `replay`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+176,Audit trails,controlCenter.recordSystemEvent,bu turda maddeye özel dosya açılmadı,Aranan iz: `audit-log`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+177,Controlled execution,assertBound before execute,server/lib/controlCenter.js,Bu ağaçta `decideApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+178,AI cannot self-approve,requestingAgent match rejected,server/lib/pusat/humanApproval.js,"auto: true bulundu. Bu, yasağın geçtiğini göstermez.",🟡,Onay merkezi düşük riski otomatik onaylıyor.
+179,Pending-action list,listApprovals PENDING,server/lib/controlCenter.js,Bu ağaçta `listApprovals` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+180,Revalidate before execute,assertBound hash check,server/lib/controlCenter.js,Bu ağaçta `decideApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+181,Control Center = Pusat approval,No unbound insert path,server/core/auth/providers/aiProvider.js,Bu ağaçta `controlCenter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+182,High-impact gated actions catalog,"Sales, SoT, live pay, PO, listing, ship, deploy",server/core/constants.js,Bu ağaçta `RISK` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+183,Structured logs,securityLog + correlation,bu turda maddeye özel dosya açılmadı,Aranan iz: `security log`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+184,Metrics,Limited local counters,bu turda maddeye özel dosya açılmadı,Aranan iz: `metrics`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+185,Alerting,Not a live pager,bu turda maddeye özel dosya açılmadı,Aranan iz: `alert`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+186,Backup,scripts/backup-db.mjs,server/lib/backupAutomation.js,Yedek otomasyonu dosyası var.,🟡,Bu sabah yedekten geri dönüş koşulmadı.
+187,Restore,restore-db.mjs --dry-run,server/lib/operations/restoreSafety.js,Geri yükleme güvenlik dosyası var.,🟡,Üretim geri yüklemesi yok.
+188,Persistence design,Intended durable disk not /tmp,bu turda maddeye özel dosya açılmadı,Aranan iz: `persistent`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+189,Recovery,Local operations pack,bu turda maddeye özel dosya açılmadı,Aranan iz: `recovery`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+190,Incident evidence,Reports in docs/software-completion,bu turda maddeye özel dosya açılmadı,Aranan iz: `incident`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+191,Operational diagnostics,"provider-diagnostics, health",bu turda maddeye özel dosya açılmadı,Aranan iz: `diagnostics`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+192,Correlation IDs,X-Request-Id,bu turda maddeye özel dosya açılmadı,Aranan iz: `correlation`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+193,Security event log,logSecurityEvent rate limit + guardian,bu turda maddeye özel dosya açılmadı,Aranan iz: `security]`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+194,Health / software report,/api/health/software,bu turda maddeye özel dosya açılmadı,Aranan iz: `/api/health`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+195,No /tmp as durable app store,Policy + dbPaths,server/lib/dataDir.js,tmpdir kullanımı bulundu. Yasağın testi bu sabah yok.,🟡,Onay merkezinin varsayılan veritabanı os.tmpdir.
+196,Unit tests,vitest run,bu turda maddeye özel dosya açılmadı,Aranan iz: `vitest`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+197,Integration tests,software + commerce,bu turda maddeye özel dosya açılmadı,Aranan iz: `integration`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+198,API security tests,"fortressAuthz, csrf, cors, guest",bu turda maddeye özel dosya açılmadı,Aranan iz: `csrf.test`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+199,E2E tests,Playwright,bu turda maddeye özel dosya açılmadı,Aranan iz: `e2e`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+200,Regression tests,Locked manifests on other branches,bu turda maddeye özel dosya açılmadı,Aranan iz: `regression`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+201,Load-related safe checks,Rate limiter unit,bu turda maddeye özel dosya açılmadı,Aranan iz: `rateLimit`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+202,Production build,next build isolated,bu turda maddeye özel dosya açılmadı,Aranan iz: `next build`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+203,Lint,next lint,bu turda maddeye özel dosya açılmadı,Aranan iz: `next lint`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+204,Typecheck,tsc --noEmit,bu turda maddeye özel dosya açılmadı,Aranan iz: `tsc`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+205,Release quality,CI UNKNOWN for PR head vs local,bu turda maddeye özel dosya açılmadı,Aranan iz: `release`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+206,CSRF and CORS tests,csrf.test.mjs corsOrigins,bu turda maddeye özel dosya açılmadı,Aranan iz: `csrf.test`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+207,Finance and idempotency tests,fortressAuthz / dualPayment,bu turda maddeye özel dosya açılmadı,Aranan iz: `phase7CaptureRoute`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+208,Human approval tests,"pusatApprovalExceptions, controlCenter bridge",server/core/part32FinalControlRecoveryConstants.js,Bu ağaçta `humanApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+209,Authz and IDOR tests,guestCommerceAccess,bu turda maddeye özel dosya açılmadı,Aranan iz: `idorGuard`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+210,Dependency audit,npm audit --audit-level=high,bu turda maddeye özel dosya açılmadı,Aranan iz: `npm audit`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+211,Backup/restore tests,test:backup-restore dry-run,server/lib/survival/isolatedDisasterDrill.js,Bu ağaçta `proveBackupRestore` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+212,CI evidence,PR #430 checks,bu turda maddeye özel dosya açılmadı,Aranan iz: `ci`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+213,Production environment configuration,Cannot change production env,server/server.js,Bu ağaçta `environmentValidation` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+214,Deployment preparation,Scripts exist; no deploy,bu turda maddeye özel dosya açılmadı,Aranan iz: `deploy`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+215,External integrations inventory,externalIntegrations.js,bu turda maddeye özel dosya açılmadı,Aranan iz: `REAL_SUPPLIER`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+216,Secrets handling,No secrets in git,server/lib/jwtSecret.js,Bu ağaçta `JWT_SECRET` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+217,Monitoring,Local health only,bu turda maddeye özel dosya açılmadı,Aranan iz: `monitoring`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+218,Commercial readiness,Sales off is truthful catalog mode,bu turda maddeye özel dosya açılmadı,Aranan iz: `productionReady`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+219,Launch controls,goLiveApproval,server/core/releaseReadinessConstants.js,Bu ağaçta `goLive` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+220,Render persistence,Prior proof branch; this HEAD UNKNOWN,bu turda maddeye özel dosya açılmadı,Aranan iz: `render`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+221,DNS and access policy,No live DNS change,bu turda maddeye özel dosya açılmadı,Aranan iz: `DNS`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+222,Go-live verify script,verify-go-live.mjs,bu turda maddeye özel dosya açılmadı,Aranan iz: `verify-go-live`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+223,Provider diagnostics,provider-diagnostics.mjs,bu turda maddeye özel dosya açılmadı,Aranan iz: `diagnostics`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+224,Production safety script,production-safety.mjs,bu turda maddeye özel dosya açılmadı,Aranan iz: `production-safety`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+225,First real customer order,Irreversible,server/lib/salesMode.js,Bu ağaçta `sales_disabled` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+226,Merge and production deploy,Forbidden without human,bu turda maddeye özel dosya açılmadı,Aranan iz: `merge`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+227,Threat detection (safe),Guardian DANGEROUS_PATTERN,server/lib/jobEgressGate.js,evaluateEgress kodda. Bu sabah egress testi koşulmadı.,🟡,Canlı SOC yok.
+228,Authorization enforcement (Guardian),aiCanExecute,server/lib/controlCenter.js,Bu ağaçta `guardian` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+229,Anomaly detection,Rate + dangerous pattern,bu turda maddeye özel dosya açılmadı,Aranan iz: `anomaly`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+230,Security telemetry,guardian.deny events,bu turda maddeye özel dosya açılmadı,Aranan iz: `telemetry`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+231,Containment safeguards,Deny/fail-closed only; no autonomous destructive containment,bu turda maddeye özel dosya açılmadı,Aranan iz: `contain`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+232,Auditability,guardian.allow/deny system events,bu turda maddeye özel dosya açılmadı,Aranan iz: `audit`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+233,Agent isolation,Tool allow-list + identity required,server/lib/security/phase17Evidence.js,Bu ağaçta `MEMORY_ISOLATION` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+234,Incident response playbooks,Docs + deny path,bu turda maddeye özel dosya açılmadı,Aranan iz: `incident`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+235,Secret scanning in Guardian,scanSecrets,bu turda maddeye özel dosya açılmadı,Aranan iz: `secret`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+236,Dangerous pattern block,purchase/refund/wire/drop table,bu turda maddeye özel dosya açılmadı,Aranan iz: `dangerous`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+237,Guardian evaluation fail-closed,evaluate() catches and denies,server/core/part32FinalControlRecoveryConstants.js,Bu ağaçta `failClosed` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.

@@ -38,7 +38,14 @@ function getInventory(productId) {
   };
 }
 
-function reserve({ productId, quantity, correlationId = null, idempotencyKey = null } = {}) {
+function reserve({ productId, quantity, correlationId = null, idempotencyKey = null, actorId = null } = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "inventory",
+    method: "reserve",
+    actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
   const qty = Number(quantity);
   if (!Number.isFinite(qty) || qty <= 0) {
     return { ok: false, error: "invalid_quantity", status: 400, ...label(MODE.DRY_RUN) };
@@ -97,7 +104,14 @@ function reserve({ productId, quantity, correlationId = null, idempotencyKey = n
   return tx();
 }
 
-function release(reservationId) {
+function release(reservationId, { actorId = null } = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "inventory",
+    method: "release",
+    actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
   const row = db.prepare("SELECT * FROM inventory_sot_reservations WHERE id = ?").get(reservationId);
   if (!row) return { ok: false, error: "not_found", status: 404 };
   db.prepare("UPDATE inventory_sot_reservations SET status = 'RELEASED' WHERE id = ?").run(reservationId);

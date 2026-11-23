@@ -109,7 +109,7 @@ function createProduct(body = {}) {
       stock: body.stockQty ?? body.stock_qty,
       category: body.categoryId || body.category_id,
     },
-    { source: "PIM30" }
+    { source: "PIM30", actorId: "pim30" }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);

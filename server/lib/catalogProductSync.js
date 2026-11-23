@@ -103,7 +103,7 @@ function syncCatalogProducts() {
           stock: row.stock,
           category: row.categoryName,
         },
-        { source: "CATALOG_SYNC" }
+        { source: "CATALOG_SYNC", actorId: "catalog-sync" }
       );
       if (canonical.error || !canonical.id) {
         canonicalRejected += 1;

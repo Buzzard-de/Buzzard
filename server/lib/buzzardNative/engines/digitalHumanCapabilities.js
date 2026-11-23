@@ -31,7 +31,7 @@ function audit(profile = {}) {
     speech_in: { status: "NOT_IMPLEMENTED", ran: false },
     tts: { status: state.ttsReady === true ? "CODE_READY" : "NOT_IMPLEMENTED", ran: false },
     lip_sync: { status: lip.ok === false ? "NOT_IMPLEMENTED" : "CODE_READY", ran: lip.ok === true },
-    expression: { status: expression.ok === true && expression.body3d === false ? "CODE_READY" : "NOT_IMPLEMENTED", ran: expression.ok === true },
+    expression: { status: expression.ok === true && expression.body3d === false ? "LABEL_ONLY" : "NOT_IMPLEMENTED", ran: false, rendered: false },
     arm_gesture: { status: "NOT_IMPLEMENTED", ran: false },
     full_body_animation: { status: animation.ok === false ? "NOT_IMPLEMENTED" : "CODE_READY", ran: animation.ok === true },
     stand_and_walk: { status: "NOT_IMPLEMENTED", ran: false },

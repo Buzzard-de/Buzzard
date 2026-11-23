@@ -267,6 +267,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       return { error: "checkout_not_ready", state: checkout.state, status: 409 };
     }
 
+    const actorId = ctx.actorId || (ctx.req ? require("./commerceGuards").verifiedCommerceIdentity(ctx.req)?.id : null) || null;
     const orderBlock = assertCanCreateOrder({ orderType: checkout.orderType, req: ctx.req });
     if (orderBlock && checkout.orderType === ORDER_TYPE.COMMERCIAL) {
       transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
@@ -282,7 +283,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
 
     const totals = checkout.totals || {};
     if (body.capture === true || body.capturePayment === true) {
-      const blocked = paymentService.capturePayment({ checkoutId });
+      const blocked = paymentService.capturePayment({ checkoutId, actorId });
       transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
       return blocked;
     }
@@ -308,6 +309,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       payment,
       orderType: checkout.orderType,
       req: ctx.req,
+      actorId,
     });
 
     if (order.blocked || order.error) {
@@ -323,6 +325,7 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
         quantity: item.quantity,
         correlationId: checkoutId,
         idempotencyKey: `chk_${checkoutId}_${item.productId}`,
+        actorId,
       });
       if (!reserved.ok) {
         transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);

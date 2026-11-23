@@ -162,6 +162,15 @@ Beşinci tur, 23 Kasım 2026 11:34 Europe/Berlin. `itemsFifthPass.test.mjs` 3/3.
 - ⛔ 1
 - ⚪ 4
 
+
+Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3. Kanonik yazmalar aktörsüz duruyor. Madde 30 kısmi. Madde 88 ⛔. Dijital beden: ayrı profil var, ifade yalnız etiket ve çizilmiyor. Konuşma, duyma, sentez, dudak, kol, yürüyüş, oturma, nesne ve kıyafet sağlayıcısı yok. Madde 200, 205, 220 ve 221 doğrulanamadı. `gh pr checks 515` bu dalda kontrol döndürmedi. Satış kapalı.
+
+- ✅ 23
+- 🟡 209
+- 🔴 0
+- ⛔ 1
+- ⚪ 4
+
 ## Maddeler
 
 ## Madde 1
@@ -459,10 +468,10 @@ Beşinci tur, 23 Kasım 2026 11:34 Europe/Berlin. `itemsFifthPass.test.mjs` 3/3.
 - GÖREV: Software facade is not a second orchestrator
 - NE İSTİYOR: server/lib/software wraps existing engines
 - KOD: server/lib/software/control.js
-- TEST: 11:34 Europe/Berlin. itemsFifthPass 3/3. Kapı aktörsüz ACTOR_REQUIRED. Çift yazı DUAL_WRITE_FORBIDDEN. Pusat fiyat ve stok okuması kapıdan geçiyor. Karar yok.
-- ENTEGRASYON: Bağlı metotlar pricing, inventory, payment, shipping, supplier, identity, returns ve product.
+- TEST: 11:41 Europe/Berlin. itemsSixthPass 3/3. Aktörsüz ürün yazması ACTOR_REQUIRED. Ödeme ve stok yazması aktörsüz kapalı. Okuma rolü aktör istemiyor. Yönetici rolü aktör istiyor. Fiyat, sipariş, tedarikçi ve kanonik ürün yazması kapının içinden geçiyor.
+- ENTEGRASYON: Pusat fiyat ve stok okuması aynı kapıyı kullanıyor.
 - DURUM: 🟡
-- EKSİK: Bu listedeki metotlar dışında motorlar hâlâ doğrudan çağrılabiliyor.
+- EKSİK: Katalog SEO, arama ve eski PIM tabloları kanonik yazıdan sonra kendi satırlarını doğrudan yazıyor. Dijital beden sağlayıcıları kapıda değil.
 
 ## Madde 31
 
@@ -1039,10 +1048,10 @@ Beşinci tur, 23 Kasım 2026 11:34 Europe/Berlin. `itemsFifthPass.test.mjs` 3/3.
 - GÖREV: TecDoc adapter class
 - NE İSTİYOR: Classification / adapter
 - KOD: server/lib/adapters/tecdocAdapter.js
-- TEST: TecDoc kum havuzu adaptörü var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: 11:41 Europe/Berlin. itemsSixthPass. fetchCatalog mock true ve records boş. liveRequirements live false, accountVerified false. Gerekli ortam adları TECDOC_API_KEY, TECDOC_PROVIDER_ID, TECDOC_CATALOG_COUNTRY.
+- ENTEGRASYON: Canlı çağrı yok.
 - DURUM: ⛔
-- EKSİK: Canlı TecDoc hesabı ve kataloğu bu ağaçta yok.
+- EKSİK: TecDoc hesabı, sağlayıcı kimliği ve katalog ülkesi doğrulanmadı.
 
 ## Madde 89
 

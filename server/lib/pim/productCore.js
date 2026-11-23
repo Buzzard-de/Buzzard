@@ -107,7 +107,24 @@ function getProduct(idOrSku) {
   return attachRelations(mapProduct(row));
 }
 
-function createProduct(input, { source = "ADMIN", actorId } = {}) {
+function gateWrite(method, ctx = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "product",
+    method,
+    actorId: ctx.actorId,
+    mode: "write",
+    targets: ctx.legacyTarget ? ["D", String(ctx.legacyTarget)] : ["D"],
+  });
+  if (!gate.ok) {
+    const error = new Error(gate.code);
+    error.code = gate.code;
+    throw error;
+  }
+}
+
+function createProduct(input, ctx = {}) {
+  const { source = "ADMIN", actorId } = ctx;
+  gateWrite("createProduct", ctx);
   const sku = String(input.sku || "").trim();
   if (!sku) throw new Error("SKU required");
   productIdentifiers.assertUnique({ sku, ean: input.ean, gtin: input.gtin, mpn: input.mpn });
@@ -173,7 +190,9 @@ function createProduct(input, { source = "ADMIN", actorId } = {}) {
   return product;
 }
 
-function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
+function updateProduct(id, patch, ctx = {}) {
+  const { source = "ADMIN", actorId } = ctx;
+  gateWrite("updateProduct", ctx);
   const before = getProduct(id);
   if (!before) throw new Error("Product not found");
 
@@ -251,7 +270,9 @@ function updateProduct(id, patch, { source = "ADMIN", actorId } = {}) {
   return after;
 }
 
-function transitionStatus(id, toStatus, { source = "ADMIN", actorId } = {}) {
+function transitionStatus(id, toStatus, ctx = {}) {
+  const { source = "ADMIN", actorId } = ctx;
+  gateWrite("transitionStatus", ctx);
   const product = getProduct(id);
   if (!product) throw new Error("Product not found");
   const from = product.status;

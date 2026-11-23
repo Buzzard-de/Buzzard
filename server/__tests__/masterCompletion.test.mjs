@@ -55,7 +55,7 @@ describe("master completion gates", () => {
     });
     expect(ok.profit).toBeGreaterThanOrEqual(MIN_NET_PROFIT_EUR);
     expect(ok.livePriceWrite).toBe(false);
-    expect(applyPriceChange({ productId: "x", amount: 1, actorType: "AI" }).code).toBe("AI_PRICE_WRITE_DENIED");
+    expect(applyPriceChange({ productId: "x", amount: 1, actorType: "AI", actorId: "pricing-test" }).code).toBe("AI_PRICE_WRITE_DENIED");
     expect(quotePrice({ supplierCost: 10 }).recommendationOnly).toBe(true);
   });
 

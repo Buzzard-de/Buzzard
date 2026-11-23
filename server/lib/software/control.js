@@ -13,14 +13,14 @@ const ENGINES = {
     buyStock: () => require("../buzzardNative/core/specialists/stockEngine").buyStock(),
   },
   payment: {
-    capturePayment: () => require("../commerce/paymentService").capturePayment(),
+    capturePayment: (args) => require("../commerce/paymentService").capturePayment(args),
     authorizePayment: (args) => require("../commerce/paymentService").authorizePayment(args),
   },
   shipping: {
     calculateShipping: (args) => require("../commerce/shippingProvider").calculateShipping(args),
   },
   supplier: {
-    placeOrder: () => new (require("../adapters/interCarsAdapter").InterCarsAdapter)().placeOrder(),
+    placeOrder: (args) => new (require("../adapters/interCarsAdapter").InterCarsAdapter)().placeOrder(args),
   },
   identity: {
     phase3Identity: (args) => require("../commerce/phase3Identity").phase3Identity(args.orderId, args),
@@ -37,11 +37,31 @@ function boundMethods() {
   return Object.entries(ENGINES).flatMap(([engine, methods]) => Object.keys(methods).map((method) => `${engine}.${method}`));
 }
 
-function invoke({ engine, method, args = {}, actorId = null } = {}) {
+function enforce({ engine, method, actorId = null, mode = "read", targets = ["D"] } = {}) {
+  const dual = require("../productSot").assertNoDualWrite(targets);
   const actor = String(actorId || "").trim();
-  if (!actor) return { ok: false, code: "ACTOR_REQUIRED", engine, method, orchestrator: false, decides: false };
+  const role = mode === "admin" ? "admin" : mode === "write" ? "write" : "read";
+  if (role !== "read" && !actor) {
+    return { ok: false, code: "ACTOR_REQUIRED", engine, method, role, orchestrator: false, decides: false };
+  }
+  try {
+    require("../securityLog").logSecurityEvent({
+      type: "software_gate",
+      success: true,
+      detail: { engine, method, actorId: actor || null, role },
+    });
+  } catch {
+    /* logging does not decide the call */
+  }
+  return { ok: true, code: "OK", engine, method, actorId: actor || null, role, target: dual.target, orchestrator: false, decides: false };
+}
+
+function invoke({ engine, method, args = {}, actorId = null, mode = "read" } = {}) {
+  const actor = String(actorId || "").trim();
+  const role = mode === "admin" ? "admin" : mode === "write" ? "write" : "read";
+  if (!actor) return { ok: false, code: "ACTOR_REQUIRED", engine, method, role, orchestrator: false, decides: false };
   const fn = ENGINES[engine]?.[method];
-  if (!fn) return { ok: false, code: "ENGINE_METHOD_UNKNOWN", engine, method, orchestrator: false, decides: false };
+  if (!fn) return { ok: false, code: "ENGINE_METHOD_UNKNOWN", engine, method, role, orchestrator: false, decides: false };
   try {
     require("../securityLog").logSecurityEvent({
       type: "software_gate",
@@ -52,7 +72,7 @@ function invoke({ engine, method, args = {}, actorId = null } = {}) {
     /* logging does not decide the call */
   }
   try {
-    const result = fn(args);
+    const result = fn({ ...args, actorId: actor });
     return {
       ok: result?.ok !== false,
       code: result?.code || "OK",
@@ -76,4 +96,4 @@ function invoke({ engine, method, args = {}, actorId = null } = {}) {
   }
 }
 
-module.exports = { invoke, boundMethods, ENGINES };
+module.exports = { invoke, enforce, boundMethods, ENGINES };

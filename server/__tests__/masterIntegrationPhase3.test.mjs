@@ -15,7 +15,7 @@ function sellableProduct(productService, extras = {}) {
     stock: extras.stock ?? 10,
     visibility: "PUBLIC",
     status: "READY",
-  });
+  }, { actorId: "phase3" });
   createdProductIds.push(product.id);
   return product;
 }
@@ -111,9 +111,9 @@ describe("master integration phase 3", () => {
     const cart = cartService.createCart({ sessionId: `p3-st-${product.sku}` });
     const overflow = cartService.addItem(cart.cart.id, { productId: product.id, quantity: 3 });
     expect(overflow.code).toBe("INVENTORY_INSUFFICIENT");
-    const reserved = inventory.reserve({ productId: product.id, quantity: 1, idempotencyKey: `p3-${product.sku}` });
+    const reserved = inventory.reserve({ productId: product.id, quantity: 1, idempotencyKey: `p3-${product.sku}`, actorId: "phase3" });
     expect(reserved.ok).toBe(true);
-    const conflict = inventory.reserve({ productId: product.id, quantity: 1 });
+    const conflict = inventory.reserve({ productId: product.id, quantity: 1, actorId: "phase3" });
     expect(conflict.code).toBe("INSUFFICIENT_STOCK");
   });
 
@@ -134,7 +134,7 @@ describe("master integration phase 3", () => {
     expect(validated.state).toBe("READY");
     expect(validated.salesEnabled).toBe(false);
 
-    const first = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` });
+    const first = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` }, { actorId: "phase3" });
     expect(first.order?.id).toBeTruthy();
     expect(first.payment.captured).toBe(false);
     expect(first.payment.mode).toBe("DRY_RUN");
@@ -142,19 +142,19 @@ describe("master integration phase 3", () => {
     expect(first.order.items[0].taxSnapshot.vatRate).toBeTruthy();
     expect(first.order.status).not.toBe("PAID");
 
-    productService.updateProduct(product.id, { price: 99.99 });
+    productService.updateProduct(product.id, { price: 99.99 }, { actorId: "phase3" });
     const stored = orderService.getOrder(first.order.id);
     expect(stored.items[0].priceSnapshot).toBe(21.5);
     expect(stored.items[0].productSnapshot.title).toBe("Phase 3 sellable product");
 
-    const replay = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` });
+    const replay = checkoutService.completeCheckout(chk.id, { idempotencyKey: `idem-${product.sku}` }, { actorId: "phase3" });
     expect(replay.idempotencyReplay).toBe(true);
     expect(replay.order.id).toBe(first.order.id);
 
     const conflict = checkoutService.completeCheckout(chk.id, {
       idempotencyKey: `idem-${product.sku}`,
       capture: true,
-    });
+    }, { actorId: "phase3" });
     expect(conflict.code).toBe("ORDER_IDEMPOTENCY_CONFLICT");
   });
 
@@ -166,7 +166,7 @@ describe("master integration phase 3", () => {
     const { isSalesEnabled } = await import("../lib/salesMode.js");
     const productSot = await import("../lib/productSot.js");
 
-    const capture = paymentService.capturePayment();
+    const capture = paymentService.capturePayment({ actorId: "phase3" });
     expect(capture.code).toBe("PAYMENT_NOT_LIVE");
     expect(capture.captured).toBe(false);
 
@@ -180,10 +180,10 @@ describe("master integration phase 3", () => {
       billingAddress: address,
       shippingAddress: address,
     });
-    const done = checkoutService.completeCheckout(chk.id, { idempotencyKey: `st-${product.sku}` });
-    const paid = orderService.transitionOrderStatus(done.order.id, "PAID");
+    const done = checkoutService.completeCheckout(chk.id, { idempotencyKey: `st-${product.sku}` }, { actorId: "phase3" });
+    const paid = orderService.transitionOrderStatus(done.order.id, "PAID", { actorId: "phase3" });
     expect(["PAYMENT_NOT_LIVE", "illegal_order_transition"]).toContain(paid.code || paid.error);
-    const shipped = orderService.transitionOrderStatus(done.order.id, "SHIPPED");
+    const shipped = orderService.transitionOrderStatus(done.order.id, "SHIPPED", { actorId: "phase3" });
     expect(["FULFILLMENT_NOT_LIVE", "illegal_order_transition"]).toContain(shipped.code || shipped.error);
 
     process.env.BUZZARD_SALES_ENABLED = "1";

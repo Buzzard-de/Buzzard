@@ -30,14 +30,14 @@ afterAll(() => {
 describe("items 56-84 catalog and supplier controls", () => {
   it("creates and reads a draft product without activating the source of truth", () => {
     const sku = `item56-${Date.now()}`;
-    const created = productCore.createProduct({ sku, title: "Regalblech Satz", price: 12.5, currency: "EUR" });
+    const created = productCore.createProduct({ sku, title: "Regalblech Satz", price: 12.5, currency: "EUR" }, { actorId: "item56" });
     const read = productCore.getProduct(created.id);
     expect(read.sku).toBe(sku);
     expect(read.title).toBe("Regalblech Satz");
     expect(read.status).toBe("DRAFT");
     expect(read.currency).toBe("EUR");
     expect(isSotActive()).toBe(false);
-    expect(() => productCore.createProduct({ sku, title: "again" })).toThrow();
+    expect(() => productCore.createProduct({ sku, title: "again" }, { actorId: "item56" })).toThrow();
   });
 
   it("keeps four locale labels and a low-confidence customs review", () => {

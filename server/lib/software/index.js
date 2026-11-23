@@ -37,7 +37,7 @@ function traceCommerce(input = {}) {
     vatRate: 0.19,
     currency: "EUR",
   });
-  const priceWrite = applyPriceChange({ actorType: "AI", amount: price.recommendedPrice });
+  const priceWrite = applyPriceChange({ actorType: "AI", amount: price.recommendedPrice, actorId: "software-facade" });
   const stock = inspectFeeds({
     actorId: "stock_ai",
     feeds: [{ supplier: "sandbox", sku: "DRY-CHAIN", qty: "n/a", updatedAt: Date.now() }],
@@ -46,7 +46,7 @@ function traceCommerce(input = {}) {
     amount: price.recommendedPrice,
     currency: price.currency,
   });
-  const payment = capturePayment();
+  const payment = capturePayment({ actorId: "software-facade" });
   const shipping = calculateShipping({ country: "DE", subtotal: price.recommendedPrice, itemCount: 1 });
   const listings = listConnectors().map((row) => {
     const decision = createConnector(row.id).publishDecision({ sku: "DRY-CHAIN", title: "Dry chain" });

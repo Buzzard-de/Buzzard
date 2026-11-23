@@ -12,7 +12,14 @@ class InterCarsAdapter {
     return { ok: true, sandbox: true, live: false, records: [], orderCreated: false };
   }
 
-  placeOrder() {
+  placeOrder(input = {}) {
+    const gate = require("../software/control").enforce({
+      engine: "supplier",
+      method: "placeOrder",
+      actorId: input.actorId,
+      mode: "write",
+    });
+    if (!gate.ok) return { ...gate, sandbox: true, live: false, orderCreated: false };
     return { ok: false, code: "LIVE_ORDER_FORBIDDEN", sandbox: true, live: false, orderCreated: false };
   }
 }

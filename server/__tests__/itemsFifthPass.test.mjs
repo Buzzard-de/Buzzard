@@ -54,7 +54,9 @@ describe("fifth pass identity, gate and body", () => {
     expect(sinan.profile.agentId).not.toBe(amelia.profile.agentId);
     expect(sinan.profile.avatar).not.toBe(amelia.profile.avatar);
     expect(CAPABILITIES).toHaveLength(12);
-    expect(sinan.ready).toEqual(["expression", "separate_profile"]);
+    expect(sinan.ready).toEqual(["separate_profile"]);
+    expect(sinan.capabilities.expression.status).toBe("LABEL_ONLY");
+    expect(sinan.capabilities.expression.rendered).toBe(false);
     for (const name of ["speech_out", "speech_in", "tts", "lip_sync", "arm_gesture", "full_body_animation", "stand_and_walk", "sit_and_stand", "object_interaction", "wardrobe"]) {
       expect(sinan.capabilities[name].status).toBe("NOT_IMPLEMENTED");
     }

@@ -109,7 +109,7 @@ function createProduct(body = {}) {
       stock: body.stock,
       category: body.categoryId || body.category_id,
     },
-    { source: "PIM_CATALOG" }
+    { source: "PIM_CATALOG", actorId: "pim-catalog" }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM pim_products WHERE sku = ?").get(sku);

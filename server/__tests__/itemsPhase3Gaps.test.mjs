@@ -81,8 +81,9 @@ describe("third-pass local gaps", () => {
     fs.rmSync(storePath, { force: true });
     const cars = new InterCarsAdapter();
     expect(cars.fetchCatalog().live).toBe(false);
-    expect(cars.placeOrder().code).toBe("LIVE_ORDER_FORBIDDEN");
-    expect(cars.placeOrder().orderCreated).toBe(false);
+    expect(cars.placeOrder().code).toBe("ACTOR_REQUIRED");
+    expect(cars.placeOrder({ actorId: "supplier-test" }).code).toBe("LIVE_ORDER_FORBIDDEN");
+    expect(cars.placeOrder({ actorId: "supplier-test" }).orderCreated).toBe(false);
   });
 
   it("keeps access skip internal and stamps a non-payable phase 3 identity", () => {

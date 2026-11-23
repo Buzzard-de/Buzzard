@@ -139,7 +139,7 @@ function recordCanonicalOrder({
   return { ...mapOrder(db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(id)), created: true, canonical: true };
 }
 
-function createOrderFromCheckout({ checkout, payment, orderType, req }) {
+function createOrderFromCheckout({ checkout, payment, orderType, req, actorId = null }) {
   const block = assertCanCreateOrder({ orderType, req });
   if (block && isCommercialOrderType(orderType)) return block;
 
@@ -184,6 +184,22 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
       supplierSnapshot: snap.supplierSnapshot,
     });
   }
+
+  let actor = actorId;
+  if (!actor && req) {
+    try {
+      actor = require("./commerceGuards").verifiedCommerceIdentity(req)?.id || null;
+    } catch {
+      actor = null;
+    }
+  }
+  const gate = require("../software/control").enforce({
+    engine: "order",
+    method: "createOrderFromCheckout",
+    actorId: actor,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
 
   return recordCanonicalOrder({
     orderType,
@@ -244,7 +260,14 @@ function getOrder(orderId, ctx = {}) {
   return mapOrder(row);
 }
 
-function transitionOrderStatus(orderId, toStatus) {
+function transitionOrderStatus(orderId, toStatus, { actorId = null } = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "order",
+    method: "transitionOrderStatus",
+    actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
   const row = db.prepare("SELECT status FROM commerce_orders WHERE id = ?").get(orderId);
   if (!row) return { error: "order_not_found", status: 404 };
   if (!canTransitionOrder(row.status, toStatus)) {

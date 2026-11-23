@@ -73,7 +73,7 @@ function upsertProduct(product) {
         stock: product.stock,
         category: product.category_id,
       },
-      { source: "IMPORT" }
+      { source: "IMPORT", actorId: "json-import" }
     );
     if (canonical.error) {
       const error = new Error(canonical.error);
@@ -99,7 +99,7 @@ function upsertProduct(product) {
           price: Number(next.price || next.supplier_price?.amount || 0),
           stock: Number(next.stock || 0),
         },
-        { source: "IMPORT" }
+        { source: "IMPORT", actorId: "json-import" }
       );
     } catch {
       /* the JSON projection still updates when a status transition is illegal */

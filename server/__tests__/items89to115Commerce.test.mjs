@@ -47,7 +47,7 @@ describe("items 89-115 commerce boundaries", () => {
     const paypal = await new PayPalProvider().authorize();
     expect(stripe.realMoneyMovement).toBe(false);
     expect(paypal.realMoneyMovement).toBe(false);
-    const capture = capturePayment();
+    const capture = capturePayment({ actorId: "commerce-test" });
     expect(capture.code).toBe("PAYMENT_NOT_LIVE");
     expect(capture.status).toBe(403);
     expect(capture.realMoneyMovement).toBe(false);

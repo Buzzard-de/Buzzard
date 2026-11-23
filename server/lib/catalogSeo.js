@@ -168,7 +168,7 @@ function createProduct(body = {}) {
   if (!sku || !name) return { error: "sku and name required", status: 400 };
   const canonical = require("./productService").recordCanonicalProduct(
     { sku, title: name, description, price: priceEur, stock, category: categoryId },
-    { source: "CATALOG_SEO" }
+    { source: "CATALOG_SEO", actorId: "catalog-seo" }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existingSeo = db.prepare("SELECT id FROM products WHERE sku = ?").get(sku);

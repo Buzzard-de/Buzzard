@@ -187,7 +187,7 @@ function createProduct(body = {}) {
       stock: body.stock,
       category: body.category,
     },
-    { source: "SEARCH" }
+    { source: "SEARCH", actorId: "advanced-search" }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM srch_products WHERE sku = ?").get(sku);

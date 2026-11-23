@@ -77,7 +77,7 @@ describe("master integration phase 2", () => {
       stock: 8,
       visibility: "HIDDEN",
       status: "DRAFT",
-    });
+    }, { actorId: "phase2" });
     expect(productService.getProduct(created.id).sku).toBe(sku);
     expect(productService.getProductBySku(sku).id).toBe(created.id);
   });
@@ -86,14 +86,14 @@ describe("master integration phase 2", () => {
     const productService = await import("../lib/productService.js");
     const inventory = await import("../lib/commerce/inventoryIntegration.js");
     const sku = uniqueSku("INV");
-    const product = productService.createProduct({ sku, title: "Inv product", price: 10, stock: 2 });
+    const product = productService.createProduct({ sku, title: "Inv product", price: 10, stock: 2 }, { actorId: "phase2" });
     const before = product.stock;
-    const ok = inventory.reserve({ productId: product.id, quantity: 2, idempotencyKey: `k-${sku}` });
+    const ok = inventory.reserve({ productId: product.id, quantity: 2, idempotencyKey: `k-${sku}`, actorId: "phase2" });
     expect(ok.ok).toBe(true);
     expect(ok.mode).toBe("DRY_RUN");
-    const again = inventory.reserve({ productId: product.id, quantity: 2, idempotencyKey: `k-${sku}` });
+    const again = inventory.reserve({ productId: product.id, quantity: 2, idempotencyKey: `k-${sku}`, actorId: "phase2" });
     expect(again.duplicate).toBe(true);
-    const overflow = inventory.reserve({ productId: product.id, quantity: 1 });
+    const overflow = inventory.reserve({ productId: product.id, quantity: 1, actorId: "phase2" });
     expect(overflow.ok).toBe(false);
     expect(productService.getProduct(product.id).stock).toBe(before);
   });
@@ -102,13 +102,13 @@ describe("master integration phase 2", () => {
     const productService = await import("../lib/productService.js");
     const pricing = await import("../lib/commerce/pricingIntegration.js");
     const sku = uniqueSku("PRC");
-    const product = productService.createProduct({ sku, title: "Price product", price: 20, stock: 5 });
+    const product = productService.createProduct({ sku, title: "Price product", price: 20, stock: 5 }, { actorId: "phase2" });
     const a = pricing.quotePrice({ productId: product.id, supplierCost: 10, shippingCost: 2, targetMargin: 0.38 });
     const b = pricing.quotePrice({ productId: product.id, supplierCost: 10, shippingCost: 2, targetMargin: 0.38 });
     expect(a.recommendedPrice).toBe(b.recommendedPrice);
     expect(a.recommendationOnly).toBe(true);
     expect(a.mode).toBe("DRY_RUN");
-    const denied = pricing.applyPriceChange({ productId: product.id, amount: 99, actorType: "AI", approved: true, permission: true });
+    const denied = pricing.applyPriceChange({ productId: product.id, amount: 99, actorType: "AI", approved: true, permission: true, actorId: "phase2" });
     expect(denied.code).toBe("AI_PRICE_WRITE_DENIED");
     expect(productService.getProduct(product.id).price).toBe(20);
   });
@@ -118,7 +118,7 @@ describe("master integration phase 2", () => {
     const chain = await import("../lib/commerce/coreEngineChain.js");
     const { isSalesEnabled } = await import("../lib/salesMode.js");
     const sku = uniqueSku("ORD");
-    const product = productService.createProduct({ sku, title: "Order product", price: 15, stock: 4 });
+    const product = productService.createProduct({ sku, title: "Order product", price: 15, stock: 4 }, { actorId: "phase2" });
     const line = chain.buildLineSnapshot(product.id, 1);
     expect(line.ok).toBe(true);
     expect(line.item.productId).toBe(product.id);
@@ -162,7 +162,7 @@ describe("master integration phase 2", () => {
     const productService = await import("../lib/productService.js");
     const pusat = await import("../lib/pusat/runtime.js");
     const sku = uniqueSku("PUS");
-    const product = productService.createProduct({ sku, title: "Pusat read product", price: 9, stock: 3 });
+    const product = productService.createProduct({ sku, title: "Pusat read product", price: 9, stock: 3 }, { actorId: "phase2" });
     process.env.PUSAT_RUNTIME_ENABLED = "1";
     const inv = pusat.executeReadOnly("GET_INVENTORY", { id: product.id });
     expect(inv.ok).toBe(true);

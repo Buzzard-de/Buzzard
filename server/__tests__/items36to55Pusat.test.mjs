@@ -95,7 +95,7 @@ describe("items 36-55 pusat controls", () => {
     }
     const quote = quotePrice({ supplierCost: 10 });
     expect(quote.recommendationOnly).toBe(true);
-    expect(applyPriceChange({ productId: "none", amount: 1, actorType: "AI", approved: true, permission: true }).code).toBe(
+    expect(applyPriceChange({ productId: "none", amount: 1, actorType: "AI", approved: true, permission: true, actorId: "pricing-test" }).code).toBe(
       "AI_PRICE_WRITE_DENIED"
     );
   });

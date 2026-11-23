@@ -25,13 +25,21 @@ Durum kuralı: komşu test geçti diye madde ✅ olmadı. ✅ bu turda 0. Kod ve
 - ⛔ 1
 - ⚪ 143
 
-İkinci tur, 23 Kasım 2026 06:19 Europe/Berlin. Yalnızca madde 7 ve madde 15 yeniden açıldı. İkisi ⚪ iken 🟡 oldu. Diğer 235 madde bu turda değişmedi.
+İkinci tur, 23 Kasım 2026 06:19 Europe/Berlin. Yalnızca madde 7 ve madde 15 yeniden açıldı. İkisi ⚪ iken 🟡 oldu. Diğer 235 madde o turda değişmedi.
 
 - ✅ 0
 - 🟡 94
 - 🔴 1
 - ⛔ 1
 - ⚪ 141
+
+Madde 16, 23 Kasım 2026 06:50 Europe/Berlin. Yalnızca bu madde yeniden açıldı. ⚪ iken 🟡 oldu.
+
+- ✅ 0
+- 🟡 95
+- 🔴 1
+- ⛔ 1
+- ⚪ 140
 
 ## Maddeler
 
@@ -189,11 +197,11 @@ Durum kuralı: komşu test geçti diye madde ✅ olmadı. ✅ bu turda 0. Kod ve
 
 - GÖREV: Guest commerce proof for cart/checkout/order
 - NE İSTİYOR: Guest without session/token fail-closed
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `guest`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/plugins/commerceCorePlugin.js` misafir sepet, checkout ve sipariş rotaları. `cartService.js`, `checkoutService.js`, `orderService.js`, `commerceGuards.js`, `inventoryIntegration.js`, `paymentService.js`. Ayrı vitrin yolu `server/plugins/ordersPlugin.js` `POST /api/orders`.
+- TEST: 23 Kasım 2026 06:50 Europe/Berlin. İzole loopback API, `BUZZARD_SALES_ENABLED=0`, geçici SQLite. Token olmadan sepet, kuru checkout ve tek kuru sipariş oluştu. Ticari checkout ve `POST /api/orders` 403. Ayrıntı `04_MADDE_16.md`.
+- ENTEGRASYON: Sepetten checkout’a, oradan kuru siparişe, gölge stok rezervasyonuna ve mock ödemeye aynı istek zincirinde bağlandı. Ürün stoğu 5 kaldı. Canlı ödeme yok.
+- DURUM: 🟡
+- EKSİK: Oturumsuz misafir kuru akış fail-closed değil. `customer_id` boş sipariş ve checkout kimliği bilen herkese açık. Başkasının sepetindeki silme, 403 dönmeden önce satırı siliyor.
 
 ## Madde 17
 

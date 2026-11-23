@@ -3,16 +3,7 @@
  * A missing provider is reported. Nothing here synthesizes speech, video, or motion.
  */
 const { createDigitalBodyEngine } = require("./digitalBody");
-
-const PROFILES = Object.freeze({
-  sinan: { agentId: "sinan", avatar: "/council/sinan-bey.png", voiceId: "sinan-voice" },
-  esat: { agentId: "esat_bey", avatar: "/council/esat-bey.png", voiceId: "esat-voice" },
-  dogu: { agentId: "dogu_bey", avatar: "/council/dogu-bey.png", voiceId: "dogu-voice" },
-  mira: { agentId: "mira", avatar: "/council/mira.png", voiceId: "mira-voice" },
-  leon: { agentId: "leon", avatar: "/council/leon.png", voiceId: "leon-voice" },
-  amelia: { agentId: "amelia", avatar: "/council/amelia.png", voiceId: "amelia-voice" },
-  adrian: { agentId: "adrian", avatar: "/council/adrian.png", voiceId: "adrian-voice" },
-});
+const { PROFILES } = require("./digitalBodySession");
 
 const PROVIDERS = Object.freeze({
   speech_out: null,

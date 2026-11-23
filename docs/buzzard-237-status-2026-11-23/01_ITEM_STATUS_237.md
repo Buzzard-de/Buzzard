@@ -119,6 +119,23 @@ Madde 168–182, 23 Kasım 2026 10:59 Europe/Berlin. `items168to182Approvals.tes
 - ⛔ 1
 - ⚪ 43
 
+Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs` 2/2. CSRF 4/4, hız sınırı 2/2, Esat 5/5, misafir ticaret 4/4, yakalama 1/1. Kuru geri yükleme hedef yazmadı. npm audit yüksek eşikte çıkış 0, orta 8. Madde 187 ve 201 ✅. Madde 194, 215 ve 223 🔴.
+
+- ✅ 6
+- 🟡 211
+- 🔴 14
+- ⛔ 1
+- ⚪ 5
+
+İkinci tur başlangıcı, madde 2. İki onay kaydı görüldü. ⚪ iken 🟡 oldu. Korumalı 16, 17, 30, 48, 57, 62, 65, 87, 88, 97 ve 111 duruyor. Satış kapalı.
+
+- ✅ 6
+- 🟡 212
+- 🔴 14
+- ⛔ 1
+- ⚪ 4
+
+İkinci tur kapanışı, 23 Kasım 2026 11:02 Europe/Berlin. 🟡 maddeler yükseltilmedi. Tarayıcı geçişi, canlı taşıyıcı, canlı pazaryeri, canlı ödeme ve eksik semboller yerinde duruyor. 🔴 maddelere yer tutucu kod yazılmadı. Kalan ⚪ maddeler 200, 205, 220 ve 221. Dış bağımlılık: TecDoc hesabı, taşıyıcı hesapları, pazaryeri hesapları, bu dalın CI kaydı, Render diski ve DNS kontrolü. Güvenli düzeltme boş onaycıyı ve ikinci kararı yazmıyor. Satış hazır değil.
 ## Maddeler
 
 ## Madde 1
@@ -135,11 +152,11 @@ Madde 168–182, 23 Kasım 2026 10:59 Europe/Berlin. `items168to182Approvals.tes
 
 - GÖREV: Architecture inventory without duplicate systems
 - NE İSTİYOR: Single Pusat, single approval center, single product write boundary
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `orchestrator`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: Kontrol merkezi core_approvals yazıyor. Pusat kuyruğu ayrı orch_approvals yazıyor.
+- ENTEGRASYON: Tek onay merkezi ölçütü karşılanmadı.
+- DURUM: 🟡
+- EKSİK: İki onay kaydı duruyor.
 
 ## Madde 3
 
@@ -1945,549 +1962,549 @@ Madde 168–182, 23 Kasım 2026 10:59 Europe/Berlin. `items168to182Approvals.tes
 
 - GÖREV: Structured logs
 - NE İSTİYOR: securityLog + correlation
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `security log`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/securityLog.js
+- TEST: logSecurityEvent fonksiyon. server.js X-Request-Id başlığını yazıyor. 11:01 Europe/Berlin.
+- ENTEGRASYON: İkisi aynı olayda birlikte okunmadı.
+- DURUM: 🟡
+- EKSİK: Korelasyon başlığı ile güvenlik olayı eşlenmedi.
 
 ## Madde 184
 
 - GÖREV: Metrics
 - NE İSTİYOR: Limited local counters
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `metrics`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/operations/operationalMetrics.js
+- TEST: getOperationalMetrics diagnosticOnly true. Bu turda çalıştırılmadı.
+- ENTEGRASYON: Canlı metrik servisi yok.
+- DURUM: 🟡
+- EKSİK: Sayaçlar okunmadı.
 
 ## Madde 185
 
 - GÖREV: Alerting
 - NE İSTİYOR: Not a live pager
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `alert`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/esatBey.js
+- TEST: esatBey.test.mjs 5/5, 11:00 Europe/Berlin. soleDefense false.
+- ENTEGRASYON: Canlı çağrı sistemi yok.
+- DURUM: 🟡
+- EKSİK: Nöbetçi bildirim yok.
 
 ## Madde 186
 
 - GÖREV: Backup
 - NE İSTİYOR: scripts/backup-db.mjs
-- KOD: server/lib/backupAutomation.js
-- TEST: Yedek otomasyonu dosyası var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: scripts/backup-db.mjs
+- TEST: Betik duruyor. Çalıştırılmadı.
+- ENTEGRASYON: Yedek dosyası üretilmedi.
 - DURUM: 🟡
-- EKSİK: Bu sabah yedekten geri dönüş koşulmadı.
+- EKSİK: Veritabanı kopyalanmadı.
 
 ## Madde 187
 
 - GÖREV: Restore
 - NE İSTİYOR: restore-db.mjs --dry-run
-- KOD: server/lib/operations/restoreSafety.js
-- TEST: Geri yükleme güvenlik dosyası var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Üretim geri yüklemesi yok.
+- KOD: scripts/restore-db.mjs
+- TEST: Geçici dosyada --dry-run çıkış 0. Hedef yazılmadı. 11:00 Europe/Berlin.
+- ENTEGRASYON: Üretim geri yüklemesi yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 188
 
 - GÖREV: Persistence design
 - NE İSTİYOR: Intended durable disk not /tmp
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `persistent`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/dbPaths.js
+- TEST: Vitest yolu geçici dizinde. Varsayılan yol server/data/buzzard.db.
+- ENTEGRASYON: Kalıcı disk bu makinede bağlı değil.
+- DURUM: 🟡
+- EKSİK: Tasarlanan disk kanıtı bu başlıkta yok.
 
 ## Madde 189
 
 - GÖREV: Recovery
 - NE İSTİYOR: Local operations pack
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `recovery`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: scripts/restore-db.mjs
+- TEST: Kuruda geri yükleme hedefi yazmadı.
+- ENTEGRASYON: Yerel paket üretim kurtarması değil.
+- DURUM: 🟡
+- EKSİK: Geri dönüş tatbikatı tek dosyayla sınırlı.
 
 ## Madde 190
 
 - GÖREV: Incident evidence
 - NE İSTİYOR: Reports in docs/software-completion
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `incident`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: docs/software-completion
+- TEST: Rapor dizini duruyor.
+- ENTEGRASYON: Güncel bir olay dosyasına bağlanmadı.
+- DURUM: 🟡
+- EKSİK: Olay kanıtı seçilmedi.
 
 ## Madde 191
 
 - GÖREV: Operational diagnostics
 - NE İSTİYOR: provider-diagnostics, health
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `diagnostics`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/plugins/productionHealthPlugin.js
+- TEST: Sağlık uçları duruyor. provider-diagnostics.mjs yok.
+- ENTEGRASYON: Sağlık ucu çağrılmadı.
+- DURUM: 🟡
+- EKSİK: Sağlayıcı tanılama betiği yok.
 
 ## Madde 192
 
 - GÖREV: Correlation IDs
 - NE İSTİYOR: X-Request-Id
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `correlation`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/server.js
+- TEST: Kaynak X-Request-Id başlığını koyuyor.
+- ENTEGRASYON: HTTP yanıtı alınmadı.
+- DURUM: 🟡
+- EKSİK: Başlık telde doğrulanmadı.
 
 ## Madde 193
 
 - GÖREV: Security event log
 - NE İSTİYOR: logSecurityEvent rate limit + guardian
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `security]`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/securityLog.js
+- TEST: Hız sınırı olayları pencerede birleştiriliyor. csrf.test.mjs 4/4 geçti.
+- ENTEGRASYON: Birleştirme dalı ayrı koşulmadı.
+- DURUM: 🟡
+- EKSİK: Guardian olayı bu turda eşlenmedi.
 
 ## Madde 194
 
 - GÖREV: Health / software report
 - NE İSTİYOR: /api/health/software
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `/api/health`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/plugins/productionHealthPlugin.js
+- TEST: /api/health/software kaynağında yok.
+- ENTEGRASYON: Uç çağrılmadı.
+- DURUM: 🔴
+- EKSİK: Adı geçen sağlık ucu yok.
 
 ## Madde 195
 
 - GÖREV: No /tmp as durable app store
 - NE İSTİYOR: Policy + dbPaths
-- KOD: server/lib/dataDir.js
-- TEST: tmpdir kullanımı bulundu. Yasağın testi bu sabah yok.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/dbPaths.js
+- TEST: Test süreci geçici sqlite kullanıyor. Uygulama varsayılanı server/data.
+- ENTEGRASYON: Onay merkezinin bazı yolları geçici dizinde.
 - DURUM: 🟡
-- EKSİK: Onay merkezinin varsayılan veritabanı os.tmpdir.
+- EKSİK: Bütün yazımlar kalıcı diskte değil.
 
 ## Madde 196
 
 - GÖREV: Unit tests
 - NE İSTİYOR: vitest run
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `vitest`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__
+- TEST: Bu turda vitest dosyaları geçti. Tam paket koşulmadı.
+- ENTEGRASYON: Bütün birim testi yok.
+- DURUM: 🟡
+- EKSİK: Tek komutta tüm paket yok.
 
 ## Madde 197
 
 - GÖREV: Integration tests
 - NE İSTİYOR: software + commerce
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `integration`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/guestCheckoutFailClosed.test.mjs
+- TEST: 4/4 geçti. phase7CaptureRoute 1/1 geçti.
+- ENTEGRASYON: Yazılım ve ticaret paketinin tamamı değil.
+- DURUM: 🟡
+- EKSİK: Bütün entegrasyon paketi yok.
 
 ## Madde 198
 
 - GÖREV: API security tests
 - NE İSTİYOR: fortressAuthz, csrf, cors, guest
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `csrf.test`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/csrf.test.mjs
+- TEST: CSRF 4/4 ve misafir ticaret 4/4 geçti.
+- ENTEGRASYON: fortressAuthz ve CORS bu turda ayrı koşulmadı.
+- DURUM: 🟡
+- EKSİK: Dört güvenlik dosyasının hepsi yok.
 
 ## Madde 199
 
 - GÖREV: E2E tests
 - NE İSTİYOR: Playwright
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `e2e`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: playwright.config.ts
+- TEST: Yapılandırma duruyor. Playwright koşulmadı.
+- ENTEGRASYON: Tarayıcı kaydı yok.
+- DURUM: 🟡
+- EKSİK: Uçtan uca tur yok.
 
 ## Madde 200
 
 - GÖREV: Regression tests
 - NE İSTİYOR: Locked manifests on other branches
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `regression`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: docs/buzzard-237-status-2026-11-23
+- TEST: Kilitli manifestolar başka dallarda açılmadı.
+- ENTEGRASYON: Karşılaştırma yok.
 - DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- EKSİK: Diğer dalların kilit dosyası okunmadı.
 
 ## Madde 201
 
 - GÖREV: Load-related safe checks
 - NE İSTİYOR: Rate limiter unit
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `rateLimit`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/rateLimitStore.test.mjs
+- TEST: 2/2 geçti, 11:00 Europe/Berlin. Bellek sınırı ve env seçimi.
+- ENTEGRASYON: Dağıtık sınır yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 202
 
 - GÖREV: Production build
 - NE İSTİYOR: next build isolated
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `next build`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: package.json
+- TEST: next build bu turda çalıştırılmadı.
+- ENTEGRASYON: İzole derleme yok.
+- DURUM: 🟡
+- EKSİK: Derleme kanıtı yok.
 
 ## Madde 203
 
 - GÖREV: Lint
 - NE İSTİYOR: next lint
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `next lint`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: package.json
+- TEST: next lint bu turda çalıştırılmadı.
+- ENTEGRASYON: Lint çıktısı yok.
+- DURUM: 🟡
+- EKSİK: Lint kanıtı yok.
 
 ## Madde 204
 
 - GÖREV: Typecheck
 - NE İSTİYOR: tsc --noEmit
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `tsc`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: package.json
+- TEST: tsc --noEmit bu turda çalıştırılmadı.
+- ENTEGRASYON: Tip kontrolü yok.
+- DURUM: 🟡
+- EKSİK: Tip kanıtı yok.
 
 ## Madde 205
 
 - GÖREV: Release quality
 - NE İSTİYOR: CI UNKNOWN for PR head vs local
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `release`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: PR #515
+- TEST: Bu çekme isteğinin kontrolü raporlanmadı.
+- ENTEGRASYON: Yerel test CI sonucu değil.
 - DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- EKSİK: Dalın kontrol kaydı yok.
 
 ## Madde 206
 
 - GÖREV: CSRF and CORS tests
 - NE İSTİYOR: csrf.test.mjs corsOrigins
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `csrf.test`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/csrf.test.mjs
+- TEST: CSRF 4/4 geçti.
+- ENTEGRASYON: corsOrigins bu turda ayrıca doğrulanmadı.
+- DURUM: 🟡
+- EKSİK: CORS köken listesi koşulmadı.
 
 ## Madde 207
 
 - GÖREV: Finance and idempotency tests
 - NE İSTİYOR: fortressAuthz / dualPayment
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `phase7CaptureRoute`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/phase7CaptureRoute.test.mjs
+- TEST: Satış kilitliyken yakalama ve iade HTTP reddi 1/1.
+- ENTEGRASYON: Çift ödeme matrisi yok.
+- DURUM: 🟡
+- EKSİK: fortressAuthz dosyası koşulmadı.
 
 ## Madde 208
 
 - GÖREV: Human approval tests
 - NE İSTİYOR: pusatApprovalExceptions, controlCenter bridge
-- KOD: server/core/part32FinalControlRecoveryConstants.js
-- TEST: Bu ağaçta `humanApproval` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/__tests__/items168to182Approvals.test.mjs
+- TEST: Boş onaycı ve ikinci karar 1/1.
+- ENTEGRASYON: pusatApprovalExceptions ayrı koşulmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: İstisna paketi yok.
 
 ## Madde 209
 
 - GÖREV: Authz and IDOR tests
 - NE İSTİYOR: guestCommerceAccess
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `idorGuard`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/guestCheckoutFailClosed.test.mjs
+- TEST: Kimliksiz sepet ve ödeme 4/4 kapalı.
+- ENTEGRASYON: guestCommerceAccess adlı dosya ayrı koşulmadı.
+- DURUM: 🟡
+- EKSİK: Adı geçen dosya bu turda yok.
 
 ## Madde 210
 
 - GÖREV: Dependency audit
 - NE İSTİYOR: npm audit --audit-level=high
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `npm audit`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: package-lock.json
+- TEST: npm audit --audit-level=high çıkış 0. Yüksek ve kritik 0. Orta 8.
+- ENTEGRASYON: Orta bulgular kapatılmadı.
+- DURUM: 🟡
+- EKSİK: Ağaç yüksek eşikte temiz, orta bulgu duruyor.
 
 ## Madde 211
 
 - GÖREV: Backup/restore tests
 - NE İSTİYOR: test:backup-restore dry-run
-- KOD: server/lib/survival/isolatedDisasterDrill.js
-- TEST: Bu ağaçta `proveBackupRestore` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: scripts/restore-db.mjs
+- TEST: Geçici dosyada kuru çalıştırma geçti. npm test:backup-restore depo veritabanını kullanacağı için çalıştırılmadı.
+- ENTEGRASYON: Paket betiği depo dosyasına bakıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Paket betiği bu turda yok.
 
 ## Madde 212
 
 - GÖREV: CI evidence
 - NE İSTİYOR: PR #430 checks
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `ci`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: PR #430
+- TEST: quality, e2e-storefront ve e2e-admin SUCCESS. İstek OPEN.
+- ENTEGRASYON: Bu dalın kontrolü değil.
+- DURUM: 🟡
+- EKSİK: Tarihsel kontrol bu başlığa ait değil.
 
 ## Madde 213
 
 - GÖREV: Production environment configuration
 - NE İSTİYOR: Cannot change production env
 - KOD: server/server.js
-- TEST: Bu ağaçta `environmentValidation` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: Üretim ortamı bu turda değiştirilmedi.
+- ENTEGRASYON: Ortam doğrulama testi ayrı koşulmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Üretim env yazma yasağının testi yok.
 
 ## Madde 214
 
 - GÖREV: Deployment preparation
 - NE İSTİYOR: Scripts exist; no deploy
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `deploy`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: scripts/production-safety.mjs
+- TEST: Betikler duruyor. Dağıtım yapılmadı.
+- ENTEGRASYON: Canlı yayın yok.
+- DURUM: 🟡
+- EKSİK: Dağıtım provası yok.
 
 ## Madde 215
 
 - GÖREV: External integrations inventory
 - NE İSTİYOR: externalIntegrations.js
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `REAL_SUPPLIER`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/supplier/realSupplierConnector.js
+- TEST: externalIntegrations.js yok.
+- ENTEGRASYON: Canlı tedarikçi çağrısı yok.
+- DURUM: 🔴
+- EKSİK: Adı geçen dosya yok.
 
 ## Madde 216
 
 - GÖREV: Secrets handling
 - NE İSTİYOR: No secrets in git
 - KOD: server/lib/jwtSecret.js
-- TEST: Bu ağaçta `JWT_SECRET` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: Bu kayıtlara gizli değer yazılmadı.
+- ENTEGRASYON: Tüm geçmiş için gizli tarama yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Depo taraması tamamlanmadı.
 
 ## Madde 217
 
 - GÖREV: Monitoring
 - NE İSTİYOR: Local health only
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `monitoring`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/plugins/productionHealthPlugin.js
+- TEST: Yerel sağlık uçları duruyor.
+- ENTEGRASYON: Uç çağrılmadı.
+- DURUM: 🟡
+- EKSİK: İzleme servisi yok.
 
 ## Madde 218
 
 - GÖREV: Commercial readiness
 - NE İSTİYOR: Sales off is truthful catalog mode
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `productionReady`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/salesMode.js
+- TEST: isSalesEnabled false. phase7 yakalama reddedildi.
+- ENTEGRASYON: productionReady alanı bu testte okunmadı.
+- DURUM: 🟡
+- EKSİK: Katalog modunun bütün yüzeyleri yok.
 
 ## Madde 219
 
 - GÖREV: Launch controls
 - NE İSTİYOR: goLiveApproval
-- KOD: server/core/releaseReadinessConstants.js
-- TEST: Bu ağaçta `goLive` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/commerce/goLiveApproval.js
+- TEST: PRODUCTION_SAFETY_LOCK true. Onay çağrılmadı.
+- ENTEGRASYON: Satış açılmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Canlıya alma kararı yok.
 
 ## Madde 220
 
 - GÖREV: Render persistence
 - NE İSTİYOR: Prior proof branch; this HEAD UNKNOWN
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `render`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/dbPaths.js
+- TEST: Bu başlıkta kalıcı Render diski yok.
+- ENTEGRASYON: Önceki dalın kanıtı yeniden okunmadı.
 - DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- EKSİK: Bu HEAD için disk kanıtı yok.
 
 ## Madde 221
 
 - GÖREV: DNS and access policy
 - NE İSTİYOR: No live DNS change
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `DNS`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: scripts/production-safety.mjs
+- TEST: DNS kaydı bu turda değiştirilmedi.
+- ENTEGRASYON: DNS denetim kodu açılmadı.
 - DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- EKSİK: DNS kontrolü doğrulanmadı.
 
 ## Madde 222
 
 - GÖREV: Go-live verify script
 - NE İSTİYOR: verify-go-live.mjs
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `verify-go-live`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: scripts/verify-go-live.mjs
+- TEST: Betik duruyor. Çalıştırılmadı.
+- ENTEGRASYON: Canlı site yoklanmadı.
+- DURUM: 🟡
+- EKSİK: Doğrulama çıktısı yok.
 
 ## Madde 223
 
 - GÖREV: Provider diagnostics
 - NE İSTİYOR: provider-diagnostics.mjs
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `diagnostics`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: scripts
+- TEST: provider-diagnostics.mjs yok.
+- ENTEGRASYON: Sağlayıcı tanısı çalıştırılmadı.
+- DURUM: 🔴
+- EKSİK: Betik yok.
 
 ## Madde 224
 
 - GÖREV: Production safety script
 - NE İSTİYOR: production-safety.mjs
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `production-safety`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: scripts/production-safety.mjs
+- TEST: Betik satışın kapalı kalmasını arıyor. API ayakta olmadığı için çalıştırılmadı.
+- ENTEGRASYON: Yerel sunucu açılmadı.
+- DURUM: 🟡
+- EKSİK: Betiğin kendi çıktısı yok.
 
 ## Madde 225
 
 - GÖREV: First real customer order
 - NE İSTİYOR: Irreversible
 - KOD: server/lib/salesMode.js
-- TEST: Bu ağaçta `sales_disabled` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: Satış kapalı. Gerçek müşteri siparişi yazılmadı.
+- ENTEGRASYON: Geri alınamaz sipariş bilinçli olarak yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: İlk gerçek sipariş yok ve açılmayacak.
 
 ## Madde 226
 
 - GÖREV: Merge and production deploy
 - NE İSTİYOR: Forbidden without human
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `merge`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: PR #515
+- TEST: Bu turda birleştirme yapılmadı.
+- ENTEGRASYON: Birleştirme yasağının kod kapısı yok.
+- DURUM: 🟡
+- EKSİK: İnsan onayı olmadan birleştirme kanıtı yok.
 
 ## Madde 227
 
 - GÖREV: Threat detection (safe)
 - NE İSTİYOR: Guardian DANGEROUS_PATTERN
-- KOD: server/lib/jobEgressGate.js
-- TEST: evaluateEgress kodda. Bu sabah egress testi koşulmadı.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/security/esatBey.js
+- TEST: esatBey 5/5. Ağ çağrısı yok.
+- ENTEGRASYON: Canlı güvenlik merkezi yok.
 - DURUM: 🟡
-- EKSİK: Canlı SOC yok.
+- EKSİK: Tehdit nöbeti yok.
 
 ## Madde 228
 
 - GÖREV: Authorization enforcement (Guardian)
 - NE İSTİYOR: aiCanExecute
-- KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `guardian` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/rbac.js
+- TEST: aiCanExecute ai.read ile ai.execute için false, aynı izinle true.
+- ENTEGRASYON: Guardian karar yolu ayrı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Guardian reddi bu fonksiyonda değil.
 
 ## Madde 229
 
 - GÖREV: Anomaly detection
 - NE İSTİYOR: Rate + dangerous pattern
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `anomaly`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/esatBey.js
+- TEST: scanText parola dökümü ipucunda safe false. Hız sınırı ayrı testte geçti.
+- ENTEGRASYON: İki kontrol tek anomali motoru değil.
+- DURUM: 🟡
+- EKSİK: Satın alma ve havale kalıbı bu turda yok.
 
 ## Madde 230
 
 - GÖREV: Security telemetry
 - NE İSTİYOR: guardian.deny events
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `telemetry`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/esatBey.js
+- TEST: Esat olay kaydı tutuyor.
+- ENTEGRASYON: guardian.deny adlı olay doğrulanmadı.
+- DURUM: 🟡
+- EKSİK: Olay adı eşleşmedi.
 
 ## Madde 231
 
 - GÖREV: Containment safeguards
 - NE İSTİYOR: Deny/fail-closed only; no autonomous destructive containment
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `contain`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/phase7CaptureRoute.test.mjs
+- TEST: Kilitliyken yakalama reddedildi. Yıkıcı kapatma yok.
+- ENTEGRASYON: Otonom yok etme yolu aranmadı.
+- DURUM: 🟡
+- EKSİK: Bütün kapsama yolları yok.
 
 ## Madde 232
 
 - GÖREV: Auditability
 - NE İSTİYOR: guardian.allow/deny system events
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `audit`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: recordSystemEvent onayda çağrılıyor.
+- ENTEGRASYON: guardian.allow ve guardian.deny olayları okunmadı.
+- DURUM: 🟡
+- EKSİK: Guardian denetim adı yok.
 
 ## Madde 233
 
 - GÖREV: Agent isolation
 - NE İSTİYOR: Tool allow-list + identity required
-- KOD: server/lib/security/phase17Evidence.js
-- TEST: Bu ağaçta `MEMORY_ISOLATION` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/rbac.js
+- TEST: İzin listesi eşleşmezse false.
+- ENTEGRASYON: Kimlik zorunluluğu bu fonksiyonda değil.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Araç kimliği ayrıca yok.
 
 ## Madde 234
 
 - GÖREV: Incident response playbooks
 - NE İSTİYOR: Docs + deny path
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `incident`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/esatBey.js
+- TEST: Red yolu testte geçti.
+- ENTEGRASYON: Olay rehberi belgesi seçilmedi.
+- DURUM: 🟡
+- EKSİK: Rehber bağlantısı yok.
 
 ## Madde 235
 
 - GÖREV: Secret scanning in Guardian
 - NE İSTİYOR: scanSecrets
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `secret`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/esatBey.js
+- TEST: scanText ipucunda allowed false. scanSecrets adında fonksiyon yok.
+- ENTEGRASYON: Gerçek gizli değer kullanılmadı.
+- DURUM: 🟡
+- EKSİK: Fonksiyon adı farklı.
 
 ## Madde 236
 
 - GÖREV: Dangerous pattern block
 - NE İSTİYOR: purchase/refund/wire/drop table
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `dangerous`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/security/phase17Evidence.js
+- TEST: Satın alma, iade, havale ve drop table kalıpları bu turda yürütülmedi.
+- ENTEGRASYON: phase17 testi koşulmadı.
+- DURUM: 🟡
+- EKSİK: Dört kalıbın reddi yok.
 
 ## Madde 237
 
 - GÖREV: Guardian evaluation fail-closed
 - NE İSTİYOR: evaluate() catches and denies
-- KOD: server/core/part32FinalControlRecoveryConstants.js
-- TEST: Bu ağaçta `failClosed` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/security/esatBey.js
+- TEST: evaluate adlı bir Guardian fonksiyonu bulunmadı. scanText hatayı yutmuyor, ipucunu reddediyor.
+- ENTEGRASYON: İstisna yakalayıp reddeden evaluate yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Adı geçen evaluate yok.
 

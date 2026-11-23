@@ -61,11 +61,15 @@ Madde 18–34, 23 Kasım 2026 07:52 Europe/Berlin. `items18to33Foundation.test.m
 - ⛔ 1
 - ⚪ 130
 
-- ✅ 0
-- 🟡 95
-- 🔴 1
+Madde 35, 23 Kasım 2026 07:53 Europe/Berlin. `pusatOrchestrator.test.mjs` 11/11. Durum 🟡. Sayılar değişmedi.
+
+Madde 36–55, 23 Kasım 2026 08:15 Europe/Berlin. `items36to55Pusat.test.mjs` 5/5. Aynı komutta `diagnosticGetAuth.test.mjs` 3/3. Önceki komutta `pusatCouncil.test.mjs` 6/6, `pusatIdempotency.test.mjs` 6/6, `rbac.test.mjs` 6/6. Sekiz madde ⚪ iken 🟡 oldu. Madde 48, ajan başına Guardian penceresi bulunmadığı için ⚪ iken 🔴 oldu. Madde 51, üç orchestrator GET ucu kimlik istiyor ve test geçtiği için 🟡 iken ✅ oldu.
+
+- ✅ 1
+- 🟡 111
+- 🔴 3
 - ⛔ 1
-- ⚪ 140
+- ⚪ 121
 
 ## Maddeler
 
@@ -423,201 +427,201 @@ Madde 18–34, 23 Kasım 2026 07:52 Europe/Berlin. `items18to33Foundation.test.m
 
 - GÖREV: Agent registry and coordination
 - NE İSTİYOR: Employee/agent registry
-- KOD: server/lib/workstreams/special16Runtime.js
-- TEST: Bu ağaçta `specialistDispatch` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/buzzardNative/core/identityRegistry.js` `getAgent`. `specialistDispatch.js` `AGENT_KINDS`. `special16Runtime.js` yalnızca yeniden dışa aktarır.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `pricing_ai` kaydı ve en az 17 ajan türü doğrulandı.
+- ENTEGRASYON: Kayıt, `dispatch` ile aynı kimlik tablosunu kullanır.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Çalışan kadro ile görev atama uçtan uca bu maddede ayrıca koşulmadı.
 
 ## Madde 37
 
 - GÖREV: Central AI memory
 - NE İSTİYOR: Host/kv style memory in Pusat
-- KOD: server/lib/pusat/durable.js
-- TEST: Bu ağaçta `putMemory` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/pusat/durable.js` `putMemory` / `getMemory`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Sahibi okur. Başka ajan `PERSONAL_MEMORY_DENIED` alır. `pusatCouncil.test.mjs` 6/6 aynı sabah geçti.
+- ENTEGRASYON: Bellek geçici SQLite dosyasında. Host/kv servisi yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Ayrı bir Host/kv süreci yok. Süreçler arası kanıt madde 53'te.
 
 ## Madde 38
 
 - GÖREV: Specialist agents
 - NE İSTİYOR: Named agents with tools
-- KOD: server/core/constants.js
-- TEST: Bu ağaçta `price_ai` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `AGENT_KINDS.pricing_ai` içinde `PRICE_CALCULATE`. `stock_ai` içinde `STOCK_BUY`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. İki araç listede. `THINK` çağrısı `llmCompleted: false`.
+- ENTEGRASYON: `dispatch` kural motoru. Canlı model yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: 17 kimliğin her aracı bu turda tek tek çağrılmadı.
 
 ## Madde 39
 
 - GÖREV: Task orchestration
 - NE İSTİYOR: Tasks wait on approval
-- KOD: server/lib/comms/whatsappSandbox.js
-- TEST: Bu ağaçta `durableTaskQueue` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/pusat/durableTaskQueue.js` `enqueue({ needsApproval: true })`. İlk turdaki `whatsappSandbox.js` bu kuyruk değil.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Durum `BLOCKED_APPROVAL`. `complete` `BLOCKED_APPROVAL` döner.
+- ENTEGRASYON: Onay satırı `orch_approvals`.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: WhatsApp kum havuzu bu maddenin kuyruğu değil.
 
 ## Madde 40
 
 - GÖREV: Pusat error handling fail-closed
 - NE İSTİYOR: Exceptions classified; payments not retried
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `fail-closed`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/pusat/runtime.js`. `CAPTURE_PAYMENT` yazma listesinde. İstisna `retryable: false`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `PUSAT_RUNTIME_ENABLED=1` iken dönüş `PERMISSION_DENIED`. Sağlık `deniedWrites` içinde `CAPTURE_PAYMENT`. Satış kilidi açılmadı.
+- ENTEGRASYON: `exceptionBus` yayını. Canlı ödeme yok.
+- DURUM: 🟡
+- EKSİK: Dönüş gövdesi `retryable` alanını taşımıyor. Diğer istisna sınıfları bu testte sayılmadı.
 
 ## Madde 41
 
 - GÖREV: AI governance: cannot self-approve
 - NE İSTİYOR: decide() rejects requesting agent / AI identity
-- KOD: server/lib/controlCenter.js
-- TEST: decideApproval var. Bu, kendini onaylama yasağının kanıtı değil.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `durableTaskQueue.decideApproval` yalnız `human` ve `operator`. `controlCenter.decideApproval` aktörü denetlemez. `humanApproval.submit` düşük riski `policy:low-risk` ile otomatik APPROVED yapar.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `pricing_ai` kararı `PERMISSION_DENIED`. `human` geçer. Düşük risk `auto: true`. Yüksek risk `WAITING_APPROVAL`.
+- ENTEGRASYON: İki karar yolu var. Kuyruk yolu ajanı reddeder.
 - DURUM: 🟡
-- EKSİK: Düşük risk policy:low-risk ile otomatik APPROVED oluyor. Yasağın testi yok.
+- EKSİK: Düşük risk insan kararı olmadan onaylanır. `controlCenter.decideApproval` isteyen ajanı reddetmez.
 
 ## Madde 42
 
 - GÖREV: Dispatch idempotency
 - NE İSTİYOR: Durable read-only dispatch keys
-- KOD: server/lib/pusat/idempotencyService.js
-- TEST: Bu ağaçta `idempotencyService` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/pusat/idempotencyService.js`.
+- TEST: 23 Kasım 2026 08:14 Europe/Berlin. `pusatIdempotency.test.mjs` 6/6. Aynı yük yeniden çalışmaz. Farklı yük reddedilir. Satış ve münhasır SoT açılmaz.
+- ENTEGRASYON: `pusat_idempotency` tablosu. `core_ai_tasks` kolonları değişmedi.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Anahtarlar bu turda süreç kapatılıp aynı dosyadan tekrar açılmadı.
 
 ## Madde 43
 
 - GÖREV: Worker integration
 - NE İSTİYOR: Pusat worker hooks
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `worker`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `durableTaskQueue.registerWorker`, `heartbeat`, `health().workers`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Kayıt ve nabız geçer. `workers.live` false.
+- ENTEGRASYON: Kanca yerel SQLite. Barındırılan fabrika yok.
+- DURUM: 🟡
+- EKSİK: Çalışan bir işçi süreci yok. `hostedFactory` false.
 
 ## Madde 44
 
 - GÖREV: Agent approval requests
 - NE İSTİYOR: requestApproval bound to input hash
-- KOD: server/lib/pusat/orchestrator.js
-- TEST: Bu ağaçta `submitApproval` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/buzzardNative/core/specialists/brandDraft.js` `requestApproval`. Dönüş `HUMAN_GATE_REQUIRED`. Gövde özeti yok.
+- TEST: Bu madde için ayrı bir hash testi yok. Onay kuyruğu madde 39 ve 41 testinde geçti.
+- ENTEGRASYON: İstek, girdi özetine bağlanmıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Girdi hash bağı yok. Uydurma hash eklenmedi.
 
 ## Madde 45
 
 - GÖREV: Pusat exception dead-letter
 - NE İSTİYOR: Retry then DEAD_LETTER
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `dead-letter`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `durableTaskQueue.fail`. Kira `attempts` artırır. Sınırda `DEAD_LETTER` ve `orch_dead`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `maxAttempts: 1` ilk hatada `DEAD_LETTER`. `maxAttempts: 2` önce `QUEUED`, ikinci hatada `DEAD_LETTER`.
+- ENTEGRASYON: Aynı kuyruk dosyası.
+- DURUM: 🟡
+- EKSİK: Ödeme istisnası bu kuyruğa ayrıca bağlanmadı.
 
 ## Madde 46
 
 - GÖREV: Memory and Guardian tests
 - NE İSTİYOR: Guardian deny + memory tests
-- KOD: server/lib/pusat/durable.js
-- TEST: Bu ağaçta `PERSONAL_MEMORY_DENIED` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `durable.js` `PERSONAL_MEMORY_DENIED`. Guardian URL yapılandırılmadı.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Bellek reddi geçti. Guardian durum ucu madde 17 testinde tokensuz 401.
+- ENTEGRASYON: Guardian upstream `configured: false`.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Canlı Guardian kararı yok.
 
 ## Madde 47
 
 - GÖREV: Stub vs live LLM providers
 - NE İSTİYOR: Stub default; live not claimed
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `liveTts`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `specialistDispatch.dispatch`. `dispatchVerify.js` `llmCompleted === true` ise `LLM_CLAIM_REJECTED`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `pricing_ai` THINK `llmCompleted: false`, `live: false`.
+- ENTEGRASYON: Sağlayıcı çağrısı yok.
+- DURUM: 🟡
+- EKSİK: Canlı sağlayıcı anahtarı yok. Canlı iddia edilmedi.
 
 ## Madde 48
 
 - GÖREV: AI tool rate limit
 - NE İSTİYOR: Guardian per-agent rate window
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `rate limit`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib` ve `server/lib/buzzardNative` içinde ajan penceresi arandı. Eşleşme yok.
+- TEST: Koşulacak bir pencere yok.
+- ENTEGRASYON: Guardian rate hesabı bağlı değil.
+- DURUM: 🔴
+- EKSİK: Ajan başına Guardian hız penceresi uygulanmamış.
 
 ## Madde 49
 
 - GÖREV: Agent isolation via permissions
 - NE İSTİYOR: aiCanExecute + tool allow-list
-- KOD: server/lib/security/phase17Evidence.js
-- TEST: Bu ağaçta `MEMORY_ISOLATION` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/rbac.js` `aiCanExecute`. Araç listesi `AGENT_KINDS`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `ai.read` ile `ai.execute` false. `rbac.test.mjs` 6/6, 08:14.
+- ENTEGRASYON: İzin listesi çalışan kaydı. Araç listesi dispatch kapısı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Her ajanın izin profili bu turda tek tek eşlenmedi.
 
 ## Madde 50
 
 - GÖREV: Sensitive action classification
 - NE İSTİYOR: SENSITIVE_ACTIONS require approval
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `HIGH`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `humanApproval.js`. HIGH ve üstü kuyruğa `WAITING_APPROVAL`. LOW otomatik.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `CAPTURE_PAYMENT` yüksek risk bekler. `READ` düşük risk otomatik onaylanır.
+- ENTEGRASYON: Ayrı bir `SENSITIVE_ACTIONS` sabiti bu fonksiyonda yok. Risk alanı kullanılıyor.
+- DURUM: 🟡
+- EKSİK: Düşük risk onaysız geçer. Sabit adlı bir hassas-eylem listesi bu turda doğrulanmadı.
 
 ## Madde 51
 
 - GÖREV: Orchestrator HTTP protection
 - NE İSTİYOR: GET /api/orchestrator prefix authenticated
-- KOD: server/lib/rbac.js
-- TEST: Bu ağaçta `system.read` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- KOD: `server/plugins/orchestratorBridgePlugin.js`. Üç GET: `/status`, `/agents`, `/tasks`. Hepsi `requireAuth`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `diagnosticGetAuth.test.mjs` 3/3. Tokensuz üç uç 401. Yönetici oturumu status 200, `configured: false`.
+- ENTEGRASYON: Aynı önek altında başka GET yok.
+- DURUM: ✅
+- EKSİK: Upstream orchestrator yapılandırılmadı. Bu, kimlik kuralının dışında.
 
 ## Madde 52
 
 - GÖREV: Automations non-destructive
 - NE İSTİYOR: No autonomous money movement
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `non-destructive`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `runtime.js` `CAPTURE_PAYMENT` reddi. `pricingIntegration.applyPriceChange` AI için `AI_PRICE_WRITE_DENIED`.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. İkisi de geçti. Satış kapalı.
+- ENTEGRASYON: Otomasyon para yazmıyor.
+- DURUM: 🟡
+- EKSİK: Banka ve iade yollarının tamamı bu maddede yeniden çağrılmadı.
 
 ## Madde 53
 
 - GÖREV: Cross-process memory proof
 - NE İSTİYOR: Documented in AI completion
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `cross-process`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `durable.js` belleği SQLite satırına yazar.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Tek süreçte yazıp okuma geçti. İkinci süreç açılmadı.
+- ENTEGRASYON: AI completion belgesinde süreçler arası kanıt cümlesi bulunmadı.
+- DURUM: 🟡
+- EKSİK: Süreç kapatılıp aynı dosyadan ikinci okuma yok. Belge kanıtı yok.
 
 ## Madde 54
 
 - GÖREV: Recommendation-only assistants
 - NE İSTİYOR: Cannot execute commercial side effects
-- KOD: server/lib/commerce/pricingIntegration.js
-- TEST: Bu ağaçta `recommendationOnly` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `pricingIntegration.quotePrice` `recommendationOnly: true`. `applyPriceChange` AI yazmayı reddeder.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. İkisi de geçti.
+- ENTEGRASYON: Fiyat yazması ürün servisine yalnız insan, izin ve onay ile gider. O dal çağrılmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Stok alımı ve iade kapıları bu maddede yeniden koşulmadı.
 
 ## Madde 55
 
 - GÖREV: Pusat health/status
 - NE İSTİYOR: Health reports stub/live honestly
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `pusat`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `runtime.health`. `live` sabit false. Kuyruk `workers.live` false.
+- TEST: 23 Kasım 2026 08:15 Europe/Berlin. İkisi de false.
+- ENTEGRASYON: Sağlık, etkin bayrağı canlı model saymaz.
+- DURUM: 🟡
+- EKSİK: Canlı sağlayıcı bağlandığında sağlık cümlesi ayrıca doğrulanmadı. Canlı bağ yok.
 
 ## Madde 56
 

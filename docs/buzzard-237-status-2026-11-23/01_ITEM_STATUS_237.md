@@ -79,6 +79,14 @@ Madde 56–84, 23 Kasım 2026 08:18 Europe/Berlin. `items56to84Catalog.test.mjs`
 - ⛔ 1
 - ⚪ 108
 
+Madde 69–74 ve 85–86, 23 Kasım 2026 08:20 Europe/Berlin. `items69to86LocalCatalog.test.mjs` 3/3. Altı madde ⚪ iken 🟡 oldu. Madde 87 🔴 ve madde 88 ⛔ duruyor.
+
+- ✅ 3
+- 🟡 125
+- 🔴 6
+- ⛔ 1
+- ⚪ 102
+
 ## Maddeler
 
 ## Madde 1
@@ -765,61 +773,61 @@ Madde 56–84, 23 Kasım 2026 08:18 Europe/Berlin. `items56to84Catalog.test.mjs`
 
 - GÖREV: Search index local
 - NE İSTİYOR: sync-search-index; not live OpenSearch
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `searchAndSort`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `scripts/sync-search-index.mjs`. Hedef `srch_products`. OpenSearch yok.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. `items69to86LocalCatalog.test.mjs` 3/3. Betik metninde OpenSearch yok.
+- ENTEGRASYON: Yerel SQLite. Betik katalog dosyasına bu turda çalıştırılmadı.
+- DURUM: 🟡
+- EKSİK: Betik koşulmadı. `data/buzzard_products.json` değiştirilmedi.
 
 ## Madde 70
 
 - GÖREV: Product i18n
 - NE İSTİYOR: fill-product-i18n-gaps
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `locale`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `scripts/fill-product-i18n-gaps.mjs`. `--dry-run`. Görsel değiştirmez.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. Betik metni doğrulandı. Çalıştırılmadı.
+- ENTEGRASYON: Katalog JSON. Satış açmaz.
+- DURUM: 🟡
+- EKSİK: Boşluk doldurma bu turda koşulmadı.
 
 ## Madde 71
 
 - GÖREV: Customs validation on products
 - NE İSTİYOR: validateCustomsDecision
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `customs`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `validateCustomsDecision` yok. `productValidator.validateProduct` gümrük alanını taşır.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Güven 0.2 `review_required`. Adı geçen fonksiyon bu turda da yok.
+- ENTEGRASYON: Yerel doğrulama.
+- DURUM: 🟡
+- EKSİK: `validateCustomsDecision` uygulanmamış. Yakın doğrulayıcı var.
 
 ## Madde 72
 
 - GÖREV: Catalog / PIM health
 - NE İSTİYOR: pimCatalog plugin health
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `catalog`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/plugins/pimCatalogPlugin.js`. `pimCatalog.isEnabled`.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. Etkin true. Eklentide `/api/pim-catalog/health` yok.
+- ENTEGRASYON: Katalog uçları var. Sağlık ucu yok.
+- DURUM: 🟡
+- EKSİK: Ayrı sağlık ucu yok.
 
 ## Madde 73
 
 - GÖREV: SoT activation remains human-gated
 - NE İSTİYOR: humanApprovalRequired true
-- KOD: server/lib/salesSafetyGate.js
-- TEST: PRODUCT_SOT kapısı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `operationsPlane.runDryRun` `humanApprovalRequired: true`. `evaluateSalesGate` kilitli.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. İkisi de geçti. `live` false. Gerçek siparişe bağlı değil.
+- ENTEGRASYON: SoT bayrağı tek başına satışı açmaz.
 - DURUM: 🟡
-- EKSİK: Kaynak etkinleştirme insan işi.
+- EKSİK: İnsan onayının SoT yazmasına bağlandığı bir uç bu turda çağrılmadı.
 
 ## Madde 74
 
 - GÖREV: No invented live prices or images
 - NE İSTİYOR: Catalog mode; no fake LIVE_VERIFIED prices
-- KOD: server/lib/buzzardNative/core/specialists/pricingEngine.js
-- TEST: Bu ağaçta `MISSING_COST` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `sinanDurable.setStatus`. `LIVE_VERIFIED` yasak.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. Dönüş `LIVE_VERIFIED_FORBIDDEN`.
+- ENTEGRASYON: Katalog modu. Uydurma canlı fiyat yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Vitrin fiyatlarının tamamı bu maddede taranmadı.
 
 ## Madde 75
 
@@ -925,21 +933,21 @@ Madde 56–84, 23 Kasım 2026 08:18 Europe/Berlin. `items56to84Catalog.test.mjs`
 
 - GÖREV: Stock engine
 - NE İSTİYOR: operations/stockEngine.js
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `reserve`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `operations/stockEngine.js` yok. `specialists/stockEngine.js` `inspectFeeds` var.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Bayat stok satılamaz. `liveSupplierApi` false.
+- ENTEGRASYON: Uzman kuralı. Operasyon dosyası yok.
+- DURUM: 🟡
+- EKSİK: İstenen `operations/stockEngine.js` yolu yok.
 
 ## Madde 86
 
 - GÖREV: WMS reserve vs software reserve
 - NE İSTİYOR: Two tables; shared audit only
-- KOD: server/plugins/wmsInventoryPlugin.js
-- TEST: Bu ağaçta `wmsInventory` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `wms_reservations` ve `inventory_sot_reservations`.
+- TEST: 23 Kasım 2026 08:20 Europe/Berlin. İki tablo aynı geçici veritabanında duruyor.
+- ENTEGRASYON: Ayrı tablolar. Ortak denetim yazısı bu turda eşlenmedi.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Paylaşılan denetim kaydı doğrulanmadı.
 
 ## Madde 87
 

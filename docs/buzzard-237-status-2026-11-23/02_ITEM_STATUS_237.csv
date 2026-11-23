@@ -67,12 +67,12 @@ item,task,criterion,code,test_evidence,status,gap
 66,PIM import dry-run,No live import without flag,server/lib/supplier/csvSupplierAdapter.js,2026-11-23 08:18 Europe/Berlin fetchProducts blocked. phase3 liveImport false.,🟡,The live-import flag was not turned on for a second refusal.
 67,PIM publish gated,Publish not SoT activation,server/lib/productSot.js,2026-11-23 08:18 Europe/Berlin product created and isSotActive false.,🟡,Publish HTTP was not called.
 68,Storefront catalog read,catalogCache / catalogReadService,server/lib/storefront/catalogReadService.js,Module is required by cartService. getHealth was not called.,🟡,Read service was not executed this pass.
-69,Search index local,sync-search-index; not live OpenSearch,bu turda maddeye özel dosya açılmadı,Aranan iz: `searchAndSort`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-70,Product i18n,fill-product-i18n-gaps,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-71,Customs validation on products,validateCustomsDecision,bu turda maddeye özel dosya açılmadı,Aranan iz: `customs`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-72,Catalog / PIM health,pimCatalog plugin health,bu turda maddeye özel dosya açılmadı,Aranan iz: `catalog`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-73,SoT activation remains human-gated,humanApprovalRequired true,server/lib/salesSafetyGate.js,PRODUCT_SOT kapısı var.,🟡,Kaynak etkinleştirme insan işi.
-74,No invented live prices or images,Catalog mode; no fake LIVE_VERIFIED prices,server/lib/buzzardNative/core/specialists/pricingEngine.js,Bu ağaçta `MISSING_COST` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+69,Search index local,sync-search-index; not live OpenSearch,scripts/sync-search-index.mjs,2026-11-23 08:20 Europe/Berlin script targets srch_products and does not mention OpenSearch. Script not executed.,🟡,Catalog JSON was not rewritten.
+70,Product i18n,fill-product-i18n-gaps,scripts/fill-product-i18n-gaps.mjs,2026-11-23 08:20 Europe/Berlin dry-run flag and no-image note present. Script not executed.,🟡,Gap fill was not run.
+71,Customs validation on products,validateCustomsDecision,server/lib/productValidator.js,validateCustomsDecision is absent. Confidence 0.2 set review_required at 08:18.,🟡,The named decision function is not implemented.
+72,Catalog / PIM health,pimCatalog plugin health,server/plugins/pimCatalogPlugin.js,2026-11-23 08:20 Europe/Berlin isEnabled true. No /api/pim-catalog/health.,🟡,No health route.
+73,SoT activation remains human-gated,humanApprovalRequired true,server/lib/logistics/v5/operationsPlane.js,2026-11-23 08:20 Europe/Berlin humanApprovalRequired true. Sales gate locked. live false.,🟡,No SoT write was bound to a human approval.
+74,No invented live prices or images,Catalog mode; no fake LIVE_VERIFIED prices,server/lib/pusat/sinanDurable.js,2026-11-23 08:20 Europe/Berlin LIVE_VERIFIED_FORBIDDEN.,🟡,Storefront prices were not all scanned.
 75,Pricing engine,server/lib/pricing.js,server/lib/pricing.js,2026-11-23 08:18 Europe/Berlin pricingPolicy tested. phase5 3/3. pricing.js not called.,🟡,calculateSalePrice was not run.
 76,Profit calculation / MIN_NET_PROFIT,MIN_NET_PROFIT_EUR 0.50,server/lib/commerce/pricingPolicy.js,2026-11-23 08:18 Europe/Berlin MIN_NET_PROFIT_EUR 0.5 rejects a 0.20 profit. livePriceWrite false.,✅,Minimum net profit rule met.
 77,Supplier integration framework,Connector inventory; no real PO,server/lib/supplier/supplierSafetyGate.js,2026-11-23 08:18 Europe/Berlin orders blocked while sales off. Live fetch throws.,🟡,Full connector inventory was not listed.
@@ -83,8 +83,8 @@ item,task,criterion,code,test_evidence,status,gap
 82,Pricing safeguards / no undercut,MARKET_UNDERCUT_IMPLEMENTED false,server/lib/commerce/pricingPolicy.js,MARKET_UNDERCUT_IMPLEMENTED is absent. livePriceWrite false.,🟡,The named flag does not exist.
 83,Supplier feeds dry-run only,No live fetch,server/lib/supplier/dryRunSupplierAdapter.js,2026-11-23 08:18 Europe/Berlin live fetch blocked. Feed live false.,🟡,No external feed URL. That is intended.
 84,No real purchase orders,supplierOrdersEnabled false,server/lib/supplier/supplierSafetyGate.js,2026-11-23 08:18 Europe/Berlin supplier order flag 1 still blocked while sales are off.,🟡,commerceFeatureFlags.supplierOrdersEnabled was not read.
-85,Stock engine,operations/stockEngine.js,bu turda maddeye özel dosya açılmadı,Aranan iz: `reserve`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-86,WMS reserve vs software reserve,Two tables; shared audit only,server/plugins/wmsInventoryPlugin.js,Bu ağaçta `wmsInventory` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+85,Stock engine,operations/stockEngine.js,server/lib/buzzardNative/core/specialists/stockEngine.js,2026-11-23 08:18 Europe/Berlin stale stock is not sellable. operations/stockEngine.js is absent.,🟡,The operations path does not exist.
+86,WMS reserve vs software reserve,Two tables; shared audit only,server/lib/db.js,2026-11-23 08:20 Europe/Berlin wms_reservations and inventory_sot_reservations both exist.,🟡,Shared audit was not matched.
 87,Inter-Cars adapter class,Sandbox/mock; no live order,yok,server ağacında Inter Cars adaptörü yok.,🔴,Adaptör yazılmamış. Canlı hesap olsa da bağlanacak sınıf yok.
 88,TecDoc adapter class,Classification / adapter,server/lib/adapters/tecdocAdapter.js,TecDoc kum havuzu adaptörü var.,⛔,Canlı TecDoc hesabı ve kataloğu bu ağaçta yok.
 89,Price snapshot on cart,priceSnapshot field,bu turda maddeye özel dosya açılmadı,Aranan iz: `price snapshot`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.

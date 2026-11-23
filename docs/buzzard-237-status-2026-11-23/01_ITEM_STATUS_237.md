@@ -145,6 +145,14 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 - ⛔ 1
 - ⚪ 4
 
+Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.mjs` 2/2. Ticari zincir parasız yürüdü. Madde 136 ✅. Madde 30 ve 111 kısmi kaldı. Madde 16 ve 17 sözleşmeleri duruyor. Madde 88 ⛔. 200, 205, 220 ve 221 doğrulanamadı. Satış kapalı.
+
+- ✅ 19
+- 🟡 213
+- 🔴 0
+- ⛔ 1
+- ⚪ 4
+
 ## Maddeler
 
 ## Madde 1
@@ -442,10 +450,10 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 - GÖREV: Software facade is not a second orchestrator
 - NE İSTİYOR: server/lib/software wraps existing engines
 - KOD: server/lib/software/index.js
-- TEST: 11:21 Europe/Berlin. status() orchestrator false, decides false, satış false, ürün SoT active false.
-- ENTEGRASYON: Cephe karar vermiyor ve ürün durumunu okuyor.
+- TEST: 11:25 Europe/Berlin. traceCommerce fiyat, stok, kimlik, ödeme, kargo, tedarikçi, ilan, iade ve müşteri köprüsünü çağırdı. Satış false. Karar yok.
+- ENTEGRASYON: Zincir mevcut motorlara bağlı.
 - DURUM: 🟡
-- EKSİK: Bütün motorların metotları bu cepheden geçmiyor.
+- EKSİK: Her motorun her metodu bu cepheden geçmiyor.
 
 ## Madde 31
 
@@ -1252,10 +1260,10 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 - GÖREV: Order identity / QR
 - NE İSTİYOR: Phase 3 identity
 - KOD: server/lib/commerce/phase3Identity.js
-- TEST: 11:21 Europe/Berlin. Kuru sipariş phase3.payable false, qr null, live false.
-- ENTEGRASYON: Kimlik sipariş okumasına bağlı.
+- TEST: 11:25 Europe/Berlin. Kimlik tutarı fiyatla aynı. qr.paymentUrl null, payable false. capture PAYMENT_NOT_LIVE.
+- ENTEGRASYON: Ödeme akışı kilitli.
 - DURUM: 🟡
-- EKSİK: Ödenebilir QR yok.
+- EKSİK: Basılı veya ödenebilir QR yok.
 
 ## Madde 112
 
@@ -1501,11 +1509,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: No live listing this session
 - NE İSTİYOR: Policy
-- KOD: server/lib/marketing/influencerIdentities.js
-- TEST: publishCampaign kodu PUBLISH_BLOCKED, published false.
+- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
+- TEST: 11:25 Europe/Berlin. Kayıtlı her bağlayıcının publishDecision sonucu live false ve ok false.
 - ENTEGRASYON: Canlı ilan açılmadı.
-- DURUM: 🟡
-- EKSİK: Bütün ilan kanallarının tek tek yayını yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 137
 

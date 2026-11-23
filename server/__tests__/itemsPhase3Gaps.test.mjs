@@ -92,7 +92,8 @@ describe("third-pass local gaps", () => {
     expect(blocked.error).toBe("SKIP_ACCESS_FORBIDDEN");
     const internal = orderService.getOrder("ord-phase3", { skipAccessCheck: true, internal: true });
     expect(internal.phase3.payable).toBe(false);
-    expect(internal.phase3.qr).toBeNull();
+    expect(internal.phase3.qr.payable).toBe(false);
+    expect(internal.phase3.qr.paymentUrl).toBeNull();
     expect(internal.phase3.live).toBe(false);
     expect(internal.phase3.identity).toBe(phase3Identity("ord-phase3").identity);
     expect(phase3Identity("").ok).toBe(false);

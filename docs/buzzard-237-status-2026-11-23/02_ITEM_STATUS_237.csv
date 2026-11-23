@@ -129,58 +129,58 @@ item,task,criterion,code,test_evidence,status,gap
 128,Channel mapping,Hub vs software lists,Hub kapsamı 50. AB27 27. Dil listesi en az 30.,23 Kasım 2026 10:53 Europe/Berlin. 27 ve dil listesi ölçüldü. Hub 50 madde 58'de.,🟡,Üç listenin birebir eşlemesi yok.
 129,Marketplace mutations gated,No publish without approval,`snapshot().allBlocked`. Yayın insan onayı olmadan canlı değil.,23 Kasım 2026 10:53 Europe/Berlin. `allBlocked` true.,🟡,Onay kuyruğundan ilana giden uç bu turda çağrılmadı.
 130,RTL markets,RTL CSS,"`styles/rtl.css` `html[dir=""rtl""]`.",23 Kasım 2026 10:53 Europe/Berlin. Seçici dosyada duruyor.,🟡,Görsel RTL turu bu oturumda yok.
-131,Country and language independence,Locale not rewritten on market hydrate,bu turda maddeye özel dosya açılmadı,Aranan iz: `languageIndependence`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-132,Market engine registry tests,Vitest market checks,bu turda maddeye özel dosya açılmadı,Aranan iz: `marketEngine`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-133,Currency per market,Registry currency,bu turda maddeye özel dosya açılmadı,Aranan iz: `currency`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-134,Legal pages per market,Impressum redirects historically,bu turda maddeye özel dosya açılmadı,Aranan iz: `impressum`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-135,Feed export dry-run,No live marketplace push,bu turda maddeye özel dosya açılmadı,Aranan iz: `feed`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-136,No live listing this session,Policy,bu turda maddeye özel dosya açılmadı,Aranan iz: `PUBLISH_BLOCKED`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-137,Homepage,Storefront home,bu turda maddeye özel dosya açılmadı,Aranan iz: `homepage`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-138,Navigation / mega menu,Desktop mega menu,bu turda maddeye özel dosya açılmadı,Aranan iz: `mega`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-139,Product pages,PDP 200 / unknown 404,bu turda maddeye özel dosya açılmadı,Aranan iz: `product page`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-140,Search UI,Storefront search,bu turda maddeye özel dosya açılmadı,Aranan iz: `search`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-141,Responsive layouts,Mobile homepage work,bu turda maddeye özel dosya açılmadı,Aranan iz: `responsive`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-142,Customer experience readiness,customerExperienceReadiness,bu turda maddeye özel dosya açılmadı,Aranan iz: `customer experience`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-143,Accessibility,Not a full WCAG audit this session,bu turda maddeye özel dosya açılmadı,Aranan iz: `accessibility`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-144,Language selection,Locale switcher,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-145,Country selection,Market switcher,bu turda maddeye özel dosya açılmadı,Aranan iz: `country`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-146,RTL CSS,Arabic/Hebrew direction,bu turda maddeye özel dosya açılmadı,Aranan iz: `rtl`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-147,UI regression Playwright,Isolated :3010 static + :3001 API,bu turda maddeye özel dosya açılmadı,Aranan iz: `playwright`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-148,Mobile homepage,Phone layouts,bu turda maddeye özel dosya açılmadı,Aranan iz: `mobile`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-149,Category boxes and drawers,Phone drawers,bu turda maddeye özel dosya açılmadı,Aranan iz: `drawer`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-150,Admin UI pages,Control Center / PIM / Sessions,bu turda maddeye özel dosya açılmadı,Aranan iz: `admin`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-151,Cart and account chrome,Header cart,bu turda maddeye özel dosya açılmadı,Aranan iz: `cart`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-152,Shipping data models,shipmentGate,server/lib/workstreams/special16Runtime.js,Bu ağaçta `carrierAdapter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-153,Customer operations,customerOrderBridge,bu turda maddeye özel dosya açılmadı,Aranan iz: `customer`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-154,Tracking UI,Scan-based stub; not GPS,bu turda maddeye özel dosya açılmadı,Aranan iz: `tracking`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-155,Notifications draft / send blocked,communications.js send BLOCKED,bu turda maddeye özel dosya açılmadı,Aranan iz: `notification`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-156,Customer accounts,customerAuth login rate limit,bu turda maddeye özel dosya açılmadı,Aranan iz: `account`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-157,Returns workflows,RMA + ledger,bu turda maddeye özel dosya açılmadı,Aranan iz: `returns`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-158,Carrier adapter DHL,Stub,server/lib/logistics/carrierAdapter.js,DHL createShipment/createLabel var.,🟡,Canlı etiket yok.
-159,Carrier adapter DPD,Stub,server/lib/logistics/v5/adapterFramework.js,DPD kaydı var.,🟡,Canlı etiket yok.
-160,Carrier adapter GLS,Stub,server/lib/logistics/v5/adapterFramework.js,GLS kaydı var.,🟡,Canlı etiket yok.
-161,Carrier adapter Hermes,Stub,server/lib/logistics/v5/adapterFramework.js,Hermes kaydı var.,🟡,Canlı etiket yok.
-162,Carrier adapter UPS,Stub,server/lib/logistics/v5/adapterFramework.js,UPS kaydı var.,🟡,Canlı etiket yok.
-163,No real label purchase,Policy,server/lib/logistics/carrierContract.js,Bu ağaçta `createLabel` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-164,Operational visibility,Control Center events,bu turda maddeye özel dosya açılmadı,Aranan iz: `operational`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-165,Communications module,Send always BLOCKED,bu turda maddeye özel dosya açılmadı,Aranan iz: `notification`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-166,Customer order bridge,Existing engine,bu turda maddeye özel dosya açılmadı,Aranan iz: `order bridge`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-167,Scan-based tracking honesty,carriers note not live GPS,bu turda maddeye özel dosya açılmadı,Aranan iz: `IN_TRANSIT`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-168,Human Approval Center,controlCenter delegates to pusat.approval,server/lib/pusat/humanApproval.js,Onay merkezi var. Düşük risk otomatik APPROVED. Varsayılan veritabanı os.tmpdir.,🟡,Kendini onaylama yasağı bu dosyada görünmüyor. Kalıcı disk değil.
-169,Exception handling,Pusat exceptions,bu turda maddeye özel dosya açılmadı,Aranan iz: `exception`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-170,Approval policies,"TTL, risk, requiredApprover",server/core/constants.js,Bu ağaçta `WAITING_APPROVAL` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-171,Approver identity required,Empty decidedBy rejected on approve,server/lib/controlCenter.js,Bu ağaçta `actorId` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-172,Financial-impact recorded,financialImpact on metadata,bu turda maddeye özel dosya açılmadı,Aranan iz: `financial`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-173,Action input hashes,hashInput bind,bu turda maddeye özel dosya açılmadı,Aranan iz: `input hash`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-174,Approval expiration,expireDue,bu turda maddeye özel dosya açılmadı,Aranan iz: `expire`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-175,Replay protection,Second decide duplicate,bu turda maddeye özel dosya açılmadı,Aranan iz: `replay`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-176,Audit trails,controlCenter.recordSystemEvent,bu turda maddeye özel dosya açılmadı,Aranan iz: `audit-log`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-177,Controlled execution,assertBound before execute,server/lib/controlCenter.js,Bu ağaçta `decideApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-178,AI cannot self-approve,requestingAgent match rejected,server/lib/pusat/humanApproval.js,"auto: true bulundu. Bu, yasağın geçtiğini göstermez.",🟡,Onay merkezi düşük riski otomatik onaylıyor.
-179,Pending-action list,listApprovals PENDING,server/lib/controlCenter.js,Bu ağaçta `listApprovals` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-180,Revalidate before execute,assertBound hash check,server/lib/controlCenter.js,Bu ağaçta `decideApproval` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-181,Control Center = Pusat approval,No unbound insert path,server/core/auth/providers/aiProvider.js,Bu ağaçta `controlCenter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-182,High-impact gated actions catalog,"Sales, SoT, live pay, PO, listing, ship, deploy",server/core/constants.js,Bu ağaçta `RISK` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+131,Country and language independence,Locale not rewritten on market hydrate,lib/market/context.tsx,"items131to167Storefront 3/3, 10:58 Europe/Berlin. MarketProvider kaynak dosyasında setLocale yok. Ülke seçici dili, dil seçici ülkeyi değiştirmiyor. Depolama anahtarları ayrı.",🟡,Her pazar için çalışan bir hydrate testi yok.
+132,Market engine registry tests,Vitest market checks,server/__tests__/items131to167Storefront.test.mjs,Aynı dosya 3/3 geçti. Pazar para birimi ve yayın kilidi doğrulandı. Ayrı bir marketEngine paket testi bu turda koşulmadı.,🟡,Kayıtlı pazar motoru paketinin tamamı bu dosyada değil.
+133,Currency per market,Registry currency,data/buzzard_europe_countries.json,"DE currency EUR. Listedeki her satırın üç harfli currency alanı var. Dosya okundu, canlı kur servisi çağrılmadı.",🟡,Kur çevirisi ve canlı döviz yok.
+134,Legal pages per market,Impressum redirects historically,app/impressum/page.tsx,Sayfa dosyası duruyor. Footer /impressum/ bağlantısı içeriyor. Yönlendirme geçmişi ve her pazarın yasal sayfası tarayıcıda açılmadı.,🟡,Pazar başına yasal sayfa kanıtı yok.
+135,Feed export dry-run,No live marketplace push,server/lib/storefront/merchantFeedService.js,validateMarketplaceListing publishAllowed false ve live false. Canlı pazaryeri itmesi yapılmadı.,🟡,Üretilmiş feed dosyası bu turda yazılmadı.
+136,No live listing this session,Policy,server/lib/marketing/influencerIdentities.js,"publishCampaign kodu PUBLISH_BLOCKED, published false. Canlı ilan açılmadı.",🟡,Bütün ilan kanallarının tek tek yayını yok.
+137,Homepage,Storefront home,app/page.tsx,Ana sayfa dosyası duruyor. Tarayıcıda açılmadı.,🟡,Görsel regresyon yok.
+138,Navigation / mega menu,Desktop mega menu,components/MegaMenu.tsx,MegaMenu.tsx duruyor. Navbar tüm kategoriler düğmesi mega menüyü açıyor. Masaüstü tıklama kaydı yok.,🟡,Açık menünün görsel kanıtı yok.
+139,Product pages,PDP 200 / unknown 404,app/products/[id]/page.tsx,Sayfa notFound çağırıyor. 200 ve 404 HTTP yanıtı bu turda alınmadı.,🟡,Çalışan vitrin isteği yok.
+140,Search UI,Storefront search,components/MegaMenuSearch.tsx,Arama bileşeni duruyor. Arama sonucu HTTP ile doğrulanmadı.,🟡,Sorgu sonucu kanıtı yok.
+141,Responsive layouts,Mobile homepage work,styles/pusart.css,Ana sayfa ve mobil nav stilleri duruyor. Telefon ve masaüstü görüntüsü alınmadı.,🟡,Kırılım genişlikleri ölçülmedi.
+142,Customer experience readiness,customerExperienceReadiness,server/lib/customer/customerExperienceReadiness.js,Modül duruyor. Satış kilidi ayrıca false. evaluateCustomerExperienceReadiness bu turda çalıştırılmadı.,🟡,Hazırlık kapılarının sonucu yok.
+143,Accessibility,Not a full WCAG audit this session,components/Navbar.tsx,Ana navigasyonda role=navigation ve aria-label var. WCAG denetimi yapılmadı.,🟡,Tam erişilebilirlik raporu yok.
+144,Language selection,Locale switcher,components/LanguageSelector.tsx,"setLocale var, setCountryCode yok. Seçicinin tarayıcı davranışı yok.",🟡,Dil değişiminin sayfa sonucu yok.
+145,Country selection,Market switcher,components/CountrySelector.tsx,"setCountryCode var, setLocale yok. Ülke değişiminin sayfa sonucu yok.",🟡,Pazar değişimi tarayıcıda yok.
+146,RTL CSS,Arabic/Hebrew direction,styles/rtl.css,html[dir=rtl] kuralı duruyor. Arapça veya İbranice sayfa açılmadı.,🟡,Yönün görsel kanıtı yok.
+147,UI regression Playwright,Isolated :3010 static + :3001 API,server/__tests__/items131to167Storefront.test.mjs,Bu turda Playwright koşulmadı. Vitest 3/3 geçti. 3010 ve 3001 sunucuları açılmadı.,🟡,Uçtan uca tarayıcı kaydı yok.
+148,Mobile homepage,Phone layouts,app/page.tsx,Ana sayfa dosyası duruyor. Telefon yerleşimi görüntülenmedi.,🟡,Cihaz görüntüsü yok.
+149,Category boxes and drawers,Phone drawers,components/Navbar.tsx,all-categories-btn duruyor ve mega menüyü açıyor. drawer adlı bir bileşen bulunamadı.,🟡,Telefon çekmecesinin ayrı bileşeni yok.
+150,Admin UI pages,Control Center / PIM / Sessions,app/admin/control-center/page.tsx,"control-center, pim-core ve sessions sayfa dosyaları duruyor. Yönetici oturumu ile açılmadı.",🟡,Sayfa içeriği doğrulanmadı.
+151,Cart and account chrome,Header cart,components/Header.tsx,Başlık /warenkorb/ bağlantısını içeriyor. Sepet sayımı tarayıcıda yok.,🟡,Sepete ekleme akışı yok.
+152,Shipping data models,shipmentGate,server/lib/logistics/carrierContract.js,"createLabel HUMAN_GATE_REQUIRED, liveShipment false. shipmentGate sembolü yok.",🟡,Kapı adı koda bağlı değil.
+153,Customer operations,customerOrderBridge,server/lib/customer/customerOrderBridge.js,"getOrderHistoryReadiness bridgeEnabled true, realOrdersEnabled false. Müşteri kimliği ile sipariş listesi açılmadı.",🟡,Hesaba bağlı sipariş HTTP kanıtı yok.
+154,Tracking UI,Scan-based stub; not GPS,server/lib/logistics/carrierContract.js,trackShipment live false. Yanıtta gps yok. Canlı taşıyıcı taraması yok.,🟡,Gerçek tarama olayı yok.
+155,Notifications draft / send blocked,communications.js send BLOCKED,server/lib/comms/whatsappSandbox.js,"send WHATSAPP_SEND_DENIED, sent false. communications.js dosyası yok.",🟡,Adı geçen gönderim modülü yok.
+156,Customer accounts,customerAuth login rate limit,server/lib/customerAuth.js,customer-login penceresi 15 dakika ve en fazla 8. Hatalı giriş dizisi çalıştırılmadı.,🟡,Limitin HTTP  yanıtı yok.
+157,Returns workflows,RMA + ledger,server/lib/logistics/v5/returnsEngine.js,startReturn müşteri iadesi ve tedarikçi alacağı false. Defter satırı üretim verisine yazılmadı.,🟡,Kapalı bir RMA döngüsü yok.
+158,Carrier adapter DHL,Stub,server/lib/logistics/carrierContract.js,DHL createLabel HUMAN_GATE_REQUIRED. Canlı etiket yok.,🟡,DHL hesabı yok.
+159,Carrier adapter DPD,Stub,server/lib/logistics/carrierContract.js,DPD createLabel HUMAN_GATE_REQUIRED. Canlı etiket yok.,🟡,DPD hesabı yok.
+160,Carrier adapter GLS,Stub,server/lib/logistics/carrierContract.js,GLS createLabel HUMAN_GATE_REQUIRED. Canlı etiket yok.,🟡,GLS hesabı yok.
+161,Carrier adapter Hermes,Stub,server/lib/logistics/carrierContract.js,Hermes createLabel HUMAN_GATE_REQUIRED. Canlı etiket yok.,🟡,Hermes hesabı yok.
+162,Carrier adapter UPS,Stub,server/lib/logistics/carrierContract.js,UPS createLabel HUMAN_GATE_REQUIRED. Canlı etiket yok.,🟡,UPS hesabı yok.
+163,No real label purchase,Policy,server/lib/logistics/carrierContract.js,"snapshot live false, credentialsStored false. Etiket satın alınmadı.",🟡,Her taşıyıcı için satın alma reddi ayrı test değil.
+164,Operational visibility,Control Center events,app/admin/control-center/page.tsx,Kontrol merkezi sayfası duruyor. Olay listesi çalıştırılmadı.,🟡,Sistem olayı kanıtı yok.
+165,Communications module,Send always BLOCKED,server/lib/comms/whatsappSandbox.js,Gönderim WHATSAPP_SEND_DENIED. E-posta ve SMS gönderilmedi.,🟡,Bütün kanalların tek gönderim kapısı yok.
+166,Customer order bridge,Existing engine,server/lib/customer/customerOrderBridge.js,Köprü gerçek siparişi kapalı tutuyor. Mevcut sipariş motoruna yeni yazım yok.,🟡,Köprüden ticari sipariş oluşturulmadı ve oluşturulmayacak.
+167,Scan-based tracking honesty,carriers note not live GPS,server/lib/logistics/carrierContract.js,IN_TRANSIT izlemesi live false ve gps içermiyor. Taşıyıcı notu ayrıca okunmadı.,🟡,"Canlı konum iddiası yok, tarama kaynağı da yok."
+168,Human Approval Center,controlCenter delegates to pusat.approval,server/lib/controlCenter.js,"items168to182Approvals 1/1, 10:59 Europe/Berlin. createApproval PENDING, ardından operator onayı APPROVED. Kontrol merkezi kendi core_approvals tablosuna yazıyor. Ayrı pusat.approval kuyruğuna devretmiyor.",🟡,İki onay kaydı duruyor.
+169,Exception handling,Pusat exceptions,server/lib/pusat/runtime.js,İzin reddinde exceptionBus emit retryable false. Bu turda o dosyanın testi yeniden koşulmadı. Ödeme yeniden denemesi bu turda yok.,🟡,Dönen gövde retryable alanını taşımıyor.
+170,Approval policies,"TTL, risk, requiredApprover",server/lib/pusat/durableTaskQueue.js,Kuyruk expires_at geçince EXPIRED dönüyor. createApproval riskLevel alıyor. requiredApprover alanı yok.,🟡,Politika adı geçen üç alanın hepsi tek kayıtta değil.
+171,Approver identity required,Empty decidedBy rejected on approve,server/lib/controlCenter.js,"Boş ve boşluk decidedBy null döndü, durum PENDING kaldı. operator@example.test onayı APPROVED. Geçici sqlite. Satış kapalı.",✅,Ölçüt karşılandı.
+172,Financial-impact recorded,financialImpact on metadata,server/lib/controlCenter.js,financialImpact sembolü yok. Metadata içine mali etki yazılmadı.,🔴,Alan uygulanmadı.
+173,Action input hashes,hashInput bind,server/lib/controlCenter.js,hashInput sembolü yok. Onay girdisi hash ile bağlanmadı.,🔴,Bağlama fonksiyonu yok.
+174,Approval expiration,expireDue,server/lib/pusat/durableTaskQueue.js,Süresi geçen onay EXPIRED. expireDue adında fonksiyon yok. Kontrol merkezi satırı süreyle kapanmıyor.,🟡,İki onay yolunun süresi ortak değil.
+175,Replay protection,Second decide duplicate,server/lib/controlCenter.js,"İkinci decideApproval null döndü. İlk APPROVED durumu durdu. HTTP kodu 409 değil, uç 404 gibi boş yanıt alıyor.",🟡,"Çift karar veri yazmıyor, kod sözleşmesi ayrı."
+176,Audit trails,controlCenter.recordSystemEvent,server/lib/controlCenter.js,createApproval ve decideApproval recordSystemEvent çağırıyor. Yazılan olay satırı testte okunmadı.,🟡,Denetim satırının içeriği doğrulanmadı.
+177,Controlled execution,assertBound before execute,server/lib/controlCenter.js,PENDING olmayan kayıt tekrar yazılmıyor. assertBound adında fonksiyon yok.,🟡,Yürütmeden önce hash bağı yok.
+178,AI cannot self-approve,requestingAgent match rejected,server/lib/pusat/humanApproval.js,Düşük risk policy:low-risk ile otomatik onaylanıyor. Bu turda değiştirilmedi. İsteyen ajanın kendisini reddeden bir eşleşme yok.,🟡,Düşük risk kendi kendini onaylıyor.
+179,Pending-action list,listApprovals PENDING,server/lib/controlCenter.js,"listApprovals PENDING, onaydan sonra bu kaydı döndürmedi. Bütün bekleyen işlerin ekranı açılmadı.",🟡,Yönetici arayüzü doğrulanmadı.
+180,Revalidate before execute,assertBound hash check,server/lib/controlCenter.js,assertBound ve hash kontrolü yok. Yürütme öncesi girdi özeti karşılaştırılmıyor.,🔴,Kontrol uygulanmadı.
+181,Control Center = Pusat approval,No unbound insert path,server/lib/controlCenter.js,createApproval doğrudan PENDING satırı ekliyor. Bağsız ikinci bir insert yolu aranmadı.,🟡,Tek yazım yolu kanıtı yok.
+182,High-impact gated actions catalog,"Sales, SoT, live pay, PO, listing, ship, deploy",server/core/constants.js,"RISK düzeyi createApproval içine geçiyor. Satış kapalı kaldı. Satış, SoT, ödeme, sipariş, ilan, gönderi ve deploy kapılarının tek katalog testi yok.",🟡,Yüksek etkili eylem listesi bu turda yürütülmedi.
 183,Structured logs,securityLog + correlation,bu turda maddeye özel dosya açılmadı,Aranan iz: `security log`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 184,Metrics,Limited local counters,bu turda maddeye özel dosya açılmadı,Aranan iz: `metrics`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 185,Alerting,Not a live pager,bu turda maddeye özel dosya açılmadı,Aranan iz: `alert`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.

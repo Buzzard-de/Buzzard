@@ -432,10 +432,13 @@ function listApprovals(status) {
 }
 
 function decideApproval(id, decision, decidedBy) {
+  if (typeof decidedBy !== "string" || !decidedBy.trim()) return null;
+  const current = getApproval(id);
+  if (!current || current.status !== "PENDING") return null;
   const status = decision === "approve" ? "APPROVED" : "REJECTED";
   db.prepare(`
     UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, decidedBy, id);
+  `).run(status, decidedBy.trim(), id);
 
   const approval = getApproval(id);
   if (approval?.taskId) {

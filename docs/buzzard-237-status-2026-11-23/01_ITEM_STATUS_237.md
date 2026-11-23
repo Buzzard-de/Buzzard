@@ -103,6 +103,22 @@ Madde 116–130, 23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.
 - ⛔ 1
 - ⚪ 79
 
+Madde 131–167, 23 Kasım 2026 10:58 Europe/Berlin. `items131to167Storefront.test.mjs` 3/3. Otuz madde ⚪ iken 🟡 oldu. Dil ve ülke ayrı. Canlı ilan, etiket ve gönderim kapalı. `communications.js` ve `shipmentGate` yok.
+
+- ✅ 3
+- 🟡 176
+- 🔴 8
+- ⛔ 1
+- ⚪ 49
+
+Madde 168–182, 23 Kasım 2026 10:59 Europe/Berlin. `items168to182Approvals.test.mjs` 1/1. Boş onaycı ve ikinci karar yazılmıyor. Madde 171 ✅. Madde 172, 173 ve 180 🔴. Satış kapalı.
+
+- ✅ 4
+- 🟡 178
+- 🔴 11
+- ⛔ 1
+- ⚪ 43
+
 ## Maddeler
 
 ## Madde 1
@@ -1409,521 +1425,521 @@ Madde 116–130, 23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.
 
 - GÖREV: Country and language independence
 - NE İSTİYOR: Locale not rewritten on market hydrate
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `languageIndependence`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: lib/market/context.tsx
+- TEST: items131to167Storefront 3/3, 10:58 Europe/Berlin. MarketProvider kaynak dosyasında setLocale yok.
+- ENTEGRASYON: Ülke seçici dili, dil seçici ülkeyi değiştirmiyor. Depolama anahtarları ayrı.
+- DURUM: 🟡
+- EKSİK: Her pazar için çalışan bir hydrate testi yok.
 
 ## Madde 132
 
 - GÖREV: Market engine registry tests
 - NE İSTİYOR: Vitest market checks
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `marketEngine`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/items131to167Storefront.test.mjs
+- TEST: Aynı dosya 3/3 geçti. Pazar para birimi ve yayın kilidi doğrulandı.
+- ENTEGRASYON: Ayrı bir marketEngine paket testi bu turda koşulmadı.
+- DURUM: 🟡
+- EKSİK: Kayıtlı pazar motoru paketinin tamamı bu dosyada değil.
 
 ## Madde 133
 
 - GÖREV: Currency per market
 - NE İSTİYOR: Registry currency
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `currency`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: data/buzzard_europe_countries.json
+- TEST: DE currency EUR. Listedeki her satırın üç harfli currency alanı var.
+- ENTEGRASYON: Dosya okundu, canlı kur servisi çağrılmadı.
+- DURUM: 🟡
+- EKSİK: Kur çevirisi ve canlı döviz yok.
 
 ## Madde 134
 
 - GÖREV: Legal pages per market
 - NE İSTİYOR: Impressum redirects historically
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `impressum`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/impressum/page.tsx
+- TEST: Sayfa dosyası duruyor. Footer /impressum/ bağlantısı içeriyor.
+- ENTEGRASYON: Yönlendirme geçmişi ve her pazarın yasal sayfası tarayıcıda açılmadı.
+- DURUM: 🟡
+- EKSİK: Pazar başına yasal sayfa kanıtı yok.
 
 ## Madde 135
 
 - GÖREV: Feed export dry-run
 - NE İSTİYOR: No live marketplace push
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `feed`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/storefront/merchantFeedService.js
+- TEST: validateMarketplaceListing publishAllowed false ve live false.
+- ENTEGRASYON: Canlı pazaryeri itmesi yapılmadı.
+- DURUM: 🟡
+- EKSİK: Üretilmiş feed dosyası bu turda yazılmadı.
 
 ## Madde 136
 
 - GÖREV: No live listing this session
 - NE İSTİYOR: Policy
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `PUBLISH_BLOCKED`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/marketing/influencerIdentities.js
+- TEST: publishCampaign kodu PUBLISH_BLOCKED, published false.
+- ENTEGRASYON: Canlı ilan açılmadı.
+- DURUM: 🟡
+- EKSİK: Bütün ilan kanallarının tek tek yayını yok.
 
 ## Madde 137
 
 - GÖREV: Homepage
 - NE İSTİYOR: Storefront home
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `homepage`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/page.tsx
+- TEST: Ana sayfa dosyası duruyor.
+- ENTEGRASYON: Tarayıcıda açılmadı.
+- DURUM: 🟡
+- EKSİK: Görsel regresyon yok.
 
 ## Madde 138
 
 - GÖREV: Navigation / mega menu
 - NE İSTİYOR: Desktop mega menu
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `mega`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/MegaMenu.tsx
+- TEST: MegaMenu.tsx duruyor. Navbar tüm kategoriler düğmesi mega menüyü açıyor.
+- ENTEGRASYON: Masaüstü tıklama kaydı yok.
+- DURUM: 🟡
+- EKSİK: Açık menünün görsel kanıtı yok.
 
 ## Madde 139
 
 - GÖREV: Product pages
 - NE İSTİYOR: PDP 200 / unknown 404
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `product page`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/products/[id]/page.tsx
+- TEST: Sayfa notFound çağırıyor.
+- ENTEGRASYON: 200 ve 404 HTTP yanıtı bu turda alınmadı.
+- DURUM: 🟡
+- EKSİK: Çalışan vitrin isteği yok.
 
 ## Madde 140
 
 - GÖREV: Search UI
 - NE İSTİYOR: Storefront search
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `search`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/MegaMenuSearch.tsx
+- TEST: Arama bileşeni duruyor.
+- ENTEGRASYON: Arama sonucu HTTP ile doğrulanmadı.
+- DURUM: 🟡
+- EKSİK: Sorgu sonucu kanıtı yok.
 
 ## Madde 141
 
 - GÖREV: Responsive layouts
 - NE İSTİYOR: Mobile homepage work
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `responsive`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: styles/pusart.css
+- TEST: Ana sayfa ve mobil nav stilleri duruyor.
+- ENTEGRASYON: Telefon ve masaüstü görüntüsü alınmadı.
+- DURUM: 🟡
+- EKSİK: Kırılım genişlikleri ölçülmedi.
 
 ## Madde 142
 
 - GÖREV: Customer experience readiness
 - NE İSTİYOR: customerExperienceReadiness
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `customer experience`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/customer/customerExperienceReadiness.js
+- TEST: Modül duruyor. Satış kilidi ayrıca false.
+- ENTEGRASYON: evaluateCustomerExperienceReadiness bu turda çalıştırılmadı.
+- DURUM: 🟡
+- EKSİK: Hazırlık kapılarının sonucu yok.
 
 ## Madde 143
 
 - GÖREV: Accessibility
 - NE İSTİYOR: Not a full WCAG audit this session
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `accessibility`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/Navbar.tsx
+- TEST: Ana navigasyonda role=navigation ve aria-label var.
+- ENTEGRASYON: WCAG denetimi yapılmadı.
+- DURUM: 🟡
+- EKSİK: Tam erişilebilirlik raporu yok.
 
 ## Madde 144
 
 - GÖREV: Language selection
 - NE İSTİYOR: Locale switcher
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `locale`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/LanguageSelector.tsx
+- TEST: setLocale var, setCountryCode yok.
+- ENTEGRASYON: Seçicinin tarayıcı davranışı yok.
+- DURUM: 🟡
+- EKSİK: Dil değişiminin sayfa sonucu yok.
 
 ## Madde 145
 
 - GÖREV: Country selection
 - NE İSTİYOR: Market switcher
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `country`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/CountrySelector.tsx
+- TEST: setCountryCode var, setLocale yok.
+- ENTEGRASYON: Ülke değişiminin sayfa sonucu yok.
+- DURUM: 🟡
+- EKSİK: Pazar değişimi tarayıcıda yok.
 
 ## Madde 146
 
 - GÖREV: RTL CSS
 - NE İSTİYOR: Arabic/Hebrew direction
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `rtl`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: styles/rtl.css
+- TEST: html[dir=rtl] kuralı duruyor.
+- ENTEGRASYON: Arapça veya İbranice sayfa açılmadı.
+- DURUM: 🟡
+- EKSİK: Yönün görsel kanıtı yok.
 
 ## Madde 147
 
 - GÖREV: UI regression Playwright
 - NE İSTİYOR: Isolated :3010 static + :3001 API
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `playwright`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/__tests__/items131to167Storefront.test.mjs
+- TEST: Bu turda Playwright koşulmadı. Vitest 3/3 geçti.
+- ENTEGRASYON: 3010 ve 3001 sunucuları açılmadı.
+- DURUM: 🟡
+- EKSİK: Uçtan uca tarayıcı kaydı yok.
 
 ## Madde 148
 
 - GÖREV: Mobile homepage
 - NE İSTİYOR: Phone layouts
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `mobile`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/page.tsx
+- TEST: Ana sayfa dosyası duruyor.
+- ENTEGRASYON: Telefon yerleşimi görüntülenmedi.
+- DURUM: 🟡
+- EKSİK: Cihaz görüntüsü yok.
 
 ## Madde 149
 
 - GÖREV: Category boxes and drawers
 - NE İSTİYOR: Phone drawers
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `drawer`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/Navbar.tsx
+- TEST: all-categories-btn duruyor ve mega menüyü açıyor.
+- ENTEGRASYON: drawer adlı bir bileşen bulunamadı.
+- DURUM: 🟡
+- EKSİK: Telefon çekmecesinin ayrı bileşeni yok.
 
 ## Madde 150
 
 - GÖREV: Admin UI pages
 - NE İSTİYOR: Control Center / PIM / Sessions
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `admin`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/admin/control-center/page.tsx
+- TEST: control-center, pim-core ve sessions sayfa dosyaları duruyor.
+- ENTEGRASYON: Yönetici oturumu ile açılmadı.
+- DURUM: 🟡
+- EKSİK: Sayfa içeriği doğrulanmadı.
 
 ## Madde 151
 
 - GÖREV: Cart and account chrome
 - NE İSTİYOR: Header cart
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `cart`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: components/Header.tsx
+- TEST: Başlık /warenkorb/ bağlantısını içeriyor.
+- ENTEGRASYON: Sepet sayımı tarayıcıda yok.
+- DURUM: 🟡
+- EKSİK: Sepete ekleme akışı yok.
 
 ## Madde 152
 
 - GÖREV: Shipping data models
 - NE İSTİYOR: shipmentGate
-- KOD: server/lib/workstreams/special16Runtime.js
-- TEST: Bu ağaçta `carrierAdapter` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: createLabel HUMAN_GATE_REQUIRED, liveShipment false.
+- ENTEGRASYON: shipmentGate sembolü yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Kapı adı koda bağlı değil.
 
 ## Madde 153
 
 - GÖREV: Customer operations
 - NE İSTİYOR: customerOrderBridge
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `customer`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/customer/customerOrderBridge.js
+- TEST: getOrderHistoryReadiness bridgeEnabled true, realOrdersEnabled false.
+- ENTEGRASYON: Müşteri kimliği ile sipariş listesi açılmadı.
+- DURUM: 🟡
+- EKSİK: Hesaba bağlı sipariş HTTP kanıtı yok.
 
 ## Madde 154
 
 - GÖREV: Tracking UI
 - NE İSTİYOR: Scan-based stub; not GPS
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `tracking`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: trackShipment live false. Yanıtta gps yok.
+- ENTEGRASYON: Canlı taşıyıcı taraması yok.
+- DURUM: 🟡
+- EKSİK: Gerçek tarama olayı yok.
 
 ## Madde 155
 
 - GÖREV: Notifications draft / send blocked
 - NE İSTİYOR: communications.js send BLOCKED
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `notification`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/comms/whatsappSandbox.js
+- TEST: send WHATSAPP_SEND_DENIED, sent false.
+- ENTEGRASYON: communications.js dosyası yok.
+- DURUM: 🟡
+- EKSİK: Adı geçen gönderim modülü yok.
 
 ## Madde 156
 
 - GÖREV: Customer accounts
 - NE İSTİYOR: customerAuth login rate limit
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `account`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/customerAuth.js
+- TEST: customer-login penceresi 15 dakika ve en fazla 8.
+- ENTEGRASYON: Hatalı giriş dizisi çalıştırılmadı.
+- DURUM: 🟡
+- EKSİK: Limitin HTTP  yanıtı yok.
 
 ## Madde 157
 
 - GÖREV: Returns workflows
 - NE İSTİYOR: RMA + ledger
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `returns`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/logistics/v5/returnsEngine.js
+- TEST: startReturn müşteri iadesi ve tedarikçi alacağı false.
+- ENTEGRASYON: Defter satırı üretim verisine yazılmadı.
+- DURUM: 🟡
+- EKSİK: Kapalı bir RMA döngüsü yok.
 
 ## Madde 158
 
 - GÖREV: Carrier adapter DHL
 - NE İSTİYOR: Stub
-- KOD: server/lib/logistics/carrierAdapter.js
-- TEST: DHL createShipment/createLabel var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: DHL createLabel HUMAN_GATE_REQUIRED.
+- ENTEGRASYON: Canlı etiket yok.
 - DURUM: 🟡
-- EKSİK: Canlı etiket yok.
+- EKSİK: DHL hesabı yok.
 
 ## Madde 159
 
 - GÖREV: Carrier adapter DPD
 - NE İSTİYOR: Stub
-- KOD: server/lib/logistics/v5/adapterFramework.js
-- TEST: DPD kaydı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: DPD createLabel HUMAN_GATE_REQUIRED.
+- ENTEGRASYON: Canlı etiket yok.
 - DURUM: 🟡
-- EKSİK: Canlı etiket yok.
+- EKSİK: DPD hesabı yok.
 
 ## Madde 160
 
 - GÖREV: Carrier adapter GLS
 - NE İSTİYOR: Stub
-- KOD: server/lib/logistics/v5/adapterFramework.js
-- TEST: GLS kaydı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: GLS createLabel HUMAN_GATE_REQUIRED.
+- ENTEGRASYON: Canlı etiket yok.
 - DURUM: 🟡
-- EKSİK: Canlı etiket yok.
+- EKSİK: GLS hesabı yok.
 
 ## Madde 161
 
 - GÖREV: Carrier adapter Hermes
 - NE İSTİYOR: Stub
-- KOD: server/lib/logistics/v5/adapterFramework.js
-- TEST: Hermes kaydı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: Hermes createLabel HUMAN_GATE_REQUIRED.
+- ENTEGRASYON: Canlı etiket yok.
 - DURUM: 🟡
-- EKSİK: Canlı etiket yok.
+- EKSİK: Hermes hesabı yok.
 
 ## Madde 162
 
 - GÖREV: Carrier adapter UPS
 - NE İSTİYOR: Stub
-- KOD: server/lib/logistics/v5/adapterFramework.js
-- TEST: UPS kaydı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: UPS createLabel HUMAN_GATE_REQUIRED.
+- ENTEGRASYON: Canlı etiket yok.
 - DURUM: 🟡
-- EKSİK: Canlı etiket yok.
+- EKSİK: UPS hesabı yok.
 
 ## Madde 163
 
 - GÖREV: No real label purchase
 - NE İSTİYOR: Policy
 - KOD: server/lib/logistics/carrierContract.js
-- TEST: Bu ağaçta `createLabel` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: snapshot live false, credentialsStored false.
+- ENTEGRASYON: Etiket satın alınmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Her taşıyıcı için satın alma reddi ayrı test değil.
 
 ## Madde 164
 
 - GÖREV: Operational visibility
 - NE İSTİYOR: Control Center events
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `operational`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: app/admin/control-center/page.tsx
+- TEST: Kontrol merkezi sayfası duruyor.
+- ENTEGRASYON: Olay listesi çalıştırılmadı.
+- DURUM: 🟡
+- EKSİK: Sistem olayı kanıtı yok.
 
 ## Madde 165
 
 - GÖREV: Communications module
 - NE İSTİYOR: Send always BLOCKED
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `notification`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/comms/whatsappSandbox.js
+- TEST: Gönderim WHATSAPP_SEND_DENIED.
+- ENTEGRASYON: E-posta ve SMS gönderilmedi.
+- DURUM: 🟡
+- EKSİK: Bütün kanalların tek gönderim kapısı yok.
 
 ## Madde 166
 
 - GÖREV: Customer order bridge
 - NE İSTİYOR: Existing engine
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `order bridge`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/customer/customerOrderBridge.js
+- TEST: Köprü gerçek siparişi kapalı tutuyor.
+- ENTEGRASYON: Mevcut sipariş motoruna yeni yazım yok.
+- DURUM: 🟡
+- EKSİK: Köprüden ticari sipariş oluşturulmadı ve oluşturulmayacak.
 
 ## Madde 167
 
 - GÖREV: Scan-based tracking honesty
 - NE İSTİYOR: carriers note not live GPS
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `IN_TRANSIT`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/logistics/carrierContract.js
+- TEST: IN_TRANSIT izlemesi live false ve gps içermiyor.
+- ENTEGRASYON: Taşıyıcı notu ayrıca okunmadı.
+- DURUM: 🟡
+- EKSİK: Canlı konum iddiası yok, tarama kaynağı da yok.
 
 ## Madde 168
 
 - GÖREV: Human Approval Center
 - NE İSTİYOR: controlCenter delegates to pusat.approval
-- KOD: server/lib/pusat/humanApproval.js
-- TEST: Onay merkezi var. Düşük risk otomatik APPROVED. Varsayılan veritabanı os.tmpdir.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/controlCenter.js
+- TEST: items168to182Approvals 1/1, 10:59 Europe/Berlin. createApproval PENDING, ardından operator onayı APPROVED.
+- ENTEGRASYON: Kontrol merkezi kendi core_approvals tablosuna yazıyor. Ayrı pusat.approval kuyruğuna devretmiyor.
 - DURUM: 🟡
-- EKSİK: Kendini onaylama yasağı bu dosyada görünmüyor. Kalıcı disk değil.
+- EKSİK: İki onay kaydı duruyor.
 
 ## Madde 169
 
 - GÖREV: Exception handling
 - NE İSTİYOR: Pusat exceptions
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `exception`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/pusat/runtime.js
+- TEST: İzin reddinde exceptionBus emit retryable false. Bu turda o dosyanın testi yeniden koşulmadı.
+- ENTEGRASYON: Ödeme yeniden denemesi bu turda yok.
+- DURUM: 🟡
+- EKSİK: Dönen gövde retryable alanını taşımıyor.
 
 ## Madde 170
 
 - GÖREV: Approval policies
 - NE İSTİYOR: TTL, risk, requiredApprover
-- KOD: server/core/constants.js
-- TEST: Bu ağaçta `WAITING_APPROVAL` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/pusat/durableTaskQueue.js
+- TEST: Kuyruk expires_at geçince EXPIRED dönüyor. createApproval riskLevel alıyor.
+- ENTEGRASYON: requiredApprover alanı yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Politika adı geçen üç alanın hepsi tek kayıtta değil.
 
 ## Madde 171
 
 - GÖREV: Approver identity required
 - NE İSTİYOR: Empty decidedBy rejected on approve
 - KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `actorId` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- TEST: Boş ve boşluk decidedBy null döndü, durum PENDING kaldı. operator@example.test onayı APPROVED.
+- ENTEGRASYON: Geçici sqlite. Satış kapalı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 172
 
 - GÖREV: Financial-impact recorded
 - NE İSTİYOR: financialImpact on metadata
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `financial`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: financialImpact sembolü yok.
+- ENTEGRASYON: Metadata içine mali etki yazılmadı.
+- DURUM: 🔴
+- EKSİK: Alan uygulanmadı.
 
 ## Madde 173
 
 - GÖREV: Action input hashes
 - NE İSTİYOR: hashInput bind
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `input hash`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: hashInput sembolü yok.
+- ENTEGRASYON: Onay girdisi hash ile bağlanmadı.
+- DURUM: 🔴
+- EKSİK: Bağlama fonksiyonu yok.
 
 ## Madde 174
 
 - GÖREV: Approval expiration
 - NE İSTİYOR: expireDue
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `expire`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/pusat/durableTaskQueue.js
+- TEST: Süresi geçen onay EXPIRED. expireDue adında fonksiyon yok.
+- ENTEGRASYON: Kontrol merkezi satırı süreyle kapanmıyor.
+- DURUM: 🟡
+- EKSİK: İki onay yolunun süresi ortak değil.
 
 ## Madde 175
 
 - GÖREV: Replay protection
 - NE İSTİYOR: Second decide duplicate
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `replay`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: İkinci decideApproval null döndü. İlk APPROVED durumu durdu.
+- ENTEGRASYON: HTTP kodu 409 değil, uç 404 gibi boş yanıt alıyor.
+- DURUM: 🟡
+- EKSİK: Çift karar veri yazmıyor, kod sözleşmesi ayrı.
 
 ## Madde 176
 
 - GÖREV: Audit trails
 - NE İSTİYOR: controlCenter.recordSystemEvent
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `audit-log`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: server/lib/controlCenter.js
+- TEST: createApproval ve decideApproval recordSystemEvent çağırıyor.
+- ENTEGRASYON: Yazılan olay satırı testte okunmadı.
+- DURUM: 🟡
+- EKSİK: Denetim satırının içeriği doğrulanmadı.
 
 ## Madde 177
 
 - GÖREV: Controlled execution
 - NE İSTİYOR: assertBound before execute
 - KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `decideApproval` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: PENDING olmayan kayıt tekrar yazılmıyor.
+- ENTEGRASYON: assertBound adında fonksiyon yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Yürütmeden önce hash bağı yok.
 
 ## Madde 178
 
 - GÖREV: AI cannot self-approve
 - NE İSTİYOR: requestingAgent match rejected
 - KOD: server/lib/pusat/humanApproval.js
-- TEST: auto: true bulundu. Bu, yasağın geçtiğini göstermez.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: Düşük risk policy:low-risk ile otomatik onaylanıyor. Bu turda değiştirilmedi.
+- ENTEGRASYON: İsteyen ajanın kendisini reddeden bir eşleşme yok.
 - DURUM: 🟡
-- EKSİK: Onay merkezi düşük riski otomatik onaylıyor.
+- EKSİK: Düşük risk kendi kendini onaylıyor.
 
 ## Madde 179
 
 - GÖREV: Pending-action list
 - NE İSTİYOR: listApprovals PENDING
 - KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `listApprovals` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: listApprovals PENDING, onaydan sonra bu kaydı döndürmedi.
+- ENTEGRASYON: Bütün bekleyen işlerin ekranı açılmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Yönetici arayüzü doğrulanmadı.
 
 ## Madde 180
 
 - GÖREV: Revalidate before execute
 - NE İSTİYOR: assertBound hash check
 - KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `decideApproval` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- TEST: assertBound ve hash kontrolü yok.
+- ENTEGRASYON: Yürütme öncesi girdi özeti karşılaştırılmıyor.
+- DURUM: 🔴
+- EKSİK: Kontrol uygulanmadı.
 
 ## Madde 181
 
 - GÖREV: Control Center = Pusat approval
 - NE İSTİYOR: No unbound insert path
-- KOD: server/core/auth/providers/aiProvider.js
-- TEST: Bu ağaçta `controlCenter` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: server/lib/controlCenter.js
+- TEST: createApproval doğrudan PENDING satırı ekliyor.
+- ENTEGRASYON: Bağsız ikinci bir insert yolu aranmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Tek yazım yolu kanıtı yok.
 
 ## Madde 182
 
 - GÖREV: High-impact gated actions catalog
 - NE İSTİYOR: Sales, SoT, live pay, PO, listing, ship, deploy
 - KOD: server/core/constants.js
-- TEST: Bu ağaçta `RISK` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- TEST: RISK düzeyi createApproval içine geçiyor. Satış kapalı kaldı.
+- ENTEGRASYON: Satış, SoT, ödeme, sipariş, ilan, gönderi ve deploy kapılarının tek katalog testi yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Yüksek etkili eylem listesi bu turda yürütülmedi.
 
 ## Madde 183
 
@@ -2474,3 +2490,4 @@ Madde 116–130, 23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.
 - ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
 - DURUM: 🟡
 - EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+

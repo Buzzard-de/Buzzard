@@ -130,6 +130,7 @@ function videoLicenseAdapter() {
 }
 
 function assessTextile() {
+  const scope = require("./textileProductScope").productScope();
   return {
     acceptanceStatus: "CODE_READY",
     completeClaim: false,
@@ -150,6 +151,7 @@ function assessTextile() {
     missing: ["promo_video_licensed", "live_image_model"],
     imageModel: imageModelAdapter(),
     video: videoLicenseAdapter(),
+    productScope: scope,
   };
 }
 

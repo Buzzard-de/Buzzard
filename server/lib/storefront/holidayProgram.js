@@ -32,6 +32,43 @@ function publishBanner() {
   };
 }
 
+const schedules = new Map();
+
+function openSchedule({ country, copy } = {}) {
+  const code = String(country || "").toUpperCase();
+  const day = listDays(code)[0];
+  if (!day) return { ok: false, code: "NO_SOURCED_DAY", published: false };
+  const id = `hol_${code}_${schedules.size + 1}`;
+  const draft = {
+    id,
+    country: code,
+    day,
+    copy: String(copy || day.name).slice(0, 120),
+    status: "preview",
+    published: false,
+    copyrightChecked: false,
+  };
+  schedules.set(id, draft);
+  return { ok: true, draft };
+}
+
+function editSchedule(id, copy) {
+  const draft = schedules.get(id);
+  if (!draft || draft.status === "closed") return { ok: false, code: "NOT_EDITABLE", published: false };
+  draft.copy = String(copy || "").slice(0, 120);
+  draft.status = "edited";
+  draft.published = false;
+  return { ok: true, draft: { ...draft } };
+}
+
+function closeSchedule(id) {
+  const draft = schedules.get(id);
+  if (!draft) return { ok: false, code: "NOT_FOUND", published: false };
+  draft.status = "closed";
+  draft.published = false;
+  return { ok: true, draft: { ...draft }, published: false };
+}
+
 function previewPack({ country, today = "2026-11-01" } = {}) {
   const preview = previewBanner({ country, today });
   return {
@@ -88,4 +125,15 @@ function coverage() {
   };
 }
 
-module.exports = { listDays, listCelebrations, matchToday, previewBanner, previewPack, publishBanner, coverage };
+module.exports = {
+  listDays,
+  listCelebrations,
+  matchToday,
+  previewBanner,
+  previewPack,
+  publishBanner,
+  openSchedule,
+  editSchedule,
+  closeSchedule,
+  coverage,
+};

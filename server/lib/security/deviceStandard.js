@@ -45,6 +45,34 @@ function evaluateDevice(report = {}) {
   };
 }
 
+const operatorReviews = new Map();
+
+/** A checkbox on the report is a claim. Only a desk review id is an attestation record. */
+function clientClaim(report = {}) {
+  const claimed = report.bitlocker === true || report.attestedFromDevice === true || report.full_disk_encryption === true;
+  return {
+    attested: false,
+    liveDevice: false,
+    completeClaim: false,
+    code: claimed ? "CLAIM_IS_NOT_ATTESTATION" : "NO_ATTESTATION",
+  };
+}
+
+function recordOperatorReview({ deviceId, operatorId } = {}) {
+  if (typeof deviceId !== "string" || deviceId.trim() === "" || typeof operatorId !== "string" || operatorId.trim() === "") {
+    return { ok: false, code: "REVIEW_INCOMPLETE", attested: false, liveDevice: false, completeClaim: false };
+  }
+  const reviewId = `att_${operatorReviews.size + 1}`;
+  operatorReviews.set(reviewId, { deviceId: deviceId.trim(), operatorId: operatorId.trim() });
+  return { ok: true, reviewId, attested: false, liveDevice: false, completeClaim: false };
+}
+
+function readAttestation(reviewId) {
+  const row = operatorReviews.get(reviewId);
+  if (!row) return { ok: false, code: "NO_ATTESTATION", attested: false, liveDevice: false, completeClaim: false };
+  return { ok: true, attested: true, liveDevice: false, completeClaim: false, ...row };
+}
+
 function lostDeviceProcedure() {
   return [
     "incident_report",
@@ -60,4 +88,11 @@ function lostDeviceProcedure() {
   ];
 }
 
-module.exports = { CONTROLS, evaluateDevice, lostDeviceProcedure };
+module.exports = {
+  CONTROLS,
+  evaluateDevice,
+  clientClaim,
+  recordOperatorReview,
+  readAttestation,
+  lostDeviceProcedure,
+};

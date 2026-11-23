@@ -98,3 +98,11 @@ Admin Guardian rotası `routePermissions` üzerinden `security.read` ile admin o
 ## Nihai durum
 
 🟡 Kısmen tamamlandı
+
+## Düzeltme turu — 23 Kasım 2026 07:39 Europe/Berlin
+
+Guardian status ve health, Orchestrator status, agents ve tasks artık admin oturumu ister. `/api/db/status` hesap tokenı ister. Üçü de `PUBLIC_ROUTES` listesinden çıktı.
+
+Kanıt: `diagnosticGetAuth.test.mjs` 3/3. Tokensuz altı uç 401. Admin oturumu Guardian ve Orchestrator status için 200, `configured` false. Aynı admin belirteci DB status için 401. İmzalı hesap tokenı DB status için 200 ve `storage` sqlite. `/api/health` tokensuz 200.
+
+Madde yine 🟡. `/api/health` ve hazırlık alt yolları canlılık yoklaması olarak açık bırakıldı. Guardian ve Orchestrator upstream adresi bu ortamda yok.

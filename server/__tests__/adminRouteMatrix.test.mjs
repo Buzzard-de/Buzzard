@@ -319,7 +319,7 @@ describe("every route with a back-office policy", () => {
   it("lists as public only health, status and sign-in routes", () => {
     for (const entry of PUBLIC_ROUTES) {
       expect(entry, entry).toMatch(
-        /^(GET \/api\/(health(\/[a-z0-9-]+)?|status|categories\/visibility|catalog\/health|storefront\/health|commerce\/(status|readiness|shipping\/methods)|security\/health|p1\/status|orchestrator\/status|guardian\/status)|POST \/api\/admin\/(login|login\/2fa|logout))$/
+        /^(GET \/api\/(health(\/[a-z0-9-]+)?|status|categories\/visibility|catalog\/health|storefront\/health|commerce\/(status|readiness|shipping\/methods)|security\/health|p1\/status)|POST \/api\/admin\/(login|login\/2fa|logout))$/
       );
     }
   });

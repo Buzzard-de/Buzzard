@@ -51,6 +51,8 @@ Madde 17, 23 Kasım 2026 07:28 Europe/Berlin. Yeniden açıldı. Durum 🟡 kald
 
 Madde 16 düzeltme, 23 Kasım 2026 07:37 Europe/Berlin. Commerce çekirdeği ve eski sepet yolu tokensuz istekte kapandı. İki vitrin sözleşmesi durduğu için durum 🟡. Sayılar değişmedi.
 
+Madde 17 düzeltme, 23 Kasım 2026 07:39 Europe/Berlin. Guardian, Orchestrator ve DB status tokensuz istekte 401. `/api/health` açık kaldığı için durum 🟡. Sayılar değişmedi.
+
 - ✅ 0
 - 🟡 95
 - 🔴 1
@@ -223,11 +225,11 @@ Madde 16 düzeltme, 23 Kasım 2026 07:37 Europe/Berlin. Commerce çekirdeği ve 
 
 - GÖREV: Diagnostic / Guardian / Orchestrator / DB GET protection
 - NE İSTİYOR: Unauthenticated diagnostic prefixes 401
-- KOD: `server/lib/routePermissions.js` `PUBLIC_ROUTES` içinde `GET /api/guardian/status` ve `GET /api/orchestrator/status`. `guardianBridgePlugin.js`, `orchestratorBridgePlugin.js`, `databasePlugin.js`. Admin Guardian öneki `security.read`. DB sipariş okuması `dbAuth.requireAuth`.
-- TEST: 23 Kasım 2026 07:28 Europe/Berlin. İzole loopback, tokensuz. `/api/admin/guardian/approvals|incidents|costs` 401. `/api/db/orders` ve `/api/db/admin/orders|products` 401. `/api/guardian/status`, `/api/orchestrator/status`, `/api/db/status`, `/api/health`, `/api/health/db`, `/api/health/security-readiness` 200. Guardian health ve orchestrator agents/tasks 503. Ayrıntı `05_MADDE_17.md`.
-- ENTEGRASYON: Admin Guardian, admin oturumu geçince 503 `guardian_not_configured` döner. Aynı admin tokenı DB sipariş uçlarında `dbAuth` tarafından 401 sayılır. İki kimlik kapısı ayrı.
+- KOD: `guardianBridgePlugin.js` ve `orchestratorBridgePlugin.js` admin oturumu ister. `databasePlugin.js` `/api/db/status` hesap tokenı ister. Bu üçü `PUBLIC_ROUTES` dışına alındı.
+- TEST: 23 Kasım 2026 07:39 Europe/Berlin. `diagnosticGetAuth.test.mjs` 3/3. Tokensuz Guardian, Orchestrator ve DB status 401. Admin oturumu Guardian ve Orchestrator status için 200, ikisi de `configured: false`. Hesap tokenı DB status için 200. `/api/health` tokensuz 200 kaldı.
+- ENTEGRASYON: Admin oturumu DB status kapısından geçmez. Hesap tokenı Guardian status kapısından geçmez. Guardian ve Orchestrator adresi bu ortamda yok.
 - DURUM: 🟡
-- EKSİK: Durum, health ve DB status uçları oturumsuz 401 değil. Yapılandırılmış Guardian veya Orchestrator adresi bu turda yoktu.
+- EKSİK: `/api/health` ve altındaki hazırlık uçları hâlâ herkese açık. Canlılık yoklaması bilinçli olarak kapatılmadı.
 
 ## Madde 18
 

@@ -8,11 +8,13 @@ const { requirePermission } = require("../lib/rbac");
 
 module.exports = {
   register(app) {
-    app.get("/api/guardian/status", async (_req, res) => {
+    app.get("/api/guardian/status", async (req, res) => {
+      if (!requireAuth(req, res)) return;
       res.json(await getGuardianStatus());
     });
 
-    app.get("/api/guardian/health", async (_req, res) => {
+    app.get("/api/guardian/health", async (req, res) => {
+      if (!requireAuth(req, res)) return;
       if (!isGuardianConfigured()) {
         return res.status(503).json({ error: "guardian_not_configured" });
       }

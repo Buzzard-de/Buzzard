@@ -75,7 +75,8 @@ module.exports = {
       console.log(`SQLite catalog sync: ${catalogSync.synced} SKU rows upserted`);
     }
 
-    app.get("/api/db/status", (_req, res) => {
+    app.get("/api/db/status", (req, res) => {
+      if (!requireAuth(req, res)) return;
       res.json({ ok: true, service: "buzzard-backend", version: "0.4.0", storage: "sqlite" });
     });
 

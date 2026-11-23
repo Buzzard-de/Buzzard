@@ -1,0 +1,18 @@
+module,status,evidence,priority
+Product engine,COMPLETE_WITH_LIMITATIONS,Local canonical writer. TecDoc mock.,P1
+Supplier engine,BLOCKED_EXTERNAL,Dry adapters. submitOrder blocked.,P1
+Inventory engine,PARTIAL,Local reserve. Live feed not measured.,P1
+Pricing engine,COMPLETE_WITH_LIMITATIONS,EUR 0.50 floor. Missing cost does not publish.,P1
+Order engine,PARTIAL,Full cancel exists. Partial line cancel does not.,P1
+Customer engine,PARTIAL,Local account. Live mail blocked. Legal review open.,P2
+Payment,COMPLETE_WITH_LIMITATIONS,403 while sales locked. No live capture.,P0
+Logistics,BLOCKED_EXTERNAL,Names and human gate. No label. No lost-shipment automation.,P1
+Pusat,COMPLETE_WITH_LIMITATIONS,Local route and approval. No live model.,P2
+Memory,PARTIAL,SQLite reopen worked. No conflict rule. In-memory store is not durable.,P2
+Voice,BLOCKED_EXTERNAL,Human STT not implemented. No call. No WebRTC media.,P2
+Vision and digital human,NOT_IMPLEMENTED,"PNG and labels. No face, pose, or 3D body.",P2
+AI council,COMPLETE_WITH_LIMITATIONS,Shared rule dispatch. llmCouncil false.,P2
+Security gates,READY_WITH_LIMITATIONS,"Local auth, CSRF, egress. Legal status unverified.",P0
+30 languages,PARTIAL,30 codes. 9 of 330 L2 reviewed.,P2
+EU-27,PARTIAL,VAT and currency rows. No per-country payment methods.,P1
+Production,NOT_READY,productionReady false. No deploy in this pass.,P0

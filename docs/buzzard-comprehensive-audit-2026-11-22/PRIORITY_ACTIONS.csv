@@ -1,0 +1,11 @@
+order,priority,action,kind,why
+1,P0,"Keep the sales lock, egress deny, and productionReady false",Verify,Control already exists
+2,P0,"Do not rebuild local product, order, price, Pusat, or payment-lock code",Verify,Tests passed locally
+3,P2,Recover the original 237 titles if they exist outside this clone,Verify,Titles absent here
+4,P2,Re-test the 149 known checklist lines,Verify,August marks are stale
+5,P1,Specify partial line cancellation before coding it,Develop after a written rule,Function not found
+6,P1,Specify lost-shipment automation before coding it,Develop after a written rule,Function not found
+7,P1,"Sandbox supplier, carrier, tax, and payment with human-held secrets",External,No credential used here
+8,P0,"Counsel reviews GDPR, sanctions, and cross-border requests",Human review,Code is not a legal opinion
+9,P2,Human review of 321 L2 labels,Verify,Do not generate strings
+10,P2,Define memory conflict behavior and restart the API on a database copy,Verify,File reopen is not a process restart

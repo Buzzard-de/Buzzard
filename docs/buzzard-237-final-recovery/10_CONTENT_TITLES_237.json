@@ -1,0 +1,2372 @@
+[
+  {
+    "item_number": 1,
+    "content_title": "Repository baseline and working-tree integrity",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Inspect branch, HEAD, dirty files, ancestry; do not destroy work",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "git status / git log",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 2,
+    "content_title": "Architecture inventory without duplicate systems",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Single Pusat, single approval center, single product write boundary",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "server/lib/pusat, productWriteBoundary, controlCenter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 3,
+    "content_title": "Authentication on protected endpoints",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Unauthenticated callers cannot use protected routes",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "globalAuthMiddleware, wrapRouteHandler",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 4,
+    "content_title": "Authorization / RBAC on protected operations",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Permission checks on admin and AI tool paths",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "rbac.js, routePermissions.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 5,
+    "content_title": "Object-level access and IDOR protection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Cross-customer cart/order/checkout denied",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "commerceGuards.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 6,
+    "content_title": "Admin and customer session separation",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Distinct HttpOnly cookies; no session mix-up",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "auth.js, customerAuth.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 7,
+    "content_title": "Cookie flags HttpOnly, Secure, SameSite",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Session cookies not readable by JS; CSRF companion token",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "admin/customer cookie helpers",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 8,
+    "content_title": "CSRF protection for cookie-authenticated mutations",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Mutating cookie session requires X-Buzzard-CSRF-Token",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "csrf tests",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 9,
+    "content_title": "CORS origin and header policy",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Unlisted Origin rejected; null Origin not trusted unless listed",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "corsOrigins.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 10,
+    "content_title": "Production JWT secret fail-closed",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Empty/default JWT_SECRET throws in production",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "jwtSecret.js, environmentValidation.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 11,
+    "content_title": "Rate limiting remains enabled",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Production cannot set RATE_LIMIT_DISABLED; health has own bucket",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "rateLimitStore.js, server.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 12,
+    "content_title": "Feature flags sales / SoT / live payments parent-child",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Child commercial flags ineffective while sales off; SoT never auto-active",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "commerceFeatureFlags.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 13,
+    "content_title": "Environment validation at startup",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Production rejects test mode, disabled rate limit, default JWT, live payments without sales",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "environmentValidation.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 14,
+    "content_title": "Secrets redaction and secure configuration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No secrets in logs/reports/commits",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "securityLog, guardian.scanSecrets",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 15,
+    "content_title": "Request validation and safe error messages",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Client totals rejected; public errors do not leak internals",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "commerceValidation.js, publicErrorBody",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 16,
+    "content_title": "Guest commerce proof for cart/checkout/order",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Guest without session/token fail-closed",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "commerceGuards, checkoutService, orderService",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 17,
+    "content_title": "Diagnostic / Guardian / Orchestrator / DB GET protection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Unauthenticated diagnostic prefixes 401",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "routePermissions, globalAuthMiddleware",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 18,
+    "content_title": "Data protection and durable storage design",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "App data not persisted in /tmp; intended DB path used",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "dbPaths.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 19,
+    "content_title": "Project integrity: commercial locks stay off",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "SALES, SoT, LIVE_PAYMENTS remain off; no fail-open auth wrappers",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (1–19)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "salesMode.js, process env",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 20,
+    "content_title": "Shared commerce constants and state machines",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Checkout and order transitions enforced",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 21,
+    "content_title": "Common error contracts",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Public error keys without stack traces",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 22,
+    "content_title": "Cart data contract",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Server-owned totals; session binding",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/pricingProfitIntegrity.js`; cartService.js; commerceValidation",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 23,
+    "content_title": "Checkout data contract",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sales lock; guest proof",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/pricingProfitIntegrity.js`; checkoutService.js; commerceValidation",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 24,
+    "content_title": "Order data contract",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Guest token stripped from public map",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 25,
+    "content_title": "Product data contract",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Canonical product fields via PIM core",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 26,
+    "content_title": "Core DB schema and migrations",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Additive software/pusat tables",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 27,
+    "content_title": "Shared quantity and total validation",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Negative qty and client totals rejected",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/pricingProfitIntegrity.js`; commerceValidation.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 28,
+    "content_title": "Idempotency-key plumbing",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sensitive commerce operations accept Idempotency-Key",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 29,
+    "content_title": "Request correlation IDs",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "X-Request-Id / X-Correlation-Id on API",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 30,
+    "content_title": "Software facade is not a second orchestrator",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "server/lib/software wraps existing engines",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "aiAutomationIntegrity.js; software/index.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 31,
+    "content_title": "API health endpoints",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Health remains rate-limited on its own bucket",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 32,
+    "content_title": "Plugin / route registry",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "wrapRouteHandler on registered routes",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 33,
+    "content_title": "Catalog vs commerce mode split",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sales off => catalog mode",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 34,
+    "content_title": "Core shared-service test harness",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Vitest unit suite for commerce core",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (20–34)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/coreRunwayIntegrity.js` plus existing engines",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 35,
+    "content_title": "Pusat orchestrator core",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Initialize, dispatch, health",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "server/lib/pusat",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 36,
+    "content_title": "Agent registry and coordination",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Employee/agent registry",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/agents.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 37,
+    "content_title": "Central AI memory",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Host/kv style memory in Pusat",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat memory modules",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 38,
+    "content_title": "Specialist agents",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Named agents with tools",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/agents.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 39,
+    "content_title": "Task orchestration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Tasks wait on approval",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/lifecycle.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 40,
+    "content_title": "Pusat error handling fail-closed",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Exceptions classified; payments not retried",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/exceptions",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 41,
+    "content_title": "AI governance: cannot self-approve",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "decide() rejects requesting agent / AI identity",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 42,
+    "content_title": "Dispatch idempotency",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Durable read-only dispatch keys",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat idempotency",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 43,
+    "content_title": "Worker integration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Pusat worker hooks",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusatWorkerIntegration tests",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 44,
+    "content_title": "Agent approval requests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "requestApproval bound to input hash",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 45,
+    "content_title": "Pusat exception dead-letter",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Retry then DEAD_LETTER",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "exceptions.shouldRetry",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 46,
+    "content_title": "Memory and Guardian tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Guardian deny + memory tests",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusatMemoryGuardian.test.mjs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 47,
+    "content_title": "Stub vs live LLM providers",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub default; live not claimed",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "aiProviders.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 48,
+    "content_title": "AI tool rate limit",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Guardian per-agent rate window",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 49,
+    "content_title": "Agent isolation via permissions",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "aiCanExecute + tool allow-list",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "rbac + guardian",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 50,
+    "content_title": "Sensitive action classification",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "SENSITIVE_ACTIONS require approval",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/constants",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 51,
+    "content_title": "Orchestrator HTTP protection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "GET /api/orchestrator prefix authenticated",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "routePermissions",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 52,
+    "content_title": "Automations non-destructive",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No autonomous money movement",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat automations",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 53,
+    "content_title": "Cross-process memory proof",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Documented in AI completion",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "docs/ai-automation-completion",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 54,
+    "content_title": "Recommendation-only assistants",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Cannot execute commercial side effects",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/agents.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 55,
+    "content_title": "Pusat health/status",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Health reports stub/live honestly",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (35–55)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/health.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 56,
+    "content_title": "Canonical product model",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "productCore create/read",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 57,
+    "content_title": "PIM write boundary",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "authorizeCreate/Update/Delete; actor from session",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 58,
+    "content_title": "Customer-facing taxonomy L1",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "50 customer L1 categories",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 59,
+    "content_title": "Category localization",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "DE/EN/TR/AR labels",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 60,
+    "content_title": "Product validation",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "PIM validation / customs decision",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 61,
+    "content_title": "Product SoT readiness while inactive",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "activationStatus.activated false even if env flag",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 62,
+    "content_title": "Dual-write forbidden",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "assertNoDualWrite throws",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 63,
+    "content_title": "SKU uniqueness",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "productStore uniqueness",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 64,
+    "content_title": "Catalog SEO",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "createProduct active=0",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 65,
+    "content_title": "JSON product store",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Optional BUZZARD_PRODUCT_STORE_PATH",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 66,
+    "content_title": "PIM import dry-run",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live import without flag",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 67,
+    "content_title": "PIM publish gated",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Publish not SoT activation",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 68,
+    "content_title": "Storefront catalog read",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "catalogCache / catalogReadService",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 69,
+    "content_title": "Search index local",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "sync-search-index; not live OpenSearch",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 70,
+    "content_title": "Product i18n",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "fill-product-i18n-gaps",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 71,
+    "content_title": "Customs validation on products",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "validateCustomsDecision",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 72,
+    "content_title": "Catalog / PIM health",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "pimCatalog plugin health",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 73,
+    "content_title": "SoT activation remains human-gated",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "humanApprovalRequired true",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 74,
+    "content_title": "No invented live prices or images",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Catalog mode; no fake LIVE_VERIFIED prices",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (56–74)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/catalogIntegrity.js`; pimPublish; sotActivation; taxonomyCanonical; productWriteBoundary; search.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 75,
+    "content_title": "Pricing engine",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "server/lib/pricing.js",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 76,
+    "content_title": "Profit calculation / MIN_NET_PROFIT",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "MIN_NET_PROFIT_EUR 0.50",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 77,
+    "content_title": "Supplier integration framework",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Connector inventory; no real PO",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 78,
+    "content_title": "Supplier normalization",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Feed dry-run CSV/XML/JSON",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 79,
+    "content_title": "Inventory synchronization (local)",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "stockEngine",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 80,
+    "content_title": "Supplier availability",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Adapter class / mock",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 81,
+    "content_title": "Shipping cost calculation local",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "shippingProvider stubs",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 82,
+    "content_title": "Pricing safeguards / no undercut",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "MARKET_UNDERCUT_IMPLEMENTED false",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "NOT_APPLICABLE_WITH_EVIDENCE",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 83,
+    "content_title": "Supplier feeds dry-run only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live fetch",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 84,
+    "content_title": "No real purchase orders",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "supplierOrdersEnabled false",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 85,
+    "content_title": "Stock engine",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "operations/stockEngine.js",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 86,
+    "content_title": "WMS reserve vs software reserve",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Two tables; shared audit only",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 87,
+    "content_title": "Inter-Cars adapter class",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sandbox/mock; no live order",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "BLOCKED_EXTERNAL_DEPENDENCY",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 88,
+    "content_title": "TecDoc adapter class",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Classification / adapter",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "BLOCKED_EXTERNAL_DEPENDENCY",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 89,
+    "content_title": "Price snapshot on cart",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "priceSnapshot field",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 90,
+    "content_title": "Currency handling",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Market currency",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 91,
+    "content_title": "Market price rules",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Per-market config",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 92,
+    "content_title": "Supplier connector inventory honesty",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "class NOT_IMPLEMENTED where true",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 93,
+    "content_title": "Supplier retry/idempotency",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Fail-closed outage",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 94,
+    "content_title": "Fail-closed supplier outage",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Malformed/outage not treated as stock",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (75–94)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/supplierStockIntegrity.js`; supplierFeeds; inventory; stockEngine; interCarsAdapter; tecdocAdapter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 95,
+    "content_title": "Cart service",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Session-bound writes",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 96,
+    "content_title": "Checkout service",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sales lock + guest proof",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 97,
+    "content_title": "Order service",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "skipAccessCheck only internal",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 98,
+    "content_title": "Stripe payment adapter",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Live HTTP requires sales AND LIVE_PAYMENTS",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 99,
+    "content_title": "PayPal payment adapter",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Same live gate",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 100,
+    "content_title": "Dual payment engine",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Diagnostics use effective flags not raw env",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 101,
+    "content_title": "Finance confirm fail-closed",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "PROVIDER_CONFIRMATION_REQUIRED 409",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 102,
+    "content_title": "Refund fail-closed",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "PROVIDER_REFUND_REQUIRED 409",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 103,
+    "content_title": "Returns RMA",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Customer refund ≠ supplier credit",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 104,
+    "content_title": "Financial reconciliation local",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No invented revenue",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 105,
+    "content_title": "Payment idempotency",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Timeout UNCERTAIN never retried as success",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 106,
+    "content_title": "Fraud safeguards",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Client cannot mark paid",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 107,
+    "content_title": "Financial authorization",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Finance endpoints not public",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 108,
+    "content_title": "Live payments gated",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "livePaymentsEnabled false in this workspace",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 109,
+    "content_title": "Webhook signature verification",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Unsigned cannot mark paid",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 110,
+    "content_title": "Guest checkout proof",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "401 without proof",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 111,
+    "content_title": "Order identity / QR",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Phase 3 identity",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 112,
+    "content_title": "Loyalty non-abuse",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Cannot mint value via guest IDOR",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 113,
+    "content_title": "Official payment ingress",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Single official webhook path",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (95–113)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/orderPaymentReturnIntegrity.js`; orders; payments; returns; stripeAdapter; paypalAdapter; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 114,
+    "content_title": "Marketplace hub classification",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Classification only for missing channels",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "marketplaceHub",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 115,
+    "content_title": "Listing model without live publish",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Mutations gated",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "marketplace software",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 116,
+    "content_title": "Market configuration 35 markets",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "market-engine registry",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "lib/market-engine",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 117,
+    "content_title": "VAT configuration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Per-market VAT",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "market engine / tax",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 118,
+    "content_title": "Localization 30 locales",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "lib/i18n",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "lib/i18n",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 119,
+    "content_title": "Multilingual storefront",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Locale hydration must not rewrite wrongly",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "homepage-multicategory ancestry",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 120,
+    "content_title": "International expansion registry",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Markets listed",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "market-engine",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 121,
+    "content_title": "Marketplace readiness flags",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Live publish off",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "feature flags",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 122,
+    "content_title": "Amazon/eBay class if present",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Inventory honesty",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "connectorInventory",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 123,
+    "content_title": "OTTO classification-only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live adapter claimed",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "REMAINING_SOFTWARE_WORK",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 124,
+    "content_title": "eMAG classification-only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live adapter",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "same",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 125,
+    "content_title": "Skroutz classification-only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live adapter",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "same",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 126,
+    "content_title": "bol.com classification-only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live adapter",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "same",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 127,
+    "content_title": "Cdiscount classification-only",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live adapter",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "same",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 128,
+    "content_title": "Channel mapping",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Hub vs software lists",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "marketplaceHub",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 129,
+    "content_title": "Marketplace mutations gated",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No publish without approval",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "",
+    "files_named_in_register": "approval + flags",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 130,
+    "content_title": "RTL markets",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "RTL CSS",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "storefront CSS",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 131,
+    "content_title": "Country and language independence",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Locale not rewritten on market hydrate",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "i18n",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 132,
+    "content_title": "Market engine registry tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Vitest market checks",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "market tests",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 133,
+    "content_title": "Currency per market",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Registry currency",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "market-engine",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 134,
+    "content_title": "Legal pages per market",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Impressum redirects historically",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts/sync-redirects",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 135,
+    "content_title": "Feed export dry-run",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live marketplace push",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "software feeds",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 136,
+    "content_title": "No live listing this session",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Policy",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (114–136)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "safety rules",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 137,
+    "content_title": "Homepage",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Storefront home",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 138,
+    "content_title": "Navigation / mega menu",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Desktop mega menu",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 139,
+    "content_title": "Product pages",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "PDP 200 / unknown 404",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 140,
+    "content_title": "Search UI",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Storefront search",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 141,
+    "content_title": "Responsive layouts",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Mobile homepage work",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 142,
+    "content_title": "Customer experience readiness",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "customerExperienceReadiness",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "customerExperienceReadiness.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 143,
+    "content_title": "Accessibility",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Not a full WCAG audit this session",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 144,
+    "content_title": "Language selection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Locale switcher",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "marketplaceInternationalIntegrity.js; LanguageSelector.tsx",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 145,
+    "content_title": "Country selection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Market switcher",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "marketplaceInternationalIntegrity.js; CountrySelector.tsx",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 146,
+    "content_title": "RTL CSS",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Arabic/Hebrew direction",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "marketplaceInternationalIntegrity.js; styles/rtl.css",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 147,
+    "content_title": "UI regression Playwright",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Isolated :3010 static + :3001 API",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "",
+    "files_named_in_register": "e2e/",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 148,
+    "content_title": "Mobile homepage",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Phone layouts",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 149,
+    "content_title": "Category boxes and drawers",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Phone drawers",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 150,
+    "content_title": "Admin UI pages",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Control Center / PIM / Sessions",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 151,
+    "content_title": "Cart and account chrome",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Header cart",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (137–151)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/storefrontRunwayIntegrity.js` plus existing UI",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 152,
+    "content_title": "Shipping data models",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "shipmentGate",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`server/lib/software/shipmentGate.js`, `eta.js`",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 153,
+    "content_title": "Customer operations",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "customerOrderBridge",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "customerOrderBridge",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 154,
+    "content_title": "Tracking UI",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Scan-based stub; not GPS",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "`carriers.js`, `tracking.js`, `eta.js`, `liveMap.js`",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 155,
+    "content_title": "Notifications draft / send blocked",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "communications.js send BLOCKED",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "software/communications.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 156,
+    "content_title": "Customer accounts",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "customerAuth login rate limit",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "logisticsCustomerIntegrity.js; customerAuth.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 157,
+    "content_title": "Returns workflows",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "RMA + ledger",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "logisticsCustomerIntegrity.js; software/returns.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 158,
+    "content_title": "Carrier adapter DHL",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 159,
+    "content_title": "Carrier adapter DPD",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 160,
+    "content_title": "Carrier adapter GLS",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 161,
+    "content_title": "Carrier adapter Hermes",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 162,
+    "content_title": "Carrier adapter UPS",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Stub",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 163,
+    "content_title": "No real label purchase",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Policy",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "safety",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 164,
+    "content_title": "Operational visibility",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Control Center events",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "logisticsCustomerIntegrity.js; controlCenter.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 165,
+    "content_title": "Communications module",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Send always BLOCKED",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "communications.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 166,
+    "content_title": "Customer order bridge",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Existing engine",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "logisticsCustomerIntegrity.js; customerAccess.js; customerOrderBridge.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 167,
+    "content_title": "Scan-based tracking honesty",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "carriers note not live GPS",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (152–167)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "carriers.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 168,
+    "content_title": "Human Approval Center",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "controlCenter delegates to pusat.approval",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 169,
+    "content_title": "Exception handling",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Pusat exceptions",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/exceptions",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 170,
+    "content_title": "Approval policies",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "TTL, risk, requiredApprover",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 171,
+    "content_title": "Approver identity required",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Empty decidedBy rejected on approve",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "isForbiddenApprover",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 172,
+    "content_title": "Financial-impact recorded",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "financialImpact on metadata",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 173,
+    "content_title": "Action input hashes",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "hashInput bind",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/hash.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 174,
+    "content_title": "Approval expiration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "expireDue",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 175,
+    "content_title": "Replay protection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Second decide duplicate",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 176,
+    "content_title": "Audit trails",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "controlCenter.recordSystemEvent",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 177,
+    "content_title": "Controlled execution",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "assertBound before execute",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.assertBound",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 178,
+    "content_title": "AI cannot self-approve",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "requestingAgent match rejected",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.decide",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 179,
+    "content_title": "Pending-action list",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "listApprovals PENDING",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter.listApprovals",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 180,
+    "content_title": "Revalidate before execute",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "assertBound hash check",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 181,
+    "content_title": "Control Center = Pusat approval",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No unbound insert path",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter.createApproval",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 182,
+    "content_title": "High-impact gated actions catalog",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sales, SoT, live pay, PO, listing, ship, deploy",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (168–182)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "software/gatedActions.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 183,
+    "content_title": "Structured logs",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "securityLog + correlation",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "testReliabilityOpsIntegrity.js; securityLog.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 184,
+    "content_title": "Metrics",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Limited local counters",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "productionHealth",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 185,
+    "content_title": "Alerting",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Not a live pager",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "BLOCKED_EXTERNAL_DEPENDENCY",
+    "files_named_in_register": "ops",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 186,
+    "content_title": "Backup",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "scripts/backup-db.mjs",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "backup-db.mjs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 187,
+    "content_title": "Restore",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "restore-db.mjs --dry-run",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "restore-db.mjs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 188,
+    "content_title": "Persistence design",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Intended durable disk not /tmp",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "dbPaths, RENDER docs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 189,
+    "content_title": "Recovery",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Local operations pack",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "ops:local",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 190,
+    "content_title": "Incident evidence",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Reports in docs/software-completion",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "docs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 191,
+    "content_title": "Operational diagnostics",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "provider-diagnostics, health",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 192,
+    "content_title": "Correlation IDs",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "X-Request-Id",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "correlationContext",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 193,
+    "content_title": "Security event log",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "logSecurityEvent rate limit + guardian",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "securityLog.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 194,
+    "content_title": "Health / software report",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "/api/health/software",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "softwareCompletionPlugin",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 195,
+    "content_title": "No /tmp as durable app store",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Policy + dbPaths",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (183–195)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "dbPaths.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 196,
+    "content_title": "Unit tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "vitest run",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "package.json test:unit; testReliabilityOpsIntegrity.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 197,
+    "content_title": "Integration tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "software + commerce",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "testReliabilityOpsIntegrity.js; server/__tests__",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 198,
+    "content_title": "API security tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "fortressAuthz, csrf, cors, guest",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "fortressAuthz.test.mjs csrf.test.mjs corsOrigins.test.mjs guestCommerceAccess.test.mjs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 199,
+    "content_title": "E2E tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Playwright",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "e2e/",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 200,
+    "content_title": "Regression tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Locked manifests on other branches",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "testReliabilityOpsIntegritySoftware.test.mjs + locked pack",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 201,
+    "content_title": "Load-related safe checks",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Rate limiter unit",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "testReliabilityOpsIntegrity.js; rateLimitStore.test.mjs",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 202,
+    "content_title": "Production build",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "next build isolated",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "package.json build",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 203,
+    "content_title": "Lint",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "next lint",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "package.json lint",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 204,
+    "content_title": "Typecheck",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "tsc --noEmit",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "package.json typecheck",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 205,
+    "content_title": "Release quality",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "CI UNKNOWN for PR head vs local",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "GitHub",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 206,
+    "content_title": "CSRF and CORS tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "csrf.test.mjs corsOrigins",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "csrf.test.mjs; corsOrigins.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 207,
+    "content_title": "Finance and idempotency tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "fortressAuthz / dualPayment",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "dualPaymentAdapters.test.mjs; officialPaymentIngress",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 208,
+    "content_title": "Human approval tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "pusatApprovalExceptions, controlCenter bridge",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "aiAutomationIntegrity.js; pusat/approval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 209,
+    "content_title": "Authz and IDOR tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "guestCommerceAccess",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guestCommerceAccess.test.mjs; commerceGuards.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 210,
+    "content_title": "Dependency audit",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "npm audit --audit-level=high",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "package.json security:audit",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 211,
+    "content_title": "Backup/restore tests",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "test:backup-restore dry-run",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 212,
+    "content_title": "CI evidence",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "PR #430 checks",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (196–212)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "GitHub",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 213,
+    "content_title": "Production environment configuration",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Cannot change production env",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "safety",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 214,
+    "content_title": "Deployment preparation",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Scripts exist; no deploy",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "start-production, render",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 215,
+    "content_title": "External integrations inventory",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "externalIntegrations.js",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "software/externalIntegrations.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 216,
+    "content_title": "Secrets handling",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No secrets in git",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "policy",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 217,
+    "content_title": "Monitoring",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Local health only",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "ops",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 218,
+    "content_title": "Commercial readiness",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Sales off is truthful catalog mode",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "salesMode",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 219,
+    "content_title": "Launch controls",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "goLiveApproval",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "goLiveApproval.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 220,
+    "content_title": "Render persistence",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Prior proof branch; this HEAD UNKNOWN",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "docs RENDER",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 221,
+    "content_title": "DNS and access policy",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "No live DNS change",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "safety",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 222,
+    "content_title": "Go-live verify script",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "verify-go-live.mjs",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 223,
+    "content_title": "Provider diagnostics",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "provider-diagnostics.mjs",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 224,
+    "content_title": "Production safety script",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "production-safety.mjs",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "scripts",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 225,
+    "content_title": "First real customer order",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Irreversible",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "safety",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 226,
+    "content_title": "Merge and production deploy",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Forbidden without human",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (213–226)",
+    "register_status": "HUMAN_APPROVAL_REQUIRED",
+    "files_named_in_register": "git/PR",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 227,
+    "content_title": "Threat detection (safe)",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Guardian DANGEROUS_PATTERN",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "pusat/guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 228,
+    "content_title": "Authorization enforcement (Guardian)",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "aiCanExecute",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 229,
+    "content_title": "Anomaly detection",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Rate + dangerous pattern",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 230,
+    "content_title": "Security telemetry",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "guardian.deny events",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter + securityLog",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 231,
+    "content_title": "Containment safeguards",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Deny/fail-closed only; no autonomous destructive containment",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 232,
+    "content_title": "Auditability",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "guardian.allow/deny system events",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "controlCenter",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 233,
+    "content_title": "Agent isolation",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Tool allow-list + identity required",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.evaluateUnsafe",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 234,
+    "content_title": "Incident response playbooks",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "Docs + deny path",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "docs GUARDIAN_DE",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 235,
+    "content_title": "Secret scanning in Guardian",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "scanSecrets",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.js",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 236,
+    "content_title": "Dangerous pattern block",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "purchase/refund/wire/drop table",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "DANGEROUS_PATTERN",
+    "original_title": "UNKNOWN"
+  },
+  {
+    "item_number": 237,
+    "content_title": "Guardian evaluation fail-closed",
+    "title_taken_from": "Established scope",
+    "what_it_assigns": "evaluate() catches and denies",
+    "why_it_is_there": "SCOPE_ESTABLISHED_FROM_DIRECTIVE_CATEGORY_BAND (227–237)",
+    "register_status": "PARTIAL",
+    "files_named_in_register": "guardian.evaluate",
+    "original_title": "UNKNOWN"
+  }
+]

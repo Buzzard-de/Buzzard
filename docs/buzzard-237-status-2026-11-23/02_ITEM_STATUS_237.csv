@@ -114,21 +114,21 @@ item,task,criterion,code,test_evidence,status,gap
 113,Official payment ingress,Single official webhook path,"`POST /api/webhooks/payment`, `POST /api/webhooks/:provider`, `POST /api/payments-finance/webhook`.",23 Kasım 2026 10:51 Europe/Berlin. Üç kayıt duruyor. İmzasız finans doğrulayıcısı reddediyor.,🟡,Birden fazla webhook yolu var.
 114,Marketplace hub classification,Classification only for missing channels,`marketplaceConnectorRegistry`. 10 kanal. `decidePublish` `live: false`.,23 Kasım 2026 10:51 Europe/Berlin. `snapshot().anyLive` false.,🟡,Canlı pazar yeri hesabı yok.
 115,Listing model without live publish,Mutations gated,`decidePublish` yayın bayrağı ve kimlik olmadan `LIVE_CONNECTION_BLOCKED` veya doğrulama hatası. `live` false.,23 Kasım 2026 10:51 Europe/Berlin. `live` false.,🟡,Her kanalın liste yazması HTTP ile denenmedi.
-116,Market configuration 35 markets,market-engine registry,bu turda maddeye özel dosya açılmadı,Aranan iz: `market`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-117,VAT configuration,Per-market VAT,server/lib/buzzardNative/core/tradeFlow.js,Bu ağaçta `vatEngine` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-118,Localization 30 locales,lib/i18n,bu turda maddeye özel dosya açılmadı,Aranan iz: `supported-locales`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-119,Multilingual storefront,Locale hydration must not rewrite wrongly,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-120,International expansion registry,Markets listed,bu turda maddeye özel dosya açılmadı,Aranan iz: `europe`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-121,Marketplace readiness flags,Live publish off,server/lib/marketplace/marketplaceConnectorRegistry.js,Bu ağaçta `LIVE_CONNECTION_BLOCKED` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-122,Amazon/eBay class if present,Inventory honesty,bu turda maddeye özel dosya açılmadı,Aranan iz: `amazon`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-123,OTTO classification-only,No live adapter claimed,server/lib/marketplace/marketplaceConnectorRegistry.js,otto kanalı listede.,🟡,Canlı OTTO adaptörü yok.
-124,eMAG classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,emag kanalı listede.,🟡,Canlı eMAG yok.
-125,Skroutz classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,skroutz kanalı listede.,🟡,Canlı Skroutz yok.
-126,bol.com classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,bol kanalı listede.,🟡,Canlı bol.com yok.
-127,Cdiscount classification-only,No live adapter,server/lib/marketplace/marketplaceConnectorRegistry.js,cdiscount kanalı listede.,🟡,Canlı Cdiscount yok.
-128,Channel mapping,Hub vs software lists,bu turda maddeye özel dosya açılmadı,Aranan iz: `channel`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-129,Marketplace mutations gated,No publish without approval,server/lib/marketplace/marketplaceConnectorRegistry.js,decidePublish LIVE_CONNECTION_BLOCKED döner.,🟡,Canlı yayın insan ve kimlik bilgisi ister.
-130,RTL markets,RTL CSS,bu turda maddeye özel dosya açılmadı,Aranan iz: `rtl`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+116,Market configuration 35 markets,market-engine registry,`ab27Tax.AB27` 27 ülke. `taxPools.POOL_COUNTRIES` 26. Ayrı bir 35 pazar motoru yok.,23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.mjs` 2/2. Uzunluk 27 ve 26.,🟡,35 pazarlık market-engine kaydı yok.
+117,VAT configuration,Per-market VAT,"`getStandardVat`. DE 19, GR `EL` 24. ABD null.",23 Kasım 2026 10:53 Europe/Berlin. Üçü geçti. Havuz `paymentAuthority` false.,🟡,Lisanslı vergi motoru yok.
+118,Localization 30 locales,lib/i18n,`lib/i18n/supported-locales.json`. `server/lib/i18nCatalog.js`.,23 Kasım 2026 10:53 Europe/Berlin. Listede `ar` var. Uzunluk en az 30.,🟡,Her vitrin dizesi bu turda çevrilmedi.
+119,Multilingual storefront,Locale hydration must not rewrite wrongly,Pazar hidrasyonu ile dili yeniden yazan bir fonksiyon bulunamadı.,23 Kasım 2026 10:53 Europe/Berlin. `hydrate` araması pazar dilini kapsamıyor.,🟡,Hidrasyon fonksiyonu olmadığı için yanlış yazma senaryosu çalıştırılamadı.
+120,International expansion registry,Markets listed,AB27 listesi ve desteklenen diller.,23 Kasım 2026 10:53 Europe/Berlin. 27 ülke ve en az 30 dil.,🟡,35 pazar listesi yok.
+121,Marketplace readiness flags,Live publish off,`marketplaceConnectorRegistry.snapshot`.,23 Kasım 2026 10:53 Europe/Berlin. `anyLive` false. `allBlocked` true.,🟡,Canlı mağaza hesabı yok.
+122,Amazon/eBay class if present,Inventory honesty,`carrierAdapters.dryRun`. Etiket `LIVE_SHIPMENT_BLOCKED`.,23 Kasım 2026 10:53 Europe/Berlin. Etiket reddedildi. Fiyat teklifi `live` false.,🟡,Depo sayımı bu maddede açılmadı.
+123,OTTO classification-only,No live adapter claimed,Taşıyıcı `dryRun` `live: false`.,23 Kasım 2026 10:53 Europe/Berlin. DE teklif canlı değil.,🟡,Canlı taşıyıcı hesabı yok.
+124,eMAG classification-only,No live adapter,Aynı kuru taşıyıcı kapısı.,23 Kasım 2026 10:53 Europe/Berlin. Etiket oluşturma bloke.,🟡,Her ağ ayrı çağrılmadı.
+125,Skroutz classification-only,No live adapter,`NETWORKS` kuru. `live` false.,23 Kasım 2026 10:53 Europe/Berlin. Teklif canlı değil.,🟡,DHL hesabı yok.
+126,bol.com classification-only,No live adapter,Etiket eylemi `LIVE_SHIPMENT_BLOCKED`.,23 Kasım 2026 10:53 Europe/Berlin. Kod geçti.,🟡,Etiket sağlayıcısı yok.
+127,Cdiscount classification-only,No live adapter,Dönüş ve iptal akışları kuru çalışma tablosunda.,23 Kasım 2026 10:53 Europe/Berlin. Canlı gönderi kapalı.,🟡,İade etiketi sağlayıcısı yok.
+128,Channel mapping,Hub vs software lists,Hub kapsamı 50. AB27 27. Dil listesi en az 30.,23 Kasım 2026 10:53 Europe/Berlin. 27 ve dil listesi ölçüldü. Hub 50 madde 58'de.,🟡,Üç listenin birebir eşlemesi yok.
+129,Marketplace mutations gated,No publish without approval,`snapshot().allBlocked`. Yayın insan onayı olmadan canlı değil.,23 Kasım 2026 10:53 Europe/Berlin. `allBlocked` true.,🟡,Onay kuyruğundan ilana giden uç bu turda çağrılmadı.
+130,RTL markets,RTL CSS,"`styles/rtl.css` `html[dir=""rtl""]`.",23 Kasım 2026 10:53 Europe/Berlin. Seçici dosyada duruyor.,🟡,Görsel RTL turu bu oturumda yok.
 131,Country and language independence,Locale not rewritten on market hydrate,bu turda maddeye özel dosya açılmadı,Aranan iz: `languageIndependence`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 132,Market engine registry tests,Vitest market checks,bu turda maddeye özel dosya açılmadı,Aranan iz: `marketEngine`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 133,Currency per market,Registry currency,bu turda maddeye özel dosya açılmadı,Aranan iz: `currency`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.

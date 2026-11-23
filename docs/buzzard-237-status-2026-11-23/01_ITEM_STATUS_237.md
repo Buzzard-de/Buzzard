@@ -95,6 +95,14 @@ Madde 89–115, 23 Kasım 2026 10:51 Europe/Berlin. `items89to115Commerce.test.m
 - ⛔ 1
 - ⚪ 86
 
+Madde 116–130, 23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.mjs` 2/2. Yedi madde ⚪ iken 🟡 oldu. 35 pazar kaydı yok. Canlı yayın ve canlı gönderi kapalı.
+
+- ✅ 3
+- 🟡 146
+- 🔴 8
+- ⛔ 1
+- ⚪ 79
+
 ## Maddeler
 
 ## Madde 1
@@ -1251,151 +1259,151 @@ Madde 89–115, 23 Kasım 2026 10:51 Europe/Berlin. `items89to115Commerce.test.m
 
 - GÖREV: Market configuration 35 markets
 - NE İSTİYOR: market-engine registry
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `market`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `ab27Tax.AB27` 27 ülke. `taxPools.POOL_COUNTRIES` 26. Ayrı bir 35 pazar motoru yok.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. `items116to130Markets.test.mjs` 2/2. Uzunluk 27 ve 26.
+- ENTEGRASYON: AB vergi anlığı. Canlı vergi dairesi yok.
+- DURUM: 🟡
+- EKSİK: 35 pazarlık market-engine kaydı yok.
 
 ## Madde 117
 
 - GÖREV: VAT configuration
 - NE İSTİYOR: Per-market VAT
-- KOD: server/lib/buzzardNative/core/tradeFlow.js
-- TEST: Bu ağaçta `vatEngine` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `getStandardVat`. DE 19, GR `EL` 24. ABD null.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Üçü geçti. Havuz `paymentAuthority` false.
+- ENTEGRASYON: Standart oran anlığı. İndirimli oran yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Lisanslı vergi motoru yok.
 
 ## Madde 118
 
 - GÖREV: Localization 30 locales
 - NE İSTİYOR: lib/i18n
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `supported-locales`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `lib/i18n/supported-locales.json`. `server/lib/i18nCatalog.js`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Listede `ar` var. Uzunluk en az 30.
+- ENTEGRASYON: Yerel liste. Canlı çeviri servisi yok.
+- DURUM: 🟡
+- EKSİK: Her vitrin dizesi bu turda çevrilmedi.
 
 ## Madde 119
 
 - GÖREV: Multilingual storefront
 - NE İSTİYOR: Locale hydration must not rewrite wrongly
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `locale`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Pazar hidrasyonu ile dili yeniden yazan bir fonksiyon bulunamadı.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. `hydrate` araması pazar dilini kapsamıyor.
+- ENTEGRASYON: Yeniden yazan bir akış yok.
+- DURUM: 🟡
+- EKSİK: Hidrasyon fonksiyonu olmadığı için yanlış yazma senaryosu çalıştırılamadı.
 
 ## Madde 120
 
 - GÖREV: International expansion registry
 - NE İSTİYOR: Markets listed
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `europe`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: AB27 listesi ve desteklenen diller.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. 27 ülke ve en az 30 dil.
+- ENTEGRASYON: İki ayrı liste.
+- DURUM: 🟡
+- EKSİK: 35 pazar listesi yok.
 
 ## Madde 121
 
 - GÖREV: Marketplace readiness flags
 - NE İSTİYOR: Live publish off
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: Bu ağaçta `LIVE_CONNECTION_BLOCKED` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `marketplaceConnectorRegistry.snapshot`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. `anyLive` false. `allBlocked` true.
+- ENTEGRASYON: Yayın kapalı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Canlı mağaza hesabı yok.
 
 ## Madde 122
 
 - GÖREV: Amazon/eBay class if present
 - NE İSTİYOR: Inventory honesty
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `amazon`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `carrierAdapters.dryRun`. Etiket `LIVE_SHIPMENT_BLOCKED`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Etiket reddedildi. Fiyat teklifi `live` false.
+- ENTEGRASYON: Stok ve gönderi canlı sayılmıyor.
+- DURUM: 🟡
+- EKSİK: Depo sayımı bu maddede açılmadı.
 
 ## Madde 123
 
 - GÖREV: OTTO classification-only
 - NE İSTİYOR: No live adapter claimed
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: otto kanalı listede.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: Taşıyıcı `dryRun` `live: false`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. DE teklif canlı değil.
+- ENTEGRASYON: Ulusal posta API'si yapılandırılmadı.
 - DURUM: 🟡
-- EKSİK: Canlı OTTO adaptörü yok.
+- EKSİK: Canlı taşıyıcı hesabı yok.
 
 ## Madde 124
 
 - GÖREV: eMAG classification-only
 - NE İSTİYOR: No live adapter
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: emag kanalı listede.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: Aynı kuru taşıyıcı kapısı.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Etiket oluşturma bloke.
+- ENTEGRASYON: Canlı adaptör iddiası yok.
 - DURUM: 🟡
-- EKSİK: Canlı eMAG yok.
+- EKSİK: Her ağ ayrı çağrılmadı.
 
 ## Madde 125
 
 - GÖREV: Skroutz classification-only
 - NE İSTİYOR: No live adapter
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: skroutz kanalı listede.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `NETWORKS` kuru. `live` false.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Teklif canlı değil.
+- ENTEGRASYON: Canlı adaptör yok.
 - DURUM: 🟡
-- EKSİK: Canlı Skroutz yok.
+- EKSİK: DHL hesabı yok.
 
 ## Madde 126
 
 - GÖREV: bol.com classification-only
 - NE İSTİYOR: No live adapter
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: bol kanalı listede.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: Etiket eylemi `LIVE_SHIPMENT_BLOCKED`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Kod geçti.
+- ENTEGRASYON: Canlı adaptör yok.
 - DURUM: 🟡
-- EKSİK: Canlı bol.com yok.
+- EKSİK: Etiket sağlayıcısı yok.
 
 ## Madde 127
 
 - GÖREV: Cdiscount classification-only
 - NE İSTİYOR: No live adapter
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: cdiscount kanalı listede.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: Dönüş ve iptal akışları kuru çalışma tablosunda.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Canlı gönderi kapalı.
+- ENTEGRASYON: Canlı adaptör yok.
 - DURUM: 🟡
-- EKSİK: Canlı Cdiscount yok.
+- EKSİK: İade etiketi sağlayıcısı yok.
 
 ## Madde 128
 
 - GÖREV: Channel mapping
 - NE İSTİYOR: Hub vs software lists
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `channel`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Hub kapsamı 50. AB27 27. Dil listesi en az 30.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. 27 ve dil listesi ölçüldü. Hub 50 madde 58'de.
+- ENTEGRASYON: Listeler ayrı.
+- DURUM: 🟡
+- EKSİK: Üç listenin birebir eşlemesi yok.
 
 ## Madde 129
 
 - GÖREV: Marketplace mutations gated
 - NE İSTİYOR: No publish without approval
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: decidePublish LIVE_CONNECTION_BLOCKED döner.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `snapshot().allBlocked`. Yayın insan onayı olmadan canlı değil.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. `allBlocked` true.
+- ENTEGRASYON: Onaysız yayın yok.
 - DURUM: 🟡
-- EKSİK: Canlı yayın insan ve kimlik bilgisi ister.
+- EKSİK: Onay kuyruğundan ilana giden uç bu turda çağrılmadı.
 
 ## Madde 130
 
 - GÖREV: RTL markets
 - NE İSTİYOR: RTL CSS
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `rtl`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `styles/rtl.css` `html[dir="rtl"]`.
+- TEST: 23 Kasım 2026 10:53 Europe/Berlin. Seçici dosyada duruyor.
+- ENTEGRASYON: Stil sayfası. Tarayıcıda Arapça sayfa açılmadı.
+- DURUM: 🟡
+- EKSİK: Görsel RTL turu bu oturumda yok.
 
 ## Madde 131
 

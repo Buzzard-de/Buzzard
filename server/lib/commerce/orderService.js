@@ -203,18 +203,31 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
 }
 
 function getOrder(orderId, ctx = {}) {
+  if (ctx.req) {
+    const { assertCommerceCredential } = require("./commerceGuards");
+    const credential = assertCommerceCredential(ctx.req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+  }
   const row = db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(orderId);
   if (!row) return { error: "order_not_found", status: 404 };
 
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: row.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "order",
-    req: ctx.req,
-  });
-  if (access?.blocked && row.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  const { assertCustomerResourceAccess, refuseIdentityLessRecord } = require("./commerceGuards");
+  const identityBlock = refuseIdentityLessRecord(row, ctx, "order");
+  if (identityBlock?.blocked) {
+    return { error: identityBlock.code, status: identityBlock.status || 401, blocked: true, message: identityBlock.message };
+  }
+  if (!ctx.req) {
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: row.customer_id,
+      requestCustomerId: ctx.customerId,
+      resourceType: "order",
+      req: ctx.req,
+    });
+    if (access?.blocked && row.customer_id) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   return mapOrder(row);

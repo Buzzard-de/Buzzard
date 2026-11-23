@@ -64,7 +64,9 @@ module.exports = {
         sessionId: body.sessionId,
         country: body.country,
         currency: body.currency,
+        req,
       });
+      if (cart.error) return res.status(cart.status || 400).json({ success: false, errorKey: cart.error, ...cart });
       res.json({ success: true, ...cart });
     });
 
@@ -218,11 +220,16 @@ module.exports = {
 
     app.post("/api/commerce/checkout/attempt", (req, res) => {
       if (!rateLimit(req, res, readinessRateLimit)) return;
+      const credential = commerce.assertCommerceCredential(req);
+      if (!credential || credential.blocked) {
+        return res.status(401).json({ success: false, errorKey: "auth_required", blocked: true });
+      }
       const body = parseBody(req);
       const demo = commerce.cartService.getDemoProductForCart();
       if (!demo) return res.status(503).json({ success: false, errorKey: "demo_product_unavailable" });
 
-      const cart = commerce.cartService.createCart({ sessionId: body.sessionId || "readiness-test" });
+      const cart = commerce.cartService.createCart({ sessionId: body.sessionId || "readiness-test", req });
+      if (cart.error) return res.status(cart.status || 400).json({ success: false, errorKey: cart.error, blocked: true });
       commerce.cartService.addItem(cart.cart.id, {
         productId: demo.productId,
         quantity: 1,

@@ -16,7 +16,9 @@ const {
 const { assessCheckoutRisk } = require("./riskEngine");
 const {
   assertCanCreateOrder,
+  assertCommerceCredential,
   logCommerceBlock,
+  refuseIdentityLessRecord,
   resolveOrderType,
 } = require("./commerceGuards");
 const { withIdempotency } = require("./idempotency");
@@ -41,18 +43,30 @@ function parseJson(val, fallback = {}) {
 }
 
 function getCheckout(checkoutId, ctx = {}) {
+  if (ctx.req) {
+    const credential = assertCommerceCredential(ctx.req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+  }
   const row = db.prepare("SELECT * FROM commerce_checkouts WHERE id = ?").get(checkoutId);
   if (!row) return { error: "checkout_not_found", status: 404 };
 
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: row.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "checkout",
-    req: ctx.req,
-  });
-  if (access?.blocked && row.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  const identityBlock = refuseIdentityLessRecord(row, ctx, "checkout");
+  if (identityBlock?.blocked) {
+    return { error: identityBlock.code, status: identityBlock.status || 401, blocked: true, message: identityBlock.message };
+  }
+  if (!ctx.req) {
+    const { assertCustomerResourceAccess } = require("./commerceGuards");
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: row.customer_id,
+      requestCustomerId: ctx.customerId,
+      resourceType: "checkout",
+      req: ctx.req,
+    });
+    if (access?.blocked && row.customer_id) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   return {
@@ -82,6 +96,16 @@ function transitionCheckout(checkoutId, toState) {
 }
 
 function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = {}) {
+  if (req) {
+    const credential = assertCommerceCredential(req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+    if (customerId && String(customerId) !== credential.identity.id) {
+      return { error: "idor_denied", status: 403, blocked: true, message: "Access denied" };
+    }
+    customerId = credential.identity.id;
+  }
   const flags = getEffectiveFlags();
   if (!flags.checkoutEnabled) {
     logCommerceBlock("checkout_blocked", { reason: "checkout_disabled" }, req);

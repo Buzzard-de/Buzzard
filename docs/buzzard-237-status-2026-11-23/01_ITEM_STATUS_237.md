@@ -49,6 +49,14 @@ Madde 17, 23 Kasım 2026 07:28 Europe/Berlin. Yeniden açıldı. Durum 🟡 kald
 - ⛔ 1
 - ⚪ 140
 
+Madde 16 düzeltme, 23 Kasım 2026 07:37 Europe/Berlin. Commerce çekirdeği ve eski sepet yolu tokensuz istekte kapandı. İki vitrin sözleşmesi durduğu için durum 🟡. Sayılar değişmedi.
+
+- ✅ 0
+- 🟡 95
+- 🔴 1
+- ⛔ 1
+- ⚪ 140
+
 ## Maddeler
 
 ## Madde 1
@@ -205,11 +213,11 @@ Madde 17, 23 Kasım 2026 07:28 Europe/Berlin. Yeniden açıldı. Durum 🟡 kald
 
 - GÖREV: Guest commerce proof for cart/checkout/order
 - NE İSTİYOR: Guest without session/token fail-closed
-- KOD: `server/plugins/commerceCorePlugin.js` misafir sepet, checkout ve sipariş rotaları. `cartService.js`, `checkoutService.js`, `orderService.js`, `commerceGuards.js`, `inventoryIntegration.js`, `paymentService.js`. Ayrı vitrin yolu `server/plugins/ordersPlugin.js` `POST /api/orders`.
-- TEST: 23 Kasım 2026 06:50 Europe/Berlin. İzole loopback API, `BUZZARD_SALES_ENABLED=0`, geçici SQLite. Token olmadan sepet, kuru checkout ve tek kuru sipariş oluştu. Ticari checkout ve `POST /api/orders` 403. Ayrıntı `04_MADDE_16.md`.
-- ENTEGRASYON: Sepetten checkout’a, oradan kuru siparişe, gölge stok rezervasyonuna ve mock ödemeye aynı istek zincirinde bağlandı. Ürün stoğu 5 kaldı. Canlı ödeme yok.
+- KOD: `commerceGuards.js` `assertCommerceCredential` ve `authorizeCartWrite`. `cartService.js` yazmadan önce kontrol. `checkoutService.js` ve `orderService.js` kimliksiz HTTP kaydını 401 yapar. `cartCheckoutPlugin.js` eski sepet yolunu da aynı kapıya bağlar.
+- TEST: 23 Kasım 2026 07:37 Europe/Berlin. `guestCheckoutFailClosed.test.mjs` 4/4. `part8Foundation.test.mjs` ve `masterIntegrationPhase3.test.mjs` geçti. `adminRouteMatrix.test.mjs` içindeki yazma sınıfları geçti: imzasız sepet ve checkout 401, satış kilitli oturumlar 403. Satış kilidi açık değil.
+- ENTEGRASYON: Kimlik, admin oturumu veya imzalı hesap tokenından gelir. Gövdedeki `customerId` token sayılmaz. Motorun süreç içi çağrıları `req` taşımadığında eski kuru akışta kalır.
 - DURUM: 🟡
-- EKSİK: Oturumsuz misafir kuru akış fail-closed değil. `customer_id` boş sipariş ve checkout kimliği bilen herkese açık. Başkasının sepetindeki silme, 403 dönmeden önce satırı siliyor.
+- EKSİK: `POST /api/orders/dry-rehearsal` tokensuz kuru prova çalıştırıyor; bunu bekleyen ayrı test var. `GET /api/orders/:orderNumber` kimliği gizleyerek 200 dönüyor; `adminAuthorizationHardening.test.mjs` bunu sözleşme sayıyor. Bu iki vitrin yolu değiştirilmedi.
 
 ## Madde 17
 

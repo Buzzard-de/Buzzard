@@ -14,7 +14,7 @@ const {
   computeLineTotal,
   validateCartItemCount,
 } = require("./commerceValidation");
-const { assertCustomerResourceAccess } = require("./commerceGuards");
+const { assertCustomerResourceAccess, assertCommerceCredential, authorizeCartWrite } = require("./commerceGuards");
 const { logSecurityEvent } = require("../securityLog");
 const { MAX_CART_ITEMS } = require("../../core/commerceConstants");
 const commerceCouponService = require("./commerceCouponService");
@@ -63,7 +63,14 @@ function buildPriceSnapshot(product, variantId) {
   };
 }
 
-function createCart({ customerId, sessionId, country = "DE", currency = "EUR" } = {}) {
+function createCart({ customerId, sessionId, country = "DE", currency = "EUR", req } = {}) {
+  if (req) {
+    const credential = assertCommerceCredential(req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+    customerId = credential.identity.id;
+  }
   const id = newId("cart");
   const expiresAt = new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString();
   db.prepare(`
@@ -74,8 +81,22 @@ function createCart({ customerId, sessionId, country = "DE", currency = "EUR" } 
 }
 
 function getCart(cartId, { customerId, req } = {}) {
+  if (req) {
+    const credential = assertCommerceCredential(req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+    customerId = credential.identity.id;
+  }
   const cart = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
   if (!cart) return { error: "cart_not_found", status: 404 };
+  if (req && (!cart.customer_id || String(cart.customer_id) !== String(customerId))) {
+    return {
+      error: cart.customer_id ? "idor_denied" : "auth_required",
+      status: cart.customer_id ? 403 : 401,
+      blocked: true,
+    };
+  }
 
   const access = assertCustomerResourceAccess({
     resourceCustomerId: cart.customer_id,
@@ -153,16 +174,22 @@ function buildCouponTotals(couponCode, subtotal) {
 function addItem(cartId, input = {}) {
   const { productId, variantId, quantity, clientPrice, metadata, customerId, req } = input;
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
+  const writeGate = authorizeCartWrite(cartRow, { customerId, req });
+  if (writeGate?.blocked) {
+    return { error: writeGate.code, status: writeGate.status || 403, blocked: true, message: writeGate.message };
+  }
   if (!cartRow) return { error: "cart_not_found", status: 404 };
 
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: cartRow.customer_id,
-    requestCustomerId: customerId,
-    resourceType: "cart",
-    req,
-  });
-  if (access?.blocked && cartRow.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  if (!req) {
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: cartRow.customer_id,
+      requestCustomerId: customerId,
+      resourceType: "cart",
+      req,
+    });
+    if (access?.blocked && cartRow.customer_id) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   const qtyCheck = validateQuantity(quantity);
@@ -237,6 +264,12 @@ function addItem(cartId, input = {}) {
 }
 
 function updateItemQuantity(cartId, itemId, quantity, ctx = {}) {
+  const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
+  const access = authorizeCartWrite(cartRow, ctx);
+  if (access?.blocked) {
+    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  }
+
   const qtyCheck = validateQuantity(quantity);
   if (!qtyCheck.ok) return { error: qtyCheck.code, status: 400 };
 
@@ -259,6 +292,11 @@ function updateItemQuantity(cartId, itemId, quantity, ctx = {}) {
 }
 
 function removeItem(cartId, itemId, ctx = {}) {
+  const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
+  const access = authorizeCartWrite(cartRow, ctx);
+  if (access?.blocked) {
+    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  }
   db.prepare("DELETE FROM commerce_cart_items WHERE id = ? AND cart_id = ?").run(itemId, cartId);
   return getCart(cartId, ctx);
 }
@@ -298,16 +336,8 @@ function getDemoProductForCart() {
 
 function clearCart(cartId, ctx = {}) {
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
-  if (!cartRow) return { error: "cart_not_found", status: 404 };
-
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: cartRow.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "cart",
-    req: ctx.req,
-  });
-  if (access?.blocked && cartRow.customer_id) {
+  const access = authorizeCartWrite(cartRow, ctx);
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -318,15 +348,8 @@ function clearCart(cartId, ctx = {}) {
 
 function applyCoupon(cartId, { couponCode, clientDiscount, customerId, req } = {}) {
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
-  if (!cartRow) return { error: "cart_not_found", status: 404 };
-
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: cartRow.customer_id,
-    requestCustomerId: customerId,
-    resourceType: "cart",
-    req,
-  });
-  if (access?.blocked && cartRow.customer_id) {
+  const access = authorizeCartWrite(cartRow, { customerId, req });
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 
@@ -351,15 +374,8 @@ function applyCoupon(cartId, { couponCode, clientDiscount, customerId, req } = {
 
 function removeCoupon(cartId, ctx = {}) {
   const cartRow = db.prepare("SELECT * FROM commerce_carts WHERE id = ? AND status = 'active'").get(cartId);
-  if (!cartRow) return { error: "cart_not_found", status: 404 };
-
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: cartRow.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "cart",
-    req: ctx.req,
-  });
-  if (access?.blocked && cartRow.customer_id) {
+  const access = authorizeCartWrite(cartRow, ctx);
+  if (access?.blocked) {
     return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
   }
 

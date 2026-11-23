@@ -127,3 +127,17 @@ Bu bağ, dosyaların yan yana durmasından değil, tek izole süreçteki cevap v
 ## Nihai durum
 
 🟡 Kısmen tamamlandı
+
+## Düzeltme turu — 23 Kasım 2026 07:33 Europe/Berlin
+
+Commerce çekirdeğinde üç delik kapatıldı. HTTP isteği varken kimlik, admin oturumu veya imzalı hesap tokenıdır. Gövdedeki müşteri kimliği token sayılmaz.
+
+- Silme, miktar güncelleme ve sepet boşaltma, SQL yazısından önce `authorizeCartWrite` çağırır. Tokensuz silme 401 döner ve satır kalır.
+- `customer_id` boş checkout ve sipariş HTTP’de 401 döner. Başka müşterinin tokenı da bu kaydı açmaz.
+- Tokensuz sepet oluşturma, okuma, kalem ekleme ve checkout başlatma 401 döner. Tokenlı ticari checkout 403 `sales_disabled` kalır.
+
+Kanıt, 23 Kasım 2026 07:37 Europe/Berlin: `guestCheckoutFailClosed.test.mjs` 4/4. `part8Foundation.test.mjs`, `masterIntegrationPhase3.test.mjs` ve `adminRouteMatrix.test.mjs` yazma sınıfları geçti. Satış kilidi açık değildi.
+
+Eski `/api/cart-checkout` sepeti ve checkout denemesi de tokensuz istekte 401. Satır sayısı değişmedi. Tokenlı ticari checkout 403 `sales_disabled`.
+
+Madde yine 🟡. İki vitrin yolu ayrı testlerin sözleşmesi olarak duruyor: `POST /api/orders/dry-rehearsal` tokensuz kuru prova çalıştırıyor, `GET /api/orders/:orderNumber` kimliği gizleyerek 200 dönüyor. Bu ikisi bu turda değiştirilmedi.

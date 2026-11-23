@@ -87,6 +87,14 @@ Madde 69–74 ve 85–86, 23 Kasım 2026 08:20 Europe/Berlin. `items69to86LocalC
 - ⛔ 1
 - ⚪ 102
 
+Madde 89–115, 23 Kasım 2026 10:51 Europe/Berlin. `items89to115Commerce.test.mjs` 3/3. On dört madde ⚪ iken 🟡 oldu. Madde 97 ve 111 🔴. Satış ve canlı para kapalı.
+
+- ✅ 3
+- 🟡 139
+- 🔴 8
+- ⛔ 1
+- ⚪ 86
+
 ## Maddeler
 
 ## Madde 1
@@ -973,271 +981,271 @@ Madde 69–74 ve 85–86, 23 Kasım 2026 08:20 Europe/Berlin. `items69to86LocalC
 
 - GÖREV: Price snapshot on cart
 - NE İSTİYOR: priceSnapshot field
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `price snapshot`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `commerceValidation.computeOrderTotals` `priceSnapshot` kullanır. `detectPriceTampering` müşteri fiyatını sunucu fiyatıyla karşılaştırır.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `items89to115Commerce.test.mjs` 3/3. 12.50 anlık fiyat, adet 2, ara toplam 25. Müşteri fiyatı 1 `price_tampering`.
+- ENTEGRASYON: Sepet servisi aynı alanı yazar. Bu turda yeni sepet satırı açılmadı.
+- DURUM: 🟡
+- EKSİK: HTTP sepet satırı bu maddede yeniden yazılmadı.
 
 ## Madde 90
 
 - GÖREV: Currency handling
 - NE İSTİYOR: Market currency
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `currency`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `computeOrderTotals` ve `calculateTax` para birimi EUR.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Toplam ve DE vergi EUR.
+- ENTEGRASYON: Pazar kaydı ayrı. Varsayılan EUR.
+- DURUM: 🟡
+- EKSİK: 35 pazarın her para birimi bu maddede listelenmedi.
 
 ## Madde 91
 
 - GÖREV: Market price rules
 - NE İSTİYOR: Per-market config
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `quoteForMarket`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `taxProvider.VAT_BY_COUNTRY`. `quoteForMarket` yok.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. DE 19. Bilinmeyen ülke `tax_rate_unknown` ve blocked.
+- ENTEGRASYON: Sekiz ülke. Pazar motoru fiyatı yok.
+- DURUM: 🟡
+- EKSİK: `quoteForMarket` uygulanmamış.
 
 ## Madde 92
 
 - GÖREV: Supplier connector inventory honesty
 - NE İSTİYOR: class NOT_IMPLEMENTED where true
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `supplier`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `engineContract.notImplemented`. `evaluateCapabilityMatrix` sipariş yeteneği desteklemez. `canGoLive` false.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `NOT_IMPLEMENTED`. ORDERS supported false.
+- ENTEGRASYON: Sahte başarı yok.
+- DURUM: 🟡
+- EKSİK: Her bağlayıcı sınıfı tek tek envantere dökülmedi.
 
 ## Madde 93
 
 - GÖREV: Supplier retry/idempotency
 - NE İSTİYOR: Fail-closed outage
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `supplier`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Tedarikçi sipariş yeteneği kapalı. Ağ okuması madde 83'te bloke.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. ORDERS false ve `canGoLive` false.
+- ENTEGRASYON: Kesinti stoğa çevrilmiyor.
+- DURUM: 🟡
+- EKSİK: Tedarikçi yeniden deneme sayacı ayrıca yok.
 
 ## Madde 94
 
 - GÖREV: Fail-closed supplier outage
 - NE İSTİYOR: Malformed/outage not treated as stock
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `outage`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `stockEngine.inspectFeeds`. Sayı olmayan miktar satılamaz.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `sellable` false. `liveSupplierApi` false.
+- ENTEGRASYON: Bozuk besleme stok sayılmıyor.
+- DURUM: 🟡
+- EKSİK: HTTP kesinti gövdesi ayrıca çağrılmadı.
 
 ## Madde 95
 
 - GÖREV: Cart service
 - NE İSTİYOR: Session-bound writes
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `cart`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `cartService` yazmadan önce `authorizeCartWrite`. Fiyat `priceSnapshot`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Sunucu fiyatı müşteri fiyatını ezer. Kimlik kapısı madde 16 testinde duruyor.
+- ENTEGRASYON: Oturumsuz yazı madde 16'da 401.
+- DURUM: 🟡
+- EKSİK: Bu turda sepet HTTP'si yeniden koşulmadı. İki vitrin sözleşmesi duruyor.
 
 ## Madde 96
 
 - GÖREV: Checkout service
 - NE İSTİYOR: Sales lock + guest proof
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `checkout`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `isSalesEnabled` false. Checkout satış kapalıyken madde 16'da 403.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Satış kapalı. Yakalama `PAYMENT_NOT_LIVE`.
+- ENTEGRASYON: Misafir kanıtı madde 16.
+- DURUM: 🟡
+- EKSİK: Kuru prova ve kimliği gizlenmiş sipariş okuması duruyor.
 
 ## Madde 97
 
 - GÖREV: Order service
 - NE İSTİYOR: skipAccessCheck only internal
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `orderManagement`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `skipAccessCheck` depoda yok.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Sembol arandı. Eşleşme yok.
+- ENTEGRASYON: İç atlama anahtarı yok.
+- DURUM: 🔴
+- EKSİK: `skipAccessCheck` uygulanmamış.
 
 ## Madde 98
 
 - GÖREV: Stripe payment adapter
 - NE İSTİYOR: Live HTTP requires sales AND LIVE_PAYMENTS
-- KOD: server/lib/paymentsFinance.js
-- TEST: Stripe adı finans kodunda var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `StripeProvider.authorize`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `stripe_disabled` yolu `realMoneyMovement` false. Satış kapalıyken `stripeEnabled` false. Anahtar kullanılmadı.
+- ENTEGRASYON: Canlı HTTP yok.
 - DURUM: 🟡
-- EKSİK: Canlı tahsilat yok.
+- EKSİK: `LIVE_PAYMENTS` adlı ikinci bayrak yok. Canlı tahsilat yok.
 
 ## Madde 99
 
 - GÖREV: PayPal payment adapter
 - NE İSTİYOR: Same live gate
-- KOD: server/lib/paymentsFinance.js
-- TEST: PayPal adı finans kodunda var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `PayPalProvider.authorize`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `realMoneyMovement` false.
+- ENTEGRASYON: Aynı satış kapısı.
 - DURUM: 🟡
-- EKSİK: Canlı tahsilat yok.
+- EKSİK: Canlı PayPal yok.
 
 ## Madde 100
 
 - GÖREV: Dual payment engine
 - NE İSTİYOR: Diagnostics use effective flags not raw env
-- KOD: server/lib/paymentsFinance.js
-- TEST: Ödeme fonksiyonları bu dosyada. phase7CaptureRoute bu sabah geçti: satış kapalıyken yakalama ve iade 403.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `getEffectiveFlags` ve `getProviderHealth`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Ham ödeme ve Stripe bayrağı 1 iken etkin `paymentEnabled` ve `stripeEnabled` false.
+- ENTEGRASYON: Teşhis etkin bayrağı okur.
 - DURUM: 🟡
-- EKSİK: Canlı para hareketi yok.
+- EKSİK: Bütün finans teşhis uçları HTTP ile açılmadı.
 
 ## Madde 101
 
 - GÖREV: Finance confirm fail-closed
 - NE İSTİYOR: PROVIDER_CONFIRMATION_REQUIRED 409
-- KOD: server/lib/paymentsFinance.js
-- TEST: Satış kilitliyken finans yazısı reddediliyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `capturePayment` `PAYMENT_NOT_LIVE` status 403.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Kod ve 403 geçti. `realMoneyMovement` false.
+- ENTEGRASYON: Sağlayıcı onayı yok.
 - DURUM: 🟡
-- EKSİK: Canlı onay yok.
+- EKSİK: `PROVIDER_CONFIRMATION_REQUIRED` 409 yok. Mevcut sözleşme 403.
 
 ## Madde 102
 
 - GÖREV: Refund fail-closed
 - NE İSTİYOR: PROVIDER_REFUND_REQUIRED 409
-- KOD: server/lib/paymentsFinance.js
-- TEST: REFUND_NOT_LIVE. phase7 bu sabah 403 gördü.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `createRefund` satış kapalıyken `REFUND_NOT_LIVE`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Kod `REFUND_NOT_LIVE`. Veritabanına iade yazılmadı.
+- ENTEGRASYON: Canlı iade yok.
 - DURUM: 🟡
-- EKSİK: Canlı iade yok.
+- EKSİK: `PROVIDER_REFUND_REQUIRED` 409 yok.
 
 ## Madde 103
 
 - GÖREV: Returns RMA
 - NE İSTİYOR: Customer refund ≠ supplier credit
-- KOD: server/lib/platform/devList51.js
-- TEST: Bu ağaçta `startReturn` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `startReturn`. `customerRefundIssued` ve `supplierRefundReceived` ayrı. `refundMoney` `REAL_REFUND_BLOCKED`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. İkisi false. Para hareketi yok.
+- ENTEGRASYON: Müşteri iadesi tedarikçi alacağı sayılmıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Gerçek RMA defteri bu turda açılmadı.
 
 ## Madde 104
 
 - GÖREV: Financial reconciliation local
 - NE İSTİYOR: No invented revenue
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `reconciliation`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: İade ve yakalama para yazmıyor.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `refundIssued` false. Yakalama captured false.
+- ENTEGRASYON: Gelir uydurulmuyor.
+- DURUM: 🟡
+- EKSİK: Ayrı bir mutabakat raporu üretilmedi.
 
 ## Madde 105
 
 - GÖREV: Payment idempotency
 - NE İSTİYOR: Timeout UNCERTAIN never retried as success
-- KOD: server/lib/paymentsFinance.js
-- TEST: Bu ağaçta `idempotency` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `commerce/idempotency.js` farklı yükte `ORDER_IDEMPOTENCY_CONFLICT`, `retryable: false`.
+- TEST: `UNCERTAIN` sembolü ödeme idempotency dosyasında yok. Bu turda zaman aşımı satırı yazılmadı.
+- ENTEGRASYON: Çatışma başarı sayılmıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: `UNCERTAIN` durumu uygulanmamış.
 
 ## Madde 106
 
 - GÖREV: Fraud safeguards
 - NE İSTİYOR: Client cannot mark paid
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `fraud`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `detectPriceTampering`. `capturePayment` müşteri gövdesi kabul etmez.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Sahte fiyat `price_tampering`. Yakalama 403.
+- ENTEGRASYON: Müşteri kendini ödemiş işaretleyemez.
+- DURUM: 🟡
+- EKSİK: Sahte `paid` alanının HTTP gövdesi ayrıca denenmedi.
 
 ## Madde 107
 
 - GÖREV: Financial authorization
 - NE İSTİYOR: Finance endpoints not public
-- KOD: server/lib/paymentsFinance.js
-- TEST: Bu ağaçta `refuseWhileSalesLocked` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `paymentsFinancePlugin` onay ve iade `guardAdmin`. Satış kapalıyken iade reddi.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `createRefund` kilitli. HTTP finans listesi bu turda açılmadı.
+- ENTEGRASYON: Uçlar herkese açık değil.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Tokensuz finans HTTP'si bu turda yeniden ölçülmedi.
 
 ## Madde 108
 
 - GÖREV: Live payments gated
 - NE İSTİYOR: livePaymentsEnabled false in this workspace
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `BUZZARD_LIVE_PAYMENTS`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `livePaymentsEnabled` sembolü yok. `paymentEnabled` satış olmadan false. `realMoneyMovement` false.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. İkisi de false.
+- ENTEGRASYON: Bu çalışma alanında canlı ödeme kapalı.
+- DURUM: 🟡
+- EKSİK: Adı geçen `livePaymentsEnabled` alanı yok.
 
 ## Madde 109
 
 - GÖREV: Webhook signature verification
 - NE İSTİYOR: Unsigned cannot mark paid
-- KOD: server/__tests__/webhookSecurity.test.mjs
-- TEST: Webhook güvenlik testi bu sabah geçti.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `finance/paymentWebhook.verify`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. İmzasız `MISSING_SIGNATURE`. Yerel HMAC `moneyMoved` false.
+- ENTEGRASYON: Sağlayıcı hesabı yok.
 - DURUM: 🟡
-- EKSİK: İmza sağlayıcı hesabı yok.
+- EKSİK: Stripe veya PayPal canlı imzası yok.
 
 ## Madde 110
 
 - GÖREV: Guest checkout proof
 - NE İSTİYOR: 401 without proof
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `guest`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Commerce kimlik kapısı madde 16'da. Bu tur satış kilidini yeniden ölçtü.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Satış kapalı. Misafir 401 kanıtı `guestCheckoutFailClosed.test.mjs` kaydında.
+- ENTEGRASYON: Kanıtsız ödeme yakalanmıyor.
+- DURUM: 🟡
+- EKSİK: Misafir HTTP'si bu turda yeniden koşulmadı.
 
 ## Madde 111
 
 - GÖREV: Order identity / QR
 - NE İSTİYOR: Phase 3 identity
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `QR`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Sipariş kütüphanelerinde QR veya phase 3 kimlik sembolü yok.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Arandı. Eşleşme yok.
+- ENTEGRASYON: Kimlik karesi yok.
+- DURUM: 🔴
+- EKSİK: Phase 3 sipariş kimliği uygulanmamış.
 
 ## Madde 112
 
 - GÖREV: Loyalty non-abuse
 - NE İSTİYOR: Cannot mint value via guest IDOR
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `loyalty`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `POST /api/admin/crm-loyalty/points/earn` `requireAnyAdmin`. Müşteri kendi puanını yazamaz. `POST /api/marketing-loyalty/points` izin tablosunda `orders.write`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Kod okundu. Puan yazan HTTP bu turda çağrılmadı.
+- ENTEGRASYON: CRM kazancı yönetici. Pazarlama ucu eklenti içinde ikinci bir kontrol taşımıyor.
+- DURUM: 🟡
+- EKSİK: Pazarlama puan ucu eklenti içinde kimlik kontrol etmiyor. Ara katman `orders.write` diyor.
 
 ## Madde 113
 
 - GÖREV: Official payment ingress
 - NE İSTİYOR: Single official webhook path
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `payment ingress`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `POST /api/webhooks/payment`, `POST /api/webhooks/:provider`, `POST /api/payments-finance/webhook`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Üç kayıt duruyor. İmzasız finans doğrulayıcısı reddediyor.
+- ENTEGRASYON: Tek resmi yol değil.
+- DURUM: 🟡
+- EKSİK: Birden fazla webhook yolu var.
 
 ## Madde 114
 
 - GÖREV: Marketplace hub classification
 - NE İSTİYOR: Classification only for missing channels
-- KOD: server/lib/marketplace/marketplaceConnectorRegistry.js
-- TEST: 10 kanal tanımlı. marketplaceConnectorRegistry testi bu sabah geçti.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `marketplaceConnectorRegistry`. 10 kanal. `decidePublish` `live: false`.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `snapshot().anyLive` false.
+- ENTEGRASYON: Eksik kanal canlı ilan olmuyor.
 - DURUM: 🟡
-- EKSİK: Canlı ilan yok.
+- EKSİK: Canlı pazar yeri hesabı yok.
 
 ## Madde 115
 
 - GÖREV: Listing model without live publish
 - NE İSTİYOR: Mutations gated
-- KOD: server/lib/marketplaceHub.js
-- TEST: Bu ağaçta `validateMarketplaceListing` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `decidePublish` yayın bayrağı ve kimlik olmadan `LIVE_CONNECTION_BLOCKED` veya doğrulama hatası. `live` false.
+- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `live` false.
+- ENTEGRASYON: Mutasyon canlıya gitmiyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Her kanalın liste yazması HTTP ile denenmedi.
 
 ## Madde 116
 

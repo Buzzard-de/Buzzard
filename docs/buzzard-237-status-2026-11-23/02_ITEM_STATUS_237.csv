@@ -33,7 +33,7 @@ item,task,criterion,code,test_evidence,status,gap
 32,Plugin / route registry,wrapRouteHandler on registered routes,server/server.js wrapRouteHandler,"2026-11-23 07:52 Europe/Berlin: route registration calls wrapRouteHandler.",🟡,No inventory test that every route is wrapped.
 33,Catalog vs commerce mode split,Sales off => catalog mode,getSalesSafetyStatus catalogMode,"2026-11-23 07:52 Europe/Berlin: catalogMode true while sales are off.",🟡,Not every storefront commerce route was called again.
 34,Core shared-service test harness,Vitest unit suite for commerce core,server/__tests__/items18to33Foundation.test.mjs,"2026-11-23 07:52 Europe/Berlin: 6/6.",🟡,October harness absent. phase1 remains 91.7.
-35,Pusat orchestrator core,"Initialize, dispatch, health",server/__tests__/pusatOrchestrator.test.mjs,Pusat orkestratör testi bu sabah geçti.,🟡,Canlı model yok.
+35,Pusat orchestrator core,"Initialize, dispatch, health",server/__tests__/pusatOrchestrator.test.mjs,"2026-11-23 07:53 Europe/Berlin pusatOrchestrator.test.mjs 11/11. Price quote, approval gate, dependency wait, 17 identities, dry rails, restart still refuses live stock.",🟡,No live model.
 36,Agent registry and coordination,Employee/agent registry,server/lib/workstreams/special16Runtime.js,Bu ağaçta `specialistDispatch` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
 37,Central AI memory,Host/kv style memory in Pusat,server/lib/pusat/durable.js,Bu ağaçta `putMemory` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
 38,Specialist agents,Named agents with tools,server/core/constants.js,Bu ağaçta `price_ai` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.

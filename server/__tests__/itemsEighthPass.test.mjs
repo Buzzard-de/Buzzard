@@ -36,7 +36,7 @@ describe("eighth pass digital body", () => {
   it("manages a speech session without producing audio", () => {
     const opened = body.openSession({ actorId: "sinan_bey", profileKey: "sinan", lang: "tr" });
     const said = body.speak(opened.sessionId, { text: "durum" });
-    expect(said.code).toBe("PROVIDER_ABSENT");
+    expect(said.code).toBe("CLONE_DENIED");
     expect(said.bytes).toBe(0);
     expect(said.voiceId).toBe(VOICE_ID);
     expect(body.hear(opened.sessionId).transcript).toBeNull();
@@ -44,7 +44,7 @@ describe("eighth pass digital body", () => {
     expect(body.interrupt(opened.sessionId, { actorId: "pusat" }).code).toBe("INTERRUPTED");
     expect(body.speak(opened.sessionId).code).toBe("SESSION_INTERRUPTED");
     expect(body.restart(opened.sessionId, { actorId: "pusat" }).code).toBe("RESTARTED");
-    expect(body.speak(opened.sessionId).code).toBe("PROVIDER_ABSENT");
+    expect(body.speak(opened.sessionId).code).toBe("CLONE_DENIED");
   });
 
   it("blocks an unauthorized profile change and isolates a provider fault", () => {
@@ -70,7 +70,7 @@ describe("eighth pass digital body", () => {
     const routed = body.pusatRoute({ actorId: "pusat", profileKey: "amelia", lang: "en", text: "report" });
     expect(routed.routed).toBe(true);
     expect(routed.spoke).toBe(false);
-    expect(routed.speech).toBe("PROVIDER_ABSENT");
+    expect(routed.speech).toBe("VOICE_REFERENCE_ABSENT");
     expect(routed.voiceId).toBe(body.PROFILES.amelia.voiceId);
     const other = body.openSession({ actorId: "esat_bey", profileKey: "esat", lang: "de" });
     body.interrupt(routed.sessionId, { actorId: "pusat" });

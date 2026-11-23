@@ -141,16 +141,16 @@ function speak(sessionId, { text } = {}) {
   if (!row) return { ok: false, code: "SESSION_UNKNOWN", audio: false };
   if (row.state === "interrupted") return { ok: false, code: "SESSION_INTERRUPTED", audio: false, voiceId: row.voiceId };
   if (row.state === "error") return { ok: false, code: "SESSION_ERROR", audio: false, voiceId: row.voiceId };
-  const said = callProvider("tts", null);
-  return { ...said, voiceId: row.voiceId, agentId: row.agentId, lang: row.lang, textAccepted: typeof text === "string", audio: false };
+  const said = require("../speech/ttsGate").synthesize({ agentId: row.agentId, voiceId: row.voiceId });
+  return { ...said, voiceId: row.voiceId, agentId: row.agentId, lang: row.lang, textAccepted: typeof text === "string", audio: false, bytes: 0 };
 }
 
-function hear(sessionId) {
+function hear(sessionId, input = {}) {
   const row = session(sessionId);
   if (!row) return { ok: false, code: "SESSION_UNKNOWN", transcript: null };
   if (row.state === "interrupted") return { ok: false, code: "SESSION_INTERRUPTED", transcript: null };
-  const heard = callProvider("stt", null);
-  return { ...heard, transcript: null, lang: row.lang, agentId: row.agentId };
+  const heard = require("../hearing/sttGate").transcribe({ audio: input.audio, lang: input.lang || row.lang, timeoutMs: input.timeoutMs });
+  return { ...heard, transcript: null, lang: input.lang || row.lang, agentId: row.agentId, stored: false };
 }
 
 function interrupt(sessionId, { actorId } = {}) {
@@ -192,12 +192,18 @@ function animate(sessionId, capability) {
   return { ...callProvider(capability, null), agentId: row.agentId, cssIsNotABody: true, rendered: false };
 }
 
-function pusatRoute({ actorId, profileKey, lang = "tr", text = "" } = {}) {
+function pusatRoute({ actorId, profileKey, lang = "tr", text = "", audio = null } = {}) {
   if (actorId !== "pusat") return { ok: false, code: "ORCHESTRATOR_REQUIRED", spoke: false, routed: false };
+  const steps = [{ step: "capture", code: audio == null ? "PROVIDER_ABSENT" : "AUDIO_PRESENT" }];
   const opened = openSession({ actorId, profileKey, lang });
-  if (!opened.ok) return { ...opened, spoke: false, routed: false };
+  if (!opened.ok) return { ...opened, spoke: false, routed: false, steps };
+  const heard = hear(opened.sessionId, { audio, lang });
+  steps.push({ step: "stt", code: heard.code });
+  steps.push({ step: "select", agentId: opened.agentId });
   const said = speak(opened.sessionId, { text });
-  return { ok: true, routed: true, spoke: false, audio: false, sessionId: opened.sessionId, voiceId: said.voiceId, speech: said.code };
+  steps.push({ step: "tts", code: said.code, bytes: said.bytes || 0 });
+  const spoke = said.audio === true && Number(said.bytes) > 0;
+  return { ok: true, routed: true, spoke, audio: false, sessionId: opened.sessionId, voiceId: said.voiceId, speech: said.code, steps };
 }
 
 function clearSessions() {

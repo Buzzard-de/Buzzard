@@ -22,6 +22,7 @@ const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const healthRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 240, keyPrefix: 'health:' });
 const anonymousWriteLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: 'api-anon-write:' });
 
 function setCommonHeaders(res) {
@@ -372,7 +373,8 @@ async function serveRequest(req, res) {
       return;
     }
 
-    if (apiRateLimit(req)) {
+    const healthProbe = pathname === '/api/health' || pathname.startsWith('/api/health/');
+    if (healthProbe ? healthRateLimit(req) : apiRateLimit(req)) {
       logSecurityEvent({
         type: 'api_rate_limited',
         success: false,

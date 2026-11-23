@@ -53,6 +53,14 @@ Madde 16 düzeltme, 23 Kasım 2026 07:37 Europe/Berlin. Commerce çekirdeği ve 
 
 Madde 17 düzeltme, 23 Kasım 2026 07:39 Europe/Berlin. Guardian, Orchestrator ve DB status tokensuz istekte 401. `/api/health` açık kaldığı için durum 🟡. Sayılar değişmedi.
 
+Madde 18–34, 23 Kasım 2026 07:52 Europe/Berlin. `items18to33Foundation.test.mjs` 6/6. On madde ⚪ iken 🟡 oldu. Madde 30, yazılım cephesi bu dalda olmadığı için 🟡 iken 🔴 oldu.
+
+- ✅ 0
+- 🟡 104
+- 🔴 2
+- ⛔ 1
+- ⚪ 130
+
 - ✅ 0
 - 🟡 95
 - 🔴 1
@@ -235,171 +243,171 @@ Madde 17 düzeltme, 23 Kasım 2026 07:39 Europe/Berlin. Guardian, Orchestrator v
 
 - GÖREV: Data protection and durable storage design
 - NE İSTİYOR: App data not persisted in /tmp; intended DB path used
-- KOD: server/lib/dbStartup.js
-- TEST: Bu ağaçta `dbPaths` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/dbPaths.js` `defaultDbPath` ve `resolveDbPath`. `server/lib/dbStartup.js` bu yolu açar.
+- TEST: 23 Kasım 2026 07:52 Europe/Berlin. `items18to33Foundation.test.mjs` 6/6. Varsayılan yol `/tmp` değil. `BUZZARD_DB_PATH` seçiliyor. `/tmp` kalıcı sayılmıyor.
+- ENTEGRASYON: Yol seçimi `dbStartup.validateDatabaseStartup` üzerinden açılışa bağlı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Bu makinede `/var/data` üretim süreci doğrulanmadı.
 
 ## Madde 19
 
 - GÖREV: Project integrity: commercial locks stay off
 - NE İSTİYOR: SALES, SoT, LIVE_PAYMENTS remain off; no fail-open auth wrappers
-- KOD: server/lib/salesMode.js
-- TEST: Satış kilidi kodda. phase1 invariant salesLocked true bekliyor; phase1 yüzdesi bu sabah 91.7.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/salesMode.js` `isSalesEnabled`. Bypass, satış anahtarı yokken etkisiz.
+- TEST: Aynı dosya. `BUZZARD_SALES_GATE_BYPASS=1` ve satış anahtarı yokken `isSalesEnabled()` false. `catalogMode` true.
+- ENTEGRASYON: Katalog modu `getSalesSafetyStatus` ile aynı kilide bağlı.
 - DURUM: 🟡
-- EKSİK: Kilit duruyor. Korunan veri kontrolü kırmızı.
+- EKSİK: Korunan JSON kırmızı. Bütün auth sarmalayıcıları bu turda açılmadı.
 
 ## Madde 20
 
 - GÖREV: Shared commerce constants and state machines
 - NE İSTİYOR: Checkout and order transitions enforced
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `state machine`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/core/commerceConstants.js` `canTransitionCheckout` ve `canTransitionOrder`.
+- TEST: Aynı dosya. Yasal geçiş geçer, `DRAFT → COMPLETED` ve `DELIVERED → CANCELLED` reddedilir.
+- ENTEGRASYON: `checkoutService.transitionCheckout` ve `orderService` bu fonksiyonu yazmadan önce çağırır.
+- DURUM: 🟡
+- EKSİK: Her HTTP geçişi bu turda çağrılmadı.
 
 ## Madde 21
 
 - GÖREV: Common error contracts
 - NE İSTİYOR: Public error keys without stack traces
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `errorKey`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/security.js` `publicErrorBody`.
+- TEST: Aynı dosya. Cevap yalnız `{ success:false, errorKey }`. `stack` yok.
+- ENTEGRASYON: `server.js` `sendRequestError` bu gövdeyi kullanır.
+- DURUM: 🟡
+- EKSİK: `core/errors.js` mesaj yaymaya devam ediyor.
 
 ## Madde 22
 
 - GÖREV: Cart data contract
 - NE İSTİYOR: Server-owned totals; session binding
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `addItem`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/commerce/commerceValidation.js` `rejectClientTotals` ve `validateQuantity`.
+- TEST: Aynı dosya. Negatif adet ve istemci toplamı reddedildi.
+- ENTEGRASYON: Sepet HTTP kapısı madde 16’da token ister.
+- DURUM: 🟡
+- EKSİK: Madde 16’daki iki vitrin sözleşmesi duruyor.
 
 ## Madde 23
 
 - GÖREV: Checkout data contract
 - NE İSTİYOR: Sales lock; guest proof
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `checkout`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/commerce/commerceGuards.js` `catalogMode`.
+- TEST: Aynı dosya. Satış kapalıyken katalog modu true.
+- ENTEGRASYON: Ticari checkout 403 `sales_disabled` madde 16 testinde duruyor.
+- DURUM: 🟡
+- EKSİK: Misafir kuru prova hâlâ tokensuz çalışıyor.
 
 ## Madde 24
 
 - GÖREV: Order data contract
 - NE İSTİYOR: Guest token stripped from public map
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `cancelOrder`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/commerce/orderService.js` `mapOrder`. `commerce_orders` şemasında token kolonu yok.
+- TEST: Fonksiyon bu turda okundu. Ayrı birim çağrısı yok. Ayrıntı `06_MADDE_18_34.md`.
+- ENTEGRASYON: HTTP sipariş okuması madde 16’da kimlik ister.
+- DURUM: 🟡
+- EKSİK: `mapOrder` için ayrı bir çağrı testi yok.
 
 ## Madde 25
 
 - GÖREV: Product data contract
 - NE İSTİYOR: Canonical product fields via PIM core
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `canonicalProduct`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/pimCatalog.js` ve `server/lib/productCatalogPim.js` `canonicalProductId`.
+- TEST: Dosyalar bu turda açıldı. Uçtan uca ürün oluşturma koşulmadı.
+- ENTEGRASYON: Sipariş satırı `canonicalProductId` alanını ürün kimliğinden dolduruyor.
+- DURUM: 🟡
+- EKSİK: Yeni bir PIM yazma testi bu turda yok.
 
 ## Madde 26
 
 - GÖREV: Core DB schema and migrations
 - NE İSTİYOR: Additive software/pusat tables
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `migrations`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/db.js` `commerce_orders`. `server/lib/pusat/durableTaskQueue.js` `orch_tasks`.
+- TEST: Şema bu turda okundu. Yeni migrasyon koşusu yok.
+- ENTEGRASYON: Orkestratör kuyruğu kendi tablosunu açılışta kurar.
+- DURUM: 🟡
+- EKSİK: `server/lib/software` tabloları yok.
 
 ## Madde 27
 
 - GÖREV: Shared quantity and total validation
 - NE İSTİYOR: Negative qty and client totals rejected
-- KOD: server/lib/returnsRma.js
-- TEST: Bu ağaçta `quantity` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/commerce/commerceValidation.js`.
+- TEST: Aynı dosya. `validateQuantity(-1)` ve `0` başarısız. İstemci toplamı reddedildi.
+- ENTEGRASYON: Sepet kalemi bu doğrulamadan geçmeden yazılmıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: İade motorundaki miktar kuralı ayrıca çağrılmadı.
 
 ## Madde 28
 
 - GÖREV: Idempotency-key plumbing
 - NE İSTİYOR: Sensitive commerce operations accept Idempotency-Key
-- KOD: server/lib/paymentsFinance.js
-- TEST: Bu ağaçta `idempotency` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `commerce_idempotency` tablosu. `commerceCorePlugin.js` `Idempotency-Key` başlığı.
+- TEST: Kod bu turda okundu. Yeni tekrar oynatma çağrısı yok.
+- ENTEGRASYON: Checkout tamamlama aynı anahtarla `withIdempotency` kullanır.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Bu turda yeni bir replay çağrısı yok.
 
 ## Madde 29
 
 - GÖREV: Request correlation IDs
 - NE İSTİYOR: X-Request-Id / X-Correlation-Id on API
-- KOD: server/server.js
-- TEST: Bu ağaçta `correlation` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/server.js` `handleRequest`. `server/lib/operations/correlationContext.js`.
+- TEST: Aynı dosya. `GET /api/health` 200. `X-Request-Id` dolu. Gönderilen `X-Correlation-Id` geri döndü.
+- ENTEGRASYON: Başlıklar bütün `/api` isteklerinin ortak girişinde yazılıyor.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Bozuk kimlik başlığının reddi bu çağrıda yok.
 
 ## Madde 30
 
 - GÖREV: Software facade is not a second orchestrator
 - NE İSTİYOR: server/lib/software wraps existing engines
-- KOD: server/lib/controlCenter.js
-- TEST: Bu ağaçta `orchestratorBridge` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- KOD: `server/lib/software` bu dalda yok.
+- TEST: Dizin arandı, dosya yok. `controlCenter.js` bu maddeyi karşılamıyor.
+- ENTEGRASYON: Cephe olmadığı için motorlara ikinci bir sarmalayıcı bağlanmadı.
+- DURUM: 🔴
+- EKSİK: Yazılım cephesi uygulanmadı.
 
 ## Madde 31
 
 - GÖREV: API health endpoints
 - NE İSTİYOR: Health remains rate-limited on its own bucket
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `/api/health`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/server.js` `healthRateLimit`, önek `health:`.
+- TEST: Aynı dosya. Health kovası dolunca API kovası dolmuyor. `GET /api/health` 200.
+- ENTEGRASYON: Sağlık uçları genel `api:` kovasına yazmıyor.
+- DURUM: 🟡
+- EKSİK: HTTP ile 240 isteklik doluluk basılmadı.
 
 ## Madde 32
 
 - GÖREV: Plugin / route registry
 - NE İSTİYOR: wrapRouteHandler on registered routes
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `plugins`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/server.js` rota kaydı `wrapRouteHandler` çağırır. `server/lib/globalAuthMiddleware.js`.
+- TEST: Kayıt satırı bu turda okundu.
+- ENTEGRASYON: Eşleşen rota, izin çözücüsünden geçen sarmalayıcıya gider.
+- DURUM: 🟡
+- EKSİK: Her rotanın sarıldığı ayrı envanter testi yok.
 
 ## Madde 33
 
 - GÖREV: Catalog vs commerce mode split
 - NE İSTİYOR: Sales off => catalog mode
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `sales_disabled`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `getSalesSafetyStatus().catalogMode`.
+- TEST: Aynı dosya. Satış kapalıyken katalog modu true.
+- ENTEGRASYON: Ticari işlemler satış kapısında durur.
+- DURUM: 🟡
+- EKSİK: Vitrindeki her ticari uç bu turda yeniden çağrılmadı.
 
 ## Madde 34
 
 - GÖREV: Core shared-service test harness
 - NE İSTİYOR: Vitest unit suite for commerce core
-- KOD: server/plugins/ecosystemPlugin.js
-- TEST: Bu ağaçta `phase1CoreIntegrity` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/__tests__/items18to33Foundation.test.mjs` ve mevcut commerce Vitest dosyaları.
+- TEST: 23 Kasım 2026 07:52 Europe/Berlin, 6/6.
+- ENTEGRASYON: Test, çalışan `dbPaths`, satış kilidi ve sağlık ucuna bağlı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Ekim 237 kemeri bu dalda yok. phase1 yüzde 91.7.
 
 ## Madde 35
 

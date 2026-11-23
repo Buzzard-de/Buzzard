@@ -100,6 +100,15 @@ describe("phase 7 payment capture route", () => {
       expect(direct.code).toBe("PAYMENT_NOT_LIVE");
       expect(direct.captured).toBe(false);
       expect(direct.realMoneyMovement).toBe(false);
+      const intentWrite = paymentsFinance.createPaymentIntent({ orderNumber: "BZ-LOCK", amount: 10 });
+      expect(intentWrite.code).toBe("PAYMENT_NOT_LIVE");
+      expect(intentWrite.realMoneyMovement).toBe(false);
+      const invoiceWrite = paymentsFinance.createInvoice({ orderNumber: "BZ-LOCK", grossAmount: 10 });
+      expect(invoiceWrite.code).toBe("INVOICE_NOT_LIVE");
+      expect(invoiceWrite.realMoneyMovement).toBe(false);
+      const signed = paymentsFinance.handlePaymentWebhook({ externalId: "pi-lock", status: "succeeded" });
+      expect(signed.code).toBe("PAYMENT_NOT_LIVE");
+      expect(signed.realMoneyMovement).toBe(false);
 
       const capture = await post(port, "/api/payments-finance/intents/pay_test/confirm");
       expect(capture.status).toBe(403);

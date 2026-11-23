@@ -45,7 +45,8 @@ const ROUTES = [
   {
     route: "/api/payments-finance/webhook",
     scope: "payment",
-    accepted: 202,
+    accepted: 403,
+    acceptedBody: { code: "PAYMENT_NOT_LIVE", realMoneyMovement: false },
     prepare(db) {
       const externalId = unique("pi-synthetic");
       db.prepare("INSERT INTO finance_payment_intents(order_number, external_id, amount) VALUES(?,?,?)").run(unique("BZ-SYN"), externalId, 10);
@@ -53,7 +54,7 @@ const ROUTES = [
     },
     effect: (db, payload) => db.prepare("SELECT status FROM finance_payment_intents WHERE external_id = ?").get(payload.externalId).status,
     before: "requires_payment",
-    after: "succeeded",
+    after: "requires_payment",
   },
   {
     route: "/api/webhooks/payment",
@@ -67,19 +68,21 @@ const ROUTES = [
   {
     route: "/api/payments-finance/provider/payout-webhook",
     scope: "payout",
-    accepted: 202,
+    accepted: 403,
+    acceptedBody: { code: "PAYOUT_NOT_LIVE", realMoneyMovement: false },
     prepare(db) {
       db.prepare("INSERT OR IGNORE INTO finance_payment_providers(code, name) VALUES('synthetic', 'Synthetic provider')").run();
       return { provider: "synthetic", externalPayoutId: unique("po-synthetic"), amount: 12.5, currency: "EUR" };
     },
     effect: (db, payload) => db.prepare("SELECT COUNT(*) n FROM finance_payouts WHERE external_payout_id = ?").get(payload.externalPayoutId).n,
     before: 0,
-    after: 1,
+    after: 0,
   },
   {
     route: "/api/payments-finance/provider/dispute-webhook",
     scope: "dispute",
-    accepted: 202,
+    accepted: 403,
+    acceptedBody: { code: "DISPUTE_NOT_LIVE", realMoneyMovement: false },
     prepare(db) {
       const externalId = unique("pi-synthetic");
       db.prepare("INSERT INTO finance_payment_intents(order_number, external_id, amount) VALUES(?,?,?)").run(unique("BZ-SYN"), externalId, 10);
@@ -87,7 +90,7 @@ const ROUTES = [
     },
     effect: (db, payload) => db.prepare("SELECT COUNT(*) n FROM finance_disputes WHERE external_case_id = ?").get(payload.caseId).n,
     before: 0,
-    after: 1,
+    after: 0,
   },
   {
     route: "/api/marketplace-hub/order-webhook",
@@ -330,9 +333,9 @@ describe("inbound webhooks", () => {
       const signature = header(secrets.payout, raw);
       const results = await Promise.all(Array.from({ length: 10 }, () => post(route, raw, signature)));
       const statuses = results.map((res) => res.status).sort();
-      expect(statuses.filter((status) => status === 202)).toHaveLength(1);
+      expect(statuses.filter((status) => status === 403)).toHaveLength(1);
       expect(statuses.filter((status) => status === 409)).toHaveLength(9);
-      expect(payouts(payload.externalPayoutId)).toBe(1);
+      expect(payouts(payload.externalPayoutId)).toBe(0);
     });
 
     it("processes ten differently signed deliveries of one event exactly once", async () => {
@@ -341,9 +344,9 @@ describe("inbound webhooks", () => {
       const base = nowSeconds();
       const results = [];
       for (let i = 0; i < 10; i += 1) results.push(await post(route, raw, header(secrets.payout, raw, base - i)));
-      expect(results[0].status).toBe(202);
-      for (const res of results.slice(1)) expect(res.json).toEqual({ success: true, duplicate: true });
-      expect(payouts(payload.externalPayoutId)).toBe(1);
+      expect(results.every((res) => res.status === 403)).toBe(true);
+      expect(results.every((res) => res.json.code === "PAYOUT_NOT_LIVE")).toBe(true);
+      expect(payouts(payload.externalPayoutId)).toBe(0);
     });
 
     it("uses the sender's event id when there is one, independent of the payload bytes", async () => {
@@ -353,16 +356,17 @@ describe("inbound webhooks", () => {
       const second = JSON.stringify({ amount: 1, externalPayoutId: id, provider: "synthetic" });
       const a = await post(route, first, header(secrets.payout, first), { "X-Buzzard-Event-Id": eventId });
       const b = await post(route, second, header(secrets.payout, second), { "X-Buzzard-Event-Id": eventId });
-      expect(a.status).toBe(202);
-      expect(b.json).toEqual({ success: true, duplicate: true });
-      expect(payouts(id)).toBe(1);
+      expect(a.status).toBe(403);
+      expect(b.status).toBe(403);
+      expect(a.json.code).toBe("PAYOUT_NOT_LIVE");
+      expect(payouts(id)).toBe(0);
     });
 
     it("keeps event ids of different scopes apart", async () => {
       const eventId = unique("evt-shared");
       const payout = JSON.stringify({ provider: "synthetic", externalPayoutId: unique("po-scope"), amount: 1, eventId });
       const payment = JSON.stringify({ eventId, orderNumber: unique("BZ-SYN"), status: "failed" });
-      expect((await post(route, payout, header(secrets.payout, payout))).status).toBe(202);
+      expect((await post(route, payout, header(secrets.payout, payout))).status).toBe(403);
       expect((await post("/api/webhooks/payment", payment, header(secrets.payment, payment))).status).toBe(200);
     });
 
@@ -371,15 +375,17 @@ describe("inbound webhooks", () => {
       const raw = JSON.stringify({ externalId, status: "succeeded", eventId: unique("evt") });
       const base = nowSeconds();
       const first = await post("/api/payments-finance/webhook", raw, header(secrets.payment, raw, base));
-      expect(first.status).toBe(404);
+      expect(first.status).toBe(403);
+      expect(first.json.code).toBe("PAYMENT_NOT_LIVE");
 
       db.prepare("INSERT INTO finance_payment_intents(order_number, external_id, amount) VALUES(?,?,?)").run(unique("BZ-SYN"), externalId, 10);
       const retry = await post("/api/payments-finance/webhook", raw, header(secrets.payment, raw, base + 1));
-      expect(retry.status).toBe(202);
-      expect(db.prepare("SELECT status FROM finance_payment_intents WHERE external_id = ?").get(externalId).status).toBe("succeeded");
+      expect(retry.status).toBe(403);
+      expect(db.prepare("SELECT status FROM finance_payment_intents WHERE external_id = ?").get(externalId).status).toBe("requires_payment");
 
       const again = await post("/api/payments-finance/webhook", raw, header(secrets.payment, raw, base + 2));
-      expect(again.json).toEqual({ success: true, duplicate: true });
+      expect(again.status).toBe(403);
+      expect(again.json.realMoneyMovement).toBe(false);
     });
 
     it("accepts the previous secret of a scope during a rotation and nothing older", async () => {

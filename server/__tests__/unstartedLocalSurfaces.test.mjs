@@ -80,6 +80,13 @@ describe("local surfaces that were not started", () => {
     expect(attested.liveDevice).toBe(false);
     expect(attested.completeClaim).toBe(false);
     expect(readAttestation("missing").code).toBe("NO_ATTESTATION");
+    const firstReview = recordOperatorReview({ deviceId: "desk-old", operatorId: "owner" });
+    for (let i = 0; i < 64; i += 1) recordOperatorReview({ deviceId: `desk-${i}`, operatorId: "owner" });
+    expect(readAttestation(firstReview.reviewId).code).toBe("NO_ATTESTATION");
+    const holidays = [];
+    for (let i = 0; i < 70; i += 1) holidays.push(openSchedule({ country: "DE", copy: `<script>${i}</script>` }));
+    expect(editSchedule(holidays[0].draft.id, "old").code).toBe("NOT_FOUND");
+    expect(holidays.at(-1).draft.copy.includes("<")).toBe(false);
   });
 
   it("keeps the four ad channels local and unpaid", () => {

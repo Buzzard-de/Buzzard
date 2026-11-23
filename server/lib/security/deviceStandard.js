@@ -46,6 +46,8 @@ function evaluateDevice(report = {}) {
 }
 
 const operatorReviews = new Map();
+const MAX_REVIEWS = 64;
+let reviewSeq = 0;
 
 /** A checkbox on the report is a claim. Only a desk review id is an attestation record. */
 function clientClaim(report = {}) {
@@ -62,8 +64,13 @@ function recordOperatorReview({ deviceId, operatorId } = {}) {
   if (typeof deviceId !== "string" || deviceId.trim() === "" || typeof operatorId !== "string" || operatorId.trim() === "") {
     return { ok: false, code: "REVIEW_INCOMPLETE", attested: false, liveDevice: false, completeClaim: false };
   }
-  const reviewId = `att_${operatorReviews.size + 1}`;
-  operatorReviews.set(reviewId, { deviceId: deviceId.trim(), operatorId: operatorId.trim() });
+  if (operatorReviews.size >= MAX_REVIEWS) {
+    const oldest = operatorReviews.keys().next().value;
+    operatorReviews.delete(oldest);
+  }
+  reviewSeq += 1;
+  const reviewId = `att_${reviewSeq}`;
+  operatorReviews.set(reviewId, { deviceId: deviceId.trim().slice(0, 80), operatorId: operatorId.trim().slice(0, 80) });
   return { ok: true, reviewId, attested: false, liveDevice: false, completeClaim: false };
 }
 

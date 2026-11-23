@@ -56,10 +56,12 @@ describe("items 89-115 commerce boundaries", () => {
     const unsigned = verify({ payload: "{}", header: "", secret: "local-test-secret" });
     expect(unsigned.code).toBe("MISSING_SIGNATURE");
     expect(unsigned.live).toBe(false);
-    const header = crypto.createHmac("sha256", "local-test-secret").update("{}").digest("hex");
-    const signed = verify({ payload: "{}", header, secret: "local-test-secret" });
+    const payload = `{"probe":${process.pid}}`;
+    const header = crypto.createHmac("sha256", "local-test-secret").update(payload).digest("hex");
+    const signed = verify({ payload, header, secret: "local-test-secret" });
     expect(signed.ok).toBe(true);
     expect(signed.moneyMoved).toBe(false);
+    expect(verify({ payload, header, secret: "local-test-secret" }).code).toBe("REPLAY");
   });
 
   it("does not treat a return, a bad feed, or a listing as money or live stock", () => {

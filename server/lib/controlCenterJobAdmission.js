@@ -307,6 +307,11 @@ function releaseApprovedControlCenterJob({ approval, actor, deps }) {
   if (approval.status !== "APPROVED") {
     return refusal(409, "APPROVAL_REQUIRED", "The job stays unqueued until the approval is approved");
   }
+  if (approval.metadata?.inputHash) {
+    const { assertBound } = require("./approvalBinding");
+    const bound = assertBound(approval);
+    if (!bound.ok) return refusal(409, bound.code, "The approval input does not match its hash");
+  }
   const metadata = approval.metadata || {};
   if (metadata.jobId) {
     return { ok: true, duplicate: true, job: { id: metadata.jobId } };

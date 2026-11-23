@@ -272,6 +272,13 @@ function executeEsat(action, payload, { actorId, correlationId }) {
 }
 
 function executeReadOnly(action, payload = {}, { actorId = null, correlationId = null } = {}) {
+  if (actorId) {
+    const { consumeAgentWindow } = require("../security/agentRateWindow");
+    const window = consumeAgentWindow(actorId);
+    if (!window.allowed) {
+      return { ok: false, code: window.code, action, live: false };
+    }
+  }
   const esatResult = executeEsat(action, payload, { actorId, correlationId });
   if (esatResult) return esatResult;
 

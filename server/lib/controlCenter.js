@@ -7,6 +7,7 @@ const { listAudit } = require("./coreAudit");
 const { listSecurityEvents } = require("./securityLog");
 const categoryVisibility = require("./categoryVisibility");
 const { aiCanExecute } = require("./rbac");
+const { hashInput } = require("./approvalBinding");
 const {
   SERVICE_STATUS,
   AI_EMPLOYEE_STATUS,
@@ -371,7 +372,14 @@ function updateTaskStatus(id, status, { error, result, actorType } = {}) {
 
 function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel, metadata } = {}, options = {}) {
   const id = newId("appr");
-  const trustedMetadata = options.trustMetadata === true && metadata && typeof metadata === "object" ? metadata : {};
+  const supplied = options.trustMetadata === true && metadata && typeof metadata === "object" ? { ...metadata } : {};
+  delete supplied.financialImpact;
+  delete supplied.inputHash;
+  const trustedMetadata = {
+    ...supplied,
+    financialImpact: { realMoneyMovement: false, salesEnabled: false, amount: null, currency: null },
+    inputHash: hashInput({ taskId, resourceType, resourceId, reason, riskLevel }),
+  };
   db.prepare(`
     INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status, metadata_json)
     VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)

@@ -136,6 +136,15 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 - ⚪ 4
 
 İkinci tur kapanışı, 23 Kasım 2026 11:02 Europe/Berlin. 🟡 maddeler yükseltilmedi. Tarayıcı geçişi, canlı taşıyıcı, canlı pazaryeri, canlı ödeme ve eksik semboller yerinde duruyor. 🔴 maddelere yer tutucu kod yazılmadı. Kalan ⚪ maddeler 200, 205, 220 ve 221. Dış bağımlılık: TecDoc hesabı, taşıyıcı hesapları, pazaryeri hesapları, bu dalın CI kaydı, Render diski ve DNS kontrolü. Güvenli düzeltme boş onaycıyı ve ikinci kararı yazmıyor. Satış hazır değil.
+
+Üçüncü tur, 23 Kasım 2026 11:21 Europe/Berlin. `itemsPhase3Gaps.test.mjs` 6/6. Regresyon 40/40. Madde 48, 57, 62, 65, 87, 97, 172, 173, 180, 194, 215 ve 223 ✅. Madde 30 ve 111 🟡. Madde 16 ve 17 yeniden geçti, durumları duruyor. Madde 88 ⛔. Satış kapalı.
+
+- ✅ 18
+- 🟡 214
+- 🔴 0
+- ⛔ 1
+- ⚪ 4
+
 ## Maddeler
 
 ## Madde 1
@@ -292,21 +301,21 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Guest commerce proof for cart/checkout/order
 - NE İSTİYOR: Guest without session/token fail-closed
-- KOD: `commerceGuards.js` `assertCommerceCredential` ve `authorizeCartWrite`. `cartService.js` yazmadan önce kontrol. `checkoutService.js` ve `orderService.js` kimliksiz HTTP kaydını 401 yapar. `cartCheckoutPlugin.js` eski sepet yolunu da aynı kapıya bağlar.
-- TEST: 23 Kasım 2026 07:37 Europe/Berlin. `guestCheckoutFailClosed.test.mjs` 4/4. `part8Foundation.test.mjs` ve `masterIntegrationPhase3.test.mjs` geçti. `adminRouteMatrix.test.mjs` içindeki yazma sınıfları geçti: imzasız sepet ve checkout 401, satış kilitli oturumlar 403. Satış kilidi açık değil.
-- ENTEGRASYON: Kimlik, admin oturumu veya imzalı hesap tokenından gelir. Gövdedeki `customerId` token sayılmaz. Motorun süreç içi çağrıları `req` taşımadığında eski kuru akışta kalır.
+- KOD: server/lib/commerce/commerceGuards.js
+- TEST: 11:21 Europe/Berlin. guestCheckoutFailClosed.test.mjs 4/4 yeniden geçti.
+- ENTEGRASYON: Kimliksiz sepet ve checkout kapalı.
 - DURUM: 🟡
-- EKSİK: `POST /api/orders/dry-rehearsal` tokensuz kuru prova çalıştırıyor; bunu bekleyen ayrı test var. `GET /api/orders/:orderNumber` kimliği gizleyerek 200 dönüyor; `adminAuthorizationHardening.test.mjs` bunu sözleşme sayıyor. Bu iki vitrin yolu değiştirilmedi.
+- EKSİK: POST /api/orders/dry-rehearsal ve kimliği gizleyen GET /api/orders/:orderNumber sözleşmesi duruyor.
 
 ## Madde 17
 
 - GÖREV: Diagnostic / Guardian / Orchestrator / DB GET protection
 - NE İSTİYOR: Unauthenticated diagnostic prefixes 401
-- KOD: `guardianBridgePlugin.js` ve `orchestratorBridgePlugin.js` admin oturumu ister. `databasePlugin.js` `/api/db/status` hesap tokenı ister. Bu üçü `PUBLIC_ROUTES` dışına alındı.
-- TEST: 23 Kasım 2026 07:39 Europe/Berlin. `diagnosticGetAuth.test.mjs` 3/3. Tokensuz Guardian, Orchestrator ve DB status 401. Admin oturumu Guardian ve Orchestrator status için 200, ikisi de `configured: false`. Hesap tokenı DB status için 200. `/api/health` tokensuz 200 kaldı.
-- ENTEGRASYON: Admin oturumu DB status kapısından geçmez. Hesap tokenı Guardian status kapısından geçmez. Guardian ve Orchestrator adresi bu ortamda yok.
+- KOD: server/plugins/guardianBridgePlugin.js
+- TEST: 11:21 Europe/Berlin. diagnosticGetAuth.test.mjs 3/3 yeniden geçti.
+- ENTEGRASYON: Guardian, Orchestrator ve DB status tokensuz 401.
 - DURUM: 🟡
-- EKSİK: `/api/health` ve altındaki hazırlık uçları hâlâ herkese açık. Canlılık yoklaması bilinçli olarak kapatılmadı.
+- EKSİK: /api/health herkese açık kaldı.
 
 ## Madde 18
 
@@ -432,11 +441,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Software facade is not a second orchestrator
 - NE İSTİYOR: server/lib/software wraps existing engines
-- KOD: `server/lib/software` bu dalda yok.
-- TEST: Dizin arandı, dosya yok. `controlCenter.js` bu maddeyi karşılamıyor.
-- ENTEGRASYON: Cephe olmadığı için motorlara ikinci bir sarmalayıcı bağlanmadı.
-- DURUM: 🔴
-- EKSİK: Yazılım cephesi uygulanmadı.
+- KOD: server/lib/software/index.js
+- TEST: 11:21 Europe/Berlin. status() orchestrator false, decides false, satış false, ürün SoT active false.
+- ENTEGRASYON: Cephe karar vermiyor ve ürün durumunu okuyor.
+- DURUM: 🟡
+- EKSİK: Bütün motorların metotları bu cepheden geçmiyor.
 
 ## Madde 31
 
@@ -612,11 +621,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: AI tool rate limit
 - NE İSTİYOR: Guardian per-agent rate window
-- KOD: `server/lib` ve `server/lib/buzzardNative` içinde ajan penceresi arandı. Eşleşme yok.
-- TEST: Koşulacak bir pencere yok.
-- ENTEGRASYON: Guardian rate hesabı bağlı değil.
-- DURUM: 🔴
-- EKSİK: Ajan başına Guardian hız penceresi uygulanmamış.
+- KOD: server/lib/security/agentRateWindow.js
+- TEST: 11:21 Europe/Berlin. Aynı ajanın ikinci executeReadOnly çağrısı AGENT_RATE_LIMITED, live false.
+- ENTEGRASYON: Pusat yürütmesi pencereyi ajan kimliğiyle tüketiyor.
+- DURUM: ✅
+- EKSİK: Uzak Guardian adresi hâlâ yapılandırılmadı. Pencere yerel.
 
 ## Madde 49
 
@@ -702,11 +711,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: PIM write boundary
 - NE İSTİYOR: authorizeCreate/Update/Delete; actor from session
-- KOD: Depoda `authorizeCreate`, `authorizeUpdate`, `authorizeDelete` yok.
-- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Sembol arandı. Eşleşme yok.
-- ENTEGRASYON: Oturumdan aktör alan bir ürün yazma kapısı yok.
-- DURUM: 🔴
-- EKSİK: Üç yetki fonksiyonu uygulanmamış.
+- KOD: server/lib/pim/productAuthorization.js
+- TEST: 11:21 Europe/Berlin. Oturumsuz ACTOR_REQUIRED. Oturum e-postası aktör. Plugin create ve update bu sonucu kullanıyor.
+- ENTEGRASYON: Gövdeden aktör alınmıyor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 58
 
@@ -752,11 +761,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Dual-write forbidden
 - NE İSTİYOR: assertNoDualWrite throws
-- KOD: `assertNoDualWrite` depoda yok.
-- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Sembol arandı. Eşleşme yok.
-- ENTEGRASYON: Çift yazmayı atan bir fonksiyon yok.
-- DURUM: 🔴
-- EKSİK: Fonksiyon uygulanmamış.
+- KOD: server/lib/productSot.js
+- TEST: 11:21 Europe/Berlin. assertNoDualWrite iki hedefte DUAL_WRITE_FORBIDDEN fırlatıyor. productService.createProduct aynı hatayı veriyor.
+- ENTEGRASYON: Tek hedef D yazılıyor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 63
 
@@ -782,11 +791,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: JSON product store
 - NE İSTİYOR: Optional BUZZARD_PRODUCT_STORE_PATH
-- KOD: `BUZZARD_PRODUCT_STORE_PATH` sunucuda yok. Veritabanı yolu `BUZZARD_DB_PATH`.
-- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Ürün, testin verdiği `BUZZARD_DB_PATH` dosyasına yazıldı.
-- ENTEGRASYON: İstenen ortam adı uygulanmamış.
-- DURUM: 🔴
-- EKSİK: `BUZZARD_PRODUCT_STORE_PATH` yok.
+- KOD: server/lib/pim/productJsonStore.js
+- TEST: 11:21 Europe/Berlin. Yol yokken kapalı. Geçici yolda active 0. Depo data yolu PRODUCT_STORE_PATH_PROTECTED.
+- ENTEGRASYON: İsteğe bağlı JSON yolu.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 66
 
@@ -1002,11 +1011,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Inter-Cars adapter class
 - NE İSTİYOR: Sandbox/mock; no live order
-- KOD: yok
-- TEST: server ağacında Inter Cars adaptörü yok.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🔴
-- EKSİK: Adaptör yazılmamış. Canlı hesap olsa da bağlanacak sınıf yok.
+- KOD: server/lib/adapters/interCarsAdapter.js
+- TEST: 11:21 Europe/Berlin. placeOrder LIVE_ORDER_FORBIDDEN, orderCreated false, live false.
+- ENTEGRASYON: Kum havuzu. Ağ çağrısı yok.
+- DURUM: ✅
+- EKSİK: Canlı Inter Cars hesabı yok. Sipariş yolu kapalı.
 
 ## Madde 88
 
@@ -1102,11 +1111,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Order service
 - NE İSTİYOR: skipAccessCheck only internal
-- KOD: `skipAccessCheck` depoda yok.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Sembol arandı. Eşleşme yok.
-- ENTEGRASYON: İç atlama anahtarı yok.
-- DURUM: 🔴
-- EKSİK: `skipAccessCheck` uygulanmamış.
+- KOD: server/lib/commerce/orderService.js
+- TEST: 11:21 Europe/Berlin. İstek gövdesindeki skipAccessCheck 403. internal ve req yokken kuru sipariş okunuyor.
+- ENTEGRASYON: İstemci atlaması kapalı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 98
 
@@ -1242,11 +1251,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Order identity / QR
 - NE İSTİYOR: Phase 3 identity
-- KOD: Sipariş kütüphanelerinde QR veya phase 3 kimlik sembolü yok.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Arandı. Eşleşme yok.
-- ENTEGRASYON: Kimlik karesi yok.
-- DURUM: 🔴
-- EKSİK: Phase 3 sipariş kimliği uygulanmamış.
+- KOD: server/lib/commerce/phase3Identity.js
+- TEST: 11:21 Europe/Berlin. Kuru sipariş phase3.payable false, qr null, live false.
+- ENTEGRASYON: Kimlik sipariş okumasına bağlı.
+- DURUM: 🟡
+- EKSİK: Ödenebilir QR yok.
 
 ## Madde 112
 
@@ -1852,21 +1861,21 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Financial-impact recorded
 - NE İSTİYOR: financialImpact on metadata
-- KOD: server/lib/controlCenter.js
-- TEST: financialImpact sembolü yok.
-- ENTEGRASYON: Metadata içine mali etki yazılmadı.
-- DURUM: 🔴
-- EKSİK: Alan uygulanmadı.
+- KOD: server/lib/approvalBinding.js
+- TEST: 11:21 Europe/Berlin. financialImpact.realMoneyMovement false ve amount null. İstemci tutarı silindi.
+- ENTEGRASYON: Onay metadata sunucuda yazılıyor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 173
 
 - GÖREV: Action input hashes
 - NE İSTİYOR: hashInput bind
-- KOD: server/lib/controlCenter.js
-- TEST: hashInput sembolü yok.
-- ENTEGRASYON: Onay girdisi hash ile bağlanmadı.
-- DURUM: 🔴
-- EKSİK: Bağlama fonksiyonu yok.
+- KOD: server/lib/approvalBinding.js
+- TEST: 11:21 Europe/Berlin. hashInput onay alanlarından üretildi. assertBound eşleşti.
+- ENTEGRASYON: İstemci hash değeri kabul edilmiyor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 174
 
@@ -1932,11 +1941,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Revalidate before execute
 - NE İSTİYOR: assertBound hash check
-- KOD: server/lib/controlCenter.js
-- TEST: assertBound ve hash kontrolü yok.
-- ENTEGRASYON: Yürütme öncesi girdi özeti karşılaştırılmıyor.
-- DURUM: 🔴
-- EKSİK: Kontrol uygulanmadı.
+- KOD: server/lib/controlCenterJobAdmission.js
+- TEST: 11:21 Europe/Berlin. Hash uyuşmazlığında INPUT_HASH_MISMATCH. Kuyruğa iş yazılmadı.
+- ENTEGRASYON: Yürütmeden önce bağ kontrolü.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 181
 
@@ -2073,10 +2082,10 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 - GÖREV: Health / software report
 - NE İSTİYOR: /api/health/software
 - KOD: server/plugins/productionHealthPlugin.js
-- TEST: /api/health/software kaynağında yok.
-- ENTEGRASYON: Uç çağrılmadı.
-- DURUM: 🔴
-- EKSİK: Adı geçen sağlık ucu yok.
+- TEST: 11:21 Europe/Berlin. GET /api/health/software diagnosticOnly true, salesEnabled false, orchestrator false.
+- ENTEGRASYON: Salt okunur rapor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 195
 
@@ -2282,11 +2291,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: External integrations inventory
 - NE İSTİYOR: externalIntegrations.js
-- KOD: server/lib/supplier/realSupplierConnector.js
-- TEST: externalIntegrations.js yok.
-- ENTEGRASYON: Canlı tedarikçi çağrısı yok.
-- DURUM: 🔴
-- EKSİK: Adı geçen dosya yok.
+- KOD: server/lib/externalIntegrations.js
+- TEST: 11:21 Europe/Berlin. inventory live false. Her satır live false.
+- ENTEGRASYON: Ağ çağrısı yok.
+- DURUM: ✅
+- EKSİK: Canlı hesap bağlanmadı.
 
 ## Madde 216
 
@@ -2362,11 +2371,11 @@ Madde 183–237, 23 Kasım 2026 11:01 Europe/Berlin. `items183to237Ops.test.mjs`
 
 - GÖREV: Provider diagnostics
 - NE İSTİYOR: provider-diagnostics.mjs
-- KOD: scripts
-- TEST: provider-diagnostics.mjs yok.
-- ENTEGRASYON: Sağlayıcı tanısı çalıştırılmadı.
-- DURUM: 🔴
-- EKSİK: Betik yok.
+- KOD: scripts/provider-diagnostics.mjs
+- TEST: 11:21 Europe/Berlin. Betik çıkış 0. salesEnabled false, network false, live false.
+- ENTEGRASYON: Sağlayıcı çağrısı yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 224
 

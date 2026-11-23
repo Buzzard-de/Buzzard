@@ -48,6 +48,7 @@ function mapOrder(row) {
     metadata: parseJson(row.metadata_json, {}),
     createdAt: row.created_at,
     isCommercial: isCommercialOrderType(row.order_type),
+    phase3: require("./phase3Identity").phase3Identity(row.id),
   };
 }
 
@@ -203,6 +204,16 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
 }
 
 function getOrder(orderId, ctx = {}) {
+  const requestedSkip = ctx.req && (
+    ctx.req.body?.skipAccessCheck === true
+    || ctx.req.query?.skipAccessCheck === true
+    || ctx.req.query?.skipAccessCheck === "true"
+    || ctx.skipAccessCheck === true
+  );
+  if (requestedSkip) {
+    return { error: "SKIP_ACCESS_FORBIDDEN", status: 403, blocked: true };
+  }
+  const internalSkip = ctx.skipAccessCheck === true && ctx.internal === true && !ctx.req;
   if (ctx.req) {
     const { assertCommerceCredential } = require("./commerceGuards");
     const credential = assertCommerceCredential(ctx.req);
@@ -218,7 +229,7 @@ function getOrder(orderId, ctx = {}) {
   if (identityBlock?.blocked) {
     return { error: identityBlock.code, status: identityBlock.status || 401, blocked: true, message: identityBlock.message };
   }
-  if (!ctx.req) {
+  if (!ctx.req && !internalSkip) {
     const access = assertCustomerResourceAccess({
       resourceCustomerId: row.customer_id,
       requestCustomerId: ctx.customerId,

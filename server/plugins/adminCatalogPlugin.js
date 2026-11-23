@@ -110,7 +110,8 @@ module.exports = {
         supplier_price: supplierPrice,
         buy_now_enabled: body.buy_now_enabled ?? false,
         created_at: new Date().toISOString(),
-      });
+      }, require("../lib/software/control").actorFromRequest(req));
+      if (product.code) return res.status(product.status || 401).json({ success: false, code: product.code });
 
       audit(req, { action: "create", entityType: "product", entityId: product.id, field: null, oldValue: null, newValue: product.id });
       return res.status(201).json({ success: true, product });
@@ -140,7 +141,8 @@ module.exports = {
         return res.status(409).json({ success: false, errorKey: "admin.product.duplicate", productId: duplicate.id });
       }
 
-      const updated = productStore.upsertProduct({ ...validated.product, id: existing.id });
+      const updated = productStore.upsertProduct({ ...validated.product, id: existing.id }, require("../lib/software/control").actorFromRequest(req));
+      if (updated.code) return res.status(updated.status || 401).json({ success: false, code: updated.code });
       Object.keys(body).forEach((field) => {
         audit(req, {
           action: "update",
@@ -163,7 +165,8 @@ module.exports = {
       if (!["draft", "active", "paused", "archived"].includes(status)) {
         return res.status(400).json({ success: false, errorKey: "admin.product.invalidStatus" });
       }
-      const updated = productStore.upsertProduct({ ...existing, status });
+      const updated = productStore.upsertProduct({ ...existing, status }, require("../lib/software/control").actorFromRequest(req));
+      if (updated.code) return res.status(updated.status || 401).json({ success: false, code: updated.code });
       audit(req, { action: "status", entityType: "product", entityId: existing.id, field: "status", oldValue: existing.status, newValue: status });
       return res.json({ success: true, product: updated });
     });

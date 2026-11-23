@@ -96,7 +96,9 @@ function getProductBySku(sku) {
   };
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.createProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_products" });
+  if (denied) return denied;
   const sku = String(body.sku || "").trim();
   if (!sku) return { error: "sku required", status: 400 };
   const canonical = require("./productService").recordCanonicalProduct(
@@ -109,7 +111,7 @@ function createProduct(body = {}) {
       stock: body.stock,
       category: body.categoryId || body.category_id,
     },
-    { source: "PIM_CATALOG", actorId: "pim-catalog" }
+    { source: "PIM_CATALOG", actorId: ctx.actorId }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM pim_products WHERE sku = ?").get(sku);
@@ -164,7 +166,9 @@ function createProduct(body = {}) {
   }
 }
 
-function updateProduct(id, body = {}) {
+function updateProduct(id, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.updateProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_products" });
+  if (denied) return denied;
   const product = db.prepare("SELECT * FROM pim_products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
   db.prepare(`
@@ -189,7 +193,9 @@ function updateProduct(id, body = {}) {
   return { product: { ...updated, completeness: score } };
 }
 
-function upsertTranslation(body = {}) {
+function upsertTranslation(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.upsertTranslation", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_product_translations" });
+  if (denied) return denied;
   const productId = Number(body.productId || body.product_id);
   if (!productId) return { error: "productId required", status: 400 };
   db.prepare(`
@@ -210,7 +216,9 @@ function upsertTranslation(body = {}) {
   return { ok: true };
 }
 
-function upsertAttribute(body = {}) {
+function upsertAttribute(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.upsertAttribute", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_product_attributes" });
+  if (denied) return denied;
   const productId = Number(body.productId || body.product_id);
   if (!productId || !body.key) return { error: "productId and key required", status: 400 };
   db.prepare(`
@@ -224,7 +232,9 @@ function upsertAttribute(body = {}) {
   return { ok: true };
 }
 
-function addMedia(body = {}) {
+function addMedia(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.addMedia", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_product_media" });
+  if (denied) return denied;
   const productId = Number(body.productId || body.product_id);
   if (!productId || !body.url) return { error: "productId and url required", status: 400 };
   db.prepare(
@@ -240,7 +250,9 @@ function addMedia(body = {}) {
   return { ok: true };
 }
 
-function upsertSeo(body = {}) {
+function upsertSeo(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.upsertSeo", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_product_seo" });
+  if (denied) return denied;
   const productId = Number(body.productId || body.product_id);
   if (!productId) return { error: "productId required", status: 400 };
   db.prepare(`
@@ -255,7 +267,9 @@ function upsertSeo(body = {}) {
   return { ok: true };
 }
 
-function addVariant(body = {}) {
+function addVariant(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.addVariant", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_product_variants" });
+  if (denied) return denied;
   const productId = Number(body.productId || body.product_id);
   const variantSku = String(body.variantSku || body.variant_sku || "").trim();
   if (!productId || !variantSku) return { error: "productId and variantSku required", status: 400 };
@@ -289,7 +303,9 @@ function getCompletenessStats() {
   };
 }
 
-function queueImport(body = {}) {
+function queueImport(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "pimCatalog.queueImport", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_catalog_import_jobs" });
+  if (denied) return denied;
   const result = db
     .prepare("INSERT INTO pim_catalog_import_jobs(source_type, source_name, items_total) VALUES(?,?,?)")
     .run(body.sourceType || body.source_type || "xml", body.sourceName || body.source_name || "supplier-feed", Number(body.itemsTotal || body.items_total || 0));

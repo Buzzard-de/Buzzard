@@ -73,7 +73,9 @@ function collectCatalogRows(product) {
   return rows;
 }
 
-function syncCatalogProducts() {
+function syncCatalogProducts(ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSync.products", actorId: ctx.actorId, actorType: ctx.actorType, table: "products" });
+  if (denied) return { synced: 0, canonicalRejected: 0, ...denied };
   const products = loadCatalogProducts();
   if (!products.length) return { synced: 0 };
 
@@ -103,7 +105,7 @@ function syncCatalogProducts() {
           stock: row.stock,
           category: row.categoryName,
         },
-        { source: "CATALOG_SYNC", actorId: "catalog-sync" }
+        { source: "CATALOG_SYNC", actorId: ctx.actorId }
       );
       if (canonical.error || !canonical.id) {
         canonicalRejected += 1;

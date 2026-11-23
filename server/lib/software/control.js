@@ -96,4 +96,38 @@ function invoke({ engine, method, args = {}, actorId = null, mode = "read" } = {
   }
 }
 
-module.exports = { invoke, enforce, boundMethods, ENGINES };
+function authorizeProjection({ engine = "projection", method, actorId = null, actorType = null, table = null, targets = ["D"] } = {}) {
+  const dual = require("../productSot").assertNoDualWrite(targets);
+  const actor = String(actorId || "").trim();
+  if (!actor) {
+    return { ok: false, code: "ACTOR_REQUIRED", error: "ACTOR_REQUIRED", engine, method, table, role: "write", status: 401, orchestrator: false, decides: false };
+  }
+  if (String(actorType || "").toUpperCase() === "AI") {
+    return { ok: false, code: "AI_WRITE_DENIED", error: "AI_WRITE_DENIED", engine, method, table, actorId: actor, role: "write", status: 403, orchestrator: false, decides: false };
+  }
+  try {
+    require("../securityLog").logSecurityEvent({
+      type: "software_gate",
+      success: true,
+      detail: { engine, method, actorId: actor, role: "write", table },
+    });
+  } catch {
+    /* logging does not decide the call */
+  }
+  return { ok: true, code: "OK", engine, method, table, actorId: actor, role: "write", target: dual.target, orchestrator: false, decides: false };
+}
+
+function guardProjection(input = {}) {
+  const gate = authorizeProjection(input);
+  return gate.ok ? null : gate;
+}
+
+function actorFromRequest(req) {
+  const session = req?.adminUser || req?.user || null;
+  if (!session) return { actorId: null, actorType: null };
+  const actorId = session.email || session.userId || session.sub || session.id || null;
+  const role = String(session.actorType || session.role || "").toLowerCase();
+  return { actorId: actorId ? String(actorId) : null, actorType: role === "ai" ? "AI" : "HUMAN" };
+}
+
+module.exports = { invoke, enforce, authorizeProjection, guardProjection, actorFromRequest, boundMethods, ENGINES };

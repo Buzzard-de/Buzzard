@@ -178,7 +178,18 @@ function processRecords(records, supplierId, ctx = {}) {
       }
 
       const { product, action } = buildBuzzardProduct(normalized, supplier, ctx);
-      productStore.upsertProduct(product);
+      const stored = productStore.upsertProduct(product, { actorId: ctx.actorId, actorType: ctx.actorType });
+      if (!stored || stored.code) {
+        failed += 1;
+        syncLog.logImportRecord({
+          supplier_id: supplierId,
+          record_reference: normalized.supplier_sku || "unknown",
+          error_type: "actor",
+          error_message: stored?.code || "ACTOR_REQUIRED",
+          sync_job_id: job.id,
+        });
+        continue;
+      }
       if (action === "created") created += 1;
       else updated += 1;
     } catch (error) {

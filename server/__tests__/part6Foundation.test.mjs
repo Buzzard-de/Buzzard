@@ -126,7 +126,7 @@ describe("seoService", () => {
   it("updates SEO with slug", () => {
     const seoService = require("../lib/pim/seoService.js");
     const slug = `demo-seo-${crypto.randomBytes(3).toString("hex")}`;
-    const seo = seoService.updateSeo("pim_prod_demo001", { slug, metaTitle: "Demo SEO" });
+    const seo = seoService.updateSeo("pim_prod_demo001", { slug, metaTitle: "Demo SEO" }, { actorId: "part6@example.invalid", actorType: "HUMAN" });
     expect(seo.slug).toBe(slug);
   });
 });

@@ -138,7 +138,9 @@ function listAdminProducts() {
     .map(mapProduct);
 }
 
-function createCategory(body = {}) {
+function createCategory(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSeo.createCategory", actorId: ctx.actorId, actorType: ctx.actorType, table: "categories" });
+  if (denied) return denied;
   const { name } = body;
   if (!name) return { error: "name required", status: 400 };
   try {
@@ -150,7 +152,9 @@ function createCategory(body = {}) {
   }
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSeo.createProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "products" });
+  if (denied) return denied;
   const {
     sku,
     name,
@@ -168,7 +172,7 @@ function createProduct(body = {}) {
   if (!sku || !name) return { error: "sku and name required", status: 400 };
   const canonical = require("./productService").recordCanonicalProduct(
     { sku, title: name, description, price: priceEur, stock, category: categoryId },
-    { source: "CATALOG_SEO", actorId: "catalog-seo" }
+    { source: "CATALOG_SEO", actorId: ctx.actorId }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existingSeo = db.prepare("SELECT id FROM products WHERE sku = ?").get(sku);
@@ -231,7 +235,9 @@ function createProduct(body = {}) {
   }
 }
 
-function updateProduct(id, body = {}) {
+function updateProduct(id, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSeo.updateProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "products" });
+  if (denied) return denied;
   const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
 
@@ -268,7 +274,9 @@ function updateProduct(id, body = {}) {
   return { product: mapProduct(db.prepare("SELECT * FROM products WHERE id = ?").get(product.id)) };
 }
 
-function bulkUpdatePrices(margin = 0.3) {
+function bulkUpdatePrices(margin = 0.3, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSeo.bulkUpdatePrices", actorId: ctx.actorId, actorType: ctx.actorType, table: "products" });
+  if (denied) return denied;
   const rows = db.prepare("SELECT id, supplier_cost_eur FROM products WHERE active = 1").all();
   const update = db.prepare("UPDATE products SET price_eur = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
   const tx = db.transaction(() => {
@@ -280,7 +288,9 @@ function bulkUpdatePrices(margin = 0.3) {
   return { updated: rows.length, margin: Number(margin) };
 }
 
-function addProductImage(productId, body = {}) {
+function addProductImage(productId, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "catalogSeo.addProductImage", actorId: ctx.actorId, actorType: ctx.actorType, table: "product_images" });
+  if (denied) return denied;
   const { url, altText = "", sortOrder = 0 } = body;
   if (!url) return { error: "url required", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);

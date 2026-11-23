@@ -71,6 +71,14 @@ Madde 36–55, 23 Kasım 2026 08:15 Europe/Berlin. `items36to55Pusat.test.mjs` 5
 - ⛔ 1
 - ⚪ 121
 
+Madde 56–84, 23 Kasım 2026 08:18 Europe/Berlin. `items56to84Catalog.test.mjs` 5/5. `phase2CategoryInfrastructure.test.mjs` 1/1, `phase3ProductPim.test.mjs` 1/1, `phase5PricingProfit.test.mjs` 3/3. Madde 56 ve 76 ✅. Madde 57, 62 ve 65 🔴. On madde ⚪ iken 🟡 oldu.
+
+- ✅ 3
+- 🟡 119
+- 🔴 6
+- ⛔ 1
+- ⚪ 108
+
 ## Maddeler
 
 ## Madde 1
@@ -627,131 +635,131 @@ Madde 36–55, 23 Kasım 2026 08:15 Europe/Berlin. `items36to55Pusat.test.mjs` 5
 
 - GÖREV: Canonical product model
 - NE İSTİYOR: productCore create/read
-- KOD: server/__tests__/canonicalProductWriter.test.mjs
-- TEST: canonicalProductId yazarı var. Bu sabah koşulmadı.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Test bu oturumda çalıştırılmadı.
+- KOD: `server/lib/pim/productCore.js` `createProduct` / `getProduct`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `items56to84Catalog.test.mjs` 5/5. SKU yazıldı ve aynı id ile okundu. Durum `DRAFT`.
+- ENTEGRASYON: Geçici SQLite. `BUZZARD_PRODUCT_SOT_ACTIVE=1` iken `isSotActive()` false.
+- DURUM: ✅
+- EKSİK: Yok. Kabul cümlesi oluşturma ve okuma.
 
 ## Madde 57
 
 - GÖREV: PIM write boundary
 - NE İSTİYOR: authorizeCreate/Update/Delete; actor from session
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `productWrite`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: Depoda `authorizeCreate`, `authorizeUpdate`, `authorizeDelete` yok.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Sembol arandı. Eşleşme yok.
+- ENTEGRASYON: Oturumdan aktör alan bir ürün yazma kapısı yok.
+- DURUM: 🔴
+- EKSİK: Üç yetki fonksiyonu uygulanmamış.
 
 ## Madde 58
 
 - GÖREV: Customer-facing taxonomy L1
 - NE İSTİYOR: 50 customer L1 categories
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `activeL1`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `hubSeoLocaleService.validateHubSeoCoverage`. `phase2CategoryInfrastructure`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `activeHubs` 50, `missingPrimary` boş. `phase2CategoryInfrastructure.test.mjs` 1/1, `master50` 50, `templateL1` 50, `completeClaim` false.
+- ENTEGRASYON: Yazılım şablonu. Canlı müşteri vitrini bu testte açılmadı.
+- DURUM: 🟡
+- EKSİK: `completeClaim` false. Müşteri vitrininde 50 kutu ayrıca sayılmadı.
 
 ## Madde 59
 
 - GÖREV: Category localization
 - NE İSTİYOR: DE/EN/TR/AR labels
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `hubSeo`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `PRIMARY` de, en, tr, ar. `productValidator.VALID_LOCALES` aynı dördü.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. İkisi de geçti. Kapsam `completeClaim` false.
+- ENTEGRASYON: Hub etiketleri manifestte. Çeviri iddiası yok.
+- DURUM: 🟡
+- EKSİK: Her ürün satırının dört dili bu turda doldurulmadı.
 
 ## Madde 60
 
 - GÖREV: Product validation
 - NE İSTİYOR: PIM validation / customs decision
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `validateEan`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `productValidator.validateProduct` içinde `validateCustoms`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Güven 0.2 iken `review_required` true. Menşe `DE`.
+- ENTEGRASYON: Doğrulama yerel. Canlı gümrük servisi yok.
+- DURUM: 🟡
+- EKSİK: Ayrı bir gümrük karar motoru çağrılmadı.
 
 ## Madde 61
 
 - GÖREV: Product SoT readiness while inactive
 - NE İSTİYOR: activationStatus.activated false even if env flag
-- KOD: server/lib/salesSafetyGate.js
-- TEST: Bu ağaçta `PRODUCT_SOT` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `activationStatus` sembolü yok. `productSot.isSotActive` hem aktif hem münhasır bayrak ister.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Yalnız `BUZZARD_PRODUCT_SOT_ACTIVE=1` iken `isSotActive()` false.
+- ENTEGRASYON: Ürün yine de taslak yazıldı. Kaynak tekliği açılmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Adı geçen `activationStatus.activated` alanı yok.
 
 ## Madde 62
 
 - GÖREV: Dual-write forbidden
 - NE İSTİYOR: assertNoDualWrite throws
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `dual-write`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `assertNoDualWrite` depoda yok.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Sembol arandı. Eşleşme yok.
+- ENTEGRASYON: Çift yazmayı atan bir fonksiyon yok.
+- DURUM: 🔴
+- EKSİK: Fonksiyon uygulanmamış.
 
 ## Madde 63
 
 - GÖREV: SKU uniqueness
 - NE İSTİYOR: productStore uniqueness
-- KOD: server/lib/pim/phase11Evidence.js
-- TEST: Bu ağaçta `duplicate_ean` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `productCore.createProduct` `productIdentifiers.assertUnique`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Aynı SKU ikinci kez yazılınca istisna.
+- ENTEGRASYON: `pim_core_products`. Ayrı bir `productStore` dosyası bu testte yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: `productStore` adı bu ağaçta ayrıca doğrulanmadı.
 
 ## Madde 64
 
 - GÖREV: Catalog SEO
 - NE İSTİYOR: createProduct active=0
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `jsonLd`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `createProduct` durum vermezse `PRODUCT_STATUS.DRAFT` ve görünürlük `HIDDEN`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Okunan durum `DRAFT`.
+- ENTEGRASYON: `active=0` kolonu yok.
+- DURUM: 🟡
+- EKSİK: Kabul cümlesindeki `active=0` alanı yok. Taslak, yayında değil.
 
 ## Madde 65
 
 - GÖREV: JSON product store
 - NE İSTİYOR: Optional BUZZARD_PRODUCT_STORE_PATH
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `jsonStore`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `BUZZARD_PRODUCT_STORE_PATH` sunucuda yok. Veritabanı yolu `BUZZARD_DB_PATH`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Ürün, testin verdiği `BUZZARD_DB_PATH` dosyasına yazıldı.
+- ENTEGRASYON: İstenen ortam adı uygulanmamış.
+- DURUM: 🔴
+- EKSİK: `BUZZARD_PRODUCT_STORE_PATH` yok.
 
 ## Madde 66
 
 - GÖREV: PIM import dry-run
 - NE İSTİYOR: No live import without flag
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `dry-run`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `CsvSupplierAdapter.fetchProducts` ağı bloke eder. `phase3` `PIM_LIVE_PUBLISH` `BLOCKED_EXTERNAL`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Canlı okuma reddedildi. `phase3ProductPim.test.mjs` 1/1, `liveImport` false, `completeClaim` false.
+- ENTEGRASYON: Kuru okuma `live: false`.
+- DURUM: 🟡
+- EKSİK: Canlı içe aktarma bayrağı açıkken red ayrıca denenmedi.
 
 ## Madde 67
 
 - GÖREV: PIM publish gated
 - NE İSTİYOR: Publish not SoT activation
-- KOD: server/lib/platform/phase3ProductPim.js
-- TEST: PIM_LIVE_PUBLISH kapısı var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `productSot.isSotActive`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Ürün oluştu, kaynak tekliği false.
+- ENTEGRASYON: Yayın ile SoT aynı anahtar değil.
 - DURUM: 🟡
-- EKSİK: Yayın insan onayında. Canlı PIM yok.
+- EKSİK: Yayın ucu HTTP ile çağrılmadı.
 
 ## Madde 68
 
 - GÖREV: Storefront catalog read
 - NE İSTİYOR: catalogCache / catalogReadService
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `catalog`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/storefront/catalogReadService.js`. Sepet servisi onu ister.
+- TEST: Bu turda `getHealth` çağrılmadı.
+- ENTEGRASYON: Modül duruyor. Önbellek sağlığı ölçülmedi.
+- DURUM: 🟡
+- EKSİK: Okuma servisi bu turda çalıştırılmadı.
 
 ## Madde 69
 
@@ -817,101 +825,101 @@ Madde 36–55, 23 Kasım 2026 08:15 Europe/Berlin. `items36to55Pusat.test.mjs` 5
 
 - GÖREV: Pricing engine
 - NE İSTİYOR: server/lib/pricing.js
-- KOD: server/lib/commerce/pricingPolicy.js
-- TEST: Fiyat politikası dosyası var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `server/lib/pricing.js` `calculateSalePrice`. Kurallar ayrıca `server/lib/commerce/pricingPolicy.js`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `pricingPolicy.evaluateOffer` geçti. `phase5PricingProfit.test.mjs` 3/3. `pricing.js` bu komutta çağrılmadı.
+- ENTEGRASYON: İki fiyat modülü var. İkisi de satış açmaz.
 - DURUM: 🟡
-- EKSİK: Kâr tabanı bu sabah yeniden hesaplanmadı.
+- EKSİK: `pricing.js` satış hesabı bu turda koşulmadı.
 
 ## Madde 76
 
 - GÖREV: Profit calculation / MIN_NET_PROFIT
 - NE İSTİYOR: MIN_NET_PROFIT_EUR 0.50
-- KOD: server/lib/commerce/pricingPolicy.js
-- TEST: MIN_NET_PROFIT sembolü fiyat politikasında aranacak dosyada duruyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Bu sabah fiyat testi koşulmadı.
+- KOD: `pricingPolicy.MIN_NET_PROFIT_EUR` 0.5.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. 0.20 kâr `MIN_NET_PROFIT` ile reddedildi. `livePriceWrite` false.
+- ENTEGRASYON: Teklif tavsiye. Fiyat yazılmadı.
+- DURUM: ✅
+- EKSİK: Yok. Taban 0.50 EUR ve altı reddediliyor.
 
 ## Madde 77
 
 - GÖREV: Supplier integration framework
 - NE İSTİYOR: Connector inventory; no real PO
-- KOD: server/lib/supplier/dryRunSupplierAdapter.js
-- TEST: Bu ağaçta `baseAdapter` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `supplierSafetyGate.isSupplierOrdersBlocked`. `CsvSupplierAdapter`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Satış kapalı ve sipariş bayrağı 1 iken sipariş kapalı. Canlı okuma fırlatır.
+- ENTEGRASYON: Gerçek satınalma emri yok.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Bütün bağlayıcı envanteri tek tek listelenmedi.
 
 ## Madde 78
 
 - GÖREV: Supplier normalization
 - NE İSTİYOR: Feed dry-run CSV/XML/JSON
-- KOD: server/lib/jobHandlers.js
-- TEST: Bu ağaçta `supplierMapping` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `supplierImportPipeline.importSupplierFeed`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. CSV biçimli kayıt `pimWrite` false, `live` false.
+- ENTEGRASYON: Ham CSV, XML ve JSON dosyası ayrıştırılmadı. Alan normalleştirildi.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: Üç dosya biçiminin ham ayrıştırması yok.
 
 ## Madde 79
 
 - GÖREV: Inventory synchronization (local)
 - NE İSTİYOR: stockEngine
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `inventory`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/buzzardNative/core/specialists/stockEngine.js` `inspectFeeds`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Bayat ve sayı olmayan stok satılamaz. `liveSupplierApi` false.
+- ENTEGRASYON: Yerel kural. Depo stoğu yok.
+- DURUM: 🟡
+- EKSİK: `operations/stockEngine.js` yolu yok. Uzman motoru var.
 
 ## Madde 80
 
 - GÖREV: Supplier availability
 - NE İSTİYOR: Adapter class / mock
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `availability`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `CsvSupplierAdapter`. `networkBlocked` true. `canGoLive` false.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `fetchProducts` reddedildi. Kuru okuma `live` false.
+- ENTEGRASYON: Örnek kayıt. Dış hesap yok.
+- DURUM: 🟡
+- EKSİK: Her tedarikçi sınıfı çağrılmadı.
 
 ## Madde 81
 
 - GÖREV: Shipping cost calculation local
 - NE İSTİYOR: shippingProvider stubs
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `dryShipping`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `shippingProvider.calculateShipping`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. EUR, `dryRun` true, `shipmentCreated` false. `realShipmentEnabled` false.
+- ENTEGRASYON: Sabit tablo. Taşıyıcı çağrısı yok.
+- DURUM: 🟡
+- EKSİK: Ağırlık ve posta kodu tarifesi bu fonksiyonda yok.
 
 ## Madde 82
 
 - GÖREV: Pricing safeguards / no undercut
 - NE İSTİYOR: MARKET_UNDERCUT_IMPLEMENTED false
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `undercut`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `MARKET_UNDERCUT_IMPLEMENTED` yok. `pricingPolicy` `ABOVE_UNDERCUT_TARGET` ve `livePriceWrite: false`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. 80 EUR, pazar 90 iken undercut nedeni yok. Canlı fiyat yazması false.
+- ENTEGRASYON: Tavsiye kuralı. Vitrin fiyatı kesilmedi.
+- DURUM: 🟡
+- EKSİK: Adı geçen bayrak yok.
 
 ## Madde 83
 
 - GÖREV: Supplier feeds dry-run only
 - NE İSTİYOR: No live fetch
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `supplierFeed`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `DryRunSupplierAdapter.fetchProducts` ve `importSupplierFeed`.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Canlı okuma bloke. Besleme `live` false.
+- ENTEGRASYON: Ağ kapalı.
+- DURUM: 🟡
+- EKSİK: Dış besleme URL'si yok. Olmaması doğru.
 
 ## Madde 84
 
 - GÖREV: No real purchase orders
 - NE İSTİYOR: supplierOrdersEnabled false
-- KOD: server/lib/jobSafetyGate.js
-- TEST: Bu ağaçta `submitOrder` geçiyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
+- KOD: `isSupplierOrdersBlocked`. Satış kapalıyken sipariş bayrağı etkisiz.
+- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `BUZZARD_SUPPLIER_ORDERS_ENABLED=1` ve satış 0 iken true.
+- ENTEGRASYON: Gerçek satınalma emri oluşmadı.
 - DURUM: 🟡
-- EKSİK: Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+- EKSİK: `commerceFeatureFlags.supplierOrdersEnabled` bu testte okunmadı.
 
 ## Madde 85
 

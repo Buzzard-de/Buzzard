@@ -54,35 +54,35 @@ item,task,criterion,code,test_evidence,status,gap
 53,Cross-process memory proof,Documented in AI completion,server/lib/pusat/durable.js,2026-11-23 08:15 Europe/Berlin single-process sqlite read. No second process.,🟡,No cross-process reopen and no AI-completion document proof.
 54,Recommendation-only assistants,Cannot execute commercial side effects,server/lib/commerce/pricingIntegration.js,2026-11-23 08:15 Europe/Berlin recommendationOnly true. AI price write denied.,🟡,Stock buy and refund gates were not re-run in this item.
 55,Pusat health/status,Health reports stub/live honestly,server/lib/pusat/runtime.js,2026-11-23 08:15 Europe/Berlin health.live false and workers.live false.,🟡,No live provider was attached.
-56,Canonical product model,productCore create/read,server/__tests__/canonicalProductWriter.test.mjs,canonicalProductId yazarı var. Bu sabah koşulmadı.,🟡,Test bu oturumda çalıştırılmadı.
-57,PIM write boundary,authorizeCreate/Update/Delete; actor from session,bu turda maddeye özel dosya açılmadı,Aranan iz: `productWrite`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-58,Customer-facing taxonomy L1,50 customer L1 categories,bu turda maddeye özel dosya açılmadı,Aranan iz: `activeL1`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-59,Category localization,DE/EN/TR/AR labels,bu turda maddeye özel dosya açılmadı,Aranan iz: `hubSeo`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-60,Product validation,PIM validation / customs decision,bu turda maddeye özel dosya açılmadı,Aranan iz: `validateEan`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-61,Product SoT readiness while inactive,activationStatus.activated false even if env flag,server/lib/salesSafetyGate.js,Bu ağaçta `PRODUCT_SOT` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-62,Dual-write forbidden,assertNoDualWrite throws,bu turda maddeye özel dosya açılmadı,Aranan iz: `dual-write`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-63,SKU uniqueness,productStore uniqueness,server/lib/pim/phase11Evidence.js,Bu ağaçta `duplicate_ean` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-64,Catalog SEO,createProduct active=0,bu turda maddeye özel dosya açılmadı,Aranan iz: `jsonLd`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-65,JSON product store,Optional BUZZARD_PRODUCT_STORE_PATH,bu turda maddeye özel dosya açılmadı,Aranan iz: `jsonStore`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-66,PIM import dry-run,No live import without flag,bu turda maddeye özel dosya açılmadı,Aranan iz: `dry-run`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-67,PIM publish gated,Publish not SoT activation,server/lib/platform/phase3ProductPim.js,PIM_LIVE_PUBLISH kapısı var.,🟡,Yayın insan onayında. Canlı PIM yok.
-68,Storefront catalog read,catalogCache / catalogReadService,bu turda maddeye özel dosya açılmadı,Aranan iz: `catalog`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
+56,Canonical product model,productCore create/read,server/lib/pim/productCore.js,2026-11-23 08:18 Europe/Berlin create and getProduct. Status DRAFT. SoT inactive.,✅,Create and read met.
+57,PIM write boundary,authorizeCreate/Update/Delete; actor from session,server/lib,authorizeCreate/Update/Delete not in the repo.,🔴,The three authorization functions are not implemented.
+58,Customer-facing taxonomy L1,50 customer L1 categories,server/lib/storefront/hubSeoLocaleService.js,"2026-11-23 08:18 Europe/Berlin 50 hubs, phase2 1/1 master50 50, completeClaim false.",🟡,Storefront boxes were not counted in a browser.
+59,Category localization,DE/EN/TR/AR labels,server/lib/storefront/hubSeoLocaleService.js,2026-11-23 08:18 Europe/Berlin PRIMARY and VALID_LOCALES are de en tr ar.,🟡,Not every product row has four languages.
+60,Product validation,PIM validation / customs decision,server/lib/productValidator.js,2026-11-23 08:18 Europe/Berlin confidence 0.2 sets review_required.,🟡,No separate customs decision engine was called.
+61,Product SoT readiness while inactive,activationStatus.activated false even if env flag,server/lib/productSot.js,2026-11-23 08:18 Europe/Berlin SOT_ACTIVE=1 and isSotActive false.,🟡,activationStatus.activated does not exist.
+62,Dual-write forbidden,assertNoDualWrite throws,server/lib,assertNoDualWrite not in the repo.,🔴,The function is not implemented.
+63,SKU uniqueness,productStore uniqueness,server/lib/pim/productCore.js,2026-11-23 08:18 Europe/Berlin duplicate SKU throws.,🟡,No separate productStore module was verified.
+64,Catalog SEO,createProduct active=0,server/lib/pim/productCore.js,2026-11-23 08:18 Europe/Berlin omitted status is DRAFT.,🟡,No active=0 column.
+65,JSON product store,Optional BUZZARD_PRODUCT_STORE_PATH,server/lib/dbPaths.js,BUZZARD_PRODUCT_STORE_PATH is absent. BUZZARD_DB_PATH was used.,🔴,The named optional path is not implemented.
+66,PIM import dry-run,No live import without flag,server/lib/supplier/csvSupplierAdapter.js,2026-11-23 08:18 Europe/Berlin fetchProducts blocked. phase3 liveImport false.,🟡,The live-import flag was not turned on for a second refusal.
+67,PIM publish gated,Publish not SoT activation,server/lib/productSot.js,2026-11-23 08:18 Europe/Berlin product created and isSotActive false.,🟡,Publish HTTP was not called.
+68,Storefront catalog read,catalogCache / catalogReadService,server/lib/storefront/catalogReadService.js,Module is required by cartService. getHealth was not called.,🟡,Read service was not executed this pass.
 69,Search index local,sync-search-index; not live OpenSearch,bu turda maddeye özel dosya açılmadı,Aranan iz: `searchAndSort`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 70,Product i18n,fill-product-i18n-gaps,bu turda maddeye özel dosya açılmadı,Aranan iz: `locale`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 71,Customs validation on products,validateCustomsDecision,bu turda maddeye özel dosya açılmadı,Aranan iz: `customs`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 72,Catalog / PIM health,pimCatalog plugin health,bu turda maddeye özel dosya açılmadı,Aranan iz: `catalog`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 73,SoT activation remains human-gated,humanApprovalRequired true,server/lib/salesSafetyGate.js,PRODUCT_SOT kapısı var.,🟡,Kaynak etkinleştirme insan işi.
 74,No invented live prices or images,Catalog mode; no fake LIVE_VERIFIED prices,server/lib/buzzardNative/core/specialists/pricingEngine.js,Bu ağaçta `MISSING_COST` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-75,Pricing engine,server/lib/pricing.js,server/lib/commerce/pricingPolicy.js,Fiyat politikası dosyası var.,🟡,Kâr tabanı bu sabah yeniden hesaplanmadı.
-76,Profit calculation / MIN_NET_PROFIT,MIN_NET_PROFIT_EUR 0.50,server/lib/commerce/pricingPolicy.js,MIN_NET_PROFIT sembolü fiyat politikasında aranacak dosyada duruyor.,🟡,Bu sabah fiyat testi koşulmadı.
-77,Supplier integration framework,Connector inventory; no real PO,server/lib/supplier/dryRunSupplierAdapter.js,Bu ağaçta `baseAdapter` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-78,Supplier normalization,Feed dry-run CSV/XML/JSON,server/lib/jobHandlers.js,Bu ağaçta `supplierMapping` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
-79,Inventory synchronization (local),stockEngine,bu turda maddeye özel dosya açılmadı,Aranan iz: `inventory`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-80,Supplier availability,Adapter class / mock,bu turda maddeye özel dosya açılmadı,Aranan iz: `availability`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-81,Shipping cost calculation local,shippingProvider stubs,bu turda maddeye özel dosya açılmadı,Aranan iz: `dryShipping`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-82,Pricing safeguards / no undercut,MARKET_UNDERCUT_IMPLEMENTED false,bu turda maddeye özel dosya açılmadı,Aranan iz: `undercut`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-83,Supplier feeds dry-run only,No live fetch,bu turda maddeye özel dosya açılmadı,Aranan iz: `supplierFeed`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
-84,No real purchase orders,supplierOrdersEnabled false,server/lib/jobSafetyGate.js,Bu ağaçta `submitOrder` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
+75,Pricing engine,server/lib/pricing.js,server/lib/pricing.js,2026-11-23 08:18 Europe/Berlin pricingPolicy tested. phase5 3/3. pricing.js not called.,🟡,calculateSalePrice was not run.
+76,Profit calculation / MIN_NET_PROFIT,MIN_NET_PROFIT_EUR 0.50,server/lib/commerce/pricingPolicy.js,2026-11-23 08:18 Europe/Berlin MIN_NET_PROFIT_EUR 0.5 rejects a 0.20 profit. livePriceWrite false.,✅,Minimum net profit rule met.
+77,Supplier integration framework,Connector inventory; no real PO,server/lib/supplier/supplierSafetyGate.js,2026-11-23 08:18 Europe/Berlin orders blocked while sales off. Live fetch throws.,🟡,Full connector inventory was not listed.
+78,Supplier normalization,Feed dry-run CSV/XML/JSON,server/lib/supplier/supplierImportPipeline.js,2026-11-23 08:18 Europe/Berlin feed pimWrite false and live false.,🟡,Raw CSV XML and JSON files were not parsed.
+79,Inventory synchronization (local),stockEngine,server/lib/buzzardNative/core/specialists/stockEngine.js,2026-11-23 08:18 Europe/Berlin stale feed is not sellable. liveSupplierApi false.,🟡,operations/stockEngine.js is absent.
+80,Supplier availability,Adapter class / mock,server/lib/supplier/csvSupplierAdapter.js,2026-11-23 08:18 Europe/Berlin fetchProducts rejected. Dry run live false.,🟡,Not every supplier class was called.
+81,Shipping cost calculation local,shippingProvider stubs,server/lib/commerce/shippingProvider.js,2026-11-23 08:18 Europe/Berlin dryRun true shipmentCreated false.,🟡,No weight or postal tariff in this function.
+82,Pricing safeguards / no undercut,MARKET_UNDERCUT_IMPLEMENTED false,server/lib/commerce/pricingPolicy.js,MARKET_UNDERCUT_IMPLEMENTED is absent. livePriceWrite false.,🟡,The named flag does not exist.
+83,Supplier feeds dry-run only,No live fetch,server/lib/supplier/dryRunSupplierAdapter.js,2026-11-23 08:18 Europe/Berlin live fetch blocked. Feed live false.,🟡,No external feed URL. That is intended.
+84,No real purchase orders,supplierOrdersEnabled false,server/lib/supplier/supplierSafetyGate.js,2026-11-23 08:18 Europe/Berlin supplier order flag 1 still blocked while sales are off.,🟡,commerceFeatureFlags.supplierOrdersEnabled was not read.
 85,Stock engine,operations/stockEngine.js,bu turda maddeye özel dosya açılmadı,Aranan iz: `reserve`.,⚪,Sonraki turda bu maddenin dosyası ve testi açılacak.
 86,WMS reserve vs software reserve,Two tables; shared audit only,server/plugins/wmsInventoryPlugin.js,Bu ağaçta `wmsInventory` geçiyor.,🟡,Madde numarasına bağlı test bu sabah koşulmadı. Orijinal kabul ölçütü UNKNOWN.
 87,Inter-Cars adapter class,Sandbox/mock; no live order,yok,server ağacında Inter Cars adaptörü yok.,🔴,Adaptör yazılmamış. Canlı hesap olsa da bağlanacak sınıf yok.

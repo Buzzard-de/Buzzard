@@ -17,11 +17,21 @@ Durum kuralı: komşu test geçti diye madde ✅ olmadı. ✅ bu turda 0. Kod ve
 
 ## Sayılar
 
+İlk tur:
+
 - ✅ 0
 - 🟡 92
 - 🔴 1
 - ⛔ 1
 - ⚪ 143
+
+İkinci tur, 23 Kasım 2026 06:19 Europe/Berlin. Yalnızca madde 7 ve madde 15 yeniden açıldı. İkisi ⚪ iken 🟡 oldu. Diğer 235 madde bu turda değişmedi.
+
+- ✅ 0
+- 🟡 94
+- 🔴 1
+- ⛔ 1
+- ⚪ 141
 
 ## Maddeler
 
@@ -89,11 +99,11 @@ Durum kuralı: komşu test geçti diye madde ✅ olmadı. ✅ bu turda 0. Kod ve
 
 - GÖREV: Cookie flags HttpOnly, Secure, SameSite
 - NE İSTİYOR: Session cookies not readable by JS; CSRF companion token
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `HttpOnly`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/auth.js` login JSON `token` döner, Set-Cookie yazmaz. `lib/store/client.ts` tokenı `sessionStorage` içinde tutar. `server/lib/csrf.js` gelen `buzzard_csrf` çerezini okur, yazmaz. HttpOnly, Secure ve SameSite atayan kod `js/mjs/ts/tsx/py` içinde yok.
+- TEST: 23 Kasım 2026 06:19 Europe/Berlin. `csrf.test.mjs` 4/4 geçti; bayrak assert etmez. `adminSessionHttp.test.mjs` 19/19 geçti. Login `set-cookie` null. Cookie ile `/api/admin/me` 401.
+- ENTEGRASYON: `globalAuthMiddleware.js` CSRF okuyucusunu auth öncesine bağlar. İstemci `Authorization: Bearer` gönderir. Üretim ve geliştirme için ayrı çerez bayrağı dalı yok.
+- DURUM: 🟡
+- EKSİK: HttpOnly, Secure ve SameSite uygulanmıyor. Oturum tokenı `sessionStorage` içinde ve JS okuyabiliyor. CSRF eşlik çerezi sunucu tarafından set edilmiyor. Geçen testler bayrakları doğrulamıyor.
 
 ## Madde 8
 
@@ -169,11 +179,11 @@ Durum kuralı: komşu test geçti diye madde ✅ olmadı. ✅ bu turda 0. Kod ve
 
 - GÖREV: Request validation and safe error messages
 - NE İSTİYOR: Client totals rejected; public errors do not leak internals
-- KOD: bu turda maddeye özel dosya açılmadı
-- TEST: Aranan iz: `sendPublicError`.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: ⚪
-- EKSİK: Sonraki turda bu maddenin dosyası ve testi açılacak.
+- KOD: `server/lib/commerce/commerceValidation.js` `rejectClientTotals`. `checkoutService.js` bu kodu 400 ile döndürür. `server/lib/security.js` `publicErrorBody` yalnız `errorKey` verir. `server/server.js` yakalanan hatayı bu gövdeyle yollar, mesajı sunucu logunda tutar.
+- TEST: 23 Kasım 2026 06:19 Europe/Berlin. `part8Foundation.test.mjs` 17/17 geçti. `rejectClientTotals({ total: 1 }).ok` false. Sunucu tarafı toplam hesabı da geçti. HTTP cevabının stack sızdırmadığına dair test yok.
+- ENTEGRASYON: `validateCheckout` istemci toplamını reddeder. `sendRequestError` genel API yolunda `publicErrorBody` kullanır. `server/core/errors.js` `publicError` mesaj ve `meta` yayar; `server` içinde çağıran yok.
+- DURUM: 🟡
+- EKSİK: Toplam reddi birim testi HTTP rotasını çalıştırmıyor. Genel hata gövdesinin iç veri sızdırmadığı test edilmedi.
 
 ## Madde 16
 

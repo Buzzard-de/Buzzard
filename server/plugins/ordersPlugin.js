@@ -194,29 +194,6 @@ function mayReadOrderIdentity(req, order) {
   return Boolean(customer.email && orderEmail && String(customer.email).trim().toLowerCase() === orderEmail);
 }
 
-function withoutIdentity(order) {
-  const {
-    customer,
-    shippingAddress,
-    billingAddress,
-    customerId,
-    customerNote,
-    notes,
-    ip,
-    userAgent,
-    duplicateKey,
-    ...rest
-  } = order;
-  return {
-    ...rest,
-    customer: { firstName: "", lastName: "", email: "" },
-    shippingAddress: { country: shippingAddress?.country || "" },
-    billingAddress: { country: billingAddress?.country || "" },
-    shipments: (order.shipments || []).map(({ recipient, address, shippingAddress: to, customer: who, email, phone, ...shipment }) => shipment),
-    identityWithheld: true,
-  };
-}
-
 function validateAddress(address) {
   if (!address) return false;
   const required = ["firstName", "lastName", "street", "zip", "city", "country"];
@@ -245,6 +222,11 @@ module.exports = {
     ensureDataDir();
 
     app.post("/api/orders/dry-rehearsal", async (req, res) => {
+      const { assertCommerceCredential } = require("../lib/commerce/commerceGuards");
+      const credential = assertCommerceCredential(req);
+      if (credential?.blocked) {
+        return res.status(credential.status).json({ success: false, errorKey: credential.code, live: false, rehearsal: false });
+      }
       const { evaluateSalesGate } = require("../lib/salesSafetyGate");
       const sales = evaluateSalesGate();
       if (sales.allowed) {
@@ -551,13 +533,21 @@ module.exports = {
     });
 
     app.get("/api/orders/:orderNumber", (req, res) => {
+      const { assertCommerceCredential } = require("../lib/commerce/commerceGuards");
+      const credential = assertCommerceCredential(req);
+      if (credential?.blocked) {
+        return res.status(401).json({ success: false, errorKey: "auth_required", live: false });
+      }
       const orderNumber = decodeURIComponent(req.params.orderNumber || "");
       const order = readOrders().find((o) => o.orderNumber === orderNumber);
-      if (!order) {
-        return res.status(404).json({ success: false, errorKey: "checkout.orderNotFound" });
+      if (!order || !mayReadOrderIdentity(req, order)) {
+        return res.status(order ? 403 : 404).json({
+          success: false,
+          errorKey: order ? "order_forbidden" : "checkout.orderNotFound",
+          live: false,
+        });
       }
-      const view = attachShipments(order);
-      return res.json({ success: true, order: mayReadOrderIdentity(req, order) ? view : withoutIdentity(view) });
+      return res.json({ success: true, order: attachShipments(order) });
     });
   },
 };

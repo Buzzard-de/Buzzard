@@ -68,7 +68,7 @@ function evaluatePhase6OrderManagement() {
     {
       id: "ORD_HTTP_DRY_REHEARSAL",
       ok: ordersPluginHasDryRehearsalRoute(),
-      note: "Route presence only. phase6DryRehearsalRoute.test.mjs calls POST /api/orders/dry-rehearsal and expects 200 with live false",
+      note: "Route presence only. A guest receives 401. A signed session receives a non-live rehearsal.",
     },
     { id: "ORD_LIVE_SUBMIT", ok: false, status: "BLOCKED_EXTERNAL", note: "supplierOrdersBlocked + SALES locked" },
   ];

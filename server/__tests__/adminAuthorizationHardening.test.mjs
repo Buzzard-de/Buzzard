@@ -48,34 +48,34 @@ describe("identity behind an order", () => {
 
   const lookup = (token) => api.request("GET", `/api/orders/${ORDER.orderNumber}`, { token });
 
-  it("is withheld from an anonymous caller who knows or guesses the order number", async () => {
+  it("is closed to an anonymous caller who knows or guesses the order number", async () => {
     const res = await lookup();
-    expect(res.status).toBe(200);
-    expect(res.json.order.identityWithheld).toBe(true);
-    expect(res.json.order.orderNumber).toBe(ORDER.orderNumber);
-    expect(res.json.order.status).toBe("created");
-    expect(res.json.order.shippingAddress).toEqual({ country: "DE" });
+    expect(res.status).toBe(401);
+    expect(res.json.order).toBeUndefined();
     for (const value of IDENTITY_VALUES) expect(res.text, value).not.toContain(value);
   });
 
-  it("is withheld from a signed-in customer who did not place the order", async () => {
+  it("is closed to a signed-in customer who did not place the order", async () => {
     const res = await lookup(await registerCustomer(api, "other@synthetic.invalid"));
-    expect(res.json.order.identityWithheld).toBe(true);
+    expect(res.status).toBe(403);
+    expect(res.json.order).toBeUndefined();
     for (const value of IDENTITY_VALUES) expect(res.text, value).not.toContain(value);
   });
 
-  it("is withheld from a back-office role without orders.read", async () => {
+  it("is closed to a back-office role without orders.read", async () => {
     for (const role of ["catalog_manager", "ai_agent"]) {
       const res = await lookup(tokens[role]);
-      expect(res.json.order.identityWithheld, role).toBe(true);
+      expect(res.status, role).toBe(403);
+      expect(res.json.order, role).toBeUndefined();
       for (const value of IDENTITY_VALUES) expect(res.text, `${role} ${value}`).not.toContain(value);
     }
   });
 
-  it("is withheld for a forged or malformed token", async () => {
+  it("is closed for a forged or malformed token", async () => {
     for (const token of ["a".repeat(64), "not-a-token", "eyJhbGciOiJub25lIn0.eyJzdWIiOjEsImVtYWlsIjoiYnV5ZXJAc3ludGhldGljLmludmFsaWQifQ."]) {
       const res = await lookup(token);
-      expect(res.json.order.identityWithheld, token.slice(0, 12)).toBe(true);
+      expect(res.status, token.slice(0, 12)).toBe(401);
+      expect(res.json.order).toBeUndefined();
     }
   });
 
@@ -95,12 +95,12 @@ describe("identity behind an order", () => {
     }
   });
 
-  it("answers an unknown order number the same way for everyone", async () => {
-    for (const token of [undefined, tokens.administrator]) {
-      const res = await api.request("GET", "/api/orders/BZ-20990101-99999", { token });
-      expect(res.status).toBe(404);
-      expect(res.json.errorKey).toBe("checkout.orderNotFound");
-    }
+  it("does not tell an anonymous caller whether an order number exists", async () => {
+    const anonymous = await api.request("GET", "/api/orders/BZ-20990101-99999");
+    expect(anonymous.status).toBe(401);
+    const admin = await api.request("GET", "/api/orders/BZ-20990101-99999", { token: tokens.administrator });
+    expect(admin.status).toBe(404);
+    expect(admin.json.errorKey).toBe("checkout.orderNotFound");
   });
 });
 

@@ -153,6 +153,15 @@ Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.
 - ⛔ 1
 - ⚪ 4
 
+
+Beşinci tur, 23 Kasım 2026 11:34 Europe/Berlin. `itemsFifthPass.test.mjs` 3/3. Kimlik testleri ve teşhis testleri geçti. Madde 16, 17, 22 ve 111 ✅. Madde 30 kısmi. Dijital bedende hazır olanlar ifade ve ayrı profil. Konuşma, duyma, ses sentezi, dudak, kol, yürüyüş, oturma, nesne ve kıyafet uygulanmadı. Madde 88 ⛔. 200, 205, 220 ve 221 doğrulanamadı. `/api/health/*` hazırlık uçları eski sözleşme gereği herkese açık kaldı. Satış kapalı.
+
+- ✅ 23
+- 🟡 209
+- 🔴 0
+- ⛔ 1
+- ⚪ 4
+
 ## Maddeler
 
 ## Madde 1
@@ -309,21 +318,21 @@ Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.
 
 - GÖREV: Guest commerce proof for cart/checkout/order
 - NE İSTİYOR: Guest without session/token fail-closed
-- KOD: server/lib/commerce/commerceGuards.js
-- TEST: 11:21 Europe/Berlin. guestCheckoutFailClosed.test.mjs 4/4 yeniden geçti.
-- ENTEGRASYON: Kimliksiz sepet ve checkout kapalı.
-- DURUM: 🟡
-- EKSİK: POST /api/orders/dry-rehearsal ve kimliği gizleyen GET /api/orders/:orderNumber sözleşmesi duruyor.
+- KOD: server/plugins/ordersPlugin.js
+- TEST: 11:34 Europe/Berlin. guestCheckoutFailClosed 4/4. Kimliksiz kuru prova 401. Kimliksiz sipariş okuma 401. Başka müşteri 403. Sahte token 401. Sahip ve orders.read 200. orderDryRehearsalIntegration oturumlu kuru prova 200, live false.
+- ENTEGRASYON: Misafir sepet, checkout ve sipariş kapalı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 17
 
 - GÖREV: Diagnostic / Guardian / Orchestrator / DB GET protection
 - NE İSTİYOR: Unauthenticated diagnostic prefixes 401
-- KOD: server/plugins/guardianBridgePlugin.js
-- TEST: 11:21 Europe/Berlin. diagnosticGetAuth.test.mjs 3/3 yeniden geçti.
-- ENTEGRASYON: Guardian, Orchestrator ve DB status tokensuz 401.
-- DURUM: 🟡
-- EKSİK: /api/health herkese açık kaldı.
+- KOD: server/plugins/aiAutomationPlugin.js
+- TEST: 11:34 Europe/Berlin. diagnosticGetAuth 3/3. Guardian, Orchestrator ve DB status tokensuz 401. GET /api/health yalnız success, ok, live false ve isolated döner. Teşhis gövdesi tokensuz 401.
+- ENTEGRASYON: Canlılık ucu yol ve entegrasyon dökümü vermiyor.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 18
 
@@ -369,11 +378,11 @@ Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.
 
 - GÖREV: Cart data contract
 - NE İSTİYOR: Server-owned totals; session binding
-- KOD: `server/lib/commerce/commerceValidation.js` `rejectClientTotals` ve `validateQuantity`.
-- TEST: Aynı dosya. Negatif adet ve istemci toplamı reddedildi.
-- ENTEGRASYON: Sepet HTTP kapısı madde 16’da token ister.
-- DURUM: 🟡
-- EKSİK: Madde 16’daki iki vitrin sözleşmesi duruyor.
+- KOD: server/lib/commerce/commerceValidation.js
+- TEST: 11:34 Europe/Berlin. guestCheckoutFailClosed 4/4. Sepet yazma tokensuz 401. Madde 16’daki iki açık sözleşme kapandı.
+- ENTEGRASYON: Toplam sunucuda. Oturum bağlı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 23
 
@@ -449,11 +458,11 @@ Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.
 
 - GÖREV: Software facade is not a second orchestrator
 - NE İSTİYOR: server/lib/software wraps existing engines
-- KOD: server/lib/software/index.js
-- TEST: 11:25 Europe/Berlin. traceCommerce fiyat, stok, kimlik, ödeme, kargo, tedarikçi, ilan, iade ve müşteri köprüsünü çağırdı. Satış false. Karar yok.
-- ENTEGRASYON: Zincir mevcut motorlara bağlı.
+- KOD: server/lib/software/control.js
+- TEST: 11:34 Europe/Berlin. itemsFifthPass 3/3. Kapı aktörsüz ACTOR_REQUIRED. Çift yazı DUAL_WRITE_FORBIDDEN. Pusat fiyat ve stok okuması kapıdan geçiyor. Karar yok.
+- ENTEGRASYON: Bağlı metotlar pricing, inventory, payment, shipping, supplier, identity, returns ve product.
 - DURUM: 🟡
-- EKSİK: Her motorun her metodu bu cepheden geçmiyor.
+- EKSİK: Bu listedeki metotlar dışında motorlar hâlâ doğrudan çağrılabiliyor.
 
 ## Madde 31
 
@@ -1260,10 +1269,10 @@ Dördüncü tur, 23 Kasım 2026 11:25 Europe/Berlin. `itemsFourthPassChain.test.
 - GÖREV: Order identity / QR
 - NE İSTİYOR: Phase 3 identity
 - KOD: server/lib/commerce/phase3Identity.js
-- TEST: 11:25 Europe/Berlin. Kimlik tutarı fiyatla aynı. qr.paymentUrl null, payable false. capture PAYMENT_NOT_LIVE.
-- ENTEGRASYON: Ödeme akışı kilitli.
-- DURUM: 🟡
-- EKSİK: Basılı veya ödenebilir QR yok.
+- TEST: 11:34 Europe/Berlin. itemsFifthPass 3/3. Kuru ödeme adresi QR matrisinden geri okundu. paymentUrl null. verifyPayment PAYMENT_NOT_LIVE. İptal iade etmiyor. Zaman aşımı para hareketi yok.
+- ENTEGRASYON: Sağlayıcı hesabı yok. Adres buzzard://dry-pay ve ödeme değil.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı. Canlı ödeme sağlayıcısı bu maddenin dışında.
 
 ## Madde 112
 

@@ -1,5 +1,3 @@
-import os from "node:os";
-import path from "node:path";
 import { chromium } from "@playwright/test";
 
 /**
@@ -111,24 +109,20 @@ export default async function globalSetup(): Promise<void> {
   }
 
   if (response) {
-    let health: { database?: { path?: string }; adminData?: { isolated?: boolean } };
+    let health: { isolated?: boolean; live?: boolean };
     try {
       health = await response.json();
     } catch {
       refuse(api, ["it answers, but not with a health report, so its storage cannot be checked"]);
     }
 
-    const tmp = os.tmpdir() + path.sep;
-    const dbPath = health.database?.path ? path.resolve(health.database.path) : "";
     const problems: string[] = [];
-    if (!dbPath) {
-      problems.push("it does not say where its database is");
-    } else if (!dbPath.startsWith(tmp)) {
-      problems.push(`its database is ${dbPath}, not a temporary file`);
+    // The public probe says only whether storage is under the temporary directory. It does not return the path.
+    if (health.isolated !== true) {
+      problems.push("its storage is not a temporary directory");
     }
-    // What the API itself reports counts; an environment variable of this process proves nothing about it.
-    if (health.adminData?.isolated !== true) {
-      problems.push("its admin sessions and security/audit logs are not known to be isolated");
+    if (health.live === true) {
+      problems.push("its health probe reports a live runtime");
     }
     if (problems.length > 0) refuse(api, problems);
     verified = true;

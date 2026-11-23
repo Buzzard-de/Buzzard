@@ -102,8 +102,15 @@ describe("production with a complete configuration", () => {
 
     const health = await api.request("GET", "/api/health");
     expect(health.status).toBe(200);
+    expect(health.json).toEqual({ success: true, ok: true, live: false, isolated: true });
     expect(health.text).not.toContain(api.root);
-    expect(health.json.database.path).toBe("[data]/catalog.sqlite");
+    const openDiagnostics = await api.request("GET", "/api/health/diagnostics");
+    expect(openDiagnostics.status).toBe(401);
+    const diagnostics = await api.request("GET", "/api/health/diagnostics", { token: login.json.token });
+    expect(diagnostics.status).toBe(200);
+    expect(typeof diagnostics.json.database.path).toBe("string");
+    expect(health.text).not.toContain("catalog.sqlite");
+    expect(openDiagnostics.text).not.toContain("catalog.sqlite");
     for (const route of ["/api/health/db", "/api/health/production", "/api/health/operations", "/api/health/go-live-readiness", "/api/smart-menu-48/health"]) {
       const res = await api.request("GET", route);
       expect(res.text, route).not.toContain(api.root);

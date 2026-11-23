@@ -39,6 +39,13 @@ describe("diagnostic GET prefixes", () => {
 
     const health = await api.request("GET", "/api/health");
     expect(health.status).toBe(200);
+    expect(health.json).toEqual({ success: true, ok: true, live: false, isolated: true });
+    const openDiagnostics = await api.request("GET", "/api/health/diagnostics");
+    expect(openDiagnostics.status).toBe(401);
+    const diagnostics = await api.request("GET", "/api/health/diagnostics", { token: adminToken });
+    expect(diagnostics.status).toBe(200);
+    expect(diagnostics.text).not.toContain(adminToken);
+    expect(diagnostics.json.adminData.mode).toBeTruthy();
   });
 
   it("lets a signed account read database status and rejects the admin session there", async () => {

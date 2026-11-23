@@ -371,20 +371,32 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
 
   if (action === ACTIONS.GET_INVENTORY) {
     const key = payload.id || payload.sku || payload.productId;
-    const inv = inventory.getInventory(key);
+    const gated = require("../software/control").invoke({
+      engine: "inventory",
+      method: "getInventory",
+      args: { productId: key },
+      actorId: actorId || "pusat",
+    });
+    const inv = gated.result || {};
     if (inv.error) {
-      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, gate: gated.code, ...label(MODE.DRY_RUN) };
     }
-    return { ok: true, action, data: inv, source: "D", actorId, correlationId: corr, ...label(MODE.DRY_RUN) };
+    return { ok: true, action, data: inv, source: "D", actorId, correlationId: corr, gate: gated.code, ...label(MODE.DRY_RUN) };
   }
 
   if (action === ACTIONS.GET_PRICE) {
     const key = payload.id || payload.sku || payload.productId;
-    const quote = pricing.quotePrice({ productId: key, supplierCost: payload.supplierCost });
+    const gated = require("../software/control").invoke({
+      engine: "pricing",
+      method: "quotePrice",
+      args: { productId: key, supplierCost: payload.supplierCost },
+      actorId: actorId || "pusat",
+    });
+    const quote = gated.result || {};
     if (!quote.productId) {
-      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, ...label(MODE.DRY_RUN) };
+      return { ok: false, code: "NOT_FOUND", action, correlationId: corr, gate: gated.code, ...label(MODE.DRY_RUN) };
     }
-    return { ok: true, action, data: quote, source: "D", actorId, correlationId: corr, ...label(MODE.DRY_RUN) };
+    return { ok: true, action, data: quote, source: "D", actorId, correlationId: corr, gate: gated.code, ...label(MODE.DRY_RUN) };
   }
 
   if (action === ACTIONS.GET_ORDER_STATUS) {

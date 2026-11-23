@@ -124,7 +124,7 @@ const OTHER_WRITES = {
   "POST /api/cart-checkout/carts/:token/items": "signed-in",
   "PATCH /api/cart-checkout/carts/:token/items/:sku": "signed-in",
   "POST /api/cart-checkout/carts/:token/coupon": "signed-in",
-  "POST /api/orders/dry-rehearsal": "guest",
+  "POST /api/orders/dry-rehearsal": "signed-in",
   "POST /api/marketplace/connectors/:id/publish": "gated",
   "POST /api/storefront/textile/sandbox/session": "guest",
   "POST /api/cart-checkout/sessions/:token/validate": "signed-in",

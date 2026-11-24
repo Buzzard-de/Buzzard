@@ -285,9 +285,10 @@ function transitionOrderStatus(orderId, toStatus, { actorId = null } = {}) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
 
-  const livePayment = process.env.BUZZARD_PAYMENT_LIVE === "1";
-  const liveFulfillment = process.env.BUZZARD_FULFILLMENT_LIVE === "1";
-  const liveRefund = process.env.BUZZARD_REFUND_LIVE === "1";
+  const salesOn = require("../salesMode").isSalesEnabled();
+  const livePayment = salesOn && process.env.BUZZARD_PAYMENT_LIVE === "1";
+  const liveFulfillment = salesOn && process.env.BUZZARD_FULFILLMENT_LIVE === "1";
+  const liveRefund = salesOn && process.env.BUZZARD_REFUND_LIVE === "1";
   if (toStatus === ORDER_STATUS.PAID && !livePayment) {
     return { error: "PAYMENT_NOT_LIVE", code: "PAYMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
   }

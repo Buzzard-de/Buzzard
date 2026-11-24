@@ -271,27 +271,27 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - TEST: Üretimde JWT_SECRET boşsa hata metni var. jwtSecretHardening bu sabah geçti.
 - ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
 - DURUM: 🟡
-- EKSİK: Çalışan üretim sürecine bakılmadı.
+- EKSİK: Bekleyen iş. Çalışan üretim süreci görülmedi. Bu madde VERIFIED değildir.
 
 ## Madde 11
 
 - GÖREV: Rate limiting remains enabled
 - NE İSTİYOR: Production cannot set RATE_LIMIT_DISABLED; health has own bucket
 - KOD: server/__tests__/rateLimitStore.test.mjs
-- TEST: Hız sınırı testi bu sabah geçti.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Sağlık yolu için ayrı kova bu turda ölçülmedi.
+- TEST: 24 Kasım 2026 08:39 Europe/Berlin. `healthRateLimitBucket.test.mjs` geçti. Sağlık kovası 240, kullanıcı kovası 180. Sağlık taşması `/api/status` isteğini kesmedi. Kullanıcı taşması `/api/health` isteğini kesmedi. Sınırdan sonraki sağlık yolu 429 ve yalnız `security.rateLimited`.
+- ENTEGRASYON: `server/server.js` mevcut `createRateLimiter` örneğini `health:` önekiyle kullanır. İkinci bir hız sistemi yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 12
 
 - GÖREV: Feature flags sales / SoT / live payments parent-child
 - NE İSTİYOR: Child commercial flags ineffective while sales off; SoT never auto-active
 - KOD: server/lib/salesMode.js
-- TEST: isSalesEnabled satış kapalıyken false. phaseSoftwareSide bu sabah geçti.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Canlı satış açma denemesi yok.
+- TEST: 24 Kasım 2026 08:39 Europe/Berlin. `salesChildFlags.test.mjs` 2/2. Çocuk bayraklar açıkken satış kapalı. SoT kimlik doğrulanmadan `READ_TARGET`. Bütün bayraklar açılınca ödeme `PAYMENT_NOT_LIVE`, tedarikçi `LIVE_ORDER_FORBIDDEN`.
+- ENTEGRASYON: `transitionOrderStatus` ödeme, sevkiyat ve iade geçişlerini satış kapalıyken çocuk bayraktan bağımsız reddeder.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 13
 

@@ -448,20 +448,20 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Idempotency-key plumbing
 - NE İSTİYOR: Sensitive commerce operations accept Idempotency-Key
 - KOD: `commerce_idempotency` tablosu. `commerceCorePlugin.js` `Idempotency-Key` başlığı.
-- TEST: Kod bu turda okundu. Yeni tekrar oynatma çağrısı yok.
-- ENTEGRASYON: Checkout tamamlama aynı anahtarla `withIdempotency` kullanır.
-- DURUM: 🟡
-- EKSİK: Bu turda yeni bir replay çağrısı yok.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `localClosedSurface.test.mjs`. Aynı anahtar ikinci yükü çalıştırmadı ve ilk tutarı geri verdi. Farklı yük 409 `ORDER_IDEMPOTENCY_CONFLICT`.
+- ENTEGRASYON: Geçici test veritabanı. Canlı ödeme tekrar oynatması yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 29
 
 - GÖREV: Request correlation IDs
 - NE İSTİYOR: X-Request-Id / X-Correlation-Id on API
 - KOD: `server/server.js` `handleRequest`. `server/lib/operations/correlationContext.js`.
-- TEST: Aynı dosya. `GET /api/health` 200. `X-Request-Id` dolu. Gönderilen `X-Correlation-Id` geri döndü.
-- ENTEGRASYON: Başlıklar bütün `/api` isteklerinin ortak girişinde yazılıyor.
-- DURUM: 🟡
-- EKSİK: Bozuk kimlik başlığının reddi bu çağrıda yok.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `localClosedSurface.test.mjs`. Boşluk ve `Set-Cookie` taşıyan başlık yanıt kimliğine yazılmadı. Sunucu `req_` ve `corr_` kimliği üretti.
+- ENTEGRASYON: `handleRequest` aynı `acceptId` kuralını kullanır. Canlı trafik üzerinde başlık ölçülmedi.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 30
 
@@ -568,20 +568,20 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Pusat error handling fail-closed
 - NE İSTİYOR: Exceptions classified; payments not retried
 - KOD: `server/lib/pusat/runtime.js`. `CAPTURE_PAYMENT` yazma listesinde. İstisna `retryable: false`.
-- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `PUSAT_RUNTIME_ENABLED=1` iken dönüş `PERMISSION_DENIED`. Sağlık `deniedWrites` içinde `CAPTURE_PAYMENT`. Satış kilidi açılmadı.
-- ENTEGRASYON: `exceptionBus` yayını. Canlı ödeme yok.
-- DURUM: 🟡
-- EKSİK: Dönüş gövdesi `retryable` alanını taşımıyor. Diğer istisna sınıfları bu testte sayılmadı.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `localClosedSurface.test.mjs`. `CAPTURE_PAYMENT` dönüşü `PERMISSION_DENIED`, `retryable: false`, `live: false`.
+- ENTEGRASYON: Canlı ödeme yok. Diğer istisna sınıflarının tamamı bu çağrıda sayılmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 41
 
 - GÖREV: AI governance: cannot self-approve
 - NE İSTİYOR: decide() rejects requesting agent / AI identity
-- KOD: `durableTaskQueue.decideApproval` yalnız `human` ve `operator`. `controlCenter.decideApproval` aktörü denetlemez. `humanApproval.submit` düşük riski `policy:low-risk` ile otomatik APPROVED yapar.
-- TEST: 23 Kasım 2026 08:15 Europe/Berlin. `pricing_ai` kararı `PERMISSION_DENIED`. `human` geçer. Düşük risk `auto: true`. Yüksek risk `WAITING_APPROVAL`.
-- ENTEGRASYON: İki karar yolu var. Kuyruk yolu ajanı reddeder.
-- DURUM: 🟡
-- EKSİK: Düşük risk insan kararı olmadan onaylanır. `controlCenter.decideApproval` isteyen ajanı reddetmez.
+- KOD: `humanApproval.submit` ajan kimliğini `identityRegistry.ids` ile tanır ve kuyruğa yazar. `controlCenter.decideApproval` aynı kimlikleri reddeder.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `items36to55Pusat.test.mjs` ve `localClosedSurface.test.mjs`. `pricing_ai` düşük riski `WAITING_APPROVAL`. İnsan düşük riski `policy:low-risk`. Ajan kararı onay satırını `PENDING` bırakır.
+- ENTEGRASYON: İki onay kaydı duruyor. Canlı kadro kararı yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 42
 
@@ -1288,10 +1288,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Loyalty non-abuse
 - NE İSTİYOR: Cannot mint value via guest IDOR
 - KOD: `POST /api/admin/crm-loyalty/points/earn` `requireAnyAdmin`. Müşteri kendi puanını yazamaz. `POST /api/marketing-loyalty/points` izin tablosunda `orders.write`.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Kod okundu. Puan yazan HTTP bu turda çağrılmadı.
-- ENTEGRASYON: CRM kazancı yönetici. Pazarlama ucu eklenti içinde ikinci bir kontrol taşımıyor.
-- DURUM: 🟡
-- EKSİK: Pazarlama puan ucu eklenti içinde kimlik kontrol etmiyor. Ara katman `orders.write` diyor.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `localClosedSurface.test.mjs`. Tokensuz `POST /api/marketing-loyalty/points` 401. Gövde müşteri kimliğini geri vermiyor.
+- ENTEGRASYON: Kapı `wrapRouteHandler` ve `orders.write`. İzole API. Canlı puan defteri yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 113
 
@@ -1948,10 +1948,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: AI cannot self-approve
 - NE İSTİYOR: requestingAgent match rejected
 - KOD: server/lib/pusat/humanApproval.js
-- TEST: Düşük risk policy:low-risk ile otomatik onaylanıyor. Bu turda değiştirilmedi.
-- ENTEGRASYON: İsteyen ajanın kendisini reddeden bir eşleşme yok.
-- DURUM: 🟡
-- EKSİK: Düşük risk kendi kendini onaylıyor.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `pricing_ai` düşük riski `WAITING_APPROVAL`. Karar veren ajan `PERMISSION_DENIED` yolunda kalır.
+- ENTEGRASYON: İnsan operatörün düşük riskli okuması mevcut politika ile otomatik kalır. Canlı onay ekranı yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 179
 
@@ -2518,28 +2518,28 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Secret scanning in Guardian
 - NE İSTİYOR: scanSecrets
 - KOD: server/lib/security/esatBey.js
-- TEST: scanText ipucunda allowed false. scanSecrets adında fonksiyon yok.
-- ENTEGRASYON: Gerçek gizli değer kullanılmadı.
-- DURUM: 🟡
-- EKSİK: Fonksiyon adı farklı.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `scanSecrets("aws_secret_access_key")` `allowed: false`.
+- ENTEGRASYON: `scanSecrets`, mevcut `scanText` taramasıdır. Depo taraması ve canlı Guardian yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 236
 
 - GÖREV: Dangerous pattern block
 - NE İSTİYOR: purchase/refund/wire/drop table
 - KOD: server/lib/security/phase17Evidence.js
-- TEST: Satın alma, iade, havale ve drop table kalıpları bu turda yürütülmedi.
-- ENTEGRASYON: phase17 testi koşulmadı.
-- DURUM: 🟡
-- EKSİK: Dört kalıbın reddi yok.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `drop table`, `wire transfer`, `purchase order` ve `issue refund` `allowed: false` ve `hold: true`.
+- ENTEGRASYON: Tarama süreç içi Esat kaydıdır. Canlı satın alma veya iade yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 237
 
 - GÖREV: Guardian evaluation fail-closed
 - NE İSTİYOR: evaluate() catches and denies
 - KOD: server/lib/security/esatBey.js
-- TEST: evaluate adlı bir Guardian fonksiyonu bulunmadı. scanText hatayı yutmuyor, ipucunu reddediyor.
-- ENTEGRASYON: İstisna yakalayıp reddeden evaluate yok.
-- DURUM: 🟡
-- EKSİK: Adı geçen evaluate yok.
+- TEST: 24 Kasım 2026 12:30 Europe/Berlin. `evaluate` tarayıcıyı çağırır. Tarayıcı fırlatırsa dönüş `EVALUATE_FAILED`, `allowed: false`.
+- ENTEGRASYON: Bu yerel sarmalayıcıdır. Uzak Guardian servisi yapılandırılmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 

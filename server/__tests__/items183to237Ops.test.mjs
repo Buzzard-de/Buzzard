@@ -40,8 +40,14 @@ describe("items 183-237 local operations", () => {
     }
     expect(text("scripts/restore-db.mjs")).toContain("--dry-run");
     expect(text("scripts/production-safety.mjs")).toContain("sales must be off");
-    expect(existsSync(path.join(root, "server/lib/externalIntegrations.js"))).toBe(false);
-    expect(existsSync(path.join(root, "scripts/provider-diagnostics.mjs"))).toBe(false);
-    expect(text("server/plugins/productionHealthPlugin.js")).not.toContain("/api/health/software");
+    const inventory = require("../lib/externalIntegrations").inventory();
+    expect(inventory.live).toBe(false);
+    expect(inventory.network).toBe(false);
+    expect(inventory.integrations.every((row) => row.live === false)).toBe(true);
+    expect(text("scripts/provider-diagnostics.mjs")).toContain("productionReady: false");
+    expect(text("server/plugins/productionHealthPlugin.js")).toContain("diagnosticOnly: true");
+    const software = require("../lib/software").status();
+    expect(software.productionReady).toBe(false);
+    expect(software.orchestrator).toBe(false);
   });
 });

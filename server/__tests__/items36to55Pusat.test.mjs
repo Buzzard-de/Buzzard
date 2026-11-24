@@ -104,8 +104,11 @@ describe("items 36-55 pusat controls", () => {
     expect(aiCanExecute(["ai.read"], "ai.execute")).toBe(false);
     const center = createApprovalCenter({ dbPath: path.join(tempDir(), "approvals.sqlite") });
     const low = center.submit({ action: "READ", requestedBy: "pricing_ai", risk: "LOW" });
-    expect(low.item.auto).toBe(true);
-    expect(low.item.decidedBy).toBe("policy:low-risk");
+    expect(low.item.status).toBe("WAITING_APPROVAL");
+    expect(low.item.auto).toBeUndefined();
+    const humanLow = center.submit({ action: "READ", requestedBy: "operator@example.invalid", risk: "LOW", taskId: "human-low" });
+    expect(humanLow.item.auto).toBe(true);
+    expect(humanLow.item.decidedBy).toBe("policy:low-risk");
     const high = center.submit({ action: "CAPTURE_PAYMENT", requestedBy: "pricing_ai", risk: "HIGH" });
     expect(high.item.status).toBe("WAITING_APPROVAL");
     center.close();

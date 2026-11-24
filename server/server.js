@@ -29,28 +29,9 @@ function setCommonHeaders(res) {
   setSecurityHeaders(res);
 }
 
-function getAllowedOrigins() {
-  const defaults = [
-    "http://localhost:8000",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://buzzard24.de",
-    "https://www.buzzard24.de",
-  ];
-  // "null" is the origin of file:// pages and sandboxed frames. Local HTML
-  // prototypes rely on it; a deployed API has no reason to trust it.
-  if (!require("./lib/runtimeEnv").isProduction()) defaults.push("null");
-  const extra = (process.env.BUZZARD_CORS_ORIGINS || "")
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean);
-  return new Set([...defaults, ...extra]);
-}
-
 function setApiCorsHeaders(req, res) {
   const origin = req.headers.origin;
-  const allowed = getAllowedOrigins();
-  if (origin && allowed.has(origin)) {
+  if (require("./lib/corsOrigins").originAllowed(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
   }

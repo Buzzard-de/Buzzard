@@ -1,5 +1,11 @@
 # 237 madde durum turu — 23 Kasım 2026
 
+## Oturum kapanışı — 24 Kasım 2026, 12:33 Europe/Berlin
+
+Dal `cursor/237-morning-status-c293`. Son iş kaydı `a43df8b5`. Satış kilitli. Üretim veritabanı `server/data/buzzard.db` değişmedi: SHA-256 `27d460eca7461f5093406296256be9c9d98b45eaf5493ab91192483902fc0a0f`, boyut 1744896.
+
+Kayıt: 42 madde ✅, 190 madde 🟡, 1 madde ⛔, 4 madde ⚪. Yeşil ışık açılmadı. Canlı ödeme, taşıyıcı, TecDoc, pazar yeri, DNS, Render diski ve ilk gerçek sipariş dışarıda kaldı. Yarın yerel açık maddelerden devam. Madde 23 ve 24 gerekçesiz açılmayacak.
+
 Saat: 23 Kasım 2026, sabah, Europe/Berlin.
 Ağaç: `cursor/save-three-day-records-c293`, HEAD `6b0e3ccd`.
 Satış kilitli. productionReady false. egress deny.

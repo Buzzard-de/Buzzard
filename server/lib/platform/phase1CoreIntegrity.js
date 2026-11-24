@@ -45,13 +45,63 @@ function defaultBaselinePath(repoRoot) {
   );
 }
 
+const READONLY_GIT = new Set(["rev-parse", "status", "merge-base", "check-ignore", "ls-files"]);
+
 function gitSucceeds(repoRoot, args) {
-  try {
-    execFileSync("git", ["-C", repoRoot, ...args], { stdio: ["ignore", "pipe", "ignore"] });
-    return true;
-  } catch {
-    return false;
+  return gitOutput(repoRoot, args).ok;
+}
+
+function gitOutput(repoRoot, args) {
+  if (!READONLY_GIT.has(args[0])) return { ok: false, code: "GIT_COMMAND_REFUSED" };
+  if (args.some((arg) => arg === "--hard" || arg === "clean" || arg === "reset" || arg === "checkout")) {
+    return { ok: false, code: "GIT_COMMAND_REFUSED" };
   }
+  try {
+    const stdout = execFileSync("git", ["-C", repoRoot, ...args], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    return { ok: true, stdout };
+  } catch {
+    return { ok: false, code: "GIT_FAILED" };
+  }
+}
+
+function inspectRepositoryBaseline(options = {}) {
+  const repoRoot = path.resolve(options.repoRoot || process.cwd());
+  const branch = gitOutput(repoRoot, ["rev-parse", "--abbrev-ref", "HEAD"]);
+  const head = gitOutput(repoRoot, ["rev-parse", "HEAD"]);
+  const status = gitOutput(repoRoot, ["status", "--porcelain"]);
+  if (!branch.ok || !head.ok || !status.ok) {
+    return {
+      id: "CORE_REPOSITORY_BASELINE",
+      ok: false,
+      code: branch.code || head.code || status.code || "GIT_FAILED",
+      wrote: false,
+      destroyed: false,
+    };
+  }
+  const headText = head.stdout.trim();
+  const branchText = branch.stdout.trim();
+  const dirtyCount = status.stdout.split("\n").filter((line) => line.trim()).length;
+  const headOk = /^[0-9a-f]{40}$/.test(headText);
+  let ancestor = null;
+  if (options.ancestor) {
+    const probe = gitOutput(repoRoot, ["merge-base", "--is-ancestor", String(options.ancestor), "HEAD"]);
+    ancestor = { commit: String(options.ancestor), isAncestor: probe.ok };
+  }
+  return {
+    id: "CORE_REPOSITORY_BASELINE",
+    ok: headOk && branchText.length > 0,
+    code: headOk ? "INSPECTED" : "HEAD_INVALID",
+    branch: branchText,
+    head: headText,
+    dirty: dirtyCount > 0,
+    dirtyCount,
+    ancestor,
+    wrote: false,
+    destroyed: false,
+  };
 }
 
 function loadBaseline(baselinePath) {
@@ -269,4 +319,5 @@ module.exports = {
   PROTECTED_FILES,
   DATA_STATES,
   checkProtectedDataIntegrity,
+  inspectRepositoryBaseline,
 };

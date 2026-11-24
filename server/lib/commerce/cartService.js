@@ -301,8 +301,8 @@ function removeItem(cartId, itemId, ctx = {}) {
   return getCart(cartId, ctx);
 }
 
-function validateStockForCheckout(cartId) {
-  const cart = getCart(cartId);
+function validateStockForCheckout(cartId, ctx = {}) {
+  const cart = getCart(cartId, ctx);
   if (cart.error) return cart;
 
   const issues = [];

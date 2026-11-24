@@ -121,7 +121,10 @@ module.exports = {
       const body = parseBody(req);
       const cart = commerce.cartService.getCart(req.params.id, { customerId: body.customerId, req });
       if (cart.error) return res.status(cart.status || 400).json({ success: false, errorKey: cart.error });
-      const stock = commerce.cartService.validateStockForCheckout(req.params.id);
+      const stock = commerce.cartService.validateStockForCheckout(req.params.id, {
+        customerId: body.customerId,
+        req,
+      });
       res.json({
         success: true,
         ok: stock.ok,

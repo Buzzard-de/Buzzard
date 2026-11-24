@@ -120,6 +120,14 @@ function startCheckout({ cartId, customerId, orderType, idempotencyKey, req } = 
 
   const cart = cartService.getCart(cartId, { customerId, req });
   if (cart.error) return cart;
+  if (!customerId || !cart.cart?.customerId || String(cart.cart.customerId) !== String(customerId)) {
+    return {
+      error: cart.cart?.customerId ? "idor_denied" : "customer_required",
+      code: cart.cart?.customerId ? "idor_denied" : "auth_required",
+      status: cart.cart?.customerId ? 403 : 401,
+      blocked: true,
+    };
+  }
   if (!cart.items?.length) return { error: "cart_empty", status: 400 };
 
   const id = newId("chk");
@@ -156,7 +164,14 @@ function validateCheckout(checkoutId, body = {}, ctx = {}) {
     return { error: "coupon_tampering", status: 400 };
   }
 
-  const stock = cartService.validateStockForCheckout(checkout.cartId);
+  const stock = cartService.validateStockForCheckout(checkout.cartId, {
+    customerId: checkout.customerId,
+    req: ctx.req,
+  });
+  if (stock.error || stock.blocked) {
+    transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
+    return { error: stock.error || stock.code, code: stock.code || stock.error, status: stock.status || 403, blocked: true };
+  }
   if (!stock.ok) {
     transitionCheckout(checkoutId, CHECKOUT_STATE.BLOCKED);
     logCommerceBlock("checkout_blocked", { checkoutId, reason: "stock", issues: stock.issues }, ctx.req);
@@ -279,13 +294,9 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       return { error: sanitized.code, status: 400 };
     }
 
-    transitionCheckout(checkoutId, CHECKOUT_STATE.PAYMENT_PENDING);
-
     const totals = checkout.totals || {};
     if (body.capture === true || body.capturePayment === true) {
-      const blocked = paymentService.capturePayment({ checkoutId, actorId });
-      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
-      return blocked;
+      return paymentService.capturePayment({ checkoutId, actorId });
     }
     const payment = paymentService.authorizePayment({
       amount: totals.total,
@@ -297,45 +308,79 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       dryRun: true,
     });
 
-    if (payment.blocked || payment.error) {
-      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
-      return payment;
-    }
-
-    transitionCheckout(checkoutId, CHECKOUT_STATE.PAYMENT_AUTHORIZED);
-
-    const order = orderService.createOrderFromCheckout({
-      checkout,
-      payment,
-      orderType: checkout.orderType,
-      req: ctx.req,
-      actorId,
-    });
-
-    if (order.blocked || order.error) {
-      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
-      return order;
-    }
+    if (payment.blocked || payment.error) return payment;
 
     const cart = cartService.getCart(checkout.cartId, { customerId: checkout.customerId, req: ctx.req });
     if (cart.error || cart.blocked) {
-      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
       return { error: cart.error, code: cart.error, status: cart.status || 403, blocked: true };
     }
-    const inventory = require("./inventoryIntegration");
-    for (const item of cart.items || []) {
-      const reserved = inventory.reserve({
-        productId: item.productId,
-        quantity: item.quantity,
-        correlationId: checkoutId,
-        idempotencyKey: `chk_${checkoutId}_${item.productId}`,
-        actorId,
-      });
-      if (!reserved.ok) {
-        transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
-        return reserved;
-      }
+
+    let outcome;
+    try {
+      outcome = db.transaction(() => {
+        const existing = db.prepare("SELECT id FROM commerce_orders WHERE checkout_id = ?").get(checkout.id);
+        if (existing) {
+          db.prepare(
+            "UPDATE commerce_checkouts SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND state = ?"
+          ).run(CHECKOUT_STATE.COMPLETED, checkout.id, CHECKOUT_STATE.READY);
+          return { duplicate: true, order: { id: existing.id, created: false } };
+        }
+        const claimed = db.prepare(
+          "UPDATE commerce_checkouts SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND state = ?"
+        ).run(CHECKOUT_STATE.PAYMENT_PENDING, checkout.id, CHECKOUT_STATE.READY);
+        if (claimed.changes !== 1) return { error: "checkout_not_ready", status: 409 };
+        db.prepare(
+          "UPDATE commerce_checkouts SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND state = ?"
+        ).run(CHECKOUT_STATE.PAYMENT_AUTHORIZED, checkout.id, CHECKOUT_STATE.PAYMENT_PENDING);
+
+        const order = orderService.createOrderFromCheckout({
+          checkout,
+          payment,
+          orderType: checkout.orderType,
+          req: ctx.req,
+          actorId,
+        });
+        if (order.blocked || order.error) {
+          const rejected = new Error("order_rejected");
+          rejected.result = order;
+          throw rejected;
+        }
+        const inventory = require("./inventoryIntegration");
+        for (const item of cart.items || []) {
+          const reserved = inventory.reserve({
+            productId: item.productId,
+            quantity: item.quantity,
+            correlationId: checkoutId,
+            idempotencyKey: `chk_${checkoutId}_${item.productId}`,
+            actorId,
+          });
+          if (!reserved.ok) {
+            const rejected = new Error("reserve_rejected");
+            rejected.result = reserved;
+            throw rejected;
+          }
+        }
+        db.prepare(
+          "UPDATE commerce_checkouts SET state = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND state = ?"
+        ).run(CHECKOUT_STATE.COMPLETED, checkout.id, CHECKOUT_STATE.PAYMENT_AUTHORIZED);
+        return { order };
+      }).immediate();
+    } catch (err) {
+      return err.result || { error: "checkout_failed", code: "CHECKOUT_FAILED", status: 409, blocked: true };
     }
+    if (outcome.error) return outcome;
+    if (outcome.duplicate) {
+      return {
+        checkoutId,
+        state: CHECKOUT_STATE.COMPLETED,
+        order: outcome.order,
+        duplicate: true,
+        payment: { ...payment, realMoneyMovement: false, captured: false, mode: "DRY_RUN" },
+        commercial: checkout.orderType === ORDER_TYPE.COMMERCIAL,
+        salesEnabled: getEffectiveFlags().salesEnabled,
+      };
+    }
+    const order = outcome.order;
 
     const events = require("../eventBus");
     require("./canonicalCommercePath").emitPath(
@@ -344,8 +389,6 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       order.id,
       { checkoutId, paymentStatus: payment.status, captured: false }
     );
-
-    transitionCheckout(checkoutId, CHECKOUT_STATE.COMPLETED);
 
     try {
       const customerNotificationReadiness = require("../customer/customerNotificationReadiness");

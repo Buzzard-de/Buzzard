@@ -156,11 +156,19 @@ function createOrderFromCheckout({ checkout, payment, orderType, req, actorId = 
     }
   }
 
+  const customerId = String(checkout?.customerId || "").trim();
+  if (!customerId) {
+    return { error: "customer_required", code: "auth_required", status: 401, blocked: true };
+  }
+
   const totals = checkout.totals || {};
   const cartService = require("./cartService");
-  const cart = cartService.getCart(checkout.cartId, { customerId: checkout.customerId, req });
+  const cart = cartService.getCart(checkout.cartId, { customerId, req });
   if (cart.error || cart.blocked) {
     return { error: cart.error, code: cart.error, status: cart.status || 403, blocked: true };
+  }
+  if (!cart.cart?.customerId || String(cart.cart.customerId) !== customerId) {
+    return { error: "idor_denied", code: "idor_denied", status: 403, blocked: true };
   }
   const pathAdapter = require("./canonicalCommercePath");
   const items = [];

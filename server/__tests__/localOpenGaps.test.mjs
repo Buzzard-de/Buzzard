@@ -21,6 +21,10 @@ const { tickScheduler, startSchedulerLoop, stopSchedulerLoop, createSchedule, SC
 const { assertApprovedForExecution } = require("../lib/controlCenterJobAdmission");
 const { isSalesEnabled } = require("../lib/salesMode");
 const orderService = require("../lib/commerce/orderService");
+const cartService = require("../lib/commerce/cartService");
+const checkoutService = require("../lib/commerce/checkoutService");
+const pathAdapter = require("../lib/commerce/canonicalCommercePath");
+const inventory = require("../lib/commerce/inventoryIntegration");
 const { capturePayment } = require("../lib/commerce/paymentService");
 
 describe("local open gaps", () => {
@@ -305,6 +309,106 @@ describe("local open gaps", () => {
     expect(denied.code).toBe("idor_denied");
     expect(denied.blocked).toBe(true);
     expect(db.prepare("SELECT COUNT(*) AS n FROM commerce_orders").get().n).toBe(before);
+    expect(isSalesEnabled()).toBe(false);
+  });
+
+  it("keeps customer A out of customer B's cart and checkout", () => {
+    db.prepare(`
+      INSERT INTO commerce_carts(id, customer_id, country, currency, status, expires_at)
+      VALUES ('cart-b', 'customer-b', 'DE', 'EUR', 'active', datetime('now', '+1 day'))
+    `).run();
+    db.prepare(`
+      INSERT INTO commerce_cart_items(id, cart_id, product_id, quantity, price_snapshot)
+      VALUES ('item-b', 'cart-b', 'missing-product', 1, 1)
+    `).run();
+    expect(cartService.getCart("cart-b", { customerId: "customer-a" }).error).toBe("idor_denied");
+    expect(cartService.addItem("cart-b", { customerId: "customer-a", productId: "missing-product", quantity: 1 }).error).toBe(
+      "idor_denied"
+    );
+    expect(cartService.updateItemQuantity("cart-b", "item-b", 4, { customerId: "customer-a" }).error).toBe("idor_denied");
+    expect(cartService.removeItem("cart-b", "item-b", { customerId: "customer-a" }).error).toBe("idor_denied");
+    expect(db.prepare("SELECT quantity FROM commerce_cart_items WHERE id = 'item-b'").get().quantity).toBe(1);
+    expect(checkoutService.startCheckout({ cartId: "cart-b", customerId: "customer-a" }).error).toBe("idor_denied");
+    expect(db.prepare("SELECT COUNT(*) AS n FROM commerce_checkouts WHERE cart_id = 'cart-b'").get().n).toBe(0);
+  });
+
+  it("refuses an order without a customer and a second completion of the same checkout", () => {
+    const ownerless = orderService.createOrderFromCheckout({
+      checkout: { id: "chk-none", cartId: "cart-b", customerId: "  ", totals: {} },
+      payment: { dryRun: true },
+      orderType: "DRY_RUN",
+      actorId: "operator",
+    });
+    expect(ownerless.code).toBe("auth_required");
+    expect(ownerless.blocked).toBe(true);
+
+    db.prepare(`
+      INSERT INTO commerce_carts(id, customer_id, country, currency, status, expires_at)
+      VALUES ('cart-guest', NULL, 'DE', 'EUR', 'active', datetime('now', '+1 day'))
+    `).run();
+    expect(checkoutService.startCheckout({ cartId: "cart-guest", customerId: "customer-a" }).code).toBe("auth_required");
+
+    db.prepare(`
+      INSERT INTO commerce_checkouts(id, cart_id, customer_id, state, order_type, idempotency_key)
+      VALUES ('chk-once', 'cart-b', 'customer-b', 'READY', 'DRY_RUN', 'once-key')
+    `).run();
+    const originalGet = cartService.getCart;
+    const originalSnap = pathAdapter.buildImmutableSnapshot;
+    const originalReserve = inventory.reserve;
+    cartService.getCart = (_id, ctx) => {
+      if (ctx?.customerId && ctx.customerId !== "customer-b") {
+        return { error: "idor_denied", code: "idor_denied", status: 403, blocked: true };
+      }
+      return {
+        cart: { id: "cart-b", customerId: "customer-b", currency: "EUR" },
+        items: [{ productId: "p1", quantity: 1, priceSnapshot: 5, sku: "sku", title: "Pad" }],
+      };
+    };
+    pathAdapter.buildImmutableSnapshot = () => ({
+      ok: true,
+      snapshotVersion: 1,
+      productSnapshot: { sku: "sku" },
+      priceSnapshot: { amount: 5 },
+      taxSnapshot: { rate: 0 },
+      inventorySnapshot: { stock: 1 },
+    });
+    inventory.reserve = () => ({ ok: false, code: "INSUFFICIENT_STOCK", status: 409 });
+    const ordersBefore = db.prepare("SELECT COUNT(*) AS n FROM commerce_orders").get().n;
+    const reservedBefore = db.prepare("SELECT COUNT(*) AS n FROM inventory_sot_reservations").get().n;
+    try {
+      const failed = checkoutService.completeCheckout(
+        "chk-once",
+        { idempotencyKey: "fail-key" },
+        { actorId: "operator", customerId: "customer-b" }
+      );
+      expect(failed.code).toBe("INSUFFICIENT_STOCK");
+      expect(db.prepare("SELECT COUNT(*) AS n FROM commerce_orders").get().n).toBe(ordersBefore);
+      expect(db.prepare("SELECT COUNT(*) AS n FROM inventory_sot_reservations").get().n).toBe(reservedBefore);
+      expect(db.prepare("SELECT state FROM commerce_checkouts WHERE id = 'chk-once'").get().state).toBe("READY");
+
+      inventory.reserve = () => ({ ok: true, reservationId: "rsv-test" });
+      const first = checkoutService.completeCheckout(
+        "chk-once",
+        { idempotencyKey: "ok-key" },
+        { actorId: "operator", customerId: "customer-b" }
+      );
+      expect(first.state).toBe("COMPLETED");
+      expect(first.order?.id).toBeTruthy();
+      db.prepare("UPDATE commerce_checkouts SET state = 'READY' WHERE id = 'chk-once'").run();
+      const second = checkoutService.completeCheckout(
+        "chk-once",
+        { idempotencyKey: "ok-key-2" },
+        { actorId: "operator", customerId: "customer-b" }
+      );
+      expect(second.duplicate).toBe(true);
+      expect(second.order.id).toBe(first.order.id);
+      expect(db.prepare("SELECT COUNT(*) AS n FROM commerce_orders WHERE checkout_id = 'chk-once'").get().n).toBe(1);
+      expect(db.prepare("SELECT state FROM commerce_checkouts WHERE id = 'chk-once'").get().state).toBe("COMPLETED");
+    } finally {
+      cartService.getCart = originalGet;
+      pathAdapter.buildImmutableSnapshot = originalSnap;
+      inventory.reserve = originalReserve;
+    }
     expect(isSalesEnabled()).toBe(false);
   });
 });

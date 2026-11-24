@@ -25,7 +25,7 @@ afterEach(async () => {
   api = null;
 });
 
-async function expectRefusal(env, pattern, secrets = []) {
+async function expectRefusal(env, pattern, secrets = [], { allowAdminFile = false } = {}) {
   api = await startIsolatedApi({ env: { ...production, ...env }, seed: false, expectExit: true });
   const exit = await Promise.race([api.exited, new Promise((resolve) => setTimeout(() => resolve("still running"), 45_000))]);
   expect(exit, api.output().slice(-600)).not.toBe("still running");
@@ -33,7 +33,7 @@ async function expectRefusal(env, pattern, secrets = []) {
   expect(api.output()).toMatch(pattern);
   expect(api.output()).not.toMatch(/Buzzard API server running/);
   for (const secret of [jwtSecret, adminPassword, ...secrets]) expect(api.output()).not.toContain(secret);
-  expect(existsSync(path.join(api.dataDir, "admin-users.json"))).toBe(false);
+  if (!allowAdminFile) expect(existsSync(path.join(api.dataDir, "admin-users.json"))).toBe(false);
 }
 
 describe("production refuses to start without its mandatory secrets", () => {
@@ -72,6 +72,14 @@ describe("production refuses to start without its mandatory secrets", () => {
 
   it("with BUZZARD_RATE_LIMIT_DISABLED=1", async () => {
     await expectRefusal({ BUZZARD_RATE_LIMIT_DISABLED: "1" }, /BUZZARD_RATE_LIMIT_DISABLED=1 must not be set/);
+  }, 60_000);
+
+  it("with BUZZARD_PAYMENT_LIVE=1 while sales are off", async () => {
+    await expectRefusal({ BUZZARD_PAYMENT_LIVE: "1", BUZZARD_SALES_ENABLED: "0" }, /BUZZARD_PAYMENT_LIVE=1 without SALES/, [], { allowAdminFile: true });
+  }, 60_000);
+
+  it("with BUZZARD_PAYMENT_ENABLED=1 while sales are off", async () => {
+    await expectRefusal({ BUZZARD_PAYMENT_ENABLED: "1", BUZZARD_SALES_ENABLED: "0" }, /Payment enabled without SALES/, [], { allowAdminFile: true });
   }, 60_000);
 
   it("on a hosted runtime that forgot NODE_ENV=production", async () => {

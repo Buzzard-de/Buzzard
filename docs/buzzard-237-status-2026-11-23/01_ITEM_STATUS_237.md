@@ -258,10 +258,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: CORS origin and header policy
 - NE İSTİYOR: Unlisted Origin rejected; null Origin not trusted unless listed
 - KOD: server/server.js
-- TEST: Access-Control-Allow-Origin atanıyor.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: İzinli origin listesinin reddi bu sabah test edilmedi.
+- TEST: 24 Kasım 2026 08:33 Europe/Berlin. `corsOrigins.test.mjs` geçti. Listede olmayan origin ve `null` reddedilir. `null` yalnız `BUZZARD_CORS_ORIGINS` içindeyse kabul edilir.
+- ENTEGRASYON: `server/server.js` `server/lib/corsOrigins.js` üzerinden aynı izin listesini yazar.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 10
 
@@ -298,10 +298,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Environment validation at startup
 - NE İSTİYOR: Production rejects test mode, disabled rate limit, default JWT, live payments without sales
 - KOD: server/lib/environmentValidation.js
-- TEST: Üretim JWT ve zayıf sır kontrolü var.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Bütün ortam değişkenleri tek tek sayılmadı.
+- TEST: 24 Kasım 2026 08:45 Europe/Berlin. `productionStartup.test.mjs` içinde `BUZZARD_PAYMENT_LIVE=1` ve `BUZZARD_PAYMENT_ENABLED=1` satış kapalıyken üretim sürecini 1 koduyla kapatır. Test modu, hız sınırı ve JWT redleri aynı dosyada duruyor.
+- ENTEGRASYON: `configurationValidation` mevcut satış kontrolüne `BUZZARD_PAYMENT_LIVE` satırını ekler. Süreç bu hatada dinlemeye geçmez.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı. Çalışan üretim sürecinin kendisi madde 10’da bekliyor.
 
 ## Madde 14
 
@@ -318,10 +318,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Request validation and safe error messages
 - NE İSTİYOR: Client totals rejected; public errors do not leak internals
 - KOD: `server/lib/commerce/commerceValidation.js` `rejectClientTotals`. `checkoutService.js` bu kodu 400 ile döndürür. `server/lib/security.js` `publicErrorBody` yalnız `errorKey` verir. `server/server.js` yakalanan hatayı bu gövdeyle yollar, mesajı sunucu logunda tutar.
-- TEST: 23 Kasım 2026 06:19 Europe/Berlin. `part8Foundation.test.mjs` 17/17 geçti. `rejectClientTotals({ total: 1 }).ok` false. Sunucu tarafı toplam hesabı da geçti. HTTP cevabının stack sızdırmadığına dair test yok.
-- ENTEGRASYON: `validateCheckout` istemci toplamını reddeder. `sendRequestError` genel API yolunda `publicErrorBody` kullanır. `server/core/errors.js` `publicError` mesaj ve `meta` yayar; `server` içinde çağıran yok.
-- DURUM: 🟡
-- EKSİK: Toplam reddi birim testi HTTP rotasını çalıştırmıyor. Genel hata gövdesinin iç veri sızdırmadığı test edilmedi.
+- TEST: 24 Kasım 2026 08:45 Europe/Berlin. `clientTotalsHttp.test.mjs` geçti. Oturumlu kuru prova checkout’una `total: 1` gönderildi. Cevap 400 `client_totals_rejected`. Bozuk JSON 400 `security.invalidJson`. Gövde yığın ve dosya yolu taşımıyor.
+- ENTEGRASYON: `POST /api/commerce/checkout/:id/validate` `rejectClientTotals` sonucunu döndürür. `sendRequestError` `publicErrorBody` kullanır.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 16
 
@@ -378,10 +378,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Common error contracts
 - NE İSTİYOR: Public error keys without stack traces
 - KOD: `server/lib/security.js` `publicErrorBody`.
-- TEST: Aynı dosya. Cevap yalnız `{ success:false, errorKey }`. `stack` yok.
-- ENTEGRASYON: `server.js` `sendRequestError` bu gövdeyi kullanır.
-- DURUM: 🟡
-- EKSİK: `core/errors.js` mesaj yaymaya devam ediyor.
+- TEST: 24 Kasım 2026 08:45 Europe/Berlin. `clientTotalsHttp.test.mjs` `publicError` çağrısında mesaj, yığın ve SQL alanlarının cevapta olmadığını doğruladı.
+- ENTEGRASYON: `server/core/errors.js` `publicError` artık `publicErrorBody` ile aynı iki alanı döndürür.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 22
 

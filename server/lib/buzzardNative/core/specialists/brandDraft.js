@@ -3,7 +3,9 @@ const { check } = require("../permissionEngine");
 const { getAgent } = require("../identityRegistry");
 
 function approvalInputHash({ actorId = null, action = "BRAND_LIVE_PUBLISH", input = {} } = {}) {
-  return crypto.createHash("sha256").update(JSON.stringify({ actorId, action, input })).digest("hex");
+  const body = { ...(input || {}) };
+  delete body.humanApproved;
+  return crypto.createHash("sha256").update(JSON.stringify({ actorId, action, input: body })).digest("hex");
 }
 
 function draft({ actorId, kind = "BRAND_DRAFT", facts = {} } = {}) {

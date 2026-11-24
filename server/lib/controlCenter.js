@@ -474,6 +474,7 @@ function decideApproval(id, decision, decidedBy) {
   const run = db.transaction(() => {
     const current = getApproval(id);
     if (!current || current.status !== "PENDING") return null;
+    if (current.metadata?.inputHash && !require("./approvalBinding").assertBound(current).ok) return null;
     const changed = db.prepare(`
       UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP
       WHERE id = ? AND status = 'PENDING'

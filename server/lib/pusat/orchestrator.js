@@ -5,6 +5,7 @@ const { createDurableTaskQueue } = require("./durableTaskQueue");
 const { dispatch } = require("../buzzardNative/core/specialistDispatch");
 const { verifyDispatch } = require("./dispatchVerify");
 const { ids } = require("../buzzardNative/core/identityRegistry");
+const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
 
 function createOrchestrator({ dbPath } = {}) {
   const queue = createDurableTaskQueue({ dbPath });
@@ -17,16 +18,40 @@ function createOrchestrator({ dbPath } = {}) {
     const payload = task.payload || {};
     const kind = payload.kind || "THINK";
     const input = { ...(payload.input || {}), humanApproved: Boolean(payload.humanApproved) };
+    if (payload.gateInputHash) {
+      const current = approvalInputHash({
+        actorId: task.assigneeId,
+        action: input.action || kind,
+        input,
+      });
+      if (current !== payload.gateInputHash) {
+        queue.fail(task.id, { reason: "INPUT_HASH_MISMATCH" });
+        return { taskId: task.id, status: "FAILED", code: "INPUT_HASH_MISMATCH" };
+      }
+    }
     const result = dispatch({ agentId: task.assigneeId, kind, input });
-    queue.setPayload(task.id, { ...payload, result, executedAt: new Date().toISOString() });
+    const stamped = { ...payload, result, executedAt: new Date().toISOString() };
+    queue.setPayload(task.id, stamped);
     if (!result.ok && result.code === "HUMAN_GATE_REQUIRED" && !payload.humanApproved) {
+      const inputHash = result.result?.inputHash || null;
+      const approvalPayload = { taskId: task.id, kind };
+      if (inputHash) {
+        const bound = { actorId: task.assigneeId, action: input.action || kind, input };
+        if (approvalInputHash(bound) !== inputHash) {
+          queue.fail(task.id, { reason: "INPUT_HASH_MISMATCH" });
+          return { taskId: task.id, status: "FAILED", code: "INPUT_HASH_MISMATCH" };
+        }
+        queue.setPayload(task.id, { ...stamped, gateInputHash: inputHash, gateBound: bound });
+        approvalPayload.inputHash = inputHash;
+        approvalPayload.bound = bound;
+      }
       queue.submitApproval({
         taskId: task.id,
         action: kind,
         requestedBy: task.assigneeId,
         reason: result.code,
         risk: "HIGH",
-        payload: { taskId: task.id, kind },
+        payload: approvalPayload,
       });
       queue.block(task.id, { reason: "HUMAN_GATE_REQUIRED" });
       return { taskId: task.id, status: "GATED", result, verification: { code: "NOT_VERIFIED" } };
@@ -95,7 +120,19 @@ function createOrchestrator({ dbPath } = {}) {
     queue,
     approvals: {
       submit: (row) => queue.submitApproval(row),
-      decide: (row) => queue.decideApproval(row),
+      decide: (row) => {
+        const item = queue.getApproval(row.id);
+        const task = item ? queue.get(item.task_id) : null;
+        const gateHash = task?.payload?.gateInputHash;
+        const approvalHash = item?.payload?.inputHash;
+        if (gateHash || approvalHash) {
+          const actual = approvalInputHash(task?.payload?.gateBound || {});
+          if (!gateHash || approvalHash !== gateHash || actual !== gateHash) {
+            return { ok: false, code: "INPUT_HASH_MISMATCH" };
+          }
+        }
+        return queue.decideApproval(row);
+      },
       pending: () => queue.listApprovals({ status: "WAITING_APPROVAL" }),
       list: () => queue.listApprovals(),
     },

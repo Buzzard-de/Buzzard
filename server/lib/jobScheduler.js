@@ -112,6 +112,7 @@ function disableSchedule(id) {
 }
 
 function tickScheduler(now = new Date()) {
+  require("./controlCenter").expireDue(now.getTime());
   const due = db.prepare(`
     SELECT * FROM core_scheduled_jobs
     WHERE enabled = 1 AND next_run_at <= ?

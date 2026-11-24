@@ -123,11 +123,38 @@ function gateWrite(method, ctx = {}) {
   }
 }
 
+function rejectBadMeasure(value, name) {
+  if (value === undefined || value === null || value === "") return;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) {
+    const err = new Error(`${name} must be a non-negative number`);
+    err.code = "PRODUCT_INVALID";
+    throw err;
+  }
+}
+
+function rejectStatus(status) {
+  if (!status) return;
+  if (!Object.values(PRODUCT_STATUS).includes(status)) {
+    const err = new Error("Unknown product status");
+    err.code = "PRODUCT_INVALID";
+    throw err;
+  }
+  if (process.env.BUZZARD_SALES_ENABLED !== "1" && status === PRODUCT_STATUS.ACTIVE) {
+    const err = new Error("Sales disabled — ACTIVE status not allowed");
+    err.code = "PRODUCT_INVALID";
+    throw err;
+  }
+}
+
 function createProduct(input, ctx = {}) {
   const { source = "ADMIN", actorId } = ctx;
   gateWrite("createProduct", ctx);
   const sku = String(input.sku || "").trim();
   if (!sku) throw new Error("SKU required");
+  rejectBadMeasure(input.price, "price");
+  rejectBadMeasure(input.stock, "stock");
+  rejectStatus(input.status);
   productIdentifiers.assertUnique({ sku, ean: input.ean, gtin: input.gtin, mpn: input.mpn });
 
   const id = input.id || newId();
@@ -196,9 +223,25 @@ function updateProduct(id, patch, ctx = {}) {
   gateWrite("updateProduct", ctx);
   const before = getProduct(id);
   if (!before) throw new Error("Product not found");
-
+  rejectBadMeasure(patch.price, "price");
+  rejectBadMeasure(patch.stock, "stock");
   if (patch.status && patch.status !== before.status) {
-    transitionStatus(id, patch.status, { source, actorId });
+    if (!canTransition(before.status, patch.status)) {
+      throw new Error(`Invalid transition ${before.status} → ${patch.status}`);
+    }
+    if (patch.status === PRODUCT_STATUS.ACTIVE && SALES_BLOCKED_STATUSES.has(before.status)) {
+      throw new Error("BLOCKED products cannot become ACTIVE");
+    }
+    rejectStatus(patch.status);
+  }
+  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
+    productIdentifiers.assertUnique({
+      sku: patch.sku || before.sku,
+      ean: patch.ean ?? before.ean,
+      gtin: patch.gtin ?? before.gtin,
+      mpn: patch.mpn ?? before.mpn,
+      excludeId: id,
+    });
   }
 
   const fields = [];
@@ -242,21 +285,26 @@ function updateProduct(id, patch, ctx = {}) {
     params.push(JSON.stringify(patch.metadata));
   }
 
-  if (fields.length) {
-    fields.push("updated_at = CURRENT_TIMESTAMP");
-    params.push(id);
-    db.prepare(`UPDATE pim_core_products SET ${fields.join(", ")} WHERE id = ?`).run(...params);
-  }
-
-  if (patch.ean || patch.gtin || patch.mpn || patch.sku) {
-    productIdentifiers.assertUnique({
-      sku: patch.sku || before.sku,
-      ean: patch.ean ?? before.ean,
-      gtin: patch.gtin ?? before.gtin,
-      mpn: patch.mpn ?? before.mpn,
-      excludeId: id,
-    });
-  }
+  const apply = db.transaction(() => {
+    if (patch.status && patch.status !== before.status) {
+      db.prepare("UPDATE pim_core_products SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(patch.status, id);
+      productAudit.logChange({
+        productId: id,
+        action: "product.status",
+        source,
+        actorId,
+        fieldName: "status",
+        before: { status: before.status },
+        after: { status: patch.status },
+      });
+    }
+    if (fields.length) {
+      fields.push("updated_at = CURRENT_TIMESTAMP");
+      params.push(id);
+      db.prepare(`UPDATE pim_core_products SET ${fields.join(", ")} WHERE id = ?`).run(...params);
+    }
+  });
+  apply();
 
   const after = getProduct(id);
   qualityScore.updateScore(id);

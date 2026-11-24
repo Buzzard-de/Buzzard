@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { db } = require("./db");
+const { validateQuantity, validatePrice } = require("./commerce/commerceValidation");
 
 const TRANSITIONS = {
   requested: ["approved", "rejected", "cancelled"],
@@ -41,50 +42,65 @@ function createReturn(body = {}) {
   }
   if (!body.reason) return { error: "Order number and return reason required", status: 400 };
 
-  const result = db
-    .prepare(`
-      INSERT INTO rma_returns(
-        rma_number, order_number, customer_id, customer_email, reason, type, status,
-        customer_note, return_address_json, inspection_due_at, refund_amount, warranty_claim
-      )
-      VALUES(?,?,?,?,?,?,?,?,?,datetime('now','+'||?||' hours'),?,?)
-    `)
-    .run(
-      rmaNumber(),
-      body.orderNumber || body.order_number,
-      body.customerId || body.customer_id || null,
-      body.customerEmail || body.customer_email || "",
-      body.reason,
-      body.type || "refund",
-      "requested",
-      body.note || "",
-      JSON.stringify(body.returnAddress || body.return_address || {}),
-      Number(body.inspectionSlaHours || body.inspection_sla_hours || 48),
-      Number(body.refundAmount || body.refund_amount || 0),
-      body.warrantyClaim || body.warranty_claim ? 1 : 0
-    );
+  const items = Array.isArray(body.items) ? body.items : [];
+  const quantities = [];
+  for (const item of items) {
+    const rawQty = item.quantity ?? item.qty;
+    const qty = validateQuantity(rawQty === undefined || rawQty === null || rawQty === "" ? 1 : rawQty);
+    if (!qty.ok) return { error: qty.message, code: qty.code, status: 400 };
+    const unit = validatePrice(item.unitPrice ?? item.unit_price ?? 0);
+    if (!unit.ok) return { error: unit.message, code: unit.code, status: 400 };
+    quantities.push({ item, quantity: qty.quantity, unitPrice: unit.price });
+  }
+  const refund = validatePrice(body.refundAmount ?? body.refund_amount ?? 0);
+  if (!refund.ok) return { error: refund.message, code: refund.code, status: 400 };
 
-  const insertItem = db.prepare(`
-    INSERT INTO rma_return_items(return_id, order_item_id, sku, title, quantity, unit_price)
-    VALUES(?,?,?,?,?,?)
-  `);
-  (body.items || []).forEach((item) => {
-    insertItem.run(
-      result.lastInsertRowid,
-      item.orderItemId || item.order_item_id || null,
-      item.sku || "",
-      item.title || "",
-      Number(item.quantity || 1),
-      Number(item.unitPrice || item.unit_price || 0)
-    );
+  const write = db.transaction(() => {
+    const result = db
+      .prepare(`
+        INSERT INTO rma_returns(
+          rma_number, order_number, customer_id, customer_email, reason, type, status,
+          customer_note, return_address_json, inspection_due_at, refund_amount, warranty_claim
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,datetime('now','+'||?||' hours'),?,?)
+      `)
+      .run(
+        rmaNumber(),
+        body.orderNumber || body.order_number,
+        body.customerId || body.customer_id || null,
+        body.customerEmail || body.customer_email || "",
+        body.reason,
+        body.type || "refund",
+        "requested",
+        body.note || "",
+        JSON.stringify(body.returnAddress || body.return_address || {}),
+        Number(body.inspectionSlaHours || body.inspection_sla_hours || 48),
+        refund.price,
+        body.warrantyClaim || body.warranty_claim ? 1 : 0
+      );
+    const insertItem = db.prepare(`
+      INSERT INTO rma_return_items(return_id, order_item_id, sku, title, quantity, unit_price)
+      VALUES(?,?,?,?,?,?)
+    `);
+    for (const row of quantities) {
+      insertItem.run(
+        result.lastInsertRowid,
+        row.item.orderItemId || row.item.order_item_id || null,
+        row.item.sku || "",
+        row.item.title || "",
+        row.quantity,
+        row.unitPrice
+      );
+    }
+    recordEvent(result.lastInsertRowid, "return_created", null, "requested", "Return request created", {
+      reason: body.reason,
+      type: body.type || "refund",
+    });
+    return result.lastInsertRowid;
   });
 
-  recordEvent(result.lastInsertRowid, "return_created", null, "requested", "Return request created", {
-    reason: body.reason,
-    type: body.type || "refund",
-  });
-
-  return { return: db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(result.lastInsertRowid), created: true };
+  const id = write();
+  return { return: db.prepare("SELECT * FROM rma_returns WHERE id = ?").get(id), created: true };
 }
 
 function getReturnByRma(rma) {

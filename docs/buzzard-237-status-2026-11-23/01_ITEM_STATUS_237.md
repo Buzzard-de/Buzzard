@@ -417,11 +417,11 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 
 - GÖREV: Product data contract
 - NE İSTİYOR: Canonical product fields via PIM core
-- KOD: `server/lib/pimCatalog.js` ve `server/lib/productCatalogPim.js` `canonicalProductId`.
-- TEST: Dosyalar bu turda açıldı. Uçtan uca ürün oluşturma koşulmadı.
-- ENTEGRASYON: Sipariş satırı `canonicalProductId` alanını ürün kimliğinden dolduruyor.
-- DURUM: 🟡
-- EKSİK: Yeni bir PIM yazma testi bu turda yok.
+- KOD: `server/lib/pim/productCore.js` `createProduct` ve `updateProduct`. Kapı `guardProjection`. `productService` sarmalayıcı. `pimCatalog.updateProduct` fiyat ve stok değişimini aynı çekirdeğe yollar.
+- TEST: 24 Kasım 2026 12:14 Europe/Berlin. `canonicalPimWriteSafety.test.mjs` 4/4. Aktörsüz yazma `ACTOR_REQUIRED`, yapay zekâ `AI_WRITE_DENIED`. Boş SKU, negatif fiyat, sayı olmayan stok ve satış kapalıyken `ACTIVE` satır açmıyor. Çakışan EAN fiyatı ve stoku eski halinde bırakıyor. Art arda fiyat ve stok güncellemesi ikisini de tutuyor. Açık işlem sırasında ikinci bağlantı kilitleniyor. İzdüşüm fiyatı kanonik satırdan önce değişmiyor.
+- ENTEGRASYON: Çalışan bir üretim süreci görülmedi. Üretim veritabanına yazılmadı. Bu madde canlı entegrasyon doğrulaması değildir.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı. Katalog SEO, arama ve eski ürün tabloları oluşturma sırasında kanonik kayıttan sonra kendi satırlarını yazmaya devam ediyor. Ayrı bir ürün motoru eklenmedi.
 
 ## Madde 26
 
@@ -437,11 +437,11 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 
 - GÖREV: Shared quantity and total validation
 - NE İSTİYOR: Negative qty and client totals rejected
-- KOD: `server/lib/commerce/commerceValidation.js`.
-- TEST: Aynı dosya. `validateQuantity(-1)` ve `0` başarısız. İstemci toplamı reddedildi.
-- ENTEGRASYON: Sepet kalemi bu doğrulamadan geçmeden yazılmıyor.
-- DURUM: 🟡
-- EKSİK: İade motorundaki miktar kuralı ayrıca çağrılmadı.
+- KOD: `server/lib/commerce/commerceValidation.js` `validateQuantity`. `server/lib/returnsRma.js` `createReturn` aynı kuralı yazıdan önce çağırır.
+- TEST: 24 Kasım 2026 12:14 Europe/Berlin. `returnsQuantityGuard.test.mjs` 2/2. Miktar `-2` `quantity_invalid` döndürür ve `rma_returns` ile `rma_return_items` sayıları değişmez. Miktar `2` mevcut yazıcıyla kaydolur.
+- ENTEGRASYON: Çalışan bir iade veya ödeme süreci görülmedi. Bu kayıt satış kapalıyken geçici test veritabanına yazıldı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı. `logistics/v5/returnsEngine.startReturn` miktar almıyor. Lojistik iade satırında miktar kolonu yok.
 
 ## Madde 28
 

@@ -171,6 +171,21 @@ function updateProduct(id, body = {}, ctx = {}) {
   if (denied) return denied;
   const product = db.prepare("SELECT * FROM pim_products WHERE id = ?").get(id);
   if (!product) return { error: "Product not found", status: 404 };
+  const canonical = require("./productService").getProductBySku(product.sku);
+  if (canonical && (body.price !== undefined || body.stock !== undefined)) {
+    try {
+      require("./productService").updateProduct(
+        canonical.id,
+        {
+          ...(body.price !== undefined ? { price: body.price } : {}),
+          ...(body.stock !== undefined ? { stock: body.stock } : {}),
+        },
+        ctx
+      );
+    } catch (error) {
+      return { error: error.message, code: error.code || "PRODUCT_REJECTED", status: 400 };
+    }
+  }
   db.prepare(`
     UPDATE pim_products
     SET brand_id = ?, category_id = ?, ean = ?, gtin = ?, status = ?, price = ?, cost = ?, weight_kg = ?, stock = ?,

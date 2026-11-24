@@ -108,16 +108,17 @@ function getProduct(idOrSku) {
 }
 
 function gateWrite(method, ctx = {}) {
-  const gate = require("../software/control").enforce({
+  const denied = require("../software/control").guardProjection({
     engine: "product",
     method,
     actorId: ctx.actorId,
-    mode: "write",
+    actorType: ctx.actorType,
+    table: "pim_core_products",
     targets: ctx.legacyTarget ? ["D", String(ctx.legacyTarget)] : ["D"],
   });
-  if (!gate.ok) {
-    const error = new Error(gate.code);
-    error.code = gate.code;
+  if (denied) {
+    const error = new Error(denied.code);
+    error.code = denied.code;
     throw error;
   }
 }

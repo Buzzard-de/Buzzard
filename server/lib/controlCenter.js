@@ -371,6 +371,10 @@ function updateTaskStatus(id, status, { error, result, actorType } = {}) {
 }
 
 function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel, metadata } = {}, options = {}) {
+  if (taskId) {
+    const existing = db.prepare("SELECT id FROM core_approvals WHERE task_id = ? AND status = 'PENDING'").get(taskId);
+    if (existing) return getApproval(existing.id);
+  }
   const id = newId("appr");
   const supplied = options.trustMetadata === true && metadata && typeof metadata === "object" ? { ...metadata } : {};
   delete supplied.financialImpact;
@@ -441,31 +445,39 @@ function listApprovals(status) {
 
 function decideApproval(id, decision, decidedBy) {
   if (typeof decidedBy !== "string" || !decidedBy.trim()) return null;
-  const current = getApproval(id);
-  if (!current || current.status !== "PENDING") return null;
+  const decider = decidedBy.trim();
+  const { ids } = require("./buzzardNative/core/identityRegistry");
+  if (ids().includes(decider)) return null;
   const status = decision === "approve" ? "APPROVED" : "REJECTED";
-  db.prepare(`
-    UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, decidedBy.trim(), id);
+  const run = db.transaction(() => {
+    const current = getApproval(id);
+    if (!current || current.status !== "PENDING") return null;
+    const changed = db.prepare(`
+      UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP
+      WHERE id = ? AND status = 'PENDING'
+    `).run(status, decider, id);
+    if (changed.changes !== 1) return null;
 
-  const approval = getApproval(id);
-  if (approval?.taskId) {
-    updateTaskStatus(
-      approval.taskId,
-      decision === "approve" ? TASK_STATUS.ASSIGNED : TASK_STATUS.CANCELLED
-    );
-  }
+    const approval = getApproval(id);
+    if (approval?.taskId) {
+      updateTaskStatus(
+        approval.taskId,
+        decision === "approve" ? TASK_STATUS.ASSIGNED : TASK_STATUS.CANCELLED
+      );
+    }
 
-  recordSystemEvent({
-    eventType: `approval.${decision}`,
-    actorType: "admin",
-    actorId: decidedBy,
-    resourceType: "approval",
-    resourceId: id,
-    summary: `Approval ${status.toLowerCase()}`,
+    recordSystemEvent({
+      eventType: `approval.${decision}`,
+      actorType: "admin",
+      actorId: decider,
+      resourceType: "approval",
+      resourceId: id,
+      summary: `Approval ${status.toLowerCase()}`,
+    });
+
+    return approval;
   });
-
-  return approval;
+  return run.immediate();
 }
 
 function createEscalation({ sourceType, sourceId, title, message, riskLevel, metadata }) {

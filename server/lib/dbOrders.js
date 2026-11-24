@@ -13,6 +13,14 @@ function createOrderFromCart(userId, { countryCode = "DE", currency = "EUR", shi
   const blocked = assertSalesEnabled();
   if (blocked) return blocked;
 
+  const stockGate = require("./software/control").guardProjection({
+    method: "dbOrders.decrementStock",
+    actorId: userId ? String(userId) : "",
+    actorType: "HUMAN",
+    table: "products",
+  });
+  if (stockGate) return { error: stockGate.code, code: stockGate.code, status: stockGate.status || 403 };
+
   const cart = db.prepare("SELECT id FROM carts WHERE user_id = ?").get(userId);
   if (!cart) return { error: "Cart is empty", status: 400 };
 

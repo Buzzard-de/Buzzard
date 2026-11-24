@@ -231,7 +231,14 @@ function upsertProductTranslation(productId, body = {}) {
   return { ok: true };
 }
 
-function upsertPriceOverride(productId, body = {}) {
+function upsertPriceOverride(productId, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({
+    method: "localizationFeeds.upsertPriceOverride",
+    actorId: ctx.actorId,
+    actorType: ctx.actorType,
+    table: "price_overrides",
+  });
+  if (denied) return { error: denied.code, code: denied.code, status: denied.status || 403 };
   const { locale, price, currency } = body;
   if (!locale || price === undefined) return { error: "locale and price required", status: 400 };
   const product = db.prepare("SELECT id FROM products WHERE id = ?").get(productId);

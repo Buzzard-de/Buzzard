@@ -43,6 +43,32 @@ function getOrCreateCart(userId) {
   return cart;
 }
 
+function updateAdminProduct(id, patch = {}, ctx = {}) {
+  const denied = require("../lib/software/control").guardProjection({
+    method: "databasePlugin.updateAdminProduct",
+    actorId: ctx.actorId,
+    actorType: ctx.actorType,
+    table: "products",
+  });
+  if (denied) return denied;
+  const { price_eur, stock, active, name, description } = patch;
+  const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+  if (!product) return { error: "Product not found", status: 404 };
+  db.prepare(`
+    UPDATE products
+    SET price_eur = ?, stock = ?, active = ?, name = ?, description = ?
+    WHERE id = ?
+  `).run(
+    price_eur ?? product.price_eur,
+    stock ?? product.stock,
+    active ?? product.active,
+    name ?? product.name,
+    description ?? product.description,
+    product.id
+  );
+  return { ok: true, product: db.prepare("SELECT * FROM products WHERE id = ?").get(product.id) };
+}
+
 function readCartPayload(cartId) {
   const items = db
     .prepare(`
@@ -60,6 +86,7 @@ function readCartPayload(cartId) {
 }
 
 module.exports = {
+  updateAdminProduct,
   register(app) {
     if (!isEnabled()) {
       console.log("SQLite database plugin disabled (BUZZARD_DB_ENABLED=0)");
@@ -400,22 +427,15 @@ module.exports = {
 
     app.patch("/api/db/admin/products/:id", (req, res) => {
       if (!requireAdmin(req, res)) return;
-      const { price_eur, stock, active, name, description } = req.body || {};
-      const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
-      if (!product) return res.status(404).json({ error: "Product not found" });
-      db.prepare(`
-        UPDATE products
-        SET price_eur = ?, stock = ?, active = ?, name = ?, description = ?
-        WHERE id = ?
-      `).run(
-        price_eur ?? product.price_eur,
-        stock ?? product.stock,
-        active ?? product.active,
-        name ?? product.name,
-        description ?? product.description,
-        product.id
+      const result = updateAdminProduct(
+        req.params.id,
+        req.body || {},
+        require("../lib/software/control").actorFromRequest(req)
       );
-      return res.json(db.prepare("SELECT * FROM products WHERE id = ?").get(product.id));
+      if (result.error || result.code) {
+        return res.status(result.status || 403).json({ error: result.error || result.code, code: result.code || null });
+      }
+      return res.json(result.product);
     });
 
     app.patch("/api/db/admin/orders/:orderNumber/status", (req, res) => {

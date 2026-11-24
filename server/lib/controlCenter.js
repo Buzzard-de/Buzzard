@@ -383,6 +383,7 @@ function createApproval({ taskId, resourceType, resourceId, aiRecommendation, re
     ...supplied,
     financialImpact: { realMoneyMovement: false, salesEnabled: false, amount: null, currency: null },
     inputHash: hashInput({ taskId, resourceType, resourceId, reason, riskLevel }),
+    expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
   };
   db.prepare(`
     INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status, metadata_json)
@@ -443,7 +444,28 @@ function listApprovals(status) {
   return db.prepare(sql).all(...params).map((row) => getApproval(row.id));
 }
 
+function expireDue(now = Date.now()) {
+  const rows = db.prepare("SELECT id, metadata_json FROM core_approvals WHERE status = 'PENDING'").all();
+  const update = db.prepare(
+    "UPDATE core_approvals SET status = 'EXPIRED', decided_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'PENDING'"
+  );
+  let expired = 0;
+  for (const row of rows) {
+    let meta = {};
+    try {
+      meta = JSON.parse(row.metadata_json || "{}");
+    } catch {
+      meta = {};
+    }
+    const at = Date.parse(meta.expiresAt || "");
+    if (!Number.isFinite(at) || at > now) continue;
+    if (update.run(row.id).changes === 1) expired += 1;
+  }
+  return { ok: true, expired };
+}
+
 function decideApproval(id, decision, decidedBy) {
+  expireDue();
   if (typeof decidedBy !== "string" || !decidedBy.trim()) return null;
   const decider = decidedBy.trim();
   const { ids } = require("./buzzardNative/core/identityRegistry");
@@ -685,6 +707,7 @@ module.exports = {
   updateTaskStatus,
   createApproval,
   listApprovals,
+  expireDue,
   decideApproval,
   createEscalation,
   listEscalations,

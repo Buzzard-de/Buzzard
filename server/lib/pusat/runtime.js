@@ -314,6 +314,7 @@ function executeReadOnly(action, payload = {}, { actorId = null, correlationId =
       action,
       actorId,
       correlationId: corr,
+      retryable: false,
       ...label(MODE.DISABLED),
     };
   }

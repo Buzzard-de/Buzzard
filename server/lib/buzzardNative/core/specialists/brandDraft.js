@@ -1,5 +1,10 @@
+const crypto = require("crypto");
 const { check } = require("../permissionEngine");
 const { getAgent } = require("../identityRegistry");
+
+function approvalInputHash({ actorId = null, action = "BRAND_LIVE_PUBLISH", input = {} } = {}) {
+  return crypto.createHash("sha256").update(JSON.stringify({ actorId, action, input })).digest("hex");
+}
 
 function draft({ actorId, kind = "BRAND_DRAFT", facts = {} } = {}) {
   if (!check(actorId, "CREATE_REPORTS").ok) return { ok: false, code: "PERMISSION_DENIED" };
@@ -28,8 +33,15 @@ function campaignAnalyze({ actorId, rows = [] } = {}) {
   };
 }
 
-function requestApproval({ actorId, action = "BRAND_LIVE_PUBLISH" } = {}) {
-  return { ok: false, code: "HUMAN_GATE_REQUIRED", actorId, action, livePublish: false };
+function requestApproval({ actorId, action = "BRAND_LIVE_PUBLISH", input = {} } = {}) {
+  return {
+    ok: false,
+    code: "HUMAN_GATE_REQUIRED",
+    actorId,
+    action,
+    inputHash: approvalInputHash({ actorId, action, input }),
+    livePublish: false,
+  };
 }
 
-module.exports = { draft, campaignAnalyze, requestApproval };
+module.exports = { draft, campaignAnalyze, requestApproval, approvalInputHash };

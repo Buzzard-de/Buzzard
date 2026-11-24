@@ -256,79 +256,161 @@ function dryCancelFlags() {
   return { realMoneyMovement: false, refundIssued: false, live: false, supplierOrder: false };
 }
 
+function moneyBlock(body = {}) {
+  const payment = body.payment && typeof body.payment === "object" ? body.payment : {};
+  if (body.refund === true || payment.refund === true) return "REFUND_NOT_LIVE";
+  if (
+    body.capture === true ||
+    body.realMoneyMovement === true ||
+    payment.captured === true ||
+    payment.realMoneyMovement === true
+  ) {
+    return "PAYMENT_NOT_LIVE";
+  }
+  return null;
+}
+
+function parseCancelQty(value) {
+  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) return null;
+  return value;
+}
+
+function toCents(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return 0;
+  return Math.round(amount * 100);
+}
+
 function cancelOrderLines(id, body = {}) {
   const flags = dryCancelFlags();
-  const actor = String(body.actorId || "").trim();
-  if (!actor) return { ok: false, code: "ACTOR_REQUIRED", status: 401, ...flags };
-  if (body.refund === true || body.capture === true) {
-    return { ok: false, code: "REFUND_NOT_LIVE", status: 403, ...flags };
-  }
-  const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
-  if (!order) return { ok: false, code: "ORDER_NOT_FOUND", status: 404, ...flags };
-  if (["cancelled", "fulfilled"].includes(order.order_status)) {
-    return { ok: false, code: "ORDER_NOT_CANCELLABLE", status: 400, ...flags };
-  }
+  const money = moneyBlock(body);
+  if (money) return { ok: false, code: money, status: 403, ...flags };
+  const denied = require("./software/control").guardProjection({
+    engine: "order",
+    method: "cancelOrderLines",
+    actorId: body.actorId,
+    actorType: body.actorType,
+    table: "oms_order_items",
+  });
+  if (denied) return { ok: false, code: denied.code, status: denied.status || 403, ...flags };
   const requested = Array.isArray(body.lines) ? body.lines : [];
   if (!requested.length) return { ok: false, code: "LINES_REQUIRED", status: 400, ...flags };
 
-  const items = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
-  const updates = [];
-  for (const line of requested) {
-    const sku = line.sku || line.product_sku || null;
-    const matches = items.filter((row) => {
-      if (line.itemId != null) return Number(row.id) === Number(line.itemId);
-      return sku && row.product_sku === sku;
-    });
-    if (matches.length === 0) return { ok: false, code: "LINE_NOT_FOUND", status: 404, ...flags };
-    if (matches.length > 1) return { ok: false, code: "LINE_AMBIGUOUS", status: 400, ...flags };
-    const item = matches[0];
-    const qty = Number(line.quantity);
-    if (!Number.isInteger(qty) || qty <= 0) return { ok: false, code: "QTY_INVALID", status: 400, ...flags };
-    const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
-    if (qty > open) return { ok: false, code: "QTY_EXCEEDS_OPEN", status: 400, ...flags };
-    updates.push({ item, qty });
+  let outcome = { ok: false, code: "CANCEL_FAILED", status: 500, ...flags };
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
+    if (!order) outcome = { ok: false, code: "ORDER_NOT_FOUND", status: 404, ...flags };
+    else if (["cancelled", "fulfilled"].includes(order.order_status)) {
+      outcome = { ok: false, code: "ORDER_NOT_CANCELLABLE", status: 400, ...flags };
+    } else {
+      const items = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
+      const byId = new Map();
+      for (const line of requested) {
+        const sku = line.sku || line.product_sku || null;
+        const matches = items.filter((row) => {
+          if (line.itemId != null && line.itemId !== "") return Number(row.id) === Number(line.itemId);
+          return Boolean(sku) && row.product_sku === sku;
+        });
+        if (matches.length === 0) {
+          outcome = { ok: false, code: "LINE_NOT_FOUND", status: 404, ...flags };
+          break;
+        }
+        if (matches.length > 1) {
+          outcome = { ok: false, code: "LINE_AMBIGUOUS", status: 400, ...flags };
+          break;
+        }
+        const qty = parseCancelQty(line.quantity);
+        if (qty == null) {
+          outcome = { ok: false, code: "QTY_INVALID", status: 400, ...flags };
+          break;
+        }
+        byId.set(matches[0].id, (byId.get(matches[0].id) || 0) + qty);
+      }
+      if (!outcome.code || outcome.code === "CANCEL_FAILED") {
+        for (const [itemId, qty] of byId) {
+          const item = items.find((row) => row.id === itemId);
+          const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
+          if (qty > open) {
+            outcome = { ok: false, code: "QTY_EXCEEDS_OPEN", status: 400, ...flags };
+            break;
+          }
+        }
+      }
+      if (!outcome.code || outcome.code === "CANCEL_FAILED") {
+        const update = db.prepare(`
+          UPDATE oms_order_items
+          SET cancelled_quantity = cancelled_quantity + @qty,
+              reserved_quantity = MIN(
+                CASE WHEN reserved_quantity >= @qty THEN reserved_quantity - @qty ELSE 0 END,
+                quantity - (cancelled_quantity + @qty)
+              )
+          WHERE id = @id AND order_id = @orderId
+            AND cancelled_quantity + @qty <= quantity
+        `);
+        let blocked = false;
+        for (const [itemId, qty] of byId) {
+          if (update.run({ qty, id: itemId, orderId: order.id }).changes !== 1) {
+            blocked = true;
+            break;
+          }
+        }
+        if (blocked) outcome = { ok: false, code: "QTY_EXCEEDS_OPEN", status: 409, ...flags };
+        else {
+          const fresh = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
+          let merchandiseCents = 0;
+          let taxCents = 0;
+          let allCancelled = fresh.length > 0;
+          fresh.forEach((item) => {
+            const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
+            if (open > 0) allCancelled = false;
+            const lineCents = toCents(open * Number(item.unit_price));
+            merchandiseCents += lineCents;
+            taxCents += Math.round(lineCents * Number(item.tax_rate || 0) / 100);
+          });
+          const baseCents = toCents(order.subtotal);
+          const discountCents = allCancelled || baseCents <= 0
+            ? 0
+            : Math.min(merchandiseCents, Math.round(toCents(order.discount_total) * merchandiseCents / baseCents));
+          const shippingCents = allCancelled ? 0 : toCents(order.shipping_total);
+          if (allCancelled) taxCents = 0;
+          const grandCents = Math.max(0, merchandiseCents + shippingCents + taxCents - discountCents);
+          const nextStatus = allCancelled ? "cancelled" : order.order_status;
+          db.prepare(`
+            UPDATE oms_orders
+            SET subtotal = ?, shipping_total = ?, discount_total = ?, tax_total = ?, grand_total = ?,
+                order_status = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+          `).run(
+            merchandiseCents / 100,
+            shippingCents / 100,
+            discountCents / 100,
+            taxCents / 100,
+            grandCents / 100,
+            nextStatus,
+            order.id
+          );
+          recordEvent(order.id, "partial_cancel", order.order_status, nextStatus, body.reason || "Selected lines cancelled", {
+            actorId: String(body.actorId).trim(),
+            lines: [...byId].map(([itemId, qty]) => ({ itemId, quantity: qty })),
+            realMoneyMovement: false,
+          });
+          outcome = {
+            ok: true,
+            code: "PARTIAL_CANCELLED",
+            status: 200,
+            order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id),
+            ...flags,
+          };
+        }
+      }
+    }
+    db.exec(outcome.ok ? "COMMIT" : "ROLLBACK");
+  } catch {
+    try { db.exec("ROLLBACK"); } catch { /* the transaction is already closed */ }
+    outcome = { ok: false, code: "CANCEL_FAILED", status: 500, ...flags };
   }
-
-  const apply = db.transaction(() => {
-    const update = db.prepare(`
-      UPDATE oms_order_items
-      SET cancelled_quantity = cancelled_quantity + ?,
-          reserved_quantity = MAX(0, reserved_quantity - ?)
-      WHERE id = ?
-    `);
-    updates.forEach((row) => update.run(row.qty, row.qty, row.item.id));
-    const fresh = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
-    let subtotal = 0;
-    let allCancelled = fresh.length > 0;
-    fresh.forEach((item) => {
-      const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
-      if (open > 0) allCancelled = false;
-      subtotal += open * Number(item.unit_price);
-    });
-    const nextStatus = allCancelled ? "cancelled" : order.order_status;
-    const grand = allCancelled
-      ? 0
-      : Math.max(0, subtotal + Number(order.shipping_total || 0) + Number(order.tax_total || 0) - Number(order.discount_total || 0));
-    db.prepare(`
-      UPDATE oms_orders
-      SET subtotal = ?, grand_total = ?, order_status = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `).run(subtotal, grand, nextStatus, order.id);
-    recordEvent(order.id, "partial_cancel", order.order_status, nextStatus, body.reason || "Selected lines cancelled", {
-      actorId: actor,
-      lines: updates.map((row) => ({ itemId: row.item.id, sku: row.item.product_sku, quantity: row.qty })),
-      realMoneyMovement: false,
-    });
-  });
-  apply();
-  const saved = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id);
-  return {
-    ok: true,
-    code: "PARTIAL_CANCELLED",
-    status: 200,
-    order: saved,
-    ...flags,
-  };
+  return outcome;
 }
 
 function splitOrder(id, body = {}) {

@@ -285,7 +285,8 @@ module.exports = {
           result: rehearsal,
         });
       } catch (err) {
-        return res.status(500).json({ success: false, code: "REHEARSAL_FAILED", message: err.message, live: false });
+        console.error("dry rehearsal failed:", err && err.code ? err.code : err && err.name);
+        return res.status(500).json({ success: false, errorKey: "security.internalError", live: false, rehearsal: false });
       }
     });
 

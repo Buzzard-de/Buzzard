@@ -398,20 +398,20 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Checkout data contract
 - NE İSTİYOR: Sales lock; guest proof
 - KOD: `server/lib/commerce/commerceGuards.js` `catalogMode`.
-- TEST: Aynı dosya. Satış kapalıyken katalog modu true.
-- ENTEGRASYON: Ticari checkout 403 `sales_disabled` madde 16 testinde duruyor.
-- DURUM: 🟡
-- EKSİK: Misafir kuru prova hâlâ tokensuz çalışıyor.
+- TEST: 24 Kasım 2026 11:58 Europe/Berlin. `guestDryRehearsalAccess.test.mjs`, `orderDryRehearsalIntegration.test.mjs` ve `phase6DryRehearsalRoute.test.mjs` geçti. Tokensuz ve sahte belirteç 401. Başka müşterinin e-postası cevapta yok. Ticari `POST /api/orders` 403 `sales_disabled`. Oturumlu prova `live: false`, `paymentCapture: false`. Yazılan satır ticari değil.
+- ENTEGRASYON: `POST /api/orders/dry-rehearsal` `assertCommerceCredential` kullanır. Hata cevabı yalnız `security.internalError` taşır.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 24
 
 - GÖREV: Order data contract
 - NE İSTİYOR: Guest token stripped from public map
 - KOD: `server/lib/commerce/orderService.js` `mapOrder`. `commerce_orders` şemasında token kolonu yok.
-- TEST: Fonksiyon bu turda okundu. Ayrı birim çağrısı yok. Ayrıntı `06_MADDE_18_34.md`.
-- ENTEGRASYON: HTTP sipariş okuması madde 16’da kimlik ister.
-- DURUM: 🟡
-- EKSİK: `mapOrder` için ayrı bir çağrı testi yok.
+- TEST: 24 Kasım 2026 11:58 Europe/Berlin. `mapOrderPublic.test.mjs` geçti. Satırdaki misafir token, oturum tokenı ve parola eşlenen gövdede yok. `phase3.live` ve `payable` false.
+- ENTEGRASYON: `mapOrder` şema alanlarını döndürür. `commerce_orders` tablosunda token kolonu yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 25
 

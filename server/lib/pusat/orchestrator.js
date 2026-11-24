@@ -18,13 +18,16 @@ function createOrchestrator({ dbPath } = {}) {
     const payload = task.payload || {};
     const kind = payload.kind || "THINK";
     const input = { ...(payload.input || {}), humanApproved: Boolean(payload.humanApproved) };
-    if (payload.gateInputHash) {
+    const boundApproval = queue
+      .listApprovals()
+      .find((row) => row.task_id === task.id && row.payload?.inputHash);
+    if (boundApproval) {
       const current = approvalInputHash({
         actorId: task.assigneeId,
         action: input.action || kind,
         input,
       });
-      if (current !== payload.gateInputHash) {
+      if (current !== boundApproval.payload.inputHash) {
         queue.fail(task.id, { reason: "INPUT_HASH_MISMATCH" });
         return { taskId: task.id, status: "FAILED", code: "INPUT_HASH_MISMATCH" };
       }

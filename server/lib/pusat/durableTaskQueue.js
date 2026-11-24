@@ -499,6 +499,19 @@ function createDurableTaskQueue({ dbPath }) {
         );
         return { ok: false, code: "EXPIRED" };
       }
+      if (item.payload?.inputHash) {
+        const task = get(item.task_id);
+        const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
+        const current = approvalInputHash({
+          actorId: task?.assigneeId || item.requested_by,
+          action: task?.payload?.input?.action || task?.payload?.gateBound?.action || item.action,
+          input: task?.payload?.input || {},
+        });
+        const boundHash = approvalInputHash(task?.payload?.gateBound || {});
+        if (current !== item.payload.inputHash || boundHash !== item.payload.inputHash) {
+          return { ok: false, code: "INPUT_HASH_MISMATCH" };
+        }
+      }
       const status = approved ? "APPROVED" : "REJECTED";
       const changed = db.prepare(
         `UPDATE orch_approvals SET status = ?, decided_by = ?, decided_at = ? WHERE id = ? AND status = 'WAITING_APPROVAL'`

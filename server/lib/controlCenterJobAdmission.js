@@ -308,9 +308,11 @@ function releaseApprovedControlCenterJob({ approval, actor, deps }) {
     return refusal(409, "APPROVAL_REQUIRED", "The job stays unqueued until the approval is approved");
   }
   if (approval.metadata?.inputHash) {
-    const { assertBound } = require("./approvalBinding");
+    const { assertBound, assertSpec } = require("./approvalBinding");
     const bound = assertBound(approval);
     if (!bound.ok) return refusal(409, bound.code, "The approval input does not match its hash");
+    const specBound = assertSpec(approval);
+    if (!specBound.ok) return refusal(409, specBound.code, "The approval input does not match its hash");
   }
   const metadata = approval.metadata || {};
   if (metadata.jobId) {
@@ -368,6 +370,14 @@ function approvalMatchesJob(job, approval) {
   }
   if (!job?.jobType || approval.metadata?.spec?.jobType !== job.jobType) {
     return { ok: false, code: "APPROVAL_JOB_TYPE_MISMATCH" };
+  }
+  const { assertSpec } = require("./approvalBinding");
+  if (!assertSpec(approval).ok) return { ok: false, code: "INPUT_HASH_MISMATCH" };
+  const approvedPayload = approval.metadata?.spec?.payload || {};
+  for (const [key, value] of Object.entries(approvedPayload)) {
+    if (JSON.stringify(payload[key]) !== JSON.stringify(value)) {
+      return { ok: false, code: "INPUT_HASH_MISMATCH" };
+    }
   }
   if (!approval.metadata?.jobId || approval.metadata.jobId !== job.id) {
     return { ok: false, code: "APPROVAL_JOB_MISMATCH" };

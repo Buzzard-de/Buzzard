@@ -326,13 +326,7 @@ if (process.env.BUZZARD_WORKER_ENABLED === "1") {
   const jobScheduler = require("./lib/jobScheduler");
   jobWorker.setupGracefulShutdown();
   jobWorker.startWorker({ pollIntervalMs: Number(process.env.BUZZARD_WORKER_POLL_MS) || 3000 });
-  setInterval(() => {
-    try {
-      jobScheduler.tickScheduler();
-    } catch (err) {
-      console.error("[scheduler] tick error:", err.message);
-    }
-  }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
+  jobScheduler.startSchedulerLoop();
 }
 
 async function handleRequest(req, res) {

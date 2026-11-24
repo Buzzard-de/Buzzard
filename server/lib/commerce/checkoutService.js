@@ -317,7 +317,11 @@ function completeCheckout(checkoutId, body = {}, ctx = {}) {
       return order;
     }
 
-    const cart = cartService.getCart(checkout.cartId);
+    const cart = cartService.getCart(checkout.cartId, { customerId: checkout.customerId, req: ctx.req });
+    if (cart.error || cart.blocked) {
+      transitionCheckout(checkoutId, CHECKOUT_STATE.FAILED);
+      return { error: cart.error, code: cart.error, status: cart.status || 403, blocked: true };
+    }
     const inventory = require("./inventoryIntegration");
     for (const item of cart.items || []) {
       const reserved = inventory.reserve({

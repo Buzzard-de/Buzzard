@@ -20,6 +20,7 @@ const { createApprovalCenter } = require("../lib/pusat/humanApproval");
 const { tickScheduler, startSchedulerLoop, stopSchedulerLoop, createSchedule, SCHEDULE_TYPE } = require("../lib/jobScheduler");
 const { assertApprovedForExecution } = require("../lib/controlCenterJobAdmission");
 const { isSalesEnabled } = require("../lib/salesMode");
+const orderService = require("../lib/commerce/orderService");
 const { capturePayment } = require("../lib/commerce/paymentService");
 
 describe("local open gaps", () => {
@@ -282,6 +283,28 @@ describe("local open gaps", () => {
       controlCenter.expireDue = original;
       process.env.BUZZARD_WORKER_ENABLED = "0";
     }
+    expect(isSalesEnabled()).toBe(false);
+  });
+
+  it("refuses another customer's cart when creating an order", () => {
+    db.prepare(`
+      INSERT INTO commerce_carts(id, customer_id, country, currency, status, expires_at)
+      VALUES ('cart-owner-a', 'customer-a', 'DE', 'EUR', 'active', datetime('now', '+1 day'))
+    `).run();
+    const before = db.prepare("SELECT COUNT(*) AS n FROM commerce_orders").get().n;
+    const denied = orderService.createOrderFromCheckout({
+      checkout: {
+        id: "chk-cross",
+        cartId: "cart-owner-a",
+        customerId: "customer-b",
+        totals: { currency: "EUR", total: 0 },
+      },
+      payment: { dryRun: true },
+      orderType: "DRY_RUN",
+    });
+    expect(denied.code).toBe("idor_denied");
+    expect(denied.blocked).toBe(true);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM commerce_orders").get().n).toBe(before);
     expect(isSalesEnabled()).toBe(false);
   });
 });

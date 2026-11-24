@@ -158,7 +158,10 @@ function createOrderFromCheckout({ checkout, payment, orderType, req, actorId = 
 
   const totals = checkout.totals || {};
   const cartService = require("./cartService");
-  const cart = cartService.getCart(checkout.cartId);
+  const cart = cartService.getCart(checkout.cartId, { customerId: checkout.customerId, req });
+  if (cart.error || cart.blocked) {
+    return { error: cart.error, code: cart.error, status: cart.status || 403, blocked: true };
+  }
   const pathAdapter = require("./canonicalCommercePath");
   const items = [];
   for (const i of cart.items || []) {

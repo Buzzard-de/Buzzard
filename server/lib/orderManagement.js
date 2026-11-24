@@ -252,6 +252,85 @@ function cancelOrder(id, body = {}) {
   return { ok: true, order: db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id) };
 }
 
+function dryCancelFlags() {
+  return { realMoneyMovement: false, refundIssued: false, live: false, supplierOrder: false };
+}
+
+function cancelOrderLines(id, body = {}) {
+  const flags = dryCancelFlags();
+  const actor = String(body.actorId || "").trim();
+  if (!actor) return { ok: false, code: "ACTOR_REQUIRED", status: 401, ...flags };
+  if (body.refund === true || body.capture === true) {
+    return { ok: false, code: "REFUND_NOT_LIVE", status: 403, ...flags };
+  }
+  const order = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
+  if (!order) return { ok: false, code: "ORDER_NOT_FOUND", status: 404, ...flags };
+  if (["cancelled", "fulfilled"].includes(order.order_status)) {
+    return { ok: false, code: "ORDER_NOT_CANCELLABLE", status: 400, ...flags };
+  }
+  const requested = Array.isArray(body.lines) ? body.lines : [];
+  if (!requested.length) return { ok: false, code: "LINES_REQUIRED", status: 400, ...flags };
+
+  const items = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
+  const updates = [];
+  for (const line of requested) {
+    const sku = line.sku || line.product_sku || null;
+    const matches = items.filter((row) => {
+      if (line.itemId != null) return Number(row.id) === Number(line.itemId);
+      return sku && row.product_sku === sku;
+    });
+    if (matches.length === 0) return { ok: false, code: "LINE_NOT_FOUND", status: 404, ...flags };
+    if (matches.length > 1) return { ok: false, code: "LINE_AMBIGUOUS", status: 400, ...flags };
+    const item = matches[0];
+    const qty = Number(line.quantity);
+    if (!Number.isInteger(qty) || qty <= 0) return { ok: false, code: "QTY_INVALID", status: 400, ...flags };
+    const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
+    if (qty > open) return { ok: false, code: "QTY_EXCEEDS_OPEN", status: 400, ...flags };
+    updates.push({ item, qty });
+  }
+
+  const apply = db.transaction(() => {
+    const update = db.prepare(`
+      UPDATE oms_order_items
+      SET cancelled_quantity = cancelled_quantity + ?,
+          reserved_quantity = MAX(0, reserved_quantity - ?)
+      WHERE id = ?
+    `);
+    updates.forEach((row) => update.run(row.qty, row.qty, row.item.id));
+    const fresh = db.prepare("SELECT * FROM oms_order_items WHERE order_id = ?").all(order.id);
+    let subtotal = 0;
+    let allCancelled = fresh.length > 0;
+    fresh.forEach((item) => {
+      const open = Number(item.quantity) - Number(item.cancelled_quantity || 0);
+      if (open > 0) allCancelled = false;
+      subtotal += open * Number(item.unit_price);
+    });
+    const nextStatus = allCancelled ? "cancelled" : order.order_status;
+    const grand = allCancelled
+      ? 0
+      : Math.max(0, subtotal + Number(order.shipping_total || 0) + Number(order.tax_total || 0) - Number(order.discount_total || 0));
+    db.prepare(`
+      UPDATE oms_orders
+      SET subtotal = ?, grand_total = ?, order_status = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(subtotal, grand, nextStatus, order.id);
+    recordEvent(order.id, "partial_cancel", order.order_status, nextStatus, body.reason || "Selected lines cancelled", {
+      actorId: actor,
+      lines: updates.map((row) => ({ itemId: row.item.id, sku: row.item.product_sku, quantity: row.qty })),
+      realMoneyMovement: false,
+    });
+  });
+  apply();
+  const saved = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(order.id);
+  return {
+    ok: true,
+    code: "PARTIAL_CANCELLED",
+    status: 200,
+    order: saved,
+    ...flags,
+  };
+}
+
 function splitOrder(id, body = {}) {
   const parent = db.prepare("SELECT * FROM oms_orders WHERE id = ?").get(id);
   if (!parent) return { error: "Order not found", status: 404 };
@@ -427,6 +506,7 @@ module.exports = {
   updatePaymentStatus,
   updateFulfillmentStatus,
   cancelOrder,
+  cancelOrderLines,
   splitOrder,
   addFulfillmentLink,
   addOrderNote,

@@ -10,6 +10,7 @@ function inventory() {
       { id: "paypal", mode: "locked", live: false },
       { id: "carriers", mode: "stub", live: false },
       { id: "marketplaces", mode: "blocked", live: false },
+      { id: "trendyol", mode: "international-sandbox", live: false, orders: false, network: false, storeFrontCode: "DE" },
     ],
   };
 }

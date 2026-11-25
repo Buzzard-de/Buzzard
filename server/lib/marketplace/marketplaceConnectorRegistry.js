@@ -14,9 +14,11 @@ const CHANNELS = Object.freeze([
   { id: "emag", display: "eMAG", oauthEnv: "EMAG_API_KEY", publishEnv: "EMAG_PUBLISH_ALLOWED" },
   { id: "skroutz", display: "Skroutz", oauthEnv: "SKROUTZ_API_KEY", publishEnv: "SKROUTZ_PUBLISH_ALLOWED" },
   { id: "google_shopping", display: "Google Shopping", oauthEnv: "GOOGLE_MERCHANT_CENTER_ID", publishEnv: "GOOGLE_SHOPPING_PUBLISH_ALLOWED" },
+  { id: "trendyol", display: "Trendyol", oauthEnv: "TRENDYOL_API_KEY", publishEnv: "TRENDYOL_PUBLISH_ALLOWED" },
 ]);
 
 function credentialsConfigured(channel) {
+  if (channel.id === "trendyol") return require("./trendyol/config").readConfig().configured === true;
   const key = process.env[channel.oauthEnv];
   return Boolean(key && String(key).trim().length > 8);
 }
@@ -45,7 +47,7 @@ function createConnector(channelId) {
   const channel = CHANNELS.find((row) => row.id === channelId);
   if (!channel) return { ok: false, code: "CHANNEL_UNKNOWN" };
 
-  return {
+  const connector = {
     id: channel.id,
     display: channel.display,
     live: false,
@@ -75,6 +77,13 @@ function createConnector(channelId) {
       return { ok: true, fee: Math.round(gross * rate * 100) / 100, currency: "EUR", live: false };
     },
   };
+  if (channel.id === "trendyol") {
+    connector.adapter = require("./trendyol/adapter").createTrendyolAdapter();
+    connector.health = () => connector.adapter.health();
+    connector.market = "international";
+    connector.storeFrontCode = "DE";
+  }
+  return connector;
 }
 
 function listConnectors() {

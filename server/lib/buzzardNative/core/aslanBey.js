@@ -128,6 +128,7 @@ function handToDefense(exam) {
     researchOwner: "dogu_bey",
     defenseOwner: "esat_bey",
     esat: esat.status(),
+    plan: esat.planRecovery(exam),
     affected: exam.affected || [],
     risk: exam.risk || "LOW",
     custody: exam.custody || [],

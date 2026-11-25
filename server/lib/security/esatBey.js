@@ -246,6 +246,23 @@ function activate() {
   return status();
 }
 
+function planRecovery(finding = {}) {
+  const affected = Array.isArray(finding.affected) ? finding.affected.filter(Boolean) : [];
+  return {
+    ok: true,
+    id: ID,
+    risk: finding.risk || "LOW",
+    affected,
+    recommendations: affected.length ? ["preserve_evidence", "review_local_controls"] : ["no_affected_system_named"],
+    recoveryPlan: ["keep_hashes", "human_approval_before_any_change"],
+    applied: false,
+    productionChange: false,
+    serviceStopped: false,
+    code: "HUMAN_GATE_REQUIRED",
+    live: false,
+  };
+}
+
 function status() {
   const holds = events.filter((e) => e.action === "ISOLATE_AND_HOLD").length;
   return {
@@ -283,6 +300,7 @@ module.exports = {
   watchRestore,
   watchException,
   activate,
+  planRecovery,
   recent,
   status,
   resetEsat,

@@ -530,6 +530,13 @@ function createDurableTaskQueue({ dbPath }) {
     return run.immediate();
   }
 
+  function list({ state = null } = {}) {
+    const rows = state
+      ? db.prepare(`SELECT * FROM orch_tasks WHERE state = ? ORDER BY updated_at ASC`).all(state)
+      : db.prepare(`SELECT * FROM orch_tasks ORDER BY updated_at ASC`).all();
+    return rows.map(rowToTask);
+  }
+
   function close() {
     db.close();
   }
@@ -537,6 +544,7 @@ function createDurableTaskQueue({ dbPath }) {
   return {
     enqueue,
     get,
+    list,
     lease,
     registerWorker,
     heartbeat,

@@ -20,6 +20,12 @@ Oturum Bearer ve `sessionStorage` üzerinde duruyor. Login `set-cookie` yazmaz. 
 
 Kalan 182 sarı madde dış hesap, üretim süreci veya görsel kanıt ister. Yeni eksik aranmayacak.
 
+## İç kapanış — 25 Kasım 2026, 07:00 Europe/Berlin
+
+Kayıt: 62 madde ✅, 170 madde 🟡, 1 madde ⛔, 4 madde ⚪. Bu turda kapananlar: 5, 53, 68, 84, 106, 176, 183, 191, 192, 202, 203, 204. Satış kilitli. Üretim veritabanı aynı hash ve aynı boyut. Push, merge ve deploy yok.
+
+`internalSoftwareClosures.test.mjs` 9/9. `tsc --noEmit` geçti. `next lint` geçti. `next build` 2073 sayfa üretti. Çerez oturumu, iki onay kaydı ve yeni semboller açılmadı.
+
 ## Tam otomasyon — kod varlığı ve gerçek entegrasyon
 
 Satış kapalı. Aşağıdaki satırlar yeni iş listesi değildir.
@@ -262,10 +268,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Object-level access and IDOR protection
 - NE İSTİYOR: Cross-customer cart/order/checkout denied
 - KOD: server/__tests__/idorGuard.test.mjs
-- TEST: Bu sabah geçti: yol gezintisi ve rol yükseltme reddedildi.
-- ENTEGRASYON: Ekim kemeri bu dalda yok. Bağ, yukarıdaki dosyanın bu ağaçta durup durmadığı.
-- DURUM: 🟡
-- EKSİK: Müşteri sepeti/siparişi çapraz erişim bu test dosyasında yok.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. İkinci müşteri sepet, ödeme başlangıcı, ödeme kaydı ve siparişte 403. Sahip 200.
+- ENTEGRASYON: Mevcut `refuseIdentityLessRecord` ve sepet yazma kapısı. Canlı sipariş yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 6
 
@@ -742,10 +748,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Cross-process memory proof
 - NE İSTİYOR: Documented in AI completion
 - KOD: `durable.js` belleği SQLite satırına yazar.
-- TEST: 23 Kasım 2026 08:15 Europe/Berlin. Tek süreçte yazıp okuma geçti. İkinci süreç açılmadı.
-- ENTEGRASYON: AI completion belgesinde süreçler arası kanıt cümlesi bulunmadı.
-- DURUM: 🟡
-- EKSİK: Süreç kapatılıp aynı dosyadan ikinci okuma yok. Belge kanıtı yok.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. SQLite kapatıldı, aynı dosya açıldı, `{n:7}` okundu. Başka sahip `PERSONAL_MEMORY_DENIED`.
+- ENTEGRASYON: `createDurable` aynı dosyayı yeniden açar. Canlı bellek servisi yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 54
 
@@ -892,10 +898,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Storefront catalog read
 - NE İSTİYOR: catalogCache / catalogReadService
 - KOD: `server/lib/storefront/catalogReadService.js`. Sepet servisi onu ister.
-- TEST: Bu turda `getHealth` çağrılmadı.
-- ENTEGRASYON: Modül duruyor. Önbellek sağlığı ölçülmedi.
-- DURUM: 🟡
-- EKSİK: Okuma servisi bu turda çalıştırılmadı.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. `getHealth` `salesEnabled` false, önbellek nesnesi ve sayı döndürdü.
+- ENTEGRASYON: Katalog okuma servisi çalıştı. Canlı vitrin önbelleği değil.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 69
 
@@ -1052,10 +1058,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: No real purchase orders
 - NE İSTİYOR: supplierOrdersEnabled false
 - KOD: `isSupplierOrdersBlocked`. Satış kapalıyken sipariş bayrağı etkisiz.
-- TEST: 23 Kasım 2026 08:18 Europe/Berlin. `BUZZARD_SUPPLIER_ORDERS_ENABLED=1` ve satış 0 iken true.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. Çocuk bayrak 1 ve satış 0 iken `supplierOrdersEnabled` false.
 - ENTEGRASYON: Gerçek satınalma emri oluşmadı.
-- DURUM: 🟡
-- EKSİK: `commerceFeatureFlags.supplierOrdersEnabled` bu testte okunmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 85
 
@@ -1272,10 +1278,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Fraud safeguards
 - NE İSTİYOR: Client cannot mark paid
 - KOD: `detectPriceTampering`. `capturePayment` müşteri gövdesi kabul etmez.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Sahte fiyat `price_tampering`. Yakalama 403.
-- ENTEGRASYON: Müşteri kendini ödemiş işaretleyemez.
-- DURUM: 🟡
-- EKSİK: Sahte `paid` alanının HTTP gövdesi ayrıca denenmedi.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. `paid: true` ile `POST /api/orders` 403 `sales_disabled`. Yönetici niyeti 403 `PAYMENT_NOT_LIVE`, `captured` false. `succeeded` satırı 0.
+- ENTEGRASYON: Müşteri kendini ödemiş işaretleyemez. Canlı tahsilat yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 107
 
@@ -1972,10 +1978,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Audit trails
 - NE İSTİYOR: controlCenter.recordSystemEvent
 - KOD: server/lib/controlCenter.js
-- TEST: createApproval ve decideApproval recordSystemEvent çağırıyor.
-- ENTEGRASYON: Yazılan olay satırı testte okunmadı.
-- DURUM: 🟡
-- EKSİK: Denetim satırının içeriği doğrulanmadı.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. `core_system_events` satırı `approval.created`, kaynak onay kimliği ve özet.
+- ENTEGRASYON: Olay geçici test veritabanına yazıldı. Üretim veritabanı değişmedi.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 177
 
@@ -2042,10 +2048,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Structured logs
 - NE İSTİYOR: securityLog + correlation
 - KOD: server/lib/securityLog.js
-- TEST: logSecurityEvent fonksiyon. server.js X-Request-Id başlığını yazıyor. 11:01 Europe/Berlin.
-- ENTEGRASYON: İkisi aynı olayda birlikte okunmadı.
-- DURUM: 🟡
-- EKSİK: Korelasyon başlığı ile güvenlik olayı eşlenmedi.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. Aynı olayda `requestId` ve `correlationId`.
+- ENTEGRASYON: `requestScope` güvenlik kaydına işler. Canlı izleme yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 184
 
@@ -2122,20 +2128,20 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Operational diagnostics
 - NE İSTİYOR: provider-diagnostics, health
 - KOD: server/plugins/productionHealthPlugin.js
-- TEST: Sağlık uçları duruyor. provider-diagnostics.mjs yok.
-- ENTEGRASYON: Sağlık ucu çağrılmadı.
-- DURUM: 🟡
-- EKSİK: Sağlayıcı tanılama betiği yok.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. `provider-diagnostics.mjs` `productionReady` false, `network` false, `live` false. `/api/health` `live` false.
+- ENTEGRASYON: Tanı yerel ve kapalı. Sağlayıcı hesabı bağlanmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı. Canlı sağlayıcı bu maddenin dışında.
 
 ## Madde 192
 
 - GÖREV: Correlation IDs
 - NE İSTİYOR: X-Request-Id
 - KOD: server/server.js
-- TEST: Kaynak X-Request-Id başlığını koyuyor.
-- ENTEGRASYON: HTTP yanıtı alınmadı.
-- DURUM: 🟡
-- EKSİK: Başlık telde doğrulanmadı.
+- TEST: 25 Kasım 2026 06:58 Europe/Berlin. `internalSoftwareClosures.test.mjs`. Geçerli `X-Request-Id` yanıtta aynı. `bad id` yerine üretilen kimlik döndü.
+- ENTEGRASYON: Başlık telde doğrulandı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 193
 
@@ -2232,30 +2238,30 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Production build
 - NE İSTİYOR: next build isolated
 - KOD: package.json
-- TEST: next build bu turda çalıştırılmadı.
-- ENTEGRASYON: İzole derleme yok.
-- DURUM: 🟡
-- EKSİK: Derleme kanıtı yok.
+- TEST: 25 Kasım 2026 07:00 Europe/Berlin. `npx next build` geçti. 2073 statik sayfa. Satış kapalı.
+- ENTEGRASYON: Yerel derleme. Dağıtım yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 203
 
 - GÖREV: Lint
 - NE İSTİYOR: next lint
 - KOD: package.json
-- TEST: next lint bu turda çalıştırılmadı.
-- ENTEGRASYON: Lint çıktısı yok.
-- DURUM: 🟡
-- EKSİK: Lint kanıtı yok.
+- TEST: 25 Kasım 2026 06:59 Europe/Berlin. `npx next lint` geçti. ESLint uyarısı ve hatası yok.
+- ENTEGRASYON: Yerel lint. Canlı yayın değil.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 204
 
 - GÖREV: Typecheck
 - NE İSTİYOR: tsc --noEmit
 - KOD: package.json
-- TEST: tsc --noEmit bu turda çalıştırılmadı.
-- ENTEGRASYON: Tip kontrolü yok.
-- DURUM: 🟡
-- EKSİK: Tip kanıtı yok.
+- TEST: 25 Kasım 2026 06:59 Europe/Berlin. `npx tsc --noEmit` geçti. `e2e/device-regression-locales.spec.ts` ülke adı dizini daraltıldı.
+- ENTEGRASYON: Yerel tip kontrolü.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 205
 

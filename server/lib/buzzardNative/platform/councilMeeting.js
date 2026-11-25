@@ -40,7 +40,7 @@ function runTextMeeting({ chair = "pusat", members = ["sinan_bey", "esat_bey", "
 const { ids, getAgent } = require("../core/identityRegistry");
 const { speak } = require("../core/sharedSpeech");
 
-function holdStaffMeeting({ chair = "pusat", topic = "kurmay" } = {}) {
+function holdStaffMeeting({ chair = "pusat", topic = "kurmay", voice = false } = {}) {
   if (chair !== "pusat") return { ok: false, code: "CHAIR_MUST_BE_PUSAT", liveVoice: false, liveStt: false, liveTts: false };
   const members = ids();
   const turns = [{ speaker: "pusat", role: "chair", text: `Toplantı açıldı. Konu: ${topic}. Canlı ses yok.`, liveVoice: false }];
@@ -59,6 +59,29 @@ function holdStaffMeeting({ chair = "pusat", topic = "kurmay" } = {}) {
       audioProduced: false,
     });
   }
+  const media = [];
+  if (voice) {
+    const { synthesizeStaff, transcribeStaff, alignToAudio } = require("../../voice/staffMedia");
+    for (const turn of turns) {
+      if (!turn.speaker || turn.role === "chair") continue;
+      const spoken = synthesizeStaff({ agentId: turn.speaker, text: "rapor", lang: "tr" });
+      if (!spoken.ok) continue;
+      const heard = transcribeStaff({ audio: spoken.wav, lang: "tr" });
+      const mouth = alignToAudio(spoken.phonemes, spoken.wav);
+      turn.audioProduced = true;
+      turn.voiceId = spoken.voiceId;
+      media.push({
+        speaker: turn.speaker,
+        voiceId: spoken.voiceId,
+        bytes: spoken.bytes,
+        frames: spoken.frames.length,
+        transcript: heard.transcript,
+        lipSync: mouth.lipSync === true,
+        mesh: mouth.mesh,
+        officialVoiceUsed: false,
+      });
+    }
+  }
   turns.push({ speaker: "pusat", role: "chair", text: "Tutanak kapandı. Canlı STT, TTS ve telefon yok.", liveVoice: false });
   return {
     ok: members.length === 17,
@@ -66,6 +89,7 @@ function holdStaffMeeting({ chair = "pusat", topic = "kurmay" } = {}) {
     members: members.length,
     turns,
     minutes: turns.map((turn) => `${turn.speaker}: ${turn.text}`).join("\n"),
+    media,
     liveVoice: false,
     liveStt: false,
     liveTts: false,

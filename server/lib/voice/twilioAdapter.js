@@ -1,5 +1,6 @@
 /**
- * Twilio call adapter. Signature check is local. No call is placed.
+ * Optional carrier adapter. Buzzard phone does not require it.
+ * Signature check is local. No call is placed.
  */
 const crypto = require("crypto");
 

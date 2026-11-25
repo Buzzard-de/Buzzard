@@ -1,6 +1,6 @@
 /**
- * OpenAI Realtime session shell. The key never leaves process.env and is never returned.
- * This process does not open a socket.
+ * Optional hosted adapter. Buzzard voice does not call this module.
+ * The key never leaves process.env and is never returned.
  */
 const sessions = new Map();
 const crypto = require("crypto");

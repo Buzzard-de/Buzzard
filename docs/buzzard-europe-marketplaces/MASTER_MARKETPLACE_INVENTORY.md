@@ -1,18 +1,24 @@
 # Avrupa pazar yeri envanteri
 
-07:34 Europe/Berlin, 25 Kasım 2026. Vitest 3 dosya, 23/23 geçti. Ayrıntı `TEST_RESULTS.md` içindedir.
+Kayıt sayısı: 196. Aynı platformun ülke ve kategori vitrinleri tek kayıttadır. Kategori eşlemesi `CATEGORY_MAPPING.md` içindedir.
 
-Kayıt sayısı: 178. Aynı platformun ülke mağazaları tek kayıtta birleştirildi. İsimlerin tamamı testteki listeyle eşleşir.
-
-- `EXISTING_UNTOUCHED`: 9
+- `EXISTING_UNTOUCHED`: 10
 - `ADAPTER_IMPLEMENTED`: 11
-- `RESEARCH_REQUIRED`: 73
+- `RESEARCH_REQUIRED`: 90
 - `PARTIAL_API_SUPPORT`: 7
 - `SELLER_ACCESS_REQUIRED`: 7
 - `NOT_ELIGIBLE`: 56
 - `NO_OFFICIAL_API`: 15
 
-Bu tablo canlı bağlantı değildir. `live`, `network` ve `productionReady` bütün kayıtlarda kapalıdır.
+Türler:
+
+- `marketplace`: 72
+- `retailer`: 92
+- `comparison`: 9
+- `classified`: 20
+- `club`: 3
+
+Bu tablo canlı bağlantı değildir. `live`, `network` ve `productionReady` kapalıdır.
 
 | Platform | Listedeki adlar | Ülkeler | Tür | Üçüncü taraf satıcı | Durum | Aile | Doğrulanmış işlem | Kapalı işlem | Kaynak | Not |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -74,10 +80,10 @@ Bu tablo canlı bağlantı değildir. `live`, `network` ve `productionReady` bü
 | Modivo | modivo | PL | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Sportano | sportano | PL | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Tradeinn | tradeinn | ES | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
-| Pigu | pigu.lt | LT | marketplace | yes | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Pigu | pigu, pigu.lt | LT | marketplace | yes | RESEARCH_REQUIRED | closed | — | — | — | — |
 | 220.lv | 220.lv | LV | marketplace | yes | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Kaup24 | kaup24 | EE | marketplace | yes | RESEARCH_REQUIRED | closed | — | — | — | — |
-| 1a | 1a.lt, 1a.lv, 1a.ee | LT, LV, EE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| 1a | 1a platformları, 1a.lt, 1a.lv, 1a.ee | LT, LV, EE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Varle | varle.lt | LT | marketplace | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Ananas | ananas | RS | marketplace | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Fashion Days | fashion days | RO, BG | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
@@ -181,7 +187,7 @@ Bu tablo canlı bağlantı değildir. `live`, `network` ve `productionReady` bü
 | Leboncoin | leboncoin | FR | classified | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Marktplaats | marktplaats | NL | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
 | 2dehands | 2dehands | BE | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
-| OLX | olx polska, olx.ro, olx.bg, olx portugal | PL, RO, BG, PT | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
+| OLX | olx, olx polska, olx.ro, olx.bg, olx portugal | PL, RO, BG, PT | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
 | Subito | subito | IT | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
 | Wallapop | wallapop | ES | classified | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
 | Njuškalo | njuškalo | HR | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
@@ -194,3 +200,21 @@ Bu tablo canlı bağlantı değildir. `live`, `network` ve `productionReady` bü
 | DoneDeal | donedeal | IE | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
 | KupujemProdajem | kupujemprodajem | RS | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
 | Osta.ee | osta.ee | EE | classified | no | NO_OFFICIAL_API | closed | — | — | — | — |
+| Google Shopping | google shopping | DE | comparison | yes | EXISTING_UNTOUCHED | existing | — | createProduct:EXISTING_CONNECTOR_UNTOUCHED; updateProduct:EXISTING_CONNECTOR_UNTOUCHED; updateOffer:EXISTING_CONNECTOR_UNTOUCHED; readOrders:EXISTING_CONNECTOR_UNTOUCHED; updateTracking:EXISTING_CONNECTOR_UNTOUCHED; cancelOrder:EXISTING_CONNECTOR_UNTOUCHED; refund:EXISTING_CONNECTOR_UNTOUCHED | — | Mevcut sandbox connector. Bu katmanda sipariş pazaryeri sayılmaz. |
+| Autodoc | autodoc | DE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Partner veya pazaryeri uygunluğu doğrulanmadı. |
+| Notino | notino | CZ | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Sephora | sephora | FR | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Pazaryeri veya satıcı modeli doğrulanmadı. |
+| Flaconi | flaconi | DE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Lookfantastic | lookfantastic | GB | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Idealo | idealo | DE | comparison | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Kelkoo | kelkoo | FR | comparison | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| PriceRunner | pricerunner | SE | comparison | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Conforama | conforama | FR | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Ülke bazlı satıcı uygunluğu doğrulanmadı. |
+| Maisons du Monde | maisons du monde | FR | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Pazaryeri veya satıcı kabulü doğrulanmadı. |
+| Castorama | castorama | FR | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| Toolstation | toolstation | GB | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | — |
+| XXL | xxl | NO | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Pazaryeri veya satıcı modeli doğrulanmadı. |
+| Musikhaus | musikhaus platformları | DE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Tek bir şirket değil. Satıcı kabulü doğrulanmadı. |
+| RS Components | rs components | GB | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Pazaryeri veya API modeli doğrulanmadı. |
+| Würth | würth | DE | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Üçüncü taraf satıcı modeli doğrulanmadı. |
+| Distrelec | distrelec | CH | retailer | unknown | RESEARCH_REQUIRED | closed | — | — | — | Pazaryeri veya API uygunluğu doğrulanmadı. |

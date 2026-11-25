@@ -6,6 +6,38 @@ Dal `cursor/237-morning-status-c293`. Satış kilitli. Üretim veritabanı deği
 
 Kayıt: 48 madde ✅, 184 madde 🟡, 1 madde ⛔, 4 madde ⚪. Bu sabah kapananlar: 31, 32, 42, 44, 169, 206. Yeşil ışık açılmadı. Madde 23 ve 24 gerekçesiz açılmayacak.
 
+## Dört yerel iş kilitlendi — 25 Kasım 2026, 06:41 Europe/Berlin
+
+Kayıt: 50 madde ✅, 182 madde 🟡, 1 madde ⛔, 4 madde ⚪. Bu turda kapananlar: 67, 89. Satış kilitli. Üretim veritabanı aynı hash ve aynı boyut. Push, merge ve deploy yok.
+
+Vitrin `http://127.0.0.1:3477` üzerinde açıldı. Ana sayfa 200, başlık Buzzard24 kataloğu. `/produkt/bremsscheibe-vorderachse-280mm/` 200. `/produkt/does-not-exist-bz/` 404. `/warenkorb/` ve `/checkout/` 200, Stripe yok. Görsel regresyon tabanı yok; madde 137 🟡 kalır. `output: export` listesinde olmayan `/products/:id` geliştirme sunucusunda 500 döner; madde 139 🟡 kalır.
+
+Oturum Bearer ve `sessionStorage` üzerinde duruyor. Login `set-cookie` yazmaz. Çerez ile `/api/admin/me` 401 döner. Madde 7 ve 8 🟡 kalır. Çerez oturumu eklenmedi.
+
+`core_approvals` ve `orch_approvals` ayrı duruyor. Birinin kimliği diğer tabloda yok. `pricing_ai` ikisinde de karar veremez. Madde 2 ve 168 🟡 kalır. Bu bir birleştirme işi olarak açık değildir.
+
+`server/__tests__/fourLocalConclusions.test.mjs` 6/6. ACTIVE yayın 400, satır READY, SoT kapalı. Sepet `priceSnapshot` 12.5, `clientPrice` 1 `price_tampering`. Finans niyeti tokensuz 401. Misafir `POST /api/orders` satış kilidiyle reddedildi; madde 110 🟡 kalır. Yönetici tedarikçi siparişi 403, `supih_orders` 0.
+
+Kalan 182 sarı madde dış hesap, üretim süreci veya görsel kanıt ister. Yeni eksik aranmayacak.
+
+## Tam otomasyon — kod varlığı ve gerçek entegrasyon
+
+Satış kapalı. Aşağıdaki satırlar yeni iş listesi değildir.
+
+| Halka | Kod | Gerçek entegrasyon |
+| --- | --- | --- |
+| Ürün | `productCore`, yerel katalog, vitrin PDP | TecDoc ve canlı katalog yazımı yok |
+| Tedarikçi | Inter Cars adaptörü, hub sipariş ucu | `LIVE_ORDER_FORBIDDEN`, `supih_orders` boş, TecDoc hesabı ⛔ |
+| Fiyat / stok | Sepet `priceSnapshot`, yerel stok kuralı | Canlı tedarikçi fiyatı ve stok beslemesi yok |
+| Sipariş | `/api/orders` ve satış kilidi | Gerçek sipariş yok |
+| Ödeme | Finans eklentisi, niyet ucu 401 | `PAYMENT_NOT_LIVE`, Stripe ve PayPal kilitli |
+| Lojistik | `server/lib/logistics`, taşıyıcı kayıtları | `externalIntegrations` taşıyıcı `live: false` |
+| Teslimat | Kuru sevkiyat ve durum anlık görüntüleri | Taşıyıcı teslim kanıtı yok |
+| İade | `returnsRma`, `returnsEngine` | Canlı iade ve para hareketi yok |
+| Muhasebe | Fatura ve finans özeti uçları | Canlı muhasebe defteri yok |
+| Müşteri hizmetleri | CRM uçları | Canlı destek kanalı yok |
+| AI kurmay heyeti | `pusat/council.js`, onay kuyruğu | Uzak Guardian ve canlı LLM yok, `productionReady: false` |
+
 ## Oturum kapanışı — 24 Kasım 2026, 12:33 Europe/Berlin
 
 Dal `cursor/237-morning-status-c293`. Son iş kaydı `a43df8b5`. Satış kilitli. Üretim veritabanı `server/data/buzzard.db` değişmedi: SHA-256 `27d460eca7461f5093406296256be9c9d98b45eaf5493ab91192483902fc0a0f`, boyut 1744896.
@@ -200,10 +232,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Architecture inventory without duplicate systems
 - NE İSTİYOR: Single Pusat, single approval center, single product write boundary
 - KOD: server/lib/controlCenter.js
-- TEST: Kontrol merkezi core_approvals yazıyor. Pusat kuyruğu ayrı orch_approvals yazıyor.
-- ENTEGRASYON: Tek onay merkezi ölçütü karşılanmadı.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. Yönetici kaydı yalnız `core_approvals` içinde PENDING. Ajan kaydı yalnız `orch_approvals` içinde. `pricing_ai` kontrol merkezinde null, kuyrukta `PERMISSION_DENIED`.
+- ENTEGRASYON: İki kayıt birbirine yazmaz. Üçüncü onay motoru yok.
 - DURUM: 🟡
-- EKSİK: İki onay kaydı duruyor.
+- EKSİK: Tek onay merkezi ölçütü duruyor. Birleştirme işi olarak açık değildir.
 
 ## Madde 3
 
@@ -250,7 +282,7 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Cookie flags HttpOnly, Secure, SameSite
 - NE İSTİYOR: Session cookies not readable by JS; CSRF companion token
 - KOD: `server/lib/auth.js` login JSON `token` döner, Set-Cookie yazmaz. `lib/store/client.ts` tokenı `sessionStorage` içinde tutar. `server/lib/csrf.js` gelen `buzzard_csrf` çerezini okur, yazmaz. HttpOnly, Secure ve SameSite atayan kod `js/mjs/ts/tsx/py` içinde yok.
-- TEST: 23 Kasım 2026 06:19 Europe/Berlin. `csrf.test.mjs` 4/4 geçti; bayrak assert etmez. `adminSessionHttp.test.mjs` 19/19 geçti. Login `set-cookie` null. Cookie ile `/api/admin/me` 401.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. İstemci `sessionStorage` yazar, `document.cookie` yazmaz. Login `set-cookie` null. Çerez ile `/api/admin/me` 401, Bearer 200.
 - ENTEGRASYON: `globalAuthMiddleware.js` CSRF okuyucusunu auth öncesine bağlar. İstemci `Authorization: Bearer` gönderir. Üretim ve geliştirme için ayrı çerez bayrağı dalı yok.
 - DURUM: 🟡
 - EKSİK: HttpOnly, Secure ve SameSite uygulanmıyor. Oturum tokenı `sessionStorage` içinde ve JS okuyabiliyor. CSRF eşlik çerezi sunucu tarafından set edilmiyor. Geçen testler bayrakları doğrulamıyor.
@@ -850,10 +882,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: PIM publish gated
 - NE İSTİYOR: Publish not SoT activation
 - KOD: `productSot.isSotActive`.
-- TEST: 23 Kasım 2026 08:18 Europe/Berlin. Ürün oluştu, kaynak tekliği false.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. `PATCH` ACTIVE 400, satır READY, `isSotActive()` false.
 - ENTEGRASYON: Yayın ile SoT aynı anahtar değil.
-- DURUM: 🟡
-- EKSİK: Yayın ucu HTTP ile çağrılmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 68
 
@@ -1070,10 +1102,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Price snapshot on cart
 - NE İSTİYOR: priceSnapshot field
 - KOD: `commerceValidation.computeOrderTotals` `priceSnapshot` kullanır. `detectPriceTampering` müşteri fiyatını sunucu fiyatıyla karşılaştırır.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `items89to115Commerce.test.mjs` 3/3. 12.50 anlık fiyat, adet 2, ara toplam 25. Müşteri fiyatı 1 `price_tampering`.
-- ENTEGRASYON: Sepet servisi aynı alanı yazar. Bu turda yeni sepet satırı açılmadı.
-- DURUM: 🟡
-- EKSİK: HTTP sepet satırı bu maddede yeniden yazılmadı.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. HTTP sepet satırı `priceSnapshot` 12.5 ve `unitPrice` 12.5. `clientPrice` 1, 400 `price_tampering`.
+- ENTEGRASYON: Sepet servisi aynı alanı yazar.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 90
 
@@ -1250,7 +1282,7 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Financial authorization
 - NE İSTİYOR: Finance endpoints not public
 - KOD: `paymentsFinancePlugin` onay ve iade `guardAdmin`. Satış kapalıyken iade reddi.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. `createRefund` kilitli. HTTP finans listesi bu turda açılmadı.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. Tokensuz `POST /api/payments-finance/intents` 401. Yöntem listesi herkese açık isim listesi olarak duruyor.
 - ENTEGRASYON: Uçlar herkese açık değil.
 - DURUM: 🟡
 - EKSİK: Tokensuz finans HTTP'si bu turda yeniden ölçülmedi.
@@ -1280,7 +1312,7 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Guest checkout proof
 - NE İSTİYOR: 401 without proof
 - KOD: Commerce kimlik kapısı madde 16'da. Bu tur satış kilidini yeniden ölçtü.
-- TEST: 23 Kasım 2026 10:51 Europe/Berlin. Satış kapalı. Misafir 401 kanıtı `guestCheckoutFailClosed.test.mjs` kaydında.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. Tokensuz `POST /api/orders` satış kilidiyle reddedildi. Kanıtsız 401, satış kilidinden ayrı ölçülmedi.
 - ENTEGRASYON: Kanıtsız ödeme yakalanmıyor.
 - DURUM: 🟡
 - EKSİK: Misafir HTTP'si bu turda yeniden koşulmadı.
@@ -1550,8 +1582,8 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Homepage
 - NE İSTİYOR: Storefront home
 - KOD: app/page.tsx
-- TEST: Ana sayfa dosyası duruyor.
-- ENTEGRASYON: Tarayıcıda açılmadı.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. Geliştirme sunucusu ana sayfa 200, başlık Buzzard24 kataloğu.
+- ENTEGRASYON: Sayfa HTML olarak geldi. Görsel regresyon tabanı yok.
 - DURUM: 🟡
 - EKSİK: Görsel regresyon yok.
 
@@ -1570,10 +1602,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Product pages
 - NE İSTİYOR: PDP 200 / unknown 404
 - KOD: app/products/[id]/page.tsx
-- TEST: Sayfa notFound çağırıyor.
-- ENTEGRASYON: 200 ve 404 HTTP yanıtı bu turda alınmadı.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `/produkt/bremsscheibe-vorderachse-280mm/` 200. `/produkt/does-not-exist-bz/` 404. Listelenmeyen `/products/:id` geliştirme sunucusunda 500.
+- ENTEGRASYON: Kanonik ürün yolu 200 ve 404 verdi.
 - DURUM: 🟡
-- EKSİK: Çalışan vitrin isteği yok.
+- EKSİK: Eski `/products/:id` yolu `output: export` dışında 404 vermiyor.
 
 ## Madde 140
 
@@ -1860,10 +1892,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Human Approval Center
 - NE İSTİYOR: controlCenter delegates to pusat.approval
 - KOD: server/lib/controlCenter.js
-- TEST: items168to182Approvals 1/1, 10:59 Europe/Berlin. createApproval PENDING, ardından operator onayı APPROVED.
-- ENTEGRASYON: Kontrol merkezi kendi core_approvals tablosuna yazıyor. Ayrı pusat.approval kuyruğuna devretmiyor.
+- TEST: 25 Kasım 2026 06:41 Europe/Berlin. `fourLocalConclusions.test.mjs`. İki tablo birbirinin kimliğini taşımaz. Ajan ikisinde de karar veremez.
+- ENTEGRASYON: Kontrol merkezi `core_approvals` yazar. Pusat kuyruğu `orch_approvals` yazar. Devir yok.
 - DURUM: 🟡
-- EKSİK: İki onay kaydı duruyor.
+- EKSİK: Tek onay merkezine devir yok. Birleştirme işi olarak açık değildir.
 
 ## Madde 169
 

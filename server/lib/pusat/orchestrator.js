@@ -240,4 +240,4 @@ function createOrchestrator({ dbPath } = {}) {
   };
 }
 
-module.exports = { createOrchestrator };
+module.exports = { createOrchestrator, STAFF_DUTY, STAFF_DOMAIN };

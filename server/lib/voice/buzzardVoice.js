@@ -59,15 +59,29 @@ function createTtsEngine() {
       if (!spoken.ok) return { ...spoken, engine: "buzzard_tts", saas: false };
       const audio = createAudioEngine().inspect(spoken.wav);
       const mouth = alignToAudio(spoken.phonemes, spoken.wav);
-      return { ...spoken, engine: "buzzard_tts", audioQuality: audio, mouth, saas: false, hostedProvider: null };
+      const openness = { A: 0.8, E: 0.45, I: 0.2, O: 0.7, U: 0.35, X: 0.15, REST: 0 };
+      const pose = {
+        kind: "PARAMETRIC_MOUTH",
+        scannedBody: false,
+        digitalHuman: false,
+        frames: (mouth.events || []).map((event) => ({ sampleIndex: event.sampleIndex, openness: openness[event.viseme] ?? 0.1 })),
+      };
+      return { ...spoken, engine: "buzzard_tts", audioQuality: audio, mouth, pose, saas: false, hostedProvider: null };
     },
   };
 }
 
 function createSttEngine() {
   const audio = createAudioEngine();
+  const decoders = [];
   return {
     id: "buzzard_stt",
+    generalSpeech: false,
+    attachDecoder(decoder) {
+      if (typeof decoder !== "function") return { ok: false, code: "DECODER_REQUIRED" };
+      decoders.push(decoder);
+      return { ok: true, generalSpeech: false, attached: decoders.length };
+    },
     recognize({ audio: wav, lang = "tr", timeoutMs = 1000, file = null } = {}) {
       const started = process.hrtime.bigint();
       const heard = transcribeStaff({ audio: wav, lang, timeoutMs, file });
@@ -77,6 +91,24 @@ function createSttEngine() {
       const hit = matchLexicon(heard.phonemes, lang);
       const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
       if (!hit) {
+        for (const decoder of decoders) {
+          const extra = decoder({ phonemes: heard.phonemes, lang, wav });
+          if (extra && extra.transcript) {
+            return {
+              ok: true,
+              code: "DECODER_MATCH",
+              transcript: extra.transcript,
+              lang,
+              phonemes: heard.phonemes,
+              orthographyRecovered: false,
+              elapsedMs,
+              engine: "buzzard_stt",
+              generalStt: false,
+              generalSpeech: false,
+              saas: false,
+            };
+          }
+        }
         return {
           ok: false,
           code: "UNRECOGNIZED_SPEECH",
@@ -86,6 +118,7 @@ function createSttEngine() {
           elapsedMs,
           engine: "buzzard_stt",
           generalStt: false,
+          generalSpeech: false,
           saas: false,
         };
       }
@@ -101,6 +134,7 @@ function createSttEngine() {
         elapsedMs,
         engine: "buzzard_stt",
         generalStt: false,
+        generalSpeech: false,
         saas: false,
       };
     },
@@ -137,7 +171,13 @@ function createRealtimeEngine() {
     open({ agentId = "pusat", lang = "tr" } = {}) {
       return { id: `rt_${agentId}_${lang}`, agentId, lang, frames: [], state: "open", saas: false };
     },
+    drop(session) {
+      if (!session) return { ok: false, code: "SESSION_UNKNOWN" };
+      session.state = "dropped";
+      return { ok: true, state: "dropped", network: false, mediaScope: "IN_PROCESS" };
+    },
     push(session, frame) {
+      if (!session || session.state === "dropped") return { ok: false, code: "MEDIA_DROPPED", network: false, saas: false };
       if (!session || session.state !== "open") return { ok: false, code: "SESSION_CLOSED", saas: false };
       if (!Buffer.isBuffer(frame) || frame.length === 0) return { ok: false, code: "EMPTY_FRAME", saas: false };
       session.frames.push(Buffer.from(frame));
@@ -158,6 +198,8 @@ function createRealtimeEngine() {
         bytes: wav.length,
         saas: false,
         network: false,
+        mediaScope: "IN_PROCESS",
+        lowLatencyVerified: false,
       };
     },
     reconnect(session) {
@@ -202,6 +244,9 @@ function createPhoneEngine() {
         taskCompleted: task ? task.merged.completed : 0,
         carrier: "buzzard",
         externalSaas: false,
+        environment: "INTERNAL_LAB",
+        placedOnCarrier: false,
+        network: false,
         salesEnabled: isSalesEnabled(),
       };
       calls.push(row);
@@ -211,12 +256,77 @@ function createPhoneEngine() {
       if (!extension) return { ok: false, code: "DESTINATION_REQUIRED", placedOnCarrier: false, externalSaas: false };
       const spoken = tts.speak({ agentId: "zeynep_hanim", text, lang });
       if (!spoken.ok) return { ...spoken, placedOnCarrier: false, externalSaas: false };
-      const row = { id: `call_${calls.length + 1}`, state: "completed", extension: "present", bytes: spoken.bytes, placedOnCarrier: false, carrier: "buzzard", externalSaas: false };
+      const row = { id: `call_${calls.length + 1}`, state: "completed", extension: "present", bytes: spoken.bytes, placedOnCarrier: false, carrier: "buzzard", externalSaas: false, environment: "INTERNAL_LAB", network: false };
       calls.push(row);
       return { ok: true, ...row, wav: spoken.wav };
     },
     report() {
       return calls.map((row) => ({ id: row.id, state: row.state, transcript: row.transcript || null }));
+    },
+  };
+}
+
+function scrub(value) {
+  return String(value || "")
+    .replace(/sk-[a-z0-9_-]+/gi, "[redacted]")
+    .replace(/password=\S+/gi, "password=[redacted]");
+}
+
+function createCallManager() {
+  const phone = createPhoneEngine();
+  const realtime = createRealtimeEngine();
+  const tts = createTtsEngine();
+  const logs = [];
+  return {
+    id: "buzzard_call_manager",
+    environment: "INTERNAL_LAB",
+    network: false,
+    receive(input) {
+      const call = phone.receive(input);
+      logs.push({
+        id: call.id || null,
+        state: call.state || "failed",
+        transcript: scrub(call.transcript),
+        environment: "INTERNAL_LAB",
+        placedOnCarrier: false,
+      });
+      return { ...call, environment: "INTERNAL_LAB", placedOnCarrier: false, network: false };
+    },
+    place(input) {
+      const call = phone.place(input);
+      logs.push({ id: call.id || null, state: call.state || "failed", transcript: null, environment: "INTERNAL_LAB", placedOnCarrier: false });
+      return { ...call, environment: "INTERNAL_LAB", placedOnCarrier: call.placedOnCarrier === true, network: false };
+    },
+    transfer({ toAgent } = {}) {
+      if (!toAgent) return { ok: false, code: "DESTINATION_REQUIRED", placedOnCarrier: false };
+      if (!canUse(toAgent, "speech")) {
+        return { ok: true, mode: "WRITTEN_HANDOFF", toAgent, speechGranted: false, placedOnCarrier: false, network: false };
+      }
+      const spoken = tts.speak({ agentId: toAgent, text: "rapor", lang: "tr" });
+      return {
+        ok: spoken.ok === true,
+        mode: "VOICE_TRANSFER",
+        toAgent,
+        bytes: spoken.bytes,
+        pose: spoken.pose,
+        placedOnCarrier: false,
+        network: false,
+        environment: "INTERNAL_LAB",
+      };
+    },
+    drop(session) {
+      return realtime.drop(session);
+    },
+    resume(session) {
+      return realtime.reconnect(session);
+    },
+    note(text) {
+      const safe = scrub(text);
+      logs.push({ id: null, state: "note", transcript: safe, environment: "INTERNAL_LAB", placedOnCarrier: false });
+      return { ok: !safe.includes("sk-"), stored: safe };
+    },
+    log() {
+      return logs.map((row) => ({ ...row }));
     },
   };
 }
@@ -228,7 +338,7 @@ function createSpeechSession() {
   const realtime = createRealtimeEngine();
   return {
     id: "buzzard_speech_session",
-    engines: ["buzzard_stt", "buzzard_tts", "buzzard_audio", "buzzard_voice_identity", "buzzard_realtime", "buzzard_phone"],
+    engines: ["buzzard_stt", "buzzard_tts", "buzzard_audio", "buzzard_voice_identity", "buzzard_realtime", "buzzard_phone", "buzzard_call_manager"],
     requiredSaas: [],
     meeting({ topic = "kurmay" } = {}) {
       const roster = identity.list();
@@ -278,5 +388,6 @@ module.exports = {
   createVoiceIdentityEngine,
   createRealtimeEngine,
   createPhoneEngine,
+  createCallManager,
   createSpeechSession,
 };

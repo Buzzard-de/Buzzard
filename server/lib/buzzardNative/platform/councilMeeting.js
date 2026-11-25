@@ -37,4 +37,41 @@ function runTextMeeting({ chair = "pusat", members = ["sinan_bey", "esat_bey", "
   };
 }
 
-module.exports = { runTextMeeting };
+const { ids, getAgent } = require("../core/identityRegistry");
+const { speak } = require("../core/sharedSpeech");
+
+function holdStaffMeeting({ chair = "pusat", topic = "kurmay" } = {}) {
+  if (chair !== "pusat") return { ok: false, code: "CHAIR_MUST_BE_PUSAT", liveVoice: false, liveStt: false, liveTts: false };
+  const members = ids();
+  const turns = [{ speaker: "pusat", role: "chair", text: `Toplantı açıldı. Konu: ${topic}. Canlı ses yok.`, liveVoice: false }];
+  for (const id of members) {
+    if (id === "pusat") continue;
+    const agent = getAgent(id);
+    const said = speak({ agentId: id, text: agent.specialization });
+    turns.push({
+      speaker: id,
+      name: agent.display_name,
+      role: agent.role,
+      text: `${agent.display_name}: ${agent.specialization}`,
+      voiceStatus: said.ok ? said.voiceStatus : said.code,
+      avatarStatus: agent.avatar_profile.status,
+      officialVoiceUsed: false,
+      audioProduced: false,
+    });
+  }
+  turns.push({ speaker: "pusat", role: "chair", text: "Tutanak kapandı. Canlı STT, TTS ve telefon yok.", liveVoice: false });
+  return {
+    ok: members.length === 17,
+    chair: "pusat",
+    members: members.length,
+    turns,
+    minutes: turns.map((turn) => `${turn.speaker}: ${turn.text}`).join("\n"),
+    liveVoice: false,
+    liveStt: false,
+    liveTts: false,
+    realtime: "NOT_CONFIGURED",
+    salesEnabled: false,
+  };
+}
+
+module.exports = { runTextMeeting, holdStaffMeeting };

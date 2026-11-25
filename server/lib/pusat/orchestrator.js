@@ -2,10 +2,55 @@
  * Pusat execution loop over the durable queue. Isolated SQLite. Not a hosted factory.
  */
 const { createDurableTaskQueue } = require("./durableTaskQueue");
-const { dispatch } = require("../buzzardNative/core/specialistDispatch");
+const { dispatch, AGENT_KINDS } = require("../buzzardNative/core/specialistDispatch");
 const { verifyDispatch } = require("./dispatchVerify");
 const { ids } = require("../buzzardNative/core/identityRegistry");
 const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
+const { createMultiMemory } = require("../buzzardNative/core/multiMemory");
+const { isSalesEnabled } = require("../salesMode");
+
+const STAFF_DUTY = Object.freeze({
+  pusat: { kind: "ASSIGN_TASK", input: {} },
+  sinan_bey: { kind: "ANALYZE_CODE", input: {} },
+  esat_bey: { kind: "SECURITY_STATUS", input: {} },
+  dogu_bey: { kind: "RESEARCH_REQUEST", input: { topic: "categories", question: "local_only" } },
+  nedim_bey: { kind: "TAX_SPLIT", input: { netProfit: 10, taxEstimate: 1, country: "DE" } },
+  tuncay_bey: { kind: "SANCTIONS_SCREEN", input: {} },
+  amelia: { kind: "BRAND_DRAFT", input: { product: "catalog" } },
+  adrian: { kind: "BRAND_DRAFT", input: { product: "catalog" } },
+  mira: { kind: "CAMPAIGN_ANALYZE", input: { rows: [] } },
+  leon: { kind: "CAMPAIGN_ANALYZE", input: { rows: [] } },
+  stock_ai: { kind: "STOCK_READ", input: { feeds: [] } },
+  category_ai: { kind: "CATEGORY_READ", input: {} },
+  pricing_ai: {
+    kind: "PRICE_CALCULATE",
+    input: { supplierCost: 10, shipping: 2, marketplaceCommission: 1, vat: 2, returnReserve: 0.5, paymentFees: 0.4, category: "other" },
+  },
+  seo_ai: { kind: "SEO_DRAFT", input: { titleFacts: ["Bremsscheibe"], lang: "de" } },
+  banu_hanim: { kind: "CUSTOMER_REPLY", input: { intent: "order_status", verifiedFacts: { orderId: "dry", answer: "not sent" } } },
+  sales_analysis_ai: { kind: "SALES_REPORT", input: { rows: [{ units: 1, revenue: 10, returns: 0, net: 1 }] } },
+  zeynep_hanim: { kind: "PHONE_SESSION", input: {} },
+});
+
+const STAFF_DOMAIN = Object.freeze({
+  all: Object.keys(STAFF_DUTY),
+  software: ["sinan_bey"],
+  security: ["esat_bey"],
+  research: ["dogu_bey"],
+  tax: ["nedim_bey"],
+  customs: ["tuncay_bey"],
+  brand: ["amelia", "adrian"],
+  campaign: ["mira", "leon"],
+  stock: ["stock_ai"],
+  category: ["category_ai"],
+  price: ["pricing_ai"],
+  seo: ["seo_ai"],
+  customer: ["banu_hanim"],
+  sales: ["sales_analysis_ai"],
+  phone: ["zeynep_hanim"],
+  coordination: ["pusat"],
+  publish: ["amelia"],
+});
 
 function createOrchestrator({ dbPath } = {}) {
   const queue = createDurableTaskQueue({ dbPath });
@@ -97,6 +142,56 @@ function createOrchestrator({ dbPath } = {}) {
     return { created: created.length, ran: ran.executed, health: queue.health(), live: false, llmCouncil: false };
   }
 
+  function routeStaff({ domain = "all", input = null, maxAttempts = 3 } = {}) {
+    const roster = ids();
+    if (roster.length !== 17 || roster.some((id) => !STAFF_DUTY[id] || !AGENT_KINDS[id])) {
+      return { ok: false, code: "ROSTER_INCOMPLETE", live: false, salesEnabled: isSalesEnabled() };
+    }
+    const selected = STAFF_DOMAIN[domain];
+    if (!selected) return { ok: false, code: "UNKNOWN_DOMAIN", live: false, salesEnabled: isSalesEnabled() };
+    const memory = createMultiMemory();
+    for (const id of selected) {
+      const duty = STAFF_DUTY[id];
+      const kind = domain === "publish" ? "APPROVAL_REQUEST" : duty.kind;
+      schedule({
+        title: `staff-${domain}-${id}`,
+        assigneeId: id,
+        ownerId: "pusat",
+        kind,
+        input: input || (kind === "APPROVAL_REQUEST" ? { action: "BRAND_LIVE_PUBLISH" } : duty.input),
+        maxAttempts,
+      });
+    }
+    const ran = tick({ limit: Math.max(selected.length, maxAttempts) });
+    const reports = ran.executed.map((row) => ({
+      taskId: row.taskId,
+      status: row.status,
+      agentId: row.result?.agentId || null,
+      kind: row.result?.kind || null,
+      code: row.result?.code || row.code || null,
+    }));
+    const note = memory.put({
+      actorId: "pusat",
+      ownerId: "pusat",
+      type: "shared_knowledge",
+      key: `staff-${domain}`,
+      value: { domain, reports, at: new Date().toISOString() },
+    });
+    return {
+      ok: reports.length === selected.length && reports.every((row) => row.status === "COMPLETED" || row.status === "GATED"),
+      domain,
+      members: selected.length,
+      reports,
+      merged: { count: reports.length, completed: reports.filter((row) => row.status === "COMPLETED").length, gated: reports.filter((row) => row.status === "GATED").length },
+      memory: { ok: note.ok === true, version: note.version || null, store: memory },
+      audit: queue.health(),
+      salesEnabled: isSalesEnabled(),
+      live: false,
+      network: false,
+      llmCouncil: false,
+    };
+  }
+
   function status() {
     return {
       ...queue.health(),
@@ -118,6 +213,7 @@ function createOrchestrator({ dbPath } = {}) {
     schedule,
     tick,
     coordinateCouncil,
+    routeStaff,
     executeTask,
     status,
     queue,

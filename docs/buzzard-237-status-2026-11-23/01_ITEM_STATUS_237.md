@@ -1,10 +1,16 @@
 # 237 madde durum turu — 23 Kasım 2026
 
+## Sabah turu — 25 Kasım 2026, 06:32 Europe/Berlin
+
+Dal `cursor/237-morning-status-c293`. Satış kilitli. Üretim veritabanı değişmedi: SHA-256 `27d460eca7461f5093406296256be9c9d98b45eaf5493ab91192483902fc0a0f`, boyut 1744896.
+
+Kayıt: 48 madde ✅, 184 madde 🟡, 1 madde ⛔, 4 madde ⚪. Bu sabah kapananlar: 31, 32, 42, 44, 169, 206. Yeşil ışık açılmadı. Madde 23 ve 24 gerekçesiz açılmayacak.
+
 ## Oturum kapanışı — 24 Kasım 2026, 12:33 Europe/Berlin
 
 Dal `cursor/237-morning-status-c293`. Son iş kaydı `a43df8b5`. Satış kilitli. Üretim veritabanı `server/data/buzzard.db` değişmedi: SHA-256 `27d460eca7461f5093406296256be9c9d98b45eaf5493ab91192483902fc0a0f`, boyut 1744896.
 
-Kayıt: 42 madde ✅, 190 madde 🟡, 1 madde ⛔, 4 madde ⚪. Yeşil ışık açılmadı. Canlı ödeme, taşıyıcı, TecDoc, pazar yeri, DNS, Render diski ve ilk gerçek sipariş dışarıda kaldı. Yarın yerel açık maddelerden devam. Madde 23 ve 24 gerekçesiz açılmayacak.
+Kayıt o akşam: 42 madde ✅, 190 madde 🟡, 1 madde ⛔, 4 madde ⚪.
 
 Saat: 23 Kasım 2026, sabah, Europe/Berlin.
 Ağaç: `cursor/save-three-day-records-c293`, HEAD `6b0e3ccd`.
@@ -484,20 +490,20 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: API health endpoints
 - NE İSTİYOR: Health remains rate-limited on its own bucket
 - KOD: `server/server.js` `healthRateLimit`, önek `health:`.
-- TEST: Aynı dosya. Health kovası dolunca API kovası dolmuyor. `GET /api/health` 200.
-- ENTEGRASYON: Sağlık uçları genel `api:` kovasına yazmıyor.
-- DURUM: 🟡
-- EKSİK: HTTP ile 240 isteklik doluluk basılmadı.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `healthRateLimitBucket.test.mjs`. 30 sağlık isteği 200. Kova 240’ta 429 `security.rateLimited`. Aynı anda `/api/status` 200. Kullanıcı kovası 180’de ayrı doluyor.
+- ENTEGRASYON: İzole API. Çalışan üretim süreci yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 32
 
 - GÖREV: Plugin / route registry
 - NE İSTİYOR: wrapRouteHandler on registered routes
 - KOD: `server/server.js` rota kaydı `wrapRouteHandler` çağırır. `server/lib/globalAuthMiddleware.js`.
-- TEST: Kayıt satırı bu turda okundu.
-- ENTEGRASYON: Eşleşen rota, izin çözücüsünden geçen sarmalayıcıya gider.
-- DURUM: 🟡
-- EKSİK: Her rotanın sarıldığı ayrı envanter testi yok.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `routeRegistryWrap.test.mjs`. `routes.push` tek yerde ve `wrapRouteHandler` ile. Eklenti dosyalarında ikinci kayıt yok.
+- ENTEGRASYON: Kayıt `server.js` `addRoute`. Canlı rota envanteri üretimde sayılmadı.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 33
 
@@ -594,10 +600,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Dispatch idempotency
 - NE İSTİYOR: Durable read-only dispatch keys
 - KOD: `server/lib/pusat/idempotencyService.js`.
-- TEST: 23 Kasım 2026 08:14 Europe/Berlin. `pusatIdempotency.test.mjs` 6/6. Aynı yük yeniden çalışmaz. Farklı yük reddedilir. Satış ve münhasır SoT açılmaz.
-- ENTEGRASYON: `pusat_idempotency` tablosu. `core_ai_tasks` kolonları değişmedi.
-- DURUM: 🟡
-- EKSİK: Anahtarlar bu turda süreç kapatılıp aynı dosyadan tekrar açılmadı.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `pusatIdempotency.test.mjs` 7/7. Dosya kapatılıp yeniden açılınca aynı anahtar `replayed: true`, ikinci iş çalışmadı. Satış ve münhasır SoT açılmadı.
+- ENTEGRASYON: Geçici SQLite dosyası. Üretim kuyruğu yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 43
 
@@ -613,11 +619,11 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 
 - GÖREV: Agent approval requests
 - NE İSTİYOR: requestApproval bound to input hash
-- KOD: `server/lib/buzzardNative/core/specialists/brandDraft.js` `requestApproval`. Dönüş `HUMAN_GATE_REQUIRED`. Gövde özeti yok.
-- TEST: Bu madde için ayrı bir hash testi yok. Onay kuyruğu madde 39 ve 41 testinde geçti.
-- ENTEGRASYON: İstek, girdi özetine bağlanmıyor.
-- DURUM: 🟡
-- EKSİK: Girdi hash bağı yok. Uydurma hash eklenmedi.
+- KOD: `server/lib/buzzardNative/core/specialists/brandDraft.js` `requestApproval`. Dönüş `HUMAN_GATE_REQUIRED` ve `inputHash`.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `localOpenGaps.test.mjs`. Aynı girdi aynı hash. Farklı eylem farklı hash. `livePublish` false.
+- ENTEGRASYON: Onay isteği yayına dönüşmüyor. Canlı marka hesabı yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 45
 
@@ -1864,10 +1870,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: Exception handling
 - NE İSTİYOR: Pusat exceptions
 - KOD: server/lib/pusat/runtime.js
-- TEST: İzin reddinde exceptionBus emit retryable false. Bu turda o dosyanın testi yeniden koşulmadı.
-- ENTEGRASYON: Ödeme yeniden denemesi bu turda yok.
-- DURUM: 🟡
-- EKSİK: Dönen gövde retryable alanını taşımıyor.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `localOpenGaps.test.mjs`. `CAPTURE_PAYMENT` dönüşü `PERMISSION_DENIED` ve `retryable: false`. `capturePayment` `PAYMENT_NOT_LIVE`.
+- ENTEGRASYON: Canlı ödeme yok.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 170
 
@@ -2234,10 +2240,10 @@ Altıncı tur, 23 Kasım 2026 11:41 Europe/Berlin. `itemsSixthPass.test.mjs` 3/3
 - GÖREV: CSRF and CORS tests
 - NE İSTİYOR: csrf.test.mjs corsOrigins
 - KOD: server/__tests__/csrf.test.mjs
-- TEST: CSRF 4/4 geçti.
-- ENTEGRASYON: corsOrigins bu turda ayrıca doğrulanmadı.
-- DURUM: 🟡
-- EKSİK: CORS köken listesi koşulmadı.
+- TEST: 25 Kasım 2026 06:32 Europe/Berlin. `csrf.test.mjs` 4/4. `corsOrigins.test.mjs`: listede olmayan köken ve `null` reddedildi. `null` yalnız listede ise kabul edildi.
+- ENTEGRASYON: Çerez oturumu varsayılan değil. Canlı tarayıcı kökeni ölçülmedi.
+- DURUM: ✅
+- EKSİK: Ölçüt karşılandı.
 
 ## Madde 207
 

@@ -1,4 +1,7 @@
 import { createRequire } from "node:module";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
@@ -213,5 +216,38 @@ describe("pusat idempotency service", () => {
     expect(evaluateSalesGate().status).toBe("LOCKED");
     const productSot = await import("../lib/productSot.js");
     expect(productSot.getStatus().active).toBe(false);
+  });
+
+  it("keeps a completed key after the database file is closed and opened again", async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "pusat-idem-"));
+    const file = path.join(dir, "idem.sqlite");
+    const firstDb = new Database(file);
+    let runs = 0;
+    await createIdempotencyService(firstDb).execute({
+      operation: "PUSAT_DISPATCH",
+      idempotencyKey: "k-durable",
+      payload: { action: "PING" },
+      execute: async () => {
+        runs += 1;
+        return { ok: true, n: runs };
+      },
+    });
+    firstDb.close();
+
+    const secondDb = new Database(file);
+    const replay = await createIdempotencyService(secondDb).execute({
+      operation: "PUSAT_DISPATCH",
+      idempotencyKey: "k-durable",
+      payload: { action: "PING" },
+      execute: async () => {
+        runs += 1;
+        return { ok: true, n: 99 };
+      },
+    });
+    secondDb.close();
+    rmSync(dir, { recursive: true, force: true });
+    expect(replay.replayed).toBe(true);
+    expect(replay.result).toEqual({ ok: true, n: 1 });
+    expect(runs).toBe(1);
   });
 });

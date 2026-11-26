@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const { createInferenceRuntime } = require("./inferenceRuntime");
 const { createTransformer, checkpoint, verifyCheckpoint } = require("./transformer");
+const { findLanguageModel, inferLanguage } = require("./localLanguageModel");
 
 function candidateFile(file) {
   if (file) return file;
@@ -14,6 +15,21 @@ function candidateFile(file) {
 }
 
 function modelGate({ file = null } = {}) {
+  if (file && path.extname(file) === ".gguf") {
+    const present = fs.existsSync(file);
+    return {
+      llmCompleted: false,
+      hostedProvider: null,
+      ruleEngine: "ACTIVE",
+      mayStartAction: false,
+      generalPurpose: false,
+      file,
+      filePresent: present,
+      ok: false,
+      code: present ? "LOCAL_MODEL_FILE" : "MODEL_NOT_CONFIGURED",
+      generalReasoning: "UNAVAILABLE",
+    };
+  }
   const target = candidateFile(file);
   const base = {
     llmCompleted: false,
@@ -99,7 +115,16 @@ function prepareLocalModel({ dest } = {}) {
   };
 }
 
-function consultReasoning({ file = null } = {}) {
+function consultReasoning({ file = null, prompt = "", bin = null } = {}) {
+  const language = findLanguageModel(file);
+  if (language) {
+    const inferred = inferLanguage({ modelFile: language.file, prompt, bin });
+    return {
+      ...inferred,
+      basis: inferred.code === "LOCAL_MODEL" ? "LOCAL_MODEL" : inferred.code,
+      health: { filePresent: inferred.filePresent === true, code: inferred.code, generalPurpose: false, mayStartAction: false },
+    };
+  }
   const health = modelHealth({ file });
   const base = { answer: null, llmCompleted: false, basis: "RULE_BASED", generalPurpose: false, mayStartAction: false, health };
   if (!health.filePresent) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED" };

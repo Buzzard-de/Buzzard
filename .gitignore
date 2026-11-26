@@ -250,3 +250,7 @@ intelligence/buzzard_ki_gesamt/snapshots/latest/
 intelligence/buzzard_ki_gesamt/snapshots/20*/
 intelligence/buzzard_ki_gesamt/snapshots/*.zip
 test-results/
+
+# Local model weights and the llama.cpp binary stay off the git history.
+data/models/*.gguf
+tools/llama/

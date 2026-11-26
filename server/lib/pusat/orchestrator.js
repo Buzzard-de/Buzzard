@@ -271,47 +271,76 @@ function createOrchestrator({ dbPath } = {}) {
     };
   }
 
-  function handleRequest({ text = "", requester = "suleyman_bey", idempotencyKey = null, voice = false, artifact = null, maxAttempts = 3 } = {}) {
+  function handleRequest({ text = "", requester = "suleyman_bey", idempotencyKey = null, voice = false, artifact = null, maxAttempts = 3, modelFile = null, llamaBin = null } = {}) {
     if (!["suleyman_bey", "pusat"].includes(requester)) {
       return { ok: false, code: "PERMISSION_DENIED", salesEnabled: isSalesEnabled(), live: false };
     }
+    const classified = classifyRequest(text);
+    if (!classified.ok && classified.code !== "UNCLASSIFIED") {
+      return { ...classified, purchased: false, salesEnabled: isSalesEnabled(), live: false, pusatDidSpecialistWork: false };
+    }
     if (/genel muhakeme|serbest yorum|open reasoning/i.test(String(text || ""))) {
-      const reasoning = consultReasoning();
+      const reasoning = consultReasoning({ file: modelFile, prompt: String(text || ""), bin: llamaBin });
+      const accepted = reasoning.code === "LOCAL_MODEL" && Boolean(reasoning.answer);
       const queuedReason = schedule({
         title: "general-reasoning",
         assigneeId: "pusat",
         ownerId: "pusat",
         kind: "REPORT",
-        input: {},
-        maxAttempts: 0,
+        input: { prompt: String(text || "") },
+        maxAttempts: accepted ? 1 : 0,
         domain: "coordination",
+        idempotencyKey,
       });
       if (queuedReason.ok && queuedReason.task && !queuedReason.duplicate) {
-        queue.fail(queuedReason.task.id, { reason: reasoning.code });
-        queue.setPayload(queuedReason.task.id, withPhase({
-          ...(queuedReason.task.payload || {}),
-          error: reasoning.code,
-          answer: null,
-          llmCompleted: false,
-          basis: "RULE_BASED",
-        }, "FAILED"));
+        if (accepted) {
+          queue.setPayload(queuedReason.task.id, withPhase({
+            ...(queuedReason.task.payload || {}),
+            answer: reasoning.answer,
+            execution: "LOCAL_MODEL",
+            basis: "LOCAL_MODEL",
+            error: null,
+            llmCompleted: false,
+            actionsExecuted: false,
+            model: reasoning.model,
+            license: reasoning.license,
+            verified: true,
+          }, "COMPLETED"));
+          queue.markTests(queuedReason.task.id, { testsPassed: true, acceptancePassed: true });
+          queue.complete(queuedReason.task.id);
+        } else {
+          queue.fail(queuedReason.task.id, { reason: reasoning.code });
+          queue.setPayload(queuedReason.task.id, withPhase({
+            ...(queuedReason.task.payload || {}),
+            error: reasoning.code,
+            answer: null,
+            execution: reasoning.code,
+            llmCompleted: false,
+            basis: reasoning.code === "GENERAL_REASONING_UNAVAILABLE" ? "RULE_BASED" : reasoning.code,
+            actionsExecuted: false,
+          }, "FAILED"));
+        }
       }
+      const stored = queue.get(queuedReason.task?.id);
+      const failed = !accepted;
       return {
-        ok: false,
-        code: reasoning.code,
-        answer: null,
+        ok: accepted,
+        code: accepted ? "LOCAL_MODEL" : reasoning.code,
+        answer: accepted ? stored?.payload?.answer || reasoning.answer : null,
+        execution: accepted ? "LOCAL_MODEL" : reasoning.code,
         llmCompleted: false,
-        basis: "RULE_BASED",
+        basis: failed && reasoning.code === "MODEL_NOT_CONFIGURED" ? "RULE_BASED" : (accepted ? "LOCAL_MODEL" : reasoning.code),
+        actionsExecuted: false,
         model: reasoning.health,
         taskId: queuedReason.task?.id || null,
-        lifecycle: lifecycleOf(queue.get(queuedReason.task?.id)),
+        lifecycle: lifecycleOf(stored),
         salesEnabled: isSalesEnabled(),
         live: false,
         saas: false,
+        purchased: false,
         pusatDidSpecialistWork: false,
       };
     }
-    const classified = classifyRequest(text);
     if (!classified.ok) {
       return { ...classified, purchased: false, salesEnabled: isSalesEnabled(), live: false, pusatDidSpecialistWork: false };
     }

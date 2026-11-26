@@ -35,8 +35,8 @@ describe("council system", () => {
     expect(installed.runner).toMatch(/llama-cli$/);
   });
 
-  it("measures Turkish, German, and English reasoning without hiding failed checks", () => {
-    const measured = measureReasoning();
+  it("measures Turkish, German, and English reasoning without hiding failed checks", async () => {
+    const measured = await measureReasoning();
     expect(measured.paid).toBe(false);
     expect(measured.generalPurpose).toBe(false);
     expect(measured.rows).toHaveLength(21);

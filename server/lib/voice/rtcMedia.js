@@ -119,7 +119,7 @@ function waitConnected(pc) {
   });
 }
 
-async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame") } = {}) {
+async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame"), reconnect = false } = {}) {
   const net = require("net");
   const { fork } = require("child_process");
   const server = net.createServer();
@@ -154,26 +154,42 @@ async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame") } = 
     ssrc: 77,
   }), body));
   const result = await next();
+  const deadline = Date.now() + 1500;
+  while (Date.now() < deadline && left.connectionState !== "connected") {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
   try { socket.end(); } catch { /* closed */ }
   try { child.kill(); } catch { /* already exited */ }
   server.close();
-  left.close();
   const heard = result && result.payload === body.toString("utf8");
-  return {
-    ok: connected && heard,
+  const parentState = left.connectionState;
+  const parentIce = left.iceConnectionState;
+  const parentConnected = parentState === "connected";
+  const peerConnected = result?.connection === "connected";
+  left.close();
+  const session = {
+    ok: parentConnected && peerConnected && heard,
+    sessionId: `rtc_${port}`,
     clients: 2,
     processes: 2,
-    ice: left.iceConnectionState,
-    connection: left.connectionState,
-    dtls: heard,
+    ice: parentIce,
+    connection: parentState,
+    peerConnection: result?.connection || null,
+    peerIce: result?.ice || null,
+    dtls: parentConnected && peerConnected,
     srtp: heard,
+    secure: parentConnected && peerConnected && heard,
     payload: result ? result.payload : null,
+    packets: heard ? 1 : 0,
     network: "LOOPBACK",
     internet: false,
     turn: false,
     paid: false,
     carrier: false,
   };
+  if (!reconnect) return session;
+  const second = await twoProcessMedia({ payload: Buffer.from(`${body.toString("utf8")}-again`), reconnect: false });
+  return { ...session, reconnect: second.ok === true, secondSessionId: second.sessionId };
 }
 
 function peerChild() {
@@ -200,7 +216,7 @@ function peerChild() {
         resolve(Buffer.from(rtp.payload).toString("utf8"));
       });
     });
-    send({ type: "result", payload: heard });
+    send({ type: "result", payload: heard, connection: pc.connectionState, ice: pc.iceConnectionState });
     pc.close();
     socket.end();
     setTimeout(() => process.exit(0), 50);

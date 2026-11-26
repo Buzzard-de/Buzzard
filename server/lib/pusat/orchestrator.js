@@ -368,11 +368,18 @@ function createOrchestrator({ dbPath } = {}) {
     }
     const fresh = queued.filter((row) => row.ok && !row.duplicate);
     const ran = fresh.length ? tick({ limit: Math.min(32, fresh.length * attempts) }) : { executed: [] };
-    const specialists = (ran.executed || []).map((row) => ({
+    const { factPairs, groundedSentence } = require("../buzzardNative/thinking/localLanguageModel");
+    const specialists = (ran.executed || []).map((row) => {
+      const fact = factPairs(row.result?.result).join("; ");
+      const agentId = row.result?.agentId || null;
+      const kind = row.result?.kind || null;
+      return {
       taskId: row.taskId,
       status: row.status,
-      agentId: row.result?.agentId || null,
-      kind: row.result?.kind || null,
+      agentId,
+      kind,
+      fact,
+      verifiedSentence: groundedSentence({ agentId, kind, status: row.status, fact }),
       verification: row.verification?.code || row.code || null,
       basis: "specialistDispatch",
       execution: "RULE_BASED",
@@ -380,7 +387,8 @@ function createOrchestrator({ dbPath } = {}) {
       confidence: row.verification?.testsPassed ? "rule_verified" : "unverified",
       error: row.status === "COMPLETED" ? null : row.verification?.code || row.code || null,
       lifecycle: lifecycleOf(queue.get(row.taskId)),
-    }));
+    };
+    });
     let research = null;
     if (classified.domain === "research") {
       research = aslan.coordinate({ topic: "categories", question: String(text).slice(0, 180), sources: [] });
@@ -416,22 +424,21 @@ function createOrchestrator({ dbPath } = {}) {
     }
     const spoken = [];
     if (voice) {
-      const { createTtsEngine } = require("../voice/buzzardVoice");
-      const { canUse } = require("../buzzardNative/core/capabilityRegistry");
-      const tts = createTtsEngine();
+      const { speakNatural } = require("../voice/naturalSpeech");
       for (const row of specialists) {
         if (!row.taskId) continue;
         if (!canUse(row.agentId, "speech")) {
           spoken.push({ taskId: row.taskId, agentId: row.agentId, audio: false, written: true, speechGranted: false });
           continue;
         }
-        const clip = tts.speak({ agentId: row.agentId, text: "rapor", lang: "tr" });
+        const clip = speakNatural({ agentId: row.agentId, text: row.verifiedSentence, lang: "tr" });
         spoken.push({
           taskId: row.taskId,
           agentId: row.agentId,
           audio: clip.ok === true,
           bytes: clip.bytes || 0,
           written: true,
+          error: clip.ok ? null : clip.code,
           officialVoiceUsed: clip.officialVoiceUsed === true,
           network: false,
           placedOnCarrier: false,
@@ -467,6 +474,21 @@ function createOrchestrator({ dbPath } = {}) {
       value: { domain: classified.domain, taskIds: specialists.map((row) => row.taskId), at: new Date().toISOString() },
     });
     return { ...report, memory: { ok: note.ok === true, store: memory } };
+  }
+
+  async function convene({ topic = "kurmay", requester = "suleyman_bey", speak = true, modelFile = null, llamaBin = null } = {}) {
+    if (!["suleyman_bey", "pusat"].includes(requester)) {
+      return { ok: false, code: "PERMISSION_DENIED", salesEnabled: isSalesEnabled(), live: false };
+    }
+    const reasoned = await reasonMembers({ modelFile, llamaBin });
+    const session = holdCouncil({ topic, modelFile, llamaBin, speak, analysis: reasoned.analysis });
+    return {
+      ...session,
+      requester,
+      analysis: reasoned.analysis,
+      taskId: reasoned.taskId,
+      actionsExecuted: false,
+    };
   }
 
   async function reasonMembers({ modelFile = null, llamaBin = null } = {}) {
@@ -560,6 +582,23 @@ function createOrchestrator({ dbPath } = {}) {
         }
       },
     });
+    if (Array.isArray(analysis?.rows)) {
+      for (const row of analysis.rows) {
+        opened.store.addMeetingEvent({
+          meetingId: meeting.id,
+          kind: "verdict",
+          speakerId: row.agentId,
+          payload: {
+            execution: row.execution,
+            modelAccepted: row.modelAccepted === true,
+            grounded: row.grounded === true,
+            answer: row.answer || null,
+            rejected: row.rejected || null,
+            fact: row.fact || "",
+          },
+        });
+      }
+    }
     opened.store.addMeetingEvent({
       meetingId: meeting.id,
       kind: "model",
@@ -611,6 +650,7 @@ function createOrchestrator({ dbPath } = {}) {
           fact: report.fact || "",
           order,
           audio: spoken.ok === true,
+          error: spoken.ok ? null : spoken.code || "TTS_FAILED",
           speech: true,
           naturalSpeech: spoken.naturalSpeech === true,
           voiceId: spoken.voiceId || null,
@@ -762,6 +802,7 @@ function createOrchestrator({ dbPath } = {}) {
     handleRequest,
     holdCouncil,
     reviewMeeting,
+    convene,
     reasonMembers,
     cancel,
     dailyReport,

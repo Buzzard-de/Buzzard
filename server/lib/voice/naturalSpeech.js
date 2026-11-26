@@ -48,6 +48,31 @@ function whisperBin() {
   return fs.existsSync(candidate) ? candidate : null;
 }
 
+function modelCard(file) {
+  const card = path.join(speechDir(), `${file}.json`);
+  if (!fs.existsSync(card)) return { lang: null, license: "NOT_IN_MODEL_CARD", dataset: null };
+  try {
+    const data = JSON.parse(fs.readFileSync(card, "utf8"));
+    return {
+      lang: data.espeak?.voice || data.language?.code || null,
+      license: data.license || "NOT_IN_MODEL_CARD",
+      dataset: data.dataset || null,
+    };
+  } catch {
+    return { lang: null, license: "NOT_IN_MODEL_CARD", dataset: null };
+  }
+}
+
+const HEARD_TERMS = Object.freeze([
+  "buzzard", "pusat", "sinan", "esat", "dogu", "doğu", "nedim", "tuncay",
+  "amelia", "adrian", "mira", "leon", "banu", "zeynep", "bremsscheibe", "ankara", "berlin", "fiyat",
+]);
+
+function languageFits(modelLang, lang) {
+  if (!modelLang || !lang) return false;
+  return modelLang === lang || modelLang.startsWith(`${lang}-`) || modelLang.startsWith(`${lang}_`);
+}
+
 function voiceFor(agentId, lang = "tr") {
   if (!canUse(agentId, "speech")) {
     return { ok: false, code: "SPEECH_DENIED", agentId, speech: false };
@@ -56,16 +81,19 @@ function voiceFor(agentId, lang = "tr") {
   if (!profile) return { ok: false, code: "VOICE_PROFILE_MISSING", agentId, speech: true };
   const registry = getAgent(agentId)?.voice_profile || null;
   const officialFile = registry?.officialSinan ? registry.file : null;
+  const card = modelCard(profile.file);
   return {
     ok: true,
     agentId,
     voiceId: `${agentId}_${profile.speaker}`,
     registryVoiceId: registry?.voice_profile_id || null,
     lang,
+    modelLang: card.lang,
+    languageMatch: languageFits(card.lang, lang),
     modelFile: profile.file,
     speaker: profile.speaker,
     dataset: profile.dataset,
-    license: LICENSE,
+    license: card.license,
     source: SOURCE,
     lengthScale: 1,
     noiseScale: 0.667,
@@ -79,14 +107,17 @@ function voiceFor(agentId, lang = "tr") {
   };
 }
 
-function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = false } = {}) {
+function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = false, modelFile = null } = {}) {
   const language = VOICES[lang] || VOICES.tr;
+  const languageCard = modelCard(language.file);
   const identity = languageVoice
     ? {
       ok: true,
       agentId,
       voiceId: `lang_${language.speaker}`,
       modelFile: language.file,
+      modelLang: languageCard.lang,
+      languageMatch: languageFits(languageCard.lang, lang),
       lengthScale: 1,
       noiseScale: 0.667,
       speech: true,
@@ -96,7 +127,7 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     : voiceFor(agentId, lang);
   if (!identity.ok) return { ...identity, naturalSpeech: false, audio: false };
   const bin = piperBin();
-  const model = path.join(speechDir(), identity.modelFile);
+  const model = path.join(speechDir(), modelFile || identity.modelFile);
   if (!bin || !fs.existsSync(model)) {
     return { ok: false, code: "NATURAL_SPEECH_NOT_CONFIGURED", naturalSpeech: false, audio: false, paid: false };
   }
@@ -128,7 +159,9 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     bytes: wav.length,
     sha256: crypto.createHash("sha256").update(wav).digest("hex"),
     voiceId: identity.voiceId,
-    modelFile: identity.modelFile,
+    modelFile: path.basename(model),
+    modelLang: identity.modelLang || null,
+    languageMatch: identity.languageMatch === true,
     speaker: identity.speaker || null,
     scaleOnly: false,
     officialVoiceUsed: false,
@@ -137,7 +170,6 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     lang,
     paid: false,
     hostedProvider: null,
-    officialVoiceUsed: false,
   };
 }
 
@@ -152,7 +184,14 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   }
   const file = path.join(os.tmpdir(), `buzzard-hear-${crypto.randomBytes(4).toString("hex")}.wav`);
   fs.writeFileSync(file, wav);
-  const ran = spawnSync(bin, ["-m", model, "-f", file, "-l", lang, "-nt", "--no-timestamps"], {
+  const ran = spawnSync(bin, [
+    "-m", model,
+    "-f", file,
+    "-l", lang,
+    "-nt",
+    "--no-timestamps",
+    "--prompt", "Buzzard Pusat fiyat Bremsscheibe Ankara Berlin",
+  ], {
     encoding: "utf8",
     timeout: 60000,
     env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
@@ -164,12 +203,20 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
     .filter((line) => line && !line.startsWith("[") && !line.startsWith("main:") && !line.startsWith("whisper_"))
     .pop() || "";
   if (ran.status !== 0 || !transcript) {
-    return { ok: false, code: "STT_FAILED", transcript: null, generalSpeech: false, paid: false };
+    return { ok: false, code: "STT_FAILED", transcript: null, raw: transcript || null, replaced: false, uncertain: true, generalSpeech: false, paid: false };
   }
+  const heard = transcript.toLowerCase();
+  const heardTerms = HEARD_TERMS.filter((term) => heard.includes(term));
+  const samples = Math.max(0, Math.floor((wav.length - 44) / 2));
+  const short = samples < 22050 * 0.4;
   return {
     ok: true,
     code: "NATURAL_STT",
     transcript,
+    raw: transcript,
+    replaced: false,
+    uncertain: short && heardTerms.length === 0,
+    heardTerms,
     lang,
     generalSpeech: true,
     lexicon: false,

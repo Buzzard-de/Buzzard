@@ -29,3 +29,9 @@ Runtime, `BUZZARD_GGUF_PATH` veya `data/models/language/` içindeki GGUF dosyas�
 Konuşma tanıma ve üretim de yereldir. Whisper small (`data/models/speech/ggml-small.bin`) ve Piper sesleri Git dışındadır. Çalıştırıcılar `tools/whisper` ve `tools/piper` altındadır. Ücretli bir ses servisi gerekmez.
 
 Bu makinede 4 CPU, NVIDIA GPU yok, yaklaşık 16 GiB bellek ve takas alanı yok. 3B model bu sınırda çalıştığı için 7B indirilmedi. Konuşan 12 üye ayrı Piper konuşmacı dosyası kullanır. Model kartında ses lisansı yazmadığı için lisans alanı `NOT_IN_MODEL_CARD` olarak durur. Sinan Bey’in `m4a` referansı senteze karışmaz.
+
+Pusat’ın doğrulaması test dosyasına özel değildir. `convene` mevcut orkestratörden geçer: konu sınıflanır, uzman motorları çalışır, cevap motor değeriyle karşılaştırılır, reddedilen metin toplantı kaydına yazılır ve yerine motor cümlesi konur. Kaynak yoksa cevap `UNVERIFIED` kalır.
+
+Whisper transkripti sözlükle değiştirilmez. İsim ve terim ipucu yalnızca `--prompt` olarak verilir. Tanınmayan kelime sessizce düzeltilmez.
+
+Yerel WebRTC oturumunda `dtls` yalnızca iki tarafın bağlantı durumu `connected` ise, `srtp` yalnızca çözülen paket aynı oturumdaki gönderilen baytlarla eşleşirse doğrudur. `secure` ikisi birden varsa açılır. Bu oturum `LOOPBACK`’tir; internet veya operatör hattı değildir. SIP laboratuvar çağrısında RTP ve SRTP ayrıdır, `mediaSecurity` `NONE` ve `secure` kapalı kalır. İnternet medyası için harici STUN/TURN gerekir; coturn kurulu değildir ve ücretli TURN zorunlu değildir.

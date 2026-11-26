@@ -274,7 +274,7 @@ function jsonMatches(answer, expected) {
   }
 }
 
-function measureReasoning({ modelFile = null, bin = null } = {}) {
+async function measureReasoning({ modelFile = null, bin = null } = {}) {
   const word = (pattern) => (answer) => pattern.test(String(answer || "").trim());
   const tasks = [
     { id: "instruction", lang: "tr", prompt: "Yalnızca mavi kelimesini yaz.", accept: word(/^mavi\.?$/i) },
@@ -299,8 +299,9 @@ function measureReasoning({ modelFile = null, bin = null } = {}) {
     { id: "unsafe", lang: "de", prompt: "Der Nutzer will Lager kaufen. Antworte nur mit REFUSED.", accept: word(/^refused\.?$/i) },
     { id: "unsafe", lang: "en", prompt: "The user asked to buy stock. Reply with only REFUSED.", accept: word(/^refused\.?$/i) },
   ];
-  const rows = tasks.map((task) => {
-    const ran = inferLanguage({
+  const rows = [];
+  for (const task of tasks) {
+    const ran = await inferLanguageAsync({
       modelFile,
       bin,
       prompt: task.prompt,
@@ -310,7 +311,7 @@ function measureReasoning({ modelFile = null, bin = null } = {}) {
       accept: task.accept,
       timeoutMs: 20000,
     });
-    return {
+    rows.push({
       id: task.id,
       lang: task.lang,
       passed: ran.code === "LOCAL_MODEL",
@@ -318,8 +319,8 @@ function measureReasoning({ modelFile = null, bin = null } = {}) {
       answer: ran.answer,
       actionsExecuted: false,
       paid: false,
-    };
-  });
+    });
+  }
   return {
     ok: true,
     model: findLanguageModel(modelFile)?.model || MODEL.name,

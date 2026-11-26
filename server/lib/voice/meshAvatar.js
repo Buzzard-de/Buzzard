@@ -3,6 +3,7 @@
  * This is not a scanned body and not a photoreal digital human.
  */
 const crypto = require("crypto");
+const { getAgent } = require("../buzzardNative/core/identityRegistry");
 
 const INDEX = Object.freeze([
   0, 1, 2,
@@ -79,16 +80,24 @@ function presentSpeaker({ agentId, wav } = {}) {
     return { ok: false, code: "AGENT_REQUIRED", mesh: "NOT_CONFIGURED", is3d: false, photoreal: false, scannedBody: false, css: false };
   }
   const frames = mouthTrack(wav);
+  if (frames.length) frames.push({ index: frames.length, jaw: 0, mouth: 0, ended: true });
   const rest = restMesh(agentId);
   const peak = frames.reduce((best, frame) => (frame.jaw > best.jaw ? frame : best), { jaw: 0, mouth: 0, index: 0 });
   const open = deform(rest, peak);
   const closed = deform(rest, { jaw: 0, mouth: 0 });
   const moved = open[7][1] !== closed[7][1];
   const meshName = `council-head-${agentId}`;
+  const registry = getAgent(agentId);
+  const realModel = registry?.avatar_profile?.is3d === true;
+  const ended = frames.length > 0 && frames[frames.length - 1].jaw === 0;
   return {
-    ok: frames.length > 0 && moved,
+    ok: frames.length > 1 && moved && ended,
     agentId,
+    avatarId: registry?.avatar_profile?.avatar_profile_id || null,
+    voiceProfileId: registry?.voice_profile?.voice_profile_id || null,
     mesh: moved ? meshName : "NOT_CONFIGURED",
+    realModel,
+    avatarComplete: false,
     vertices: rest.length,
     triangles: INDEX.length / 3,
     indices: INDEX.length,
@@ -100,7 +109,8 @@ function presentSpeaker({ agentId, wav } = {}) {
     digitalHuman: false,
     photoreal: false,
     lipSync: moved,
-    speaking: peak.jaw > 0.02,
+    speaking: false,
+    stopped: ended,
     peakJaw: peak.jaw,
     rest: closed[7],
     open: open[7],

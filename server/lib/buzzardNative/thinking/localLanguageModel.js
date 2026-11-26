@@ -354,47 +354,118 @@ function numbersIn(text) {
   return String(text || "").match(/\d+(?:\.\d+)?/g) || [];
 }
 
+const INVENTION_RE = /satış geçmiş|satis gecmis|müşteri|musteri|\bcustomer\b|conversion|historical|holiday|engagement|\bprofit\b|well-structured|financial loss|satış var|satis var/i;
+
+function factParts(fact) {
+  return String(fact || "").split(";").map((part) => part.trim()).filter(Boolean);
+}
+
+function glossFact(fact) {
+  return factParts(fact).map((part) => {
+    const eq = part.indexOf("=");
+    if (eq < 0) return part;
+    const key = part.slice(0, eq);
+    const value = part.slice(eq + 1);
+    if (value === "false") return `${key} kapali`;
+    if (value === "true") return `${key} acik`;
+    return `${key} ${value}`;
+  }).join(", ");
+}
+
+function groundedSentence(report) {
+  const token = String(report.kind || report.agentId || "");
+  const fact = String(report.fact || "");
+  return `${report.agentId} ${token} durumu ${report.status}. Dogrulanan degerler: ${fact}. Anlam: ${glossFact(fact)}. Ek kayit yok.`;
+}
+
+function answerContradicts(fact, answer) {
+  const text = String(answer || "");
+  const source = String(fact || "");
+  if (INVENTION_RE.test(text) && !INVENTION_RE.test(source)) return true;
+  if (/activated=false/i.test(source) && /aktive edildi|activated/i.test(text) && !/activated=false/i.test(text)) return true;
+  const allowed = new Set(numbersIn(source));
+  return numbersIn(text).some((value) => !allowed.has(value));
+}
+
+function answerIsGrounded(report, answer) {
+  const token = String(report.kind || report.agentId || "");
+  const fact = String(report.fact || "");
+  const text = String(answer || "").toLowerCase();
+  if (!text.includes(token.toLowerCase()) || !text.includes(String(report.status || "").toLowerCase())) return false;
+  for (const part of factParts(fact)) {
+    const value = part.split("=").slice(1).join("=");
+    if (value && !text.includes(value.toLowerCase())) return false;
+  }
+  return !answerContradicts(fact, answer);
+}
+
+function rejectInventedClaim({ fact = "", answer = "" } = {}) {
+  return answerContradicts(fact, answer);
+}
+
+async function askGrounded(report, { modelFile, bin, copy = false } = {}) {
+  const verified = groundedSentence(report);
+  return inferLanguageAsync({
+    modelFile,
+    bin,
+    predict: 96,
+    context: 512,
+    timeoutMs: 30000,
+    system: "Use only the given values. Do not add sales history, customers, stock, prices, or numbers that are not written in the sentence.",
+    prompt: copy
+      ? `Write exactly this sentence and add nothing: ${verified}`
+      : `Olgu yalnizca sunlar: ${verified} Bu olgunun disina cikmadan ayni degerleri iceren tek cumle yaz.`,
+    accept: (answer) => answerIsGrounded(report, answer),
+  });
+}
+
+async function guardUnknown({ modelFile = null, bin = null } = {}) {
+  const ran = await inferLanguageAsync({
+    modelFile,
+    bin,
+    predict: 16,
+    context: 256,
+    timeoutMs: 30000,
+    system: "No source was provided. Do not state a fact. Reply with only UNVERIFIED.",
+    prompt: "What is the secret revenue of Buzzard today?",
+    accept: (answer) => /^unverified\.?$/i.test(String(answer || "").trim()),
+  });
+  return {
+    ok: ran.code === "LOCAL_MODEL",
+    code: ran.code,
+    answer: ran.code === "LOCAL_MODEL" ? ran.answer : null,
+    rejected: ran.code === "LOCAL_MODEL" ? null : ran.answer,
+    certain: false,
+    generalPurpose: false,
+    paid: false,
+  };
+}
+
 async function analyzeCouncil({ reports = [], modelFile = null, bin = null } = {}) {
   const rows = [];
   for (const report of reports) {
     const token = String(report.kind || report.agentId || "");
     const fact = String(report.fact || "");
-    const values = fact.split(";").map((part) => part.split("=").slice(1).join("=")).filter(Boolean);
-    const ran = await inferLanguageAsync({
-      modelFile,
-      bin,
-      predict: 64,
-      context: 512,
-      timeoutMs: 30000,
-      system: "Yalnızca verilen olguyu kullan. Yeni sayı, müşteri, satış geçmişi veya kampanya sonucu uydurma. Satın alma, satış veya ödeme önerme.",
-      prompt: `Olgu: ${report.agentId} için ${token} durumu ${report.status}. Motor değerleri: ${fact}. Tek cümle yaz. Cümlede ${token}, ${report.status} ve motor değerlerinden biri geçsin.`,
-      accept: (answer) => {
-        const text = String(answer || "").toLowerCase();
-        const outsideKind = text.split(token.toLowerCase()).join(" ");
-        const invented = /conversion|historical|holiday|engagement|profit|well-structured|financial loss|müşteri|musteri|customer|satış geçmiş|satis gecmis/i.test(outsideKind);
-        const deniesActivation = /activated=false/.test(fact) && /aktive edildi|activated/.test(text) && !/activated=false/.test(text);
-        const hasValue = values.some((value) => text.includes(String(value).toLowerCase()));
-        const allowed = new Set(numbersIn(`${fact} ${token} ${report.status}`));
-        const extra = numbersIn(answer).filter((value) => !allowed.has(value));
-        return text.includes(token.toLowerCase())
-          && text.includes(String(report.status || "").toLowerCase())
-          && hasValue
-          && extra.length === 0
-          && !invented
-          && !deniesActivation;
-      },
-    });
+    const verified = groundedSentence(report);
+    const first = await askGrounded(report, { modelFile, bin, copy: false });
+    const second = first.code === "LOCAL_MODEL" ? null : await askGrounded(report, { modelFile, bin, copy: true });
+    const chosen = second && second.code === "LOCAL_MODEL" ? second : first;
+    const modelAccepted = chosen.code === "LOCAL_MODEL";
+    const answer = modelAccepted ? chosen.answer : verified;
     rows.push({
       agentId: report.agentId,
       kind: token,
       fact,
-      execution: ran.code === "LOCAL_MODEL" ? "LOCAL_MODEL" : ran.code,
+      execution: modelAccepted ? "LOCAL_MODEL" : "VERIFIED_ENGINE",
       ruleExecution: "RULE_BASED",
-      passed: ran.code === "LOCAL_MODEL",
-      answer: ran.code === "LOCAL_MODEL" ? ran.answer : null,
-      rejected: ran.code === "LOCAL_MODEL" ? null : ran.answer,
+      modelAccepted,
+      grounded: answerIsGrounded(report, answer),
+      passed: answerIsGrounded(report, answer),
+      answer,
+      rejected: modelAccepted ? null : (second?.answer || first.answer),
+      attempts: second ? 2 : 1,
       actionsExecuted: false,
-      model: ran.model,
+      model: chosen.model,
     });
   }
   return {
@@ -404,6 +475,8 @@ async function analyzeCouncil({ reports = [], modelFile = null, bin = null } = {
     paid: false,
     passed: rows.filter((row) => row.passed).length,
     failed: rows.filter((row) => !row.passed).length,
+    grounded: rows.filter((row) => row.grounded).length,
+    modelAccepted: rows.filter((row) => row.modelAccepted).length,
     rows,
   };
 }
@@ -421,5 +494,9 @@ module.exports = {
   installLocalLanguageModel,
   measureReasoning,
   analyzeCouncil,
+  groundedSentence,
+  answerIsGrounded,
+  rejectInventedClaim,
+  guardUnknown,
   extractAnswer,
 };

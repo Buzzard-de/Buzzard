@@ -487,8 +487,9 @@ function createOrchestrator({ dbPath } = {}) {
         ...(queued.task.payload || {}),
         analysis: analysis.rows,
         model: analysis.model,
-        specialistChecksPassed: analysis.passed,
+        specialistChecksPassed: analysis.grounded,
         specialistChecksFailed: analysis.failed,
+        modelAccepted: analysis.modelAccepted,
         allSpecialistsAccepted: analysis.failed === 0,
         actionsExecuted: false,
       }, "COMPLETED"));
@@ -508,7 +509,7 @@ function createOrchestrator({ dbPath } = {}) {
     };
   }
 
-  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null, speak = false, analysis = null } = {}) {
+  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null, speak = false, analysis = null, interruptAfter = null, speechFault = null } = {}) {
     if (!dbPath || String(dbPath).endsWith(`${require("path").sep}buzzard.db`) || String(dbPath).endsWith("/buzzard.db")) {
       return { ok: false, code: "PRODUCTION_DB_LOCKED", digitalHuman: false, carrier: false, placedOnCarrier: false };
     }
@@ -571,38 +572,74 @@ function createOrchestrator({ dbPath } = {}) {
     });
     const clips = [];
     const spokenRows = speak && Array.isArray(analysis?.rows) ? analysis.rows : [];
+    let interrupted = false;
     if (speak) {
       const { speakNatural } = require("../voice/naturalSpeech");
       const { presentSpeaker } = require("../voice/meshAvatar");
+      const { groundedSentence } = require("../buzzardNative/thinking/localLanguageModel");
+      let order = 0;
       for (const report of staff.reports) {
+        if (interrupted) break;
         if (!canUse(report.agentId, "speech")) {
-          clips.push({ agentId: report.agentId, audio: false, speech: false, naturalSpeech: false, analysisSpoken: false });
+          clips.push({ agentId: report.agentId, audio: false, speech: false, naturalSpeech: false, analysisSpoken: false, groundedSpoken: false, order: null });
           continue;
         }
         const row = spokenRows.find((item) => item.agentId === report.agentId);
-        const spoken = speakNatural({
-          text: row?.passed ? row.answer : `${report.agentId} kural sonucu ${report.status}.`,
-          lang: "tr",
-          agentId: report.agentId,
-        });
+        const text = row?.answer || groundedSentence(report);
+        if (speechFault && speechFault === report.agentId) {
+          const fault = {
+            agentId: report.agentId,
+            audio: false,
+            speech: true,
+            naturalSpeech: false,
+            error: "TTS_FAILED",
+            analysisSpoken: false,
+            groundedSpoken: false,
+            order: order,
+            kind: report.kind,
+          };
+          clips.push(fault);
+          opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "voice_error", speakerId: report.agentId, payload: fault });
+          order += 1;
+          continue;
+        }
+        const spoken = speakNatural({ text, lang: "tr", agentId: report.agentId });
         const face = spoken.ok ? presentSpeaker({ agentId: report.agentId, wav: spoken.wav }) : null;
         const clip = {
           agentId: report.agentId,
+          kind: report.kind,
+          fact: report.fact || "",
+          order,
           audio: spoken.ok === true,
           speech: true,
           naturalSpeech: spoken.naturalSpeech === true,
           voiceId: spoken.voiceId || null,
+          voiceModel: spoken.modelFile || null,
           bytes: spoken.bytes || 0,
           sha256: spoken.sha256 || null,
           digitalHuman: face?.digitalHuman === true,
           lipSync: face?.lipSync === true,
           photoreal: false,
+          scannedBody: false,
           css: false,
           is3d: face?.is3d === true,
-          analysisSpoken: row?.passed === true,
+          mesh: face?.mesh || "NOT_CONFIGURED",
+          vertices: face?.vertices || 0,
+          analysisSpoken: row?.modelAccepted === true,
+          groundedSpoken: Boolean(row ? row.grounded : text),
         };
         clips.push(clip);
-        opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "voice", speakerId: report.agentId, payload: clip });
+        opened.store.addMeetingEvent({ meetingId: meeting.id, kind: spoken.ok ? "voice" : "voice_error", speakerId: report.agentId, payload: clip });
+        order += 1;
+        if (interruptAfter && interruptAfter === report.agentId) {
+          interrupted = true;
+          opened.store.addMeetingEvent({
+            meetingId: meeting.id,
+            kind: "interrupt",
+            speakerId: "pusat",
+            payload: { after: report.agentId, stopped: true },
+          });
+        }
       }
     }
     const closed = opened.store.closeMeeting(meeting.id);
@@ -625,6 +662,7 @@ function createOrchestrator({ dbPath } = {}) {
       },
       stockSpeech: staff.reports.some((row) => row.agentId === "stock_ai" && canUse("stock_ai", "speech")),
       spoken: clips,
+      interrupted,
       naturalSpeech: clips.some((clip) => clip.naturalSpeech === true),
       generalStt: false,
       digitalHuman: clips.some((clip) => clip.digitalHuman === true),
@@ -638,6 +676,27 @@ function createOrchestrator({ dbPath } = {}) {
       network: false,
       saas: false,
       paid: false,
+    };
+  }
+
+  function reviewMeeting(meetingId) {
+    const opened = openDurableFile(`${dbPath}.meetings`);
+    if (!opened.ok) return opened;
+    const stored = opened.store.getMeeting(meetingId);
+    opened.db.close();
+    if (!stored) return { ok: false, code: "NOT_FOUND" };
+    return {
+      ok: true,
+      status: stored.status,
+      chairId: stored.chairId,
+      events: stored.events,
+      minutes: stored.minutes,
+      voice: stored.events.filter((row) => row.kind === "voice").map((row) => ({
+        order: row.payload.order,
+        agentId: row.speakerId,
+        kind: row.payload.kind,
+        voiceId: row.payload.voiceId,
+      })),
     };
   }
 
@@ -702,6 +761,7 @@ function createOrchestrator({ dbPath } = {}) {
     routeStaff,
     handleRequest,
     holdCouncil,
+    reviewMeeting,
     reasonMembers,
     cancel,
     dailyReport,

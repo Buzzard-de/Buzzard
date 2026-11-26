@@ -3,6 +3,10 @@
  */
 const dgram = require("dgram");
 
+function isRtp(msg) {
+  return Buffer.isBuffer(msg) && msg.length >= 12 && msg[0] === 0x80 && (msg[1] & 0x7f) === 0;
+}
+
 function rtpPacket(payload) {
   const header = Buffer.alloc(12);
   header[0] = 0x80;
@@ -20,6 +24,7 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
     const media = dgram.createSocket("udp4");
     let settled = false;
     let rtp = 0;
+    let ack = false;
     const finish = (row) => {
       if (settled) return;
       settled = true;
@@ -37,16 +42,18 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
       network: "LOOPBACK",
     }), 3000);
     media.on("message", (msg) => {
-      if (msg.length >= 12 && msg[0] === 0x80) rtp += 1;
+      if (isRtp(msg)) rtp += 1;
     });
     callee.on("message", (msg, rinfo) => {
       const text = msg.toString("utf8");
-      if (text.startsWith("INVITE")) {
+      if (text.startsWith("INVITE") && text.includes("Call-ID:") && text.includes("CSeq: 1 INVITE")) {
         const port = media.address().port;
-        const ok = `SIP/2.0 200 OK\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\nm=audio ${port} RTP/AVP 0\r\n`;
+        const ok = "SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\nm=audio " + port + " RTP/AVP 0\r\n";
         callee.send(ok, rinfo.port, rinfo.address);
+      } else if (text.startsWith("ACK")) {
+        ack = true;
       } else if (text.startsWith("BYE")) {
-        callee.send("SIP/2.0 200 OK\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
+        callee.send("SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
       }
     });
     caller.on("message", (msg, rinfo) => {
@@ -54,17 +61,23 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
       if (text.includes("m=audio")) {
         const port = Number(text.match(/m=audio (\d+)/)[1]);
         caller.send(rtpPacket(payload), port, "127.0.0.1");
-        caller.send("BYE sip:lab SIP/2.0\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
+        caller.send("ACK sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 ACK\r\n\r\n", rinfo.port, rinfo.address);
+        caller.send("BYE sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
       } else if (text.includes("CSeq: 2 BYE")) {
         finish({
-          ok: rtp === 1,
+          ok: rtp === 1 && ack,
           rtpPackets: rtp,
+          ack,
           sip: true,
+          protocol: "SIP/2.0",
           media: "RTP",
           srtp: false,
+          tls: false,
+          mediaSecurity: "NONE",
           carrier: false,
           placedOnCarrier: false,
           network: "LOOPBACK",
+          internet: false,
           paid: false,
         });
       }
@@ -72,7 +85,7 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
     media.bind(0, "127.0.0.1", () => {
       callee.bind(0, "127.0.0.1", () => {
         caller.bind(0, "127.0.0.1", () => {
-          const invite = "INVITE sip:lab@127.0.0.1 SIP/2.0\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\n";
+          const invite = "INVITE sip:lab@127.0.0.1 SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\n";
           caller.send(invite, callee.address().port, "127.0.0.1");
         });
       });
@@ -80,4 +93,4 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
   });
 }
 
-module.exports = { localSipCall };
+module.exports = { localSipCall, isRtp };

@@ -8,30 +8,30 @@ const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const { canUse } = require("../buzzardNative/core/capabilityRegistry");
+const { getAgent } = require("../buzzardNative/core/identityRegistry");
+
+const SOURCE = "https://huggingface.co/rhasspy/piper-voices";
+const LICENSE = "NOT_IN_MODEL_CARD";
 
 const VOICES = Object.freeze({
-  tr: { file: "tr_TR-dfki-medium.onnx", lang: "tr", license: "Apache-2.0" },
-  de: { file: "de_DE-kerstin-low.onnx", lang: "de", license: "Apache-2.0" },
-  en: { file: "en_US-lessac-medium.onnx", lang: "en", license: "Apache-2.0" },
+  tr: { file: "tr_TR-dfki-medium.onnx", lang: "tr", speaker: "dfki", license: LICENSE, source: SOURCE },
+  de: { file: "de_DE-kerstin-low.onnx", lang: "de", speaker: "kerstin", license: LICENSE, source: SOURCE },
+  en: { file: "en_US-lessac-medium.onnx", lang: "en", speaker: "lessac", license: LICENSE, source: SOURCE },
 });
 
-const SCALES = Object.freeze({
-  pusat: 0.9,
-  sinan_bey: 0.96,
-  esat_bey: 1.02,
-  dogu_bey: 1.08,
-  nedim_bey: 1.14,
-  tuncay_bey: 0.93,
-  amelia: 1.05,
-  adrian: 1.11,
-  mira: 0.98,
-  leon: 1.16,
-  category_ai: 1.0,
-  pricing_ai: 1.07,
-  seo_ai: 0.94,
-  banu_hanim: 1.12,
-  sales_analysis_ai: 1.03,
-  zeynep_hanim: 1.18,
+const PROFILES = Object.freeze({
+  pusat: { file: "tr_TR-dfki-medium.onnx", speaker: "dfki", dataset: "dfki" },
+  sinan_bey: { file: "de_DE-karlsson-low.onnx", speaker: "karlsson", dataset: "karlsson" },
+  esat_bey: { file: "de_DE-pavoque-low.onnx", speaker: "pavoque", dataset: "pavoque" },
+  dogu_bey: { file: "en_US-ryan-low.onnx", speaker: "ryan", dataset: "ryan" },
+  nedim_bey: { file: "en_GB-alan-low.onnx", speaker: "alan", dataset: "alan" },
+  tuncay_bey: { file: "en_US-danny-low.onnx", speaker: "danny", dataset: "danny" },
+  amelia: { file: "de_DE-eva_k-x_low.onnx", speaker: "eva_k", dataset: "eva_k" },
+  adrian: { file: "en_US-lessac-medium.onnx", speaker: "lessac", dataset: "lessac" },
+  mira: { file: "en_US-amy-low.onnx", speaker: "amy", dataset: "amy" },
+  leon: { file: "en_US-ljspeech-medium.onnx", speaker: "ljspeech", dataset: "ljspeech" },
+  banu_hanim: { file: "en_US-kristin-medium.onnx", speaker: "kristin", dataset: "kristin" },
+  zeynep_hanim: { file: "de_DE-kerstin-low.onnx", speaker: "kerstin", dataset: "kerstin" },
 });
 
 function speechDir() {
@@ -52,24 +52,51 @@ function voiceFor(agentId, lang = "tr") {
   if (!canUse(agentId, "speech")) {
     return { ok: false, code: "SPEECH_DENIED", agentId, speech: false };
   }
-  const scale = SCALES[agentId] || 1;
+  const profile = PROFILES[agentId];
+  if (!profile) return { ok: false, code: "VOICE_PROFILE_MISSING", agentId, speech: true };
+  const registry = getAgent(agentId)?.voice_profile || null;
+  const officialFile = registry?.officialSinan ? registry.file : null;
   return {
     ok: true,
     agentId,
-    voiceId: `${agentId}_piper_${lang}_${scale}`,
+    voiceId: `${agentId}_${profile.speaker}`,
+    registryVoiceId: registry?.voice_profile_id || null,
     lang,
-    lengthScale: scale,
-    noiseScale: 0.5 + ((scale * 10) % 3) / 10,
+    modelFile: profile.file,
+    speaker: profile.speaker,
+    dataset: profile.dataset,
+    license: LICENSE,
+    source: SOURCE,
+    lengthScale: 1,
+    noiseScale: 0.667,
+    scaleOnly: false,
     speech: true,
     cloneAuthorized: false,
+    officialReference: officialFile,
+    officialVoiceUsed: false,
+    referenceMixedIntoTts: false,
+    probe: "Deneme. exit 0",
   };
 }
 
-function speakNatural({ text, lang = "tr", agentId = "pusat" } = {}) {
-  const identity = voiceFor(agentId, lang);
+function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = false } = {}) {
+  const language = VOICES[lang] || VOICES.tr;
+  const identity = languageVoice
+    ? {
+      ok: true,
+      agentId,
+      voiceId: `lang_${language.speaker}`,
+      modelFile: language.file,
+      lengthScale: 1,
+      noiseScale: 0.667,
+      speech: true,
+      officialVoiceUsed: false,
+      scaleOnly: false,
+    }
+    : voiceFor(agentId, lang);
   if (!identity.ok) return { ...identity, naturalSpeech: false, audio: false };
   const bin = piperBin();
-  const model = path.join(speechDir(), (VOICES[lang] || VOICES.tr).file);
+  const model = path.join(speechDir(), identity.modelFile);
   if (!bin || !fs.existsSync(model)) {
     return { ok: false, code: "NATURAL_SPEECH_NOT_CONFIGURED", naturalSpeech: false, audio: false, paid: false };
   }
@@ -101,6 +128,11 @@ function speakNatural({ text, lang = "tr", agentId = "pusat" } = {}) {
     bytes: wav.length,
     sha256: crypto.createHash("sha256").update(wav).digest("hex"),
     voiceId: identity.voiceId,
+    modelFile: identity.modelFile,
+    speaker: identity.speaker || null,
+    scaleOnly: false,
+    officialVoiceUsed: false,
+    referenceMixedIntoTts: false,
     agentId,
     lang,
     paid: false,
@@ -148,4 +180,4 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   };
 }
 
-module.exports = { VOICES, voiceFor, speakNatural, recognizeNatural, piperBin, whisperBin };
+module.exports = { VOICES, PROFILES, voiceFor, speakNatural, recognizeNatural, piperBin, whisperBin };

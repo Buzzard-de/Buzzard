@@ -26,4 +26,6 @@ Runtime, `BUZZARD_GGUF_PATH` veya `data/models/language/` içindeki GGUF dosyas�
 
 1.5B model kısa talimatları bazen tutar. Aynı dizindeki Qwen2.5-3B-Instruct Q4_K_M dosyası varsa runtime onu seçer. Lisansı Apache-2.0, boyutu 2104932768 bayt, SHA-256 `626b4a6678b86442240e33df819e00132d3ba7dddfe1cdc4fbb18e0a9615c62d`. Doğrulama geçmeyen çıktı `LOCAL_MODEL` değildir.
 
-Konuşma tanıma ve üretim de yereldir. Whisper small (`data/models/speech/ggml-small.bin`) ve Piper sesleri (`tr_TR-dfki-medium`, `de_DE-kerstin-low`, `en_US-lessac-medium`) Git dışındadır. Çalıştırıcılar `tools/whisper` ve `tools/piper` altındadır. Ücretli bir ses servisi gerekmez.
+Konuşma tanıma ve üretim de yereldir. Whisper small (`data/models/speech/ggml-small.bin`) ve Piper sesleri Git dışındadır. Çalıştırıcılar `tools/whisper` ve `tools/piper` altındadır. Ücretli bir ses servisi gerekmez.
+
+Bu makinede 4 CPU, NVIDIA GPU yok, yaklaşık 16 GiB bellek ve takas alanı yok. 3B model bu sınırda çalıştığı için 7B indirilmedi. Konuşan 12 üye ayrı Piper konuşmacı dosyası kullanır. Model kartında ses lisansı yazmadığı için lisans alanı `NOT_IN_MODEL_CARD` olarak durur. Sinan Bey’in `m4a` referansı senteze karışmaz.

@@ -1,15 +1,34 @@
 /**
- * Small authored 3D head. Mouth vertices move from the real waveform, not from CSS.
+ * Authored 3D head for a speaking member. Jaw and mouth morphs follow the waveform.
+ * This is not a scanned body and not a photoreal digital human.
  */
 const crypto = require("crypto");
 
-const BASE = Object.freeze([
-  [0, 0.2, 0.1],
-  [-0.15, 0, 0.05],
-  [0.15, 0, 0.05],
-  [0, -0.02, 0.08],
+const INDEX = Object.freeze([
+  0, 1, 2,
+  0, 2, 3,
+  4, 5, 6,
+  4, 6, 7,
 ]);
-const JAW = Object.freeze([0, -0.28, 0.16]);
+
+function seedFor(agentId) {
+  const hex = crypto.createHash("sha256").update(String(agentId || "none")).digest();
+  return hex[0] / 255;
+}
+
+function restMesh(agentId) {
+  const spread = 0.9 + seedFor(agentId) * 0.2;
+  return [
+    [0, 0.22 * spread, 0.08],
+    [-0.16 * spread, 0.08, 0.04],
+    [0.16 * spread, 0.08, 0.04],
+    [0, -0.02, 0.1],
+    [-0.05 * spread, -0.04, 0.12],
+    [0.05 * spread, -0.04, 0.12],
+    [0, -0.08, 0.11],
+    [0, -0.12, 0.08],
+  ];
+}
 
 function pcmSamples(wav) {
   if (!Buffer.isBuffer(wav) || wav.length < 46) return [];
@@ -26,46 +45,68 @@ function mouthTrack(wav, windows = 8) {
   for (let w = 0; w < windows; w += 1) {
     const slice = samples.slice(w * size, (w + 1) * size);
     let energy = 0;
-    for (const sample of slice) energy += sample * sample;
+    let flips = 0;
+    for (let i = 0; i < slice.length; i += 1) {
+      energy += slice[i] * slice[i];
+      if (i > 0 && (slice[i] >= 0) !== (slice[i - 1] >= 0)) flips += 1;
+    }
     const rms = Math.sqrt(energy / Math.max(1, slice.length));
-    frames.push({ index: w, weight: Math.max(0, Math.min(1, rms * 8)) });
+    frames.push({
+      index: w,
+      jaw: Math.max(0, Math.min(1, rms * 8)),
+      mouth: Math.max(0, Math.min(1, flips / Math.max(8, slice.length))),
+    });
   }
   return frames;
 }
 
-function vertexAt(weight) {
-  const lip = BASE[3];
-  return [
-    lip[0] + (JAW[0] - lip[0]) * weight,
-    lip[1] + (JAW[1] - lip[1]) * weight,
-    lip[2] + (JAW[2] - lip[2]) * weight,
-  ];
+function deform(rest, frame) {
+  return rest.map((vertex, index) => {
+    if (index < 4) return vertex.slice();
+    const jaw = index === 7 ? frame.jaw : frame.jaw * 0.45;
+    const width = index === 4 || index === 5 ? frame.mouth : 0;
+    const side = index === 4 ? -1 : index === 5 ? 1 : 0;
+    return [
+      vertex[0] + side * width * 0.04,
+      vertex[1] - jaw * 0.18,
+      vertex[2] + jaw * 0.05,
+    ];
+  });
 }
 
 function presentSpeaker({ agentId, wav } = {}) {
+  if (!agentId) {
+    return { ok: false, code: "AGENT_REQUIRED", mesh: "NOT_CONFIGURED", is3d: false, photoreal: false, scannedBody: false, css: false };
+  }
   const frames = mouthTrack(wav);
-  const peak = frames.reduce((max, frame) => Math.max(max, frame.weight), 0);
-  const rest = vertexAt(0);
-  const open = vertexAt(peak);
-  const moved = open[1] !== rest[1];
+  const rest = restMesh(agentId);
+  const peak = frames.reduce((best, frame) => (frame.jaw > best.jaw ? frame : best), { jaw: 0, mouth: 0, index: 0 });
+  const open = deform(rest, peak);
+  const closed = deform(rest, { jaw: 0, mouth: 0 });
+  const moved = open[7][1] !== closed[7][1];
+  const meshName = `council-head-${agentId}`;
   return {
     ok: frames.length > 0 && moved,
     agentId,
-    mesh: "council-head",
-    vertices: BASE.length,
-    is3d: true,
+    mesh: moved ? meshName : "NOT_CONFIGURED",
+    vertices: rest.length,
+    triangles: INDEX.length / 3,
+    indices: INDEX.length,
+    morphTargets: ["jaw", "mouth"],
+    is3d: moved,
+    authored: true,
     scannedBody: false,
     css: false,
-    digitalHuman: moved,
+    digitalHuman: false,
     photoreal: false,
     lipSync: moved,
-    peak,
-    rest,
-    open,
+    speaking: peak.jaw > 0.02,
+    peakJaw: peak.jaw,
+    rest: closed[7],
+    open: open[7],
     frames,
-    speaking: peak > 0.02,
-    meshHash: crypto.createHash("sha256").update(JSON.stringify(BASE)).digest("hex").slice(0, 16),
+    meshHash: crypto.createHash("sha256").update(JSON.stringify({ agentId, rest })).digest("hex").slice(0, 16),
   };
 }
 
-module.exports = { presentSpeaker, vertexAt, BASE };
+module.exports = { presentSpeaker, restMesh, INDEX };

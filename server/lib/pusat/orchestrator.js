@@ -244,12 +244,14 @@ function createOrchestrator({ dbPath } = {}) {
       });
     }
     const ran = tick({ limit: Math.max(selected.length, maxAttempts) });
+    const { factPairs } = require("../buzzardNative/thinking/localLanguageModel");
     const reports = ran.executed.map((row) => ({
       taskId: row.taskId,
       status: row.status,
       agentId: row.result?.agentId || null,
       kind: row.result?.kind || null,
       code: row.result?.code || row.code || null,
+      fact: factPairs(row.result?.result).join("; "),
     }));
     const note = memory.put({
       actorId: "pusat",
@@ -467,7 +469,46 @@ function createOrchestrator({ dbPath } = {}) {
     return { ...report, memory: { ok: note.ok === true, store: memory } };
   }
 
-  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null } = {}) {
+  async function reasonMembers({ modelFile = null, llamaBin = null } = {}) {
+    const staff = routeStaff({ domain: "all" });
+    const { analyzeCouncil } = require("../buzzardNative/thinking/localLanguageModel");
+    const analysis = await analyzeCouncil({ reports: staff.reports, modelFile, bin: llamaBin });
+    const queued = schedule({
+      title: "specialist-analysis",
+      assigneeId: "pusat",
+      ownerId: "pusat",
+      kind: "REPORT",
+      input: {},
+      maxAttempts: 1,
+      domain: "coordination",
+    });
+    if (queued.ok && queued.task && !queued.duplicate) {
+      queue.setPayload(queued.task.id, withPhase({
+        ...(queued.task.payload || {}),
+        analysis: analysis.rows,
+        model: analysis.model,
+        specialistChecksPassed: analysis.passed,
+        specialistChecksFailed: analysis.failed,
+        allSpecialistsAccepted: analysis.failed === 0,
+        actionsExecuted: false,
+      }, "COMPLETED"));
+      queue.markTests(queued.task.id, { testsPassed: true, acceptancePassed: true });
+      queue.complete(queued.task.id);
+    }
+    return {
+      ok: staff.ok === true,
+      to: "suleyman_bey",
+      members: staff.members,
+      merged: staff.merged,
+      analysis,
+      taskId: queued.task?.id || null,
+      actionsExecuted: false,
+      salesEnabled: isSalesEnabled(),
+      paid: false,
+    };
+  }
+
+  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null, speak = false, analysis = null } = {}) {
     if (!dbPath || String(dbPath).endsWith(`${require("path").sep}buzzard.db`) || String(dbPath).endsWith("/buzzard.db")) {
       return { ok: false, code: "PRODUCTION_DB_LOCKED", digitalHuman: false, carrier: false, placedOnCarrier: false };
     }
@@ -528,6 +569,42 @@ function createOrchestrator({ dbPath } = {}) {
         actionsExecuted: false,
       },
     });
+    const clips = [];
+    const spokenRows = speak && Array.isArray(analysis?.rows) ? analysis.rows : [];
+    if (speak) {
+      const { speakNatural } = require("../voice/naturalSpeech");
+      const { presentSpeaker } = require("../voice/meshAvatar");
+      for (const report of staff.reports) {
+        if (!canUse(report.agentId, "speech")) {
+          clips.push({ agentId: report.agentId, audio: false, speech: false, naturalSpeech: false, analysisSpoken: false });
+          continue;
+        }
+        const row = spokenRows.find((item) => item.agentId === report.agentId);
+        const spoken = speakNatural({
+          text: row?.passed ? row.answer : `${report.agentId} kural sonucu ${report.status}.`,
+          lang: "tr",
+          agentId: report.agentId,
+        });
+        const face = spoken.ok ? presentSpeaker({ agentId: report.agentId, wav: spoken.wav }) : null;
+        const clip = {
+          agentId: report.agentId,
+          audio: spoken.ok === true,
+          speech: true,
+          naturalSpeech: spoken.naturalSpeech === true,
+          voiceId: spoken.voiceId || null,
+          bytes: spoken.bytes || 0,
+          sha256: spoken.sha256 || null,
+          digitalHuman: face?.digitalHuman === true,
+          lipSync: face?.lipSync === true,
+          photoreal: false,
+          css: false,
+          is3d: face?.is3d === true,
+          analysisSpoken: row?.passed === true,
+        };
+        clips.push(clip);
+        opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "voice", speakerId: report.agentId, payload: clip });
+      }
+    }
     const closed = opened.store.closeMeeting(meeting.id);
     const stored = opened.store.getMeeting(meeting.id);
     opened.db.close();
@@ -547,10 +624,12 @@ function createOrchestrator({ dbPath } = {}) {
         generalPurpose: false,
       },
       stockSpeech: staff.reports.some((row) => row.agentId === "stock_ai" && canUse("stock_ai", "speech")),
-      naturalSpeech: false,
+      spoken: clips,
+      naturalSpeech: clips.some((clip) => clip.naturalSpeech === true),
       generalStt: false,
-      digitalHuman: false,
-      mesh: "NOT_CONFIGURED",
+      digitalHuman: clips.some((clip) => clip.digitalHuman === true),
+      photoreal: false,
+      mesh: clips.some((clip) => clip.is3d) ? "council-head" : "NOT_CONFIGURED",
       carrier: false,
       placedOnCarrier: false,
       salesEnabled: isSalesEnabled(),
@@ -623,6 +702,7 @@ function createOrchestrator({ dbPath } = {}) {
     routeStaff,
     handleRequest,
     holdCouncil,
+    reasonMembers,
     cancel,
     dailyReport,
     lifecycleOf,

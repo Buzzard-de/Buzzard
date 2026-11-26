@@ -5,7 +5,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 
 const MODEL = Object.freeze({
   name: "Qwen2.5-1.5B-Instruct",
@@ -18,6 +18,16 @@ const MODEL = Object.freeze({
   languages: ["tr", "de", "en"],
   device: "cpu",
   gpuLayers: 0,
+});
+
+const STRONG = Object.freeze({
+  name: "Qwen2.5-3B-Instruct",
+  quant: "Q4_K_M",
+  fileName: "qwen2.5-3b-instruct-q4_k_m.gguf",
+  url: "https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/qwen2.5-3b-instruct-q4_k_m.gguf",
+  license: "Apache-2.0",
+  sha256: "626b4a6678b86442240e33df819e00132d3ba7dddfe1cdc4fbb18e0a9615c62d",
+  bytes: 2104932768,
 });
 
 const RUNNER = Object.freeze({
@@ -41,8 +51,10 @@ function findLanguageModel(file = null) {
   if (process.env.BUZZARD_GGUF_PATH) {
     return { file: process.env.BUZZARD_GGUF_PATH, present: fs.existsSync(process.env.BUZZARD_GGUF_PATH) };
   }
+  const strong = path.join(languageDir(), STRONG.fileName);
+  if (fs.existsSync(strong) && fs.statSync(strong).size === STRONG.bytes) return { file: strong, present: true, model: STRONG.name };
   const preferred = path.join(languageDir(), MODEL.fileName);
-  if (fs.existsSync(preferred)) return { file: preferred, present: true };
+  if (fs.existsSync(preferred)) return { file: preferred, present: true, model: MODEL.name };
   const dir = languageDir();
   if (!fs.existsSync(dir)) return null;
   const hit = fs.readdirSync(dir).find((name) => name.endsWith(".gguf"));
@@ -71,6 +83,72 @@ function spawnCollected(command, args, timeoutMs) {
     status: ran.status,
     out: ran.stdout || "",
     err: ran.stderr || "",
+  };
+}
+
+function spawnCollectedAsync(command, args, timeoutMs) {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (row) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(row);
+    };
+    const child = spawn(command, args, { stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    let err = "";
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      finish({ ok: false, code: "MODEL_UNAVAILABLE", reason: "TIMEOUT", out, err });
+    }, timeoutMs);
+    child.stdout.on("data", (chunk) => { out += chunk; });
+    child.stderr.on("data", (chunk) => { err += chunk; });
+    child.on("error", (error) => finish({ ok: false, code: "MODEL_UNAVAILABLE", reason: String(error.message || error), out, err }));
+    child.on("close", (status) => finish({
+      ok: status === 0,
+      code: status === 0 ? "EXIT" : "MODEL_UNAVAILABLE",
+      status,
+      out,
+      err,
+    }));
+  });
+}
+
+function llamaArgs({ located, system, question, predict, context }) {
+  return [
+    "-m", located.file,
+    "-sys", system || "Reply with only the requested word or short answer. Do not take actions.",
+    "-p", question,
+    "-n", String(predict),
+    "--temp", "0",
+    "-t", "4",
+    "-ngl", "0",
+    "-c", String(context),
+    "--single-turn",
+    "--no-display-prompt",
+    "--simple-io",
+    "--log-disable",
+    "--reasoning", "off",
+  ];
+}
+
+function settleInference(base, located, ran, question, accept) {
+  if (!ran.ok) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: ran.reason || ran.code };
+  const answer = extractAnswer(`${ran.out}\n${ran.err}`, question);
+  if (!answer) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_OUTPUT" };
+  if (answer.length > 800 || (typeof accept === "function" && accept(answer) !== true)) {
+    return { ...base, ok: false, code: "MODEL_OUTPUT_REJECTED", answer, filePresent: true, reason: answer.length > 800 ? "TOO_LONG" : "VALIDATION_FAILED" };
+  }
+  return {
+    ...base,
+    ok: true,
+    code: "LOCAL_MODEL",
+    answer,
+    filePresent: true,
+    file: located.file,
+    bytes: fs.statSync(located.file).size,
+    runner: RUNNER.name,
   };
 }
 
@@ -103,41 +181,38 @@ function inferLanguage({ modelFile, prompt, bin = null, timeoutMs = 30000, predi
     license: MODEL.license,
   };
   if (!located || !located.present) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED", filePresent: false };
+  base.model = String(located.file).includes("3b") ? STRONG.name : MODEL.name;
   const runner = findRunner(bin);
   if (!runner) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "RUNNER_MISSING" };
   const question = String(prompt || "").replace(/^(genel muhakeme|serbest yorum|open reasoning)\s*[:\-]?\s*/i, "").trim();
   if (!question) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_PROMPT" };
-  const ran = spawnCollected(runner, [
-    "-m", located.file,
-    "-sys", system || "Reply with only the requested word or short answer. Do not take actions.",
-    "-p", question,
-    "-n", String(predict),
-    "--temp", "0",
-    "-t", "4",
-    "-ngl", "0",
-    "-c", String(context),
-    "--single-turn",
-    "--no-display-prompt",
-    "--simple-io",
-    "--log-disable",
-    "--reasoning", "off",
-  ], timeoutMs);
-  if (!ran.ok) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: ran.reason || ran.code };
-  const answer = extractAnswer(`${ran.out}\n${ran.err}`, question);
-  if (!answer) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_OUTPUT" };
-  if (answer.length > 800 || (typeof accept === "function" && accept(answer) !== true)) {
-    return { ...base, ok: false, code: "MODEL_OUTPUT_REJECTED", answer, filePresent: true, reason: answer.length > 800 ? "TOO_LONG" : "VALIDATION_FAILED" };
-  }
-  return {
-    ...base,
-    ok: true,
-    code: "LOCAL_MODEL",
-    answer,
-    filePresent: true,
-    file: located.file,
-    bytes: fs.statSync(located.file).size,
-    runner: RUNNER.name,
+  const ran = spawnCollected(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
+  return settleInference(base, located, ran, question, accept);
+}
+
+async function inferLanguageAsync({ modelFile, prompt, bin = null, timeoutMs = 30000, predict = 24, context = 256, system = null, accept = null } = {}) {
+  const located = findLanguageModel(modelFile);
+  const base = {
+    answer: null,
+    llmCompleted: false,
+    hostedProvider: null,
+    paid: false,
+    mayStartAction: false,
+    actionsExecuted: false,
+    generalPurpose: false,
+    device: "cpu",
+    gpuLayers: 0,
+    model: MODEL.name,
+    license: MODEL.license,
   };
+  if (!located || !located.present) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED", filePresent: false };
+  base.model = String(located.file).includes("3b") ? STRONG.name : MODEL.name;
+  const runner = findRunner(bin);
+  if (!runner) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "RUNNER_MISSING" };
+  const question = String(prompt || "").replace(/^(genel muhakeme|serbest yorum|open reasoning)\s*[:\-]?\s*/i, "").trim();
+  if (!question) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_PROMPT" };
+  const ran = await spawnCollectedAsync(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
+  return settleInference(base, located, ran, question, accept);
 }
 
 function sha256File(file) {
@@ -247,8 +322,84 @@ function measureReasoning({ modelFile = null, bin = null } = {}) {
   });
   return {
     ok: true,
-    model: MODEL.name,
+    model: findLanguageModel(modelFile)?.model || MODEL.name,
     license: MODEL.license,
+    generalPurpose: false,
+    paid: false,
+    passed: rows.filter((row) => row.passed).length,
+    failed: rows.filter((row) => !row.passed).length,
+    rows,
+  };
+}
+
+const FACT_SKIP = new Set(["ok", "id", "actorId", "kind", "hooks", "codes", "script", "createdAt", "memoryNamespace", "role", "name", "packageName"]);
+
+function factPairs(value, depth = 0) {
+  const pairs = [];
+  if (!value || typeof value !== "object" || depth > 1) return pairs;
+  for (const [key, item] of Object.entries(value)) {
+    if (FACT_SKIP.has(key) || item === null || item === undefined) continue;
+    if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+      const text = String(item);
+      if (text.length > 0 && text.length <= 40) pairs.push(`${key}=${text}`);
+    } else if (depth === 0 && item && typeof item === "object" && !Array.isArray(item)) {
+      pairs.push(...factPairs(item, depth + 1));
+    }
+    if (pairs.length >= 4) break;
+  }
+  return pairs.slice(0, 4);
+}
+
+function numbersIn(text) {
+  return String(text || "").match(/\d+(?:\.\d+)?/g) || [];
+}
+
+async function analyzeCouncil({ reports = [], modelFile = null, bin = null } = {}) {
+  const rows = [];
+  for (const report of reports) {
+    const token = String(report.kind || report.agentId || "");
+    const fact = String(report.fact || "");
+    const values = fact.split(";").map((part) => part.split("=").slice(1).join("=")).filter(Boolean);
+    const ran = await inferLanguageAsync({
+      modelFile,
+      bin,
+      predict: 64,
+      context: 512,
+      timeoutMs: 30000,
+      system: "Yalnızca verilen olguyu kullan. Yeni sayı, müşteri, satış geçmişi veya kampanya sonucu uydurma. Satın alma, satış veya ödeme önerme.",
+      prompt: `Olgu: ${report.agentId} için ${token} durumu ${report.status}. Motor değerleri: ${fact}. Tek cümle yaz. Cümlede ${token}, ${report.status} ve motor değerlerinden biri geçsin.`,
+      accept: (answer) => {
+        const text = String(answer || "").toLowerCase();
+        const outsideKind = text.split(token.toLowerCase()).join(" ");
+        const invented = /conversion|historical|holiday|engagement|profit|well-structured|financial loss|müşteri|musteri|customer|satış geçmiş|satis gecmis/i.test(outsideKind);
+        const deniesActivation = /activated=false/.test(fact) && /aktive edildi|activated/.test(text) && !/activated=false/.test(text);
+        const hasValue = values.some((value) => text.includes(String(value).toLowerCase()));
+        const allowed = new Set(numbersIn(`${fact} ${token} ${report.status}`));
+        const extra = numbersIn(answer).filter((value) => !allowed.has(value));
+        return text.includes(token.toLowerCase())
+          && text.includes(String(report.status || "").toLowerCase())
+          && hasValue
+          && extra.length === 0
+          && !invented
+          && !deniesActivation;
+      },
+    });
+    rows.push({
+      agentId: report.agentId,
+      kind: token,
+      fact,
+      execution: ran.code === "LOCAL_MODEL" ? "LOCAL_MODEL" : ran.code,
+      ruleExecution: "RULE_BASED",
+      passed: ran.code === "LOCAL_MODEL",
+      answer: ran.code === "LOCAL_MODEL" ? ran.answer : null,
+      rejected: ran.code === "LOCAL_MODEL" ? null : ran.answer,
+      actionsExecuted: false,
+      model: ran.model,
+    });
+  }
+  return {
+    ok: true,
+    model: findLanguageModel(modelFile)?.model || MODEL.name,
     generalPurpose: false,
     paid: false,
     passed: rows.filter((row) => row.passed).length,
@@ -259,13 +410,16 @@ function measureReasoning({ modelFile = null, bin = null } = {}) {
 
 module.exports = {
   MODEL,
+  STRONG,
   RUNNER,
   languageDir,
   runnerDir,
   findLanguageModel,
+  factPairs,
   findRunner,
   inferLanguage,
   installLocalLanguageModel,
   measureReasoning,
+  analyzeCouncil,
   extractAnswer,
 };

@@ -251,7 +251,10 @@ intelligence/buzzard_ki_gesamt/snapshots/20*/
 intelligence/buzzard_ki_gesamt/snapshots/*.zip
 test-results/
 
-# Local model weights and the llama.cpp binary stay off the git history.
+# Local model weights and speech runtimes stay off the git history.
 data/models/*.gguf
 data/models/language/
+data/models/speech/
 tools/llama/
+tools/piper/
+tools/whisper/

@@ -9,6 +9,10 @@ const { canUse } = require("../buzzardNative/core/capabilityRegistry");
 const { alignToAudio } = require("../buzzardNative/motion/visemeSchedule");
 const { isSalesEnabled } = require("../salesMode");
 const { profileFor, synthesizeStaff, transcribeStaff } = require("./staffMedia");
+const { speakNatural, recognizeNatural, voiceFor } = require("./naturalSpeech");
+const { presentSpeaker } = require("./meshAvatar");
+const { loopbackMedia } = require("./rtcMedia");
+const { localSipCall } = require("./sipLocal");
 
 const LEXICON = Object.freeze([
   { text: "fiyat", lang: "tr", domain: "price", agentId: "pricing_ai" },
@@ -67,6 +71,11 @@ function createTtsEngine() {
         frames: (mouth.events || []).map((event) => ({ sampleIndex: event.sampleIndex, openness: openness[event.viseme] ?? 0.1 })),
       };
       return { ...spoken, engine: "buzzard_tts", audioQuality: audio, mouth, pose, saas: false, hostedProvider: null };
+    },
+    speakNatural(input) {
+      const spoken = speakNatural(input);
+      if (!spoken.ok) return spoken;
+      return { ...spoken, pose: presentSpeaker({ agentId: input.agentId, wav: spoken.wav }), engine: "buzzard_tts" };
     },
   };
 }
@@ -137,6 +146,9 @@ function createSttEngine() {
         generalSpeech: false,
         saas: false,
       };
+    },
+    recognizeNatural(input) {
+      return recognizeNatural(input);
     },
   };
 }
@@ -390,4 +402,10 @@ module.exports = {
   createPhoneEngine,
   createCallManager,
   createSpeechSession,
+  speakNatural,
+  recognizeNatural,
+  voiceFor,
+  presentSpeaker,
+  loopbackMedia,
+  localSipCall,
 };

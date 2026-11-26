@@ -8,7 +8,7 @@ const { ids } = require("../buzzardNative/core/identityRegistry");
 const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
 const { createMultiMemory } = require("../buzzardNative/core/multiMemory");
 const { isSalesEnabled } = require("../salesMode");
-const { modelGate } = require("../buzzardNative/thinking/modelGate");
+const { modelGate, consultReasoning } = require("../buzzardNative/thinking/modelGate");
 const aslan = require("../buzzardNative/core/aslanBey");
 
 const LIFECYCLE = Object.freeze([
@@ -275,6 +275,42 @@ function createOrchestrator({ dbPath } = {}) {
     if (!["suleyman_bey", "pusat"].includes(requester)) {
       return { ok: false, code: "PERMISSION_DENIED", salesEnabled: isSalesEnabled(), live: false };
     }
+    if (/genel muhakeme|serbest yorum|open reasoning/i.test(String(text || ""))) {
+      const reasoning = consultReasoning();
+      const queuedReason = schedule({
+        title: "general-reasoning",
+        assigneeId: "pusat",
+        ownerId: "pusat",
+        kind: "REPORT",
+        input: {},
+        maxAttempts: 0,
+        domain: "coordination",
+      });
+      if (queuedReason.ok && queuedReason.task && !queuedReason.duplicate) {
+        queue.fail(queuedReason.task.id, { reason: reasoning.code });
+        queue.setPayload(queuedReason.task.id, withPhase({
+          ...(queuedReason.task.payload || {}),
+          error: reasoning.code,
+          answer: null,
+          llmCompleted: false,
+          basis: "RULE_BASED",
+        }, "FAILED"));
+      }
+      return {
+        ok: false,
+        code: reasoning.code,
+        answer: null,
+        llmCompleted: false,
+        basis: "RULE_BASED",
+        model: reasoning.health,
+        taskId: queuedReason.task?.id || null,
+        lifecycle: lifecycleOf(queue.get(queuedReason.task?.id)),
+        salesEnabled: isSalesEnabled(),
+        live: false,
+        saas: false,
+        pusatDidSpecialistWork: false,
+      };
+    }
     const classified = classifyRequest(text);
     if (!classified.ok) {
       return { ...classified, purchased: false, salesEnabled: isSalesEnabled(), live: false, pusatDidSpecialistWork: false };
@@ -306,6 +342,8 @@ function createOrchestrator({ dbPath } = {}) {
       kind: row.result?.kind || null,
       verification: row.verification?.code || row.code || null,
       basis: "specialistDispatch",
+      execution: "RULE_BASED",
+      llmCompleted: false,
       confidence: row.verification?.testsPassed ? "rule_verified" : "unverified",
       error: row.status === "COMPLETED" ? null : row.verification?.code || row.code || null,
       lifecycle: lifecycleOf(queue.get(row.taskId)),
@@ -313,6 +351,30 @@ function createOrchestrator({ dbPath } = {}) {
     let research = null;
     if (classified.domain === "research") {
       research = aslan.coordinate({ topic: "categories", question: String(text).slice(0, 180), sources: [] });
+    }
+    let next = null;
+    if (research && research.report?.verification !== "SOURCED") {
+      const follow = schedule({
+        title: `auto-research-follow-${selected[0]}`,
+        assigneeId: "dogu_bey",
+        ownerId: "pusat",
+        priority: classified.priority,
+        domain: "research",
+        kind: "RESEARCH_REQUEST",
+        input: STAFF_DUTY.dogu_bey.input,
+        maxAttempts: 1,
+        idempotencyKey: idempotencyKey ? `${idempotencyKey}:follow` : null,
+      });
+      const followed = follow.ok && !follow.duplicate ? tick({ limit: 1 }) : { executed: [] };
+      const row = followed.executed?.[0] || null;
+      next = {
+        taskId: row?.taskId || follow.task?.id || null,
+        agentId: "dogu_bey",
+        status: row?.status || null,
+        verified: false,
+        reason: "UNVERIFIED",
+        lifecycle: lifecycleOf(queue.get(row?.taskId || follow.task?.id)),
+      };
     }
     let defense = null;
     if (artifact) {
@@ -353,6 +415,7 @@ function createOrchestrator({ dbPath } = {}) {
       duplicate: queued.some((row) => row.duplicate),
       specialists,
       research,
+      next,
       defense,
       spoken,
       pusatDidSpecialistWork: specialists.some((row) => row.agentId === "pusat" && classified.domain !== "coordination"),

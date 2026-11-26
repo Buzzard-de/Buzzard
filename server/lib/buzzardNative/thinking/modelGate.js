@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { createInferenceRuntime } = require("./inferenceRuntime");
-const { verifyCheckpoint } = require("./transformer");
+const { createTransformer, checkpoint, verifyCheckpoint } = require("./transformer");
 
 function candidateFile(file) {
   if (file) return file;
@@ -23,16 +23,16 @@ function modelGate({ file = null } = {}) {
     generalPurpose: false,
     file: target,
   };
-  if (!fs.existsSync(target)) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED" };
+  if (!fs.existsSync(target)) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED", filePresent: false };
   let data = null;
   try {
     data = JSON.parse(fs.readFileSync(target, "utf8"));
   } catch {
-    return { ...base, ok: false, code: "CHECKPOINT_CORRUPT" };
+    return { ...base, ok: false, code: "CHECKPOINT_CORRUPT", filePresent: true };
   }
   const runtime = createInferenceRuntime();
   const loaded = runtime.load({ checkpoint: data, tokenizer: { tokens: [] }, actorId: "pusat" });
-  if (!loaded.ok) return { ...base, ok: false, code: loaded.code || "CHECKPOINT_CORRUPT", integrity: verifyCheckpoint(data) };
+  if (!loaded.ok) return { ...base, ok: false, code: loaded.code || "CHECKPOINT_CORRUPT", filePresent: true, integrity: verifyCheckpoint(data) };
   return {
     ...base,
     ok: true,
@@ -40,7 +40,71 @@ function modelGate({ file = null } = {}) {
     status: loaded.status,
     liveVerified: false,
     loaded: runtime.loaded,
+    filePresent: true,
+    generalReasoning: "UNAVAILABLE",
   };
 }
 
-module.exports = { modelGate };
+function modelHealth({ file = null } = {}) {
+  const gate = modelGate({ file });
+  const health = {
+    filePresent: gate.filePresent === true,
+    configured: gate.ok === true,
+    code: gate.code,
+    generalReasoning: "UNAVAILABLE",
+    generalPurpose: false,
+    ruleEngine: "ACTIVE",
+    mayStartAction: false,
+    hostedProvider: null,
+    liveVerified: false,
+    probe: null,
+  };
+  if (!gate.ok) return health;
+  const runtime = createInferenceRuntime();
+  const raw = JSON.parse(fs.readFileSync(candidateFile(file), "utf8"));
+  const loaded = runtime.load({ checkpoint: raw, tokenizer: { merges: [], vocabSize: raw.vocabSize }, actorId: "pusat" });
+  if (!loaded.ok || raw.vocabSize < 256) {
+    health.probe = { ok: false, code: loaded.ok ? "CHECKPOINT_TOO_SMALL" : loaded.code, generalPurpose: false };
+    return health;
+  }
+  const probe = runtime.generate({ text: " ", steps: 1 });
+  health.probe = {
+    ok: probe.ok === true,
+    code: probe.ok ? "FORWARD_PASS" : probe.code,
+    tokens: probe.tokens || 0,
+    generalPurpose: false,
+  };
+  return health;
+}
+
+function prepareLocalModel({ dest } = {}) {
+  if (!dest || path.extname(dest) !== ".json" || path.basename(dest) === "buzzard.db") {
+    return { ok: false, code: "MODEL_DEST_REQUIRED", filePresent: false };
+  }
+  const model = createTransformer({ vocabSize: 256, dModel: 8, nHeads: 2, nPos: 16, dff: 16, seed: 11 });
+  const data = checkpoint(model);
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.writeFileSync(dest, JSON.stringify(data));
+  const health = modelHealth({ file: dest });
+  return {
+    ok: health.probe?.ok === true,
+    code: health.probe?.ok ? "LOCAL_CHECKPOINT_WRITTEN" : health.probe?.code || health.code,
+    dest,
+    filePresent: true,
+    generalPurpose: false,
+    generalReasoning: "UNAVAILABLE",
+    hostedProvider: null,
+    paid: false,
+    health,
+  };
+}
+
+function consultReasoning({ file = null } = {}) {
+  const health = modelHealth({ file });
+  const base = { answer: null, llmCompleted: false, basis: "RULE_BASED", generalPurpose: false, mayStartAction: false, health };
+  if (!health.filePresent) return { ...base, ok: false, code: "MODEL_NOT_CONFIGURED" };
+  if (!health.configured) return { ...base, ok: false, code: health.code };
+  return { ...base, ok: false, code: "GENERAL_REASONING_UNAVAILABLE" };
+}
+
+module.exports = { modelGate, modelHealth, prepareLocalModel, consultReasoning };

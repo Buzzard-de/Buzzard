@@ -253,4 +253,5 @@ test-results/
 
 # Local model weights and the llama.cpp binary stay off the git history.
 data/models/*.gguf
+data/models/language/
 tools/llama/

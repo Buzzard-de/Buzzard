@@ -115,10 +115,10 @@ function prepareLocalModel({ dest } = {}) {
   };
 }
 
-function consultReasoning({ file = null, prompt = "", bin = null } = {}) {
+function consultReasoning({ file = null, prompt = "", bin = null, predict = 24, context = 256, system = null, accept = null } = {}) {
   const language = findLanguageModel(file);
   if (language) {
-    const inferred = inferLanguage({ modelFile: language.file, prompt, bin });
+    const inferred = inferLanguage({ modelFile: language.file, prompt, bin, predict, context, system, accept });
     return {
       ...inferred,
       basis: inferred.code === "LOCAL_MODEL" ? "LOCAL_MODEL" : inferred.code,

@@ -33,7 +33,7 @@ describe("local runtime", () => {
     orch.close();
     const reopened = createOrchestrator({ dbPath });
     expect(reopened.queue.get(taskId).state).toBe("COMPLETED");
-    const open = reopened.handleRequest({ text: "genel muhakeme yap" });
+    const open = reopened.handleRequest({ text: "genel muhakeme yap", modelFile: "/tmp/buzzard-missing-language.gguf" });
     expect(open).toMatchObject({
       ok: false,
       code: "MODEL_NOT_CONFIGURED",

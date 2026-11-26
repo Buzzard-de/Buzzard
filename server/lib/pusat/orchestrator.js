@@ -4,7 +4,9 @@
 const { createDurableTaskQueue } = require("./durableTaskQueue");
 const { dispatch, AGENT_KINDS } = require("../buzzardNative/core/specialistDispatch");
 const { verifyDispatch } = require("./dispatchVerify");
-const { ids } = require("../buzzardNative/core/identityRegistry");
+const { ids, getAgent } = require("../buzzardNative/core/identityRegistry");
+const { canUse } = require("../buzzardNative/core/capabilityRegistry");
+const { openDurableFile } = require("./durable");
 const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
 const { createMultiMemory } = require("../buzzardNative/core/multiMemory");
 const { isSalesEnabled } = require("../salesMode");
@@ -465,6 +467,101 @@ function createOrchestrator({ dbPath } = {}) {
     return { ...report, memory: { ok: note.ok === true, store: memory } };
   }
 
+  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null } = {}) {
+    if (!dbPath || String(dbPath).endsWith(`${require("path").sep}buzzard.db`) || String(dbPath).endsWith("/buzzard.db")) {
+      return { ok: false, code: "PRODUCTION_DB_LOCKED", digitalHuman: false, carrier: false, placedOnCarrier: false };
+    }
+    const opened = openDurableFile(`${dbPath}.meetings`);
+    if (!opened.ok) return { ...opened, digitalHuman: false, carrier: false };
+    const meeting = opened.store.openMeeting({ chairId: "pusat" });
+    opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "agenda", speakerId: "pusat", payload: { topic } });
+    const staff = routeStaff({ domain: "all" });
+    for (const report of staff.reports) {
+      const agent = getAgent(report.agentId);
+      const speech = canUse(report.agentId, "speech");
+      opened.store.addMeetingEvent({
+        meetingId: meeting.id,
+        kind: "opinion",
+        speakerId: report.agentId,
+        payload: {
+          status: report.status,
+          kind: report.kind,
+          execution: "RULE_BASED",
+          speech,
+          audio: false,
+          naturalSpeech: false,
+          generalStt: false,
+          voiceMatchesWritten: false,
+          avatarStatus: agent?.avatar_profile?.status || "NOT_CONFIGURED",
+          is3d: agent?.avatar_profile?.is3d === true,
+          digitalHuman: false,
+          mesh: "NOT_CONFIGURED",
+        },
+      });
+    }
+    const assist = consultReasoning({
+      file: modelFile,
+      bin: llamaBin,
+      prompt: "Reply with JSON only: {\"chair\":\"pusat\",\"actionsExecuted\":false}",
+      predict: 32,
+      context: 256,
+      system: "Reply with one JSON object and no other text. Do not take actions.",
+      accept: (answer) => {
+        const start = String(answer || "").indexOf("{");
+        const end = String(answer || "").lastIndexOf("}");
+        if (start < 0 || end < start) return false;
+        try {
+          const parsed = JSON.parse(answer.slice(start, end + 1));
+          return parsed.chair === "pusat" && parsed.actionsExecuted === false;
+        } catch {
+          return false;
+        }
+      },
+    });
+    opened.store.addMeetingEvent({
+      meetingId: meeting.id,
+      kind: "model",
+      speakerId: "pusat",
+      payload: {
+        code: assist.code,
+        answer: assist.code === "LOCAL_MODEL" ? assist.answer : null,
+        actionsExecuted: false,
+      },
+    });
+    const closed = opened.store.closeMeeting(meeting.id);
+    const stored = opened.store.getMeeting(meeting.id);
+    opened.db.close();
+    return {
+      ok: staff.ok === true && stored?.status === "CLOSED",
+      to: "suleyman_bey",
+      from: "pusat",
+      topic,
+      meetingId: meeting.id,
+      members: staff.members,
+      merged: staff.merged,
+      reports: staff.reports,
+      model: {
+        code: assist.code,
+        answer: assist.code === "LOCAL_MODEL" ? assist.answer : null,
+        actionsExecuted: false,
+        generalPurpose: false,
+      },
+      stockSpeech: staff.reports.some((row) => row.agentId === "stock_ai" && canUse("stock_ai", "speech")),
+      naturalSpeech: false,
+      generalStt: false,
+      digitalHuman: false,
+      mesh: "NOT_CONFIGURED",
+      carrier: false,
+      placedOnCarrier: false,
+      salesEnabled: isSalesEnabled(),
+      minutes: closed.minutes,
+      live: false,
+      network: false,
+      saas: false,
+      paid: false,
+    };
+  }
+
   function cancel(taskId) {
     const task = queue.get(taskId);
     if (!task) return { ok: false, code: "NOT_FOUND" };
@@ -525,6 +622,7 @@ function createOrchestrator({ dbPath } = {}) {
     coordinateCouncil,
     routeStaff,
     handleRequest,
+    holdCouncil,
     cancel,
     dailyReport,
     lifecycleOf,

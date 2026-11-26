@@ -13,14 +13,40 @@ const { getAgent } = require("../buzzardNative/core/identityRegistry");
 const SOURCE = "https://huggingface.co/rhasspy/piper-voices";
 const LICENSE = "NOT_IN_MODEL_CARD";
 
+const TURKISH = Object.freeze({
+  file: "tr_TR-antalia-medium.onnx",
+  speaker: "antalia",
+  lang: "tr",
+  license: "CC-BY-4.0",
+  source: "https://huggingface.co/ozgurguler/piper-tr-antalia-medium",
+  dataset: "https://huggingface.co/datasets/cloud0day3/antalia-voice-corpus",
+  attribution: "Antalia Turkish single-speaker corpus, CC BY 4.0. Synthetic voice. Not a council member and not Sinan Bey's recording.",
+  commercialUse: true,
+  synthetic: true,
+  productVoice: true,
+  runner: "piper-tts-1.8.0",
+  runnerLicense: "GPL-3.0",
+});
+
+const NONCOMMERCIAL = Object.freeze({
+  "tr_TR-dfki-medium.onnx": {
+    license: "CC-BY-NC-SA-4.0",
+    source: "https://github.com/marytts/dfki-ot-data/",
+    commercialUse: false,
+    productVoice: false,
+    synthetic: true,
+    turkish: true,
+  },
+});
+
 const VOICES = Object.freeze({
-  tr: { file: "tr_TR-dfki-medium.onnx", lang: "tr", speaker: "dfki", license: LICENSE, source: SOURCE },
+  tr: { file: TURKISH.file, lang: "tr", speaker: TURKISH.speaker, license: TURKISH.license, source: TURKISH.source },
   de: { file: "de_DE-kerstin-low.onnx", lang: "de", speaker: "kerstin", license: LICENSE, source: SOURCE },
   en: { file: "en_US-lessac-medium.onnx", lang: "en", speaker: "lessac", license: LICENSE, source: SOURCE },
 });
 
 const PROFILES = Object.freeze({
-  pusat: { file: "tr_TR-dfki-medium.onnx", speaker: "dfki", dataset: "dfki" },
+  pusat: { file: TURKISH.file, speaker: TURKISH.speaker, dataset: "antalia" },
   sinan_bey: { file: "de_DE-karlsson-low.onnx", speaker: "karlsson", dataset: "karlsson" },
   esat_bey: { file: "de_DE-pavoque-low.onnx", speaker: "pavoque", dataset: "pavoque" },
   dogu_bey: { file: "en_US-ryan-low.onnx", speaker: "ryan", dataset: "ryan" },
@@ -48,19 +74,53 @@ function whisperBin() {
   return fs.existsSync(candidate) ? candidate : null;
 }
 
+function voiceRecord(file) {
+  if (file === TURKISH.file) return TURKISH;
+  return NONCOMMERCIAL[file] || {
+    license: "NOT_IN_MODEL_CARD",
+    source: SOURCE,
+    commercialUse: false,
+    productVoice: false,
+    synthetic: true,
+  };
+}
+
 function modelCard(file) {
+  const known = voiceRecord(file);
   const card = path.join(speechDir(), `${file}.json`);
-  if (!fs.existsSync(card)) return { lang: null, license: "NOT_IN_MODEL_CARD", dataset: null };
+  if (!fs.existsSync(card)) return { lang: null, license: known.license, dataset: known.dataset || null, phonemePairs: false };
   try {
     const data = JSON.parse(fs.readFileSync(card, "utf8"));
+    const phonemePairs = Object.keys(data.phoneme_id_map || {}).some((key) => [...key].length > 1);
     return {
       lang: data.espeak?.voice || data.language?.code || null,
-      license: data.license || "NOT_IN_MODEL_CARD",
-      dataset: data.dataset || null,
+      license: data.license || known.license,
+      dataset: data.dataset || known.dataset || null,
+      phonemePairs,
     };
   } catch {
-    return { lang: null, license: "NOT_IN_MODEL_CARD", dataset: null };
+    return { lang: null, license: known.license, dataset: known.dataset || null, phonemePairs: false };
   }
+}
+
+function prepareTurkish(text) {
+  const original = String(text || "");
+  let next = original;
+  const pairs = [
+    [/Turkiye/g, "Türkiye"],
+    [/turkiye/g, "türkiye"],
+    [/Baskent/g, "Başkent"],
+    [/baskent/g, "başkent"],
+    [/kaydini/g, "kaydını"],
+    [/soyler/g, "söyler"],
+  ];
+  for (const [pattern, value] of pairs) next = next.replace(pattern, value);
+  return { text: next, original, normalized: next !== original };
+}
+
+function piperPython() {
+  const dir = path.join(process.cwd(), "tools", "piper-py");
+  return fs.existsSync(path.join(dir, "piper")) ? dir : null;
 }
 
 const HEARD_TERMS = Object.freeze([
@@ -82,6 +142,7 @@ function voiceFor(agentId, lang = "tr") {
   const registry = getAgent(agentId)?.voice_profile || null;
   const officialFile = registry?.officialSinan ? registry.file : null;
   const card = modelCard(profile.file);
+  const known = voiceRecord(profile.file);
   return {
     ok: true,
     agentId,
@@ -90,11 +151,16 @@ function voiceFor(agentId, lang = "tr") {
     lang,
     modelLang: card.lang,
     languageMatch: languageFits(card.lang, lang),
+    turkishNatural: languageFits(card.lang, "tr") && known.productVoice === true,
+    commercialUse: known.commercialUse === true,
+    synthetic: true,
+    productVoice: known.productVoice === true,
     modelFile: profile.file,
     speaker: profile.speaker,
     dataset: profile.dataset,
-    license: card.license,
-    source: SOURCE,
+    license: known.license || card.license,
+    source: known.source || SOURCE,
+    attribution: known.attribution || null,
     lengthScale: 1,
     noiseScale: 0.667,
     scaleOnly: false,
@@ -107,9 +173,10 @@ function voiceFor(agentId, lang = "tr") {
   };
 }
 
-function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = false, modelFile = null } = {}) {
+function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = false, modelFile = null, turkish = false } = {}) {
   const language = VOICES[lang] || VOICES.tr;
   const languageCard = modelCard(language.file);
+  const languageKnown = voiceRecord(language.file);
   const identity = languageVoice
     ? {
       ok: true,
@@ -118,6 +185,11 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
       modelFile: language.file,
       modelLang: languageCard.lang,
       languageMatch: languageFits(languageCard.lang, lang),
+      turkishNatural: lang === "tr" && languageKnown.productVoice === true,
+      commercialUse: languageKnown.commercialUse === true,
+      synthetic: true,
+      license: languageKnown.license,
+      attribution: languageKnown.attribution || null,
       lengthScale: 1,
       noiseScale: 0.667,
       speech: true,
@@ -126,23 +198,79 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     }
     : voiceFor(agentId, lang);
   if (!identity.ok) return { ...identity, naturalSpeech: false, audio: false };
-  const bin = piperBin();
-  const model = path.join(speechDir(), modelFile || identity.modelFile);
-  if (!bin || !fs.existsSync(model)) {
-    return { ok: false, code: "NATURAL_SPEECH_NOT_CONFIGURED", naturalSpeech: false, audio: false, paid: false };
+  const profileFile = identity.modelFile;
+  let spoken = identity;
+  let ownVoice = true;
+  let sharedVoice = false;
+  if (turkish && lang === "tr" && identity.turkishNatural !== true && !modelFile) {
+    if (!fs.existsSync(path.join(speechDir(), TURKISH.file))) {
+      return {
+        ok: false,
+        code: "TURKISH_VOICE_MISSING",
+        assetStatus: "BLOCKED_ASSET",
+        turkishNatural: false,
+        naturalSpeech: false,
+        audio: false,
+        paid: false,
+        profileModel: profileFile,
+      };
+    }
+    const turkishCard = modelCard(TURKISH.file);
+    spoken = {
+      ...identity,
+      modelFile: TURKISH.file,
+      modelLang: turkishCard.lang || "tr",
+      languageMatch: true,
+      turkishNatural: true,
+      commercialUse: true,
+      synthetic: true,
+      license: TURKISH.license,
+      attribution: TURKISH.attribution,
+      speaker: TURKISH.speaker,
+    };
+    ownVoice = profileFile === TURKISH.file;
+    sharedVoice = !ownVoice;
   }
+  const bin = piperBin();
+  const model = path.join(speechDir(), modelFile || spoken.modelFile);
+  const python = modelCard(path.basename(model)).phonemePairs === true;
+  if (!fs.existsSync(model) || (!python && !bin) || (python && !piperPython())) {
+    return {
+      ok: false,
+      code: !fs.existsSync(model) ? "NATURAL_SPEECH_NOT_CONFIGURED" : "PIPER_RUNTIME_MISSING",
+      naturalSpeech: false,
+      audio: false,
+      paid: false,
+      turkishNatural: false,
+    };
+  }
+  const prepared = lang === "tr" ? prepareTurkish(text) : { text: String(text || ""), original: String(text || ""), normalized: false };
   const out = path.join(os.tmpdir(), `buzzard-${crypto.randomBytes(4).toString("hex")}.wav`);
-  const ran = spawnSync(bin, [
-    "--model", model,
-    "--output_file", out,
-    "--length_scale", String(identity.lengthScale),
-    "--noise_scale", String(identity.noiseScale),
-  ], {
-    input: `${text}\n`,
-    encoding: "utf8",
-    timeout: 20000,
-    env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
-  });
+  const ran = python
+    ? spawnSync("python3", [
+      "-m", "piper",
+      "-m", model,
+      "-f", out,
+      "--length-scale", String(spoken.lengthScale),
+      "--noise-scale", String(spoken.noiseScale),
+      "--",
+      prepared.text,
+    ], {
+      encoding: "utf8",
+      timeout: 20000,
+      env: { ...process.env, PYTHONPATH: piperPython() },
+    })
+    : spawnSync(bin, [
+      "--model", model,
+      "--output_file", out,
+      "--length_scale", String(spoken.lengthScale),
+      "--noise_scale", String(spoken.noiseScale),
+    ], {
+      input: `${prepared.text}\n`,
+      encoding: "utf8",
+      timeout: 20000,
+      env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
+    });
   if (ran.status !== 0 || !fs.existsSync(out)) {
     return { ok: false, code: "TTS_FAILED", naturalSpeech: false, audio: false, paid: false };
   }
@@ -160,9 +288,20 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     sha256: crypto.createHash("sha256").update(wav).digest("hex"),
     voiceId: identity.voiceId,
     modelFile: path.basename(model),
-    modelLang: identity.modelLang || null,
-    languageMatch: identity.languageMatch === true,
-    speaker: identity.speaker || null,
+    profileModel: profileFile,
+    modelLang: spoken.modelLang || null,
+    languageMatch: spoken.languageMatch === true,
+    turkishNatural: spoken.turkishNatural === true,
+    commercialUse: spoken.commercialUse === true,
+    synthetic: spoken.synthetic === true,
+    ownVoice: ownVoice,
+    sharedVoice,
+    attribution: spoken.attribution || null,
+    license: spoken.license || voiceRecord(path.basename(model)).license,
+    textNormalized: prepared.normalized,
+    spokenText: prepared.text,
+    runner: python ? TURKISH.runner : "piper-cpp",
+    speaker: spoken.speaker || null,
     scaleOnly: false,
     officialVoiceUsed: false,
     referenceMixedIntoTts: false,
@@ -227,4 +366,14 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   };
 }
 
-module.exports = { VOICES, PROFILES, voiceFor, speakNatural, recognizeNatural, piperBin, whisperBin };
+module.exports = {
+  VOICES,
+  PROFILES,
+  TURKISH,
+  voiceRecord,
+  voiceFor,
+  speakNatural,
+  recognizeNatural,
+  piperBin,
+  whisperBin,
+};

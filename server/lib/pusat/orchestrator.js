@@ -431,7 +431,7 @@ function createOrchestrator({ dbPath } = {}) {
           spoken.push({ taskId: row.taskId, agentId: row.agentId, audio: false, written: true, speechGranted: false });
           continue;
         }
-        const clip = speakNatural({ agentId: row.agentId, text: row.verifiedSentence, lang: "tr" });
+        const clip = speakNatural({ agentId: row.agentId, text: row.verifiedSentence, lang: "tr", turkish: true });
         spoken.push({
           taskId: row.taskId,
           agentId: row.agentId,
@@ -642,7 +642,7 @@ function createOrchestrator({ dbPath } = {}) {
           order += 1;
           continue;
         }
-        const spoken = speakNatural({ text, lang: "tr", agentId: report.agentId });
+        const spoken = speakNatural({ text, lang: "tr", agentId: report.agentId, turkish: true });
         const face = spoken.ok ? presentSpeaker({ agentId: report.agentId, wav: spoken.wav }) : null;
         const clip = {
           agentId: report.agentId,
@@ -655,6 +655,11 @@ function createOrchestrator({ dbPath } = {}) {
           naturalSpeech: spoken.naturalSpeech === true,
           voiceId: spoken.voiceId || null,
           voiceModel: spoken.modelFile || null,
+          profileModel: spoken.profileModel || null,
+          turkishNatural: spoken.turkishNatural === true,
+          ownVoice: spoken.ownVoice === true,
+          sharedVoice: spoken.sharedVoice === true,
+          synthetic: spoken.synthetic === true,
           bytes: spoken.bytes || 0,
           sha256: spoken.sha256 || null,
           digitalHuman: face?.digitalHuman === true,
@@ -663,6 +668,10 @@ function createOrchestrator({ dbPath } = {}) {
           scannedBody: false,
           css: false,
           is3d: face?.is3d === true,
+          assetStatus: face?.assetStatus || "BLOCKED_ASSET",
+          previewMesh: face?.previewMesh === true,
+          realCharacter: false,
+          pose: face?.state || null,
           mesh: face?.mesh || "NOT_CONFIGURED",
           vertices: face?.vertices || 0,
           analysisSpoken: row?.modelAccepted === true,

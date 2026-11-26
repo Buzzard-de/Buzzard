@@ -119,7 +119,52 @@ function waitConnected(pc) {
   });
 }
 
-async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame"), reconnect = false } = {}) {
+async function gatherCandidates({ stun = null } = {}) {
+  const pc = new RTCPeerConnection({ iceServers: stun ? [{ urls: stun }] : [] });
+  pc.addTrack(new MediaStreamTrack({ kind: "audio" }));
+  const found = [];
+  pc.onIceCandidate.subscribe((candidate) => {
+    if (candidate?.candidate) found.push(String(candidate.candidate));
+  });
+  let failed = false;
+  if (pc.onIceCandidateError) {
+    pc.onIceCandidateError.subscribe(() => {
+      failed = true;
+    });
+  }
+  await pc.setLocalDescription(await pc.createOffer());
+  await Promise.race([
+    waitGather(pc),
+    new Promise((resolve) => setTimeout(resolve, 4000)),
+  ]);
+  pc.close();
+  const count = (token) => found.filter((line) => line.includes(` typ ${token}`)).length;
+  const srflx = count("srflx");
+  const relay = count("relay");
+  const host = count("host");
+  return {
+    ok: host > 0,
+    code: relay > 0 ? "TURN_PROBE" : srflx > 0 ? (stun ? "STUN_PROBE" : "REFLEXIVE_SEEN") : stun ? "STUN_UNREACHABLE" : "HOST_ONLY",
+    host,
+    srflx,
+    relay,
+    failed,
+    candidates: found.length,
+    stun: Boolean(stun),
+    turn: relay > 0,
+    turnInstalled: false,
+    media: false,
+    dtls: false,
+    srtp: false,
+    secure: false,
+    internet: false,
+    network: stun ? "STUN_PROBE" : "HOST_ONLY",
+    paid: false,
+    carrier: false,
+  };
+}
+
+async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame"), reconnect = false, packets = 1 } = {}) {
   const net = require("net");
   const { fork } = require("child_process");
   const server = net.createServer();
@@ -147,12 +192,15 @@ async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame"), rec
   await left.setRemoteDescription(answer.sdp);
   const connected = await waitConnected(left);
   const body = Buffer.isBuffer(payload) ? payload : Buffer.from(String(payload));
-  track.writeRtp(new RtpPacket(new RtpHeader({
-    payloadType: 111,
-    sequenceNumber: 7,
-    timestamp: 320,
-    ssrc: 77,
-  }), body));
+  const copies = Math.max(1, Number(packets) || 1);
+  for (let i = 0; i < copies; i += 1) {
+    track.writeRtp(new RtpPacket(new RtpHeader({
+      payloadType: 111,
+      sequenceNumber: 7 + i,
+      timestamp: 320 + i * 160,
+      ssrc: 77,
+    }), body));
+  }
   const result = await next();
   const deadline = Date.now() + 1500;
   while (Date.now() < deadline && left.connectionState !== "connected") {
@@ -180,7 +228,9 @@ async function twoProcessMedia({ payload = Buffer.from("buzzard-pcm-frame"), rec
     srtp: heard,
     secure: parentConnected && peerConnected && heard,
     payload: result ? result.payload : null,
-    packets: heard ? 1 : 0,
+    packets: Number(result?.packets || 0),
+    sent: copies,
+    loss: Math.max(0, copies - Number(result?.packets || 0)),
     network: "LOOPBACK",
     internet: false,
     turn: false,
@@ -209,14 +259,28 @@ function peerChild() {
     send({ type: "answer", sdp: pc.localDescription });
     await waitConnected(pc);
     const heard = await new Promise((resolve) => {
-      const timer = setTimeout(() => resolve(null), 2500);
+      let count = 0;
+      let payloadText = null;
+      let quiet = null;
+      const stop = setTimeout(() => resolve({ payload: payloadText, count }), 2500);
       if (!remote || !remote.onReceiveRtp) return;
       remote.onReceiveRtp.subscribe((rtp) => {
-        clearTimeout(timer);
-        resolve(Buffer.from(rtp.payload).toString("utf8"));
+        count += 1;
+        payloadText = Buffer.from(rtp.payload).toString("utf8");
+        if (quiet) clearTimeout(quiet);
+        quiet = setTimeout(() => {
+          clearTimeout(stop);
+          resolve({ payload: payloadText, count });
+        }, 300);
       });
     });
-    send({ type: "result", payload: heard, connection: pc.connectionState, ice: pc.iceConnectionState });
+    send({
+      type: "result",
+      payload: heard.payload,
+      packets: heard.count,
+      connection: pc.connectionState,
+      ice: pc.iceConnectionState,
+    });
     pc.close();
     socket.end();
     setTimeout(() => process.exit(0), 50);
@@ -225,4 +289,4 @@ function peerChild() {
 
 if (process.env.BUZZARD_RTC_PEER === "B") peerChild();
 
-module.exports = { loopbackMedia, twoProcessMedia };
+module.exports = { loopbackMedia, twoProcessMedia, gatherCandidates };

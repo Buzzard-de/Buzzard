@@ -3,7 +3,22 @@
  * This is not a scanned body and not a photoreal digital human.
  */
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 const { getAgent } = require("../buzzardNative/core/identityRegistry");
+
+const POSES = Object.freeze(["idle", "listening", "thinking", "speaking"]);
+
+function readGltf(file) {
+  try {
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+    const meshes = Array.isArray(data.meshes) ? data.meshes.length : 0;
+    if (!data.asset?.version || meshes < 1) return { ok: false };
+    return { ok: true, version: data.asset.version, meshes, file: path.basename(file) };
+  } catch {
+    return { ok: false };
+  }
+}
 
 const INDEX = Object.freeze([
   0, 1, 2,
@@ -75,11 +90,12 @@ function deform(rest, frame) {
   });
 }
 
-function presentSpeaker({ agentId, wav } = {}) {
+function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = {}) {
   if (!agentId) {
-    return { ok: false, code: "AGENT_REQUIRED", mesh: "NOT_CONFIGURED", is3d: false, photoreal: false, scannedBody: false, css: false };
+    return { ok: false, code: "AGENT_REQUIRED", mesh: "NOT_CONFIGURED", is3d: false, photoreal: false, scannedBody: false, css: false, assetStatus: "BLOCKED_ASSET" };
   }
-  const frames = mouthTrack(wav);
+  const pose = POSES.includes(state) ? state : "speaking";
+  const frames = pose === "speaking" ? mouthTrack(wav) : [{ index: 0, jaw: 0, mouth: 0 }];
   if (frames.length) frames.push({ index: frames.length, jaw: 0, mouth: 0, ended: true });
   const rest = restMesh(agentId);
   const peak = frames.reduce((best, frame) => (frame.jaw > best.jaw ? frame : best), { jaw: 0, mouth: 0, index: 0 });
@@ -88,28 +104,35 @@ function presentSpeaker({ agentId, wav } = {}) {
   const moved = open[7][1] !== closed[7][1];
   const meshName = `council-head-${agentId}`;
   const registry = getAgent(agentId);
-  const realModel = registry?.avatar_profile?.is3d === true;
+  const assetFile = gltfPath || path.join(process.cwd(), "data", "models", "avatars", `${agentId}.gltf`);
+  const loaded = fs.existsSync(assetFile) ? readGltf(assetFile) : { ok: false };
   const ended = frames.length > 0 && frames[frames.length - 1].jaw === 0;
+  const speakingNow = false;
   return {
-    ok: frames.length > 1 && moved && ended,
+    ok: pose === "speaking" ? frames.length > 1 && moved && ended : ended,
     agentId,
+    state: pose,
     avatarId: registry?.avatar_profile?.avatar_profile_id || null,
     voiceProfileId: registry?.voice_profile?.voice_profile_id || null,
-    mesh: moved ? meshName : "NOT_CONFIGURED",
-    realModel,
+    mesh: pose === "speaking" && !moved ? "NOT_CONFIGURED" : meshName,
+    realModel: false,
+    realCharacter: false,
     avatarComplete: false,
+    assetStatus: loaded.ok ? "PARTIAL" : "BLOCKED_ASSET",
+    gltf: loaded.ok ? loaded.file : null,
+    previewMesh: true,
     vertices: rest.length,
     triangles: INDEX.length / 3,
     indices: INDEX.length,
     morphTargets: ["jaw", "mouth"],
-    is3d: moved,
+    is3d: loaded.ok === true,
     authored: true,
     scannedBody: false,
     css: false,
     digitalHuman: false,
     photoreal: false,
-    lipSync: moved,
-    speaking: false,
+    lipSync: pose === "speaking" && moved,
+    speaking: speakingNow,
     stopped: ended,
     peakJaw: peak.jaw,
     rest: closed[7],
@@ -119,4 +142,4 @@ function presentSpeaker({ agentId, wav } = {}) {
   };
 }
 
-module.exports = { presentSpeaker, restMesh, INDEX };
+module.exports = { presentSpeaker, restMesh, readGltf, INDEX, POSES };

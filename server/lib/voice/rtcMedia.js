@@ -289,4 +289,34 @@ function peerChild() {
 
 if (process.env.BUZZARD_RTC_PEER === "B") peerChild();
 
-module.exports = { loopbackMedia, twoProcessMedia, gatherCandidates };
+function commandExists(name) {
+  const { spawnSync } = require("child_process");
+  const ran = spawnSync("which", [name], { encoding: "utf8" });
+  return ran.status === 0 && Boolean(String(ran.stdout || "").trim());
+}
+
+function internetCallStatus() {
+  const turnInstalled = commandExists("turnserver");
+  return {
+    status: "BLOCKED_EXTERNAL",
+    verified: false,
+    internet: false,
+    media: false,
+    dtls: false,
+    srtp: false,
+    secure: false,
+    turnInstalled,
+    coturnPackage: "coturn",
+    coturnInstall: [
+      "apt-get install coturn",
+      "listen on an address the two peers can reach",
+      "set a long-term credential",
+      "do not open an unauthenticated public relay",
+    ],
+    reason: "TWO_SEPARATE_INTERNET_ENDPOINTS_REQUIRED",
+    paidTurn: false,
+    carrier: false,
+  };
+}
+
+module.exports = { loopbackMedia, twoProcessMedia, gatherCandidates, internetCallStatus };

@@ -14,10 +14,31 @@ function readGltf(file) {
     const data = JSON.parse(fs.readFileSync(file, "utf8"));
     const meshes = Array.isArray(data.meshes) ? data.meshes.length : 0;
     if (!data.asset?.version || meshes < 1) return { ok: false };
-    return { ok: true, version: data.asset.version, meshes, file: path.basename(file) };
+    return { ok: true, version: data.asset.version, meshes, file: path.basename(file), format: "gltf" };
   } catch {
     return { ok: false };
   }
+}
+
+function readGlb(file) {
+  try {
+    const buf = fs.readFileSync(file);
+    if (buf.length < 20 || buf.toString("utf8", 0, 4) !== "glTF") return { ok: false };
+    const version = buf.readUInt32LE(4);
+    const jsonLength = buf.readUInt32LE(12);
+    if (buf.toString("utf8", 16, 20) !== "JSON" || 20 + jsonLength > buf.length) return { ok: false };
+    const data = JSON.parse(buf.subarray(20, 20 + jsonLength).toString("utf8"));
+    const meshes = Array.isArray(data.meshes) ? data.meshes.length : 0;
+    if (!version || meshes < 1) return { ok: false };
+    return { ok: true, version, meshes, file: path.basename(file), format: "glb" };
+  } catch {
+    return { ok: false };
+  }
+}
+
+function readCharacter(file) {
+  if (file.endsWith(".glb")) return readGlb(file);
+  return readGltf(file);
 }
 
 const INDEX = Object.freeze([
@@ -104,8 +125,9 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
   const moved = open[7][1] !== closed[7][1];
   const meshName = `council-head-${agentId}`;
   const registry = getAgent(agentId);
-  const assetFile = gltfPath || path.join(process.cwd(), "data", "models", "avatars", `${agentId}.gltf`);
-  const loaded = fs.existsSync(assetFile) ? readGltf(assetFile) : { ok: false };
+  const avatarDir = path.join(process.cwd(), "data", "models", "avatars");
+  const assetFile = gltfPath || [path.join(avatarDir, `${agentId}.glb`), path.join(avatarDir, `${agentId}.gltf`)].find((file) => fs.existsSync(file));
+  const loaded = assetFile && fs.existsSync(assetFile) ? readCharacter(assetFile) : { ok: false };
   const ended = frames.length > 0 && frames[frames.length - 1].jaw === 0;
   const speakingNow = false;
   return {
@@ -120,7 +142,10 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
     avatarComplete: false,
     assetStatus: loaded.ok ? "PARTIAL" : "BLOCKED_ASSET",
     gltf: loaded.ok ? loaded.file : null,
-    previewMesh: true,
+    previewMesh: loaded.ok !== true,
+    placeholder: loaded.ok !== true,
+    display: loaded.ok ? loaded.format : "NONE",
+    lipSyncTarget: "PREVIEW_MESH",
     vertices: rest.length,
     triangles: INDEX.length / 3,
     indices: INDEX.length,
@@ -142,4 +167,4 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
   };
 }
 
-module.exports = { presentSpeaker, restMesh, readGltf, INDEX, POSES };
+module.exports = { presentSpeaker, restMesh, readGltf, readGlb, readCharacter, INDEX, POSES };

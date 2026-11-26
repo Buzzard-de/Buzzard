@@ -46,7 +46,7 @@ const VOICES = Object.freeze({
 });
 
 const PROFILES = Object.freeze({
-  pusat: { file: TURKISH.file, speaker: TURKISH.speaker, dataset: "antalia" },
+  pusat: { file: null, speaker: null, dataset: null, personal: false },
   sinan_bey: { file: "de_DE-karlsson-low.onnx", speaker: "karlsson", dataset: "karlsson" },
   esat_bey: { file: "de_DE-pavoque-low.onnx", speaker: "pavoque", dataset: "pavoque" },
   dogu_bey: { file: "en_US-ryan-low.onnx", speaker: "ryan", dataset: "ryan" },
@@ -133,6 +133,14 @@ function languageFits(modelLang, lang) {
   return modelLang === lang || modelLang.startsWith(`${lang}-`) || modelLang.startsWith(`${lang}_`);
 }
 
+function personalVoicePath(agentId) {
+  return path.join(speechDir(), "members", `${agentId}.onnx`);
+}
+
+function personalVoiceStatus(agentId) {
+  return fs.existsSync(personalVoicePath(agentId)) ? "PARTIAL" : "BLOCKED_ASSET";
+}
+
 function voiceFor(agentId, lang = "tr") {
   if (!canUse(agentId, "speech")) {
     return { ok: false, code: "SPEECH_DENIED", agentId, speech: false };
@@ -141,6 +149,39 @@ function voiceFor(agentId, lang = "tr") {
   if (!profile) return { ok: false, code: "VOICE_PROFILE_MISSING", agentId, speech: true };
   const registry = getAgent(agentId)?.voice_profile || null;
   const officialFile = registry?.officialSinan ? registry.file : null;
+  const personalAsset = personalVoiceStatus(agentId);
+  if (!profile.file) {
+    return {
+      ok: true,
+      agentId,
+      voiceId: `${agentId}_personal_missing`,
+      registryVoiceId: registry?.voice_profile_id || null,
+      lang,
+      modelLang: null,
+      languageMatch: false,
+      turkishNatural: false,
+      commercialUse: false,
+      synthetic: false,
+      productVoice: false,
+      personalAsset,
+      personalFile: path.relative(process.cwd(), personalVoicePath(agentId)),
+      modelFile: null,
+      speaker: null,
+      dataset: null,
+      license: null,
+      source: null,
+      attribution: null,
+      lengthScale: 1,
+      noiseScale: 0.667,
+      scaleOnly: false,
+      speech: true,
+      cloneAuthorized: false,
+      officialReference: officialFile,
+      officialVoiceUsed: false,
+      referenceMixedIntoTts: false,
+      probe: "personal model file missing",
+    };
+  }
   const card = modelCard(profile.file);
   const known = voiceRecord(profile.file);
   return {
@@ -151,7 +192,9 @@ function voiceFor(agentId, lang = "tr") {
     lang,
     modelLang: card.lang,
     languageMatch: languageFits(card.lang, lang),
-    turkishNatural: languageFits(card.lang, "tr") && known.productVoice === true,
+    turkishNatural: false,
+    personalAsset,
+    personalFile: path.relative(process.cwd(), personalVoicePath(agentId)),
     commercialUse: known.commercialUse === true,
     synthetic: true,
     productVoice: known.productVoice === true,
@@ -198,6 +241,19 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     }
     : voiceFor(agentId, lang);
   if (!identity.ok) return { ...identity, naturalSpeech: false, audio: false };
+  if (!identity.modelFile && !modelFile && !(turkish && lang === "tr")) {
+    return {
+      ok: false,
+      code: "BLOCKED_ASSET",
+      personalAsset: identity.personalAsset || "BLOCKED_ASSET",
+      turkishNatural: false,
+      productVoice: false,
+      naturalSpeech: false,
+      audio: false,
+      paid: false,
+      agentId,
+    };
+  }
   const profileFile = identity.modelFile;
   let spoken = identity;
   let ownVoice = true;
@@ -228,8 +284,8 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
       attribution: TURKISH.attribution,
       speaker: TURKISH.speaker,
     };
-    ownVoice = profileFile === TURKISH.file;
-    sharedVoice = !ownVoice;
+    ownVoice = false;
+    sharedVoice = true;
   }
   const bin = piperBin();
   const model = path.join(speechDir(), modelFile || spoken.modelFile);
@@ -295,6 +351,7 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
     commercialUse: spoken.commercialUse === true,
     synthetic: spoken.synthetic === true,
     ownVoice: ownVoice,
+    personalAsset: identity.personalAsset || personalVoiceStatus(agentId),
     sharedVoice,
     attribution: spoken.attribution || null,
     license: spoken.license || voiceRecord(path.basename(model)).license,
@@ -366,12 +423,46 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   };
 }
 
+function councilAssets() {
+  const { ids, getAgent } = require("../buzzardNative/core/identityRegistry");
+  return ids().map((agentId) => {
+    const agent = getAgent(agentId);
+    const voiceFile = personalVoicePath(agentId);
+    const avatarDir = path.join(process.cwd(), "data", "models", "avatars");
+    const gltf = path.join(avatarDir, `${agentId}.gltf`);
+    const glb = path.join(avatarDir, `${agentId}.glb`);
+    const avatarPresent = fs.existsSync(gltf) || fs.existsSync(glb);
+    return {
+      agentId,
+      role: agent?.role || null,
+      speech: canUse(agentId, "speech"),
+      voiceSeedStatus: agent?.voice_profile?.status || null,
+      personalVoice: fs.existsSync(voiceFile) ? "PARTIAL" : "BLOCKED_ASSET",
+      personalVoiceFile: path.relative(process.cwd(), voiceFile),
+      productTurkish: TURKISH.file,
+      productLicense: TURKISH.license,
+      productIsPersonal: false,
+      turkishPersonal: false,
+      avatarSeedStatus: agent?.avatar_profile?.status || null,
+      avatarAsset: avatarPresent ? "PARTIAL" : "BLOCKED_ASSET",
+      avatarFile: avatarPresent ? path.relative(process.cwd(), fs.existsSync(glb) ? glb : gltf) : null,
+      is3d: false,
+      photoreal: false,
+      scannedBody: false,
+      officialReference: agent?.voice_profile?.officialSinan ? agent.voice_profile.file : null,
+      cloneAuthorized: false,
+      referenceMixedIntoTts: false,
+    };
+  });
+}
+
 module.exports = {
   VOICES,
   PROFILES,
   TURKISH,
   voiceRecord,
   voiceFor,
+  councilAssets,
   speakNatural,
   recognizeNatural,
   piperBin,

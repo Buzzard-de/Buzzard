@@ -2,6 +2,12 @@
  * Local SIP and RTP loopback. This does not place a carrier call.
  */
 const dgram = require("dgram");
+const { spawnSync } = require("child_process");
+
+function commandExists(name) {
+  const ran = spawnSync("which", [name], { encoding: "utf8" });
+  return ran.status === 0 && Boolean(String(ran.stdout || "").trim());
+}
 
 function isRtp(msg) {
   return Buffer.isBuffer(msg) && msg.length >= 12 && msg[0] === 0x80 && (msg[1] & 0x7f) === 0;
@@ -86,6 +92,9 @@ function localSipCall({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
           operatorCall: false,
           opensipsInstalled: false,
           asteriskInstalled: false,
+          freeswitchInstalled: commandExists("freeswitch"),
+          phoneLine: "BLOCKED_EXTERNAL",
+          operatorAccount: false,
           selfHostedCandidate: "freeswitch",
           network: "LOOPBACK",
           internet: false,

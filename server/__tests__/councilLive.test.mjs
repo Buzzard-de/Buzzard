@@ -8,9 +8,9 @@ const require = createRequire(import.meta.url);
 const { createOrchestrator, classifyRequest } = require("../lib/pusat/orchestrator.js");
 const { getOrchestrator, forget } = require("../lib/pusat/orchRuntime.js");
 const { openDurableFile } = require("../lib/pusat/durable.js");
-const { speakNatural, recognizeNatural, voiceFor, voiceRecord, PROFILES, TURKISH } = require("../lib/voice/naturalSpeech.js");
+const { speakNatural, recognizeNatural, voiceFor, voiceRecord, councilAssets, PROFILES, TURKISH } = require("../lib/voice/naturalSpeech.js");
 const { presentSpeaker } = require("../lib/voice/meshAvatar.js");
-const { loopbackMedia, twoProcessMedia, gatherCandidates } = require("../lib/voice/rtcMedia.js");
+const { loopbackMedia, twoProcessMedia, gatherCandidates, internetCallStatus } = require("../lib/voice/rtcMedia.js");
 const { localSipCall, isRtp } = require("../lib/voice/sipLocal.js");
 const { STRONG, rejectInventedClaim, groundedSentence, answerIsGrounded, guardUnknown } = require("../lib/buzzardNative/thinking/localLanguageModel.js");
 const fs = require("node:fs");
@@ -55,15 +55,19 @@ describe("council live speech and media", () => {
     expect(classifyRequest(priceHeard.transcript || "").domain || classifyRequest(priceHeard.transcript || "").code).toBeTruthy();
     const pusatVoice = voiceFor("pusat", "tr");
     const sinanVoice = voiceFor("sinan_bey", "tr");
-    expect(pusatVoice.modelLang).toBe("tr");
-    expect(pusatVoice.languageMatch).toBe(true);
     expect(sinanVoice.languageMatch).toBe(false);
-    expect(pusatVoice.license).toBe("CC-BY-4.0");
-    expect(pusatVoice.turkishNatural).toBe(true);
-    expect(pusatVoice.commercialUse).toBe(true);
-    expect(pusatVoice.synthetic).toBe(true);
+    expect(pusatVoice.personalAsset).toBe("BLOCKED_ASSET");
+    expect(pusatVoice.turkishNatural).toBe(false);
+    expect(pusatVoice.productVoice).toBe(false);
+    expect(pusatVoice.modelFile).toBeNull();
     expect(sinanVoice.turkishNatural).toBe(false);
     expect(sinanVoice.languageMatch).toBe(false);
+    const assets = councilAssets();
+    expect(assets).toHaveLength(17);
+    expect(assets.every((row) => row.personalVoice === "BLOCKED_ASSET" && row.avatarAsset === "BLOCKED_ASSET")).toBe(true);
+    expect(assets.every((row) => row.productIsPersonal === false && row.turkishPersonal === false && row.cloneAuthorized === false)).toBe(true);
+    expect(assets.find((row) => row.agentId === "sinan_bey").officialReference).toBe("public/council/sinan-bey-official-voice-v1.m4a");
+    expect(assets.filter((row) => row.speech)).toHaveLength(12);
     expect(voiceRecord("tr_TR-dfki-medium.onnx")).toMatchObject({
       license: "CC-BY-NC-SA-4.0",
       commercialUse: false,
@@ -73,6 +77,10 @@ describe("council live speech and media", () => {
     expect(shared.modelFile).toBe(TURKISH.file);
     expect(shared.turkishNatural).toBe(true);
     expect(shared.ownVoice).toBe(false);
+    expect(shared.personalAsset).toBe("BLOCKED_ASSET");
+    const pusatProduct = speakNatural({ text: "Pusat fiyat kaydını kontrol eder.", lang: "tr", agentId: "pusat", turkish: true });
+    expect(pusatProduct.ownVoice).toBe(false);
+    expect(pusatProduct.modelFile).toBe(TURKISH.file);
     expect(shared.sharedVoice).toBe(true);
     expect(shared.synthetic).toBe(true);
     expect(shared.officialVoiceUsed).toBe(false);
@@ -82,37 +90,56 @@ describe("council live speech and media", () => {
     expect(speakNatural({ text: "Deneme.", lang: "tr", agentId: "pusat", modelFile: "missing-voice.onnx" }).code).toBe("NATURAL_SPEECH_NOT_CONFIGURED");
     const pusat = speakNatural({ text: "Pusat raporunu okur.", lang: "tr", agentId: "pusat" });
     const zeynep = speakNatural({ text: "Pusat raporunu okur.", lang: "tr", agentId: "zeynep_hanim" });
-    expect(pusat.voiceId).not.toBe(zeynep.voiceId);
-    expect(pusat.modelFile).not.toBe(zeynep.modelFile);
-    expect(pusat.scaleOnly).toBe(false);
-    expect(pusat.sha256).not.toBe(zeynep.sha256);
-    expect(new Set(Object.values(PROFILES).map((row) => row.file)).size).toBe(12);
+    expect(pusat.code).toBe("BLOCKED_ASSET");
+    expect(pusat.audio).toBe(false);
+    expect(zeynep.turkishNatural).toBe(false);
+    expect(zeynep.modelFile).not.toBe(TURKISH.file);
+    expect(new Set(Object.values(PROFILES).map((row) => row.file).filter(Boolean)).size).toBe(11);
+    expect(Object.values(PROFILES).some((row) => row.file === TURKISH.file)).toBe(false);
     const sinan = voiceFor("sinan_bey");
     expect(sinan.officialReference).toBe("public/council/sinan-bey-official-voice-v1.m4a");
     expect(sinan.officialVoiceUsed).toBe(false);
     expect(sinan.referenceMixedIntoTts).toBe(false);
     expect(sinan.modelFile.endsWith(".onnx")).toBe(true);
     expect(voiceFor("stock_ai").speech).toBe(false);
-    const face = presentSpeaker({ agentId: "pusat", wav: pusat.wav });
+    const face = presentSpeaker({ agentId: "pusat", wav: zeynep.wav });
     const quiet = presentSpeaker({ agentId: "pusat", wav: Buffer.alloc(44) });
     expect(face.is3d).toBe(false);
     expect(face.assetStatus).toBe("BLOCKED_ASSET");
     expect(face.realCharacter).toBe(false);
     expect(face.previewMesh).toBe(true);
+    expect(face.placeholder).toBe(true);
+    expect(face.display).toBe("NONE");
     expect(face.state).toBe("speaking");
-    const idle = presentSpeaker({ agentId: "pusat", wav: pusat.wav, state: "idle" });
+    const idle = presentSpeaker({ agentId: "pusat", wav: zeynep.wav, state: "idle" });
     expect(idle.state).toBe("idle");
     expect(idle.lipSync).toBe(false);
     expect(idle.peakJaw).toBe(0);
     expect(idle.stopped).toBe(true);
     const gltf = path.join(os.tmpdir(), `buzzard-head-${process.pid}.gltf`);
     fs.writeFileSync(gltf, JSON.stringify({ asset: { version: "2.0" }, meshes: [{ name: "preview", primitives: [] }] }));
-    const loaded = presentSpeaker({ agentId: "pusat", wav: pusat.wav, gltfPath: gltf });
+    const loaded = presentSpeaker({ agentId: "pusat", wav: zeynep.wav, gltfPath: gltf });
     expect(loaded.is3d).toBe(true);
     expect(loaded.assetStatus).toBe("PARTIAL");
     expect(loaded.realCharacter).toBe(false);
     expect(loaded.photoreal).toBe(false);
+    expect(loaded.display).toBe("gltf");
     fs.unlinkSync(gltf);
+    const glb = path.join(os.tmpdir(), `buzzard-head-${process.pid}.glb`);
+    const json = Buffer.from(JSON.stringify({ asset: { version: "2.0" }, meshes: [{ name: "preview", primitives: [] }] }));
+    const header = Buffer.alloc(20);
+    header.write("glTF", 0, "utf8");
+    header.writeUInt32LE(2, 4);
+    header.writeUInt32LE(20 + json.length, 8);
+    header.writeUInt32LE(json.length, 12);
+    header.write("JSON", 16, "utf8");
+    fs.writeFileSync(glb, Buffer.concat([header, json]));
+    const binary = presentSpeaker({ agentId: "zeynep_hanim", wav: zeynep.wav, gltfPath: glb });
+    expect(binary.is3d).toBe(true);
+    expect(binary.display).toBe("glb");
+    expect(binary.realCharacter).toBe(false);
+    expect(binary.placeholder).toBe(false);
+    fs.unlinkSync(glb);
     expect(face.digitalHuman).toBe(false);
     expect(face.scannedBody).toBe(false);
     expect(face.css).toBe(false);
@@ -171,6 +198,16 @@ describe("council live speech and media", () => {
     expect(stun.secure).toBe(false);
     expect(stun.media).toBe(false);
     expect(["STUN_PROBE", "STUN_UNREACHABLE"]).toContain(stun.code);
+    expect(stun.internet).toBe(false);
+    const internet = internetCallStatus();
+    expect(internet).toMatchObject({
+      status: "BLOCKED_EXTERNAL",
+      verified: false,
+      internet: false,
+      secure: false,
+      turnInstalled: false,
+      paidTurn: false,
+    });
     const call = await localSipCall();
     expect(call).toMatchObject({
       ok: true,
@@ -188,6 +225,9 @@ describe("council live speech and media", () => {
       carrierOutbound: false,
       operatorCall: false,
       localLab: true,
+      phoneLine: "BLOCKED_EXTERNAL",
+      operatorAccount: false,
+      freeswitchInstalled: false,
       placedOnCarrier: false,
       network: "LOOPBACK",
       internet: false,
@@ -234,8 +274,9 @@ describe("council live speech and media", () => {
     expect(voiced).toHaveLength(12);
     expect(new Set(voiced.map((clip) => clip.voiceId)).size).toBe(12);
     expect(voiced.every((clip) => clip.naturalSpeech && clip.lipSync && clip.is3d === false && clip.assetStatus === "BLOCKED_ASSET" && clip.css === false)).toBe(true);
-    expect(voiced.every((clip) => clip.turkishNatural && clip.voiceModel === TURKISH.file)).toBe(true);
-    expect(voiced.filter((clip) => clip.ownVoice).map((clip) => clip.agentId)).toEqual(["pusat"]);
+    expect(voiced.every((clip) => clip.voiceModel === TURKISH.file && clip.ownVoice === false && clip.personalAsset === "BLOCKED_ASSET")).toBe(true);
+    expect(session.assets).toHaveLength(17);
+    expect(session.assets.every((row) => row.personalVoice === "BLOCKED_ASSET" && row.productIsPersonal === false)).toBe(true);
     const modelSpeakers = reasoned.analysis.rows.filter((row) => row.modelAccepted && !silent.includes(row.agentId));
     expect(voiced.filter((clip) => clip.analysisSpoken).map((clip) => clip.agentId).sort()).toEqual(modelSpeakers.map((row) => row.agentId).sort());
     expect(voiced.every((clip) => clip.groundedSpoken)).toBe(true);

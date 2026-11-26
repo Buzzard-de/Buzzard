@@ -212,7 +212,12 @@ function createOrchestrator({ dbPath } = {}) {
     for (let i = 0; i < bounded; i += 1) {
       const leased = queue.lease({ workerId });
       if (!leased.ok) break;
-      executed.push(executeTask(leased.task));
+      try {
+        executed.push(executeTask(leased.task));
+      } catch (error) {
+        try { queue.fail(leased.task.id, { reason: "MEMBER_FAILED" }); } catch { /* the task is already closed */ }
+        executed.push({ taskId: leased.task.id, status: "FAILED", code: "MEMBER_FAILED" });
+      }
     }
     return { ok: true, executed, health: queue.health(), live: false, llmCouncil: false };
   }
@@ -531,7 +536,19 @@ function createOrchestrator({ dbPath } = {}) {
     };
   }
 
-  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null, speak = false, analysis = null, interruptAfter = null, speechFault = null } = {}) {
+  function meetingSummary(events) {
+    const opinions = events.filter((row) => row.kind === "opinion");
+    return {
+      source: "ENGINE",
+      members: opinions.length,
+      speechPermitted: opinions.filter((row) => row.payload?.speech === true).length,
+      faults: events.filter((row) => row.kind === "voice_error").length,
+      salesEnabled: isSalesEnabled(),
+      unverified: 0,
+    };
+  }
+
+  function holdCouncil({ topic = "kurmay", modelFile = null, llamaBin = null, speak = false, analysis = null, interruptAfter = null, speechFault = null, pause = false } = {}) {
     if (!dbPath || String(dbPath).endsWith(`${require("path").sep}buzzard.db`) || String(dbPath).endsWith("/buzzard.db")) {
       return { ok: false, code: "PRODUCTION_DB_LOCKED", digitalHuman: false, carrier: false, placedOnCarrier: false };
     }
@@ -642,8 +659,14 @@ function createOrchestrator({ dbPath } = {}) {
           order += 1;
           continue;
         }
-        const spoken = speakNatural({ text, lang: "tr", agentId: report.agentId, turkish: true });
-        const face = spoken.ok ? presentSpeaker({ agentId: report.agentId, wav: spoken.wav }) : null;
+        let spoken;
+        let face = null;
+        try {
+          spoken = speakNatural({ text, lang: "tr", agentId: report.agentId, turkish: true });
+          face = spoken.ok ? presentSpeaker({ agentId: report.agentId, wav: spoken.wav }) : null;
+        } catch (error) {
+          spoken = { ok: false, code: "MEMBER_FAILED" };
+        }
         const clip = {
           agentId: report.agentId,
           kind: report.kind,
@@ -670,6 +693,9 @@ function createOrchestrator({ dbPath } = {}) {
           css: false,
           is3d: face?.is3d === true,
           assetStatus: face?.assetStatus || "BLOCKED_ASSET",
+          onScreen: report.agentId,
+          displayedCharacter: face?.is3d === true,
+          avatarError: face?.avatarError || "AVATAR_FILE_MISSING",
           previewMesh: face?.previewMesh === true,
           realCharacter: false,
           pose: face?.state || null,
@@ -692,11 +718,81 @@ function createOrchestrator({ dbPath } = {}) {
         }
       }
     }
+    const done = new Set(clips.filter((clip) => clip.order !== null && clip.order !== undefined).map((clip) => clip.agentId));
+    const remaining = staff.reports.filter((report) => canUse(report.agentId, "speech") && !done.has(report.agentId)).map((report) => report.agentId);
+    if (interrupted || pause) {
+      opened.store.addMeetingEvent({
+        meetingId: meeting.id,
+        kind: "pause",
+        speakerId: "pusat",
+        payload: { speak: speak === true, remaining, after: interruptAfter || null },
+      });
+      opened.store.pauseMeeting(meeting.id);
+      const stored = opened.store.getMeeting(meeting.id);
+      opened.db.close();
+      return {
+        ok: staff.ok === true && stored?.status === "PAUSED",
+        to: "suleyman_bey",
+        from: "pusat",
+        topic,
+        status: "PAUSED",
+        paused: true,
+        meetingId: meeting.id,
+        members: staff.members,
+        merged: staff.merged,
+        reports: staff.reports,
+        model: {
+          code: assist.code,
+          answer: assist.code === "LOCAL_MODEL" ? assist.answer : null,
+          actionsExecuted: false,
+          generalPurpose: false,
+        },
+        stockSpeech: staff.reports.some((row) => row.agentId === "stock_ai" && canUse("stock_ai", "speech")),
+        spoken: clips,
+        assets: require("../voice/naturalSpeech").councilAssets(),
+        catalog: require("../voice/turkishCatalog").turkishCatalog(),
+        interrupted,
+        simultaneousSpeech: false,
+        naturalSpeech: clips.some((clip) => clip.naturalSpeech === true),
+        generalStt: false,
+        digitalHuman: false,
+        photoreal: false,
+        mesh: "NOT_CONFIGURED",
+        carrier: false,
+        placedOnCarrier: false,
+        salesEnabled: isSalesEnabled(),
+        minutes: null,
+        live: false,
+        network: false,
+        saas: false,
+        paid: false,
+      };
+    }
+    const summary = meetingSummary(opened.store.getMeeting(meeting.id).events);
+    const decisions = staff.reports.map((report) => ({
+      agentId: report.agentId,
+      taskId: report.taskId,
+      status: report.status,
+      kind: report.kind,
+      source: "ENGINE",
+      unverified: false,
+    }));
+    opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "summary", speakerId: "pusat", payload: summary });
+    opened.store.addMeetingEvent({ meetingId: meeting.id, kind: "decision", speakerId: "pusat", payload: { decisions, salesEnabled: isSalesEnabled() } });
+    opened.store.addMeetingEvent({
+      meetingId: meeting.id,
+      kind: "assignment",
+      speakerId: "pusat",
+      payload: { tasks: decisions.map((row) => ({ taskId: row.taskId, agentId: row.agentId, kind: row.kind })) },
+    });
     const closed = opened.store.closeMeeting(meeting.id);
     const stored = opened.store.getMeeting(meeting.id);
     opened.db.close();
     return {
       ok: staff.ok === true && stored?.status === "CLOSED",
+      status: stored?.status || "CLOSED",
+      summary,
+      decisions,
       to: "suleyman_bey",
       from: "pusat",
       topic,
@@ -713,7 +809,9 @@ function createOrchestrator({ dbPath } = {}) {
       stockSpeech: staff.reports.some((row) => row.agentId === "stock_ai" && canUse("stock_ai", "speech")),
       spoken: clips,
       assets: require("../voice/naturalSpeech").councilAssets(),
+      catalog: require("../voice/turkishCatalog").turkishCatalog(),
       interrupted,
+      simultaneousSpeech: false,
       naturalSpeech: clips.some((clip) => clip.naturalSpeech === true),
       generalStt: false,
       digitalHuman: clips.some((clip) => clip.digitalHuman === true),
@@ -726,6 +824,78 @@ function createOrchestrator({ dbPath } = {}) {
       live: false,
       network: false,
       saas: false,
+      paid: false,
+    };
+  }
+
+  function resumeCouncil(meetingId) {
+    const opened = openDurableFile(`${dbPath}.meetings`);
+    if (!opened.ok) return opened;
+    const stored = opened.store.getMeeting(meetingId);
+    if (!stored) {
+      opened.db.close();
+      return { ok: false, code: "NOT_FOUND" };
+    }
+    if (stored.status !== "PAUSED") {
+      opened.db.close();
+      return { ok: false, code: "NOT_PAUSED", status: stored.status };
+    }
+    const pauseEvent = [...stored.events].reverse().find((row) => row.kind === "pause");
+    const resumed = opened.store.resumeMeeting(meetingId);
+    if (!resumed.ok) {
+      opened.db.close();
+      return resumed;
+    }
+    const clips = [];
+    const remaining = Array.isArray(pauseEvent?.payload?.remaining) ? pauseEvent.payload.remaining : [];
+    if (pauseEvent?.payload?.speak === true) {
+      const { speakNatural } = require("../voice/naturalSpeech");
+      const { presentSpeaker } = require("../voice/meshAvatar");
+      let order = stored.events.filter((row) => row.kind === "voice" || row.kind === "voice_error").length;
+      for (const agentId of remaining) {
+        if (!canUse(agentId, "speech")) continue;
+        const verdict = stored.events.find((row) => row.kind === "verdict" && row.speakerId === agentId);
+        const text = verdict?.payload?.answer || `${agentId} kaydi suruyor.`;
+        let spoken;
+        let face = null;
+        try {
+          spoken = speakNatural({ text, lang: "tr", agentId, turkish: true });
+          face = spoken.ok ? presentSpeaker({ agentId, wav: spoken.wav }) : null;
+        } catch (error) {
+          spoken = { ok: false, code: "MEMBER_FAILED" };
+        }
+        const clip = {
+          agentId,
+          order,
+          audio: spoken.ok === true,
+          error: spoken.ok ? null : spoken.code || "TTS_FAILED",
+          onScreen: agentId,
+          displayedCharacter: face?.is3d === true,
+          avatarError: face?.avatarError || "AVATAR_FILE_MISSING",
+          ownVoice: false,
+          personalAsset: spoken.personalAsset || "BLOCKED_ASSET",
+        };
+        clips.push(clip);
+        opened.store.addMeetingEvent({ meetingId, kind: spoken.ok ? "voice" : "voice_error", speakerId: agentId, payload: clip });
+        order += 1;
+      }
+    }
+    const events = opened.store.getMeeting(meetingId).events;
+    const summary = meetingSummary(events);
+    opened.store.addMeetingEvent({ meetingId, kind: "summary", speakerId: "pusat", payload: summary });
+    opened.store.addMeetingEvent({ meetingId, kind: "decision", speakerId: "pusat", payload: { resumed: true, salesEnabled: isSalesEnabled(), source: "ENGINE" } });
+    const closed = opened.store.closeMeeting(meetingId);
+    const finalStored = opened.store.getMeeting(meetingId);
+    opened.db.close();
+    return {
+      ok: finalStored?.status === "CLOSED",
+      status: finalStored?.status || null,
+      meetingId,
+      summary,
+      spoken: clips,
+      minutes: closed.minutes,
+      simultaneousSpeech: false,
+      salesEnabled: isSalesEnabled(),
       paid: false,
     };
   }
@@ -812,6 +982,7 @@ function createOrchestrator({ dbPath } = {}) {
     routeStaff,
     handleRequest,
     holdCouncil,
+    resumeCouncil,
     reviewMeeting,
     convene,
     reasonMembers,

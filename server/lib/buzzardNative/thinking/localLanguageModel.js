@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync } = require("child_process");
+const { withHeavyProcess, withHeavyProcessAsync } = require("./localProcessLock");
 
 const MODEL = Object.freeze({
   name: "Qwen2.5-1.5B-Instruct",
@@ -72,6 +73,10 @@ function findRunner(bin = null) {
 }
 
 function spawnCollected(command, args, timeoutMs) {
+  return withHeavyProcess(() => spawnCollectedUnlocked(command, args, timeoutMs));
+}
+
+function spawnCollectedUnlocked(command, args, timeoutMs) {
   const ran = spawnSync(command, args, { timeout: timeoutMs, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   if (ran.error) {
     const reason = ran.error.code === "ETIMEDOUT" ? "TIMEOUT" : String(ran.error.message || ran.error);
@@ -87,6 +92,10 @@ function spawnCollected(command, args, timeoutMs) {
 }
 
 function spawnCollectedAsync(command, args, timeoutMs) {
+  return withHeavyProcessAsync(() => spawnCollectedAsyncUnlocked(command, args, timeoutMs));
+}
+
+function spawnCollectedAsyncUnlocked(command, args, timeoutMs) {
   return new Promise((resolve) => {
     let settled = false;
     const finish = (row) => {
@@ -186,7 +195,8 @@ function inferLanguage({ modelFile, prompt, bin = null, timeoutMs = 30000, predi
   if (!runner) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "RUNNER_MISSING" };
   const question = String(prompt || "").replace(/^(genel muhakeme|serbest yorum|open reasoning)\s*[:\-]?\s*/i, "").trim();
   if (!question) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_PROMPT" };
-  const ran = spawnCollected(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
+  let ran = spawnCollected(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
+  if (ran.reason === "TIMEOUT") ran = spawnCollected(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
   return settleInference(base, located, ran, question, accept);
 }
 
@@ -211,7 +221,9 @@ async function inferLanguageAsync({ modelFile, prompt, bin = null, timeoutMs = 3
   if (!runner) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "RUNNER_MISSING" };
   const question = String(prompt || "").replace(/^(genel muhakeme|serbest yorum|open reasoning)\s*[:\-]?\s*/i, "").trim();
   if (!question) return { ...base, ok: false, code: "MODEL_UNAVAILABLE", filePresent: true, reason: "EMPTY_PROMPT" };
-  const ran = await spawnCollectedAsync(runner, llamaArgs({ located, system, question, predict, context }), timeoutMs);
+  const args = llamaArgs({ located, system, question, predict, context });
+  let ran = await spawnCollectedAsync(runner, args, timeoutMs);
+  if (ran.reason === "TIMEOUT") ran = await spawnCollectedAsync(runner, args, timeoutMs);
   return settleInference(base, located, ran, question, accept);
 }
 

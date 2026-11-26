@@ -319,4 +319,68 @@ function internetCallStatus() {
   };
 }
 
-module.exports = { loopbackMedia, twoProcessMedia, gatherCandidates, internetCallStatus };
+async function localTurnProbe() {
+  const fs = require("fs");
+  const os = require("os");
+  const path = require("path");
+  const { spawn } = require("child_process");
+  if (!commandExists("turnserver")) {
+    return { status: "BLOCKED_EXTERNAL", installed: false, internet: false, verified: false, localTurn: false, reason: "COTURN_NOT_INSTALLED", paidTurn: false };
+  }
+  const port = 34000 + (process.pid % 1000);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-turn-"));
+  const conf = path.join(dir, "turnserver.conf");
+  fs.writeFileSync(conf, [
+    `listening-port=${port}`,
+    "listening-ip=127.0.0.1",
+    "relay-ip=127.0.0.1",
+    "fingerprint",
+    "lt-cred-mech",
+    "user=buzzard:labsecret",
+    "realm=buzzard.local",
+    "no-multicast-peers",
+    "no-cli",
+    "no-tls",
+    "no-dtls",
+    "simple-log",
+    `log-file=${path.join(dir, "turn.log")}`,
+  ].join("\n"));
+  const child = spawn("turnserver", ["-c", conf], { stdio: "ignore" });
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  let relay = false;
+  let host = false;
+  try {
+    const pc = new RTCPeerConnection({
+      iceServers: [{ urls: `turn:127.0.0.1:${port}?transport=udp`, username: "buzzard", credential: "labsecret" }],
+    });
+    pc.addTrack(new MediaStreamTrack({ kind: "audio" }));
+    await pc.setLocalDescription(await pc.createOffer());
+    await Promise.race([
+      waitGather(pc),
+      new Promise((resolve) => setTimeout(resolve, 2500)),
+    ]);
+    const sdp = pc.localDescription?.sdp || "";
+    relay = /typ relay/.test(sdp);
+    host = /typ host/.test(sdp);
+    pc.close();
+  } catch {
+    relay = false;
+  } finally {
+    try { child.kill("SIGTERM"); } catch { /* already exited */ }
+  }
+  return {
+    status: relay ? "PARTIAL" : "BLOCKED_EXTERNAL",
+    installed: true,
+    localTurn: relay,
+    relayCandidate: relay,
+    hostCandidate: host,
+    internet: false,
+    verified: false,
+    secure: false,
+    reason: relay ? "LOCAL_TURN_ONLY" : "NO_RELAY_CANDIDATE",
+    paidTurn: false,
+    carrier: false,
+  };
+}
+
+module.exports = { loopbackMedia, twoProcessMedia, gatherCandidates, internetCallStatus, localTurnProbe };

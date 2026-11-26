@@ -7,6 +7,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { withHeavyProcess } = require("../buzzardNative/thinking/localProcessLock");
 const { canUse } = require("../buzzardNative/core/capabilityRegistry");
 const { getAgent } = require("../buzzardNative/core/identityRegistry");
 
@@ -302,7 +303,7 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
   }
   const prepared = lang === "tr" ? prepareTurkish(text) : { text: String(text || ""), original: String(text || ""), normalized: false };
   const out = path.join(os.tmpdir(), `buzzard-${crypto.randomBytes(4).toString("hex")}.wav`);
-  const ran = python
+  const ran = withHeavyProcess(() => (python
     ? spawnSync("python3", [
       "-m", "piper",
       "-m", model,
@@ -326,7 +327,7 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
       encoding: "utf8",
       timeout: 20000,
       env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
-    });
+    })));
   if (ran.status !== 0 || !fs.existsSync(out)) {
     return { ok: false, code: "TTS_FAILED", naturalSpeech: false, audio: false, paid: false };
   }
@@ -380,7 +381,7 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   }
   const file = path.join(os.tmpdir(), `buzzard-hear-${crypto.randomBytes(4).toString("hex")}.wav`);
   fs.writeFileSync(file, wav);
-  const ran = spawnSync(bin, [
+  const ran = withHeavyProcess(() => spawnSync(bin, [
     "-m", model,
     "-f", file,
     "-l", lang,
@@ -391,7 +392,7 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
     encoding: "utf8",
     timeout: 60000,
     env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
-  });
+  }));
   fs.unlinkSync(file);
   const transcript = String(ran.stdout || "")
     .split(/\r?\n/)
@@ -452,6 +453,7 @@ function councilAssets() {
       officialReference: agent?.voice_profile?.officialSinan ? agent.voice_profile.file : null,
       cloneAuthorized: false,
       referenceMixedIntoTts: false,
+      catalogVoice: false,
     };
   });
 }

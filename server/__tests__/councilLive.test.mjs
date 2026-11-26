@@ -205,9 +205,9 @@ describe("council live speech and media", () => {
       verified: false,
       internet: false,
       secure: false,
-      turnInstalled: false,
       paidTurn: false,
     });
+    expect(typeof internet.turnInstalled).toBe("boolean");
     const call = await localSipCall();
     expect(call).toMatchObject({
       ok: true,
@@ -219,7 +219,7 @@ describe("council live speech and media", () => {
       secure: false,
       tls: false,
       mediaSecurity: "NONE",
-      turnInstalled: false,
+      turnUsed: false,
       carrier: false,
       carrierInbound: false,
       carrierOutbound: false,

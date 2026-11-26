@@ -127,7 +127,9 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
   const registry = getAgent(agentId);
   const avatarDir = path.join(process.cwd(), "data", "models", "avatars");
   const assetFile = gltfPath || [path.join(avatarDir, `${agentId}.glb`), path.join(avatarDir, `${agentId}.gltf`)].find((file) => fs.existsSync(file));
-  const loaded = assetFile && fs.existsSync(assetFile) ? readCharacter(assetFile) : { ok: false };
+  const requestedMissing = Boolean(gltfPath) && !fs.existsSync(gltfPath);
+  const loaded = !requestedMissing && assetFile && fs.existsSync(assetFile) ? readCharacter(assetFile) : { ok: false };
+  const avatarError = requestedMissing || (assetFile && !loaded.ok) ? "AVATAR_LOAD_FAILED" : (loaded.ok ? null : "AVATAR_FILE_MISSING");
   const ended = frames.length > 0 && frames[frames.length - 1].jaw === 0;
   const speakingNow = false;
   return {
@@ -141,6 +143,7 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
     realCharacter: false,
     avatarComplete: false,
     assetStatus: loaded.ok ? "PARTIAL" : "BLOCKED_ASSET",
+    avatarError,
     gltf: loaded.ok ? loaded.file : null,
     previewMesh: loaded.ok !== true,
     placeholder: loaded.ok !== true,

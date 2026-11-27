@@ -38,4 +38,6 @@ Yerel WebRTC oturumunda `dtls` yalnızca iki tarafın bağlantı durumu `connect
 
 27 Kasım 2026 devamı: coturn bu makinede kurulu ve yerel relay adayı alındı. Bu internet görüşmesi değildir. Düz SIP laboratuvarı RTP olarak durur. Ayrı bir laboratuvar çağrısı RFC 3711 AES-CM ve HMAC-SHA1-80 ile SRTP şifreler, doğru paketi çözer ve bozulmuş paketi reddeder. Anahtar laboratuvar vektörüdür. Sinyalleşme TLS değildir. Operatör hattı ve FreeSWITCH yoktur.
 
+27 Kasım 2026 ikinci devam: düz SIP çağrısı ve SRTP laboratuvarı aynı kaldı. Ayrı bir yerel çağrı sinyali TLS üzerinden taşır. Sertifika geçici ve kendinden imzalıdır. Sertifikasız istemci reddedilir. Bu operatör hattı değildir ve medya SRTP sayılmaz.
+
 Avatar önizlemesi ses genliğine bağlı authored mesh’tir ve gerçek karakter değildir. Üye `.gltf` veya `.glb` dosyası `data/models/avatars/` altında yoksa durum `BLOCKED_ASSET`. Yüklenen dosya da fotogerçekçi yüz veya taranmış beden sayılmaz. İnternet WebRTC görüşmesi iki ayrı uç gerektirir. coturn paketi kurulu değilse durum `BLOCKED_EXTERNAL` kalır. SIP laboratuvarı operatör hattı değildir.

@@ -346,4 +346,157 @@ function localSipSrtp({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) 
   });
 }
 
-module.exports = { localSipCall, localSipBusy, localSipInbound, localSipSrtp, phoneStackStatus, isRtp };
+function readSip(buffer, chunk) {
+  const next = buffer + chunk.toString("utf8");
+  const messages = [];
+  let rest = next;
+  let split = rest.indexOf("\r\n\r\n");
+  while (split >= 0) {
+    messages.push(rest.slice(0, split));
+    rest = rest.slice(split + 4);
+    split = rest.indexOf("\r\n\r\n");
+  }
+  return { messages, rest };
+}
+
+function localSipTls() {
+  const os = require("os");
+  const tls = require("tls");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "buzzard-sip-tls-"));
+  const keyPath = path.join(dir, "key.pem");
+  const certPath = path.join(dir, "cert.pem");
+  const made = spawnSync("openssl", [
+    "req", "-x509", "-newkey", "ec",
+    "-pkeyopt", "ec_paramgen_curve:prime256v1",
+    "-keyout", keyPath,
+    "-out", certPath,
+    "-days", "1",
+    "-nodes",
+    "-subj", "/CN=buzzard-lab.local",
+  ], { encoding: "utf8", timeout: 5000 });
+  if (made.status !== 0 || !fs.existsSync(certPath)) {
+    return Promise.resolve(labResult({
+      ok: false,
+      code: "TLS_CERT_FAILED",
+      tls: false,
+      transport: "TLS",
+      media: "NONE",
+      rtp: false,
+      srtp: false,
+    }));
+  }
+  const key = fs.readFileSync(keyPath);
+  const cert = fs.readFileSync(certPath);
+  return new Promise((resolve) => {
+    let settled = false;
+    let server = null;
+    let client = null;
+    const seen = { invite: false, ok: false, ack: false, bye: false, byeOk: false, unauthorizedRejected: false };
+    const finish = (row) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try { client?.destroy(); } catch { /* already closed */ }
+      try { server?.close(); } catch { /* already closed */ }
+      resolve(row);
+    };
+    const timer = setTimeout(() => finish(labResult({
+      ok: false,
+      code: "SIP_TIMEOUT",
+      tls: false,
+      transport: "TLS",
+      media: "NONE",
+      rtp: false,
+      srtp: false,
+    })), 4000);
+    server = tls.createServer({ key, cert }, (socket) => {
+      let buf = "";
+      socket.on("data", (chunk) => {
+        const parsed = readSip(buf, chunk);
+        buf = parsed.rest;
+        for (const msg of parsed.messages) {
+          if (msg.startsWith("INVITE")) {
+            seen.invite = true;
+            socket.write("SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\n\r\n");
+          } else if (msg.startsWith("ACK")) {
+            seen.ack = true;
+          } else if (msg.startsWith("BYE")) {
+            seen.bye = true;
+            socket.write("SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n");
+          }
+        }
+      });
+    });
+    server.listen(0, "127.0.0.1", () => {
+      const port = server.address().port;
+      const stranger = tls.connect({
+        host: "127.0.0.1",
+        port,
+        servername: "buzzard-lab.local",
+        rejectUnauthorized: true,
+      });
+      const strangerDone = (rejected) => {
+        seen.unauthorizedRejected = rejected;
+        try { stranger.destroy(); } catch { /* already closed */ }
+        startAuthorized();
+      };
+      stranger.once("secureConnect", () => strangerDone(stranger.authorized !== true));
+      stranger.once("error", () => strangerDone(true));
+      function startAuthorized() {
+        if (settled) return;
+        let buf = "";
+        client = tls.connect({
+          host: "127.0.0.1",
+          port,
+          ca: cert,
+          servername: "buzzard-lab.local",
+          rejectUnauthorized: true,
+        }, () => {
+          if (client.authorized !== true) {
+            finish(labResult({ ok: false, code: "SIP_TLS_UNAUTHORIZED", tls: false, transport: "TLS" }));
+            return;
+          }
+          client.write("INVITE sip:lab@127.0.0.1 SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\n\r\n");
+        });
+        client.on("data", (chunk) => {
+          const parsed = readSip(buf, chunk);
+          buf = parsed.rest;
+          for (const msg of parsed.messages) {
+            if (msg.includes("CSeq: 1 INVITE")) {
+              seen.ok = true;
+              client.write("ACK sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 ACK\r\n\r\n");
+              client.write("BYE sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n");
+            } else if (msg.includes("CSeq: 2 BYE")) {
+              seen.byeOk = true;
+              const dialog = client.authorized === true && seen.unauthorizedRejected && seen.invite && seen.ok && seen.ack && seen.bye && seen.byeOk;
+              finish(labResult({
+                ok: dialog,
+                code: dialog ? "SIP_TLS_LAB" : "SIP_TLS_INCOMPLETE",
+                tls: client.authorized === true,
+                authorized: client.authorized === true,
+                unauthorizedRejected: seen.unauthorizedRejected,
+                transport: "TLS",
+                certificate: "EPHEMERAL_SELF_SIGNED",
+                protocol: "SIP/2.0",
+                signalingSecurity: client.authorized === true ? "TLS" : "NONE",
+                media: "NONE",
+                rtp: false,
+                srtp: false,
+                secure: false,
+                carrier: false,
+                phoneLine: "BLOCKED_EXTERNAL",
+                operatorAccount: false,
+                internet: false,
+                localLab: true,
+                paid: false,
+              }));
+            }
+          }
+        });
+        client.on("error", () => finish(labResult({ ok: false, code: "SIP_TLS_FAILED", tls: false, transport: "TLS" })));
+      }
+    });
+  });
+}
+
+module.exports = { localSipCall, localSipBusy, localSipInbound, localSipSrtp, localSipTls, phoneStackStatus, isRtp };

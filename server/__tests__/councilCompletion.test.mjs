@@ -9,7 +9,7 @@ const { createOrchestrator } = require("../lib/pusat/orchestrator.js");
 const { presentSpeaker } = require("../lib/voice/meshAvatar.js");
 const { recognizeNatural, councilAssets } = require("../lib/voice/naturalSpeech.js");
 const { localTurnProbe, internetCallStatus } = require("../lib/voice/rtcMedia.js");
-const { localSipBusy, localSipInbound, localSipSrtp, phoneStackStatus } = require("../lib/voice/sipLocal.js");
+const { localSipBusy, localSipInbound, localSipSrtp, localSipTls, phoneStackStatus } = require("../lib/voice/sipLocal.js");
 const { sessionFromMaster } = require("../lib/voice/srtpLab.js");
 const { speakCatalog, turkishCatalog } = require("../lib/voice/turkishCatalog.js");
 const { withHeavyProcess } = require("../lib/buzzardNative/thinking/localProcessLock.js");
@@ -124,6 +124,27 @@ describe("council completion", () => {
       phoneLine: "BLOCKED_EXTERNAL",
       internet: false,
       keyExchange: "LAB_MASTER",
+    });
+  });
+
+  it("carries a local SIP dialog over TLS without turning it into a carrier line", async () => {
+    const dialog = await localSipTls();
+    expect(dialog).toMatchObject({
+      ok: true,
+      code: "SIP_TLS_LAB",
+      tls: true,
+      authorized: true,
+      unauthorizedRejected: true,
+      transport: "TLS",
+      certificate: "EPHEMERAL_SELF_SIGNED",
+      signalingSecurity: "TLS",
+      media: "NONE",
+      rtp: false,
+      srtp: false,
+      secure: false,
+      carrier: false,
+      phoneLine: "BLOCKED_EXTERNAL",
+      internet: false,
     });
   });
 

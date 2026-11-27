@@ -9,7 +9,8 @@ const { createOrchestrator } = require("../lib/pusat/orchestrator.js");
 const { presentSpeaker } = require("../lib/voice/meshAvatar.js");
 const { recognizeNatural, councilAssets } = require("../lib/voice/naturalSpeech.js");
 const { localTurnProbe, internetCallStatus } = require("../lib/voice/rtcMedia.js");
-const { localSipBusy, localSipInbound, localSipSrtp, localSipTls, phoneStackStatus } = require("../lib/voice/sipLocal.js");
+const crypto = require("crypto");
+const { localSipBusy, localSipInbound, localSipSrtp, localSipTls, localSipRegister, phoneStackStatus } = require("../lib/voice/sipLocal.js");
 const { sessionFromMaster } = require("../lib/voice/srtpLab.js");
 const { speakCatalog, turkishCatalog } = require("../lib/voice/turkishCatalog.js");
 const { withHeavyProcess } = require("../lib/buzzardNative/thinking/localProcessLock.js");
@@ -146,6 +147,35 @@ describe("council completion", () => {
       phoneLine: "BLOCKED_EXTERNAL",
       internet: false,
     });
+  });
+
+  it("registers a local SIP endpoint after a digest challenge and rejects a bad password", async () => {
+    const row = await localSipRegister();
+    const md5 = (value) => crypto.createHash("md5").update(value).digest("hex");
+    const ha1 = md5("lab:buzzard.local:labsecret");
+    const ha2 = md5("REGISTER:sip:127.0.0.1");
+    expect(row).toMatchObject({
+      ok: true,
+      code: "SIP_REGISTER_LAB",
+      registered: true,
+      challenged: true,
+      wrongPasswordRejected: true,
+      replayRejected: true,
+      unknownNonceRejected: true,
+      algorithm: "MD5",
+      realm: "buzzard.local",
+      username: "lab",
+      media: "NONE",
+      rtp: false,
+      srtp: false,
+      tls: false,
+      secure: false,
+      carrier: false,
+      phoneLine: "BLOCKED_EXTERNAL",
+      operatorAccount: false,
+      internet: false,
+    });
+    expect(row.response).toBe(md5(`${ha1}:${row.nonce}:${ha2}`));
   });
 
   it("releases the heavy process lock after each local job", () => {

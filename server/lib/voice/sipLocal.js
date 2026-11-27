@@ -499,4 +499,166 @@ function localSipTls() {
   });
 }
 
-module.exports = { localSipCall, localSipBusy, localSipInbound, localSipSrtp, localSipTls, phoneStackStatus, isRtp };
+function md5Hex(value) {
+  return require("crypto").createHash("md5").update(value).digest("hex");
+}
+
+function sipDigestResponse({ username, realm, password, method, uri, nonce }) {
+  const ha1 = md5Hex(`${username}:${realm}:${password}`);
+  const ha2 = md5Hex(`${method}:${uri}`);
+  return md5Hex(`${ha1}:${nonce}:${ha2}`);
+}
+
+function localSipRegister() {
+  const crypto = require("crypto");
+  const realm = "buzzard.local";
+  const username = "lab";
+  const password = "labsecret";
+  const uri = "sip:127.0.0.1";
+  const issued = new Set();
+  const used = new Set();
+  return new Promise((resolve) => {
+    const client = dgram.createSocket("udp4");
+    const server = dgram.createSocket("udp4");
+    let settled = false;
+    const seen = {
+      challenged: false,
+      registered: false,
+      wrongPasswordRejected: false,
+      replayRejected: false,
+      unknownNonceRejected: false,
+    };
+    let accepted = null;
+    let lastAuth = "";
+    let step = "bare";
+    const finish = (row) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      for (const socket of [client, server]) {
+        try { socket.close(); } catch { /* already closed */ }
+      }
+      resolve(row);
+    };
+    const timer = setTimeout(() => finish(labResult({
+      ok: false,
+      code: "SIP_TIMEOUT",
+      registered: false,
+      media: "NONE",
+      rtp: false,
+      srtp: false,
+      tls: false,
+    })), 4000);
+    const reply = (text, rinfo) => server.send(text, rinfo.port, rinfo.address);
+    server.on("message", (msg, rinfo) => {
+      const text = msg.toString("utf8");
+      if (!text.startsWith("REGISTER")) return;
+      const response = text.match(/response="([0-9a-f]+)"/);
+      const nonceMatch = text.match(/nonce="([^"]+)"/);
+      if (!response) {
+        const nonce = crypto.randomBytes(8).toString("hex");
+        issued.add(nonce);
+        seen.challenged = true;
+        reply(`SIP/2.0 401 Unauthorized\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\nWWW-Authenticate: Digest realm="${realm}", nonce="${nonce}", algorithm=MD5\r\n\r\n`, rinfo);
+        return;
+      }
+      const nonce = nonceMatch ? nonceMatch[1] : "";
+      if (!issued.has(nonce)) {
+        seen.unknownNonceRejected = true;
+        reply("SIP/2.0 403 Forbidden\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\n\r\n", rinfo);
+        return;
+      }
+      if (used.has(nonce)) {
+        seen.replayRejected = true;
+        reply("SIP/2.0 403 Forbidden\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\n\r\n", rinfo);
+        return;
+      }
+      const expected = sipDigestResponse({ username, realm, password, method: "REGISTER", uri, nonce });
+      if (response[1] !== expected) {
+        seen.wrongPasswordRejected = true;
+        reply("SIP/2.0 403 Forbidden\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\n\r\n", rinfo);
+        return;
+      }
+      used.add(nonce);
+      seen.registered = true;
+      accepted = { nonce, response: response[1] };
+      reply("SIP/2.0 200 OK\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\n\r\n", rinfo);
+    });
+    const header = ({ nonce, response }) => `Authorization: Digest username="${username}", realm="${realm}", nonce="${nonce}", uri="${uri}", algorithm=MD5, response="${response}"`;
+    const register = (rinfo, authorization) => {
+      const lines = ["REGISTER " + uri + " SIP/2.0", "Call-ID: reg", "CSeq: 1 REGISTER"];
+      if (authorization) lines.push(authorization);
+      client.send(lines.join("\r\n") + "\r\n\r\n", rinfo.port, rinfo.address);
+    };
+    client.on("message", (msg, rinfo) => {
+      const text = msg.toString("utf8");
+      if (text.startsWith("SIP/2.0 401") && step === "bare") {
+        const nonce = text.match(/nonce="([^"]+)"/)?.[1];
+        if (!nonce) return;
+        const response = sipDigestResponse({ username, realm, password, method: "REGISTER", uri, nonce });
+        lastAuth = header({ nonce, response });
+        step = "good";
+        register(rinfo, lastAuth);
+      } else if (text.startsWith("SIP/2.0 200") && step === "good") {
+        step = "replay";
+        register(rinfo, lastAuth);
+      } else if (text.startsWith("SIP/2.0 403") && step === "replay") {
+        step = "bad-challenge";
+        register(rinfo);
+      } else if (text.startsWith("SIP/2.0 401") && step === "bad-challenge") {
+        const nonce = text.match(/nonce="([^"]+)"/)?.[1];
+        if (!nonce) return;
+        const response = sipDigestResponse({ username, realm, password: "wrong", method: "REGISTER", uri, nonce });
+        step = "bad";
+        register(rinfo, header({ nonce, response }));
+      } else if (text.startsWith("SIP/2.0 403") && step === "bad") {
+        step = "unknown";
+        register(rinfo, header({ nonce: "not-issued", response: "00".repeat(16) }));
+      } else if (text.startsWith("SIP/2.0 403") && step === "unknown") {
+        const done = seen.challenged && seen.registered && seen.wrongPasswordRejected && seen.replayRejected && seen.unknownNonceRejected && accepted;
+        finish(labResult({
+          ok: Boolean(done),
+          code: done ? "SIP_REGISTER_LAB" : "SIP_REGISTER_INCOMPLETE",
+          registered: seen.registered,
+          challenged: seen.challenged,
+          wrongPasswordRejected: seen.wrongPasswordRejected,
+          replayRejected: seen.replayRejected,
+          unknownNonceRejected: seen.unknownNonceRejected,
+          algorithm: "MD5",
+          realm,
+          username,
+          nonce: accepted ? accepted.nonce : null,
+          response: accepted ? accepted.response : null,
+          uri,
+          media: "NONE",
+          rtp: false,
+          srtp: false,
+          tls: false,
+          secure: false,
+          carrier: false,
+          phoneLine: "BLOCKED_EXTERNAL",
+          operatorAccount: false,
+          internet: false,
+          localLab: true,
+          paid: false,
+        }));
+      }
+    });
+    server.bind(0, "127.0.0.1", () => {
+      client.bind(0, "127.0.0.1", () => {
+        client.send(`REGISTER ${uri} SIP/2.0\r\nCall-ID: reg\r\nCSeq: 1 REGISTER\r\n\r\n`, server.address().port, "127.0.0.1");
+      });
+    });
+  });
+}
+
+module.exports = {
+  localSipCall,
+  localSipBusy,
+  localSipInbound,
+  localSipSrtp,
+  localSipTls,
+  localSipRegister,
+  phoneStackStatus,
+  isRtp,
+};

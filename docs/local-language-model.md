@@ -40,4 +40,6 @@ Yerel WebRTC oturumunda `dtls` yalnızca iki tarafın bağlantı durumu `connect
 
 27 Kasım 2026 ikinci devam: düz SIP çağrısı ve SRTP laboratuvarı aynı kaldı. Ayrı bir yerel çağrı sinyali TLS üzerinden taşır. Sertifika geçici ve kendinden imzalıdır. Sertifikasız istemci reddedilir. Bu operatör hattı değildir ve medya SRTP sayılmaz.
 
+27 Kasım 2026 üçüncü devam: düz SIP, SRTP ve TLS laboratuvarları aynı kaldı. Ayrı bir yerel REGISTER özet kimlik sorar. Doğru laboratuvar parolası kaydı açar. Yanlış parola, kullanılmış nonce ve sunucunun vermediği nonce reddedilir. Bu operatör hesabı değildir ve medya yoktur.
+
 Avatar önizlemesi ses genliğine bağlı authored mesh’tir ve gerçek karakter değildir. Üye `.gltf` veya `.glb` dosyası `data/models/avatars/` altında yoksa durum `BLOCKED_ASSET`. Yüklenen dosya da fotogerçekçi yüz veya taranmış beden sayılmaz. İnternet WebRTC görüşmesi iki ayrı uç gerektirir. coturn paketi kurulu değilse durum `BLOCKED_EXTERNAL` kalır. SIP laboratuvarı operatör hattı değildir.

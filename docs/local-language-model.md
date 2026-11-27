@@ -44,4 +44,6 @@ Yerel WebRTC oturumunda `dtls` yalnızca iki tarafın bağlantı durumu `connect
 
 27 Kasım 2026 dördüncü devam: 17 üye tek `digital_body` katında oturur. Konuşma izni olanlar sırayla paylaşılan Antalia ürün sesiyle rapor okur. Kişisel ses dosyası yoktur. Dudak hareketi önizleme ağındadır ve konuşma bitince durur. Konuşmayan üye kıpırdamaz. Bir üyenin hatası toplantıyı düşürmez. Kullanıcı katılabilir ve tek üyeyle yerel görüşme açabilir. Bu fotogerçek dijital insan, karakter dosyası veya operatör hattı değildir.
 
+27 Kasım 2026 beşinci devam: kullanıcının cümlesi mevcut Pusat `handleRequest` kaydından geçer. Cevabı yalnızca görevin gittiği üye okur. Konuşma izni yoksa yazılır, ses başarı sayılmaz. Sessiz dalga başarı sayılmaz. Özel görüşme toplantı tutanağına yazılmaz. Kayıt üretim veritabanına gitmez. Kişisel ses hâlâ yoktur.
+
 Avatar önizlemesi ses genliğine bağlı authored mesh’tir ve gerçek karakter değildir. Üye `.gltf` veya `.glb` dosyası `data/models/avatars/` altında yoksa durum `BLOCKED_ASSET`. Yüklenen dosya da fotogerçekçi yüz veya taranmış beden sayılmaz. İnternet WebRTC görüşmesi iki ayrı uç gerektirir. coturn paketi kurulu değilse durum `BLOCKED_EXTERNAL` kalır. SIP laboratuvarı operatör hattı değildir.

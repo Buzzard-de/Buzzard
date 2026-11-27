@@ -3,6 +3,7 @@
  * Personal voice files and character files stay blocked when they are absent.
  * This is not a second orchestrator and not a carrier call.
  */
+const path = require("path");
 const { ids, getAgent } = require("../buzzardNative/core/identityRegistry");
 const { canUse } = require("../buzzardNative/core/capabilityRegistry");
 const { isSalesEnabled } = require("../salesMode");
@@ -62,6 +63,7 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
     transcript: [],
     ran: false,
     closed: false,
+    mic: null,
   };
 
   function snapshot() {
@@ -106,9 +108,12 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
       return { ok: true, userId, joined: true, member: false };
     },
     run({ faultAgent = null } = {}) {
+      if (room.mic) return { ok: false, code: "MIC_BUSY" };
       if (room.ran) return { ok: false, code: "ALREADY_RUN" };
       room.ran = true;
+      room.mic = "meeting";
       const { speakNatural } = require("./naturalSpeech");
+      try {
       for (const agentId of roster) {
         const seat = seats.get(agentId);
         if (!seat.speech) {
@@ -166,8 +171,12 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
         seat.peakJaw = 0;
       }
       return { ok: true, turns: room.turns.length };
+      } finally {
+        room.mic = null;
+      }
     },
     privateCall({ agentId, text, hear = false } = {}) {
+      if (room.mic) return { ok: false, code: "MIC_BUSY", audio: false, carrier: false };
       if (!room.user) return { ok: false, code: "USER_REQUIRED", audio: false, carrier: false };
       if (!seats.has(agentId)) return { ok: false, code: "MEMBER_UNKNOWN", audio: false, carrier: false };
       const seat = seats.get(agentId);
@@ -187,6 +196,8 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
       if (!seat.speech) {
         return { ...base, ok: false, code: "SPEECH_DENIED", audio: false, ownVoice: false, sharedVoice: false };
       }
+      room.mic = "private";
+      try {
       const { speakNatural, recognizeNatural } = require("./naturalSpeech");
       let spoken;
       try {
@@ -196,6 +207,7 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
       }
       if (!spoken.ok) return { ...base, ok: false, code: spoken.code || "TTS_FAILED", audio: false };
       const face = faceOf(agentId, spoken.wav, "speaking");
+      if (!(face.peakJaw > 0)) return { ...base, ok: false, code: "SILENT_AUDIO", audio: false, bytes: spoken.bytes || 0 };
       let heard = null;
       if (hear) {
         try {
@@ -221,6 +233,141 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
         assetStatus: face.assetStatus,
         heard: heard ? { ok: heard.ok === true, code: heard.code, transcript: heard.transcript, replaced: heard.replaced === true, paid: heard.paid === true } : null,
       };
+      } finally {
+        room.mic = null;
+      }
+    },
+    converse({ wav = null, text = null, agentId, dbPath } = {}) {
+      const before = room.transcript.length;
+      const untouched = () => room.transcript.length === before;
+      const blocked = {
+        audio: false,
+        carrier: false,
+        internet: false,
+        phoneLine: "BLOCKED_EXTERNAL",
+        purchased: false,
+        salesEnabled: isSalesEnabled(),
+        digitalHuman: false,
+        photoreal: false,
+        realCharacter: false,
+        channel: "private",
+        meetingUntouched: untouched(),
+      };
+      if (room.mic) return { ok: false, code: "MIC_BUSY", ...blocked };
+      if (!room.user) return { ok: false, code: "USER_REQUIRED", ...blocked };
+      if (!seats.has(agentId)) return { ok: false, code: "MEMBER_UNKNOWN", ...blocked };
+      if (!dbPath || path.basename(String(dbPath)) === "buzzard.db") {
+        return { ok: false, code: "PRODUCTION_DB_LOCKED", ...blocked };
+      }
+      const seat = seats.get(agentId);
+      room.mic = "private";
+      try {
+        const { speakNatural, recognizeNatural } = require("./naturalSpeech");
+        const { createOrchestrator } = require("../pusat/orchestrator");
+        let heard = null;
+        let utterance = text == null ? "" : String(text);
+        if (wav) {
+          if (!Buffer.isBuffer(wav) || wav.length < 1000) {
+            return { ok: false, code: "AUDIO_EMPTY", ...blocked, meetingUntouched: untouched() };
+          }
+          heard = recognizeNatural({ wav, lang: "tr", prompt: "Türkçe kurul kaydı." });
+          heard = {
+            ok: heard.ok === true,
+            code: heard.code,
+            transcript: heard.transcript,
+            replaced: heard.replaced === true,
+            paid: false,
+          };
+          if (!heard.ok || !heard.transcript) {
+            return { ok: false, code: heard.code || "STT_FAILED", heard, ...blocked, meetingUntouched: untouched() };
+          }
+          utterance = heard.transcript;
+        }
+        if (!utterance.trim()) return { ok: false, code: "UTTERANCE_REQUIRED", heard, ...blocked, meetingUntouched: untouched() };
+        const orch = createOrchestrator({ dbPath });
+        let decision;
+        try {
+          decision = orch.handleRequest({ text: utterance, requester: "suleyman_bey", voice: false });
+        } finally {
+          orch.close();
+        }
+        if (decision.code === "HUMAN_GATE_REQUIRED" || decision.code === "SALES_LOCKED" || decision.code === "PERMISSION_DENIED") {
+          return { ok: false, code: decision.code, heard, utterance, ...blocked, meetingUntouched: untouched() };
+        }
+        if (!decision.ok) {
+          return { ok: false, code: decision.code || "UNCLASSIFIED", heard, utterance, ...blocked, meetingUntouched: untouched() };
+        }
+        const workers = (decision.specialists || []).map((row) => row.agentId);
+        const worker = (decision.specialists || []).find((row) => row.agentId === agentId) || null;
+        if (!worker) {
+          return { ok: false, code: "ROUTED_ELSEWHERE", workers, heard, utterance, ...blocked, meetingUntouched: untouched() };
+        }
+        const sentence = worker.verifiedSentence || "";
+        if (!sentence.trim()) {
+          return { ok: false, code: "NO_GROUNDED_SENTENCE", taskId: worker.taskId, heard, ...blocked, meetingUntouched: untouched() };
+        }
+        if (!canUse(agentId, "speech")) {
+          return {
+            ok: true,
+            code: "WRITTEN_ONLY",
+            speechGranted: false,
+            agentId,
+            taskId: worker.taskId,
+            sentence,
+            heard,
+            utterance,
+            ...blocked,
+            meetingUntouched: untouched(),
+          };
+        }
+        const spoken = speakNatural({ text: sentence, lang: "tr", agentId, turkish: true });
+        if (!spoken.ok || !(spoken.bytes > 44)) {
+          return { ok: false, code: spoken.code || "TTS_FAILED", taskId: worker.taskId, heard, ...blocked, meetingUntouched: untouched() };
+        }
+        const face = faceOf(agentId, spoken.wav, "speaking");
+        if (!(face.peakJaw > 0) || face.lipSync !== true) {
+          return { ok: false, code: "SILENT_AUDIO", bytes: spoken.bytes, taskId: worker.taskId, heard, ...blocked, meetingUntouched: untouched() };
+        }
+        return {
+          ok: true,
+          code: "VOICE_CHAIN",
+          audio: true,
+          speechGranted: true,
+          agentId,
+          taskId: worker.taskId,
+          sentence,
+          bytes: spoken.bytes,
+          sha256: spoken.sha256,
+          modelFile: spoken.modelFile,
+          ownVoice: spoken.ownVoice === true,
+          sharedVoice: spoken.sharedVoice === true,
+          personalVoice: spoken.personalAsset,
+          lipSync: true,
+          peakJaw: face.peakJaw,
+          previewMesh: face.previewMesh === true,
+          assetStatus: face.assetStatus,
+          heard,
+          utterance,
+          workers,
+          channel: "private",
+          meetingUntouched: untouched(),
+          carrier: false,
+          internet: false,
+          phoneLine: "BLOCKED_EXTERNAL",
+          purchased: false,
+          salesEnabled: isSalesEnabled(),
+          digitalHuman: false,
+          photoreal: false,
+          realCharacter: false,
+        };
+      } catch {
+        return { ok: false, code: "MEMBER_FAILED", ...blocked, meetingUntouched: untouched() };
+      } finally {
+        room.mic = null;
+        seat.pose = seat.speech ? "listening" : "idle";
+        seat.lipSync = false;
+        seat.peakJaw = 0;
+      }
     },
     close() {
       room.closed = true;

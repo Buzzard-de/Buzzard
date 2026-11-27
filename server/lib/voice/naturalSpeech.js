@@ -370,7 +370,7 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
   };
 }
 
-function recognizeNatural({ wav, lang = "tr" } = {}) {
+function recognizeNatural({ wav, lang = "tr", prompt } = {}) {
   const bin = whisperBin();
   const model = path.join(speechDir(), "ggml-small.bin");
   if (!bin || !fs.existsSync(model)) {
@@ -381,14 +381,10 @@ function recognizeNatural({ wav, lang = "tr" } = {}) {
   }
   const file = path.join(os.tmpdir(), `buzzard-hear-${crypto.randomBytes(4).toString("hex")}.wav`);
   fs.writeFileSync(file, wav);
-  const ran = withHeavyProcess(() => spawnSync(bin, [
-    "-m", model,
-    "-f", file,
-    "-l", lang,
-    "-nt",
-    "--no-timestamps",
-    "--prompt", "Buzzard Pusat fiyat Bremsscheibe Ankara Berlin",
-  ], {
+  const hint = prompt === undefined ? "Buzzard Pusat fiyat Bremsscheibe Ankara Berlin" : String(prompt || "");
+  const args = ["-m", model, "-f", file, "-l", lang, "-nt", "--no-timestamps"];
+  if (hint) args.push("--prompt", hint);
+  const ran = withHeavyProcess(() => spawnSync(bin, args, {
     encoding: "utf8",
     timeout: 60000,
     env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },

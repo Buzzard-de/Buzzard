@@ -370,11 +370,30 @@ function speakNatural({ text, lang = "tr", agentId = "pusat", languageVoice = fa
   };
 }
 
-function recognizeNatural({ wav, lang = "tr", prompt } = {}) {
+function sttModelFile(modelFile) {
+  if (modelFile && fs.existsSync(modelFile)) return modelFile;
+  const fromEnv = process.env.BUZZARD_STT_MODEL;
+  if (fromEnv && fs.existsSync(fromEnv)) return fromEnv;
+  return path.join(speechDir(), "ggml-small.bin");
+}
+
+function contentTokens(transcription) {
+  const tokens = [];
+  for (const row of transcription || []) {
+    for (const token of row.tokens || []) {
+      const text = String(token.text || "");
+      if (!text || text.startsWith("[")) continue;
+      tokens.push({ text, p: Number(token.p) });
+    }
+  }
+  return tokens;
+}
+
+function recognizeNatural({ wav, lang = "tr", prompt, scores = false, modelFile = null } = {}) {
   const bin = whisperBin();
-  const model = path.join(speechDir(), "ggml-small.bin");
+  const model = sttModelFile(modelFile);
   if (!bin || !fs.existsSync(model)) {
-    return { ok: false, code: "NATURAL_SPEECH_NOT_CONFIGURED", transcript: null, generalSpeech: false, paid: false };
+    return { ok: false, code: "NATURAL_SPEECH_NOT_CONFIGURED", transcript: null, generalSpeech: false, paid: false, model: null };
   }
   if (!Buffer.isBuffer(wav) || wav.length < 44) {
     return { ok: false, code: "AUDIO_REQUIRED", transcript: null, generalSpeech: false };
@@ -382,41 +401,62 @@ function recognizeNatural({ wav, lang = "tr", prompt } = {}) {
   const file = path.join(os.tmpdir(), `buzzard-hear-${crypto.randomBytes(4).toString("hex")}.wav`);
   fs.writeFileSync(file, wav);
   const hint = prompt === undefined ? "Buzzard Pusat fiyat Bremsscheibe Ankara Berlin" : String(prompt || "");
-  const args = ["-m", model, "-f", file, "-l", lang, "-nt", "--no-timestamps"];
+  const jsonBase = `${file}.hear`;
+  const args = ["-m", model, "-f", file, "-l", lang, "-nt", "--no-timestamps", "--no-flash-attn"];
   if (hint) args.push("--prompt", hint);
+  if (scores) args.push("-ojf", "-of", jsonBase, "-np");
   const ran = withHeavyProcess(() => spawnSync(bin, args, {
     encoding: "utf8",
     timeout: 60000,
     env: { ...process.env, LD_LIBRARY_PATH: `${path.dirname(bin)}:${process.env.LD_LIBRARY_PATH || ""}` },
   }));
   fs.unlinkSync(file);
-  const transcript = String(ran.stdout || "")
+  let transcript = String(ran.stdout || "")
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("[") && !line.startsWith("main:") && !line.startsWith("whisper_"))
+    .filter((line) => line && !line.startsWith("[") && !line.startsWith("main:") && !line.startsWith("whisper_") && !line.startsWith("output_json"))
     .pop() || "";
+  let minTokenProbability = null;
+  const jsonPath = `${jsonBase}.json`;
+  if (scores && fs.existsSync(jsonPath)) {
+    try {
+      const body = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+      const parts = (body.transcription || []).map((row) => String(row.text || "").trim()).filter(Boolean);
+      if (parts.length) transcript = parts.join(" ").trim();
+      const tokens = contentTokens(body.transcription);
+      const probs = tokens.map((token) => token.p).filter((value) => Number.isFinite(value));
+      minTokenProbability = probs.length ? Math.min(...probs) : null;
+    } catch {
+      minTokenProbability = null;
+    }
+    fs.unlinkSync(jsonPath);
+  }
   if (ran.status !== 0 || !transcript) {
-    return { ok: false, code: "STT_FAILED", transcript: null, raw: transcript || null, replaced: false, uncertain: true, generalSpeech: false, paid: false };
+    return { ok: false, code: "STT_FAILED", transcript: null, raw: transcript || null, replaced: false, uncertain: true, generalSpeech: false, paid: false, minTokenProbability, model: path.basename(model) };
   }
   const heard = transcript.toLowerCase();
   const heardTerms = HEARD_TERMS.filter((term) => heard.includes(term));
   const samples = Math.max(0, Math.floor((wav.length - 44) / 2));
   const short = samples < 22050 * 0.4;
+  const lowConfidence = scores && (minTokenProbability == null || minTokenProbability < 0.5);
   return {
-    ok: true,
-    code: "NATURAL_STT",
+    ok: !lowConfidence,
+    code: lowConfidence ? "REPEAT_REQUIRED" : "NATURAL_STT",
     transcript,
     raw: transcript,
     replaced: false,
-    uncertain: short && heardTerms.length === 0,
+    uncertain: lowConfidence || (short && heardTerms.length === 0),
     heardTerms,
+    minTokenProbability,
     lang,
+    sampleRate: wav.length > 28 ? wav.readUInt32LE(24) : null,
+    channels: wav.length > 24 ? wav.readUInt16LE(22) : null,
     generalSpeech: true,
     lexicon: false,
     toneCodec: false,
     paid: false,
     hostedProvider: null,
-    model: "whisper-small",
+    model: path.basename(model),
   };
 }
 

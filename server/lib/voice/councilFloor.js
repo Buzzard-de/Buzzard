@@ -5,6 +5,22 @@
  */
 const path = require("path");
 const { ids, getAgent } = require("../buzzardNative/core/identityRegistry");
+
+const HEARD_COMMANDS = Object.freeze([
+  "güvenlik durumu",
+  "fiyat kontrol",
+  "stok kontrol",
+  "rapor sun",
+  "toplantıyı başlat",
+]);
+
+function foldCommand(value) {
+  return String(value || "").trim().toLocaleLowerCase("tr-TR").replace(/[.?!]+$/g, "");
+}
+
+function acceptHeardCommand(transcript) {
+  return HEARD_COMMANDS.find((command) => foldCommand(command) === foldCommand(transcript)) || null;
+}
 const { canUse } = require("../buzzardNative/core/capabilityRegistry");
 const { isSalesEnabled } = require("../salesMode");
 
@@ -270,18 +286,25 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
           if (!Buffer.isBuffer(wav) || wav.length < 1000) {
             return { ok: false, code: "AUDIO_EMPTY", ...blocked, meetingUntouched: untouched() };
           }
-          heard = recognizeNatural({ wav, lang: "tr", prompt: "Türkçe kurul kaydı." });
+          heard = recognizeNatural({ wav, lang: "tr", prompt: "", scores: true });
           heard = {
             ok: heard.ok === true,
             code: heard.code,
             transcript: heard.transcript,
             replaced: heard.replaced === true,
             paid: false,
+            minTokenProbability: heard.minTokenProbability,
+            model: heard.model,
+            executed: false,
           };
-          if (!heard.ok || !heard.transcript) {
-            return { ok: false, code: heard.code || "STT_FAILED", heard, ...blocked, meetingUntouched: untouched() };
+          if (!heard.ok || !heard.transcript || heard.code === "REPEAT_REQUIRED") {
+            return { ok: false, code: heard.code || "STT_FAILED", heard, executed: false, ...blocked, meetingUntouched: untouched() };
           }
-          utterance = heard.transcript;
+          const command = acceptHeardCommand(heard.transcript);
+          if (!command) {
+            return { ok: false, code: "HEARD_NOT_COMMAND", heard, executed: false, ...blocked, meetingUntouched: untouched() };
+          }
+          utterance = command;
         }
         if (!utterance.trim()) return { ok: false, code: "UTTERANCE_REQUIRED", heard, ...blocked, meetingUntouched: untouched() };
         const orch = createOrchestrator({ dbPath });
@@ -402,4 +425,4 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
   };
 }
 
-module.exports = { openCouncilFloor };
+module.exports = { openCouncilFloor, acceptHeardCommand };

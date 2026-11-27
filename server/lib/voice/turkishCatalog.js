@@ -52,6 +52,16 @@ function voiceReady(speaker) {
     && fs.existsSync(path.join(dir, "voices", `${speaker}.bin`));
 }
 
+function cemStatus() {
+  const tokenPresent = Boolean(process.env.HUGGING_FACE_HUB_TOKEN || process.env.HF_TOKEN);
+  return {
+    ...GATED[0],
+    tokenPresent,
+    downloaded: false,
+    reason: tokenPresent ? "NOT_DOWNLOADED" : "GATED_REPO",
+  };
+}
+
 function turkishCatalog() {
   const installed = VOICES.map((voice) => {
     const present = voiceReady(voice.speaker);
@@ -111,4 +121,4 @@ function speakCatalog({ speaker = "elif", text = "" } = {}) {
   };
 }
 
-module.exports = { turkishCatalog, speakCatalog, CANORA };
+module.exports = { turkishCatalog, speakCatalog, cemStatus, CANORA };

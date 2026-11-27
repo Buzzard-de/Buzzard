@@ -46,6 +46,8 @@ const INDEX = Object.freeze([
   0, 2, 3,
   4, 5, 6,
   4, 6, 7,
+  8, 0, 1,
+  9, 0, 2,
 ]);
 
 function seedFor(agentId) {
@@ -64,6 +66,8 @@ function restMesh(agentId) {
     [0.05 * spread, -0.04, 0.12],
     [0, -0.08, 0.11],
     [0, -0.12, 0.08],
+    [-0.06 * spread, 0.12, 0.13],
+    [0.06 * spread, 0.12, 0.13],
   ];
 }
 
@@ -98,8 +102,20 @@ function mouthTrack(wav, windows = 8) {
 }
 
 function deform(rest, frame) {
+  const blink = frame.blink || 0;
+  const yaw = frame.yaw || 0;
+  const pitch = frame.pitch || 0;
   return rest.map((vertex, index) => {
-    if (index < 4) return vertex.slice();
+    if (index < 4) {
+      return [
+        vertex[0] + yaw * 0.03,
+        vertex[1] - pitch * 0.04,
+        vertex[2],
+      ];
+    }
+    if (index === 8 || index === 9) {
+      return [vertex[0], vertex[1] - blink * 0.03, vertex[2] - blink * 0.02];
+    }
     const jaw = index === 7 ? frame.jaw : frame.jaw * 0.45;
     const width = index === 4 || index === 5 ? frame.mouth : 0;
     const side = index === 4 ? -1 : index === 5 ? 1 : 0;
@@ -116,11 +132,15 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
     return { ok: false, code: "AGENT_REQUIRED", mesh: "NOT_CONFIGURED", is3d: false, photoreal: false, scannedBody: false, css: false, assetStatus: "BLOCKED_ASSET" };
   }
   const pose = POSES.includes(state) ? state : "speaking";
-  const frames = pose === "speaking" ? mouthTrack(wav) : [{ index: 0, jaw: 0, mouth: 0 }];
-  if (frames.length) frames.push({ index: frames.length, jaw: 0, mouth: 0, ended: true });
+  const yaw = pose === "idle" ? 0 : (seedFor(agentId) - 0.5) * 0.4;
+  const frames = pose === "speaking"
+    ? mouthTrack(wav).map((frame) => ({ ...frame, yaw, pitch: frame.jaw * 0.35, blink: 0 }))
+    : [{ index: 0, jaw: 0, mouth: 0, yaw, pitch: 0, blink: pose === "listening" ? 1 : 0 }];
+  if (frames.length) frames.push({ index: frames.length, jaw: 0, mouth: 0, yaw: 0, pitch: 0, blink: 0, ended: true });
   const rest = restMesh(agentId);
   const peak = frames.reduce((best, frame) => (frame.jaw > best.jaw ? frame : best), { jaw: 0, mouth: 0, index: 0 });
-  const open = deform(rest, peak);
+  const shown = pose === "speaking" ? peak : (frames.find((frame) => !frame.ended) || peak);
+  const open = deform(rest, shown);
   const closed = deform(rest, { jaw: 0, mouth: 0 });
   const moved = open[7][1] !== closed[7][1];
   const meshName = `council-head-${agentId}`;
@@ -152,7 +172,11 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
     vertices: rest.length,
     triangles: INDEX.length / 3,
     indices: INDEX.length,
-    morphTargets: ["jaw", "mouth"],
+    morphTargets: ["jaw", "mouth", "eyes", "head"],
+    eyeOpen: shown.blink ? 0 : 1,
+    headYaw: shown.yaw || 0,
+    headPitch: shown.pitch || 0,
+    previewMotion: true,
     is3d: loaded.ok === true,
     authored: true,
     scannedBody: false,

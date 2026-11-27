@@ -60,6 +60,43 @@ function memberAssetRegistry() {
   });
 }
 
+function stageMemberAsset({ agentId, kind, bytes, root, license } = {}) {
+  if (!ids().includes(agentId)) return { ok: false, code: "MEMBER_UNKNOWN", stored: false, ownVoice: false };
+  if (!root) return { ok: false, code: "ROOT_REQUIRED", stored: false, ownVoice: false };
+  if (!license || !String(license).trim()) return { ok: false, code: "LICENSE_REQUIRED", stored: false, ownVoice: false };
+  if (!Buffer.isBuffer(bytes) || bytes.length < 32) return { ok: false, code: "INVALID_ASSET", stored: false, ownVoice: false };
+  const base = path.resolve(root);
+  const destination = kind === "voice"
+    ? path.join(base, "speech", "members", `${agentId}.onnx`)
+    : path.join(base, "avatars", `${agentId}.gltf`);
+  if (!destination.startsWith(`${base}${path.sep}`)) return { ok: false, code: "AGENT_MISMATCH", stored: false, ownVoice: false };
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  fs.writeFileSync(destination, bytes);
+  const checked = kind === "voice"
+    ? (bytes.length > 1024 && bytes.some((value) => value !== 0)
+      ? { ok: true }
+      : { ok: false, code: "INVALID_ASSET" })
+    : readCharacter(destination);
+  if (!checked.ok) {
+    fs.unlinkSync(destination);
+    return { ok: false, code: checked.code || "INVALID_ASSET", stored: false, ownVoice: false, agentId };
+  }
+  return {
+    ok: true,
+    code: kind === "voice" ? "VOICE_FILE" : "AVATAR_FILE",
+    stored: true,
+    agentId,
+    file: destination,
+    license: String(license).trim(),
+    ownVoice: false,
+    personal: false,
+    realCharacter: false,
+    photoreal: false,
+    digitalHuman: false,
+    sharedVoice: SHARED_VOICE,
+  };
+}
+
 function validateMemberFile({ agentId, kind, filePath } = {}) {
   if (!ids().includes(agentId)) return { ok: false, code: "MEMBER_UNKNOWN", accepted: false };
   if (!filePath) return { ok: false, code: "FILE_REQUIRED", accepted: false };
@@ -77,4 +114,4 @@ function validateMemberFile({ agentId, kind, filePath } = {}) {
   return { ok: true, code: "AVATAR_FILE", accepted: true, agentId, format: loaded.format, realCharacter: false, photoreal: false };
 }
 
-module.exports = { memberAssetRegistry, validateMemberFile, voicePath, SHARED_VOICE };
+module.exports = { memberAssetRegistry, validateMemberFile, stageMemberAsset, voicePath, SHARED_VOICE };

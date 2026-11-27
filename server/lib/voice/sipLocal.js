@@ -242,12 +242,13 @@ function localSipInbound({ payload = Buffer.from([0x10, 0x20]) } = {}) {
 
 function phoneStackStatus() {
   const config = path.join(process.cwd(), "deploy", "sip", "freeswitch-local.xml");
+  const operatorAccount = Boolean(process.env.BUZZARD_SIP_HOST && process.env.BUZZARD_SIP_USER && process.env.BUZZARD_SIP_PASSWORD);
   return {
     freeswitchInstalled: commandExists("freeswitch"),
     freeswitchRunning: false,
     configPrepared: fs.existsSync(config),
     phoneLine: "BLOCKED_EXTERNAL",
-    operatorAccount: false,
+    operatorAccount,
     paidApi: false,
     srtp: false,
     rtpLab: true,

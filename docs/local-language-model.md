@@ -48,4 +48,6 @@ Yerel WebRTC oturumunda `dtls` yalnızca iki tarafın bağlantı durumu `connect
 
 27 Kasım 2026 altıncı devam: Antalia kısa komutları Whisper small ile doğru duyulmuyor. Aynı klipler medium-q5_0 ve large-v3-turbo-q5_0 ile de komut olmayı tutmuyor. Duyulan metin değiştirilmez. Belirteç olasılığı düşükse komut çalıştırılmaz ve tekrar istenir. Üye dosyası yoksa kayıt `BLOCKED_ASSET` kalır. Baş ve göz hareketi önizleme ağındadır.
 
+27 Kasım 2026 yedinci devam: komut, duyulan metin aynı komutsa kabul edilir. Canora emre ile okunan katalog cümlelerinin bir kısmı Whisper small tarafından doğru yazıldı. Antalia kısa komutları doğru yazılmadı. Üye dosyası yalnızca doğrulamadan sonra ayrı bir köke yazılır. Yüklenen iskelet ve ağız morph'u fotogerçek insan sayılmaz.
+
 Avatar önizlemesi ses genliğine bağlı authored mesh’tir ve gerçek karakter değildir. Üye `.gltf` veya `.glb` dosyası `data/models/avatars/` altında yoksa durum `BLOCKED_ASSET`. Yüklenen dosya da fotogerçekçi yüz veya taranmış beden sayılmaz. İnternet WebRTC görüşmesi iki ayrı uç gerektirir. coturn paketi kurulu değilse durum `BLOCKED_EXTERNAL` kalır. SIP laboratuvarı operatör hattı değildir.

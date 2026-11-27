@@ -9,12 +9,32 @@ const { getAgent } = require("../buzzardNative/core/identityRegistry");
 
 const POSES = Object.freeze(["idle", "listening", "thinking", "speaking"]);
 
+function morphNames(mesh) {
+  const named = mesh?.extras?.targetNames || mesh?.primitives?.[0]?.extras?.targetNames || mesh?.primitives?.[0]?.extras?.morphNames;
+  if (Array.isArray(named) && named.length) return named.map((name) => String(name));
+  const count = Array.isArray(mesh?.primitives?.[0]?.targets) ? mesh.primitives[0].targets.length : 0;
+  return Array.from({ length: count }, (_, index) => `morph_${index}`);
+}
+
+function characterRig(data, file, format) {
+  const meshes = Array.isArray(data.meshes) ? data.meshes : [];
+  if (!data.asset?.version || meshes.length < 1) return { ok: false };
+  const names = meshes.flatMap((mesh) => morphNames(mesh));
+  const skins = Array.isArray(data.skins) ? data.skins.length : 0;
+  return {
+    ok: true,
+    version: data.asset.version,
+    meshes: meshes.length,
+    skins,
+    morphTargets: names,
+    file: path.basename(file),
+    format,
+  };
+}
+
 function readGltf(file) {
   try {
-    const data = JSON.parse(fs.readFileSync(file, "utf8"));
-    const meshes = Array.isArray(data.meshes) ? data.meshes.length : 0;
-    if (!data.asset?.version || meshes < 1) return { ok: false };
-    return { ok: true, version: data.asset.version, meshes, file: path.basename(file), format: "gltf" };
+    return characterRig(JSON.parse(fs.readFileSync(file, "utf8")), file, "gltf");
   } catch {
     return { ok: false };
   }
@@ -28,9 +48,8 @@ function readGlb(file) {
     const jsonLength = buf.readUInt32LE(12);
     if (buf.toString("utf8", 16, 20) !== "JSON" || 20 + jsonLength > buf.length) return { ok: false };
     const data = JSON.parse(buf.subarray(20, 20 + jsonLength).toString("utf8"));
-    const meshes = Array.isArray(data.meshes) ? data.meshes.length : 0;
-    if (!version || meshes < 1) return { ok: false };
-    return { ok: true, version, meshes, file: path.basename(file), format: "glb" };
+    if (!version) return { ok: false };
+    return characterRig(data, file, "glb");
   } catch {
     return { ok: false };
   }
@@ -168,11 +187,20 @@ function presentSpeaker({ agentId, wav, state = "speaking", gltfPath = null } = 
     previewMesh: loaded.ok !== true,
     placeholder: loaded.ok !== true,
     display: loaded.ok ? loaded.format : "NONE",
-    lipSyncTarget: "PREVIEW_MESH",
+    lipSyncTarget: loaded.ok && (loaded.morphTargets || []).some((name) => /jaw|mouth|viseme/i.test(name)) ? "AVATAR_MORPH" : "PREVIEW_MESH",
+    channels: {
+      jaw: pose === "speaking" ? peak.jaw : 0,
+      mouth: pose === "speaking" ? (peak.mouth || 0) : 0,
+      eyes: shown.blink || 0,
+      head: shown.yaw || 0,
+      body: 0,
+    },
     vertices: rest.length,
     triangles: INDEX.length / 3,
     indices: INDEX.length,
-    morphTargets: ["jaw", "mouth", "eyes", "head"],
+    morphTargets: loaded.ok && loaded.morphTargets?.length ? loaded.morphTargets : ["jaw", "mouth", "eyes", "head"],
+    rigReady: loaded.ok === true && loaded.skins > 0 && (loaded.morphTargets || []).length > 0,
+    jawWeight: pose === "speaking" ? peak.jaw : 0,
     eyeOpen: shown.blink ? 0 : 1,
     headYaw: shown.yaw || 0,
     headPitch: shown.pitch || 0,

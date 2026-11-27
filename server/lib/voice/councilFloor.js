@@ -5,22 +5,7 @@
  */
 const path = require("path");
 const { ids, getAgent } = require("../buzzardNative/core/identityRegistry");
-
-const HEARD_COMMANDS = Object.freeze([
-  "güvenlik durumu",
-  "fiyat kontrol",
-  "stok kontrol",
-  "rapor sun",
-  "toplantıyı başlat",
-]);
-
-function foldCommand(value) {
-  return String(value || "").trim().toLocaleLowerCase("tr-TR").replace(/[.?!]+$/g, "");
-}
-
-function acceptHeardCommand(transcript) {
-  return HEARD_COMMANDS.find((command) => foldCommand(command) === foldCommand(transcript)) || null;
-}
+const { acceptHeardCommand, heardGate } = require("./commandCatalog");
 const { canUse } = require("../buzzardNative/core/capabilityRegistry");
 const { isSalesEnabled } = require("../salesMode");
 
@@ -297,12 +282,14 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
             model: heard.model,
             executed: false,
           };
-          if (!heard.ok || !heard.transcript || heard.code === "REPEAT_REQUIRED") {
-            return { ok: false, code: heard.code || "STT_FAILED", heard, executed: false, ...blocked, meetingUntouched: untouched() };
+          const gate = heardGate(heard.transcript);
+          if (gate) {
+            return { ok: false, code: gate, heard, executed: false, purchased: false, ...blocked, meetingUntouched: untouched() };
           }
           const command = acceptHeardCommand(heard.transcript);
           if (!command) {
-            return { ok: false, code: "HEARD_NOT_COMMAND", heard, executed: false, ...blocked, meetingUntouched: untouched() };
+            const code = heard.ok && heard.transcript ? "HEARD_NOT_COMMAND" : (heard.code || "STT_FAILED");
+            return { ok: false, code, heard, executed: false, ...blocked, meetingUntouched: untouched() };
           }
           utterance = command;
         }
@@ -425,4 +412,4 @@ function openCouncilFloor({ topic = "kurmay" } = {}) {
   };
 }
 
-module.exports = { openCouncilFloor, acceptHeardCommand };
+module.exports = { openCouncilFloor, acceptHeardCommand, heardGate };

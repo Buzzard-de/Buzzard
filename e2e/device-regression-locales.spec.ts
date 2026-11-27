@@ -78,7 +78,10 @@ test("homepage in each of the 30 locales", async ({ page }) => {
       const women = catalog.textile["cat-01-01"][code];
       const dress = catalog.textile["cat-01-01-01"][code];
       const selectedCountry = await page.locator(".country-selector select").inputValue();
-      const expectedCountry = countryNames.names[selectedCountry]?.[code] || "";
+      const expectedCountry =
+        selectedCountry in countryNames.names
+          ? countryNames.names[selectedCountry as keyof typeof countryNames.names][code] || ""
+          : "";
       const shownCountry = (await page.locator(".country-selector select option:checked").innerText().catch(() => "")) || "";
       const mixedTurkish = code !== "tr" && panelText.includes("Elbise");
       const mixedGerman = code !== "de" && panelText.includes("Damenbekleidung");

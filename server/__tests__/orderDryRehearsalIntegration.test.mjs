@@ -11,7 +11,7 @@ describe("ordersPlugin ↔ orderManagementOrchestrator dry rehearsal", () => {
   beforeAll(async () => {
     process.env.BUZZARD_SALES_ENABLED = "0";
     process.env.NEXT_PUBLIC_SALES_ENABLED = "0";
-    api = await startIsolatedApi({ env: { BUZZARD_TEST_MODE: "1", BUZZARD_DB_ENABLED: "0" } });
+    api = await startIsolatedApi({ env: { BUZZARD_TEST_MODE: "1", BUZZARD_DB_ENABLED: "0" }, roles: ["administrator"] });
   }, 120_000);
 
   afterAll(async () => {
@@ -29,7 +29,10 @@ describe("ordersPlugin ↔ orderManagementOrchestrator dry rehearsal", () => {
       acceptTerms: true,
       acceptPrivacy: true,
     };
-    const res = await api.request("POST", "/api/orders/dry-rehearsal", { body });
+    const guest = await api.request("POST", "/api/orders/dry-rehearsal", { body });
+    expect(guest.status).toBe(401);
+    const token = await api.login("administrator");
+    const res = await api.request("POST", "/api/orders/dry-rehearsal", { token, body });
     expect(res.status, res.text).toBe(200);
     const json = res.json || {};
     expect(json.rehearsal).toBe(true);

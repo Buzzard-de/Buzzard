@@ -28,6 +28,9 @@ function listProducts(query = {}) {
 }
 
 function createProduct(input, ctx = {}) {
+  const targets = ["D"];
+  if (ctx.legacyTarget) targets.push(String(ctx.legacyTarget));
+  productSot.assertNoDualWrite(targets);
   productSot.assertCanonicalWrite("D");
   const product = productCore.createProduct(input, ctx);
   events.emit({

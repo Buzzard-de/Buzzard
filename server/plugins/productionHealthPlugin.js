@@ -42,6 +42,11 @@ function mapReadinessStatus(summary) {
 
 module.exports = {
   register(app) {
+    app.get("/api/health/software", (_req, res) => {
+      const software = require("../lib/software");
+      res.json({ success: true, diagnosticOnly: true, ...software.status() });
+    });
+
     app.get("/api/health/version", (_req, res) => {
       res.json({ success: true, ...productionHealth.getVersionPayload() });
     });

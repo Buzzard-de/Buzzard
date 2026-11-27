@@ -3,14 +3,17 @@ const {
   getOrchestratorStatus,
   isOrchestratorConfigured,
 } = require("../lib/orchestratorBridge");
+const { requireAuth } = require("../lib/auth");
 
 module.exports = {
   register(app) {
-    app.get("/api/orchestrator/status", async (_req, res) => {
+    app.get("/api/orchestrator/status", async (req, res) => {
+      if (!requireAuth(req, res)) return;
       res.json(await getOrchestratorStatus());
     });
 
-    app.get("/api/orchestrator/agents", async (_req, res) => {
+    app.get("/api/orchestrator/agents", async (req, res) => {
+      if (!requireAuth(req, res)) return;
       if (!isOrchestratorConfigured()) {
         return res.status(503).json({ error: "orchestrator_not_configured" });
       }
@@ -22,6 +25,7 @@ module.exports = {
     });
 
     app.get("/api/orchestrator/tasks", async (req, res) => {
+      if (!requireAuth(req, res)) return;
       if (!isOrchestratorConfigured()) {
         return res.status(503).json({ error: "orchestrator_not_configured" });
       }

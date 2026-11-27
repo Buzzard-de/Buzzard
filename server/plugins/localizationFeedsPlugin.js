@@ -89,7 +89,11 @@ module.exports = {
 
     app.post("/api/admin/localization/products/:id/price", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = localizationFeeds.upsertPriceOverride(req.params.id, req.body || {});
+      const result = localizationFeeds.upsertPriceOverride(
+        req.params.id,
+        req.body || {},
+        require("../lib/software/control").actorFromRequest(req)
+      );
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.json(result);
     });

@@ -16,7 +16,19 @@ const SECRET_HINTS = Object.freeze([
   "sk-live-",
 ]);
 
+const DANGEROUS_TEXT = Object.freeze([
+  { code: "DROP_TABLE", re: /\bdrop\s+table\b/i },
+  { code: "WIRE_TRANSFER", re: /\bwire\s+transfer\b/i },
+  { code: "PURCHASE_ORDER", re: /\bpurchase\s+order\b/i },
+  { code: "ISSUE_REFUND", re: /\bissue\s+refund\b/i },
+]);
+
 const ISOLATE_TYPES = Object.freeze([
+  "DROP_TABLE",
+  "WIRE_TRANSFER",
+  "PURCHASE_ORDER",
+  "ISSUE_REFUND",
+  "EVALUATE_FAILED",
   "credential_exfiltration",
   "unauthorized_access",
   "EXTERNAL_AI_EGRESS_DENIED",
@@ -140,7 +152,25 @@ function scanText(text, { actor = "system" } = {}) {
     });
     return { safe: false, hits, ...verdict };
   }
+  for (const pattern of DANGEROUS_TEXT) {
+    if (pattern.re.test(lowered)) {
+      const verdict = inspect({ type: pattern.code, details: { length: String(text || "").length }, actor });
+      return { safe: false, hits: [pattern.code], ...verdict };
+    }
+  }
   return { safe: true, hits: [], allowed: true, hold: false, action: "ALLOW" };
+}
+
+function scanSecrets(text, options) {
+  return scanText(text, options);
+}
+
+function evaluate(text, options) {
+  try {
+    return { ...module.exports.scanText(text, options), evaluated: true };
+  } catch {
+    return { safe: false, allowed: false, hold: true, action: "ISOLATE_AND_HOLD", code: "EVALUATE_FAILED", evaluated: true };
+  }
 }
 
 function watchEgress(decision, { url } = {}) {
@@ -216,6 +246,23 @@ function activate() {
   return status();
 }
 
+function planRecovery(finding = {}) {
+  const affected = Array.isArray(finding.affected) ? finding.affected.filter(Boolean) : [];
+  return {
+    ok: true,
+    id: ID,
+    risk: finding.risk || "LOW",
+    affected,
+    recommendations: affected.length ? ["preserve_evidence", "review_local_controls"] : ["no_affected_system_named"],
+    recoveryPlan: ["keep_hashes", "human_approval_before_any_change"],
+    applied: false,
+    productionChange: false,
+    serviceStopped: false,
+    code: "HUMAN_GATE_REQUIRED",
+    live: false,
+  };
+}
+
 function status() {
   const holds = events.filter((e) => e.action === "ISOLATE_AND_HOLD").length;
   return {
@@ -240,6 +287,9 @@ module.exports = {
   ID,
   inspect,
   scanText,
+  scanSecrets,
+  evaluate,
+  DANGEROUS_TEXT,
   watchEgress,
   watchShareDenied,
   watchComplianceHold,
@@ -250,6 +300,7 @@ module.exports = {
   watchRestore,
   watchException,
   activate,
+  planRecovery,
   recent,
   status,
   resetEsat,

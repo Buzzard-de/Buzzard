@@ -95,7 +95,7 @@ describe("canonical order writer", () => {
     const cancelled = orderManagement.cancelOrder(created.order.id, { reason: "synthetic" });
     expect(cancelled.ok).toBe(true);
     expect(cancelled.order.order_status).toBe("cancelled");
-    const commerce = orderService.transitionOrderStatus(created.canonicalOrderId, "CANCELLED");
+    const commerce = orderService.transitionOrderStatus(created.canonicalOrderId, "CANCELLED", { actorId: "order-test" });
     expect(commerce.status).toBe("CANCELLED");
     expect(orderService.getCommercialOrderCount()).toBe(0);
   });

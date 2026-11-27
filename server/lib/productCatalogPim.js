@@ -48,7 +48,9 @@ function updateCompleteness(productId) {
   return score;
 }
 
-function createBrand(body = {}) {
+function createBrand(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.createBrand", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_brands" });
+  if (denied) return denied;
   if (!body.name) return { error: "Brand name required", status: 400 };
   const slug = slugify(body.slug || body.name);
 
@@ -64,7 +66,9 @@ function listBrands() {
   return db.prepare("SELECT * FROM pim30_brands WHERE status = 'active' ORDER BY name").all();
 }
 
-function createCategory(body = {}) {
+function createCategory(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.createCategory", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_categories" });
+  if (denied) return denied;
   if (!body.name) return { error: "Category name required", status: 400 };
 
   const slug = slugify(body.slug || body.name);
@@ -97,7 +101,9 @@ function listCategories() {
     .all();
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.createProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_products" });
+  if (denied) return denied;
   if (!body.sku) return { error: "SKU required", status: 400 };
   const sku = String(body.sku).trim();
   const canonical = require("./productService").recordCanonicalProduct(
@@ -109,7 +115,7 @@ function createProduct(body = {}) {
       stock: body.stockQty ?? body.stock_qty,
       category: body.categoryId || body.category_id,
     },
-    { source: "PIM30" }
+    { source: "PIM30", actorId: ctx.actorId }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
@@ -203,7 +209,9 @@ function getProductBySku(sku) {
   };
 }
 
-function upsertTranslation(sku, language, body = {}) {
+function upsertTranslation(sku, language, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.upsertTranslation", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_product_translations" });
+  if (denied) return denied;
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
   if (!product) return { error: "Product not found", status: 404 };
 
@@ -238,7 +246,9 @@ function upsertTranslation(sku, language, body = {}) {
   };
 }
 
-function upsertAttribute(sku, body = {}) {
+function upsertAttribute(sku, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.upsertAttribute", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_product_attributes" });
+  if (denied) return denied;
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
   if (!product) return { error: "Product not found", status: 404 };
   if (!body.code) return { error: "Attribute code required", status: 400 };
@@ -252,7 +262,9 @@ function upsertAttribute(sku, body = {}) {
   return { ok: true };
 }
 
-function addMedia(sku, body = {}) {
+function addMedia(sku, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.addMedia", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_product_media" });
+  if (denied) return denied;
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
   if (!product) return { error: "Product not found", status: 404 };
 
@@ -276,7 +288,9 @@ function addMedia(sku, body = {}) {
   };
 }
 
-function createVariant(sku, body = {}) {
+function createVariant(sku, body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productCatalogPim.createVariant", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim30_product_variants" });
+  if (denied) return denied;
   const product = db.prepare("SELECT id FROM pim30_products WHERE sku = ?").get(sku);
   if (!product) return { error: "Parent product not found", status: 404 };
   if (!body.sku) return { error: "Variant SKU required", status: 400 };

@@ -60,7 +60,9 @@ function nextProductId() {
   return `prod-${String(next).padStart(6, "0")}`;
 }
 
-function upsertProduct(product) {
+function upsertProduct(product, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "productStore.upsertProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "catalog-json" });
+  if (denied) return denied;
   const sku = String(product.sku || "").trim();
   let canonical = null;
   if (sku) {
@@ -73,7 +75,7 @@ function upsertProduct(product) {
         stock: product.stock,
         category: product.category_id,
       },
-      { source: "IMPORT" }
+      { source: "IMPORT", actorId: ctx.actorId }
     );
     if (canonical.error) {
       const error = new Error(canonical.error);
@@ -99,7 +101,7 @@ function upsertProduct(product) {
           price: Number(next.price || next.supplier_price?.amount || 0),
           stock: Number(next.stock || 0),
         },
-        { source: "IMPORT" }
+        { source: "IMPORT", actorId: ctx.actorId }
       );
     } catch {
       /* the JSON projection still updates when a status transition is illegal */

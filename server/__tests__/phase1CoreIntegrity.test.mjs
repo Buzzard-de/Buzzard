@@ -1,4 +1,5 @@
-import { chmodSync, existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { chmodSync, existsSync, mkdtempSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -9,6 +10,7 @@ const require = createRequire(import.meta.url);
 const {
   evaluatePhase1CoreIntegrity,
   checkProtectedDataIntegrity,
+  inspectRepositoryBaseline,
   PROTECTED_FILES,
   DATA_STATES,
 } = require("../lib/platform/phase1CoreIntegrity.js");
@@ -169,6 +171,39 @@ describe("phase 1 — core system and data integrity", () => {
       expect(data.hashVerified, baselinePath).toBe(false);
       expect(data.files.every((file) => file.state === DATA_STATES.INVALID_BASELINE), baselinePath).toBe(true);
     }
+  });
+
+  it("reads branch, HEAD, dirty state, and ancestry without changing the worktree", () => {
+    const dbFile = path.join(REPO, "server/data", "buzzard.db");
+    const before = existsSync(dbFile) ? statSync(dbFile) : null;
+    const beforeStatus = execFileSync("git", ["-C", REPO, "status", "--porcelain"], { encoding: "utf8" });
+    const expectedHead = execFileSync("git", ["-C", REPO, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    const expectedBranch = execFileSync("git", ["-C", REPO, "rev-parse", "--abbrev-ref", "HEAD"], { encoding: "utf8" }).trim();
+    const self = inspectRepositoryBaseline({ repoRoot: REPO, ancestor: expectedHead });
+    const other = inspectRepositoryBaseline({
+      repoRoot: REPO,
+      ancestor: "6e9d1926df05b4205748bc53b58fd9070c9c465a",
+    });
+    const refused = inspectRepositoryBaseline({ repoRoot: REPO, ancestor: "--hard" });
+    expect(self.ok).toBe(true);
+    expect(self.code).toBe("INSPECTED");
+    expect(self.branch).toBe(expectedBranch);
+    expect(self.head).toBe(expectedHead);
+    expect(self.dirty).toBe(beforeStatus.trim().length > 0);
+    expect(self.ancestor.isAncestor).toBe(true);
+    expect(other.ancestor.isAncestor).toBe(false);
+    expect(self.wrote).toBe(false);
+    expect(self.destroyed).toBe(false);
+    expect(refused.ancestor.isAncestor).toBe(false);
+    expect(refused.wrote).toBe(false);
+    const afterStatus = execFileSync("git", ["-C", REPO, "status", "--porcelain"], { encoding: "utf8" });
+    expect(afterStatus).toBe(beforeStatus);
+    if (before) {
+      const after = statSync(dbFile);
+      expect(after.size).toBe(before.size);
+      expect(after.mtimeMs).toBe(before.mtimeMs);
+    }
+    expect(process.env.BUZZARD_SALES_ENABLED).not.toBe("1");
   });
 
   it("does not treat an unexplained missing file as safe", () => {

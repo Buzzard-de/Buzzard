@@ -155,6 +155,7 @@ function prepareOrder({ productId, quantity = 1, customerId = null, correlationI
     quantity,
     correlationId,
     idempotencyKey: correlationId ? `ordprep_${correlationId}` : null,
+    actorId: customerId || correlationId,
   });
   if (!reserved.ok) return reserved;
 

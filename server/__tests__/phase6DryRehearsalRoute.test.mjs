@@ -88,12 +88,10 @@ describe("phase 6 dry order rehearsal route", () => {
         shippingAddress: { country: "DE" },
         lines: [{ sku: "DRY-SKU-001", qty: 1, unitPrice: 40, title: "Bremsbelag Set Vorderachse" }],
       });
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.rehearsal).toBe(true);
+      expect(response.status).toBe(401);
       expect(response.body.live).toBe(false);
-      expect(response.body.result.ok).toBe(true);
-      expect(response.body.result.live).not.toBe(true);
+      expect(response.body.rehearsal).toBe(false);
+      expect(response.body.errorKey).toBe("auth_required");
     } finally {
       await new Promise((resolve) => server.close(resolve));
     }

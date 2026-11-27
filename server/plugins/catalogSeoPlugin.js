@@ -90,7 +90,7 @@ module.exports = {
 
     app.post("/api/admin/catalog/categories", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = catalogSeo.createCategory(req.body || {});
+      const result = catalogSeo.createCategory(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.category);
     });
@@ -98,7 +98,7 @@ module.exports = {
     app.post("/api/admin/catalog/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       if (rejectLegacyProductWrite(res, "E")) return;
-      const result = catalogSeo.createProduct(req.body || {});
+      const result = catalogSeo.createProduct(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.product);
     });
@@ -106,7 +106,7 @@ module.exports = {
     app.patch("/api/admin/catalog/products/:id", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       if (rejectLegacyProductWrite(res, "E")) return;
-      const result = catalogSeo.updateProduct(req.params.id, req.body || {});
+      const result = catalogSeo.updateProduct(req.params.id, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.product);
     });
@@ -114,12 +114,12 @@ module.exports = {
     app.post("/api/admin/catalog/products/bulk-price", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
       const margin = req.body?.margin ?? process.env.DEFAULT_MARGIN ?? 0.3;
-      return res.json(catalogSeo.bulkUpdatePrices(margin));
+      return res.json(catalogSeo.bulkUpdatePrices(margin, require("../lib/software/control").actorFromRequest(req)));
     });
 
     app.post("/api/admin/catalog/products/:id/images", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = catalogSeo.addProductImage(req.params.id, req.body || {});
+      const result = catalogSeo.addProductImage(req.params.id, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.image);
     });

@@ -2,6 +2,7 @@
  * Durable Pusat control-plane store. Not money, stock, or sales writes.
  */
 const crypto = require("crypto");
+const path = require("path");
 
 function ensureSchema(db) {
   db.exec(`
@@ -99,6 +100,41 @@ function createDurable(db) {
     return { ok: true, id };
   }
 
+  function getMeeting(meetingId) {
+    const meeting = db.prepare(`SELECT * FROM pusat_meetings WHERE id = ?`).get(meetingId);
+    if (!meeting) return null;
+    const events = db.prepare(`SELECT * FROM pusat_meeting_events WHERE meeting_id = ? ORDER BY created_at`).all(meetingId);
+    return {
+      id: meeting.id,
+      date: meeting.date,
+      chairId: meeting.chair_id,
+      status: meeting.status,
+      minutes: meeting.minutes_json ? JSON.parse(meeting.minutes_json) : null,
+      events: events.map((row) => ({
+        id: row.id,
+        kind: row.kind,
+        speakerId: row.speaker_id,
+        payload: JSON.parse(row.payload_json),
+      })),
+    };
+  }
+
+  function pauseMeeting(meetingId) {
+    const meeting = db.prepare(`SELECT status FROM pusat_meetings WHERE id = ?`).get(meetingId);
+    if (!meeting) return { ok: false, code: "NOT_FOUND" };
+    if (meeting.status !== "OPEN") return { ok: false, code: "NOT_OPEN" };
+    db.prepare(`UPDATE pusat_meetings SET status = 'PAUSED' WHERE id = ?`).run(meetingId);
+    return { ok: true, status: "PAUSED" };
+  }
+
+  function resumeMeeting(meetingId) {
+    const meeting = db.prepare(`SELECT status FROM pusat_meetings WHERE id = ?`).get(meetingId);
+    if (!meeting) return { ok: false, code: "NOT_FOUND" };
+    if (meeting.status !== "PAUSED") return { ok: false, code: "NOT_PAUSED" };
+    db.prepare(`UPDATE pusat_meetings SET status = 'OPEN' WHERE id = ?`).run(meetingId);
+    return { ok: true, status: "OPEN" };
+  }
+
   function closeMeeting(meetingId) {
     const meeting = db.prepare(`SELECT * FROM pusat_meetings WHERE id = ?`).get(meetingId);
     if (!meeting) return { ok: false, code: "NOT_FOUND" };
@@ -148,6 +184,9 @@ function createDurable(db) {
     getMemory,
     openMeeting,
     addMeetingEvent,
+    getMeeting,
+    pauseMeeting,
+    resumeMeeting,
     closeMeeting,
     requestResearch,
     completeResearch,
@@ -156,4 +195,17 @@ function createDurable(db) {
   };
 }
 
-module.exports = { ensureSchema, createDurable };
+function openDurableFile(dbPath) {
+  if (!dbPath || path.basename(dbPath) === "buzzard.db") return { ok: false, code: "PRODUCTION_DB_LOCKED" };
+  const { createRequire } = require("module");
+  let Database = null;
+  try {
+    Database = createRequire(path.join(__dirname, "..", "..", "..", "server", "package.json"))("better-sqlite3");
+  } catch {
+    Database = require("better-sqlite3");
+  }
+  const db = new Database(dbPath);
+  return { ok: true, db, store: createDurable(db) };
+}
+
+module.exports = { ensureSchema, createDurable, openDurableFile };

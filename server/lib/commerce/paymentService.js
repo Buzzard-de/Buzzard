@@ -112,7 +112,14 @@ function authorizePayment(input = {}) {
   };
 }
 
-function capturePayment() {
+function capturePayment(input = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "payment",
+    method: "capturePayment",
+    actorId: input.actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, captured: false, realMoneyMovement: false, status: 401 };
   const { MODE, label } = require("../integrationMode");
   const exceptions = require("../exceptionBus");
   exceptions.emit({

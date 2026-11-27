@@ -120,7 +120,9 @@ function dispatch({ agentId, kind = "THINK", input = {} } = {}) {
       return wrap(kind, brandDraft({ actorId: nativeId, kind, facts: input }));
     }
     if (kind === "CAMPAIGN_ANALYZE") return wrap(kind, campaignAnalyze({ actorId: nativeId, rows: input.rows || [] }));
-    if (kind === "APPROVAL_REQUEST") return wrap(kind, requestApproval({ actorId: nativeId, action: input.action }), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    if (kind === "APPROVAL_REQUEST") {
+      return wrap(kind, requestApproval({ actorId: nativeId, action: input.action, input }), { ok: false, code: "HUMAN_GATE_REQUIRED" });
+    }
     if (kind === "TRANSFER_MONEY" || kind === "DEPLOY") {
       return { ...base, ok: false, code: "HUMAN_GATE_REQUIRED", kind };
     }

@@ -51,6 +51,16 @@ function getCompatibility(articleOrSku) {
   });
 }
 
+function liveRequirements() {
+  return {
+    live: false,
+    sandbox: true,
+    accountVerified: false,
+    requiredEnv: ["TECDOC_API_KEY", "TECDOC_PROVIDER_ID", "TECDOC_CATALOG_COUNTRY"],
+    note: "A provider account and catalog license are required before any live call.",
+  };
+}
+
 module.exports = {
   name: "TecDoc Mock Adapter",
   mock: true,
@@ -60,4 +70,5 @@ module.exports = {
   fetchPrices,
   lookupVehicle,
   getCompatibility,
+  liveRequirements,
 };

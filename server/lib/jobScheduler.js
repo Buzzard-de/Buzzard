@@ -112,6 +112,11 @@ function disableSchedule(id) {
 }
 
 function tickScheduler(now = new Date()) {
+  try {
+    require("./controlCenter").expireDue(now.getTime());
+  } catch (err) {
+    console.error("[scheduler] approval expiry error:", err.message);
+  }
   const due = db.prepare(`
     SELECT * FROM core_scheduled_jobs
     WHERE enabled = 1 AND next_run_at <= ?
@@ -122,7 +127,14 @@ function tickScheduler(now = new Date()) {
   const deps = productionDeps();
   const admitted = [];
   for (const row of due) {
-    const schedule = mapRow(row);
+    let schedule;
+    try {
+      schedule = mapRow(row);
+    } catch (err) {
+      admitted.push({ ok: false, code: "SCHEDULE_TICK_FAILED", scheduleId: row.id, message: err.message });
+      continue;
+    }
+    try {
     const pending = db.prepare(`
       SELECT id FROM core_approvals
       WHERE status = 'PENDING' AND resource_type = 'background_job' AND resource_id = ?
@@ -171,8 +183,36 @@ function tickScheduler(now = new Date()) {
         updated_at = CURRENT_TIMESTAMP WHERE id = ?
       `).run(next, now.toISOString(), schedule.id);
     }
+    } catch (err) {
+      admitted.push({ ok: false, code: "SCHEDULE_TICK_FAILED", scheduleId: schedule.id, message: err.message });
+    }
   }
   return admitted;
+}
+
+let schedulerTimer = null;
+
+function startSchedulerLoop({
+  pollMs = Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000,
+  env = process.env,
+} = {}) {
+  if (env.BUZZARD_WORKER_ENABLED !== "1") return { started: false, code: "WORKER_DISABLED" };
+  if (schedulerTimer) return { started: true, already: true, stop: stopSchedulerLoop };
+  schedulerTimer = setInterval(() => {
+    try {
+      tickScheduler();
+    } catch (err) {
+      console.error("[scheduler] tick error:", err.message);
+    }
+  }, pollMs);
+  if (schedulerTimer.unref) schedulerTimer.unref();
+  return { started: true, stop: stopSchedulerLoop };
+}
+
+function stopSchedulerLoop() {
+  if (schedulerTimer) clearInterval(schedulerTimer);
+  schedulerTimer = null;
+  return { started: false };
 }
 
 module.exports = {
@@ -181,6 +221,8 @@ module.exports = {
   listSchedules,
   disableSchedule,
   tickScheduler,
+  startSchedulerLoop,
+  stopSchedulerLoop,
   computeNextRun,
   SCHEDULE_TYPE,
 };

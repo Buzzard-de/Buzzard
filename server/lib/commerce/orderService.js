@@ -48,6 +48,7 @@ function mapOrder(row) {
     metadata: parseJson(row.metadata_json, {}),
     createdAt: row.created_at,
     isCommercial: isCommercialOrderType(row.order_type),
+    phase3: require("./phase3Identity").phase3Identity(row.id),
   };
 }
 
@@ -138,7 +139,7 @@ function recordCanonicalOrder({
   return { ...mapOrder(db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(id)), created: true, canonical: true };
 }
 
-function createOrderFromCheckout({ checkout, payment, orderType, req }) {
+function createOrderFromCheckout({ checkout, payment, orderType, req, actorId = null }) {
   const block = assertCanCreateOrder({ orderType, req });
   if (block && isCommercialOrderType(orderType)) return block;
 
@@ -155,9 +156,20 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
     }
   }
 
+  const customerId = String(checkout?.customerId || "").trim();
+  if (!customerId) {
+    return { error: "customer_required", code: "auth_required", status: 401, blocked: true };
+  }
+
   const totals = checkout.totals || {};
   const cartService = require("./cartService");
-  const cart = cartService.getCart(checkout.cartId);
+  const cart = cartService.getCart(checkout.cartId, { customerId, req });
+  if (cart.error || cart.blocked) {
+    return { error: cart.error, code: cart.error, status: cart.status || 403, blocked: true };
+  }
+  if (!cart.cart?.customerId || String(cart.cart.customerId) !== customerId) {
+    return { error: "idor_denied", code: "idor_denied", status: 403, blocked: true };
+  }
   const pathAdapter = require("./canonicalCommercePath");
   const items = [];
   for (const i of cart.items || []) {
@@ -184,6 +196,22 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
     });
   }
 
+  let actor = actorId;
+  if (!actor && req) {
+    try {
+      actor = require("./commerceGuards").verifiedCommerceIdentity(req)?.id || null;
+    } catch {
+      actor = null;
+    }
+  }
+  const gate = require("../software/control").enforce({
+    engine: "order",
+    method: "createOrderFromCheckout",
+    actorId: actor,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
+
   return recordCanonicalOrder({
     orderType,
     checkoutId: checkout.id,
@@ -203,33 +231,64 @@ function createOrderFromCheckout({ checkout, payment, orderType, req }) {
 }
 
 function getOrder(orderId, ctx = {}) {
+  const requestedSkip = ctx.req && (
+    ctx.req.body?.skipAccessCheck === true
+    || ctx.req.query?.skipAccessCheck === true
+    || ctx.req.query?.skipAccessCheck === "true"
+    || ctx.skipAccessCheck === true
+  );
+  if (requestedSkip) {
+    return { error: "SKIP_ACCESS_FORBIDDEN", status: 403, blocked: true };
+  }
+  const internalSkip = ctx.skipAccessCheck === true && ctx.internal === true && !ctx.req;
+  if (ctx.req) {
+    const { assertCommerceCredential } = require("./commerceGuards");
+    const credential = assertCommerceCredential(ctx.req);
+    if (!credential || credential.blocked) {
+      return { error: "auth_required", status: 401, blocked: true, message: "Authentication required" };
+    }
+  }
   const row = db.prepare("SELECT * FROM commerce_orders WHERE id = ?").get(orderId);
   if (!row) return { error: "order_not_found", status: 404 };
 
-  const { assertCustomerResourceAccess } = require("./commerceGuards");
-  const access = assertCustomerResourceAccess({
-    resourceCustomerId: row.customer_id,
-    requestCustomerId: ctx.customerId,
-    resourceType: "order",
-    req: ctx.req,
-  });
-  if (access?.blocked && row.customer_id) {
-    return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+  const { assertCustomerResourceAccess, refuseIdentityLessRecord } = require("./commerceGuards");
+  const identityBlock = refuseIdentityLessRecord(row, ctx, "order");
+  if (identityBlock?.blocked) {
+    return { error: identityBlock.code, status: identityBlock.status || 401, blocked: true, message: identityBlock.message };
+  }
+  if (!ctx.req && !internalSkip) {
+    const access = assertCustomerResourceAccess({
+      resourceCustomerId: row.customer_id,
+      requestCustomerId: ctx.customerId,
+      resourceType: "order",
+      req: ctx.req,
+    });
+    if (access?.blocked && row.customer_id) {
+      return { error: access.code, status: access.status || 403, blocked: true, message: access.message };
+    }
   }
 
   return mapOrder(row);
 }
 
-function transitionOrderStatus(orderId, toStatus) {
+function transitionOrderStatus(orderId, toStatus, { actorId = null } = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "order",
+    method: "transitionOrderStatus",
+    actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return { ...gate, status: 401 };
   const row = db.prepare("SELECT status FROM commerce_orders WHERE id = ?").get(orderId);
   if (!row) return { error: "order_not_found", status: 404 };
   if (!canTransitionOrder(row.status, toStatus)) {
     return { error: "illegal_order_transition", from: row.status, to: toStatus, status: 409 };
   }
 
-  const livePayment = process.env.BUZZARD_PAYMENT_LIVE === "1";
-  const liveFulfillment = process.env.BUZZARD_FULFILLMENT_LIVE === "1";
-  const liveRefund = process.env.BUZZARD_REFUND_LIVE === "1";
+  const salesOn = require("../salesMode").isSalesEnabled();
+  const livePayment = salesOn && process.env.BUZZARD_PAYMENT_LIVE === "1";
+  const liveFulfillment = salesOn && process.env.BUZZARD_FULFILLMENT_LIVE === "1";
+  const liveRefund = salesOn && process.env.BUZZARD_REFUND_LIVE === "1";
   if (toStatus === ORDER_STATUS.PAID && !livePayment) {
     return { error: "PAYMENT_NOT_LIVE", code: "PAYMENT_NOT_LIVE", from: row.status, to: toStatus, status: 403 };
   }

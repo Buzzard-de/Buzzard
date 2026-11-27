@@ -42,8 +42,6 @@ const PUBLIC_ROUTES = new Set([
   "GET /api/commerce/shipping/methods",
   "GET /api/security/health",
   "GET /api/p1/status",
-  "GET /api/orchestrator/status",
-  "GET /api/guardian/status",
 ]);
 
 const EXACT = {

@@ -47,6 +47,13 @@ function validateConfiguration() {
     });
   }
 
+  if (envFlag("BUZZARD_PAYMENT_LIVE") && !salesEnabled) {
+    errors.push({
+      code: "live_payment_without_sales",
+      message: "BUZZARD_PAYMENT_LIVE=1 without SALES — FAIL CLOSED",
+    });
+  }
+
   if (flags.raw.BUZZARD_SUPPLIER_ORDERS_ENABLED && !salesEnabled) {
     errors.push({
       code: "supplier_orders_without_sales",

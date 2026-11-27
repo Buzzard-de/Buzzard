@@ -173,7 +173,9 @@ function recordClick(sku) {
   return { ok: true };
 }
 
-function createProduct(body = {}) {
+function createProduct(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "advancedSearch.createProduct", actorId: ctx.actorId, actorType: ctx.actorType, table: "srch_products" });
+  if (denied) return denied;
   if (!body.sku || !body.title) {
     return { error: "SKU and title required", status: 400 };
   }
@@ -187,7 +189,7 @@ function createProduct(body = {}) {
       stock: body.stock,
       category: body.category,
     },
-    { source: "SEARCH" }
+    { source: "SEARCH", actorId: ctx.actorId }
   );
   if (canonical.error) return { error: canonical.error, code: canonical.code, status: canonical.status || 400 };
   const existing = db.prepare("SELECT id FROM srch_products WHERE sku = ?").get(sku);
@@ -250,7 +252,9 @@ function createProduct(body = {}) {
   }
 }
 
-function upsertSynonym(body = {}) {
+function upsertSynonym(body = {}, ctx = {}) {
+  const denied = require("./software/control").guardProjection({ method: "advancedSearch.upsertSynonym", actorId: ctx.actorId, actorType: ctx.actorType, table: "srch_synonyms" });
+  if (denied) return denied;
   if (!body.term) return { error: "Term required", status: 400 };
 
   db.prepare(`

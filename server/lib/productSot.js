@@ -56,6 +56,16 @@ function getStatus() {
   };
 }
 
+function assertNoDualWrite(targets = []) {
+  const unique = [...new Set((Array.isArray(targets) ? targets : [targets]).filter(Boolean).map(String))];
+  if (unique.length > 1) {
+    const err = new Error("DUAL_WRITE_FORBIDDEN");
+    err.code = "DUAL_WRITE_FORBIDDEN";
+    throw err;
+  }
+  return { ok: true, target: unique[0] || null };
+}
+
 function assertCanonicalWrite(source) {
   const src = String(source || "").toUpperCase();
   if (src === SOURCE.D) return { ok: true, source: SOURCE.D };
@@ -202,6 +212,7 @@ module.exports = {
   isSotActive,
   getSotMode,
   getStatus,
+  assertNoDualWrite,
   assertCanonicalWrite,
   upsertIdentityMap,
   getIdentity,

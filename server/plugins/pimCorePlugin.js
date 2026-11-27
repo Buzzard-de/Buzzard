@@ -73,9 +73,12 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "products.write")) return;
       try {
+        const { authorizeCreate } = require("../lib/pim/productAuthorization");
+        const authorized = authorizeCreate(req.adminUser);
+        if (!authorized.ok) return res.status(403).json({ success: false, code: authorized.code });
         const product = productCore.createProduct(req.body || {}, {
           source: "ADMIN",
-          actorId: req.adminUser.email,
+          actorId: authorized.actorId,
         });
         logAuditFromRequest(req, { action: "pim.product.create", entityType: "product", entityId: product.id });
         res.status(201).json({ success: true, product });
@@ -88,9 +91,12 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "products.write")) return;
       try {
+        const { authorizeUpdate } = require("../lib/pim/productAuthorization");
+        const authorized = authorizeUpdate(req.adminUser);
+        if (!authorized.ok) return res.status(403).json({ success: false, code: authorized.code });
         const product = productCore.updateProduct(req.params.id, req.body || {}, {
           source: "ADMIN",
-          actorId: req.adminUser.email,
+          actorId: authorized.actorId,
         });
         res.json({ success: true, product });
       } catch (err) {
@@ -306,7 +312,10 @@ module.exports = {
       if (!attachAdmin(req, res)) return;
       if (!requirePerm(req, res, "products.write")) return;
       try {
-        const seo = seoService.updateSeo(req.params.id, req.body || {});
+        const { authorizeUpdate } = require("../lib/pim/productAuthorization");
+        const authorized = authorizeUpdate(req.adminUser);
+        if (!authorized.ok) return res.status(403).json({ success: false, code: authorized.code });
+        const seo = seoService.updateSeo(req.params.id, req.body || {}, { actorId: authorized.actorId, actorType: "HUMAN" });
         res.json({ success: true, seo });
       } catch (err) {
         res.status(400).json({ success: false, message: err.message });

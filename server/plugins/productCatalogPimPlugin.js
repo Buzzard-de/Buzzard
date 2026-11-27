@@ -36,7 +36,8 @@ module.exports = {
     }
 
     app.post("/api/product-catalog-pim/brands", (req, res) => {
-      const result = productCatalogPim.createBrand(req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.createBrand(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.brand);
     });
@@ -46,7 +47,8 @@ module.exports = {
     });
 
     app.post("/api/product-catalog-pim/categories", (req, res) => {
-      const result = productCatalogPim.createCategory(req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.createCategory(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.category);
     });
@@ -56,8 +58,9 @@ module.exports = {
     });
 
     app.post("/api/product-catalog-pim/products", (req, res) => {
+      if (!requireAnyAdmin(req, res)) return;
       if (rejectLegacyProductWrite(res, "C")) return;
-      const result = productCatalogPim.createProduct(req.body || {});
+      const result = productCatalogPim.createProduct(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json({ product: result.product, completeness: result.completeness });
     });
@@ -69,25 +72,29 @@ module.exports = {
     });
 
     app.put("/api/product-catalog-pim/products/:sku/translation/:language", (req, res) => {
-      const result = productCatalogPim.upsertTranslation(req.params.sku, req.params.language, req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.upsertTranslation(req.params.sku, req.params.language, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.json(result.translation);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/attributes", (req, res) => {
-      const result = productCatalogPim.upsertAttribute(req.params.sku, req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.upsertAttribute(req.params.sku, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.json(result);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/media", (req, res) => {
-      const result = productCatalogPim.addMedia(req.params.sku, req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.addMedia(req.params.sku, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 404).json({ error: result.error });
       return res.status(201).json(result.media);
     });
 
     app.post("/api/product-catalog-pim/products/:sku/variants", (req, res) => {
-      const result = productCatalogPim.createVariant(req.params.sku, req.body || {});
+      if (!requireAnyAdmin(req, res)) return;
+      const result = productCatalogPim.createVariant(req.params.sku, req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.variant);
     });

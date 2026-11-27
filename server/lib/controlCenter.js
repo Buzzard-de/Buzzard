@@ -7,6 +7,7 @@ const { listAudit } = require("./coreAudit");
 const { listSecurityEvents } = require("./securityLog");
 const categoryVisibility = require("./categoryVisibility");
 const { aiCanExecute } = require("./rbac");
+const { hashInput } = require("./approvalBinding");
 const {
   SERVICE_STATUS,
   AI_EMPLOYEE_STATUS,
@@ -370,8 +371,22 @@ function updateTaskStatus(id, status, { error, result, actorType } = {}) {
 }
 
 function createApproval({ taskId, resourceType, resourceId, aiRecommendation, reason, riskLevel, metadata } = {}, options = {}) {
+  if (taskId) {
+    const existing = db.prepare("SELECT id FROM core_approvals WHERE task_id = ? AND status = 'PENDING'").get(taskId);
+    if (existing) return getApproval(existing.id);
+  }
   const id = newId("appr");
-  const trustedMetadata = options.trustMetadata === true && metadata && typeof metadata === "object" ? metadata : {};
+  const supplied = options.trustMetadata === true && metadata && typeof metadata === "object" ? { ...metadata } : {};
+  delete supplied.financialImpact;
+  delete supplied.inputHash;
+  const trustedMetadata = {
+    ...supplied,
+    financialImpact: { realMoneyMovement: false, salesEnabled: false, amount: null, currency: null },
+    inputHash: hashInput({ taskId, resourceType, resourceId, reason, riskLevel }),
+    expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+  };
+  delete trustedMetadata.specHash;
+  if (trustedMetadata.spec) trustedMetadata.specHash = require("./approvalBinding").hashSpec(trustedMetadata.spec);
   db.prepare(`
     INSERT INTO core_approvals(id, task_id, resource_type, resource_id, ai_recommendation, reason, risk_level, status, metadata_json)
     VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)
@@ -421,6 +436,7 @@ function getApproval(id) {
 }
 
 function listApprovals(status) {
+  expireDue();
   let sql = "SELECT * FROM core_approvals";
   const params = [];
   if (status) {
@@ -431,30 +447,64 @@ function listApprovals(status) {
   return db.prepare(sql).all(...params).map((row) => getApproval(row.id));
 }
 
-function decideApproval(id, decision, decidedBy) {
-  const status = decision === "approve" ? "APPROVED" : "REJECTED";
-  db.prepare(`
-    UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP WHERE id = ?
-  `).run(status, decidedBy, id);
-
-  const approval = getApproval(id);
-  if (approval?.taskId) {
-    updateTaskStatus(
-      approval.taskId,
-      decision === "approve" ? TASK_STATUS.ASSIGNED : TASK_STATUS.CANCELLED
-    );
+function expireDue(now = Date.now()) {
+  const rows = db.prepare("SELECT id, metadata_json FROM core_approvals WHERE status = 'PENDING'").all();
+  const update = db.prepare(
+    "UPDATE core_approvals SET status = 'EXPIRED', decided_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'PENDING'"
+  );
+  let expired = 0;
+  for (const row of rows) {
+    let meta = {};
+    try {
+      meta = JSON.parse(row.metadata_json || "{}");
+    } catch {
+      meta = {};
+    }
+    const at = Date.parse(meta.expiresAt || "");
+    if (!Number.isFinite(at) || at > now) continue;
+    if (update.run(row.id).changes === 1) expired += 1;
   }
+  return { ok: true, expired };
+}
 
-  recordSystemEvent({
-    eventType: `approval.${decision}`,
-    actorType: "admin",
-    actorId: decidedBy,
-    resourceType: "approval",
-    resourceId: id,
-    summary: `Approval ${status.toLowerCase()}`,
+function decideApproval(id, decision, decidedBy) {
+  expireDue();
+  if (typeof decidedBy !== "string" || !decidedBy.trim()) return null;
+  const decider = decidedBy.trim();
+  const { ids } = require("./buzzardNative/core/identityRegistry");
+  if (ids().includes(decider)) return null;
+  const status = decision === "approve" ? "APPROVED" : "REJECTED";
+  const run = db.transaction(() => {
+    const current = getApproval(id);
+    if (!current || current.status !== "PENDING") return null;
+    if (current.metadata?.inputHash && !require("./approvalBinding").assertBound(current).ok) return null;
+    if (current.metadata?.specHash && !require("./approvalBinding").assertSpec(current).ok) return null;
+    const changed = db.prepare(`
+      UPDATE core_approvals SET status = ?, decided_by = ?, decided_at = CURRENT_TIMESTAMP
+      WHERE id = ? AND status = 'PENDING'
+    `).run(status, decider, id);
+    if (changed.changes !== 1) return null;
+
+    const approval = getApproval(id);
+    if (approval?.taskId) {
+      updateTaskStatus(
+        approval.taskId,
+        decision === "approve" ? TASK_STATUS.ASSIGNED : TASK_STATUS.CANCELLED
+      );
+    }
+
+    recordSystemEvent({
+      eventType: `approval.${decision}`,
+      actorType: "admin",
+      actorId: decider,
+      resourceType: "approval",
+      resourceId: id,
+      summary: `Approval ${status.toLowerCase()}`,
+    });
+
+    return approval;
   });
-
-  return approval;
+  return run.immediate();
 }
 
 function createEscalation({ sourceType, sourceId, title, message, riskLevel, metadata }) {
@@ -662,6 +712,7 @@ module.exports = {
   updateTaskStatus,
   createApproval,
   listApprovals,
+  expireDue,
   decideApproval,
   createEscalation,
   listEscalations,

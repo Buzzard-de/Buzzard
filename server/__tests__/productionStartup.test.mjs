@@ -25,7 +25,7 @@ afterEach(async () => {
   api = null;
 });
 
-async function expectRefusal(env, pattern, secrets = []) {
+async function expectRefusal(env, pattern, secrets = [], { allowAdminFile = false } = {}) {
   api = await startIsolatedApi({ env: { ...production, ...env }, seed: false, expectExit: true });
   const exit = await Promise.race([api.exited, new Promise((resolve) => setTimeout(() => resolve("still running"), 45_000))]);
   expect(exit, api.output().slice(-600)).not.toBe("still running");
@@ -33,7 +33,7 @@ async function expectRefusal(env, pattern, secrets = []) {
   expect(api.output()).toMatch(pattern);
   expect(api.output()).not.toMatch(/Buzzard API server running/);
   for (const secret of [jwtSecret, adminPassword, ...secrets]) expect(api.output()).not.toContain(secret);
-  expect(existsSync(path.join(api.dataDir, "admin-users.json"))).toBe(false);
+  if (!allowAdminFile) expect(existsSync(path.join(api.dataDir, "admin-users.json"))).toBe(false);
 }
 
 describe("production refuses to start without its mandatory secrets", () => {
@@ -74,6 +74,14 @@ describe("production refuses to start without its mandatory secrets", () => {
     await expectRefusal({ BUZZARD_RATE_LIMIT_DISABLED: "1" }, /BUZZARD_RATE_LIMIT_DISABLED=1 must not be set/);
   }, 60_000);
 
+  it("with BUZZARD_PAYMENT_LIVE=1 while sales are off", async () => {
+    await expectRefusal({ BUZZARD_PAYMENT_LIVE: "1", BUZZARD_SALES_ENABLED: "0" }, /BUZZARD_PAYMENT_LIVE=1 without SALES/, [], { allowAdminFile: true });
+  }, 60_000);
+
+  it("with BUZZARD_PAYMENT_ENABLED=1 while sales are off", async () => {
+    await expectRefusal({ BUZZARD_PAYMENT_ENABLED: "1", BUZZARD_SALES_ENABLED: "0" }, /Payment enabled without SALES/, [], { allowAdminFile: true });
+  }, 60_000);
+
   it("on a hosted runtime that forgot NODE_ENV=production", async () => {
     await expectRefusal({ NODE_ENV: "development", RENDER: "true", JWT_SECRET: undefined }, /JWT_SECRET must be set/);
   }, 60_000);
@@ -102,8 +110,15 @@ describe("production with a complete configuration", () => {
 
     const health = await api.request("GET", "/api/health");
     expect(health.status).toBe(200);
+    expect(health.json).toEqual({ success: true, ok: true, live: false, isolated: true });
     expect(health.text).not.toContain(api.root);
-    expect(health.json.database.path).toBe("[data]/catalog.sqlite");
+    const openDiagnostics = await api.request("GET", "/api/health/diagnostics");
+    expect(openDiagnostics.status).toBe(401);
+    const diagnostics = await api.request("GET", "/api/health/diagnostics", { token: login.json.token });
+    expect(diagnostics.status).toBe(200);
+    expect(typeof diagnostics.json.database.path).toBe("string");
+    expect(health.text).not.toContain("catalog.sqlite");
+    expect(openDiagnostics.text).not.toContain("catalog.sqlite");
     for (const route of ["/api/health/db", "/api/health/production", "/api/health/operations", "/api/health/go-live-readiness", "/api/smart-menu-48/health"]) {
       const res = await api.request("GET", route);
       expect(res.text, route).not.toContain(api.root);

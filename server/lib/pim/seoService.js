@@ -27,7 +27,14 @@ function buildSeo(product) {
   };
 }
 
-function updateSeo(productId, seoPatch) {
+function updateSeo(productId, seoPatch, ctx = {}) {
+  const denied = require("../software/control").guardProjection({ method: "seo.update", actorId: ctx.actorId, actorType: ctx.actorType, table: "pim_core_products" });
+  if (denied) {
+    const error = new Error(denied.code);
+    error.code = denied.code;
+    error.status = denied.status;
+    throw error;
+  }
   const row = db.prepare("SELECT * FROM pim_core_products WHERE id = ?").get(productId);
   if (!row) throw new Error("Product not found");
   const current = row.seo_json ? JSON.parse(row.seo_json) : {};

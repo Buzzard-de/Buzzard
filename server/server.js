@@ -22,34 +22,16 @@ const rootDir = path.join(__dirname, '..');
 const pluginsDir = path.join(__dirname, 'plugins');
 const routes = [];
 const apiRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 180, keyPrefix: 'api:' });
+const healthRateLimit = createRateLimiter({ windowMs: 60 * 1000, max: 240, keyPrefix: 'health:' });
 const anonymousWriteLimit = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPrefix: 'api-anon-write:' });
 
 function setCommonHeaders(res) {
   setSecurityHeaders(res);
 }
 
-function getAllowedOrigins() {
-  const defaults = [
-    "http://localhost:8000",
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://buzzard24.de",
-    "https://www.buzzard24.de",
-  ];
-  // "null" is the origin of file:// pages and sandboxed frames. Local HTML
-  // prototypes rely on it; a deployed API has no reason to trust it.
-  if (!require("./lib/runtimeEnv").isProduction()) defaults.push("null");
-  const extra = (process.env.BUZZARD_CORS_ORIGINS || "")
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean);
-  return new Set([...defaults, ...extra]);
-}
-
 function setApiCorsHeaders(req, res) {
   const origin = req.headers.origin;
-  const allowed = getAllowedOrigins();
-  if (origin && allowed.has(origin)) {
+  if (require("./lib/corsOrigins").originAllowed(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Vary", "Origin");
   }
@@ -325,13 +307,7 @@ if (process.env.BUZZARD_WORKER_ENABLED === "1") {
   const jobScheduler = require("./lib/jobScheduler");
   jobWorker.setupGracefulShutdown();
   jobWorker.startWorker({ pollIntervalMs: Number(process.env.BUZZARD_WORKER_POLL_MS) || 3000 });
-  setInterval(() => {
-    try {
-      jobScheduler.tickScheduler();
-    } catch (err) {
-      console.error("[scheduler] tick error:", err.message);
-    }
-  }, Number(process.env.BUZZARD_SCHEDULER_POLL_MS) || 60_000).unref();
+  jobScheduler.startSchedulerLoop();
 }
 
 async function handleRequest(req, res) {
@@ -372,7 +348,8 @@ async function serveRequest(req, res) {
       return;
     }
 
-    if (apiRateLimit(req)) {
+    const healthProbe = pathname === '/api/health' || pathname.startsWith('/api/health/');
+    if (healthProbe ? healthRateLimit(req) : apiRateLimit(req)) {
       logSecurityEvent({
         type: 'api_rate_limited',
         success: false,

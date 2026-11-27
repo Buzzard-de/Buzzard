@@ -558,6 +558,12 @@ function collectHealth() {
 module.exports = {
   register(app) {
     app.get("/api/health", (_req, res) => {
+      const { isolated } = getDataDirInfo();
+      return res.json({ success: true, ok: true, live: false, isolated: isolated === true });
+    });
+
+    app.get("/api/health/diagnostics", (req, res) => {
+      if (!requireAuth(req, res)) return;
       const { mode, isolated } = getDataDirInfo();
       return res.json({ success: true, ...collectHealth(), adminData: { mode, isolated } });
     });

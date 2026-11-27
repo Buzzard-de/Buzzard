@@ -72,7 +72,7 @@ function ensureVisibleProduct() {
     stock: 10,
     visibility: "PUBLIC",
     status: "READY",
-  });
+  }, { actorId: "part8" });
   catalogCache.invalidate();
   const created = catalogReadService.listProducts({ page: 1, limit: 10 }).items[0];
   if (!created) throw new Error("isolated catalog product was not visible");

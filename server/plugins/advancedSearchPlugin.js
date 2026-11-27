@@ -50,14 +50,14 @@ module.exports = {
 
     app.post("/api/admin/advanced-search/products", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = advancedSearch.createProduct(req.body || {});
+      const result = advancedSearch.createProduct(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.status(201).json(result.product);
     });
 
     app.post("/api/admin/advanced-search/synonyms", (req, res) => {
       if (!requireAnyAdmin(req, res)) return;
-      const result = advancedSearch.upsertSynonym(req.body || {});
+      const result = advancedSearch.upsertSynonym(req.body || {}, require("../lib/software/control").actorFromRequest(req));
       if (result.error) return res.status(result.status || 400).json({ error: result.error });
       return res.json(result);
     });

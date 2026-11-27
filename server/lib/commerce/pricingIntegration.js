@@ -74,7 +74,14 @@ function quotePrice({
   };
 }
 
-function applyPriceChange({ productId, amount, actorType = "HUMAN", approved = false, permission = false } = {}) {
+function applyPriceChange({ productId, amount, actorType = "HUMAN", approved = false, permission = false, actorId = null } = {}) {
+  const gate = require("../software/control").enforce({
+    engine: "pricing",
+    method: "applyPriceChange",
+    actorId,
+    mode: "write",
+  });
+  if (!gate.ok) return gate;
   if (actorType === "AI") {
     return { ok: false, code: "AI_PRICE_WRITE_DENIED", ...label(MODE.DISABLED) };
   }
@@ -83,7 +90,7 @@ function applyPriceChange({ productId, amount, actorType = "HUMAN", approved = f
   }
   const valid = validatePrice(amount);
   if (!valid.ok) return { ok: false, code: valid.error, ...label(MODE.DRY_RUN) };
-  const product = productService.updateProduct(productId, { price: valid.value.amount }, { source: "ADMIN" });
+  const product = productService.updateProduct(productId, { price: valid.value.amount }, { source: "ADMIN", actorId });
   events.emit({
     type: events.TYPES.PriceUpdated,
     aggregateId: productId,

@@ -6,26 +6,28 @@ const { setExpression, idleTick, speechSync } = require("../motion/expression");
 const AVATAR = "/council/sinan-bey.png";
 const POSES = Object.freeze(["idle", "listening", "thinking", "speaking"]);
 
-function createDigitalBodyEngine() {
+function createDigitalBodyEngine(profile = {}) {
+  const avatar = profile.avatar || AVATAR;
+  const voiceId = profile.voiceId || VOICE_ID;
+  const agentId = profile.agentId || "sinan_bey";
   let pose = "idle";
   return createEngine({
     id: "digital_body",
     capabilities: ["pose", "avatar_lock"],
     executeImpl(input) {
       const op = input.op || "state";
-      if (op === "state") {
-        return { op, pose, avatar: AVATAR, voiceId: VOICE_ID, ttsReady: false, animation: false, lipSync: false };
-      }
+      const shared = { avatar, voiceId, agentId, sharedEngine: "digital_body", ttsReady: false, animation: false, lipSync: false };
+      if (op === "state") return { op, pose, ...shared };
       if (op === "set_pose") {
         if (!POSES.includes(input.pose)) return { ok: false, code: "UNKNOWN_POSE" };
         pose = input.pose;
-        return { op, pose, avatar: AVATAR, voiceId: VOICE_ID, animation: false, lipSync: false };
+        return { op, pose, ...shared };
       }
-      if (op === "viseme") return { op, ...schedule(input.phonemes || []), avatar: AVATAR, body3d: false };
-      if (op === "expression") return { op, ...setExpression(input.expression || "neutral"), avatar: AVATAR };
-      if (op === "idle") return { op, ...idleTick(input.ms), avatar: AVATAR };
-      if (op === "speech_sync") return { op, ...speechSync(input.text || "merhaba", input.lang || "tr"), avatar: AVATAR };
-      if (op === "lip_sync" || op === "animate") return { ...notImplemented(op), avatar: AVATAR, lipSyncPass: false };
+      if (op === "viseme") return { op, ...schedule(input.phonemes || []), ...shared, body3d: false };
+      if (op === "expression") return { op, ...setExpression(input.expression || "neutral"), ...shared };
+      if (op === "idle") return { op, ...idleTick(input.ms), ...shared };
+      if (op === "speech_sync") return { op, ...speechSync(input.text || "merhaba", input.lang || "tr"), ...shared };
+      if (op === "lip_sync" || op === "animate") return { ...notImplemented(op), ...shared, lipSyncPass: false };
       return notImplemented(op);
     },
   });

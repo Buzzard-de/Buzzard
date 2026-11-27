@@ -1,0 +1,12 @@
+<!-- Prepared local FreeSWITCH profile. The package is not installed and this file is not running. -->
+<include>
+  <profile name="buzzard_lab">
+    <settings>
+      <param name="sip-ip" value="127.0.0.1"/>
+      <param name="sip-port" value="5060"/>
+      <param name="rtp-ip" value="127.0.0.1"/>
+      <param name="auth-calls" value="true"/>
+      <param name="context" value="buzzard"/>
+    </settings>
+  </profile>
+</include>

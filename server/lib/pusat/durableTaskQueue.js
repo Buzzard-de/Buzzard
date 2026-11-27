@@ -488,32 +488,53 @@ function createDurableTaskQueue({ dbPath }) {
   function decideApproval({ id, approved, actorId }) {
     const DECIDERS = new Set(["human", "operator"]);
     if (!DECIDERS.has(actorId)) return { ok: false, code: "PERMISSION_DENIED" };
-    const item = getApproval(id);
-    if (!item) return { ok: false, code: "NOT_FOUND" };
-    if (item.status !== "WAITING_APPROVAL") return { ok: false, code: "ALREADY_DECIDED" };
-    if (Date.parse(item.expires_at) < Date.now()) {
-      db.prepare(`UPDATE orch_approvals SET status = 'EXPIRED', decided_at = ? WHERE id = ?`).run(
-        new Date().toISOString(),
-        id
-      );
-      return { ok: false, code: "EXPIRED" };
-    }
-    const status = approved ? "APPROVED" : "REJECTED";
-    db.prepare(`UPDATE orch_approvals SET status = ?, decided_by = ?, decided_at = ? WHERE id = ?`).run(
-      status,
-      actorId,
-      new Date().toISOString(),
-      id
-    );
-    audit(item.task_id, "APPROVAL_DECIDE", { id, approved, actorId });
-    if (approved) {
-      const payload = get(item.task_id)?.payload || {};
-      setPayload(item.task_id, { ...payload, humanApproved: true, approvalId: id });
-      releaseToQueued(item.task_id);
-    } else {
-      rejectTerminal(item.task_id, "APPROVAL_REJECTED");
-    }
-    return { ok: true, item: getApproval(id), task: get(item.task_id) };
+    const run = db.transaction(() => {
+      const item = getApproval(id);
+      if (!item) return { ok: false, code: "NOT_FOUND" };
+      if (item.status !== "WAITING_APPROVAL") return { ok: false, code: "ALREADY_DECIDED" };
+      if (Date.parse(item.expires_at) < Date.now()) {
+        db.prepare(`UPDATE orch_approvals SET status = 'EXPIRED', decided_at = ? WHERE id = ? AND status = 'WAITING_APPROVAL'`).run(
+          new Date().toISOString(),
+          id
+        );
+        return { ok: false, code: "EXPIRED" };
+      }
+      if (item.payload?.inputHash) {
+        const task = get(item.task_id);
+        const { approvalInputHash } = require("../buzzardNative/core/specialists/brandDraft");
+        const current = approvalInputHash({
+          actorId: task?.assigneeId || item.requested_by,
+          action: task?.payload?.input?.action || task?.payload?.gateBound?.action || item.action,
+          input: task?.payload?.input || {},
+        });
+        const boundHash = approvalInputHash(task?.payload?.gateBound || {});
+        if (current !== item.payload.inputHash || boundHash !== item.payload.inputHash) {
+          return { ok: false, code: "INPUT_HASH_MISMATCH" };
+        }
+      }
+      const status = approved ? "APPROVED" : "REJECTED";
+      const changed = db.prepare(
+        `UPDATE orch_approvals SET status = ?, decided_by = ?, decided_at = ? WHERE id = ? AND status = 'WAITING_APPROVAL'`
+      ).run(status, actorId, new Date().toISOString(), id);
+      if (changed.changes !== 1) return { ok: false, code: "ALREADY_DECIDED" };
+      audit(item.task_id, "APPROVAL_DECIDE", { id, approved, actorId });
+      if (approved) {
+        const payload = get(item.task_id)?.payload || {};
+        setPayload(item.task_id, { ...payload, humanApproved: true, approvalId: id });
+        releaseToQueued(item.task_id);
+      } else {
+        rejectTerminal(item.task_id, "APPROVAL_REJECTED");
+      }
+      return { ok: true, item: getApproval(id), task: get(item.task_id) };
+    });
+    return run.immediate();
+  }
+
+  function list({ state = null } = {}) {
+    const rows = state
+      ? db.prepare(`SELECT * FROM orch_tasks WHERE state = ? ORDER BY updated_at ASC`).all(state)
+      : db.prepare(`SELECT * FROM orch_tasks ORDER BY updated_at ASC`).all();
+    return rows.map(rowToTask);
   }
 
   function close() {
@@ -523,6 +544,7 @@ function createDurableTaskQueue({ dbPath }) {
   return {
     enqueue,
     get,
+    list,
     lease,
     registerWorker,
     heartbeat,

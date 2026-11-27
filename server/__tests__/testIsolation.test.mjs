@@ -52,7 +52,7 @@ describe("catalog files the API rewrites", () => {
     expect(visibility.getCategoryStatus("cat-synthetic").status).toBe("DRAFT");
 
     const products = lib.load("productStore.js");
-    products.upsertProduct({ id: "syn-isolation", sku: "SYN-ISOLATION-1", title: "Synthetic" });
+    products.upsertProduct({ id: "syn-isolation", sku: "SYN-ISOLATION-1", title: "Synthetic" }, { actorId: "isolation-test@example.invalid", actorType: "HUMAN" });
     expect(products.getProductById("syn-isolation")?.sku).toBe("SYN-ISOLATION-1");
     products.deleteProduct("syn-isolation");
 

@@ -1,0 +1,399 @@
+path,category,bytes,status,note
+BUZZARD_FULL_AUDIT.zip,archive,107367,metadata_only,Arşiv. 11 üye. İç içe arşiv 0. Şifreli üye 0.
+artifacts/buzzard-security-admin-final-sprint-checkpoint-2026-11-18/work-tree.tgz,archive,16649830,unreadable,archive. 16649830 bayt. Metin olarak açılmadı.
+docs/software-completion/t15-2/admin-login.png,image,67269,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/ar-mobile-after-skip-link.png,image,39396,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/home-desktop.png,image,168199,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/home-mobile.png,image,91793,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ar-categories.png,image,152414,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ar-desktop.png,image,152319,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ar-mobile.png,image,83741,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/bg-categories.png,image,168779,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/bg-desktop.png,image,168707,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/bg-mobile.png,image,87769,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ca-categories.png,image,162584,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ca-desktop.png,image,162485,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ca-mobile.png,image,85499,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/cs-categories.png,image,170622,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/cs-desktop.png,image,170598,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/cs-mobile.png,image,89070,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/da-categories.png,image,170817,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/da-desktop.png,image,170692,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/da-mobile.png,image,83147,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/de-categories.png,image,234137,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/de-desktop.png,image,234087,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/de-mobile.png,image,123535,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/el-categories.png,image,182700,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/el-desktop.png,image,182575,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/el-mobile.png,image,87867,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/en-categories.png,image,164544,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/en-desktop.png,image,164455,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/en-mobile.png,image,86286,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/es-categories.png,image,167381,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/es-desktop.png,image,167268,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/es-mobile.png,image,88863,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/et-categories.png,image,164142,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/et-desktop.png,image,164024,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/et-mobile.png,image,86482,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/eu-categories.png,image,170993,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/eu-desktop.png,image,170890,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/eu-mobile.png,image,89330,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fi-categories.png,image,163070,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fi-desktop.png,image,162980,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fi-mobile.png,image,83322,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fr-categories.png,image,170232,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fr-desktop.png,image,170088,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/fr-mobile.png,image,87768,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ga-categories.png,image,168307,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ga-desktop.png,image,168272,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ga-mobile.png,image,86258,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/gl-categories.png,image,167531,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/gl-desktop.png,image,167468,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/gl-mobile.png,image,88606,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hr-categories.png,image,165497,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hr-desktop.png,image,165413,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hr-mobile.png,image,87669,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hu-categories.png,image,172312,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hu-desktop.png,image,172218,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/hu-mobile.png,image,87582,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/it-categories.png,image,167432,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/it-desktop.png,image,167388,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/it-mobile.png,image,80678,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lb-categories.png,image,162806,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lb-desktop.png,image,162728,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lb-mobile.png,image,85261,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lt-categories.png,image,172983,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lt-desktop.png,image,172855,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lt-mobile.png,image,87415,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lv-categories.png,image,171242,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lv-desktop.png,image,171116,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/lv-mobile.png,image,89156,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/mt-categories.png,image,166578,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/mt-desktop.png,image,166480,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/mt-mobile.png,image,84904,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/nl-categories.png,image,166714,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/nl-desktop.png,image,166647,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/nl-mobile.png,image,85101,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pl-categories.png,image,174169,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pl-desktop.png,image,174121,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pl-mobile.png,image,91183,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pt-categories.png,image,169851,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pt-desktop.png,image,169729,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/pt-mobile.png,image,87923,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ro-categories.png,image,168454,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ro-desktop.png,image,168343,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/ro-mobile.png,image,84073,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sk-categories.png,image,174067,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sk-desktop.png,image,173919,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sk-mobile.png,image,86990,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sl-categories.png,image,166959,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sl-desktop.png,image,166821,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sl-mobile.png,image,82686,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sv-categories.png,image,173464,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sv-desktop.png,image,173422,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/sv-mobile.png,image,87360,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/tr-categories.png,image,170619,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/tr-desktop.png,image,170583,metadata_only,"PNG image data, 1280 x 720, 8-bit/color RGB, non-interlaced"
+docs/software-completion/t15-2/locales/tr-mobile.png,image,85941,metadata_only,"PNG image data, 375 x 812, 8-bit/color RGB, non-interlaced"
+exports/Buzzard24_Cursor_Aufgaben.zip,archive,8213,metadata_only,Arşiv. 18 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard-part1-part14-berichte-2026-08-29.zip,archive,80572,metadata_only,Arşiv. 25 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard-part1-part2-bericht.zip,archive,16101,metadata_only,Arşiv. 10 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard24-bericht-auswahl-2026-08-28.zip,archive,4174,metadata_only,Arşiv. 6 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard24-komplettbericht-2026-08-27.zip,archive,16906,metadata_only,Arşiv. 15 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard24-komplettbericht-CHATGPT.zip,archive,27304,metadata_only,Arşiv. 3 üye. İç içe arşiv 1. Şifreli üye 0.
+exports/buzzard24-p1-catalog-platform-2026-08-27.zip,archive,81757,metadata_only,Arşiv. 73 üye. İç içe arşiv 0. Şifreli üye 0.
+exports/buzzard24-tagesbericht-2026-08-28.zip,archive,54678,metadata_only,Arşiv. 40 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_43_CATEGORY_INTELLIGENCE_MAXIMAL.zip,archive,478512,metadata_only,Arşiv. 387 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AGRICULTURE_MAXIMAL.zip,archive,636607,metadata_only,Arşiv. 458 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AI_COUNCIL_18_UNIFIED_MAXIMAL.zip,archive,320537,metadata_only,Arşiv. 268 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AI_COUNCIL_19_CUSTOMS_BUREAUCRACY_MAXIMAL.zip,archive,420060,metadata_only,Arşiv. 356 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL.zip,archive,101838,metadata_only,Arşiv. 40 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_FINAL_V3_TELEPHONY.zip,archive,143393,metadata_only,Arşiv. 93 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AI_PHONE_ASSISTANT_MAXIMAL_V2_MEMORY_CRM.zip,archive,111300,metadata_only,Arşiv. 51 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL.zip,archive,536829,metadata_only,Arşiv. 417 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_AUTOMOTIVE_TAXONOMY_MAXIMAL_WITH_TIRES.zip,archive,591142,metadata_only,Arşiv. 435 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_CATEGORY_AUDIT_MAXIMAL_654d.zip,archive,115578,metadata_only,Arşiv. 17 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_COMPLETE_COMMERCE_PLATFORM_MAXIMAL_FINAL.zip,archive,126823,metadata_only,Arşiv. 76 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_LAUNCH_SEQUENCE_MAXIMAL_ONE_PACKAGE.zip,archive,253114,metadata_only,Arşiv. 203 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_LIVESTOCK_MAXIMAL.zip,archive,680653,metadata_only,Arşiv. 482 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MAIN_COLUMN_48_CATEGORY_ENGINE_381f.zip,archive,198487,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MASTER_TAXONOMY_48_MAXIMAL_6865.zip,archive,206449,metadata_only,Arşiv. 18 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MASTER_TAXONOMY_CLEAN.zip,archive,67323,metadata_only,Arşiv. 90 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MASTER_TAXONOMY_MAXIMAL.zip,archive,49380,metadata_only,Arşiv. 9 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MASTER_TAXONOMY_UNIFICATION_MAXIMAL.zip,archive,9407,metadata_only,Arşiv. 9 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MAXIMAL_ANALYTICS_BI_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip,archive,154040,metadata_only,Arşiv. 418 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MAXIMAL_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip,archive,148087,metadata_only,Arşiv. 401 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MAXIMAL_PRODUCTION_ONE_PIECE_ALLES_IN_EINEM_ORDNER.zip,archive,165041,metadata_only,Arşiv. 439 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_MULTILINGUAL_PRODUCT_INTELLIGENCE_MAXIMAL.zip,archive,91276,metadata_only,Arşiv. 24 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_PIM_PRODUCT_MASTER_MAXIMAL.zip,archive,81771,metadata_only,Arşiv. 13 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_PRODUCTION_INTEGRATION_MAXIMAL_ONE_PACKAGE.zip,archive,214381,metadata_only,Arşiv. 167 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_SHOP_INTELLIGENCE_COMMERCE_BRIDGE_MAXIMAL_ONE_PIECE.zip,archive,260898,metadata_only,Arşiv. 650 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_SOCIAL_INTELLIGENCE_AI_MAXIMAL.zip,archive,545124,metadata_only,Arşiv. 434 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_SUPPLIER_IMPORT_ENRICHMENT_ENGINE_MAXIMAL.zip,archive,93858,metadata_only,Arşiv. 31 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/BUZZARD_SUPPLIER_INTELLIGENCE_AI_MAXIMAL_c082.zip,archive,19927,metadata_only,Arşiv. 17 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_ALLES.zip,archive,8921,metadata_only,Arşiv. 8 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_ALLES_AUF_EINMAL.zip,archive,24251,metadata_only,Arşiv. 61 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_COMMERCE_FINAL_REST_ALLES_IN_EINEM_ORDNER.zip,archive,112333,metadata_only,Arşiv. 332 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_COMMERCE_GESAMT.zip,archive,138602,metadata_only,Arşiv. 464 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_COMPLETE_ALLES_IN_EINEM_ORDNER.zip,archive,43262,metadata_only,Arşiv. 97 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_COMPLETE_FINAL_ALLES_IN_EINEM_ORDNER.zip,archive,57884,metadata_only,Arşiv. 93 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_COMPLETE_VNEXT_ALLES_IN_EINEM_ORDNER.zip,archive,74421,metadata_only,Arşiv. 130 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_CRM_CUSTOMER_EXPERIENCE_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip,archive,240593,metadata_only,Arşiv. 431 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip,archive,221930,metadata_only,Arşiv. 406 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_CUSTOMER_BILLING_RETURNS_ENGINE_V2.zip,archive,221930,metadata_only,Arşiv. 406 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_DoguBey_tek_klasor.zip,archive,4066,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_GESAMT.zip,archive,15770,metadata_only,Arşiv. 41 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_GESAMT_ALLE_FEHLENDEN_ORDNER.zip,archive,59612,metadata_only,Arşiv. 185 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_LOGISTICS_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip,archive,169329,metadata_only,Arşiv. 360 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_MARKETING_ADVERTISING_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip,archive,260341,metadata_only,Arşiv. 461 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_MAXIMAL_ALLES_IN_EINEM_ORDNER.zip,archive,132077,metadata_only,Arşiv. 389 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_NAECHSTER_GESAMTPAKET.zip,archive,33159,metadata_only,Arşiv. 90 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_NOCH_FEHLENDE_FEHLERBEREINIGT.zip,archive,100487,metadata_only,Arşiv. 224 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_ORDER_FULFILLMENT_ENGINE_V1_ALLES_IN_EINEM_ORDNER.zip,archive,194818,metadata_only,Arşiv. 382 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_f1_Commerce.zip,archive,89862,metadata_only,Arşiv. 358 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_komplett.zip,archive,4830,metadata_only,Arşiv. 6 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_AI_o3_NOCH_FEHLENDE_FEHLERBEREINIGT.zip,archive,100487,metadata_only,Arşiv. 224 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_DoguBey_AslanBey_v1.zip,archive,7561,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_FINAL_INTEGRATION_TEST_GO_LIVE.zip,archive,7638,metadata_only,Arşiv. 18 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_FINAL_PRODUCTION_COMPLETION.zip,archive,8142,metadata_only,Arşiv. 16 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_Live_Data_Connector_Pack.zip,archive,7950,metadata_only,Arşiv. 16 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_MASTER_INTEGRATION_COMPLETE.zip,archive,5067,metadata_only,Arşiv. 9 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_Marketplace_Website_Monitoring.zip,archive,6761,metadata_only,Arşiv. 11 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_Marketplace_Website_Monitoring_UPDATED.zip,archive,6761,metadata_only,Arşiv. 11 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v1.zip,archive,4522,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v100_Buzzard_AI_Intelligence_Center.zip,archive,1678,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v101_Unified_Error_Handling.zip,archive,1886,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v101_v120_Error_Resilience_COMPLETE.zip,archive,91703,metadata_only,Arşiv. 102 üye. İç içe arşiv 20. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v102_Input_Validation.zip,archive,1879,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v103_Schema_Validation.zip,archive,1882,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v104_API_Retry_Backoff.zip,archive,1891,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v105_Rate_Limit_Manager.zip,archive,1885,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v106_Timeout_Circuit_Breaker.zip,archive,1912,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v107_Credential_Secret_Validation.zip,archive,1913,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v108_Data_Integrity_Checks.zip,archive,1897,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v109_Duplicate_Conflict_Resolution.zip,archive,1923,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v10_Council_Integration.zip,archive,3374,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v110_Source_Freshness_Monitor.zip,archive,1901,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v111_Data_Provenance_Lineage.zip,archive,1903,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v112_Audit_Log_Integrity.zip,archive,1889,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v113_Agent_Health_Monitor.zip,archive,1883,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v114_Mission_Recovery_Manager.zip,archive,1900,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v115_Queue_Job_Recovery.zip,archive,1896,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v116_Human_Approval_Guardrails.zip,archive,1906,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v117_Backup_Restore_Manager.zip,archive,1904,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v118_System_Health_Dashboard.zip,archive,1891,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v119_End_to_End_Integration_Tests.zip,archive,1906,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v11_Voice_Interface.zip,archive,3270,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v120_Production_Readiness_Error_Center.zip,archive,1928,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v121_Security_Architecture.zip,archive,1793,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v121_v200_ALL_REMAINING_COMPLETE.zip,archive,344225,metadata_only,Arşiv. 402 üye. İç içe arşiv 80. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v122_Identity_Access_Control.zip,archive,1831,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v123_Role_Permission_Manager.zip,archive,1836,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v124_Secrets_Key_Management.zip,archive,1830,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v125_Privacy_Data_Minimization.zip,archive,1841,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v126_GDPR_Data_Governance.zip,archive,1821,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v127_Consent_Retention.zip,archive,1814,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v128_Security_Monitoring.zip,archive,1811,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v129_Threat_Detection.zip,archive,1801,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v12_Shared_Memory.zip,archive,2947,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v130_Security_Incident_Center.zip,archive,1822,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v131_Distributed_Data_Processing.zip,archive,1841,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v132_Database_Scaling.zip,archive,1810,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v133_Cache_Performance.zip,archive,1805,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v134_Parallel_Job_Engine.zip,archive,1824,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v135_Queue_Scaling.zip,archive,1807,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v136_API_Gateway_Load_Control.zip,archive,1845,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v137_Observability_Metrics.zip,archive,1838,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v138_Resource_Optimization.zip,archive,1825,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v139_High_Availability.zip,archive,1820,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v13_Multilingual.zip,archive,2988,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v140_Disaster_Recovery.zip,archive,1813,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v141_Advanced_Reasoning_Engine.zip,archive,1835,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v142_Agent_Memory_Retrieval.zip,archive,1835,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v143_Agent_Evaluation.zip,archive,1816,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v144_Agent_Self_Check.zip,archive,1821,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v145_Multi_Agent_Debate.zip,archive,1827,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v146_Decision_Explanation.zip,archive,1831,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v147_Uncertainty_Engine.zip,archive,1829,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v148_Continuous_Learning_Pipeline.zip,archive,1851,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v149_Model_Quality_Monitor.zip,archive,1836,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v14_Competitor_Intelligence.zip,archive,3430,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v150_AI_Council_Intelligence.zip,archive,1833,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v151_Procurement_Intelligence.zip,archive,1828,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v152_Supplier_Discovery_Advanced.zip,archive,1849,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v153_Supplier_Negotiation_Intelligence.zip,archive,1860,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v154_Purchase_Forecasting.zip,archive,1830,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v155_Lead_Time_Intelligence.zip,archive,1829,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v156_Supply_Risk_Radar.zip,archive,1818,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v157_Purchase_Order_Intelligence.zip,archive,1848,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v158_Supplier_Scorecards.zip,archive,1820,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v159_Sourcing_Optimization.zip,archive,1835,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v15_Authenticity_Trust.zip,archive,3408,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v160_Supply_Chain_Command_Center.zip,archive,1840,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v161_Customer_Intelligence.zip,archive,1808,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v162_Customer_Segmentation.zip,archive,1820,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v163_Customer_Lifetime_Value.zip,archive,1831,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v164_Sales_Forecasting.zip,archive,1818,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v165_Lead_Intelligence.zip,archive,1807,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v166_Conversion_Intelligence.zip,archive,1819,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v167_Basket_Analysis.zip,archive,1818,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v168_Retention_Intelligence.zip,archive,1819,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v169_Customer_Service_Intelligence.zip,archive,1833,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v16_Profitability.zip,archive,2850,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v170_Sales_Command_Center.zip,archive,1822,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v171_Marketing_Attribution.zip,archive,1807,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v172_Campaign_Intelligence.zip,archive,1808,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v173_Creative_Performance.zip,archive,1811,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v174_SEO_Intelligence_Advanced.zip,archive,1823,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v175_Social_Trend_Intelligence.zip,archive,1820,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v176_Content_Opportunity_Engine.zip,archive,1835,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v177_Ad_Budget_Optimizer.zip,archive,1812,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v178_ROAS_Forecasting.zip,archive,1802,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v179_Promotion_Optimization.zip,archive,1814,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v17_Market_Opportunity.zip,archive,3244,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v180_Marketing_Command_Center.zip,archive,1816,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v181_Country_Operations_Manager.zip,archive,1824,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v182_International_Tax_Intelligence.zip,archive,1828,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v183_Cross_Border_Compliance.zip,archive,1823,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v184_International_Payments.zip,archive,1814,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v185_Local_Logistics_Network.zip,archive,1830,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v186_Country_Supplier_Networks.zip,archive,1836,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v187_Local_Competitor_Radar.zip,archive,1818,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v188_Market_Launch_Operations.zip,archive,1818,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v189_International_Risk_Center.zip,archive,1817,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v18_Supplier_Intelligence.zip,archive,3725,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v190_Global_Operations_Command_Center.zip,archive,1829,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v191_Business_Operating_System.zip,archive,1832,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v192_Executive_Intelligence.zip,archive,1832,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v193_Strategic_Planning_AI.zip,archive,1840,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v194_KPI_Intelligence.zip,archive,1817,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v195_Cash_Flow_Intelligence.zip,archive,1837,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v196_Growth_Opportunity_Engine.zip,archive,1856,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v197_Decision_Support_Center.zip,archive,1843,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v198_Enterprise_Memory.zip,archive,1829,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v199_Autonomous_Business_Workflow.zip,archive,1857,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v19_Risk_Compliance.zip,archive,3973,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v200_Buzzard_AI_Business_Operating_Intelligence_Center.zip,archive,1860,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v20_Council_Orchestrator.zip,archive,4180,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v21_AI_Agent_Gateway.zip,archive,3575,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v22_Web_Research.zip,archive,3579,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v23_Connector_Hub.zip,archive,3596,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v24_Product_Matching.zip,archive,4115,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v25_Price_Intelligence.zip,archive,3264,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v26_Demand_Forecasting.zip,archive,3431,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v27_Supplier_Matching.zip,archive,3781,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v28_Product_Selection.zip,archive,3576,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v29_Official_Verification.zip,archive,3978,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v2_Memory.zip,archive,4899,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v30_Autonomous_Mission.zip,archive,4828,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v31_Learning_Memory.zip,archive,4044,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v32_Category_Intelligence.zip,archive,4028,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v33_Competitor_Intelligence.zip,archive,3950,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v33_to_v40_COMPLETE.zip,archive,34888,metadata_only,Arşiv. 38 üye. İç içe arşiv 8. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v34_Alerts_Anomaly_Detection.zip,archive,1941,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v35_Deep_Category_Taxonomy.zip,archive,1902,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v36_Market_Geography.zip,archive,1820,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v37_Risk_Compliance.zip,archive,1860,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v38_Profitability_Scenario.zip,archive,1906,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v39_Intelligence_Dashboard.zip,archive,1858,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v3_Collector.zip,archive,5910,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v40_Master_Intelligence_Core.zip,archive,1868,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v41_Authorized_Web_Research.zip,archive,1659,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v41_v70_ALL_REMAINING.zip,archive,122255,metadata_only,Arşiv. 152 üye. İç içe arşiv 30. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v42_Public_API_Data_Connectors.zip,archive,1665,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v43_Data_Normalization_and_Deduplication.zip,archive,1687,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v44_Source_Reliability_Scoring.zip,archive,1668,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v45_Change_Detection.zip,archive,1639,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v46_Competitor_Product_Tracking.zip,archive,1678,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v47_Competitor_Category_Mapping.zip,archive,1678,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v48_Competitor_Price_Tracking.zip,archive,1671,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v49_Market_Trend_Radar.zip,archive,1646,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v4_Scheduler.zip,archive,6685,metadata_only,Arşiv. 6 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v50_Opportunity_Discovery.zip,archive,1656,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v51_Product_Trend_Radar.zip,archive,1648,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v52_Brand_Intelligence.zip,archive,1640,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v53_Supplier_Verification.zip,archive,1656,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v54_Supplier_Performance_Tracking.zip,archive,1682,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v55_Supplier_Price_Comparison.zip,archive,1669,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v56_Stock_and_Availability_Intelligence.zip,archive,1695,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v57_Shipping_and_Delivery_Intelligence.zip,archive,1692,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v58_Marketplace_Intelligence.zip,archive,1657,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v59_SEO_and_Search_Demand_Intelligence.zip,archive,1688,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v5_API_Layer.zip,archive,3610,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v60_Advertising_Intelligence.zip,archive,1656,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v61_Customer_Review_Intelligence.zip,archive,1673,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v62_Promotion_and_Discount_Intelligence.zip,archive,1694,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v63_Seasonality_Intelligence.zip,archive,1661,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v64_Cross-Border_Market_Intelligence.zip,archive,1688,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v65_EU_and_Germany_Compliance_Monitor.zip,archive,1691,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v66_Currency_and_FX_Intelligence.zip,archive,1668,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v67_Landed_Cost_Calculator.zip,archive,1660,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v68_Advanced_Profitability_Optimizer.zip,archive,1691,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v69_Portfolio_and_Category_Portfolio_Manager.zip,archive,1692,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v6_Analysis.zip,archive,3724,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v70_Real-Time_Intelligence_Command_Center.zip,archive,1695,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v71_Automated_Research_Jobs.zip,archive,1674,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v71_v100_COMPLETE.zip,archive,117823,metadata_only,Arşiv. 152 üye. İç içe arşiv 30. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v72_Data_Quality_Control.zip,archive,1666,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v73_Multi_Agent_Collaboration.zip,archive,1683,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v74_Hypothesis_Engine.zip,archive,1661,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v75_Fact_Checking_Counter_Verification.zip,archive,1717,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v76_Opportunity_Ranking.zip,archive,1664,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v77_Product_Discovery.zip,archive,1652,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v78_Supplier_Discovery.zip,archive,1655,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v79_Market_Entry_Planner.zip,archive,1663,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v7_Trend_Opportunity.zip,archive,2754,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v80_Intelligence_Workflow_Automation.zip,archive,1697,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v81_Dynamic_Price_Optimization.zip,archive,1681,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v82_Dynamic_Margin_Intelligence.zip,archive,1680,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v83_Advertising_ROAS_Intelligence.zip,archive,1685,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v84_Inventory_Planning.zip,archive,1657,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v85_Demand_to_Purchasing.zip,archive,1663,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v86_Purchasing_to_Selling_Price.zip,archive,1683,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v87_Cross_Sell_Intelligence.zip,archive,1668,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v88_Bundle_Intelligence.zip,archive,1644,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v89_Assortment_Optimization.zip,archive,1668,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v8_Category_Discovery.zip,archive,2768,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v90_Category_Portfolio_Intelligence.zip,archive,1692,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v91_Germany_Market_Intelligence.zip,archive,1682,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v92_EU_Market_Intelligence.zip,archive,1661,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v93_T_rkiye_Market_Intelligence.zip,archive,1695,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v94_Gulf_Market_Intelligence.zip,archive,1674,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v95_International_Expansion_Intelligence.zip,archive,1696,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v96_Global_Currency_Intelligence.zip,archive,1682,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v97_Global_Customs_Intelligence.zip,archive,1680,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v98_Global_Logistics_Intelligence.zip,archive,1686,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v99_Local_Marketplace_Intelligence.zip,archive,1687,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/Buzzard_Intelligence_v9_Reporting_Alerts.zip,archive,2894,metadata_only,Arşiv. 4 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/fehler_behebung_2.zip,archive,113675,metadata_only,Arşiv. 462 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/archive/smart_menu.zip,archive,261455,metadata_only,Arşiv. 5 üye. İç içe arşiv 0. Şifreli üye 0.
+intelligence/buzzard_ki_gesamt/aktiv/Buzzard,symlink,0,metadata_only,../../../Buzzard
+intelligence/buzzard_ki_gesamt/aktiv/archive,symlink,0,metadata_only,../../archive
+intelligence/buzzard_ki_gesamt/aktiv/buzzard_ai_complete,symlink,0,metadata_only,../../buzzard_ai_complete
+intelligence/buzzard_ki_gesamt/aktiv/buzzard_ai_gesamt,symlink,0,metadata_only,../../buzzard_ai_gesamt
+intelligence/buzzard_ki_gesamt/aktiv/buzzard_intelligence,symlink,0,metadata_only,../../buzzard_intelligence
+intelligence/buzzard_ki_gesamt/aktiv/gizli,symlink,0,metadata_only,../../../gizli
+intelligence/buzzard_ki_gesamt/aktiv/live_connectors,symlink,0,metadata_only,../../live_connectors
+intelligence/buzzard_ki_gesamt/aktiv/main_py,symlink,0,metadata_only,../../main.py
+intelligence/buzzard_ki_gesamt/aktiv/public_taxonomy,symlink,0,metadata_only,../../../public/taxonomy
+intelligence/buzzard_ki_gesamt/aktiv/scripts,symlink,0,metadata_only,../../scripts
+intelligence/buzzard_ki_gesamt/aktiv/taxonomy,symlink,0,metadata_only,../../../data/taxonomy
+intelligence/buzzard_ki_gesamt/snapshots/latest,symlink,0,metadata_only,2026-08-18
+logo/logo.png,image,66337,metadata_only,"JPEG image data, Exif standard: [TIFF image data, big-endian, direntries=6, orientation=upper-left, xresolution=86, yresolution=94, resolutionunit=2], baseline, precision 8, 839x417, components 3"
+public/council/sinan-bey-official-voice-v1.m4a,audio,401218,metadata_only,"{
+    ""programs"": [
+
+    ],
+    ""streams"": [
+        {
+            ""codec_name"": ""aac"",
+            ""sample_rate"": ""48000"",
+            ""channels"": 2
+        }
+    ],
+    ""format"": {
+        ""format_name"": ""mov,mp4,m4a,3gp,3g2,mj2"",
+       "
+public/council/sinan-bey.png,image,2470619,metadata_only,"PNG image data, 1199 x 1312, 8-bit/color RGB, non-interlaced"
+public/images/backgrounds/germany/buzzard-germany-de.png,image,271858,metadata_only,"JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x720, components 3"
+public/logo/logo.png,image,66337,metadata_only,"JPEG image data, Exif standard: [TIFF image data, big-endian, direntries=6, orientation=upper-left, xresolution=86, yresolution=94, resolutionunit=2], baseline, precision 8, 839x417, components 3"

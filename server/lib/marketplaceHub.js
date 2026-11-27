@@ -95,7 +95,11 @@ function queueOrderSync() {
 
 function preflightListing(body = {}) {
   const connector = createConnector(body.marketplace);
-  if (connector.ok === false) return { ok: false, code: connector.code, live: false };
+  if (connector.ok === false) {
+    const europe = require("./marketplace/europe/workflow").preflight(body);
+    if (europe.code === "PLATFORM_UNKNOWN") return { ok: false, code: connector.code, live: false };
+    return europe;
+  }
   const validation = validateMarketplaceListing({
     sku: body.productSku,
     title: body.title,

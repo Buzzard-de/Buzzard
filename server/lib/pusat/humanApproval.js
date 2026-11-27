@@ -16,9 +16,11 @@ const RISK = Object.freeze({
 function createApprovalCenter({ dbPath } = {}) {
   const resolved = dbPath || path.join(os.tmpdir(), "buzzard-approvals.sqlite");
   const queue = createDurableTaskQueue({ dbPath: resolved });
+  const { ids } = require("../buzzardNative/core/identityRegistry");
 
   function submit({ action, requestedBy, reason, risk = RISK.HIGH, payload = {}, taskId = "standalone" } = {}) {
-    if (risk === RISK.LOW) {
+    const agentAsked = ids().includes(requestedBy);
+    if (risk === RISK.LOW && !agentAsked) {
       return {
         ok: true,
         item: {

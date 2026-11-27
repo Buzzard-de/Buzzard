@@ -5,8 +5,9 @@ const require = createRequire(import.meta.url);
 const { createConnector, listConnectors, snapshot } = require("../lib/marketplace/marketplaceConnectorRegistry.js");
 
 describe("marketplace connector registry", () => {
-  it("lists ten sandbox channels with live blocked", () => {
-    expect(listConnectors().length).toBe(10);
+  it("lists the sandbox channels with live blocked", () => {
+    expect(listConnectors().length).toBe(11);
+    expect(listConnectors().some((row) => row.id === "trendyol" && row.live === false)).toBe(true);
     expect(snapshot().anyLive).toBe(false);
     expect(snapshot().allBlocked).toBe(true);
   });

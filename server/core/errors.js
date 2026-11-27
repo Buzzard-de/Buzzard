@@ -4,14 +4,10 @@ function newErrorId() {
   return `err_${crypto.randomBytes(6).toString("hex")}`;
 }
 
-function publicError(message, errorKey = "core.error", statusCode = 500, meta = {}) {
-  const errorId = newErrorId();
+function publicError(_message, errorKey = "core.error") {
   return {
     success: false,
     errorKey,
-    message,
-    errorId,
-    ...meta,
   };
 }
 

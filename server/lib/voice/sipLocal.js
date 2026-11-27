@@ -254,4 +254,96 @@ function phoneStackStatus() {
   };
 }
 
-module.exports = { localSipCall, localSipBusy, localSipInbound, phoneStackStatus, isRtp };
+function localSipSrtp({ payload = Buffer.from([0x10, 0x20, 0x30, 0x40]) } = {}) {
+  const { sessionFromMaster, protectSrtp, unprotectSrtp } = require("./srtpLab");
+  const session = sessionFromMaster();
+  return new Promise((resolve) => {
+    const caller = dgram.createSocket("udp4");
+    const callee = dgram.createSocket("udp4");
+    const media = dgram.createSocket("udp4");
+    let settled = false;
+    let decrypted = 0;
+    let rejected = 0;
+    let ack = false;
+    const finish = (row) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      for (const socket of [caller, callee, media]) {
+        try { socket.close(); } catch { /* already closed */ }
+      }
+      resolve(row);
+    };
+    const timer = setTimeout(() => finish(labResult({
+      ok: false,
+      code: "SIP_TIMEOUT",
+      media: "SRTP",
+      srtp: false,
+      rtp: false,
+    })), 3000);
+    media.on("message", (msg) => {
+      const plain = unprotectSrtp(session, msg);
+      if (plain && plain.equals(payload)) decrypted += 1;
+      else rejected += 1;
+    });
+    callee.on("message", (msg, rinfo) => {
+      const text = msg.toString("utf8");
+      if (text.startsWith("INVITE") && text.includes("RTP/SAVP")) {
+        const port = media.address().port;
+        callee.send(`SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\nm=audio ${port} RTP/SAVP 0\r\n`, rinfo.port, rinfo.address);
+      } else if (text.startsWith("ACK")) {
+        ack = true;
+      } else if (text.startsWith("BYE")) {
+        callee.send("SIP/2.0 200 OK\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
+      }
+    });
+    caller.on("message", (msg, rinfo) => {
+      const text = msg.toString("utf8");
+      if (text.includes("RTP/SAVP")) {
+        const port = Number(text.match(/m=audio (\d+)/)[1]);
+        caller.send(protectSrtp(session, rtpPacket(payload)), port, "127.0.0.1");
+        const tampered = protectSrtp(session, rtpPacket(payload));
+        tampered[12] ^= 0xff;
+        caller.send(tampered, port, "127.0.0.1");
+        caller.send("ACK sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 ACK\r\n\r\n", rinfo.port, rinfo.address);
+        caller.send("BYE sip:lab SIP/2.0\r\nCall-ID: lab\r\nCSeq: 2 BYE\r\n\r\n", rinfo.port, rinfo.address);
+      } else if (text.includes("CSeq: 2 BYE")) {
+        const matched = decrypted === 1 && rejected === 1;
+        finish(labResult({
+          ok: matched && ack,
+          code: "SIP_SRTP_LAB",
+          rtpPackets: 0,
+          srtpPackets: decrypted,
+          rejectedPackets: rejected,
+          ack,
+          sip: true,
+          protocol: "SIP/2.0",
+          media: "SRTP",
+          srtp: matched,
+          rtp: false,
+          tls: false,
+          mediaSecurity: matched ? "SRTP" : "NONE",
+          secure: false,
+          keyExchange: "LAB_MASTER",
+          carrier: false,
+          placedOnCarrier: false,
+          operatorCall: false,
+          phoneLine: "BLOCKED_EXTERNAL",
+          operatorAccount: false,
+          network: "LOOPBACK",
+          internet: false,
+          paid: false,
+        }));
+      }
+    });
+    media.bind(0, "127.0.0.1", () => {
+      callee.bind(0, "127.0.0.1", () => {
+        caller.bind(0, "127.0.0.1", () => {
+          caller.send("INVITE sip:lab@127.0.0.1 SIP/2.0\r\nCall-ID: lab\r\nCSeq: 1 INVITE\r\nContent-Type: application/sdp\r\n\r\nv=0\r\nm=audio 0 RTP/SAVP 0\r\n", callee.address().port, "127.0.0.1");
+        });
+      });
+    });
+  });
+}
+
+module.exports = { localSipCall, localSipBusy, localSipInbound, localSipSrtp, phoneStackStatus, isRtp };

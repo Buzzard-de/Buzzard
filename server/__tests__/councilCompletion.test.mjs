@@ -9,7 +9,8 @@ const { createOrchestrator } = require("../lib/pusat/orchestrator.js");
 const { presentSpeaker } = require("../lib/voice/meshAvatar.js");
 const { recognizeNatural, councilAssets } = require("../lib/voice/naturalSpeech.js");
 const { localTurnProbe, internetCallStatus } = require("../lib/voice/rtcMedia.js");
-const { localSipBusy, localSipInbound, phoneStackStatus } = require("../lib/voice/sipLocal.js");
+const { localSipBusy, localSipInbound, localSipSrtp, phoneStackStatus } = require("../lib/voice/sipLocal.js");
+const { sessionFromMaster } = require("../lib/voice/srtpLab.js");
 const { speakCatalog, turkishCatalog } = require("../lib/voice/turkishCatalog.js");
 const { withHeavyProcess } = require("../lib/buzzardNative/thinking/localProcessLock.js");
 
@@ -104,6 +105,26 @@ describe("council completion", () => {
     expect(stack.configPrepared).toBe(true);
     expect(stack.phoneLine).toBe("BLOCKED_EXTERNAL");
     expect(stack.paidApi).toBe(false);
+    const keys = sessionFromMaster();
+    expect(keys.key.toString("hex")).toBe("c61e7a93744f39ee10734afe3ff7a087");
+    expect(keys.auth.toString("hex")).toBe("cebe321f6ff7716b6fd4ab49af256a156d38baa4");
+    expect(keys.salt.toString("hex")).toBe("30cbbc08863d8c85d49db34a9ae1");
+    const secure = await localSipSrtp();
+    expect(secure).toMatchObject({
+      ok: true,
+      code: "SIP_SRTP_LAB",
+      media: "SRTP",
+      srtp: true,
+      rtp: false,
+      srtpPackets: 1,
+      rejectedPackets: 1,
+      tls: false,
+      secure: false,
+      carrier: false,
+      phoneLine: "BLOCKED_EXTERNAL",
+      internet: false,
+      keyExchange: "LAB_MASTER",
+    });
   });
 
   it("releases the heavy process lock after each local job", () => {
